@@ -1,11 +1,13 @@
 // Mini Drills config. Set demo:false to use the real backend (Firebase).
 window.MD_CONFIG = {
   demo: false,
-  teachers: ['YOUR_TEACHER_EMAIL@gmail.com'],
+  teachers: ['lorenkids795@gmail.com'],
   firebase: {
-    apiKey: 'PASTE_HERE',
-    authDomain: 'PASTE_HERE.firebaseapp.com',
-    projectId: 'PASTE_HERE',
-    appId: 'PASTE_HERE'
+    apiKey: 'AIzaSyA6cCzpbLHi1F54pJEAA2EOZFtQjkjr-mo',
+    authDomain: 'mini-drills.firebaseapp.com',
+    projectId: 'mini-drills',
+    storageBucket: 'mini-drills.firebasestorage.app',
+    messagingSenderId: '532860047599',
+    appId: '1:532860047599:web:b55dfbcbd1852b984a0b1a'
   }
 };
