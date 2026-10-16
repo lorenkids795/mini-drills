@@ -3,7 +3,7 @@ window.MD_CONFIG = {
   demo: false,
   teachers: ['lorenkids795@gmail.com'],
   firebase: {
-    apiKey: 'AIzaSyA6cCzpbLHi1F54pJEAA2EOZFtQjkjr-mo',
+    apiKey: 'AIzaSyA6cCzpbLHi1F54pJEAa2EOZFtQjkjr-mo',
     authDomain: 'mini-drills.firebaseapp.com',
     projectId: 'mini-drills',
     storageBucket: 'mini-drills.firebasestorage.app',
