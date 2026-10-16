@@ -52,6 +52,7 @@
       fb.auth().onAuthStateChanged(function (u) {
         if (u && u.email) {
           try { localStorage.setItem('md-email', u.email.toLowerCase()); } catch (e) {}
+          window.MD_USER = { name: u.displayName || '', email: u.email.toLowerCase() };
           resolveDb(fb.firestore());
         }
       });

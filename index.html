@@ -568,7 +568,6 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
   <section id="v-login">
     <div class="login">
       <h1>Sign in</h1>
-      <p class="muted" style="margin:0">This is a private platform. Only emails on your class list can sign in.</p>
       <form id="loginForm">
         <label class="field" for="lgEmail">Email<input id="lgEmail" type="email" autocomplete="email" placeholder="you@example.com" required></label>
         <button class="btn pri" type="submit">Continue</button>
@@ -782,7 +781,7 @@ function allRoster(){
   (DEMO?DEMO_ROSTER:(CFG.teachers||[]).map(function(e){return {email:String(e).toLowerCase(),name:'Teacher',role:'teacher',course:'',cls:''}})).concat(src).forEach(function(r){if(!m[r.email]){m[r.email]=1;out.push(r)}});
   return out;
 }
-var findUser=function(email){var e=String(email||'').trim().toLowerCase();var r=allRoster();for(var i=0;i<r.length;i++)if(r[i].email===e)return (r[i].role==='student'&&removedAll()[e])?null:r[i];return null};
+var findUser=function(email){var e=String(email||'').trim().toLowerCase();var r=allRoster();for(var i=0;i<r.length;i++)if(r[i].email===e)return (r[i].role==='student'&&removedAll()[e])?null:r[i];if(!DEMO&&e&&e.indexOf('@')>0){var gn=(window.MD_USER&&window.MD_USER.name)||e.split('@')[0];return {email:e,name:gn,role:'student',course:'',cls:''}}return null};
 var classDocs=[],localClasses={};
 var PAL=['#2f6fd6','#12896f','#c2410c','#7c3aed','#be185d','#0e7490','#a16207','#4d7c0f'];
 function hashOf(t){var h=7;for(var i=0;i<t.length;i++)h=(h*31+t.charCodeAt(i))>>>0;return h}
@@ -2418,7 +2417,9 @@ function xGet(o,p){return p.split('.').reduce(function(a,k){return a==null?a:a[k
 function xSet(o,p,v){var k=p.split('.'),c=o;for(var i=0;i<k.length-1;i++)c=c[k[i]];c[k[k.length-1]]=v}
 function xBlank(x){return isArr(x)?x.map(xBlank):(x&&typeof x==='object'?Object.keys(x).reduce(function(o,k){o[k]=xBlank(x[k]);return o},{}):(typeof x==='number'?0:''))}
 var XH={ans:'(gap: accepted answers · mcq/match: position of the right option, from 0 · tfng: True / False / Not Given)',correct_option_index:'(0 = first option)',correct_index:'(0 = first option)',type:'(gap, mcq, tfng or match)',highlight_target:'(must appear exactly inside transcript_segment)'};
-function xLabel(k){return /^\d+$/.test(k)?'#'+(+k+1):k.replace(/_/g,' ').replace(/^./,function(c){return c.toUpperCase()})}
+var XN={audio_url:'Audio link',material:'Transcript / passage',target_word:'Target word',context_sentence:'Sentence in transcript',image_search_keyword:'Image keyword',guessing_options:'Meaning options',correct_option_index:'Correct option',meaning_en:'Meaning (English)',meaning_vi:'Meaning (Vietnamese)',word_family:'Word family',collocations:'Collocations',new_example:'New example',ccq:'Concept check question',question_text:'Question',transcript_segment:'Transcript excerpt',highlight_target:'Part to highlight',explanation:'Explanation',paraphrase_highlight:'Stage 2 · Highlight',trap_alert:'Stage 2 · Trap alert',cloze_material:'Text with gaps (__________)',answers:'Answers',guided_summary_text:'Summary with gaps',summary_answers:'Summary answers',instructions:'Instructions',stage_1_vocabulary:'Stage 1 · Vocabulary',stage_2_autopsy:'Stage 2 · Autopsy',stage_3_dictation:'Stage 3 · Dictation',stage_4_summary:'Stage 4 · Summary',stage_5_retest:'Stage 5 · Re-test'};
+XH.audio_url='(mp3 link, e.g. audio/test1.mp3 from the repo audio folder)';XH.correct_index='(0 = first option, 1 = second)';
+function xLabel(k){if(XN[k])return XN[k];return /^\d+$/.test(k)?'#'+(+k+1):k.replace(/_/g,' ').replace(/^./,function(c){return c.toUpperCase()})}
 function xLeaf(v,p){
   if(typeof v==='number')return '<input type="number" data-xp="'+p+'" value="'+v+'">';
   v=v==null?'':String(v);
@@ -2797,7 +2798,7 @@ populateBookTest();
     if(!db){setStatus('local');dbReady=true;return}
     dbh=db;
     var toDocs=function(snap){return snap.docs.map(function(d){return Object.assign({id:d.id,docId:d.id},d.data())})};
-    db.collection('roster').onSnapshot(function(s){rosterDocs=toDocs(s);dbReady=true;if(!U&&lsGet('md-email')){if(findUser(lsGet('md-email')))signIn(lsGet('md-email'));else if(!DEMO){var lm=$('#lgMsg');if(lm)lm.textContent='The account '+lsGet('md-email')+' is not on the class list. Ask your teacher to add it.'}}refreshLive()},function(){dbReady=true});
+    db.collection('roster').onSnapshot(function(s){rosterDocs=toDocs(s);dbReady=true;if(!U&&lsGet('md-email')){if(findUser(lsGet('md-email')))signIn(lsGet('md-email'));}refreshLive()},function(){dbReady=true});
     db.collection('exercises').onSnapshot(function(s){customDocs=toDocs(s);rebuildCustom();refreshLive()},function(){});
     db.collection('assignments').onSnapshot(function(s){asgDocs=toDocs(s);refreshLive()},function(){});
     db.collection('hwdone').onSnapshot(function(s){hwdoneDocs=toDocs(s);refreshLive()},function(){});

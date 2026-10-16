@@ -4,8 +4,8 @@ service cloud.firestore {
     function signedIn() { return request.auth != null && request.auth.token.email_verified == true; }
     function mail() { return request.auth.token.email.lower(); }
     // EDIT: put your teacher email(s) here (lowercase)
-    function teacher() { return signedIn() && mail() in ['YOUR_TEACHER_EMAIL@gmail.com']; }
-    function member() { return teacher() || (signedIn() && exists(/databases/$(database)/documents/roster/$(mail()))); }
+    function teacher() { return signedIn() && mail() in ['lorenkids795@gmail.com']; }
+    function member() { return signedIn(); }
 
     match /{col}/{id} {
       allow read: if member() && col in ['roster','exercises','assignments','classes','config'];
