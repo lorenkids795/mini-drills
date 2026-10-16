@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null && request.auth.token.email_verified == true; }
+    function mail() { return request.auth.token.email.lower(); }
+    // EDIT: put your teacher email(s) here (lowercase)
+    function teacher() { return signedIn() && mail() in ['YOUR_TEACHER_EMAIL@gmail.com']; }
+    function member() { return teacher() || (signedIn() && exists(/databases/$(database)/documents/roster/$(mail()))); }
+
+    match /{col}/{id} {
+      allow read: if member() && col in ['roster','exercises','assignments','classes','config'];
+      allow write: if teacher() && col in ['roster','exercises','assignments','classes','config'];
+      allow read, write: if member() && col in ['attempts','hwdone','profiles','cards','wins','codes','redeems','passes'];
+    }
+  }
+}
