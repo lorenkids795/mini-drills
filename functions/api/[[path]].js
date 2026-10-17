@@ -22,6 +22,7 @@
 //   staff          { "<email>": { name, ts } }   teachers added by the admin
 //   off:<email>    '1' = paused, 'moved:<new>'   blocks login; the app checks /api/status every 10 minutes
 //   adm:<key>      ADMIN_EMAIL, 12 h             admin session key, sent as X-Admin-Key to /api/admin/*
+//   sheet          { url, csv, ts }              Google Sheet class list; sheetcache = last read, 5 minutes
 
 const enc = new TextEncoder();
 const PBKDF2_ITER = 100000; // Workers maximum
@@ -204,6 +205,139 @@ async function fsUpdate(env, col, id, obj, updateTime) {
   const r = await fs(env, 'PATCH', '/' + col + '/' + encodeURIComponent(id) + '?' + mask + pre, { fields: toFields(obj) });
   return r.ok;
 }
+// create only if the document does not exist yet (false = it already exists)
+async function fsCreate(env, col, id, obj) {
+  const r = await fs(env, 'PATCH', '/' + col + '/' + encodeURIComponent(id) + '?currentDocument.exists=false', { fields: toFields(obj) });
+  return r.ok;
+}
+
+/* ---------- Google Sheet class list (CSV link, no Google API) ---------- */
+// KV sheet = { url, csv, ts }; KV sheetcache = { url, ts, rows, cols } kept 5 minutes.
+// Row id = hash of (class + full name with accents), or of the "id" column when the Sheet has one.
+// Plain slug() would mix up names that differ only by accents (VĂN THIÊN / VĂN THIỆN).
+const SHEET_TTL = 300000;
+const fold = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 'd').toLowerCase().replace(/\s+/g, ' ').trim();
+const SHEET_COLS = {
+  name: ['name', 'full name', 'student', 'student name', 'ho va ten', 'ho ten', 'ten', 'hoc sinh', 'ten hoc sinh'],
+  cls: ['class', 'lop', 'lop hoc', 'ca', 'ca hoc', 'gio', 'gio hoc', 'time'],
+  id: ['id', 'student id', 'ma', 'ma hs', 'ma hoc sinh'],
+  course: ['course', 'khoa', 'khoa hoc'],
+  grade: ['hien tai', 'khoi hien tai', 'grade'], // current grade; when empty, "Khối" is used
+  grade2: ['khoi'],
+  teacher: ['teacher', 'giao vien', 'gv'],
+};
+// Classes are named by time: "7H30" -> "7h30", "15H" -> "15h", "17PM" / "5PM" -> "17h", "7:30" -> "7h30". Other names stay as written.
+function classLabel(raw) {
+  const s = String(raw || '').trim();
+  const m = /^(\d{1,2})\s*(?:h|g|:|\.)?\s*(\d{2})?\s*(am|pm)?$/i.exec(s);
+  if (!m) return s;
+  let h = Number(m[1]);
+  const mi = m[2] || '';
+  if (m[3] && m[3].toLowerCase() === 'pm' && h < 12) h += 12;
+  if (h > 23 || (mi && Number(mi) > 59)) return s;
+  return h + 'h' + (mi && mi !== '00' ? mi : '');
+}
+const classMinutes = (c) => { const m = /^(\d{1,2})h(\d{2})?$/.exec(c); return m ? Number(m[1]) * 60 + Number(m[2] || 0) : 9999; };
+const byClassThenName = (a, b) => (classMinutes(a.cls) - classMinutes(b.cls)) || a.cls.localeCompare(b.cls) || a.name.localeCompare(b.name, 'vi');
+const nameKey = (cls, name) => String(cls || '').trim().toLowerCase() + '|' + String(name || '').normalize('NFC').replace(/\s+/g, ' ').trim().toUpperCase();
+
+// edit / share link -> CSV link. '' = not a Google Sheet link.
+function sheetCsvUrl(url) {
+  const u = String(url || '').trim();
+  if (!/^https:\/\/docs\.google\.com\/spreadsheets\//.test(u)) return '';
+  const g = /[#?&]gid=(\d+)/.exec(u);
+  if (/\/spreadsheets\/d\/e\//.test(u)) { // File -> Share -> Publish to web
+    return u.split(/[?#]/)[0].replace(/\/pub(html)?$/, '') + '/pub?output=csv' + (g ? '&single=true&gid=' + g[1] : '');
+  }
+  const m = /\/spreadsheets\/d\/([a-zA-Z0-9_-]{20,})/.exec(u);
+  return m ? 'https://docs.google.com/spreadsheets/d/' + m[1] + '/export?format=csv&gid=' + (g ? g[1] : '0') : '';
+}
+function parseCsv(text) {
+  const rows = [];
+  let row = [], cur = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += c;
+    } else if (c === '"') q = true;
+    else if (c === ',') { row.push(cur); cur = ''; }
+    else if (c === '\n' || c === '\r') {
+      if (c === '\r' && text[i + 1] === '\n') i++;
+      row.push(cur); rows.push(row); row = []; cur = '';
+    } else cur += c;
+  }
+  if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
+  return rows;
+}
+// Finds the header row (title rows above it are skipped) -> { rows: [{id, name, cls, course, teacher}], cols }
+async function parseSheet(text) {
+  const grid = parseCsv(String(text).replace(/^﻿/, ''));
+  let hi = -1, map = null;
+  for (let i = 0; i < Math.min(grid.length, 20) && hi < 0; i++) {
+    const f = grid[i].map(fold), m = {};
+    Object.keys(SHEET_COLS).forEach((k) => {
+      m[k] = -1;
+      for (const a of SHEET_COLS[k]) { const j = f.indexOf(a); if (j >= 0) { m[k] = j; break; } }
+    });
+    if (m.name >= 0 && m.cls >= 0) { hi = i; map = m; }
+  }
+  if (hi < 0) throw new Error('The Sheet needs a header row with a name column (Họ và tên or name) and a class column (Lớp or class).');
+  const rows = [], seen = {};
+  for (const r of grid.slice(hi + 1)) {
+    const cell = (k) => (map[k] >= 0 ? String(r[map[k]] || '').replace(/\s+/g, ' ').trim() : '');
+    const name = cell('name'), cls = classLabel(cell('cls'));
+    if (!name || !cls) continue;
+    let key = cell('id') ? 'id|' + cell('id') : nameKey(cls, name);
+    seen[key] = (seen[key] || 0) + 1;
+    if (seen[key] > 1) key += '#' + seen[key];
+    const grade = cell('grade') || cell('grade2');
+    rows.push({
+      id: 's' + (await sha256Hex(key)).slice(0, 20), name, cls,
+      course: cell('course') || (grade ? 'Grade ' + grade : ''), teacher: cell('teacher'),
+    });
+  }
+  const cols = {};
+  Object.keys(map).forEach((k) => { if (map[k] >= 0) cols[k] = grid[hi][map[k]]; });
+  return { rows, cols };
+}
+async function fetchSheet(csv) {
+  let r;
+  try { r = await fetch(csv, { redirect: 'follow' }); } catch (e) { throw new Error('Could not reach Google. Try again in a minute.'); }
+  if (r.status === 404) throw new Error('This Sheet was not found. Check the link.');
+  // a private Sheet answers with Google's sign-in page (HTML), not CSV
+  if (!r.ok || /text\/html/.test(r.headers.get('Content-Type') || '')) {
+    throw new Error('Google did not let the app read this Sheet. In the Sheet: Share → General access → "Anyone with the link" → Viewer.');
+  }
+  return parseSheet(await r.text());
+}
+// null = no Sheet linked. Fresh = skip the 5-minute cache. If Google fails, the last good copy is used.
+async function sheetRows(env, fresh) {
+  const conf = await env.MD_KV.get('sheet', 'json');
+  if (!conf || !conf.csv) return null;
+  const old = await env.MD_KV.get('sheetcache', 'json');
+  if (!fresh && old && old.url === conf.csv && Date.now() - old.ts < SHEET_TTL) return old;
+  try {
+    const s = await fetchSheet(conf.csv);
+    const c = { url: conf.csv, ts: Date.now(), rows: s.rows, cols: s.cols };
+    await env.MD_KV.put('sheetcache', JSON.stringify(c));
+    return c;
+  } catch (e) {
+    if (old && old.url === conf.csv) return Object.assign(old, { stale: true, error: e.message });
+    throw e;
+  }
+}
+// Sheet rows already used: names/{id} claimed, or a student with the same class + name in the roster (old CSV sign-ups)
+async function takenSet(env) {
+  const [names, roster] = await Promise.all([fsList(env, 'names'), fsList(env, 'roster')]);
+  const ids = {}, keys = {};
+  names.forEach((n) => { if (n.claimed) ids[n.id] = 1; });
+  roster.forEach((r) => {
+    if (r.role === 'teacher') return;
+    if (r.sid) ids[r.sid] = 1;
+    keys[nameKey(r.cls, r.name)] = 1;
+  });
+  return { ids, keys, taken: (row) => !!(ids[row.id] || keys[nameKey(row.cls, row.name)]) };
+}
 
 /* ---------- roles, paused accounts, admin session ---------- */
 async function staffMap(env) {
@@ -251,7 +385,13 @@ async function adminKeyOk(env, request) {
 }
 
 /* ---------- routes ---------- */
+// Names a new student can pick. With a Sheet linked: Sheet rows nobody has taken yet, classes in time order.
 async function listNames(env) {
+  const sh = await sheetRows(env, false);
+  if (sh) {
+    const t = await takenSet(env);
+    return sh.rows.filter((r) => !t.taken(r)).map((r) => ({ id: r.id, name: r.name, cls: r.cls, course: r.course })).sort(byClassThenName);
+  }
   const rows = await fsList(env, 'names');
   return rows
     .filter((n) => !n.claimed && n.name && n.cls)
@@ -317,7 +457,23 @@ async function register(env, body, ip) {
   }
 
   let name = '';
-  if (nameId) {
+  let sh = null;
+  try { sh = nameId ? await sheetRows(env, true) : null; } catch (e) { return fail('Could not read the class list. Try again in a minute.', 503); }
+  if (sh) {
+    // Sheet linked: the name must be in the Sheet now and not taken; names/{id} is created only once
+    const row = sh.rows.filter((r) => r.id === nameId)[0];
+    if (!row) return fail('That name is no longer on the class list. Reload the page and pick again.', 409);
+    if (await fsGet(env, 'roster', email)) return fail('This email is already on the class list. Choose "my teacher already added my email" instead.', 409);
+    if ((await takenSet(env)).taken(row)) return fail('That name was already taken. Pick it again from the list, or ask your teacher.', 409);
+    const okClaim = await fsCreate(env, 'names', row.id, {
+      name: row.name, cls: row.cls, course: row.course, teacher: row.teacher, claimed: true, email, sid: row.id, ts: Date.now(),
+    });
+    if (!okClaim) return fail('That name was just taken. Reload and pick again.', 409);
+    name = row.name;
+    await fsPut(env, 'roster', email, {
+      email, name, role: 'student', course: row.course, cls: row.cls, teacher: row.teacher, self: true, sid: row.id, ts: Date.now(),
+    });
+  } else if (nameId) {
     const n = await fsGet(env, 'names', nameId);
     if (!n || n.data.claimed) return fail('That name was already taken. Pick it again from the list.', 409);
     if (await fsGet(env, 'roster', email)) return fail('This email is already on the class list. Choose "my teacher already added my email" instead.', 409);
@@ -446,6 +602,57 @@ async function adminUnlock(env, body) {
   return json({ adminKey: await newAdminKey(env, ad) });
 }
 
+// What the admin sees about the Sheet: columns found, 5 first rows, and per class who has not registered yet.
+async function sheetSummary(env, c) {
+  const t = await takenSet(env), by = {};
+  c.rows.forEach((r) => {
+    const k = by[r.cls] || (by[r.cls] = { cls: r.cls, total: 0, open: [] });
+    k.total++;
+    if (!t.taken(r)) k.open.push(r.name);
+  });
+  const classes = Object.keys(by).map((k) => by[k]).sort((a, b) => byClassThenName({ cls: a.cls, name: '' }, { cls: b.cls, name: '' }));
+  return { ts: c.ts, cols: c.cols, total: c.rows.length, classes, preview: c.rows.slice(0, 5), stale: !!c.stale, error: c.error || '' };
+}
+// op: 'get' | 'check' (read a link, save nothing) | 'save' | 'refresh' (read again now) | 'unlink'
+async function adminSheet(env, body) {
+  const op = String(body.op || 'get');
+  if (op === 'check' || op === 'save') {
+    const url = String(body.url || '').trim(), csv = sheetCsvUrl(url);
+    if (!csv) return fail('Paste the link of a Google Sheet (it starts with https://docs.google.com/spreadsheets/).');
+    let s;
+    try { s = await fetchSheet(csv); } catch (e) { return fail(e.message); }
+    if (!s.rows.length) return fail('The Sheet has a header row but no students under it.');
+    const c = { url: csv, ts: Date.now(), rows: s.rows, cols: s.cols };
+    if (op === 'save') {
+      await env.MD_KV.put('sheet', JSON.stringify({ url, csv, ts: Date.now() }));
+      await env.MD_KV.put('sheetcache', JSON.stringify(c));
+      await fsPut(env, 'config', 'sheet', { linked: true, ts: Date.now() }); // lets the teacher Students tab hide the CSV box
+    }
+    return json(Object.assign({ linked: op === 'save', url, saved: op === 'save' }, await sheetSummary(env, c)));
+  }
+  if (op === 'unlink') {
+    await env.MD_KV.delete('sheet');
+    await env.MD_KV.delete('sheetcache');
+    await fsPut(env, 'config', 'sheet', { linked: false, ts: Date.now() });
+    return json({ linked: false });
+  }
+  const conf = await env.MD_KV.get('sheet', 'json');
+  if (!conf) return json({ linked: false });
+  let c;
+  try { c = await sheetRows(env, op === 'refresh'); } catch (e) { return json({ linked: true, url: conf.url, error: e.message, classes: [], preview: [], total: 0, cols: {} }); }
+  return json(Object.assign({ linked: true, url: conf.url }, await sheetSummary(env, c)));
+}
+
+// Move a registered student to another class (the Sheet only matters before sign-up).
+async function adminClass(env, body) {
+  const email = normEmail(body.email), cls = classLabel(String(body.cls || '').slice(0, 60)), course = String(body.course || '').trim().slice(0, 60);
+  if (!cls) return fail('Choose a class.');
+  const row = await fsGet(env, 'roster', email);
+  if (!row || row.data.role === 'teacher') return fail('This student was not found.', 404);
+  if (!(await fsUpdate(env, 'roster', email, { cls, course }))) return fail('Could not save. Try again.', 500);
+  return json({ ok: true, cls });
+}
+
 export async function onRequest(ctx) {
   const { request, env } = ctx;
   const url = new URL(request.url);
@@ -474,6 +681,8 @@ export async function onRequest(ctx) {
       if (route === 'admin/password') return await adminPassword(env, body);
       if (route === 'admin/active') return await adminActive(env, body);
       if (route === 'admin/teachers') return await adminTeachers(env, body);
+      if (route === 'admin/sheet') return await adminSheet(env, body);
+      if (route === 'admin/class') return await adminClass(env, body);
     }
     return fail('Not found.', 404);
   } catch (e) {

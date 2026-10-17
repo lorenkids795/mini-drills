@@ -86,7 +86,7 @@ Các khối JS được ngăn bằng comment `/* ---------- Tên ---------- */`.
 
 - Student: `library` (Home) · `cards` · `ranks` · `wheel` · `bag` · `set`
 - Teacher: `library` · `dash` · `asg` · `mark` · `roster` · `create` · `prize` · `xps`
-- Admin (teacher có `U.adm`): như Teacher, thêm `admin` ở cuối (`#v-admin`, `renderAdmin()`, tab con `AD.sub`: `guide` · `users` · `teachers` · `me`)
+- Admin (teacher có `U.adm`): như Teacher, thêm `admin` ở cuối (`#v-admin`, `renderAdmin()`, tab con `AD.sub`: `guide` · `users` · `teachers` · `sheet` · `me`)
 
 Mỗi tab ứng với một `<section id="v-...">`: `library` dùng `#v-lib`, các tab khác dùng `#v-<tên tab>`. `showTab(t)` ẩn hết các section, bật section của tab `t` rồi gọi `renderXxx()` tương ứng.
 
@@ -118,11 +118,20 @@ Mỗi tab ứng với một `<section id="v-...">`: `library` dùng `#v-lib`, c�
 | POST | `/api/admin/users` | mọi tài khoản + `status` (`active`/`paused`/`moved`) + `hasPassword` |
 | POST | `/api/admin/password` | `{email, newPassword}`; với chính admin cần thêm `oldPassword` |
 | POST | `/api/admin/active` | `{email, active}` → đặt/xóa `off:` |
+| POST | `/api/admin/sheet` | `{op}`: `get`, `check` + `url`, `save` + `url`, `refresh`, `unlink` → cột nhận được, 5 dòng đầu, tên chưa đăng ký theo lớp |
+| POST | `/api/admin/class` | `{email, cls, course}`: đổi lớp của học sinh đã đăng ký (`roster`) |
 | POST | `/api/admin/teachers` | `{op, name, email, password}`, `op` = `'add'` hoặc `'remove'` |
 
 Mọi `/api/admin/*` (trừ `unlock`) cần header `X-Admin-Key`. Ở frontend, mọi lời gọi admin đi qua **`adminApi(path, body)`** (demo: `demoAdminRun()` trên dữ liệu giả `DEMO_ADM`).
 
-KV: `acct:<email>` (mật khẩu), `rl:<email>` (đếm sai), `reg:<ip>`, `setup:<ip>`, `staff` (`{email:{name,ts}}`), `off:<email>`, `adm:<key>`.
+KV: `acct:<email>` (mật khẩu), `rl:<email>` (đếm sai), `reg:<ip>`, `setup:<ip>`, `staff` (`{email:{name,ts}}`), `off:<email>`, `adm:<key>`, `sheet` (`{url, csv, ts}`), `sheetcache` (lần đọc gần nhất, dùng 5 phút).
+
+**Google Sheet (danh sách lớp)**: server đọc CSV qua link `export?format=csv&gid=` (Sheet chia sẻ "Anyone with the link"), không dùng Google API.
+- Tự tìm dòng tiêu đề trong 20 dòng đầu (`SHEET_COLS`, tên cột Việt/Anh, so khớp đã bỏ dấu).
+- Lớp chuẩn hóa theo giờ bằng `classLabel()`: `7H30`→`7h30`, `17PM`→`17h`. Sắp theo giờ (`byClassThenName`). Cột "Hiện tại" (dự phòng "Khối") → `course: 'Grade N'`.
+- Mã dòng = `'s'+sha256(lớp|HỌ TÊN giữ dấu)` (hoặc cột `id`). **Không dùng `slug()`** vì tên chỉ khác dấu sẽ trùng.
+- Khi có Sheet: `/api/names` trả dòng chưa ai nhận (`takenSet`: `names/{id}.claimed`, `roster.sid`, hoặc trùng lớp + tên trong roster). `/api/register` đọc lại Sheet, tạo `names/{id}` bằng `fsCreate` (`currentDocument.exists=false`), rồi tạo `roster/{email}` có `sid`, `teacher`. Không có Sheet thì dùng luồng `names` cũ.
+- Server ghi `config/sheet = {linked}` để tab Students của giáo viên ẩn khung CSV (`renderRoster`).
 Biến môi trường thêm: `ADMIN_EMAIL` (Text), `ADMIN_PASSWORD` (Secret).
 
 ### Collection Firestore và quyền (xem `firestore.rules`)
@@ -193,7 +202,7 @@ Các thay đổi đã có trong code. **Không đảo ngược** nếu không đ
 5. **Leaderboard**: hạng 1–3 có class `.rk.top1/.top2/.top3`, tô nền cả hàng vàng kim/bạc/đồng và hiện số thứ tự thay cho emoji huy chương. Hàng của người dùng `.rk.me` giữ nền `--hl-soft` và có thêm viền `--accent`.
 6. **Inventory**: đã xóa nút "Open file" cho vật phẩm `mat` và `custom` có `url` (nhánh `act=''` trong `renderBag()`).
 
-7. **Admin (GĐ 1, 10/2026)**: vai trò admin, tab Admin (Guide/Users/Teachers/My account), Pause/Resume, đổi mật khẩu, thêm/xóa giáo viên, `/api/status`. Còn lại: GĐ 2 Google Sheet + đăng ký đối chiếu Sheet; GĐ 3 đổi email (`migrateEmail`).
+7. **Admin (GĐ 1, 10/2026)**: vai trò admin, tab Admin (Guide/Users/Teachers/My account), Pause/Resume, đổi mật khẩu, thêm/xóa giáo viên, `/api/status`. GĐ 2 (Google Sheet, Edit class) đã xong. Còn lại: GĐ 3 đổi email (`migrateEmail`).
    - Email là khóa dữ liệu ở: `roster/{email}`, `profiles/{slug(email)}`, `cards/{slug(email)}_{word}`, `hwdone/{slug(email)}_{asgId}`, `passes/{slug(email)}_{asgId}`, trường `email` của `attempts`/`redeems`, `codes.to`, `names.email`, **`classes.removed[]`**, KV `acct:`/`rl:`/`staff`.
 
 ## 8. Giới hạn đã biết / chưa làm

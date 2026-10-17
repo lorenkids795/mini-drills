@@ -34,6 +34,13 @@ Upload cả thư mục này (index.html, md-config.js, md-backend.js, README.md,
 - Tạm khóa hoặc xóa giáo viên: không đăng nhập được nữa, thiết bị đang mở bị đăng xuất trong vòng 10 phút. Không xóa dữ liệu.
 - Firestore rules **không cần sửa** cho tính năng admin.
 
+## 3c. Danh sách lớp từ Google Sheet
+1. Sheet cần dòng tiêu đề có cột **Họ và tên** và **Lớp** (tùy chọn: Giáo viên, Khối, Hiện tại, id). Các dòng tiêu đề phụ phía trên được bỏ qua.
+2. Lớp ghi theo giờ: `7H30`, `15H`, `17PM`… App hiển thị thành `7h30`, `15h`, `17h` và sắp theo giờ.
+3. Chia sẻ Sheet: **Share → General access → Anyone with the link → Viewer**. Sheet chỉ nên có tên, lớp, khối; **không** ghi email hay số điện thoại.
+4. Admin → **Google Sheet** → dán link → **Save & check**. Form đăng ký của học sinh dùng danh sách này ngay; sau khi sửa Sheet, tối đa 5 phút là cập nhật (hoặc bấm **Refresh now**).
+5. Khi đã nối Sheet, khung nhập CSV ở tab Students của giáo viên được ẩn đi. Học sinh đã đăng ký từ trước vẫn đăng nhập bình thường.
+
 ## 4. Dùng
 - Giáo viên: mở site → tab **Teacher** → "First time? Create your teacher password" → nhập email, mật khẩu mới và setup key.
 - Tab **Students** → dán danh sách CSV với cột `name, course, class` → Import. Học sinh tự chọn tên trên trang đăng nhập.

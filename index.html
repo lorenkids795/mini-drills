@@ -620,6 +620,11 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .adm-guide p,.adm-guide li{font-size:.92rem}
 .adm-guide details{border-bottom:1px solid var(--line);padding:.55rem 0}
 .adm-guide summary{cursor:pointer;font-weight:600}
+.adm .subtabs{overflow-x:auto;scrollbar-width:none}
+.adm .subtabs button{white-space:nowrap;flex:none}
+.adm-cl{border-bottom:1px solid var(--line);padding:.5rem 0}
+.adm-cl summary{cursor:pointer}
+.adm-cl p{margin:6px 0 0;font-size:.9rem;color:var(--muted)}
 .adm-add{display:flex;flex-wrap:wrap;gap:12px;align-items:end;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:18px}
 .adm-add .ck{display:flex;gap:6px;align-items:center;font-size:.9rem;padding-bottom:.55rem}
 .adt td{vertical-align:middle}
@@ -685,9 +690,12 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
   <section id="v-roster" hidden>
     <div class="pad">
       <h3>Class list</h3>
+      <p class="h" id="sheetNote" hidden>Class list comes from Google Sheet (managed by Admin). New students pick their class and name from the Sheet on the sign-in page. <button class="btn sm" type="button" data-act="ad-open-sheet" id="sheetNoteBtn" hidden>Open Admin › Google Sheet</button></p>
+      <div id="csvBox">
       <p class="h">Paste your class list as CSV. Columns: <span class="mono">name, course, class</span> (course is optional). Each student then picks their class and name on the sign-in page and sets their own email and password. If you already know a student's email, add an <span class="mono">email</span> column and fill it in for that student.</p>
       <textarea class="csv" id="csvIn" spellcheck="false" aria-label="CSV text" placeholder="name,course,class&#10;Nguyen Van An,Foundation,Class 6.0-A&#10;Tran Thi Binh,Foundation,Class 6.0-A"></textarea>
       <div class="actions"><button class="btn pri" type="button" data-act="import-csv">Import list</button><span class="saved" id="rMsg" aria-live="polite"></span></div>
+      </div>
     </div>
     <div id="rosterBody" style="margin-top:20px"></div>
   </section>
@@ -1728,7 +1736,8 @@ function importCSV(){
   }else{localRoster=out;fin()}
 }
 function renderRoster(){
-  var R=allRoster();
+  var R=allRoster(),sh=cfgGet('sheet'),lk=!!(sh&&sh.linked);
+  $('#sheetNote').hidden=!lk;$('#csvBox').hidden=lk;$('#sheetNoteBtn').hidden=!(U&&U.adm);
   $('#rosterBody').innerHTML='<div class="scroll"><table><thead><tr><th>Name</th><th>Email</th><th>Course · Class</th><th>Role</th></tr></thead><tbody>'+R.map(function(r){
     return '<tr><td>'+esc(r.name)+'</td><td class="mono" style="font-size:.82rem">'+esc(r.email)+'</td><td>'+(r.role==='teacher'?'—':esc(r.course||'—')+' · '+esc(r.cls))+'</td><td>'+r.role+(r.demo?' <small style="display:inline;color:var(--muted)">(demo)</small>':'')+'</td></tr>';
   }).join('')+'</tbody></table></div>';
@@ -1825,7 +1834,7 @@ function showTab(t){
 function signIn(email){
   var u=findUser(email),m=$('#lgMsg');
   if(!u){m.textContent=(dbh&&!dbReady)?'Still loading the class list. Try again in a moment.':'This email is not on your class list.';return false}
-  m.textContent='';U=u;RP=0;lsSet('md-email',u.email);AD.sub='users';AD.users=null;AD.loadErr='';AD.err='';AD.modal=null;AD.locked=false;NAV={book:null,test:null,skill:null,ex:null};PANE='q';
+  m.textContent='';U=u;RP=0;lsSet('md-email',u.email);AD.sub='users';AD.users=null;AD.loadErr='';AD.err='';AD.modal=null;AD.locked=false;AD.sheet=null;AD.shErr='';NAV={book:null,test:null,skill:null,ex:null};PANE='q';
   showTab('library');return true;
 }
 function refreshLive(){
@@ -3005,23 +3014,44 @@ var ADMIN_GUIDE=[
     'Admin → Users → Pause. Học sinh không đăng nhập được, thiết bị đang mở bị đăng xuất trong vòng 10 phút.',
     'Không có dữ liệu nào bị xóa. Bấm Resume để mở lại, mọi bài làm, XP và flashcard vẫn còn nguyên.']],
   ['Google Sheet danh sách lớp',[
-    'Sắp có (giai đoạn 2): dán link Google Sheet để form đăng ký lấy lớp và tên từ Sheet.']],
+    'Form đăng ký của học sinh (chọn lớp → chọn tên) lấy danh sách từ Google Sheet. Chỉ học sinh có tên trong Sheet mới đăng ký được, mỗi tên chỉ đăng ký được một lần.',
+    'Sheet cần một dòng tiêu đề có ít nhất cột "Họ và tên" và cột "Lớp" (tên tiếng Anh name, class cũng được). Các dòng tiêu đề phụ phía trên được bỏ qua. Cột tùy chọn: "Giáo viên", "Khối" / "Hiện tại" (hiện thành Grade 11), "id" (mã học sinh).',
+    'Lớp đặt theo giờ học: 7H30 → 7h30, 15H → 15h, 17PM → 17h (viết 7:30 hay 5PM cũng được). Các lớp tự sắp theo giờ trong ngày.',
+    'Chia sẻ Sheet: mở Sheet → Share (Chia sẻ) → General access → "Anyone with the link" → Viewer. Rồi copy link trên thanh địa chỉ, dán vào Admin → Google Sheet → Save & check.',
+    'Vì ai có link cũng xem được, Sheet chỉ nên có tên, lớp, khối. KHÔNG ghi email hay số điện thoại vào Sheet.',
+    'Sửa Sheet xong, tối đa 5 phút sau form đăng ký tự cập nhật. Muốn thấy ngay thì bấm Refresh now.'],'tpl'],
+  ['Học sinh chuyển lớp',[
+    'Học sinh CHƯA đăng ký: chỉ cần sửa cột Lớp trong Sheet.',
+    'Học sinh ĐÃ đăng ký: vào Admin → Users → Edit class để đổi lớp trong app, rồi sửa luôn trong Sheet cho khớp. Bài làm, XP và flashcard giữ nguyên.',
+    'Không đổi tên học sinh đã đăng ký trong Sheet: app sẽ hiểu là một học sinh mới chưa đăng ký.']],
   ['Đổi email cho học sinh',[
     'Sắp có (giai đoạn 3): đổi email và chuyển toàn bộ dữ liệu sang email mới, giữ nguyên mật khẩu.']],
   ['Lỗi thường gặp',[
     '"Enter your admin password to continue": phiên admin 12 giờ đã hết hoặc bạn mở tab mới. Nhập mật khẩu admin để tiếp tục.',
     '"Too many tries": nhập sai mật khẩu 10 lần nên bị khóa 15 phút. Admin đổi mật khẩu cho người đó để gỡ khóa ngay.',
     '"Your account is paused": tài khoản đang bị tạm khóa. Vào Users → Resume.',
+    '"Google did not let the app read this Sheet": Sheet chưa chia sẻ. Mở Sheet → Share → "Anyone with the link" → Viewer, rồi bấm Save & check lại.',
+    '"The Sheet needs a header row…": thiếu cột Họ và tên hoặc cột Lớp, hoặc dòng tiêu đề nằm dưới dòng 20.',
+    'Học sinh báo không thấy tên mình: kiểm tra tên có trong Sheet, đúng lớp, và chưa bị ai đăng ký. Admin → Google Sheet hiện danh sách tên chưa đăng ký theo từng lớp.',
     'Giáo viên có nhãn "Listed in Cloudflare (TEACHERS)": được khai báo bằng biến TEACHERS (cách cũ). Remove sẽ tạm khóa họ ở đây; muốn gỡ hẳn thì xóa email khỏi TEACHERS trên Cloudflare.']]
 ];
-var AD={sub:'users',users:null,me:'',loadErr:'',err:'',modal:null,locked:false,q:'',role:'all',cls:'all'};
+// Sheet template shown in the Guide (header row is copyable)
+var SHEET_TPL=[['STT','Giáo viên','Lớp','Họ và tên','Khối'],['1','Cô Nhi','7H30','NGUYỄN MAI TRANG','11'],['2','Cô Nhi','15H','TRẦN GIA HUY','12'],['3','Cô Nhi','17PM','LÊ KHÁNH NAM','10']];
+var AD={sub:'users',users:null,me:'',loadErr:'',err:'',modal:null,locked:false,q:'',role:'all',cls:'all',sheet:null,shErr:''};
+var SHEET_COLNAME={name:'Name',cls:'Class',id:'ID',course:'Course',grade:'Grade',grade2:'Grade (backup)',teacher:'Teacher'};
 var EMAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]+$/,API_BASE=CFG.api||'/api';
 var PWW=['apple','river','mango','tiger','lemon','cloud','ocean','piano','maple','coral','eagle','forest','garden','honey','island','koala','lotus','melon','olive','panda','pearl','robin','tulip','violet','willow','zebra','amber','bamboo','daisy','ginger'];
 // easy to read aloud, e.g. mango-58-river
 function genPw(){var r=new Uint32Array(3);try{crypto.getRandomValues(r)}catch(e){for(var i=0;i<3;i++)r[i]=Math.floor(Math.random()*1e9)}return PWW[r[0]%PWW.length]+'-'+(10+r[1]%90)+'-'+PWW[r[2]%PWW.length]}
 
 // Demo: same answers as the server, on local data that is lost on reload.
-var DEMO_ADM={off:{},staff:{}};
+var DEMO_ADM={off:{},staff:{},sheet:''};
+function demoSheetSum(url){
+  var rows=[['Minh Anh','7h30'],['Quoc Bao','7h30'],['Nguyen Mai Trang','7h30'],['Hoang Nam','15h'],['Tran Gia Huy','15h'],['Le Khanh Nam','17h'],['Pham Bao Tran','17h']].map(function(r,i){return {id:'d'+i,name:r[0],cls:r[1],course:'Grade 11',teacher:'Cô Nhi'}});
+  var by={},classes=[];
+  rows.forEach(function(r){if(!by[r.cls]){by[r.cls]={cls:r.cls,total:0,open:[]};classes.push(by[r.cls])}by[r.cls].total++;if(!students().some(function(s){return s.name===r.name}))by[r.cls].open.push(r.name)});
+  return {linked:true,url:url,ts:Date.now(),cols:{name:'Họ và tên',cls:'Lớp',grade:'Hiện tại',teacher:'Giáo viên'},total:rows.length,classes:classes,preview:rows.slice(0,5),stale:false,error:''};
+}
 function demoUsers(){
   var out=[{email:'admin@demo.vn',name:'Mr. Admin',role:'admin',cls:'',course:'',src:'env'},{email:'teacher@demo.vn',name:'Ms. Lan',role:'teacher',cls:'',course:'',src:'env'}];
   Object.keys(DEMO_ADM.staff).forEach(function(e){out.push({email:e,name:DEMO_ADM.staff[e].name,role:'teacher',cls:'',course:'',src:'admin'})});
@@ -3033,6 +3063,15 @@ function demoAdminRun(path,b){
   var err=function(m){throw new Error(m)},em=String(b.email||'').trim().toLowerCase(),all=demoUsers();
   var find=function(e){return all.filter(function(u){return u.email===e})[0]};
   if(path==='admin/users')return {users:all,me:'admin@demo.vn'};
+  if(path==='admin/sheet'){
+    var op=b.op||'get',su=String(b.url||'').trim();
+    if(op==='check'||op==='save'){if(!/^https:\/\/docs\.google\.com\/spreadsheets\//.test(su))err('Paste the link of a Google Sheet (it starts with https://docs.google.com/spreadsheets/).');if(op==='save')DEMO_ADM.sheet=su;return Object.assign(demoSheetSum(su),{linked:op==='save',saved:op==='save'})}
+    if(op==='unlink'){DEMO_ADM.sheet='';return {linked:false}}
+    return DEMO_ADM.sheet?demoSheetSum(DEMO_ADM.sheet):{linked:false}}
+  if(path==='admin/class'){
+    var dr=DEMO_ROSTER.filter(function(r){return r.email===em&&r.role==='student'})[0];
+    if(!dr)err('This student was not found.');if(!String(b.cls||'').trim())err('Choose a class.');
+    dr.cls=String(b.cls).trim();dr.course=String(b.course||'').trim();return {ok:true,cls:dr.cls}}
   if(path==='admin/unlock')return {adminKey:'demo'};
   if(!EMAIL_RE.test(em))err('Enter a valid email.');
   if(path==='admin/password'){
@@ -3090,17 +3129,50 @@ function adUser(email){return (AD.users||[]).filter(function(u){return u.email==
 
 function renderAdmin(){
   var el=$('#v-admin');if(!U||!U.adm){el.innerHTML='';return}
-  var subs=[['guide','Guide'],['users','Users'],['teachers','Teachers'],['me','My account']];
+  var subs=[['guide','Guide'],['users','Users'],['teachers','Teachers'],['sheet','Google Sheet'],['me','My account']];
   var needList=AD.sub==='users'||AD.sub==='teachers';
   if(needList&&!AD.locked&&!AD.users&&!AD.loadErr)adLoad();
-  var body=AD.sub==='guide'?adGuideHTML():AD.locked?adUnlockHTML():AD.sub==='teachers'?adTeachersHTML():AD.sub==='me'?adMeHTML():adUsersHTML();
+  if(AD.sub==='sheet'&&!AD.locked&&!AD.sheet&&!AD.shErr)adSheetLoad();
+  var body=AD.sub==='guide'?adGuideHTML():AD.locked?adUnlockHTML():AD.sub==='teachers'?adTeachersHTML():AD.sub==='sheet'?adSheetHTML():AD.sub==='me'?adMeHTML():adUsersHTML();
   el.innerHTML='<div class="pad adm"><div class="sechead"><h2>Admin</h2><span class="meta">Accounts, teachers and passwords</span></div>'+
     (DEMO?'<p class="adm-demo" role="note">Demo: changes are not saved.</p>':'')+
     '<div class="subtabs" role="tablist">'+subs.map(function(s){return '<button type="button" role="tab" data-act="ad-sub" data-v="'+s[0]+'" aria-selected="'+(AD.sub===s[0])+'">'+s[1]+'</button>'}).join('')+'</div>'+
     body+'<p class="msg" id="adMsg" aria-live="polite">'+esc(AD.err)+'</p>'+adModalHTML()+'</div>';
 }
 function adGuideHTML(){
-  return '<div class="adm-guide">'+ADMIN_GUIDE.map(function(s,i){return '<details'+(i===0?' open':'')+'><summary>'+esc(s[0])+'</summary>'+s[1].map(function(p){return '<p>'+esc(p)+'</p>'}).join('')+'</details>'}).join('')+'</div>';
+  return '<div class="adm-guide">'+ADMIN_GUIDE.map(function(s,i){return '<details'+(i===0?' open':'')+'><summary>'+esc(s[0])+'</summary>'+s[1].map(function(p){return '<p>'+esc(p)+'</p>'}).join('')+(s[2]==='tpl'?adTplHTML():'')+'</details>'}).join('')+'</div>';
+}
+function adTplHTML(){
+  return '<p><b>Mẫu Sheet</b> (dòng 1 là tiêu đề):</p><div class="scroll"><table><thead><tr>'+SHEET_TPL[0].map(function(c){return '<th>'+esc(c)+'</th>'}).join('')+'</tr></thead><tbody>'+
+    SHEET_TPL.slice(1).map(function(r){return '<tr>'+r.map(function(c){return '<td>'+esc(c)+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div>'+
+    '<div class="actions" style="margin-top:10px"><button class="btn sm" type="button" data-act="ad-copyhdr">Copy header row</button><button class="btn sm" type="button" data-act="ad-sub" data-v="sheet">Open Google Sheet settings</button></div>';
+}
+function adWhen(ts){if(!ts)return '—';var d=new Date(ts);return pad(d.getHours())+':'+pad(d.getMinutes())+' '+fmtD(ts)}
+var adShBusy=false;
+function adSheetLoad(){
+  if(adShBusy)return;adShBusy=true;
+  adminApi('admin/sheet',{op:'get'}).then(function(d){AD.sheet=d;AD.shErr=''},function(e){if(!AD.locked)AD.shErr=e.message||'Something went wrong.'}).then(function(){adShBusy=false;if(TAB==='admin')renderAdmin()});
+}
+function adSheetHTML(){
+  var s=AD.sheet;
+  if(AD.shErr)return '<p class="saved">Could not load. '+esc(AD.shErr)+' <button class="btn sm" type="button" data-act="ad-sh-reload">Try again</button></p>';
+  if(!s)return '<p class="saved">Loading…</p>';
+  var h='<div class="sec" style="max-width:860px"><h3>1. Link your Sheet</h3><p class="sub">First share it: in the Sheet, Share → General access → "Anyone with the link" → Viewer. Keep only names, classes and grades in it (no email, no phone number).</p>'+
+    '<div class="form-row" style="padding-block:6px"><label class="field" for="adShUrl" style="flex:1 1 320px">Google Sheet link<input id="adShUrl" type="url" value="'+esc(s.url||'')+'" placeholder="https://docs.google.com/spreadsheets/d/…" autocomplete="off"></label>'+
+    '<button class="btn pri" type="button" data-act="ad-sh-save">Save &amp; check</button>'+
+    (s.linked?'<button class="btn" type="button" data-act="ad-sh-refresh">Refresh now</button><button class="btn sm bad" type="button" data-act="ad-sh-unlink">Unlink</button>':'')+'</div>';
+  if(!s.linked)h+='<p class="saved">No Sheet linked yet. Until you link one, the sign-in page uses the old class list (CSV in the Students tab).</p>';
+  if(s.error)h+='<p class="msg">'+(s.stale?'Could not read the Sheet just now, so the last good copy is used. ':'')+esc(s.error)+'</p>';
+  if(s.total){
+    h+='<h3 style="margin-top:22px">2. What the app reads</h3><p class="sub">'+(s.linked?'Read at '+esc(adWhen(s.ts))+'. The sign-in page refreshes it every 5 minutes. ':'')+s.total+' students in '+s.classes.length+' classes: '+s.classes.map(function(c){return esc(c.cls)}).join(', ')+'.</p>'+
+      '<div class="chips2" style="margin-bottom:12px">'+Object.keys(s.cols||{}).map(function(k){return '<span class="pill">'+esc(SHEET_COLNAME[k]||k)+' ← '+esc(s.cols[k])+'</span>'}).join('')+'</div>'+
+      '<div class="scroll adt"><table><thead><tr><th>Name</th><th>Class</th><th>Grade</th><th>Teacher</th></tr></thead><tbody>'+(s.preview||[]).map(function(r){
+        return '<tr><td data-l="Name">'+esc(r.name)+'</td><td data-l="Class">'+esc(r.cls)+'</td><td data-l="Grade">'+esc(r.course||'—')+'</td><td data-l="Teacher">'+esc(r.teacher||'—')+'</td></tr>'}).join('')+'</tbody></table></div>'+
+      '<p class="saved" style="margin-top:6px">First 5 rows.</p>'+
+      '<h3 style="margin-top:22px">3. Not registered yet</h3>'+s.classes.map(function(c){
+        return '<details class="adm-cl"><summary><b>'+esc(c.cls)+'</b> · '+c.open.length+' of '+c.total+' not registered</summary><p>'+(c.open.length?c.open.map(esc).join(', '):'Everyone in this class has registered.')+'</p></details>'}).join('');
+  }
+  return h+'</div>';
 }
 function adUnlockHTML(){
   return '<div class="sec" style="max-width:560px"><h3>Enter your admin password to continue</h3><p class="sub">The admin tools ask for your password again after 12 hours or in a new browser tab. You stay signed in to the app.</p>'+
@@ -3137,6 +3209,7 @@ function adListHTML(){
     var e=esc(u.email),acts='';
     if(u.role==='admin')acts='<button class="btn sm" type="button" data-act="ad-sub" data-v="me">My account</button>';
     else if(u.status!=='moved')acts='<button class="btn sm" type="button" data-act="ad-pw" data-email="'+e+'">Change password</button>'+
+      (u.role==='student'?'<button class="btn sm" type="button" data-act="ad-cls" data-email="'+e+'">Edit class</button>':'')+
       (u.status==='paused'?'<button class="btn sm" type="button" data-act="ad-on" data-email="'+e+'">Resume</button>':'<button class="btn sm bad" type="button" data-act="ad-off" data-email="'+e+'">Pause</button>');
     return '<tr><td data-l="Name"><b>'+esc(u.name||'—')+'</b>'+(u.src==='env'&&u.role==='teacher'?'<small>Listed in Cloudflare (TEACHERS)</small>':'')+'</td>'+
       '<td data-l="Email" class="mono" style="font-size:.82rem">'+e+'</td>'+
@@ -3175,6 +3248,29 @@ function adAct(a,t){
   if(a.indexOf('ad-')!==0)return false;
   var who=t.dataset.email||'',u=adUser(who),nm=u.name||who;
   if(a==='ad-sub'){AD.sub=t.dataset.v;AD.err='';renderAdmin();return true}
+  if(a==='ad-open-sheet'){AD.sub='sheet';AD.err='';showTab('admin');return true}
+  if(a==='ad-sh-reload'){AD.shErr='';AD.sheet=null;renderAdmin();return true}
+  if(a==='ad-copyhdr'){var hv=SHEET_TPL[0].join('\t'),hno=function(){adSay('Copy failed. Type the header by hand: '+SHEET_TPL[0].join(', '))};try{navigator.clipboard.writeText(hv).then(function(){toast('Header copied. Paste it into row 1 of your Sheet.')},hno)}catch(x){hno()}return true}
+  if(a==='ad-sh-save'||a==='ad-sh-refresh'){
+    var su=($('#adShUrl')&&$('#adShUrl').value||'').trim();
+    if(a==='ad-sh-save'&&!su){adSay('Paste the Google Sheet link first.');return true}
+    adBusy(t,true);adSay('');
+    adminApi('admin/sheet',a==='ad-sh-save'?{op:'save',url:su}:{op:'refresh'}).then(function(d){
+      AD.sheet=d;AD.shErr='';toast(d.error?'Read with a problem, see below.':(a==='ad-sh-save'?'Sheet saved: ':'Read again: ')+d.total+' students in '+(d.classes||[]).length+' classes.');renderAdmin();
+    },function(e){adBusy(t,false);adSay(e.message)});
+    return true}
+  if(a==='ad-sh-unlink'){
+    AD.modal={title:'Unlink the Google Sheet?',text:'The sign-in page goes back to the old class list (CSV). Students who already registered are not changed.',ok:'Unlink',danger:true,
+      run:function(){return adminApi('admin/sheet',{op:'unlink'}).then(function(d){AD.sheet=d;AD.modal=null;toast('Sheet unlinked.');renderAdmin()})}};
+    renderAdmin();return true}
+  if(a==='ad-cls'){
+    var cl={},clo=[];(AD.sheet&&AD.sheet.classes||[]).concat((AD.users||[]).map(function(x){return {cls:x.cls}})).forEach(function(c){if(c.cls&&!cl[c.cls]){cl[c.cls]=1;clo.push(c.cls)}});
+    AD.modal={title:'Edit class',text:'Move '+nm+' ('+who+') to another class. Their work, XP and flashcards stay. Also change the class in the Google Sheet so both match.',ok:'Save class',
+      body:'<div class="form-row" style="padding-block:6px"><label class="field" for="adClsIn">Class<input id="adClsIn" list="adClsList" value="'+esc(u.cls||'')+'" autocomplete="off" placeholder="e.g. 15h"></label><datalist id="adClsList">'+clo.map(function(c){return '<option value="'+esc(c)+'">'}).join('')+'</datalist>'+
+        '<label class="field" for="adCrsIn">Grade / course<input id="adCrsIn" value="'+esc(u.course||'')+'" autocomplete="off"></label></div>',
+      run:function(){var nc=($('#adClsIn').value||'').trim();if(!nc)return Promise.reject(new Error('Choose a class.'));
+        return adminApi('admin/class',{email:who,cls:nc,course:($('#adCrsIn').value||'').trim()}).then(function(d){return adDone(nm+' moved to '+(d.cls||nc)+'.')})}};
+    renderAdmin();var ci2=$('#adClsIn');if(ci2)ci2.focus();return true}
   if(a==='ad-reload'){AD.loadErr='';AD.users=null;renderAdmin();return true}
   if(a==='ad-close'){closeAdModal();return true}
   if(a==='ad-unlock'){adUnlock(t);return true}
