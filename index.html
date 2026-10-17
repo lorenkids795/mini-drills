@@ -608,6 +608,30 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .msheet .cl{justify-content:center;color:var(--muted);font-weight:500}
 .fbbox{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(640px,calc(100% - 24px));max-height:86vh;overflow:auto;z-index:71;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}
 .fbo{display:inline-block;font-size:.8rem;margin-left:6px}
+/* ---- admin ---- */
+#v-login[data-wait] .login>*{display:none}
+#v-login[data-wait] .login::before{content:'Signing you in…';color:var(--muted);font-size:.95rem}
+.adm .msg{min-height:1.4em;font-size:.88rem;color:var(--bad);font-weight:500;margin:8px 0 0}
+.adm-demo{background:var(--hl-soft);border:1px solid var(--line);border-radius:8px;padding:.5rem .8rem;font-size:.86rem;margin:0 0 6px}
+.pill.acc{border-color:var(--accent);color:var(--accent)}
+.pill.bad{border-color:var(--bad);color:var(--bad)}
+.adm-guide{max-width:760px}
+.adm-guide h3{margin:22px 0 8px}
+.adm-guide p,.adm-guide li{font-size:.92rem}
+.adm-guide details{border-bottom:1px solid var(--line);padding:.55rem 0}
+.adm-guide summary{cursor:pointer;font-weight:600}
+.adm-add{display:flex;flex-wrap:wrap;gap:12px;align-items:end;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:18px}
+.adm-add .ck{display:flex;gap:6px;align-items:center;font-size:.9rem;padding-bottom:.55rem}
+.adt td{vertical-align:middle}
+.adt .acts{display:flex;flex-wrap:wrap;gap:6px}
+.adt small{display:block;color:var(--muted);font-size:.78rem}
+@media (max-width:640px){
+  .adt table{min-width:0}
+  .adt thead{display:none}
+  .adt tr{display:block;border-bottom:1px solid var(--line);padding:10px 12px}
+  .adt td{display:block;border:0;padding:3px 0}
+  .adt td[data-l]::before{content:attr(data-l);display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+}
 </style>
 
 <div class="app">
@@ -635,6 +659,7 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
       <div class="demo-ids"><span>Demo accounts:</span>
         <button class="btn sm" type="button" data-act="demo" data-email="teacher@demo.vn">Teacher</button>
         <button class="btn sm" type="button" data-act="demo" data-email="minhanh@demo.vn">Student · Minh Anh</button>
+        <button class="btn sm" type="button" data-act="demo" data-email="admin@demo.vn">Admin</button>
       </div>
     </div>
   </section>
@@ -655,6 +680,7 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
   <section id="v-dash" hidden></section>
   <section id="v-asg" hidden></section>
   <section id="v-mark" hidden></section>
+  <section id="v-admin" hidden></section>
 
   <section id="v-roster" hidden>
     <div class="pad">
@@ -833,7 +859,7 @@ function rebuildCustom(){
 /* ---------- Roster ---------- */
 var CLS=[['Foundation','Class 6.0-A'],['Intensive','Class 6.5-B']];
 var STU=[['Minh Anh','minhanh',0,.75],['Quoc Bao','quocbao',0,.55],['Thu Ha','thuha',0,.85],['Gia Huy','giahuy',0,.6],['Ngoc Lan','ngoclan',0,.7],['Hoang Nam','hoangnam',1,.8],['Phuong Linh','phuonglinh',1,.72],['Duc Tri','ductri',1,.6],['Khanh Vy','khanhvy',1,.88],['Bao Chau','baochau',1,.66]];
-var DEMO_ROSTER=[{email:'teacher@demo.vn',name:'Ms. Lan',role:'teacher',course:'',cls:'',demo:true}].concat(STU.map(function(s){return {email:s[1]+'@demo.vn',name:s[0],role:'student',course:CLS[s[2]][0],cls:CLS[s[2]][1],demo:true}}));
+var DEMO_ROSTER=[{email:'teacher@demo.vn',name:'Ms. Lan',role:'teacher',course:'',cls:'',demo:true},{email:'admin@demo.vn',name:'Mr. Admin',role:'teacher',adm:true,course:'',cls:'',demo:true}].concat(STU.map(function(s){return {email:s[1]+'@demo.vn',name:s[0],role:'student',course:CLS[s[2]][0],cls:CLS[s[2]][1],demo:true}}));
 var rosterDocs=[],localRoster=null;
 function allRoster(){
   var m={},out=[];
@@ -841,7 +867,12 @@ function allRoster(){
   (DEMO?DEMO_ROSTER:(CFG.teachers||[]).map(function(e){return {email:String(e).toLowerCase(),name:'Teacher',role:'teacher',course:'',cls:''}})).concat(src).forEach(function(r){if(!m[r.email]){m[r.email]=1;out.push(r)}});
   return out;
 }
-var findUser=function(email){var e=String(email||'').trim().toLowerCase();var r=allRoster();for(var i=0;i<r.length;i++)if(r[i].email===e)return (r[i].role==='student'&&removedAll()[e])?null:r[i];if(!DEMO&&e&&e.indexOf('@')>0){var gn=(window.MD_USER&&window.MD_USER.name)||e.split('@')[0];return {email:e,name:gn,role:'student',course:'',cls:''}}return null};
+// Real site: the role comes from the login token (window.MD_USER, set by md-backend.js), never from the roster or CFG.teachers.
+var meFromToken=function(e){var mu=window.MD_USER;if(DEMO||!mu||String(mu.email||'').toLowerCase()!==e)return null;
+  var row=allRoster().filter(function(x){return x.email===e})[0]||{};
+  if(mu.role==='teacher')return {email:e,name:mu.name||row.name||'Teacher',role:'teacher',adm:mu.adm===true,course:'',cls:''};
+  return Object.assign({},row,{email:e,name:row.name||mu.name||e.split('@')[0],role:'student',course:row.course||'',cls:row.cls||''})};
+var findUser=function(email){var e=String(email||'').trim().toLowerCase();var tk=meFromToken(e);if(tk)return (tk.role==='student'&&removedAll()[e])?null:tk;var r=allRoster();for(var i=0;i<r.length;i++)if(r[i].email===e)return (r[i].role==='student'&&removedAll()[e])?null:r[i];if(!DEMO&&e&&e.indexOf('@')>0){var gn=(window.MD_USER&&window.MD_USER.name)||e.split('@')[0];return {email:e,name:gn,role:'student',course:'',cls:''}}return null};
 var classDocs=[],localClasses={};
 var PAL=['#2f6fd6','#12896f','#c2410c','#7c3aed','#be185d','#0e7490','#a16207','#4d7c0f'];
 function hashOf(t){var h=7;for(var i=0;i<t.length;i++)h=(h*31+t.charCodeAt(i))>>>0;return h}
@@ -1778,21 +1809,23 @@ function addExercise(){
 function setThemeLbl(d){$('#themeBtn').innerHTML='<span class="lt">'+(d?'Light mode':'Dark mode')+'</span><span class="ic">'+(d?'☀':'☾')+'</span>'}
 function applyTheme(t){document.documentElement.setAttribute('data-theme',t);lsSet('md-theme',t);setThemeLbl(t==='dark')}
 function curDark(){var t=document.documentElement.getAttribute('data-theme');if(t)return t==='dark';return !!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)}
-function tabsFor(){return U.role==='teacher'?[['library','Library'],['dash','Dashboard'],['asg','Assignments'],['mark','Marking'],['roster','Students'],['create','Create'],['prize','Prizes'],['xps','Settings']]:[['library','Home'],['cards','Flashcards'],['ranks','Leaderboard'],['wheel','Lucky Wheel'],['bag','Inventory'],['set','Settings']]}
+function tabsFor(){return U.role==='teacher'?[['library','Library'],['dash','Dashboard'],['asg','Assignments'],['mark','Marking'],['roster','Students'],['create','Create'],['prize','Prizes'],['xps','Settings']].concat(U.adm?[['admin','Admin']]:[]):[['library','Home'],['cards','Flashcards'],['ranks','Leaderboard'],['wheel','Lucky Wheel'],['bag','Inventory'],['set','Settings']]}
 function showTab(t){
   TAB=t;stopAudio();clearTimer();MK.open=false;
-  ['login','lib','cards','ranks','wheel','bag','set','prize','xps','dash','asg','mark','roster','create'].forEach(function(n){$('#v-'+n).hidden=true});
-  if(!U){$('#v-login').hidden=false;$('#tabs').hidden=true;$('#who').hidden=true;return}
-  $('#tabs').hidden=tabsFor().length<2;$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b><span class="rl"> · '+U.role+'</span>';
+  ['login','lib','cards','ranks','wheel','bag','set','prize','xps','dash','asg','mark','roster','create','admin'].forEach(function(n){$('#v-'+n).hidden=true});
+  if(!U){var lv=$('#v-login');lv.hidden=false;if(!DEMO&&lsGet('md-email')&&!window.MD_USER){lv.setAttribute('data-wait','');setTimeout(function(){lv.removeAttribute('data-wait')},10000)}else lv.removeAttribute('data-wait');$('#tabs').hidden=true;$('#who').hidden=true;return}
+  $('#v-login').removeAttribute('data-wait');if(t==='admin'&&!U.adm){t='library';TAB=t}
+  $('#tabs').hidden=tabsFor().length<2;$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b><span class="rl"> · '+(U.adm?'admin':U.role)+'</span>';
   $('#tabs').innerHTML=tabsFor().map(function(x){return '<button role="tab" data-act="tab" data-tab="'+x[0]+'" aria-selected="'+(x[0]===t)+'">'+x[1]+'</button>'}).join('');
-  var id={library:'lib',cards:'cards',ranks:'ranks',wheel:'wheel',bag:'bag',set:'set',prize:'prize',xps:'xps',dash:'dash',asg:'asg',mark:'mark',roster:'roster',create:'create'}[t];$('#v-'+id).hidden=false;updMarq();
+  var id={library:'lib',cards:'cards',ranks:'ranks',wheel:'wheel',bag:'bag',set:'set',prize:'prize',xps:'xps',dash:'dash',asg:'asg',mark:'mark',roster:'roster',create:'create',admin:'admin'}[t];$('#v-'+id).hidden=false;updMarq();
+  if(t==='admin')renderAdmin();
   if(t==='library')renderLib();if(t==='cards')renderCards();if(t==='ranks')renderRanks();if(t==='wheel')renderWheel();if(t==='bag')renderBag();if(t==='set')renderSettings();if(t==='prize')renderPrize();if(t==='xps')renderXps();if(t==='dash')renderDash();if(t==='roster')renderRoster();if(t==='mark')renderMark();
   if(t==='asg'){AG.form=null;AG.open=null;AG.cur=null;AG.sub='list';renderAsg()}
 }
 function signIn(email){
   var u=findUser(email),m=$('#lgMsg');
   if(!u){m.textContent=(dbh&&!dbReady)?'Still loading the class list. Try again in a moment.':'This email is not on your class list.';return false}
-  m.textContent='';U=u;RP=0;lsSet('md-email',u.email);NAV={book:null,test:null,skill:null,ex:null};PANE='q';
+  m.textContent='';U=u;RP=0;lsSet('md-email',u.email);AD.sub='users';AD.users=null;AD.loadErr='';AD.err='';AD.modal=null;AD.locked=false;NAV={book:null,test:null,skill:null,ex:null};PANE='q';
   showTab('library');return true;
 }
 function refreshLive(){
@@ -1814,6 +1847,7 @@ function populateBookTest(){
 
 document.addEventListener('click',function(e){
   if(e.target.id==='mkModal'){MK.open=false;return renderMark()}
+  if(e.target.id==='adModal')return closeAdModal();
   if(VP&&!e.target.closest('.vpop')){VP=null;showPop()}
   var t=e.target.closest('[data-act]');if(!t)return;var a=t.dataset.act,au=$('#aud');
   if(extAct(a,t))return;
@@ -1883,11 +1917,13 @@ document.addEventListener('change',function(e){
   if(d.m){MK[d.m]=e.target.value;renderMark()}
   if(d.pk){AS.pk=AS.pk||{};AS.pk[d.pk]=e.target.value;if(d.pk==='book'){AS.pk.test='all'}renderAsg()}
   if(d.hw!==undefined){HWSEL[d.hw]=e.target.value;renderDash()}
+  if(d.adf){AD[d.adf]=e.target.value;var al=$('#adList');if(al)al.innerHTML=adListHTML()}
   if(d.gk){idsForKey(d.gk).forEach(function(i){AS.sel[i]=e.target.checked?1:0});$$('[data-ck]').forEach(function(c){c.checked=!!AS.sel[c.dataset.ck]});syncTree()}
   if(d.ck){AS.sel[d.ck]=e.target.checked?1:0;syncTree()}
 });
 document.addEventListener('input',function(e){
   if(e.target.id==='aRange'){var a=$('#aud');if(a)a.currentTime=+e.target.value}
+  if(e.target.id==='adQ'){AD.q=e.target.value;var al=$('#adList');if(al)al.innerHTML=adListHTML()}
   if(e.target.dataset&&e.target.dataset.crit!==undefined)updBand();
   if(e.target.id==='fDd'){var nmI=$('#fNm'),dp=e.target.value.split('-');if(nmI&&dp.length===3)nmI.placeholder=asgName({due:new Date(+dp[0],+dp[1]-1,+dp[2]).getTime()})}
   if(e.target.id==='csColor'||e.target.id==='csName'){var pc=$('#csPrev');if(pc){var cc=$('#csColor').value;pc.querySelector('.covl').style.background=cc;pc.querySelector('.cn').textContent=$('#csName').value}}
@@ -1913,6 +1949,8 @@ document.addEventListener('keydown',function(e){
   }
   if(e.key==='Escape'&&VP){VP=null;showPop();return}
   if(e.key==='Escape'&&MK.open){MK.open=false;renderMark();return}
+  if(e.key==='Escape'&&AD.modal&&TAB==='admin'){closeAdModal();return}
+  if(e.key==='Enter'&&e.target.id==='adUnPw'){e.preventDefault();var ub=$('[data-act="ad-unlock"]');if(ub)ub.click();return}
   if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('gap')&&!e.target.readOnly){
     e.preventDefault();var all=$$('#libBody .gap');var i=all.indexOf(e.target);if(all[i+1])all[i+1].focus();else{var s=$('#submit');if(s)s.focus()}
   }
@@ -2617,6 +2655,7 @@ function xSave(){
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
 function extAct(a,t){
+  if(adAct(a,t))return true;
   if(mkAct(a,t))return true;
   if(a==='lx'){var lv=t.dataset.l,v=t.dataset.v;
     if(lv==='book')LIBX=LIBX.book===v?{}:{book:v};
@@ -2947,6 +2986,236 @@ function lsAct(a,t){
   return true;
 }
 
+/* ---------- Admin: Guide, Users, Teachers, My account ---------- */
+// Vietnamese help for the admin (Guide tab). Plain text, it goes through esc(). Edit freely: [title, [paragraphs]].
+var ADMIN_GUIDE=[
+  ['Đăng nhập admin lần đầu',[
+    'Trên Cloudflare Pages → Settings → Variables and Secrets, thêm ADMIN_EMAIL (email của bạn) và ADMIN_PASSWORD (mật khẩu đầu tiên, ít nhất 6 ký tự), rồi deploy lại.',
+    'Mở trang web → chọn Teacher → nhập ADMIN_EMAIL và ADMIN_PASSWORD → Sign in. Tab Admin hiện ở cuối thanh menu.',
+    'Từ lần đăng nhập đầu tiên, mật khẩu được lưu trong hệ thống. Muốn đổi thì vào Admin → My account. Sửa ADMIN_PASSWORD trên Cloudflare sau đó không còn tác dụng.',
+    'Để an toàn, các công cụ admin hỏi lại mật khẩu sau 12 giờ hoặc khi bạn mở tab trình duyệt mới. Bạn vẫn ở trong app, chỉ cần nhập lại mật khẩu.']],
+  ['Thêm giáo viên',[
+    'Admin → Teachers → nhập Name, Email, Password (bấm Generate để tạo mật khẩu dễ đọc) → Add teacher.',
+    'Gửi email và mật khẩu cho giáo viên. Giáo viên mở trang, chọn Teacher, đăng nhập và thấy đầy đủ các tab của giáo viên.',
+    'Remove: giáo viên không đăng nhập được nữa, thiết bị đang mở bị đăng xuất trong vòng 10 phút. Bài chấm và bài tập họ đã giao vẫn còn.']],
+  ['Học sinh hoặc giáo viên quên mật khẩu',[
+    'Admin → Users → tìm theo tên hoặc email → Change password → bấm Generate (hoặc tự gõ) → Copy → Save password.',
+    'Gửi mật khẩu mới cho người đó. Mật khẩu cũ hết tác dụng ngay. Nếu họ bị khóa 15 phút vì nhập sai nhiều lần, đổi mật khẩu cũng gỡ khóa.']],
+  ['Học sinh nghỉ học (tạm khóa)',[
+    'Admin → Users → Pause. Học sinh không đăng nhập được, thiết bị đang mở bị đăng xuất trong vòng 10 phút.',
+    'Không có dữ liệu nào bị xóa. Bấm Resume để mở lại, mọi bài làm, XP và flashcard vẫn còn nguyên.']],
+  ['Google Sheet danh sách lớp',[
+    'Sắp có (giai đoạn 2): dán link Google Sheet để form đăng ký lấy lớp và tên từ Sheet.']],
+  ['Đổi email cho học sinh',[
+    'Sắp có (giai đoạn 3): đổi email và chuyển toàn bộ dữ liệu sang email mới, giữ nguyên mật khẩu.']],
+  ['Lỗi thường gặp',[
+    '"Enter your admin password to continue": phiên admin 12 giờ đã hết hoặc bạn mở tab mới. Nhập mật khẩu admin để tiếp tục.',
+    '"Too many tries": nhập sai mật khẩu 10 lần nên bị khóa 15 phút. Admin đổi mật khẩu cho người đó để gỡ khóa ngay.',
+    '"Your account is paused": tài khoản đang bị tạm khóa. Vào Users → Resume.',
+    'Giáo viên có nhãn "Listed in Cloudflare (TEACHERS)": được khai báo bằng biến TEACHERS (cách cũ). Remove sẽ tạm khóa họ ở đây; muốn gỡ hẳn thì xóa email khỏi TEACHERS trên Cloudflare.']]
+];
+var AD={sub:'users',users:null,me:'',loadErr:'',err:'',modal:null,locked:false,q:'',role:'all',cls:'all'};
+var EMAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]+$/,API_BASE=CFG.api||'/api';
+var PWW=['apple','river','mango','tiger','lemon','cloud','ocean','piano','maple','coral','eagle','forest','garden','honey','island','koala','lotus','melon','olive','panda','pearl','robin','tulip','violet','willow','zebra','amber','bamboo','daisy','ginger'];
+// easy to read aloud, e.g. mango-58-river
+function genPw(){var r=new Uint32Array(3);try{crypto.getRandomValues(r)}catch(e){for(var i=0;i<3;i++)r[i]=Math.floor(Math.random()*1e9)}return PWW[r[0]%PWW.length]+'-'+(10+r[1]%90)+'-'+PWW[r[2]%PWW.length]}
+
+// Demo: same answers as the server, on local data that is lost on reload.
+var DEMO_ADM={off:{},staff:{}};
+function demoUsers(){
+  var out=[{email:'admin@demo.vn',name:'Mr. Admin',role:'admin',cls:'',course:'',src:'env'},{email:'teacher@demo.vn',name:'Ms. Lan',role:'teacher',cls:'',course:'',src:'env'}];
+  Object.keys(DEMO_ADM.staff).forEach(function(e){out.push({email:e,name:DEMO_ADM.staff[e].name,role:'teacher',cls:'',course:'',src:'admin'})});
+  students().forEach(function(s){out.push({email:s.email,name:s.name,role:'student',cls:s.cls,course:s.course,src:'roster'})});
+  out.forEach(function(u){u.status=DEMO_ADM.off[u.email]?'paused':'active';u.hasPassword=true});
+  return out;
+}
+function demoAdminRun(path,b){
+  var err=function(m){throw new Error(m)},em=String(b.email||'').trim().toLowerCase(),all=demoUsers();
+  var find=function(e){return all.filter(function(u){return u.email===e})[0]};
+  if(path==='admin/users')return {users:all,me:'admin@demo.vn'};
+  if(path==='admin/unlock')return {adminKey:'demo'};
+  if(!EMAIL_RE.test(em))err('Enter a valid email.');
+  if(path==='admin/password'){
+    if(String(b.newPassword||'').length<6)err('The new password needs at least 6 characters.');
+    if(em==='admin@demo.vn'){if(!b.oldPassword)err('Your current password is wrong.')}else if(!find(em))err('This email is not a student or teacher in the app.');
+    return {ok:true}}
+  if(path==='admin/active'){
+    if(em==='admin@demo.vn')err('The admin account cannot be paused.');if(!find(em))err('This email is not a student or teacher in the app.');
+    if(b.active===false)DEMO_ADM.off[em]=1;else delete DEMO_ADM.off[em];return {ok:true}}
+  if(path==='admin/teachers'){
+    if(em==='admin@demo.vn')err('This is the admin account.');
+    var f=find(em);
+    if(b.op==='add'){var nm=String(b.name||'').trim();if(!nm)err('Enter the teacher name.');if(String(b.password||'').length<6)err('The password needs at least 6 characters.');
+      if(f&&f.role!=='student')err('This email is already a teacher. If it is paused, use Resume in Users.');if(f)err('This email belongs to a student. Use another email.');
+      DEMO_ADM.staff[em]={name:nm.slice(0,80)};delete DEMO_ADM.off[em];return {ok:true}}
+    if(b.op==='remove'){if(!f||f.role!=='teacher')err('This teacher was not found.');delete DEMO_ADM.staff[em];DEMO_ADM.off[em]=1;return {ok:true}}
+  }
+  err('Unknown action.');
+}
+function adPost(path,body,key){
+  var hd={'Content-Type':'application/json'};if(key)hd['X-Admin-Key']=key;
+  return fetch(API_BASE+'/'+path,{method:'POST',headers:hd,body:JSON.stringify(body||{})}).then(function(r){
+    return r.json().catch(function(){return {}}).then(function(d){d._status=r.status;d._ok=r.ok;return d})
+  },function(){throw new Error('No connection. Check your internet and try again.')});
+}
+// Every admin call goes through here. Demo: local fake data. Real site: X-Admin-Key from the admin login (sessionStorage).
+function adminApi(path,body){
+  if(DEMO)return new Promise(function(ok,no){setTimeout(function(){try{ok(demoAdminRun(path,body||{}))}catch(e){no(e)}},250)});
+  var key='';try{key=sessionStorage.getItem('md-akey')||''}catch(e){}
+  return adPost(path,body,key).then(function(d){
+    if(d._status===401&&d.needUnlock){AD.locked=true;AD.modal=null;if(TAB==='admin')renderAdmin();throw new Error(d.error)}
+    if(!d._ok)throw new Error(d.error||'Something went wrong. Try again.');
+    return d;
+  });
+}
+function adUnlock(btn){
+  var pw=($('#adUnPw')||{}).value||'';if(!pw){adSay('Enter your admin password.');return}
+  adBusy(btn,true);adSay('');
+  var p=DEMO?adminApi('admin/unlock',{}):adPost('admin/unlock',{password:pw},'').then(function(d){if(!d._ok||!d.adminKey)throw new Error(d.error||'Something went wrong. Try again.');return d});
+  p.then(function(d){try{sessionStorage.setItem('md-akey',d.adminKey)}catch(e){}AD.locked=false;AD.users=null;AD.loadErr='';AD.err='';toast('Admin tools unlocked.');renderAdmin()},
+    function(e){adBusy(btn,false);adSay(e.message)});
+}
+function adBusy(btn,on){if(!btn)return;if(on){btn.setAttribute('data-lbl',btn.textContent);btn.disabled=true;btn.textContent='Saving…'}else{btn.disabled=false;if(btn.getAttribute('data-lbl'))btn.textContent=btn.getAttribute('data-lbl')}}
+function adSay(m){AD.err=m||'';var el=$('#adMsg');if(el)el.textContent=AD.err}
+var adLoading=null;
+function adLoad(force){
+  if(adLoading)return adLoading;if(AD.users&&!force)return Promise.resolve();
+  adLoading=adminApi('admin/users',{}).then(function(d){AD.users=d.users||[];AD.me=d.me||U.email;AD.loadErr=''},
+    function(e){if(!AD.locked)AD.loadErr=e.message||'Something went wrong.'}).then(function(){adLoading=null;if(TAB==='admin')renderAdmin()});
+  return adLoading;
+}
+// after a change: keep the button busy until the fresh list is in
+function adDone(msg){AD.modal=null;AD.err='';toast(msg);return adLoad(true)}
+function adUser(email){return (AD.users||[]).filter(function(u){return u.email===email})[0]||{email:email,name:email}}
+
+function renderAdmin(){
+  var el=$('#v-admin');if(!U||!U.adm){el.innerHTML='';return}
+  var subs=[['guide','Guide'],['users','Users'],['teachers','Teachers'],['me','My account']];
+  var needList=AD.sub==='users'||AD.sub==='teachers';
+  if(needList&&!AD.locked&&!AD.users&&!AD.loadErr)adLoad();
+  var body=AD.sub==='guide'?adGuideHTML():AD.locked?adUnlockHTML():AD.sub==='teachers'?adTeachersHTML():AD.sub==='me'?adMeHTML():adUsersHTML();
+  el.innerHTML='<div class="pad adm"><div class="sechead"><h2>Admin</h2><span class="meta">Accounts, teachers and passwords</span></div>'+
+    (DEMO?'<p class="adm-demo" role="note">Demo: changes are not saved.</p>':'')+
+    '<div class="subtabs" role="tablist">'+subs.map(function(s){return '<button type="button" role="tab" data-act="ad-sub" data-v="'+s[0]+'" aria-selected="'+(AD.sub===s[0])+'">'+s[1]+'</button>'}).join('')+'</div>'+
+    body+'<p class="msg" id="adMsg" aria-live="polite">'+esc(AD.err)+'</p>'+adModalHTML()+'</div>';
+}
+function adGuideHTML(){
+  return '<div class="adm-guide">'+ADMIN_GUIDE.map(function(s,i){return '<details'+(i===0?' open':'')+'><summary>'+esc(s[0])+'</summary>'+s[1].map(function(p){return '<p>'+esc(p)+'</p>'}).join('')+'</details>'}).join('')+'</div>';
+}
+function adUnlockHTML(){
+  return '<div class="sec" style="max-width:560px"><h3>Enter your admin password to continue</h3><p class="sub">The admin tools ask for your password again after 12 hours or in a new browser tab. You stay signed in to the app.</p>'+
+    '<div class="form-row" style="padding-block:6px"><label class="field" for="adUnPw">Admin password<input id="adUnPw" type="password" autocomplete="current-password"></label><button class="btn pri" type="button" data-act="ad-unlock">Continue</button></div></div>';
+}
+function adListState(){
+  if(AD.loadErr)return '<p class="saved">Could not load the list. '+esc(AD.loadErr)+' <button class="btn sm" type="button" data-act="ad-reload">Try again</button></p>';
+  if(!AD.users)return '<p class="saved">Loading…</p>';
+  return '';
+}
+function adOpts(list,cur){return list.map(function(o){return '<option value="'+esc(o[0])+'"'+(o[0]===cur?' selected':'')+'>'+esc(o[1])+'</option>'}).join('')}
+function adUsersHTML(){
+  var st=adListState();if(st)return st;
+  var seen={},classes=[];AD.users.forEach(function(u){if(u.cls&&!seen[u.cls]){seen[u.cls]=1;classes.push(u.cls)}});classes.sort();
+  return '<div class="form-row" style="padding-block:0 14px"><label class="field" for="adQ">Search<input id="adQ" type="search" value="'+esc(AD.q)+'" placeholder="Name or email" autocomplete="off"></label>'+
+    '<label class="field" for="adRole">Role<select id="adRole" data-adf="role">'+adOpts([['all','Everyone'],['student','Students'],['teacher','Teachers']],AD.role)+'</select></label>'+
+    '<label class="field" for="adCls">Class<select id="adCls" data-adf="cls">'+adOpts([['all','All classes']].concat(classes.map(function(c){return [c,classTitle(c)]})),AD.cls)+'</select></label></div>'+
+    '<div id="adList">'+adListHTML()+'</div>';
+}
+function adFiltered(){
+  var q=AD.q.trim().toLowerCase();
+  return AD.users.filter(function(u){
+    if(AD.role==='student'&&u.role!=='student')return false;
+    if(AD.role==='teacher'&&u.role==='student')return false;
+    if(AD.cls!=='all'&&u.cls!==AD.cls)return false;
+    return !q||(u.name+' '+u.email).toLowerCase().indexOf(q)>=0});
+}
+function adStatusHTML(u){return u.status==='paused'?'<span class="pill bad">Paused</span>':u.status==='moved'?'<span class="pill pend">Email changed</span>':!u.hasPassword?'<span class="pill">No password yet</span>':'<span class="pill ok">Active</span>'}
+function adRoleHTML(u){return u.role==='admin'?'<span class="pill acc">Admin</span>':u.role==='teacher'?'Teacher':'Student'}
+function adListHTML(){
+  if(!AD.users)return '';
+  var L=adFiltered();if(!L.length)return '<p class="saved">No one matches.</p>';
+  return '<p class="saved" style="margin:0 0 8px">'+L.length+' of '+AD.users.length+' accounts</p><div class="scroll adt"><table><thead><tr><th>Name</th><th>Email</th><th>Class</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody>'+L.map(function(u){
+    var e=esc(u.email),acts='';
+    if(u.role==='admin')acts='<button class="btn sm" type="button" data-act="ad-sub" data-v="me">My account</button>';
+    else if(u.status!=='moved')acts='<button class="btn sm" type="button" data-act="ad-pw" data-email="'+e+'">Change password</button>'+
+      (u.status==='paused'?'<button class="btn sm" type="button" data-act="ad-on" data-email="'+e+'">Resume</button>':'<button class="btn sm bad" type="button" data-act="ad-off" data-email="'+e+'">Pause</button>');
+    return '<tr><td data-l="Name"><b>'+esc(u.name||'—')+'</b>'+(u.src==='env'&&u.role==='teacher'?'<small>Listed in Cloudflare (TEACHERS)</small>':'')+'</td>'+
+      '<td data-l="Email" class="mono" style="font-size:.82rem">'+e+'</td>'+
+      '<td data-l="Class">'+(u.cls?esc(classTitle(u.cls))+(u.course?'<small>'+esc(u.course)+'</small>':''):'—')+'</td>'+
+      '<td data-l="Role">'+adRoleHTML(u)+'</td><td data-l="Status">'+adStatusHTML(u)+'</td>'+
+      '<td data-l="Actions"><div class="acts">'+acts+'</div></td></tr>'}).join('')+'</tbody></table></div>';
+}
+function adTeachersHTML(){
+  var h='<div class="adm-add"><label class="field" for="adTName">Name<input id="adTName" type="text" maxlength="80" autocomplete="off"></label>'+
+    '<label class="field" for="adTEmail">Email<input id="adTEmail" type="email" maxlength="160" autocomplete="off" placeholder="teacher@example.com"></label>'+
+    '<label class="field" for="adTPw">Password<input id="adTPw" type="text" autocomplete="off" spellcheck="false" placeholder="At least 6 characters"></label>'+
+    '<button class="btn sm" type="button" data-act="ad-gen" data-for="adTPw">Generate</button><button class="btn pri" type="button" data-act="ad-tadd">Add teacher</button></div>'+
+    '<p class="saved" style="margin:-8px 0 16px">Give the email and password to the teacher. They sign in on the Teacher tab of the sign-in page.</p>';
+  var st=adListState();if(st)return h+st;
+  var T=AD.users.filter(function(u){return u.role!=='student'});
+  return h+'<div class="scroll adt"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody>'+T.map(function(u){
+    var e=esc(u.email);
+    return '<tr><td data-l="Name"><b>'+esc(u.name||'—')+'</b>'+(u.src==='env'&&u.role==='teacher'?'<small>Listed in Cloudflare (TEACHERS)</small>':'')+'</td>'+
+      '<td data-l="Email" class="mono" style="font-size:.82rem">'+e+'</td><td data-l="Role">'+adRoleHTML(u)+'</td><td data-l="Status">'+adStatusHTML(u)+'</td>'+
+      '<td data-l="Actions"><div class="acts">'+(u.role==='admin'?'<span class="muted">—</span>':'<button class="btn sm" type="button" data-act="ad-pw" data-email="'+e+'">Change password</button>'+(u.status==='paused'?'':'<button class="btn sm bad" type="button" data-act="ad-trm" data-email="'+e+'">Remove</button>'))+'</div></td></tr>'}).join('')+'</tbody></table></div>';
+}
+function adMeHTML(){
+  return '<div class="sec" style="max-width:720px"><h3>Change my password</h3><p class="sub">Signed in as <b>'+esc(U.email)+'</b>. After this, sign in with the new password. ADMIN_PASSWORD on Cloudflare is only used for the very first sign-in.</p>'+
+    '<div class="form-row" style="padding-block:8px"><label class="field" for="pwOld">Current password<input type="password" id="pwOld" autocomplete="current-password"></label>'+
+    '<label class="field" for="pwNew">New password<input type="password" id="pwNew" autocomplete="new-password" placeholder="At least 6 characters"></label>'+
+    '<label class="field" for="pwNew2">New password again<input type="password" id="pwNew2" autocomplete="new-password"></label></div>'+
+    '<div class="actions" style="margin-top:6px"><button class="btn pri" data-act="ad-mypw" type="button">Change password</button></div></div>';
+}
+function adModalHTML(){
+  var m=AD.modal;if(!m)return '';
+  return '<div class="modal" id="adModal" role="dialog" aria-modal="true" aria-labelledby="adMT"><div class="mbox" style="width:min(520px,100%)"><h3 id="adMT" style="font-size:1.15rem;margin-bottom:10px">'+esc(m.title)+'</h3><p>'+esc(m.text)+'</p>'+(m.body||'')+
+    '<p class="msg" id="adMMsg" aria-live="polite"></p><div class="actions"><button class="btn'+(m.danger?' bad':' pri')+'" type="button" data-act="ad-ok">'+esc(m.ok)+'</button><button class="btn" type="button" data-act="ad-close">Cancel</button></div></div></div>';
+}
+function closeAdModal(){AD.modal=null;renderAdmin()}
+function adAct(a,t){
+  if(a.indexOf('ad-')!==0)return false;
+  var who=t.dataset.email||'',u=adUser(who),nm=u.name||who;
+  if(a==='ad-sub'){AD.sub=t.dataset.v;AD.err='';renderAdmin();return true}
+  if(a==='ad-reload'){AD.loadErr='';AD.users=null;renderAdmin();return true}
+  if(a==='ad-close'){closeAdModal();return true}
+  if(a==='ad-unlock'){adUnlock(t);return true}
+  if(a==='ad-gen'){var gi=$('#'+t.dataset.for);if(gi){gi.value=genPw();gi.focus()}return true}
+  if(a==='ad-copy'){var ci=$('#'+t.dataset.for),cm=$('#adMMsg'),cv=ci?ci.value:'',no=function(){if(cm)cm.textContent='Select the password and copy it.'};
+    if(!cv){no();return true}try{navigator.clipboard.writeText(cv).then(function(){toast('Copied.')},no)}catch(x){no()}return true}
+  if(a==='ad-pw'){
+    AD.modal={title:'Change password',text:'New password for '+nm+' ('+who+'). Their old password stops working at once. Copy it before you save, then give it to them.',ok:'Save password',
+      body:'<div class="form-row" style="padding-block:6px"><label class="field" for="adNewPw">New password<input id="adNewPw" type="text" autocomplete="off" spellcheck="false" placeholder="At least 6 characters"></label><button class="btn sm" type="button" data-act="ad-gen" data-for="adNewPw">Generate</button><button class="btn sm" type="button" data-act="ad-copy" data-for="adNewPw">Copy</button></div>',
+      run:function(){var v=($('#adNewPw').value||'').trim();if(v.length<6)return Promise.reject(new Error('The new password needs at least 6 characters.'));
+        return adminApi('admin/password',{email:who,newPassword:v}).then(function(){return adDone('Password changed for '+nm+'.')})}};
+    renderAdmin();var pi=$('#adNewPw');if(pi)pi.focus();return true}
+  if(a==='ad-off'){
+    AD.modal={title:'Pause this account?',text:nm+' ('+who+') can no longer sign in, and devices that are signed in are signed out within 10 minutes. Nothing is deleted. Use Resume to undo.',ok:'Pause',danger:true,
+      run:function(){return adminApi('admin/active',{email:who,active:false}).then(function(){return adDone(nm+' is paused.')})}};
+    renderAdmin();return true}
+  if(a==='ad-on'){adBusy(t,true);adminApi('admin/active',{email:who,active:true}).then(function(){return adDone(nm+' can sign in again.')},function(e){adBusy(t,false);adSay(e.message)});return true}
+  if(a==='ad-trm'){
+    AD.modal={title:'Remove teacher?',text:nm+' ('+who+') can no longer sign in, and devices that are signed in are signed out within 10 minutes. Their marking and assignments stay in the app.'+(u.src==='env'?' This email is listed in TEACHERS on Cloudflare: it is paused here; also delete it from TEACHERS to remove it for good.':''),ok:'Remove teacher',danger:true,
+      run:function(){return adminApi('admin/teachers',{op:'remove',email:who}).then(function(){return adDone(nm+' was removed.')})}};
+    renderAdmin();return true}
+  if(a==='ad-tadd'){
+    var tn=($('#adTName').value||'').trim(),te=($('#adTEmail').value||'').trim().toLowerCase(),tp=($('#adTPw').value||'').trim();
+    if(!tn||!EMAIL_RE.test(te)){adSay('Enter the teacher name and a valid email.');return true}
+    if(tp.length<6){adSay('The password needs at least 6 characters. Press Generate to make one.');return true}
+    adBusy(t,true);adSay('');
+    adminApi('admin/teachers',{op:'add',name:tn,email:te,password:tp}).then(function(){return adDone('Teacher added. Give '+te+' their password.')},function(e){adBusy(t,false);adSay(e.message)});
+    return true}
+  if(a==='ad-mypw'){
+    var o=$('#pwOld').value,n=$('#pwNew').value,n2=$('#pwNew2').value;
+    if(!o||!n){adSay('Fill in all three boxes.');return true}
+    if(n.length<6){adSay('The new password needs at least 6 characters.');return true}
+    if(n!==n2){adSay('The two new passwords are not the same.');return true}
+    adBusy(t,true);adSay('');
+    adminApi('admin/password',{email:U.email,oldPassword:o,newPassword:n}).then(function(){adBusy(t,false);$('#pwOld').value='';$('#pwNew').value='';$('#pwNew2').value='';toast('Your password was changed.')},function(e){adBusy(t,false);adSay(e.message)});
+    return true}
+  if(a==='ad-ok'){var m=AD.modal;if(!m||!m.run)return true;adBusy(t,true);var mm=$('#adMMsg');if(mm)mm.textContent='';
+    m.run().then(function(){},function(e){adBusy(t,false);var m2=$('#adMMsg');if(m2)m2.textContent=e.message||'Something went wrong.'});return true}
+  return false;
+}
+
 /* ---------- Boot ---------- */
 if(DEMO){sampleData=makeSample().concat(makeSubs());samplePass=makeSamplePass();sampleCards=makeSampleCards();sampleProf=makeSampleProf();makeSampleExtras()}
 $('#promptText').textContent=LPROMPT;
@@ -2954,7 +3223,8 @@ var th=lsGet('md-theme');if(th==='dark'||th==='light')applyTheme(th);else setThe
 rebuildCustom();
 if(!DEMO){var dd=document.querySelector('.demo-ids'),lf=$('#loginForm'),nf=document.querySelector('.note-foot');if(dd)dd.hidden=true;if(lf)lf.hidden=true;if(nf)nf.hidden=true}
 var prev=lsGet('md-email');
-if(prev&&findUser(prev)){signIn(prev)}else showTab('library');
+// real site: wait for the login token (md-backend.js) so the role is right; the roster snapshot below signs in
+if(prev&&(DEMO||window.MD_USER)&&findUser(prev)){signIn(prev)}else showTab('library');
 populateBookTest();
 (function(){
   var c=window.claude;
@@ -2963,10 +3233,10 @@ populateBookTest();
     if(!db){setStatus('local');dbReady=true;return}
     dbh=db;
     var toDocs=function(snap){return snap.docs.map(function(d){return Object.assign({id:d.id,docId:d.id},d.data())})};
-    var myEm=String((window.MD_USER&&window.MD_USER.email)||lsGet('md-email')||'').toLowerCase(),isT=DEMO||(CFG.teachers||[]).some(function(x){return String(x).toLowerCase()===myEm});
+    var myEm=String((window.MD_USER&&window.MD_USER.email)||lsGet('md-email')||'').toLowerCase(),isT=DEMO||!!(window.MD_USER&&window.MD_USER.role==='teacher');
     var own=function(c){return isT?db.collection(c):db.collection(c).where('email','==',myEm)};
     var attQ=function(){return isT?db.collection('attempts').orderBy('ts','desc').limit(500):db.collection('attempts').where('email','==',myEm).limit(500)};
-    db.collection('roster').onSnapshot(function(s){rosterDocs=toDocs(s);dbReady=true;if(!U&&lsGet('md-email')){if(findUser(lsGet('md-email')))signIn(lsGet('md-email'));}refreshLive()},function(){dbReady=true});
+    db.collection('roster').onSnapshot(function(s){rosterDocs=toDocs(s);dbReady=true;if(!U&&lsGet('md-email')){if(findUser(lsGet('md-email')))signIn(lsGet('md-email'));}refreshLive()},function(){dbReady=true;if(!U&&window.MD_USER)signIn(window.MD_USER.email)});
     db.collection('exercises').onSnapshot(function(s){customDocs=toDocs(s);rebuildCustom();refreshLive()},function(){});
     db.collection('assignments').onSnapshot(function(s){asgDocs=toDocs(s);refreshLive()},function(){});
     own('hwdone').onSnapshot(function(s){hwdoneDocs=toDocs(s);refreshLive()},function(){});

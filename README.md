@@ -3,7 +3,7 @@
 Đăng nhập KHÔNG dùng Google, KHÔNG gửi mã:
 - Học sinh: lần đầu chọn lớp → chọn tên → nhập email + tự đặt mật khẩu. Các lần sau chỉ email + mật khẩu. Thiết bị được nhớ, không phải đăng nhập lại (trừ khi bấm Sign out hoặc xóa dữ liệu trình duyệt).
 - Giáo viên: lần đầu tạo mật khẩu bằng "setup key" (chỉ bạn biết), sau đó đăng nhập bằng email + mật khẩu.
-- Học sinh quên mật khẩu: nhắn giáo viên → giáo viên vào tab **Students** → "Reset a student password" → đặt mật khẩu mới rồi báo lại cho học sinh.
+- Học sinh quên mật khẩu: nhắn giáo viên → giáo viên vào tab **Students** → "Reset a student password" → đặt mật khẩu mới rồi báo lại cho học sinh. Admin làm việc này ở tab **Admin → Users**.
 - Phần xác thực nằm trong thư mục `functions/` (Cloudflare Pages Functions), tự chạy khi deploy.
 
 ## 1. GitHub
@@ -23,7 +23,16 @@ Upload cả thư mục này (index.html, md-config.js, md-backend.js, README.md,
    - `FIREBASE_PRIVATE_KEY` (Secret): `private_key` trong file JSON, dán nguyên cả đoạn từ `-----BEGIN PRIVATE KEY-----`
    - `TEACHERS` (Text): `lorenkids795@gmail.com` (nhiều email thì cách nhau bằng dấu phẩy; phải trùng `teachers` trong `md-config.js`)
    - `ADMIN_SETUP_KEY` (Secret): một câu dài ít nhất 8 ký tự do bạn tự nghĩ, dùng 1 lần khi tạo mật khẩu giáo viên
+   - `ADMIN_EMAIL` (Text): email của tài khoản admin (admin = giáo viên có thêm tab **Admin**)
+   - `ADMIN_PASSWORD` (Secret): mật khẩu đầu tiên của admin, ít nhất 6 ký tự. Chỉ dùng ở lần đăng nhập đầu; sau đó đổi trong Admin → My account
 4. Deploy lại (Deployments → Retry deployment) để biến mới có hiệu lực.
+
+## 3b. Admin
+- Mở site → tab **Teacher** → đăng nhập bằng `ADMIN_EMAIL` + `ADMIN_PASSWORD` → tab **Admin** hiện ở cuối menu.
+- Admin xem mọi tài khoản, đổi mật khẩu cho bất kỳ ai, tạm khóa/mở khóa, thêm/xóa giáo viên. Hướng dẫn chi tiết (tiếng Việt) nằm trong Admin → **Guide**.
+- Giáo viên do admin thêm được lưu trong KV (key `staff`), không cần sửa `TEACHERS`.
+- Tạm khóa hoặc xóa giáo viên: không đăng nhập được nữa, thiết bị đang mở bị đăng xuất trong vòng 10 phút. Không xóa dữ liệu.
+- Firestore rules **không cần sửa** cho tính năng admin.
 
 ## 4. Dùng
 - Giáo viên: mở site → tab **Teacher** → "First time? Create your teacher password" → nhập email, mật khẩu mới và setup key.
@@ -34,6 +43,6 @@ Upload cả thư mục này (index.html, md-config.js, md-backend.js, README.md,
 ## Giới hạn
 - Học sinh nhập email tự do: ai biết tên và lớp thì có thể đăng ký trước tên đó. Giáo viên kiểm tra tab Students nếu thấy lạ.
 - Danh sách tên chưa đăng ký của từng lớp hiển thị công khai trên trang đăng nhập (không kèm email).
-- Sau khi giáo viên đổi mật khẩu, thiết bị đang đăng nhập sẵn của học sinh vẫn dùng tiếp được.
+- Sau khi giáo viên đổi mật khẩu, thiết bị đang đăng nhập sẵn của học sinh vẫn dùng tiếp được. (Muốn đẩy thiết bị ra: admin bấm Pause, tối đa 10 phút.)
 - AI chấm Writing tự động / tra từ AI chưa chạy trên site thật. Chưa có email nhắc 20:00.
 - Rules: học sinh chỉ đọc/ghi bài của mình, giáo viên đọc tất cả. Bảng `roster` (tên và email cả lớp) vẫn đọc được bởi mọi người đã đăng nhập.

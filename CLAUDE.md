@@ -1,0 +1,214 @@
+# CLAUDE.md — Mini Drills IELTS
+
+> File này cung cấp toàn bộ bối cảnh dự án cho Claude. Đọc hết trước khi sửa code.
+> **Luôn trả lời người dùng bằng tiếng Việt.** Tên hàm, biến, CSS và thông báo commit giữ nguyên tiếng Anh.
+
+---
+
+## 1. Dự án là gì
+
+Web app một trang (SPA) để giao và làm **bài tập về nhà IELTS**. Có 2 vai trò:
+
+- **Student**: làm bài về nhà theo tuần (hạn chót **Chủ nhật 22:00 giờ máy**), làm bài Listening/Reading/Writing/Speaking theo bộ Cambridge IELTS 7–21 (Test 1–4), luyện tập hằng ngày 5–10 phút, học flashcard từ vựng (lặp lại ngắt quãng 1/3/7 ngày), kiếm XP và level, giữ streak, xem Leaderboard, quay Lucky Wheel lấy quà, quản lý Inventory.
+- **Teacher**: Dashboard thống kê, giao bài (Assignments), chấm Writing/Speaking theo band IELTS (Marking), quản lý danh sách học sinh bằng CSV (Students), tạo bài bằng cách dán JSON do AI sinh ra (Create), quản lý quà/voucher (Prizes), chỉnh thông số XP (Settings).
+
+Giao diện người dùng viết bằng **tiếng Anh**. Chú thích trong code và README dùng cả tiếng Việt lẫn tiếng Anh.
+
+---
+
+## 2. Tech stack — KHÔNG được thay đổi
+
+| Lớp | Công nghệ |
+|---|---|
+| Frontend | **HTML + CSS + JavaScript thuần, kiểu ES5**. Không framework, không bundler, không build step, không `package.json` |
+| Font | Google Fonts: Be Vietnam Pro (`--font`), IBM Plex Mono (`--mono`) |
+| CSDL | **Firebase Firestore**, SDK **v10.12.2 bản compat** (`firebase.firestore()`), tải động từ `gstatic` trong `md-backend.js` |
+| Xác thực | Firebase Auth với **Custom Token**, có claims `{em, role, nm}`. Không dùng Google Sign-In |
+| API | **Cloudflare Pages Functions**: `functions/api/[[path]].js` (Workers runtime, WebCrypto, `fetch`) |
+| Lưu mật khẩu | **Cloudflare KV** (binding `MD_KV`), băm PBKDF2-SHA256 với 100k vòng |
+| Server gọi Firestore | Firestore REST API với OAuth2 service account, JWT RS256 tự ký (không dùng firebase-admin) |
+| Hosting | Cloudflare Pages, deploy từ GitHub (push là tự deploy) |
+
+---
+
+## 3. Cấu trúc thư mục
+
+```
+/
+├── index.html            # ~2990 dòng: TOÀN BỘ app (HTML khung + CSS + JS). Đa số thay đổi nằm ở đây
+├── md-config.js          # window.MD_CONFIG = { demo, teachers[], api:'/api', firebase:{...} }
+├── md-backend.js         # Adapter Firebase + UI đăng nhập thật + form "Reset a student password"
+├── firestore.rules       # Security rules (dán tay vào Firebase Console, không tự deploy)
+├── README.md             # Hướng dẫn deploy (tiếng Việt)
+├── CLAUDE.md             # File này
+├── TESTING.md            # Checklist để người dùng tự test trên bản Preview của Cloudflare Pages
+├── ai-worker.js          # Worker riêng (AI chữa lỗi Writing), không thuộc luồng đăng nhập
+└── functions/api/[[path]].js   # Route: xem mục 4 "Endpoint /api"
+```
+
+Thứ tự nạp script cuối `index.html`: `md-config.js` → `md-backend.js` → `<script>` inline của app.
+
+### Bản đồ `index.html` (số dòng xấp xỉ, có thể lệch; dùng grep để tìm chính xác)
+
+| Dòng | Nội dung |
+|---|---|
+| 1–2 | `<style>` reset tối thiểu (dòng rất dài) |
+| 7–611 | `<style>` chính: biến màu `:root` + dark mode, sau đó CSS từng khu vực |
+| 612–700 | Khung HTML: `.app`, header `.top` (brand, `#tabs`, `#who`, `#status`, `#themeBtn`, `#logoutBtn`), các `<section id="v-*">`, `#toast` |
+| 702–2985 | `<script>` app, bọc trong IIFE `(function(){'use strict'; ... })()` |
+
+Các khối JS được ngăn bằng comment `/* ---------- Tên ---------- */`. Tìm nhanh bằng:
+`grep -n "/\* ----------" index.html`
+
+| Khối | Hàm và biến chính |
+|---|---|
+| Helpers | `$`, `$$`, `esc`, `lsGet`, `lsSet`, `pad`, `fmtD`, `fmtT`, `MONTHS`, `DAYS` |
+| Weeks and deadlines | `weekStartDate`, `iso`, `fromISO`, `dueOf`, `thisWk`, `shiftWk`, `weekLabel`, `leftLabel` |
+| Library data | `BOOKS` (cam7–cam21), `TESTS` t1–t4, `SKILLS`, `SNAME`, `LIBMAP`, `EXS`, `exOf`, `locOf`, `rebuildCustom` |
+| Roster / State | `rosterDocs`, `findUser`, `students`, `classTitle`, `U` (user hiện tại), `dbh` (Firestore handle), `setStatus` |
+| Sample data | `makeSample`, `makeSubs`, `makeSamplePass`… (chỉ chạy khi `DEMO`) |
+| Attempts and progress | `attemptsOf(email)`, `doneMap`, `prog`, `progHTML`, `scoreColor`, `pctColor` |
+| Library views | `homeworkHTML`, `actionsHTML`, `recentHTML` (+ `rsInfo`, `rsCell`), `renderLib` |
+| Player | `renderPlayer`, `qHTML`, `gradeNow`, `saveAttempt` |
+| Writing and speaking | `renderWriting`, `submitWriting`, `renderSpeaking`, `startTimer` |
+| Teacher | `renderDash`, `renderAsg`/`saveAsg`, `renderMark`/`saveGrade`/`gradeOf`/`CRIT`, `renderRoster`/`importCSV`, `parseAI`/`addExercise` (Create) |
+| Shell | `tabsFor`, `showTab`, `signIn`, `refreshLive`, các listener `click`/`change`/`input`/`keydown` |
+| Vocabulary | `DICT`, `lookupWord`, popup `VP`/`showPop`, flashcard `CV`, `reviewHTML`, `rvRate`, `bsPress`, `renderCards` |
+| Profile | `XPD` (giá trị XP mặc định), `xpv(key)`, `LV`, `lvOf`, `myProf`, `putProf`, `addXP`, `rollStreak`, `grantSpin` |
+| Daily Practice | `DTYPES`, `todaysTypes`, `dailyHTML`, `buildDaily`, `renderDailyTask`, `dyAct` |
+| Leaderboard | `renderRanks`, `RK` ('class' hoặc 'all') |
+| Prizes | `PZ`, `TIERNAME`, `renderWheel`/`doSpin`/`wheelSVG`, `renderBag` (Inventory), `renderPrize` (teacher), `takeCode`, `updMarq` |
+| Avatars / settings | `avatarHTML`, `renderSettings`, `renderXps`, `extAct` |
+| Listening lesson | 5 giai đoạn `STG`, `LPROMPT`, `parseLesson`, `renderLesson`, `lsGrade`, `lsAct` |
+| Boot | nạp dữ liệu demo, áp theme, `signIn` từ localStorage, mở các `onSnapshot` Firestore |
+
+### Tab theo vai trò (`tabsFor()`)
+
+- Student: `library` (Home) · `cards` · `ranks` · `wheel` · `bag` · `set`
+- Teacher: `library` · `dash` · `asg` · `mark` · `roster` · `create` · `prize` · `xps`
+- Admin (teacher có `U.adm`): như Teacher, thêm `admin` ở cuối (`#v-admin`, `renderAdmin()`, tab con `AD.sub`: `guide` · `users` · `teachers` · `me`)
+
+Mỗi tab ứng với một `<section id="v-...">`: `library` dùng `#v-lib`, các tab khác dùng `#v-<tên tab>`. `showTab(t)` ẩn hết các section, bật section của tab `t` rồi gọi `renderXxx()` tương ứng.
+
+---
+
+## 4. Kiến trúc và luồng dữ liệu
+
+1. **Adapter `window.claude.use('db')`**: app ban đầu được viết như một Claude Artifact. `md-backend.js` giả lập đúng API đó, trả về Promise resolve ra `firebase.firestore()` sau khi đăng nhập. Khi `MD_CONFIG.demo !== false`, adapter không chạy và app dùng **dữ liệu mẫu cục bộ** (tài khoản demo `teacher@demo.vn`, `minhanh@demo.vn`).
+2. **Đăng nhập**: POST `/api/login` hoặc `/api/register` → Worker kiểm tra mật khẩu trong KV → trả custom token → `signInWithCustomToken` → `window.MD_USER = {name, email, role, adm}` (lấy từ claims), đồng thời lưu `localStorage['md-email']`.
+   - **Vai trò ở server** (`roleOf`): `ADMIN_EMAIL` → KV `staff` hoặc biến `TEACHERS` → `roster/{email}` (student). Claims `{em, role, nm, adm?}`; admin có `role:'teacher'` + `adm:true`.
+   - **Vai trò ở client**: ở site thật luôn lấy từ `window.MD_USER` (`meFromToken()` trong `findUser()`, `isT` ở Boot). Boot **chờ** `MD_USER` rồi mới `signIn` (khung đăng nhập hiện "Signing you in…" qua `#v-login[data-wait]`). `CFG.teachers` chỉ còn dùng cho demo.
+   - **Admin**: lần đăng nhập đầu tạo `acct:` từ `ADMIN_PASSWORD` (`seedAdmin`). Login trả thêm `adminKey` (KV `adm:<key>`, 12 giờ), lưu ở `sessionStorage['md-akey']`, gửi bằng header `X-Admin-Key`. Hết hạn → tab Admin hiện ô "Enter your admin password to continue" (`/api/admin/unlock`).
+   - **Tạm khóa / đổi email**: KV `off:<email>` = `'1'` hoặc `'moved:<email mới>'`. Login từ chối; `md-backend.js` gọi `GET /api/status?em=` lúc khởi động và 10 phút/lần, bị khóa thì `signOut()` và hiện lý do (`sessionStorage['md-ended']`).
+   - Học sinh đăng ký lần đầu: chọn lớp, chọn tên (từ collection `names` chưa có ai nhận), rồi nhập email và mật khẩu. Server đặt `names/{id}.claimed=true` (có precondition `updateTime`) và tạo `roster/{email}`.
+   - Giáo viên: email phải nằm trong biến môi trường `TEACHERS` và trong `MD_CONFIG.teachers`. Lần đầu tạo mật khẩu cần `ADMIN_SETUP_KEY`.
+   - Giới hạn thử: sai 10 lần thì khóa 15 phút; tối đa 30 lần đăng ký mỗi IP mỗi giờ.
+3. **Realtime**: ở phần Boot, app mở `onSnapshot` cho các collection. Teacher đọc tất cả; student đọc `where('email','==',myEm)` qua helper `own(col)`. Mỗi snapshot cập nhật một mảng `xxxDocs` rồi gọi `refreshLive()`, hàm này vẽ lại tab đang mở. Không vẽ lại khi người dùng đang gõ trong input.
+4. **Dự phòng**: khi ghi Firestore lỗi, dữ liệu được giữ trong mảng `local*` và một số cấu hình lưu localStorage. Ghi dữ liệu theo mẫu: `if(dbh)dbh.collection('x').add(rec).then(ok,fallback);else fallback();`
+
+### Endpoint `/api` và KV
+
+| Method | Path | Mục đích |
+|---|---|---|
+| GET | `/api/names` | tên chưa có người nhận (form đăng ký) |
+| GET | `/api/status?em=` | `{ok}` / `{off}` / `{moved}` |
+| POST | `/api/login`, `/api/register` | đăng nhập, đăng ký (admin nhận thêm `adminKey`) |
+| POST | `/api/reset` | form cũ của giáo viên (xác thực bằng mật khẩu giáo viên); không đổi được mật khẩu admin |
+| POST | `/api/admin/unlock` | `{password}` → `adminKey` mới |
+| POST | `/api/admin/users` | mọi tài khoản + `status` (`active`/`paused`/`moved`) + `hasPassword` |
+| POST | `/api/admin/password` | `{email, newPassword}`; với chính admin cần thêm `oldPassword` |
+| POST | `/api/admin/active` | `{email, active}` → đặt/xóa `off:` |
+| POST | `/api/admin/teachers` | `{op, name, email, password}`, `op` = `'add'` hoặc `'remove'` |
+
+Mọi `/api/admin/*` (trừ `unlock`) cần header `X-Admin-Key`. Ở frontend, mọi lời gọi admin đi qua **`adminApi(path, body)`** (demo: `demoAdminRun()` trên dữ liệu giả `DEMO_ADM`).
+
+KV: `acct:<email>` (mật khẩu), `rl:<email>` (đếm sai), `reg:<ip>`, `setup:<ip>`, `staff` (`{email:{name,ts}}`), `off:<email>`, `adm:<key>`.
+Biến môi trường thêm: `ADMIN_EMAIL` (Text), `ADMIN_PASSWORD` (Secret).
+
+### Collection Firestore và quyền (xem `firestore.rules`)
+
+| Collection | Nội dung | Quyền |
+|---|---|---|
+| `attempts` | bài làm `{email, student, cls, ex, score, total, items, kind?, text?, link?, ts, grade?, fixes?}` | HS đọc/tạo bài của mình, **không được ghi `grade`**, chỉ sửa được `fixes`; GV toàn quyền |
+| `hwdone`, `passes`, `cards`, `redeems` | dữ liệu riêng của HS (có trường `email`) | chỉ chủ sở hữu; GV đọc |
+| `profiles` | XP, streak, inv, title, avatar… | mọi người đã đăng nhập đọc được; chỉ chủ ghi |
+| `wins` | marquee "vừa quay trúng" | đã đăng nhập: đọc và tạo |
+| `codes` | voucher | HS chỉ nhận được mã còn trống (`to:''` → email của mình) |
+| `names` | tên chờ HS nhận | chỉ GV và server |
+| `roster`, `exercises`, `assignments`, `classes`, `config` | dữ liệu do GV quản lý | đọc: đã đăng nhập; ghi: GV |
+
+**Thêm collection mới thì phải làm cả 3 việc**: (1) thêm rule vào `firestore.rules` và nhắc người dùng dán lại vào Firebase Console, (2) thêm `onSnapshot` ở phần Boot, (3) có phương án dự phòng cục bộ.
+
+### Mô hình dữ liệu cần biết
+
+- Bài tập (`EXS[id]` / `exOf(id)`): `{id, title, skill:'listening'|'reading'|'writing'|'speaking', material, questions[], kind?('readaloud'|lesson...), audio_url?}`
+- Câu hỏi: `gap {q, ans:[...]}` · `mcq {q, opts, ans:index}` · `tfng {q, ans:'True'|'False'|'Not Given'}` · `match {q, opts, ans}` · có thể kèm `tag`
+- Bài Writing/Speaking là attempt có `kind:'submission'`, `score:0, total:0`; điểm nằm ở `gradeOf(a) → {overall, max(=9), crit{}, feedback, sticker, marks, link}`
+- `CRIT`: 4 tiêu chí band cho writing và speaking; 3 tiêu chí cho `readaloud`
+- XP: `xpv('key')` đọc `config/xp` và dùng `XPD` làm mặc định. Bài tự chấm đạt khi `score/total >= .7`
+
+---
+
+## 5. Quy ước code BẮT BUỘC
+
+1. **Chỉ dùng ES5**: `var`, `function`, nối chuỗi bằng `+`. **Không** dùng `let`, `const`, arrow function, template literal, class, `async/await`, ES module, optional chaining. (Riêng `functions/api/[[path]].js` là code Workers hiện đại, ở đó được dùng `const`/`async`.)
+2. **Render bằng ghép chuỗi HTML** rồi gán `el.innerHTML`. Hàm con đặt tên `xxxHTML()` và trả về chuỗi. **Mọi dữ liệu người dùng hoặc DB đưa vào HTML đều phải qua `esc()`**, kể cả giá trị trong thuộc tính (`title`, `data-*`, `src`).
+3. **Sự kiện dùng event delegation**: không gắn `onclick` trên từng phần tử. Thêm `data-act="ten-hanh-dong"` (kèm `data-*` nếu cần) vào phần tử, rồi xử lý trong listener `click` toàn cục (`document.addEventListener('click', ...)` ở khối Shell). Listener đó lấy `t=e.target.closest('[data-act]')`, `a=t.dataset.act`. Các nhóm lớn có hàm con trả về `true` khi đã xử lý (`extAct`, `dyAct`, `lsAct`, `mkAct`).
+4. **CSS**: dùng biến màu trên `:root` (`--bg --surface --ink --muted --line --accent --good --bad --warn --more --hl --hl-soft`, huy chương `--gold-* --silv-* --brz-*`). Màu mới phải khai báo ở **cả 3 chỗ**: `:root` (sáng), `@media (prefers-color-scheme: dark){:root:not([data-theme="light"])}` và `:root[data-theme="dark"]`. Trên điện thoại phải hiển thị tốt ở độ rộng 390px (`@media (max-width:640px)`).
+5. **Khả năng tiếp cận**: phần tử bấm được phải là `<button type="button">`; thêm `aria-label` cho nút chỉ có icon; dùng `aria-live` cho thông báo.
+6. **Thay đổi nhỏ và có chủ đích**: dùng Edit thay chuỗi chính xác, **không viết lại cả `index.html`**. File có nhiều dòng rất dài (hơn 500 ký tự), nên khi sửa hãy lấy đúng đoạn bằng `grep -n` hoặc Read có offset.
+7. **Không đổi** tên route `/api/*`, đường dẫn `functions/api/[[path]].js`, claims của token (`em`, `role`, `nm`) hay tên collection, trừ khi người dùng yêu cầu.
+8. Không commit với `demo: true` trong `md-config.js` (site thật cần `demo: false`).
+9. Không đưa secret vào repo (service account JSON, `ADMIN_SETUP_KEY`). `apiKey` Firebase web trong `md-config.js` là công khai theo thiết kế.
+
+---
+
+## 6. Chạy thử trên máy
+
+```bash
+# 1) Chuyển sang chế độ demo (dữ liệu mẫu, không cần Firebase). NHỚ đổi lại trước khi commit!
+#    md-config.js: demo: false  ->  demo: true
+# 2) Chạy server tĩnh ở thư mục gốc
+python3 -m http.server 8765        # hoặc: npx serve .
+# 3) Mở http://localhost:8765, bấm "Student · Minh Anh" hoặc "Teacher"
+```
+
+- `/api/*` không chạy được với server tĩnh. Muốn thử đăng nhập thật thì dùng `npx wrangler pages dev .` (cần KV và các biến môi trường như trong README).
+- Sau mỗi thay đổi, kiểm tra: không có lỗi trong Console; giao diện sáng và tối (nút Dark mode); độ rộng 390px và từ 1280px trở lên; cả tab Student lẫn Teacher nếu phần sửa dùng chung.
+
+---
+
+## 7. Lịch sử thay đổi gần nhất (Student UI, 10/2026)
+
+Các thay đổi đã có trong code. **Không đảo ngược** nếu không được yêu cầu:
+
+1. **Header `#status`**: chỉ còn một chấm tròn, không có chữ. `data-s="saved"` màu xanh lá, `"local"` màu cam, `"wait"` màu xám nhấp nháy. Mô tả trạng thái nằm ở `title`/`aria-label` (sửa trong `setStatus()`).
+2. **Daily practice**: thẻ `.dtask` không còn icon `.di`, chỉ còn tiêu đề (`dailyHTML()`).
+3. **Recent Results By Skill**: `recentHTML()` chia 4 ô L/R/W/S qua `rsCell(sk, list)` và `rsInfo(a)`; CSS nằm trong `.rs-*`.
+   - Ngưỡng đạt: `RS_PASS_PCT=70` (L/R), `RS_PASS_BAND=6` (W/S, quy về thang 9). `RS_BARS=12` là số cột hiển thị.
+   - Cột biểu đồ là `<button>` có `data-act="fb-open"` (nếu bài có feedback) hoặc `data-act="nav"`.
+   - Bài đang chờ chấm có class `.pd`. Ô không có bài hiện "No X results yet. Your first one will show here."
+   - Phân trang cũ (`RP`, `data-act="rpage"`) không còn dùng nhưng handler vẫn để lại, vô hại.
+4. **Flashcard**: Space để lật thẻ; **Backspace 1 lần = Got it**; **Backspace 2 lần trong `BS_GAP=300`ms = Forgot**. Lần nhấn đầu chờ 300ms rồi mới chấm. Bỏ qua `e.repeat`. Enter không còn là phím tắt. Hàm: `bsPress()`, `bsClear()`.
+5. **Leaderboard**: hạng 1–3 có class `.rk.top1/.top2/.top3`, tô nền cả hàng vàng kim/bạc/đồng và hiện số thứ tự thay cho emoji huy chương. Hàng của người dùng `.rk.me` giữ nền `--hl-soft` và có thêm viền `--accent`.
+6. **Inventory**: đã xóa nút "Open file" cho vật phẩm `mat` và `custom` có `url` (nhánh `act=''` trong `renderBag()`).
+
+7. **Admin (GĐ 1, 10/2026)**: vai trò admin, tab Admin (Guide/Users/Teachers/My account), Pause/Resume, đổi mật khẩu, thêm/xóa giáo viên, `/api/status`. Còn lại: GĐ 2 Google Sheet + đăng ký đối chiếu Sheet; GĐ 3 đổi email (`migrateEmail`).
+   - Email là khóa dữ liệu ở: `roster/{email}`, `profiles/{slug(email)}`, `cards/{slug(email)}_{word}`, `hwdone/{slug(email)}_{asgId}`, `passes/{slug(email)}_{asgId}`, trường `email` của `attempts`/`redeems`, `codes.to`, `names.email`, **`classes.removed[]`**, KV `acct:`/`rl:`/`staff`.
+
+## 8. Giới hạn đã biết / chưa làm
+
+- AI chấm Writing và `aiLookup` (tra từ bằng AI) gọi `window.claude`, nên chỉ chạy trong Claude Artifact, chưa chạy trên site thật.
+- Chưa gửi email nhắc lúc 20:00 (mới có checkbox và phần Preview trong Inventory).
+- Collection `roster` đọc được bởi mọi người đã đăng nhập. Ai biết tên và lớp có thể nhận tên của học sinh khác trước.
+- Học sinh hiện không có nút mở file Materials (do mục 7.6).
+
+---
+
+## 9. Cách làm việc với người dùng
+
+- Người dùng là giáo viên/chủ dự án, không chuyên lập trình: **giải thích ngắn, bằng tiếng Việt**, nói rõ đã sửa hàm nào và CSS nào.
+- Khi yêu cầu chưa rõ (ví dụ màu sắc, ngưỡng điểm, vị trí), chọn phương án hợp lý nhất, làm luôn, rồi nêu giả định trong câu trả lời. Chỉ hỏi trước khi thay đổi có thể làm mất dữ liệu, đổi schema Firestore/rules hoặc đổi cách đăng nhập.
+- Khi người dùng nói có ảnh thiết kế đính kèm nhưng không thấy ảnh, nói rõ điều đó và làm theo mô tả chữ.
+- Sau khi sửa, tóm tắt theo mẫu: **Đã đổi gì → Ở đâu (hàm/CSS) → Cách kiểm tra → Lưu ý/giả định**.
+- Thay đổi ảnh hưởng `firestore.rules` hoặc biến môi trường Cloudflare thì nhắc người dùng các bước làm trên Console.

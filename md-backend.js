@@ -1,6 +1,8 @@
 // Adapter: gives the app the same window.claude.use('db') API, backed by Firebase.
-// Login is NOT Google. Students use class + name + email + password; teachers use an
-// emailed 6-digit code. Both go through /api, which returns a Firebase custom token.
+// Login is NOT Google. Everyone uses email + password through /api, which returns a Firebase custom token.
+// window.MD_USER = { name, email, role, adm } comes from the token claims (the app takes the role from here).
+// The admin also gets an adminKey at login, kept in sessionStorage 'md-akey' for /api/admin/* (see adminApi in index.html).
+// Every 10 minutes (and at start) it asks /api/status whether the account was paused or its email changed.
 (function () {
   var C = window.MD_CONFIG || {};
   if (C.demo !== false) return;
@@ -36,6 +38,7 @@
     }, function () { throw new Error('No connection. Check your internet and try again.'); });
   }
   function enter(res) {
+    try { if (res.adminKey) sessionStorage.setItem('md-akey', res.adminKey); else sessionStorage.removeItem('md-akey'); } catch (e) {}
     return ready.then(function (fb) { return fb.auth().signInWithCustomToken(res.token); });
   }
 
@@ -145,6 +148,11 @@
     toTReg.onclick = function () { show('treg'); };
     toTIn.onclick = function () { show('teacher'); };
     show('student');
+    // signed out by the status check: say why
+    var ended = '';
+    try { ended = sessionStorage.getItem('md-ended') || ''; sessionStorage.removeItem('md-ended'); } catch (e) {}
+    if (ended === 'moved') say('Your email was changed by the admin. Sign in with your new email.');
+    else if (ended === 'off') say('Your account is paused. Ask your teacher.');
 
     function run(btn, fn) {
       btn.disabled = true; say('');
@@ -171,7 +179,7 @@
     };
   }
 
-  /* ---------- teacher: reset a student's password (inside the Students tab) ---------- */
+  /* ---------- teacher: reset a student's password (inside the Students tab; the admin uses the Admin tab) ---------- */
   function resetUi() {
     var pad = document.querySelector('#v-roster .pad');
     if (!pad || document.getElementById('mdReset')) return;
@@ -198,19 +206,32 @@
   }
 
   /* ---------- session ---------- */
+  // Paused or moved (email changed by the admin): sign out and show why on the sign-in page.
+  function checkStatus(fb, em) {
+    fetch(API + '/status?em=' + encodeURIComponent(em)).then(function (r) { return r.json(); }).then(function (d) {
+      var why = d && d.moved ? 'moved' : d && d.off ? 'off' : '';
+      if (!why) return;
+      try { sessionStorage.setItem('md-ended', why); sessionStorage.removeItem('md-akey'); localStorage.removeItem('md-email'); } catch (e) {}
+      fb.auth().signOut().then(function () { location.reload(); });
+    }, function () { /* offline: try again next time */ });
+  }
   function start() {
     ui();
     resetUi();
     ready.then(function (fb) {
-      var first = true;
+      var first = true, timer = null;
       fb.auth().onAuthStateChanged(function (u) {
         if (u) {
           u.getIdTokenResult().then(function (t) {
             var em = String(t.claims.em || '').toLowerCase();
             if (!em) { fb.auth().signOut(); return; }
             try { localStorage.setItem('md-email', em); } catch (e) {}
-            window.MD_USER = { name: t.claims.nm || '', email: em };
+            window.MD_USER = { name: t.claims.nm || '', email: em, role: t.claims.role === 'teacher' ? 'teacher' : 'student', adm: t.claims.adm === true };
+            var rf = document.getElementById('mdReset');
+            if (rf && window.MD_USER.adm) rf.hidden = true;
             resolveDb(fb.firestore());
+            checkStatus(fb, em);
+            if (!timer) timer = setInterval(function () { checkStatus(fb, em); }, 600000);
           });
         } else if (first) {
           // no saved session: forget a stale local email once, then show the login page
@@ -223,7 +244,7 @@
       document.addEventListener('click', function (ev) {
         var t = ev.target.closest && ev.target.closest('[data-act="logout"],#btnLogout,.logout');
         if (t) {
-          try { localStorage.removeItem('md-email'); } catch (e) {}
+          try { localStorage.removeItem('md-email'); sessionStorage.removeItem('md-akey'); } catch (e) {}
           fb.auth().signOut().then(function () { location.reload(); });
         }
       }, true);
