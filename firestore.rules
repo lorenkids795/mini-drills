@@ -1,16 +1,91 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function signedIn() { return request.auth != null && request.auth.token.email_verified == true; }
-    function mail() { return request.auth.token.email.lower(); }
-    // EDIT: put your teacher email(s) here (lowercase)
-    function teacher() { return signedIn() && mail() in ['lorenkids795@gmail.com']; }
-    function member() { return signedIn(); }
 
-    match /{col}/{id} {
-      allow read: if member() && col in ['roster','exercises','assignments','classes','config'];
-      allow write: if teacher() && col in ['roster','exercises','assignments','classes','config'];
-      allow read, write: if member() && col in ['attempts','hwdone','profiles','cards','wins','codes','redeems','passes'];
+    function signedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
     }
+    function me() {
+      return request.auth.token.email.lower();
+    }
+    function teacher() {
+      return signedIn() && me() in ['lorenkids795@gmail.com'];
+    }
+    function ownsOld() {
+      return signedIn() && resource.data.email == me();
+    }
+    function ownsNew() {
+      return signedIn() && request.resource.data.email == me();
+    }
+
+    // ---- Bài làm: học sinh chỉ thấy bài của mình, giáo viên thấy tất cả ----
+    match /attempts/{id} {
+      allow read: if teacher() || ownsOld();
+      // học sinh không được tự gắn điểm chấm (grade)
+      allow create: if ownsNew() && !('grade' in request.resource.data);
+      // học sinh chỉ được thêm gợi ý sửa lỗi (fixes); giáo viên được ghi grade
+      allow update: if teacher()
+        || (ownsOld() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fixes']));
+      allow delete: if teacher();
+    }
+
+    // ---- Dữ liệu riêng của từng học sinh (có trường email) ----
+    match /hwdone/{id} {
+      allow read: if teacher() || ownsOld();
+      allow create: if ownsNew();
+      allow update: if ownsOld() && ownsNew();
+      allow delete: if teacher();
+    }
+    match /passes/{id} {
+      allow read: if teacher() || ownsOld();
+      allow create: if ownsNew();
+      allow update: if ownsOld() && ownsNew();
+      allow delete: if teacher();
+    }
+    match /cards/{id} {
+      allow read: if teacher() || ownsOld();
+      allow create: if ownsNew();
+      allow update: if ownsOld() && ownsNew();
+      allow delete: if teacher() || ownsOld();
+    }
+    match /redeems/{id} {
+      allow read: if teacher() || ownsOld();
+      allow create: if ownsNew();
+      allow update, delete: if teacher();
+    }
+
+    // ---- Profile: ai cũng đọc được (cần cho Leaderboard), chỉ chủ ghi ----
+    match /profiles/{id} {
+      allow read: if signedIn();
+      allow create: if ownsNew();
+      allow update: if ownsOld() && ownsNew();
+      allow delete: if teacher();
+    }
+
+    // ---- Marquee "vừa quay trúng" ----
+    match /wins/{id} {
+      allow read: if signedIn();
+      allow create: if signedIn();
+      allow update: if false;
+      allow delete: if teacher();
+    }
+
+    // ---- Mã voucher: học sinh chỉ được nhận 1 mã chưa ai nhận (đặt trường "to" = email mình) ----
+    match /codes/{id} {
+      allow read: if signedIn();
+      allow create, delete: if teacher();
+      allow update: if teacher()
+        || (signedIn()
+            && resource.data.to == ''
+            && request.resource.data.to == me()
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['to']));
+    }
+
+    // ---- Nội dung do giáo viên quản lý: mọi người đã đăng nhập đọc, chỉ teacher ghi ----
+    match /roster/{id}      { allow read: if signedIn(); allow write: if teacher(); }
+    match /exercises/{id}   { allow read: if signedIn(); allow write: if teacher(); }
+    match /assignments/{id} { allow read: if signedIn(); allow write: if teacher(); }
+    match /classes/{id}     { allow read: if signedIn(); allow write: if teacher(); }
+    match /config/{id}      { allow read: if signedIn(); allow write: if teacher(); }
   }
 }

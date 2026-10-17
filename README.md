@@ -9,7 +9,7 @@ Tạo repo trống (vd `mini-drills`) → Add file → Upload files → kéo c�
 3. Build → Firestore Database → Create database (production mode).
 4. Tab **Rules**: dán nội dung `firestore.rules` (email giáo viên đã điền sẵn) → Publish.
 5. Project settings → Your apps → Web (`</>`) → copy `firebaseConfig`.
-6. Sửa `md-config.js` trên GitHub: dán config (email giáo viên đã điền sẵn).
+6. Sửa `md-config.js` trên GitHub: dán `projectId`, `authDomain`, `appId` từ firebaseConfig (apiKey và email giáo viên đã điền sẵn).
 
 ## 3. Cloudflare Pages
 Workers & Pages → Create → Pages → Connect to Git → chọn repo → Build command: để trống; Output directory: `/` → Deploy.
@@ -22,4 +22,4 @@ Sau đó copy domain `xxx.pages.dev` → Firebase → Authentication → Setting
 ## Giới hạn
 - Tính năng AI (chấm Writing tự động, tra từ AI) chưa chạy trên site thật (cần backend AI riêng).
 - Chưa có email nhắc 20:00.
-- Rules là bảo mật mức "mềm": thành viên lớp có thể đọc dữ liệu của nhau.
+- Rules đã siết "bài ai nấy xem": học sinh chỉ đọc/ghi doc có email của mình, giáo viên đọc tất cả (Leaderboard và mã voucher vẫn dùng chung).

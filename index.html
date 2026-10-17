@@ -549,6 +549,26 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 }
 .kh{margin-top:12px;font-size:.78rem;color:var(--muted)}
 @media (pointer:coarse){.kh{display:none}}
+:root{--m1:#fbcfcf;--m1l:#b42323;--m2:#fdd9b0;--m2l:#b8560a;--m3:#fff09a;--m3l:#8a7400}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--m1:#5c2227;--m1l:#ff8a8a;--m2:#5a3814;--m2l:#ffb066;--m3:#51480f;--m3l:#f0d54a}}
+:root[data-theme="dark"]{--m1:#5c2227;--m1l:#ff8a8a;--m2:#5a3814;--m2l:#ffb066;--m3:#51480f;--m3l:#f0d54a}
+.mkpass{border-left:3px solid var(--accent);padding-left:12px;font-size:1.05rem;line-height:2;margin:6px 0}
+.mkpass p{margin:0 0 .8em}.mkpass p:last-child{margin:0}
+.w{border-radius:4px;padding:2px 1px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ro .w{cursor:default}
+.w.m1{background:var(--m1);text-decoration:underline wavy var(--m1l);text-underline-offset:4px}
+.w.m2{background:var(--m2);text-decoration:underline solid var(--m2l);text-underline-offset:4px}
+.w.m3{background:var(--m3);text-decoration:underline dotted var(--m3l);text-underline-offset:4px}
+.mleg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8rem;color:var(--muted);margin:2px 0 4px}
+.mleg i{font-style:normal;padding:1px 6px;border-radius:4px;color:var(--ink)}
+.msbg{position:fixed;inset:0;background:rgba(10,15,30,.45);z-index:70}
+.msheet{position:fixed;left:0;right:0;bottom:0;z-index:71;background:var(--surface);border-top:1px solid var(--line);border-radius:14px 14px 0 0;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;max-width:640px;margin:0 auto}
+.msheet h3{font-size:.95rem;color:var(--muted);font-weight:500}.msheet h3 b{color:var(--ink);font-size:1.1rem}
+.msheet button{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:.75rem .9rem;text-align:left;font-weight:600;display:flex;gap:10px;align-items:center;min-height:48px}
+.msheet button i{flex:none;width:16px;height:16px;padding:0}
+.msheet .cl{justify-content:center;color:var(--muted);font-weight:500}
+.fbbox{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(640px,calc(100% - 24px));max-height:86vh;overflow:auto;z-index:71;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}
+.fbo{display:inline-block;font-size:.8rem;margin-left:6px}
 </style>
 
 <div class="app">
@@ -736,6 +756,7 @@ EXS.s1={id:'s1',skill:'speaking',title:'Parts 1 and 2: free time',kind:'speaking
  part1:['Do you prefer spending your free time indoors or outdoors?','What did you do last weekend?','Has the way you spend free time changed since you were a child?'],
  cue:{title:'Describe a hobby you would like to start.',points:['what the hobby is','why you are interested in it','what you would need to get started','and explain how you think it would help you.']}};
 
+EXS.ra1={id:'ra1',skill:'speaking',title:'Read aloud: The Honey Bee Decline',kind:'readaloud',hint:'Read the passage aloud once, clearly and at a natural pace.',focus:'Word stress in long words (pollination, agricultural) and linking between words.',qs:[],text:'Honey bees play a vital role in global agriculture. By carrying pollen from one flower to another, they help produce a third of the food we eat, from apples and almonds to coffee.\n\nHowever, bee populations have fallen sharply in recent decades. Scientists point to several causes, including habitat loss, pesticide use and the spread of parasites, although no single factor explains the whole decline.\n\nProtecting bees therefore requires a combined effort. Farmers can plant wildflower strips, governments can restrict harmful chemicals, and ordinary people can grow bee-friendly gardens.'};
 var customEx=[],customMap={},localCustom=[],customDocs=[],EDIT=null,DELC=null,LIBX={},XED=null;
 var exOf=function(id){return EXS[id]||customMap[id]||null};
 var qOf=function(exId,qid){var e=exOf(exId);if(!e)return null;for(var i=0;i<e.qs.length;i++)if(e.qs[i].id===qid)return e.qs[i];return null};
@@ -960,11 +981,11 @@ function recentHTML(){
   if(!rec.length)return h+'<p class="muted" style="margin:0;font-size:.9rem">Nothing yet.</p></div>';
   h+='<div class="rtiles">'+rec.map(function(a){
     var e=exOf(a.ex),g=gradeOf(a),ring,sk=e?e.skill:'reading';
-    if(a.kind==='submission')ring=g?ringHTML(Math.round(g.overall/9*100),g.overall,'var(--accent)'):'<div class="ring pend"><span>sent</span></div>';
+    if(a.kind==='submission')ring=g?ringHTML(Math.round(g.overall/(g.max||9)*100),fmtS(g.overall),'var(--accent)'):'<div class="ring pend"><span>sent</span></div>';
     else{var p=a.total?Math.round(a.score/a.total*100):0;ring=ringHTML(p,a.score+'/'+a.total,pctColor(p))}
     var lc=locOf(a.ex);
     return (lc?'<button class="rt" data-act="nav" data-book="'+lc.book+'" data-test="'+lc.test+'" data-skill="'+lc.skill+'" data-ex="'+a.ex+'" type="button">':'<div class="rt">')+'<span class="sq sk-'+sk+'">'+SKL[sk]+'</span><div class="rtm"><b>'+esc(e?e.title:a.ex)+'</b><small>'+fmtD(a.ts)+'</small></div>'+ring+
-      (g&&(g.sticker||g.feedback)?'<div class="rrow">'+(g.sticker?'<img class="stk-s" src="'+g.sticker+'" alt="Sticker">':'')+(g.feedback?'<p class="rfb">'+esc(g.feedback)+'</p>':'')+'</div>':'')+(lc?'</button>':'</div>');
+      (g&&(g.sticker||g.feedback||hasFb(g))?'<div class="rrow">'+(g.sticker?'<img class="stk-s" src="'+g.sticker+'" alt="Sticker">':'')+(g.feedback?'<p class="rfb">'+esc(g.feedback)+'</p>':'')+(hasFb(g)?'<span class="linkish fbo" data-act="fb-open" data-id="'+esc(a.id)+'" role="button" tabindex="0">Open feedback</span>':'')+'</div>':'')+(lc?'</button>':'</div>');
   }).join('')+'</div>';
   if(pages>1){
     h+='<div class="pager">'+(RP>0?'<button data-act="rpage" data-p="'+(RP-1)+'" type="button" aria-label="Previous page">‹</button>':'');
@@ -1444,7 +1465,12 @@ function saveAsg(){
 }
 
 /* ---------- Marking (Writing and Speaking, rubric) ---------- */
-var CRIT={writing:['Task Achievement','Coherence & Cohesion','Lexical Resource','Grammatical Range & Accuracy'],speaking:['Fluency & Coherence','Lexical Resource','Grammatical Range & Accuracy','Pronunciation']};
+var CRIT={writing:['Task Achievement','Coherence & Cohesion','Lexical Resource','Grammatical Range & Accuracy'],speaking:['Fluency & Coherence','Lexical Resource','Grammatical Range & Accuracy','Pronunciation'],readaloud:['Pronunciation','Fluency & intonation','Accuracy (words read as written)']};
+var critKey=function(e){return e.kind==='readaloud'?'readaloud':e.skill};
+var gMax=function(e){return e.kind==='readaloud'?10:9};
+var gStep=function(e){return e.kind==='readaloud'?.5:1};
+var fmtS=function(v){return (+v).toFixed(1).replace('.0','')};
+var roundFor=function(x,e){return e&&e.kind==='readaloud'?Math.round(x*2)/2:Math.floor(x*2)/2};
 var roundBand=function(x){return Math.floor(x*2)/2};
 function gradeOf(a){return a.grade||gradesLocal[a.id]||null}
 function subsAll(){return realAttempts().concat(sampleData).filter(function(a){return a.kind==='submission'}).sort(function(a,b){return b.ts-a.ts})}
@@ -1453,9 +1479,9 @@ function makeSubs(){
   var W1='The table compares the share of households with internet access in four countries in 2005 and 2020. Overall, access rose sharply everywhere, and Country D showed the biggest relative increase.\n\nIn 2005, Country C had the highest figure at 52%, while Country D had only 7%. By 2020, Country C was still ahead at 95%, closely followed by Country A at 92%.\n\nCountry B and Country D grew more slowly in absolute terms but still reached 71% and 48% respectively.';
   var W2='The table shows internet access in four countries. It goes up in all countries. Country C is the highest and Country D is the lowest in both years. In 2005 country C had 52% and in 2020 it had 95%.';
   gradesLocal.sub1={scores:[7,6,6,7],overall:6.5,feedback:'Clear overview and good comparisons. Add a sentence on which countries grew fastest.',by:'Ms. Lan',ts:now-DAY};
-  gradesLocal.sub4={scores:[7,7,7,6],overall:6.5,feedback:'Natural answer for Part 2. Watch the final -s on verbs.',by:'Ms. Lan',ts:now-DAY};
+  gradesLocal.sub6={scores:[7,6.5,8],overall:7,max:10,marks:{5:1,18:2,33:3,44:2},link:'https://vocaroo.com/example-teacher',feedback:'Clear and steady. Stress the third syllable in "agricultural".',by:'Ms. Lan',ts:now-DAY/2};gradesLocal.sub4={scores:[7,7,7,6],overall:6.5,feedback:'Natural answer for Part 2. Watch the final -s on verbs.',by:'Ms. Lan',ts:now-DAY};
   return [
-    mk('sub1','minhanh@demo.vn','Minh Anh',0,'w1',now-2*DAY,{text:W1,words:wordCount(W1)}),
+    mk('sub5','quocbao@demo.vn','Quoc Bao',0,'ra1',now-3600e3,{link:'https://vocaroo.com/example-sample-3'}),mk('sub6','thuha@demo.vn','Thu Ha',0,'ra1',now-DAY,{link:'https://vocaroo.com/example-sample-4'}),mk('sub1','minhanh@demo.vn','Minh Anh',0,'w1',now-2*DAY,{text:W1,words:wordCount(W1)}),
     mk('sub2','quocbao@demo.vn','Quoc Bao',0,'w1',now-3*3600e3,{text:W2,words:wordCount(W2),fixes:[{from:'It goes up in all countries',to:'It rose in all four countries',type:'word choice',why:'Use the past tense and a more precise verb for a trend.'},{from:'In 2005 country C had',to:'In 2005, Country C had',type:'punctuation',why:'Add a comma after the time phrase and capitalise the name.'}]}),
     mk('sub3','hoangnam@demo.vn','Hoang Nam',1,'s1',now-5*3600e3,{link:'https://vocaroo.com/example-sample',notes:'sports, cheaper, friends',transcript:'Today I want to talk about a free time activity that I really enjoy, which is playing football with my friends. We usually meet on Saturday afternoon at a small field near my house. It is cheaper than going to the gym and it helps me relax after a busy week.'}),
     mk('sub4','khanhvy@demo.vn','Khanh Vy',1,'s1',now-2*DAY,{link:'https://vocaroo.com/example-sample-2',notes:'painting',transcript:'I would like to describe a hobby that I started last year. It is painting. I bought some colours and a small canvas, and I paint at home in the evening. At first it was difficult but now I feel more confident.'})];
@@ -1467,16 +1493,62 @@ function makeSamplePass(){
   return [{id:'sp1',email:'quocbao@demo.vn',asgId:'demo-0-cur',kind:'day',month:mk,sample:true},{id:'sp2',email:'giahuy@demo.vn',asgId:'demo-0-prev',kind:'week',month:mk,sample:true}];
 }
 var initials=function(n){return String(n).split(/\s+/).filter(Boolean).slice(-2).map(function(w){return w[0]}).join('').toUpperCase()};
+var gLabel=function(g){return g.max?fmtS(g.overall)+' / '+g.max:'Band '+g.overall};
+var hasFb=function(g){return !!(g&&(g.link||(g.marks&&Object.keys(g.marks).length)))};
+var VOCRE=/^https?:\/\/(www\.)?(vocaroo\.com|voca\.ro)\/\S+/i;
+function mkLabels(e){return e.kind==='readaloud'?['Wrong word or sound','Wrong stress','Unclear or swallowed']:['Grammar or spelling','Word choice','Unclear or awkward']}
+function markSrc(a,e){return e.kind==='readaloud'?e.text:(e.skill==='writing'?(a.text||''):null)}
+function wordsHTML(text,marks,edit){
+  var i=0;
+  return String(text||'').split(/\n\s*\n/).map(function(p){return '<p>'+p.split(/\s+/).filter(Boolean).map(function(w){var k=i++,m=marks&&marks[k];return '<span class="w'+(m?' m'+m:'')+'"'+(edit?' data-act="mk-word" data-w="'+k+'"':'')+'>'+esc(w)+'</span>'}).join(' ')+'</p>'}).join('');
+}
+function legendHTML(e){var L=mkLabels(e);return '<div class="mleg">'+[1,2,3].map(function(t){return '<span><i class="w m'+t+'">'+['red','orange','yellow'][t-1]+'</i> '+L[t-1]+'</span>'}).join('')+'</div>'}
+function markCnt(){var n=Object.keys(MK.marks||{}).length;return n+' word'+(n===1?'':'s')+' marked'}
+function curSub(){return subsAll().filter(function(x){return x.id===MK.sel})[0]}
+function closeMkSheet(){var a=$('#mkSbg'),b=$('#mkSheet');if(a)a.remove();if(b)b.remove()}
+function mkSheet(word){
+  closeMkSheet();var a=curSub(),e=a&&exOf(a.ex);if(!e)return;
+  var L=mkLabels(e),cur=(MK.marks||{})[MK.pw],w=String(word).replace(/[^\w'’-]/g,'');
+  document.body.insertAdjacentHTML('beforeend','<div class="msbg" id="mkSbg" data-act="mk-close"></div><div class="msheet" id="mkSheet" role="dialog" aria-label="Mark word"><h3>Mark <b>“'+esc(w)+'”</b></h3>'+[1,2,3].map(function(t){return '<button type="button" data-act="mk-set" data-t="'+t+'"><i class="w m'+t+'"></i>'+esc(L[t-1])+(cur===t?' ✓':'')+'</button>'}).join('')+'<button type="button" class="cl" data-act="mk-set" data-t="0">'+(cur?'Remove mark':'No mistake')+'</button></div>');
+}
+function closeFb(){var a=$('#fbBg'),b=$('#fbBox');if(a)a.remove();if(b)b.remove()}
+function showFb(id){
+  closeFb();var a=attemptsOf(U.email).filter(function(x){return x.id===id})[0];if(!a)return;
+  var g=gradeOf(a),e=exOf(a.ex);if(!g||!e)return;
+  var ms=markSrc(a,e),has=ms!=null&&g.marks&&Object.keys(g.marks).length;
+  document.body.insertAdjacentHTML('beforeend','<div class="msbg" id="fbBg" data-act="fb-close"></div><div class="fbbox" id="fbBox" role="dialog" aria-label="Teacher feedback"><div class="sechead"><div><h3 style="font-size:1.1rem">'+esc(e.title)+'</h3><span class="muted" style="font-size:.85rem">Teacher feedback · '+fmtD(a.ts)+'</span></div><button class="iconbtn" data-act="fb-close" type="button">Close</button></div><div class="score" style="margin-bottom:8px"><b>'+esc(g.max?fmtS(g.overall)+' / '+g.max:g.overall)+'</b><span class="muted">'+(g.max?'score':'band')+'</span></div>'+(g.sticker?'<img class="stk-s" src="'+g.sticker+'" alt="Sticker">':'')+(g.link?'<h4 class="tk">Voice feedback</h4>'+vocEmbed(g.link):'')+(g.feedback?'<h4 class="tk">Note</h4><p style="margin:0">'+esc(g.feedback)+'</p>':'')+(has?'<h4 class="tk">Marked words</h4>'+legendHTML(e)+'<div class="mkpass ro" style="margin-top:6px">'+wordsHTML(ms,g.marks,false)+'</div>':'')+'</div>');
+}
+function mkAct(a,t){
+  if(a==='mk-word'){MK.pw=+t.dataset.w;mkSheet(t.textContent);return true}
+  if(a==='mk-set'){
+    var ty=+t.dataset.t;MK.marks=MK.marks||{};if(ty)MK.marks[MK.pw]=ty;else delete MK.marks[MK.pw];
+    var sp=$('#mkText [data-w="'+MK.pw+'"]');if(sp)sp.className='w'+(ty?' m'+ty:'');
+    var c=$('#mkCnt');if(c)c.textContent=c.textContent.replace(/^\d+ words? marked/,markCnt());
+    closeMkSheet();return true;
+  }
+  if(a==='mk-close'){closeMkSheet();return true}
+  if(a==='fb-open'){showFb(t.dataset.id);return true}
+  if(a==='fb-close'){closeFb();return true}
+  return false;
+}
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Escape')return;
+  if($('#mkSheet')){closeMkSheet();e.stopImmediatePropagation()}else if($('#fbBox')){closeFb();e.stopImmediatePropagation()}
+},true);
 function modalHTML(a){
-  var e=exOf(a.ex),g=gradeOf(a),cr=CRIT[e.skill];
+  var e=exOf(a.ex),g=gradeOf(a),cr=CRIT[critKey(e)],mx=gMax(e),st=gStep(e),ms=markSrc(a,e),rd=e.kind==='readaloud';
   var h='<div class="modal" id="mkModal" role="dialog" aria-modal="true" aria-label="Submission"><div class="mbox"><div class="sechead"><div><h3 style="font-size:1.15rem">'+esc(a.student)+'</h3><span class="muted" style="font-size:.85rem">'+esc(a.cls)+' · '+esc(e.title)+' · '+fmtD(a.ts)+(a.sample?' · sample':'')+'</span></div><button class="iconbtn" data-act="mclose" type="button">Close</button></div>';
-  if(e.skill==='writing')h+='<h4 class="tk">Task</h4>'+writingTask(e)+'<h4 class="tk">Student answer</h4><div class="subtext">'+esc(a.text||'')+'</div><p class="saved" style="margin:-8px 0 8px">'+(a.words||wordCount(a.text))+' words</p>'+((a.fixes&&a.fixes.length)?'<h4 class="tk">Auto corrections</h4><div class="subtext">'+fixHTML(a.text||'',a.fixes)+'</div>'+fixListHTML(a.fixes):'');
+  if(rd)h+=(e.focus?'<p class="banner"><b>Focus:</b> '+esc(e.focus)+'</p>':'')+'<h4 class="tk">Student recording</h4><div style="margin:6px 0 10px">'+(vocEmbed(a.link)||'<p class="saved">No recording link.</p>')+'</div>';
+  else if(e.skill==='writing')h+='<h4 class="tk">Task</h4>'+writingTask(e);
   else h+='<div style="margin:10px 0">'+vocEmbed(a.link)+'</div><h4 class="tk">Transcript</h4><div class="subtext" style="max-height:170px">'+(a.transcript?esc(a.transcript):'<span class="muted">No transcript yet. On the live site it appears here automatically from the recording.</span>')+'</div>'+(a.notes?'<p class="saved" style="margin:0 0 8px">Student notes: '+esc(a.notes)+'</p>':'');
+  if(ms!=null)h+='<h4 class="tk">'+(rd?'Mark mistakes on the passage':'Student answer · tap a word to mark')+'</h4>'+legendHTML(e)+'<div class="mkpass" id="mkText">'+wordsHTML(ms,MK.marks,true)+'</div><p class="saved" id="mkCnt" style="margin:6px 0 8px">'+markCnt()+(rd?'':' · '+(a.words||wordCount(a.text))+' words')+'</p>';
+  if(!rd&&e.skill==='writing'&&a.fixes&&a.fixes.length)h+='<h4 class="tk">Auto corrections</h4><div class="subtext">'+fixHTML(a.text||'',a.fixes)+'</div>'+fixListHTML(a.fixes);
   h+='<p class="banner" style="margin-top:6px">Marking is optional. If you skip it, this still counts as done.</p>';
-  h+=cr.map(function(c,i){var v=g?Math.round(g.scores[i]):6;return '<div class="rub"><label for="rb'+i+'">'+esc(c)+'</label><span class="mono" data-cv="'+i+'">'+v+'</span><input type="range" id="rb'+i+'" data-crit="'+i+'" min="0" max="9" step="1" value="'+v+'"></div>'}).join('');
-  h+='<div class="rub"><span>Overall band</span><span class="band" id="mkOverall">'+(g?g.overall:6)+'</span></div>';
+  h+=cr.map(function(c,i){var v=(g&&g.scores&&g.scores[i]!=null)?g.scores[i]:6;return '<div class="rub"><label for="rb'+i+'">'+esc(c)+'</label><span class="mono" data-cv="'+i+'">'+fmtS(v)+'</span><input type="range" id="rb'+i+'" data-crit="'+i+'" min="0" max="'+mx+'" step="'+st+'" value="'+v+'"></div>'}).join('');
+  h+='<div class="rub"><span>Overall '+(rd?'(out of 10)':'band')+'</span><span class="band" id="mkOverall">'+(g?fmtS(g.overall):6)+'</span></div>';
   h+='<div class="stkrow"><div class="stk" id="stkBox" tabindex="0" role="button" aria-label="Paste a sticker image"></div><div class="stkbtn"><span class="lbl" style="margin:0">Sticker</span><button class="btn sm" data-act="stk-file" type="button">Choose image</button><button class="btn sm" data-act="stk-clear" type="button">Remove</button><input type="file" id="stkFile" accept="image/*" hidden></div></div>';
-  h+='<label class="lbl" for="mkFb">Feedback for the student</label><textarea class="wbox" id="mkFb" style="min-height:80px">'+esc(g?g.feedback||'':'')+'</textarea><div class="actions"><button class="btn pri" data-act="save-grade" type="button">'+(g?'Update grade':'Save grade')+'</button><span class="saved" id="mkMsg" aria-live="polite"></span></div></div></div>';
+  h+='<label class="lbl" for="mkLink">Voice feedback (Vocaroo link, optional)</label><input class="linkin" id="mkLink" placeholder="https://vocaroo.com/..." autocomplete="off" inputmode="url" value="'+esc(MK.link||'')+'"><div id="mkLinkPrev">'+(VOCRE.test(MK.link||'')?vocEmbed(MK.link):'')+'</div>';
+  h+='<label class="lbl" for="mkFb">Written note (optional)</label><textarea class="wbox" id="mkFb" style="min-height:80px">'+esc(g?g.feedback||'':'')+'</textarea><div class="actions"><button class="btn pri" data-act="save-grade" type="button">'+(g?'Update grade':'Save grade')+'</button><span class="saved" id="mkMsg" aria-live="polite"></span></div></div></div>';
   return h;
 }
 function renderMark(){
@@ -1485,7 +1557,7 @@ function renderMark(){
   var h='<div class="filters"><label class="field" for="mCls">Class<select id="mCls" data-m="cls">'+selOpts(classes,MK.cls,'All')+'</select></label><span class="saved" style="padding-bottom:.6rem">'+L.length+' submitted · '+L.filter(function(a){return gradeOf(a)}).length+' marked</span></div>';
   h+=L.length?'<div class="mtiles">'+L.map(function(a){
     var e=exOf(a.ex),g=gradeOf(a);
-    return '<button class="mtile" data-act="msel" data-id="'+esc(a.id)+'" type="button"><span class="av">'+esc(initials(a.student))+'</span><span><b>'+esc(a.student)+'</b><small>'+esc(a.cls)+'</small></span><span class="mt">'+esc(e?e.title:a.ex)+'<small>'+(e?SNAME[e.skill]:'')+' · '+fmtD(a.ts)+'</small></span><span class="mst">'+(g?'<span class="pill ok">Band '+g.overall+'</span>'+(g.sticker?'<img class="stk-s" src="'+g.sticker+'" alt="">':''):'<span class="pill">Done</span>')+'</span></button>';
+    return '<button class="mtile" data-act="msel" data-id="'+esc(a.id)+'" type="button"><span class="av">'+esc(initials(a.student))+'</span><span><b>'+esc(a.student)+'</b><small>'+esc(a.cls)+'</small></span><span class="mt">'+esc(e?e.title:a.ex)+'<small>'+(e?SNAME[e.skill]:'')+' · '+fmtD(a.ts)+'</small></span><span class="mst">'+(g?'<span class="pill ok">'+gLabel(g)+'</span>'+(g.sticker?'<img class="stk-s" src="'+g.sticker+'" alt="">':''):'<span class="pill">Done</span>')+'</span></button>';
   }).join('')+'</div>':'<div class="scroll"><div class="empty">No submissions yet.</div></div>';
   var a=MK.open?L.filter(function(x){return x.id===MK.sel})[0]:null;
   if(a)h+=modalHTML(a);
@@ -1504,15 +1576,17 @@ function stickerFrom(file){
   rd.readAsDataURL(file);
 }
 function updBand(){
-  var r=$$('#v-mark [data-crit]'),sum=0;
-  r.forEach(function(x){sum+=+x.value;var c=$('#v-mark [data-cv="'+x.dataset.crit+'"]');if(c)c.textContent=x.value});
-  var o=$('#mkOverall');if(o&&r.length)o.textContent=roundBand(sum/r.length);
+  var a=curSub(),e=a&&exOf(a.ex),r=$$('#v-mark [data-crit]'),sum=0;
+  r.forEach(function(x){sum+=+x.value;var c=$('#v-mark [data-cv="'+x.dataset.crit+'"]');if(c)c.textContent=fmtS(x.value)});
+  var o=$('#mkOverall');if(o&&r.length)o.textContent=fmtS(roundFor(sum/r.length,e));
 }
 function saveGrade(){
-  var a=subsAll().filter(function(x){return x.id===MK.sel})[0];if(!a)return;
-  var sc=$$('#v-mark [data-crit]').map(function(x){return +x.value}),ov=roundBand(sc.reduce(function(s,v){return s+v},0)/sc.length);
-  var g={scores:sc,overall:ov,feedback:$('#mkFb').value.trim(),sticker:MK.sticker||'',by:U.name,ts:Date.now()};
-  var fin=function(){renderMark();var m=$('#mkMsg');if(m)m.textContent='Saved. The student sees Band '+ov+'.'};
+  var a=curSub();if(!a)return;var e=exOf(a.ex),msg=$('#mkMsg'),link=($('#mkLink').value||'').trim();
+  if(link&&!VOCRE.test(link)){if(msg)msg.textContent='The link must be a Vocaroo link, for example https://vocaroo.com/abc123.';return}
+  var sc=$$('#v-mark [data-crit]').map(function(x){return +x.value}),ov=roundFor(sc.reduce(function(s,v){return s+v},0)/sc.length,e);
+  var g={scores:sc,overall:ov,feedback:$('#mkFb').value.trim(),sticker:MK.sticker||'',link:link,marks:Object.assign({},MK.marks||{}),by:U.name,ts:Date.now()};
+  if(e.kind==='readaloud')g.max=10;
+  var fin=function(){renderMark();var m=$('#mkMsg');if(m)m.textContent='Saved. The student sees '+gLabel(g)+'.'};
   var loc=function(){gradesLocal[a.id]=g;fin()};
   if(a.sample||String(a.id).indexOf('local-')===0||!dbh)loc();else dbh.doc('attempts/'+a.id).update({grade:g}).then(fin,loc);
 }
@@ -1689,7 +1763,7 @@ document.addEventListener('click',function(e){
   if(a==='pass-ask'){PASSCONF={asg:t.dataset.asg,kind:t.dataset.kind};return renderLib()}
   if(a==='pass-cancel'){PASSCONF=null;return renderLib()}
   if(a==='pass-use')return usePass();
-  if(a==='msel'){MK.sel=t.dataset.id;MK.open=true;var sb=subsAll().filter(function(x){return x.id===MK.sel})[0],gg=sb&&gradeOf(sb);MK.sticker=gg&&gg.sticker||'';return renderMark()}
+  if(a==='msel'){MK.sel=t.dataset.id;MK.open=true;var sb=subsAll().filter(function(x){return x.id===MK.sel})[0],gg=sb&&gradeOf(sb);MK.sticker=gg&&gg.sticker||'';MK.marks=Object.assign({},gg&&gg.marks||{});MK.link=gg&&gg.link||'';return renderMark()}
   if(a==='mclose'){MK.open=false;return renderMark()}
   if(a==='stk-file'){var sf=$('#stkFile');if(sf)sf.click();return}
   if(a==='stk-clear'){MK.sticker='';return setStk()}
@@ -1741,6 +1815,7 @@ document.addEventListener('input',function(e){
   if(e.target.id==='fDd'){var nmI=$('#fNm'),dp=e.target.value.split('-');if(nmI&&dp.length===3)nmI.placeholder=asgName({due:new Date(+dp[0],+dp[1]-1,+dp[2]).getTime()})}
   if(e.target.id==='csColor'||e.target.id==='csName'){var pc=$('#csPrev');if(pc){var cc=$('#csColor').value;pc.querySelector('.covl').style.background=cc;pc.querySelector('.cn').textContent=$('#csName').value}}
   if(e.target.id==='spLink'){var pv=$('#spPrev');if(pv)pv.innerHTML=vocEmbed(e.target.value)}
+  if(e.target.id==='mkLink'){MK.link=e.target.value.trim();var lp=$('#mkLinkPrev');if(lp)lp.innerHTML=VOCRE.test(MK.link)?vocEmbed(MK.link):''}
   if(e.target.id==='wText'){lsSet('md-draft-'+U.email+'-'+NAV.ex,e.target.value);updWords()}
 });
 document.addEventListener('paste',function(e){
@@ -2453,6 +2528,7 @@ function xSave(){
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
 function extAct(a,t){
+  if(mkAct(a,t))return true;
   if(a==='lx'){var lv=t.dataset.l,v=t.dataset.v;
     if(lv==='book')LIBX=LIBX.book===v?{}:{book:v};
     else if(lv==='test')LIBX={book:LIBX.book,test:LIBX.test===v?null:v};
@@ -2798,19 +2874,22 @@ populateBookTest();
     if(!db){setStatus('local');dbReady=true;return}
     dbh=db;
     var toDocs=function(snap){return snap.docs.map(function(d){return Object.assign({id:d.id,docId:d.id},d.data())})};
+    var myEm=String((window.MD_USER&&window.MD_USER.email)||lsGet('md-email')||'').toLowerCase(),isT=DEMO||(CFG.teachers||[]).some(function(x){return String(x).toLowerCase()===myEm});
+    var own=function(c){return isT?db.collection(c):db.collection(c).where('email','==',myEm)};
+    var attQ=function(){return isT?db.collection('attempts').orderBy('ts','desc').limit(500):db.collection('attempts').where('email','==',myEm).limit(500)};
     db.collection('roster').onSnapshot(function(s){rosterDocs=toDocs(s);dbReady=true;if(!U&&lsGet('md-email')){if(findUser(lsGet('md-email')))signIn(lsGet('md-email'));}refreshLive()},function(){dbReady=true});
     db.collection('exercises').onSnapshot(function(s){customDocs=toDocs(s);rebuildCustom();refreshLive()},function(){});
     db.collection('assignments').onSnapshot(function(s){asgDocs=toDocs(s);refreshLive()},function(){});
-    db.collection('hwdone').onSnapshot(function(s){hwdoneDocs=toDocs(s);refreshLive()},function(){});
+    own('hwdone').onSnapshot(function(s){hwdoneDocs=toDocs(s);refreshLive()},function(){});
     db.collection('classes').onSnapshot(function(s){classDocs=toDocs(s);classDocs.forEach(function(d){delete localClasses[d.docId]});refreshLive()},function(){});
     db.collection('profiles').onSnapshot(function(s){profDocs=toDocs(s);profDocs.forEach(function(d){var lp=localProf[d.email];if(lp&&!lp._dirty)delete localProf[d.email]});refreshLive()},function(){});
-    db.collection('cards').onSnapshot(function(s){cardDocs=toDocs(s);refreshLive()},function(){});
+    own('cards').onSnapshot(function(s){cardDocs=toDocs(s);refreshLive()},function(){});
     db.collection('wins').onSnapshot(function(s){winDocs=toDocs(s);updMarq()},function(){});
     db.collection('codes').onSnapshot(function(s){codeDocs=toDocs(s);if(TAB==='prize')refreshLive()},function(){});
-    db.collection('redeems').onSnapshot(function(s){redDocs=toDocs(s);if(TAB==='prize')refreshLive()},function(){});
+    own('redeems').onSnapshot(function(s){redDocs=toDocs(s);if(TAB==='prize')refreshLive()},function(){});
     db.collection('config').onSnapshot(function(s){cfgDocs=toDocs(s);refreshLive()},function(){});
-    db.collection('passes').onSnapshot(function(s){passDocs=toDocs(s);refreshLive()},function(){});
-    db.collection('attempts').orderBy('ts','desc').limit(500).onSnapshot(function(s){attemptDocs=toDocs(s);setStatus('saved');refreshLive()},function(){dbh=null;setStatus('local');dbReady=true});
+    own('passes').onSnapshot(function(s){passDocs=toDocs(s);refreshLive()},function(){});
+    attQ().onSnapshot(function(s){attemptDocs=toDocs(s);setStatus('saved');refreshLive()},function(){dbh=null;setStatus('local');dbReady=true});
   },function(){setStatus('local');dbReady=true});
 })();
 })();
