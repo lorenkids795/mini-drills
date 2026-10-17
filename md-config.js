@@ -1,8 +1,6 @@
 // Mini Drills config. Set demo:false to use the real backend (Firebase).
-// Open the site with ?demo=1 to try it with sample data (nothing is saved, no real accounts are touched).
-var mdDemo = /[?&]demo(=1|=true)?(&|$)/.test(location.search);
 window.MD_CONFIG = {
-  demo: mdDemo,
+  demo: false,
   // Must match the TEACHERS variable in Cloudflare Pages (see README).
   teachers: ['lorenkids795@gmail.com'],
   api: '/api',

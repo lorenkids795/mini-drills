@@ -31,11 +31,6 @@ Upload cả thư mục này (index.html, md-config.js, md-backend.js, README.md,
 - Nếu đã biết email học sinh, thêm cột `email`: học sinh bấm "My teacher already added my email" để đặt mật khẩu.
 - Audio nghe: bỏ file mp3 vào thư mục `audio/` trong repo, trong JSON thêm `"audio_url": "audio/ten-file.mp3"`.
 
-## Chế độ Demo (test giao diện)
-- Mở `https://<site>/?demo=1` (hoặc bấm link "Demo mode" ở màn hình đăng nhập) để dùng dữ liệu mẫu, không đụng tới dữ liệu thật.
-- Ở màn hình đăng nhập có 2 nút: **Demo: Login as Teacher** (lorenkids795@gmail.com) và **Demo: Login as Student** (Minh Anh).
-- Trong bài tập có thanh **Demo helper**: Fill all correct, Half correct, Clear. Thanh này chỉ hiện ở chế độ demo hoặc khi giáo viên đăng nhập, học sinh trên site thật không thấy.
-
 ## Giới hạn
 - Học sinh nhập email tự do: ai biết tên và lớp thì có thể đăng ký trước tên đó. Giáo viên kiểm tra tab Students nếu thấy lạ.
 - Danh sách tên chưa đăng ký của từng lớp hiển thị công khai trên trang đăng nhập (không kèm email).

@@ -97,8 +97,7 @@
     var toTIn = h('button', { type: 'button', 'class': 'btn sm', hidden: 'hidden', text: 'I already have a password' });
 
     root.appendChild(tabs);
-    var demoLink = h('a', { href: '?demo=1', text: 'Demo mode (sample data, nothing is saved)', style: 'font-size:.85rem;color:var(--muted)' });
-    [formIn, formReg, formT, formTR, toReg, toIn, toTReg, toTIn, msg, demoLink].forEach(function (x) { root.appendChild(x); });
+    [formIn, formReg, formT, formTR, toReg, toIn, toTReg, toTIn, msg].forEach(function (x) { root.appendChild(x); });
     var host = document.querySelector('#loginForm');
     card.insertBefore(root, host || null);
 

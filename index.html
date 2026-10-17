@@ -13,6 +13,7 @@
   --accent:#2347d6; --accent-ink:#ffffff; --hl:#ffe45c; --hl-soft:#fff3b0;
   --good:#12703f; --good-bg:#def3e7; --bad:#be2a2a; --bad-bg:#fde6e6; --warn:#a56a0a;
   --done:#16803c; --done-ink:#ffffff; --more:#e8820c; --more-ink:#1b1200;
+  --gold-a:#fbecb8; --gold-b:#f3d277; --gold-e:#c99a1c; --silv-a:#eff1f5; --silv-b:#d8dde5; --silv-e:#98a2b1; --brz-a:#f7e4d3; --brz-b:#e8c09b; --brz-e:#b06f3a;
   --font:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
 }
@@ -20,12 +21,12 @@
   --bg:#0e1424; --surface:#161f35; --ink:#e8edf7; --muted:#9aa6bf; --line:#2a3552;
   --accent:#8aa6ff; --accent-ink:#0e1424; --hl:#f0d54a; --hl-soft:#3b3615;
   --good:#5fd49e; --good-bg:#12332a; --bad:#ff8080; --bad-bg:#3a1b21; --warn:#f0b44c;
-  --done:#3fbf7f; --done-ink:#08210f; --more:#f5a04a; --more-ink:#1b1200; color-scheme:dark}}
+  --done:#3fbf7f; --done-ink:#08210f; --more:#f5a04a; --more-ink:#1b1200; --gold-a:#33291a; --gold-b:#5c4713; --gold-e:#d4a72c; --silv-a:#232a38; --silv-b:#333b4c; --silv-e:#aab3c2; --brz-a:#30221b; --brz-b:#45301f; --brz-e:#c98a55; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0e1424; --surface:#161f35; --ink:#e8edf7; --muted:#9aa6bf; --line:#2a3552;
   --accent:#8aa6ff; --accent-ink:#0e1424; --hl:#f0d54a; --hl-soft:#3b3615;
   --good:#5fd49e; --good-bg:#12332a; --bad:#ff8080; --bad-bg:#3a1b21; --warn:#f0b44c;
-  --done:#3fbf7f; --done-ink:#08210f; --more:#f5a04a; --more-ink:#1b1200; color-scheme:dark}
+  --done:#3fbf7f; --done-ink:#08210f; --more:#f5a04a; --more-ink:#1b1200; --gold-a:#33291a; --gold-b:#5c4713; --gold-e:#d4a72c; --silv-a:#232a38; --silv-b:#333b4c; --silv-e:#aab3c2; --brz-a:#30221b; --brz-b:#45301f; --brz-e:#c98a55; color-scheme:dark}
 
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.55;padding-inline:16px;padding-block:0}
@@ -47,9 +48,14 @@ button{cursor:pointer}
 .tabs button{border:0;background:transparent;padding:.45rem .85rem;border-radius:6px;font-weight:500;color:var(--muted)}
 .tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);font-weight:600}
 .right{margin-left:auto;display:flex;flex-wrap:wrap;align-items:center;gap:12px;font-size:.82rem;color:var(--muted)}
-.status{display:flex;align-items:center;gap:8px}
-.status i{width:8px;height:8px;border-radius:50%;background:var(--warn);display:inline-block}
-.status[data-s="saved"] i{background:var(--good)}
+.status{display:flex;align-items:center;padding:4px;cursor:help}
+.status i{width:11px;height:11px;border-radius:50%;background:var(--muted);display:inline-block}
+.status[data-s="saved"] i{background:var(--good);box-shadow:0 0 0 3px var(--good-bg)}
+.status[data-s="local"] i{background:var(--more);box-shadow:0 0 0 3px color-mix(in srgb,var(--more) 22%,transparent)}
+.status[data-s="wait"] i{animation:stPulse 1.2s ease-in-out infinite}
+@keyframes stPulse{50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.status[data-s="wait"] i{animation:none}}
+.status span{display:none}
 .iconbtn{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:.3rem .65rem;font-size:.82rem;font-weight:500}
 .who{display:flex;align-items:center;gap:8px}
 .who b{color:var(--ink);font-weight:600}
@@ -363,11 +369,11 @@ body.locked #who,body.locked .crumbs{visibility:hidden}
 .prow{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
 .brow{grid-template-columns:minmax(6.5rem,10rem) minmax(0,1fr) 3.4rem !important}
 .axis{grid-template-columns:minmax(6.5rem,10rem) minmax(0,1fr) 3.4rem !important}
-.rt .sq{color:#fff}
-.rt .sq.sk-listening{background:#2563eb}
-.rt .sq.sk-reading{background:#0f9d6e}
-.rt .sq.sk-writing{background:#7c4dcc}
-.rt .sq.sk-speaking{background:#e07a1f}
+.rt .sq,.rs .sq{color:#fff}
+.rt .sq.sk-listening,.rs .sq.sk-listening{background:#2563eb}
+.rt .sq.sk-reading,.rs .sq.sk-reading{background:#0f9d6e}
+.rt .sq.sk-writing,.rs .sq.sk-writing{background:#7c4dcc}
+.rt .sq.sk-speaking,.rs .sq.sk-speaking{background:#c2651a}
 .pager{display:flex;gap:6px;justify-content:center;margin-top:14px;flex-wrap:wrap}
 .pager button{min-width:34px;height:34px;border:1px solid var(--line);background:var(--surface);border-radius:8px;font-weight:600}
 .pager button.cur{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
@@ -463,8 +469,15 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .dw-ok{background:var(--good-bg);color:var(--good)}
 .dw-bad{background:var(--bad-bg);color:var(--bad);text-decoration:line-through}
 .rk{display:grid;grid-template-columns:2rem auto minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:.6rem .8rem;border-bottom:1px solid var(--line);font-size:.92rem}
-.rk.me{background:var(--hl-soft)}
 .rk .n{font-family:var(--mono);color:var(--muted);text-align:center}
+/* top 3: full-row metallic tint; the "you" row keeps its own highlight (rule order below wins) */
+.rk.top1{background:linear-gradient(100deg,var(--gold-a),var(--gold-b) 55%,var(--gold-a));box-shadow:inset 4px 0 0 var(--gold-e)}
+.rk.top2{background:linear-gradient(100deg,var(--silv-a),var(--silv-b) 55%,var(--silv-a));box-shadow:inset 4px 0 0 var(--silv-e)}
+.rk.top3{background:linear-gradient(100deg,var(--brz-a),var(--brz-b) 55%,var(--brz-a));box-shadow:inset 4px 0 0 var(--brz-e)}
+.rk.top1 .n,.rk.top2 .n,.rk.top3 .n{color:var(--ink);font-weight:700;font-size:1rem}
+.rk.me{background:var(--hl-soft);box-shadow:inset 0 0 0 2px var(--accent)}
+.rk.me.top1{box-shadow:inset 4px 0 0 var(--gold-e),inset 0 0 0 2px var(--accent)}.rk.me.top2{box-shadow:inset 4px 0 0 var(--silv-e),inset 0 0 0 2px var(--accent)}.rk.me.top3{box-shadow:inset 4px 0 0 var(--brz-e),inset 0 0 0 2px var(--accent)}
+.fcard .btn.good.kpress{box-shadow:0 0 0 3px var(--good-bg)}
 .rk .av{width:34px;height:34px;border-radius:50%;background:var(--hl);color:#14213d;display:grid;place-items:center;font-weight:700;font-size:.8rem}
 .rk small{display:block;color:var(--muted);font-size:.76rem}
 .ttl{font-size:.7rem;font-weight:600;background:var(--ink);color:var(--bg);border-radius:99px;padding:.05rem .5rem;margin-left:6px;white-space:nowrap}
@@ -511,10 +524,36 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .notif .pv{background:var(--bg);border-radius:8px;padding:.5rem .7rem;margin-top:8px;font-size:.86rem}
 .dstat .flame{font-size:3.2rem;line-height:1}
 .dstat b{font-size:3.2rem;line-height:1}
-.dtask{grid-template-columns:auto minmax(0,1fr)}
-.dtask .di{grid-row:auto}
+.dtask{grid-template-columns:minmax(0,1fr);min-height:52px}
 .dtask.dn{background:var(--line);color:var(--muted);opacity:1}
-.dtask.dn .di{filter:grayscale(1);opacity:.7}
+/* ---- Recent results by skill ---- */
+.rs-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
+.rs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (min-width:1080px){.rs-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:640px){.rs-grid{grid-template-columns:minmax(0,1fr)}}
+.rs{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.rs-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:2px 12px;align-items:center}
+.rs-top .sq{width:38px;height:38px;border-radius:10px;color:#fff;display:grid;place-items:center;font-weight:700;font-size:.95rem;grid-column:1;grid-row:1/3}.rs-top>b{grid-column:2;grid-row:1;font-size:.98rem;align-self:end}
+.rs-top>small{grid-column:2;grid-row:2;color:var(--muted);font-size:.78rem;align-self:start}
+.rs-avg{grid-column:3;grid-row:1/3;text-align:right;line-height:1.1;align-self:start}
+.rs-avg b{display:block;font-family:var(--mono);font-size:1.35rem;font-weight:500}
+.rs-avg small{font-size:.7rem;text-transform:uppercase;letter-spacing:.05em}
+.rs-bars{display:flex;align-items:flex-end;gap:4px;height:46px;padding-bottom:2px;border-bottom:1px solid var(--line)}
+.rs-bars .rb{flex:1 1 0;max-width:22px;min-height:4px;border:0;padding:0;border-radius:3px 3px 0 0;background:var(--bad);display:block}
+.rs-bars .rb.ok{background:var(--good)}
+.rs-bars .rb.pd{background:transparent;border:1px dashed var(--muted);border-bottom:0}
+.rs-bars button.rb:hover{filter:brightness(1.12)}
+.rs-bars.empty{align-items:center;justify-content:center;color:var(--muted);font-size:.78rem}
+.rs-last{display:flex;flex-direction:column;gap:2px;font-size:.86rem;min-width:0;margin-top:auto}
+.rs-last .stk-s{height:22px;width:auto}
+.rs-last .rfb{font-size:.82rem;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.rs-last .lbl2{font-size:.7rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.rs-last .row2{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;min-width:0}
+.rs-last .row2 .t{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.rs-last button.t{background:none;border:0;padding:0;color:inherit;text-align:left;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.rs-last button.t:hover{text-decoration-color:var(--accent)}
+.rs-last .muted{font-size:.84rem}
+.rs-last .fbo{font-size:.8rem}
 .dtask:disabled{opacity:.5;cursor:default}
 .lad{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
 .lad span{font-size:.7rem;padding:.05rem .55rem;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
@@ -579,7 +618,7 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
     <nav class="tabs" id="tabs" role="tablist" aria-label="Sections" hidden></nav>
     <div class="right">
       <div class="who" id="who" hidden><span id="whoName"></span></div>
-      <div class="status" id="status" data-s="wait"><i></i><span title="Connecting">…</span></div>
+      <div class="status" id="status" data-s="wait" role="img" aria-label="Connecting…" title="Connecting…"><i></i></div>
       <button class="iconbtn" id="themeBtn" data-act="theme" type="button" aria-label="Toggle dark mode"><span class="lt">Dark mode</span><span class="ic">☾</span></button>
       <button class="iconbtn" id="logoutBtn" data-act="logout" type="button" aria-label="Sign out"><span class="lt">Sign out</span><span class="ic">⎋</span></button>
     </div>
@@ -594,8 +633,8 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
         <p class="msg" id="lgMsg" aria-live="polite"></p>
       </form>
       <div class="demo-ids"><span>Demo accounts:</span>
-        <button class="btn sm" type="button" data-act="demo" data-email="lorenkids795@gmail.com">Demo: Login as Teacher</button>
-        <button class="btn sm" type="button" data-act="demo" data-email="minhanh@demo.vn">Demo: Login as Student</button>
+        <button class="btn sm" type="button" data-act="demo" data-email="teacher@demo.vn">Teacher</button>
+        <button class="btn sm" type="button" data-act="demo" data-email="minhanh@demo.vn">Student · Minh Anh</button>
       </div>
     </div>
   </section>
@@ -794,7 +833,7 @@ function rebuildCustom(){
 /* ---------- Roster ---------- */
 var CLS=[['Foundation','Class 6.0-A'],['Intensive','Class 6.5-B']];
 var STU=[['Minh Anh','minhanh',0,.75],['Quoc Bao','quocbao',0,.55],['Thu Ha','thuha',0,.85],['Gia Huy','giahuy',0,.6],['Ngoc Lan','ngoclan',0,.7],['Hoang Nam','hoangnam',1,.8],['Phuong Linh','phuonglinh',1,.72],['Duc Tri','ductri',1,.6],['Khanh Vy','khanhvy',1,.88],['Bao Chau','baochau',1,.66]];
-var DEMO_ROSTER=[{email:'teacher@demo.vn',name:'Ms. Lan',role:'teacher',course:'',cls:'',demo:true},{email:'lorenkids795@gmail.com',name:'Ms. Lan',role:'teacher',course:'',cls:'',demo:true}].concat(STU.map(function(s){return {email:s[1]+'@demo.vn',name:s[0],role:'student',course:CLS[s[2]][0],cls:CLS[s[2]][1],demo:true}}));
+var DEMO_ROSTER=[{email:'teacher@demo.vn',name:'Ms. Lan',role:'teacher',course:'',cls:'',demo:true}].concat(STU.map(function(s){return {email:s[1]+'@demo.vn',name:s[0],role:'student',course:CLS[s[2]][0],cls:CLS[s[2]][1],demo:true}}));
 var rosterDocs=[],localRoster=null;
 function allRoster(){
   var m={},out=[];
@@ -825,9 +864,10 @@ var WL={on:false,n:0,t:0},HWSEL={};
 var realAttempts=function(){return attemptDocs.concat(localAttempts)};
 var isDemoStudent=function(e){return STU.some(function(s){return s[1]+'@demo.vn'===e})};
 function setStatus(s){
-  var el=$('#status');el.setAttribute('data-s',s==='saved'?'saved':'wait');
-  $('span',el).textContent={saved:'Online',local:'Local only',wait:'…'}[s];
-  el.title={saved:'Connected. Results save automatically.',local:'No data store. Results are kept for this session only.',wait:'Connecting'}[s];
+  var el=$('#status');s=(s==='saved'||s==='local')?s:'wait';el.setAttribute('data-s',s);
+  var sp=$('span',el);if(sp)sp.textContent='';
+  el.title={saved:'Connected. Results save automatically.',local:'No data store. Results are kept for this session only.',wait:'Connecting…'}[s];
+  el.setAttribute('role','img');el.setAttribute('aria-label',el.title);
 }
 
 /* ---------- Sample data ---------- */
@@ -974,25 +1014,56 @@ function imDone(id){
 var SKL={listening:'L',reading:'R',writing:'W',speaking:'S'};
 function ringHTML(p,txt,color){return '<div class="ring" style="--p:'+p+';--c:'+color+'"><span>'+txt+'</span></div>'}
 var RP=0;
-function recentHTML(){
-  var all=attemptsOf(U.email).filter(function(a){return a.total>0||a.kind==='submission'}).sort(function(a,b){return b.ts-a.ts}),PER=10,pages=Math.max(1,Math.ceil(all.length/PER));
-  if(RP>=pages)RP=pages-1;
-  var rec=all.slice(RP*PER,RP*PER+PER),h='<div class="recent"><h3>Recent results</h3>';
-  if(!rec.length)return h+'<p class="muted" style="margin:0;font-size:.9rem">Nothing yet.</p></div>';
-  h+='<div class="rtiles">'+rec.map(function(a){
-    var e=exOf(a.ex),g=gradeOf(a),ring,sk=e?e.skill:'reading';
-    if(a.kind==='submission')ring=g?ringHTML(Math.round(g.overall/(g.max||9)*100),fmtS(g.overall),'var(--accent)'):'<div class="ring pend"><span>sent</span></div>';
-    else{var p=a.total?Math.round(a.score/a.total*100):0;ring=ringHTML(p,a.score+'/'+a.total,pctColor(p))}
-    var lc=locOf(a.ex);
-    return (lc?'<button class="rt" data-act="nav" data-book="'+lc.book+'" data-test="'+lc.test+'" data-skill="'+lc.skill+'" data-ex="'+a.ex+'" type="button">':'<div class="rt">')+'<span class="sq sk-'+sk+'">'+SKL[sk]+'</span><div class="rtm"><b>'+esc(e?e.title:a.ex)+'</b><small>'+fmtD(a.ts)+'</small></div>'+ring+
-      (g&&(g.sticker||g.feedback||hasFb(g))?'<div class="rrow">'+(g.sticker?'<img class="stk-s" src="'+g.sticker+'" alt="Sticker">':'')+(g.feedback?'<p class="rfb">'+esc(g.feedback)+'</p>':'')+(hasFb(g)?'<span class="linkish fbo" data-act="fb-open" data-id="'+esc(a.id)+'" role="button" tabindex="0">Open feedback</span>':'')+'</div>':'')+(lc?'</button>':'</div>');
-  }).join('')+'</div>';
-  if(pages>1){
-    h+='<div class="pager">'+(RP>0?'<button data-act="rpage" data-p="'+(RP-1)+'" type="button" aria-label="Previous page">‹</button>':'');
-    for(var i=0;i<pages;i++)h+='<button class="'+(i===RP?'cur':'')+'" data-act="rpage" data-p="'+i+'" type="button"'+(i===RP?' aria-current="page"':'')+'>'+(i+1)+'</button>';
-    h+=(RP<pages-1?'<button data-act="rpage" data-p="'+(RP+1)+'" type="button" aria-label="Next page">›</button>':'')+'</div>';
+/* ---------- Recent results by skill (4 cells: L, R, W, S) ----------
+   Pass rule: Listening/Reading >= RS_PASS_PCT % correct; Writing/Speaking band >= RS_PASS_BAND (scaled to /9).
+   Ungraded Writing/Speaking submissions count as exercises but are neither passed nor averaged. */
+var RS_PASS_PCT=70,RS_PASS_BAND=6,RS_BARS=12;
+var SKORDER=['listening','reading','writing','speaking'];
+var fmtDM=function(ts){var d=new Date(ts);return d.getDate()+' '+MONTHS[d.getMonth()]};
+function rsInfo(a){
+  // -> {pct:0..100|null, ok:bool, pend:bool, txt:'3/6' | 'Band 6.5' | 'Waiting for grade'}
+  if(a.kind==='submission'){
+    var g=gradeOf(a);if(!g||g.overall==null||g.overall==='')return {pct:null,ok:false,pend:true,band:null,txt:'Waiting for grade'};
+    var mx=+g.max||9,b=(+g.overall)/mx*9;
+    return {pct:Math.round(+g.overall/mx*100),ok:b>=RS_PASS_BAND,pend:false,band:b,txt:'Band '+fmtS(g.overall)+(mx!==9?' / '+fmtS(mx):'')};
   }
-  return h+'</div>';
+  var p=a.total?Math.round(a.score/a.total*100):0;
+  return {pct:p,ok:p>=RS_PASS_PCT,pend:false,band:null,txt:a.score+'/'+a.total};
+}
+function rsCell(sk,list){
+  // list: this skill's attempts, newest first
+  var band=sk==='writing'||sk==='speaking',inf=list.map(rsInfo),n=list.length,passed=0,sum=0,cnt=0;
+  inf.forEach(function(x){if(x.ok)passed++;if(!x.pend){sum+=band?x.band:x.pct;cnt++}});
+  var avg=cnt?(band?fmtS(Math.round(sum/cnt*2)/2):Math.round(sum/cnt)+'%'):'–';
+  var h='<article class="rs" aria-label="'+SNAME[sk]+' results"><div class="rs-top"><span class="sq sk-'+sk+'" aria-hidden="true">'+SKL[sk]+'</span><b>'+SNAME[sk]+'</b>'+
+    '<small>'+n+' exercise'+(n===1?'':'s')+' · '+passed+' passed</small>'+
+    '<div class="rs-avg"><b>'+avg+'</b><small class="muted">'+(band?'avg band':'average')+'</small></div></div>';
+  if(!n)return h+'<div class="rs-bars empty" aria-hidden="true"></div><div class="rs-last"><span class="lbl2">Latest</span><span class="muted">No '+SNAME[sk]+' results yet. Your first one will show here.</span></div></article>';
+  // bars: oldest -> newest, left to right; each bar opens feedback (if any) or the exercise
+  var rec=list.slice(0,RS_BARS).reverse(),ri=inf.slice(0,RS_BARS).reverse();
+  h+='<div class="rs-bars" role="group" aria-label="Last '+rec.length+' '+SNAME[sk]+' results, oldest first">'+rec.map(function(a,i){
+    var x=ri[i],e=exOf(a.ex),g=gradeOf(a),lc=locOf(a.ex),ht=x.pend?100:Math.max(8,x.pct),
+      tip=(e?e.title:a.ex)+' · '+x.txt+' · '+fmtDM(a.ts),
+      act=hasFb(g)?' data-act="fb-open" data-id="'+esc(a.id)+'"':(lc?' data-act="nav" data-book="'+lc.book+'" data-test="'+lc.test+'" data-skill="'+lc.skill+'" data-ex="'+esc(a.ex)+'"':'');
+    var cls='rb '+(x.pend?'pd':(x.ok?'ok':'no')),at=' class="'+cls+'" style="height:'+ht+'%" title="'+esc(tip)+'" aria-label="'+esc(tip)+'"';
+    return act?'<button type="button"'+at+act+'></button>':'<span role="img"'+at+'></span>';
+  }).join('')+'</div>';
+  var a=list[0],x=inf[0],e=exOf(a.ex),g=gradeOf(a),lc=locOf(a.ex),ttl=esc(e?e.title:a.ex);
+  h+='<div class="rs-last"><span class="lbl2">Latest</span><div class="row2">'+
+    (lc?'<button class="t" type="button" data-act="nav" data-book="'+lc.book+'" data-test="'+lc.test+'" data-skill="'+lc.skill+'" data-ex="'+esc(a.ex)+'">'+ttl+'</button>':'<span class="t">'+ttl+'</span>')+
+    '<span class="mono" style="color:'+(x.pend?'var(--muted)':(x.ok?'var(--good)':'var(--bad)'))+'">'+esc(x.txt)+'</span><span class="muted">· '+fmtDM(a.ts)+'</span>'+
+    (g&&g.sticker?'<img class="stk-s" src="'+esc(g.sticker)+'" alt="Sticker">':'')+
+    (hasFb(g)?'<span class="linkish fbo" data-act="fb-open" data-id="'+esc(a.id)+'" role="button" tabindex="0">Open feedback</span>':'')+'</div>'+
+    (g&&g.feedback?'<p class="rfb" style="margin:2px 0 0">'+esc(g.feedback)+'</p>':'')+'</div>';
+  return h+'</article>';
+}
+function recentHTML(){
+  var by={listening:[],reading:[],writing:[],speaking:[]};
+  attemptsOf(U.email).filter(function(a){return a.total>0||a.kind==='submission'}).sort(function(a,b){return b.ts-a.ts}).forEach(function(a){
+    var e=exOf(a.ex),sk=e&&by[e.skill]?e.skill:'reading';by[sk].push(a);
+  });
+  return '<section class="recent" aria-label="Recent results by skill"><div class="rs-head"><h3>Recent results by skill</h3></div><div class="rs-grid">'+
+    SKORDER.map(function(sk){return rsCell(sk,by[sk])}).join('')+'</div></section>';
 }
 function setLock(b){try{document.body.classList.toggle('locked',b)}catch(e){}}
 function renderLib(){
@@ -1084,23 +1155,6 @@ function lockInfo(id){
   if(open||did)return null;
   return as.sort(function(x,y){return y.due-x.due})[0];
 }
-function qDemoBar(){
-  if(!(DEMO||(U&&U.role==='teacher')))return '';
-  return '<div class="lsdemo">Demo helper: <button class="btn sm" data-act="qdemo" data-m="ok" type="button">Fill all correct</button><button class="btn sm" data-act="qdemo" data-m="half" type="button">Half correct</button><button class="btn sm" data-act="qdemo" data-m="clear" type="button">Clear</button></div>';
-}
-function qDemo(m){
-  if(done)return;
-  var ex=exOf(NAV.ex);
-  (ex.qs||[]).forEach(function(q,k){
-    var good=m==='ok'||(m==='half'&&k%2===0),el;
-    if(q.type==='gap'){el=$('[data-id="'+q.id+'"]');if(el)el.value=m==='clear'?'':(good?String(q.ans[0]):'xx')}
-    else if(q.type==='match'){el=$('[data-id="'+q.id+'"]');if(el)el.value=m==='clear'?'-1':String(good?q.ans:(q.ans+1)%q.opts.length)}
-    else{
-      $$('input[name="'+q.id+'"]').forEach(function(i){i.checked=false});
-      if(m!=='clear'){var r=$('input[name="'+q.id+'"][value="'+(good?q.ans:(q.ans+1)%q.opts.length)+'"]');if(r)r.checked=true}
-    }
-  });
-}
 function renderPlayer(){
   var ex=exOf(NAV.ex);done=false;
   var lk=lockInfo(NAV.ex);
@@ -1110,7 +1164,7 @@ function renderPlayer(){
   }
   var teacher=U.role==='teacher',ban=teacher?'<div class="banner">Preview mode: your answers are not saved.</div>':'';
   var head='<div class="phead"><span class="chip">'+SNAME[ex.skill]+'</span><h2>'+esc(ex.title)+'</h2><p>'+esc(ex.hint)+'</p></div>';
-  var tail=qDemoBar()+'<div class="actions"><button class="btn pri" data-act="submit" id="submit" type="button">Submit</button><span class="saved" id="saveMsg"></span></div><div id="result"></div>';
+  var tail='<div class="actions"><button class="btn pri" data-act="submit" id="submit" type="button">Submit</button><span class="saved" id="saveMsg"></span></div><div id="result"></div>';
   if(ex.kind==='writing')return renderWriting(ex,head,ban);
   if(ex.kind==='speaking')return renderSpeaking(ex,head,ban);
   if(ex.kind==='lesson')return renderLesson(ex,head,ban);
@@ -1738,7 +1792,7 @@ function showTab(t){
 function signIn(email){
   var u=findUser(email),m=$('#lgMsg');
   if(!u){m.textContent=(dbh&&!dbReady)?'Still loading the class list. Try again in a moment.':'This email is not on your class list.';return false}
-  m.textContent='';U=u;RP=0;lsSet('md-email',DEMO?'':u.email);NAV={book:null,test:null,skill:null,ex:null};PANE='q';
+  m.textContent='';U=u;RP=0;lsSet('md-email',u.email);NAV={book:null,test:null,skill:null,ex:null};PANE='q';
   showTab('library');return true;
 }
 function refreshLive(){
@@ -1771,7 +1825,6 @@ document.addEventListener('click',function(e){
   if(a==='aback'){if(au)au.currentTime=Math.max(0,au.currentTime-5);return}
   if(a==='afwd'){if(au)au.currentTime=Math.min(isFinite(au.duration)?au.duration:au.currentTime+5,au.currentTime+5);return}
   if(a==='submit')return gradeNow();
-  if(a==='qdemo'){qDemo(t.dataset.m);return}
   if(a==='sub-w')return submitWriting();
   if(a==='sub-s')return submitSpeaking();
   if(a==='timer')return startTimer();
@@ -1851,9 +1904,11 @@ if(window.addEventListener){window.addEventListener('blur',leaveEvt);window.addE
 document.addEventListener('visibilitychange',function(){if(document.hidden)leaveEvt()});
 document.addEventListener('submit',function(e){if(e.target.id==='loginForm'){e.preventDefault();signIn($('#lgEmail').value)}});
 document.addEventListener('keydown',function(e){
-  if(CV&&U&&CV.i<CV.q.length&&(e.key===' '||e.key==='Enter'||e.key==='Backspace')&&!/INPUT|TEXTAREA|SELECT/.test((e.target&&e.target.tagName)||'')&&((TAB==='cards'&&CV.where==='tab')||(TAB==='library'&&NAV.daily==='review'))){
+  if(CV&&U&&CV.i<CV.q.length&&(e.key===' '||e.key==='Backspace')&&!/INPUT|TEXTAREA|SELECT/.test((e.target&&e.target.tagName)||'')&&((TAB==='cards'&&CV.where==='tab')||(TAB==='library'&&NAV.daily==='review'))){
     e.preventDefault();
-    if(e.key===' '){if(!CV.flip){CV.flip=true;rerenderReview()}}else if(CV.flip)rvRate(e.key==='Enter');
+    if(e.repeat)return;
+    if(e.key===' '){if(!CV.flip){CV.flip=true;rerenderReview()}return}
+    if(CV.flip)bsPress();
     return;
   }
   if(e.key==='Escape'&&VP){VP=null;showPop();return}
@@ -2010,9 +2065,19 @@ function reviewHTML(){
   var h='<div class="fcard"><span class="muted" style="font-size:.8rem">Card '+(CV.i+1)+' of '+CV.q.length+'</span><div class="big">'+esc(c.word)+'</div><div class="ipa muted mono">'+esc(e.ipa||'')+' <button class="spk" data-act="rv-say" type="button" aria-label="Pronounce">🔊</button></div>';
   if(!CV.flip)return h+'<div class="fbtns"><button class="btn pri" data-act="rv-flip" type="button">Show answer</button></div><div class="kh">Space: show answer</div></div>';
   h+='<div class="back"><span><b>EN</b> · '+esc(e.en||'')+'</span><span><b>VI</b> · '+esc(e.vi||'')+'</span>'+(e.ex?'<span class="ex">'+hlWord(e.ex,c.word)+'</span>':'')+'</div>';
-  return h+'<div class="fbtns"><button class="btn bad" data-act="rv-no" type="button">Forgot</button><button class="btn good" data-act="rv-yes" type="button">Got it</button></div><div class="kh">Enter: got it · Backspace: forgot</div></div>';
+  return h+'<div class="fbtns"><button class="btn bad" data-act="rv-no" type="button">Forgot</button><button class="btn good" data-act="rv-yes" type="button">Got it</button></div><div class="kh">Backspace: got it · Backspace ×2 (quick): forgot</div></div>';
 }
 function rerenderReview(){if(CV&&CV.where==='daily')renderLib();else renderCards()}
+/* Backspace x1 = Got it, Backspace x2 within BS_GAP ms = Forgot.
+   The first press waits BS_GAP ms for a second one before rating, so a double press never rates "Got it" first. */
+var BS_GAP=300,bsT=null,bsCard=-1;
+function bsClear(){if(bsT){clearTimeout(bsT);bsT=null}bsCard=-1}
+function bsPress(){
+  if(bsT&&bsCard===CV.i){bsClear();rvRate(false);return}
+  bsClear();bsCard=CV.i;
+  var fb=$('.fcard .btn.good');if(fb)fb.classList.add('kpress');
+  bsT=setTimeout(function(){var i=bsCard;bsT=null;bsCard=-1;if(CV&&CV.flip&&CV.i===i&&CV.i<CV.q.length)rvRate(true)},BS_GAP);
+}
 function rvRate(ok){
   var c=cardById(CV.q[CV.i]);if(c){rateCard(c,ok);if(ok)CV.ok++}
   CV.i++;CV.flip=false;
@@ -2116,7 +2181,7 @@ function dailyHTML(){
   '<div class="dlv"><b>'+esc(lv.name)+(p.title?' <span class="ttl">'+esc(p.title)+'</span>':'')+'</b><div class="prog"><i style="width:'+lv.pct+'%"></i></div><small>'+p.xp+' XP'+(lv.next?' · '+(lv.next-p.xp)+' to '+LV[lv.i+1][0]:' · top rank')+'</small><div class="lad">'+LV.map(function(r,i){return '<span class="'+(i===lv.i?'on':(i<lv.i?'past':''))+'">'+(i<lv.i?'✓ ':'')+r[0]+'</span>'}).join('')+'</div></div></div>'+
   '<h2>Daily practice<small>5–10 min</small></h2><div class="dgrid">'+tt.map(function(k){
     var d=DTYPES[k],dn=done.indexOf(k)>=0,off=k==='review'&&!due&&!dn;
-    return '<button class="dtask'+(dn?' dn':'')+'" data-act="dstart" data-t="'+k+'" type="button"'+(off?' disabled':'')+'><span class="di" aria-hidden="true">'+d.i+'</span><b>'+d.t+'</b></button>';
+    return '<button class="dtask'+(dn?' dn':'')+'" data-act="dstart" data-t="'+k+'" type="button"'+(off?' disabled':'')+'><b>'+esc(d.t)+'</b></button>';
   }).join('')+'</div></section>';
 }
 function shuf(a,r){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(r()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
@@ -2252,7 +2317,7 @@ function renderRanks(){
   var A=students().filter(function(s){return RK==='all'||s.cls===U.cls}).map(function(s){var p=profFor(s.email);return {s:s,p:p,xp:p.xp}}).sort(function(a,b){return b.xp-a.xp||(a.s.name<b.s.name?-1:1)});
   var row=function(x,i){
     var pr=x.p,me=x.s.email===U.email;
-    return '<div class="rk'+(me?' me':'')+'"><span class="n">'+(i<3?['🥇','🥈','🥉'][i]:i+1)+'</span>'+avatarHTML(x.s.email,38)+'<span><b>'+esc(nameOf(x.s.email))+(me?' (you)':'')+'</b>'+(pr.title?'<span class="ttl">'+esc(pr.title)+'</span>':'')+'<small>'+esc(RK==='all'?classTitle(x.s.cls):lvOf(pr.xp).name)+'</small></span><span class="mono">'+(pr.streak?'🔥 '+pr.streak:'–')+'</span><span class="mono lv"><b>'+pr.xp+'</b> XP</span></div>';
+    return '<div class="rk'+(i<3?' top'+(i+1):'')+(me?' me':'')+'"><span class="n"'+(i<3?' aria-label="Rank '+(i+1)+'"':'')+'>'+(i+1)+'</span>'+avatarHTML(x.s.email,38)+'<span><b>'+esc(nameOf(x.s.email))+(me?' (you)':'')+'</b>'+(pr.title?'<span class="ttl">'+esc(pr.title)+'</span>':'')+'<small>'+esc(RK==='all'?classTitle(x.s.cls):lvOf(pr.xp).name)+'</small></span><span class="mono">'+(pr.streak?'🔥 '+pr.streak:'–')+'</span><span class="mono lv"><b>'+pr.xp+'</b> XP</span></div>';
   };
   var me=-1;A.forEach(function(x,i){if(x.s.email===U.email)me=i});
   var h='<div class="pad"><div class="sechead"><h2>Leaderboard</h2><span class="meta">Ranked by XP</span></div><div class="subtabs" role="tablist"><button role="tab" data-act="rk-set" data-v="class" aria-selected="'+(RK==='class')+'">My class</button><button role="tab" data-act="rk-set" data-v="all" aria-selected="'+(RK==='all')+'">Everyone</button></div><div class="rklist">';
@@ -2402,7 +2467,7 @@ function renderBag(){
     var d=PZ[it.kind],act='';
     if(it.kind==='title')act=p.title===it.text?'<button class="btn sm" data-act="bag-unequip" type="button">Unequip</button>':'<button class="btn pri sm" data-act="bag-equip" data-id="'+it.id+'" type="button">Equip</button>';
     else if(it.kind==='ctitle')act=BAG.ct===it.id?'<input class="linkin" id="ctIn" maxlength="20" placeholder="Your title (max 20)" style="flex:1;min-width:140px"><button class="btn pri sm" data-act="bag-ctsave" data-id="'+it.id+'" type="button">Save</button>':'<button class="btn pri sm" data-act="bag-ct" data-id="'+it.id+'" type="button">Write title</button>';
-    else if(it.kind==='mat'||(it.kind==='custom'&&it.url))act='<a class="btn pri sm" href="'+esc(it.url)+'" target="_blank" rel="noopener" style="text-decoration:none">Open file</a>';
+    else if(it.kind==='mat'||(it.kind==='custom'&&it.url))act='';
     else if(it.kind==='hint')act='<span class="saved">Applies by itself when you open a Writing hint.</span>';
     else if(it.kind==='ext'){act=it.used?'<span class="saved">Used</span>':(BAG.ext===it.id?extPick():'<button class="btn pri sm" data-act="bag-ext" data-id="'+it.id+'" type="button">Use</button>')}
     else if(it.kind==='vip'){act=it.used?'<span class="saved">Sent to your teacher</span>':(BAG.vip===it.id?vipPick(it):'<button class="btn pri sm" data-act="bag-vip" data-id="'+it.id+'" type="button">Use</button>')}
@@ -2812,7 +2877,7 @@ function lsBody(){
 function lsDraw(){
   var st=LS.st,bar='<div class="lsbar">'+STG.map(function(n,i){return '<span class="lsstep'+(i===st?' cur':(LS.chk[i]?' dn':''))+'">'+(LS.chk[i]&&i!==st?'✓ ':(i+1)+'. ')+n+'</span>'}).join('')+'</div>';
   var ids=lsIds(st),sc=ids.filter(function(x){return LS.res[x]}).length,chk=LS.chk[st],act;
-  var chip='<span class="btn pri lsscore">Stage '+(st+1)+': '+sc+'/'+ids.length+'</span> ',demo=(!chk&&(DEMO||(U&&U.role==='teacher')))?'<div class="lsdemo">Demo helper: <button class="btn sm" data-act="ls-demo" data-m="ok" type="button">Fill all correct</button><button class="btn sm" data-act="ls-demo" data-m="half" type="button">Half correct</button><button class="btn sm" data-act="ls-demo" data-m="bad" type="button">All wrong</button></div>':'';
+  var chip='<span class="btn pri lsscore">Stage '+(st+1)+': '+sc+'/'+ids.length+'</span> ',demo=(!chk)?'<div class="lsdemo">Demo helper: <button class="btn sm" data-act="ls-demo" data-m="ok" type="button">Fill all correct</button><button class="btn sm" data-act="ls-demo" data-m="half" type="button">Half wrong</button><button class="btn sm" data-act="ls-demo" data-m="bad" type="button">All wrong</button></div>':'';
   if(LS.fail===st)act='<div class="actions">'+chip+'<button class="btn" data-act="ls-retry" type="button">Try again</button></div><p class="muted" style="margin:6px 0 0">You need at least 70% to move on. The correct answers stay hidden until you reach it, so listen again and retry.</p>';
   else if(!chk)act='<div class="actions"><button class="btn pri" data-act="ls-check" type="button">Check answers</button></div>';
   else act='<div class="actions">'+chip+(st<4?'<button class="btn pri" data-act="ls-next" type="button">Next: '+STG[st+1]+' →</button>':'')+'</div>';
