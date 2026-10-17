@@ -594,8 +594,8 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
         <p class="msg" id="lgMsg" aria-live="polite"></p>
       </form>
       <div class="demo-ids"><span>Demo accounts:</span>
-        <button class="btn sm" type="button" data-act="demo" data-email="teacher@demo.vn">Teacher</button>
-        <button class="btn sm" type="button" data-act="demo" data-email="minhanh@demo.vn">Student · Minh Anh</button>
+        <button class="btn sm" type="button" data-act="demo" data-email="lorenkids795@gmail.com">Demo: Login as Teacher</button>
+        <button class="btn sm" type="button" data-act="demo" data-email="minhanh@demo.vn">Demo: Login as Student</button>
       </div>
     </div>
   </section>
@@ -794,7 +794,7 @@ function rebuildCustom(){
 /* ---------- Roster ---------- */
 var CLS=[['Foundation','Class 6.0-A'],['Intensive','Class 6.5-B']];
 var STU=[['Minh Anh','minhanh',0,.75],['Quoc Bao','quocbao',0,.55],['Thu Ha','thuha',0,.85],['Gia Huy','giahuy',0,.6],['Ngoc Lan','ngoclan',0,.7],['Hoang Nam','hoangnam',1,.8],['Phuong Linh','phuonglinh',1,.72],['Duc Tri','ductri',1,.6],['Khanh Vy','khanhvy',1,.88],['Bao Chau','baochau',1,.66]];
-var DEMO_ROSTER=[{email:'teacher@demo.vn',name:'Ms. Lan',role:'teacher',course:'',cls:'',demo:true}].concat(STU.map(function(s){return {email:s[1]+'@demo.vn',name:s[0],role:'student',course:CLS[s[2]][0],cls:CLS[s[2]][1],demo:true}}));
+var DEMO_ROSTER=[{email:'teacher@demo.vn',name:'Ms. Lan',role:'teacher',course:'',cls:'',demo:true},{email:'lorenkids795@gmail.com',name:'Ms. Lan',role:'teacher',course:'',cls:'',demo:true}].concat(STU.map(function(s){return {email:s[1]+'@demo.vn',name:s[0],role:'student',course:CLS[s[2]][0],cls:CLS[s[2]][1],demo:true}}));
 var rosterDocs=[],localRoster=null;
 function allRoster(){
   var m={},out=[];
@@ -1084,6 +1084,23 @@ function lockInfo(id){
   if(open||did)return null;
   return as.sort(function(x,y){return y.due-x.due})[0];
 }
+function qDemoBar(){
+  if(!(DEMO||(U&&U.role==='teacher')))return '';
+  return '<div class="lsdemo">Demo helper: <button class="btn sm" data-act="qdemo" data-m="ok" type="button">Fill all correct</button><button class="btn sm" data-act="qdemo" data-m="half" type="button">Half correct</button><button class="btn sm" data-act="qdemo" data-m="clear" type="button">Clear</button></div>';
+}
+function qDemo(m){
+  if(done)return;
+  var ex=exOf(NAV.ex);
+  (ex.qs||[]).forEach(function(q,k){
+    var good=m==='ok'||(m==='half'&&k%2===0),el;
+    if(q.type==='gap'){el=$('[data-id="'+q.id+'"]');if(el)el.value=m==='clear'?'':(good?String(q.ans[0]):'xx')}
+    else if(q.type==='match'){el=$('[data-id="'+q.id+'"]');if(el)el.value=m==='clear'?'-1':String(good?q.ans:(q.ans+1)%q.opts.length)}
+    else{
+      $$('input[name="'+q.id+'"]').forEach(function(i){i.checked=false});
+      if(m!=='clear'){var r=$('input[name="'+q.id+'"][value="'+(good?q.ans:(q.ans+1)%q.opts.length)+'"]');if(r)r.checked=true}
+    }
+  });
+}
 function renderPlayer(){
   var ex=exOf(NAV.ex);done=false;
   var lk=lockInfo(NAV.ex);
@@ -1093,7 +1110,7 @@ function renderPlayer(){
   }
   var teacher=U.role==='teacher',ban=teacher?'<div class="banner">Preview mode: your answers are not saved.</div>':'';
   var head='<div class="phead"><span class="chip">'+SNAME[ex.skill]+'</span><h2>'+esc(ex.title)+'</h2><p>'+esc(ex.hint)+'</p></div>';
-  var tail='<div class="actions"><button class="btn pri" data-act="submit" id="submit" type="button">Submit</button><span class="saved" id="saveMsg"></span></div><div id="result"></div>';
+  var tail=qDemoBar()+'<div class="actions"><button class="btn pri" data-act="submit" id="submit" type="button">Submit</button><span class="saved" id="saveMsg"></span></div><div id="result"></div>';
   if(ex.kind==='writing')return renderWriting(ex,head,ban);
   if(ex.kind==='speaking')return renderSpeaking(ex,head,ban);
   if(ex.kind==='lesson')return renderLesson(ex,head,ban);
@@ -1721,7 +1738,7 @@ function showTab(t){
 function signIn(email){
   var u=findUser(email),m=$('#lgMsg');
   if(!u){m.textContent=(dbh&&!dbReady)?'Still loading the class list. Try again in a moment.':'This email is not on your class list.';return false}
-  m.textContent='';U=u;RP=0;lsSet('md-email',u.email);NAV={book:null,test:null,skill:null,ex:null};PANE='q';
+  m.textContent='';U=u;RP=0;lsSet('md-email',DEMO?'':u.email);NAV={book:null,test:null,skill:null,ex:null};PANE='q';
   showTab('library');return true;
 }
 function refreshLive(){
@@ -1754,6 +1771,7 @@ document.addEventListener('click',function(e){
   if(a==='aback'){if(au)au.currentTime=Math.max(0,au.currentTime-5);return}
   if(a==='afwd'){if(au)au.currentTime=Math.min(isFinite(au.duration)?au.duration:au.currentTime+5,au.currentTime+5);return}
   if(a==='submit')return gradeNow();
+  if(a==='qdemo'){qDemo(t.dataset.m);return}
   if(a==='sub-w')return submitWriting();
   if(a==='sub-s')return submitSpeaking();
   if(a==='timer')return startTimer();
@@ -2794,7 +2812,7 @@ function lsBody(){
 function lsDraw(){
   var st=LS.st,bar='<div class="lsbar">'+STG.map(function(n,i){return '<span class="lsstep'+(i===st?' cur':(LS.chk[i]?' dn':''))+'">'+(LS.chk[i]&&i!==st?'✓ ':(i+1)+'. ')+n+'</span>'}).join('')+'</div>';
   var ids=lsIds(st),sc=ids.filter(function(x){return LS.res[x]}).length,chk=LS.chk[st],act;
-  var chip='<span class="btn pri lsscore">Stage '+(st+1)+': '+sc+'/'+ids.length+'</span> ',demo=(!chk)?'<div class="lsdemo">Demo helper: <button class="btn sm" data-act="ls-demo" data-m="ok" type="button">Fill all correct</button><button class="btn sm" data-act="ls-demo" data-m="half" type="button">Half wrong</button><button class="btn sm" data-act="ls-demo" data-m="bad" type="button">All wrong</button></div>':'';
+  var chip='<span class="btn pri lsscore">Stage '+(st+1)+': '+sc+'/'+ids.length+'</span> ',demo=(!chk&&(DEMO||(U&&U.role==='teacher')))?'<div class="lsdemo">Demo helper: <button class="btn sm" data-act="ls-demo" data-m="ok" type="button">Fill all correct</button><button class="btn sm" data-act="ls-demo" data-m="half" type="button">Half correct</button><button class="btn sm" data-act="ls-demo" data-m="bad" type="button">All wrong</button></div>':'';
   if(LS.fail===st)act='<div class="actions">'+chip+'<button class="btn" data-act="ls-retry" type="button">Try again</button></div><p class="muted" style="margin:6px 0 0">You need at least 70% to move on. The correct answers stay hidden until you reach it, so listen again and retry.</p>';
   else if(!chk)act='<div class="actions"><button class="btn pri" data-act="ls-check" type="button">Check answers</button></div>';
   else act='<div class="actions">'+chip+(st<4?'<button class="btn pri" data-act="ls-next" type="button">Next: '+STG[st+1]+' →</button>':'')+'</div>';
