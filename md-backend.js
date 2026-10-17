@@ -153,6 +153,7 @@
     try { ended = sessionStorage.getItem('md-ended') || ''; sessionStorage.removeItem('md-ended'); } catch (e) {}
     if (ended === 'moved') say('Your email was changed by the admin. Sign in with your new email.');
     else if (ended === 'off') say('Your account is paused. Ask your teacher.');
+    else if (ended === 'kicked') say('Your account was removed. To come back, choose "First time here? Create your password".');
 
     function run(btn, fn) {
       btn.disabled = true; say('');
@@ -209,7 +210,7 @@
   // Paused or moved (email changed by the admin): sign out and show why on the sign-in page.
   function checkStatus(fb, em) {
     fetch(API + '/status?em=' + encodeURIComponent(em)).then(function (r) { return r.json(); }).then(function (d) {
-      var why = d && d.moved ? 'moved' : d && d.off ? 'off' : '';
+      var why = d && d.moved ? 'moved' : d && d.off ? 'off' : d && d.kicked ? 'kicked' : '';
       if (!why) return;
       try { sessionStorage.setItem('md-ended', why); sessionStorage.removeItem('md-akey'); localStorage.removeItem('md-email'); } catch (e) {}
       fb.auth().signOut().then(function () { location.reload(); });

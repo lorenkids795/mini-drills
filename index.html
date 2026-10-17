@@ -3010,8 +3010,13 @@ var ADMIN_GUIDE=[
   ['Học sinh hoặc giáo viên quên mật khẩu',[
     'Admin → Users → tìm theo tên hoặc email → Change password → bấm Generate (hoặc tự gõ) → Copy → Save password.',
     'Gửi mật khẩu mới cho người đó. Mật khẩu cũ hết tác dụng ngay. Nếu họ bị khóa 15 phút vì nhập sai nhiều lần, đổi mật khẩu cũng gỡ khóa.']],
-  ['Học sinh nghỉ học (tạm khóa)',[
-    'Admin → Users → Pause. Học sinh không đăng nhập được, thiết bị đang mở bị đăng xuất trong vòng 10 phút.',
+  ['Học sinh nghỉ học (Kick)',[
+    'Admin → Users → Kick. Tài khoản bị xóa: mật khẩu hết tác dụng, học sinh rời khỏi danh sách lớp và bảng xếp hạng, thiết bị đang mở bị đăng xuất trong vòng 10 phút.',
+    'Tên của học sinh hiện lại trên form đăng ký. Muốn quay lại, học sinh phải đăng ký lại từ đầu (First time here? → chọn lớp, tên, email, mật khẩu).',
+    'Bài làm, XP và flashcard cũ KHÔNG bị xóa: nếu học sinh đăng ký lại bằng đúng email cũ thì dữ liệu tự quay về; đăng ký bằng email khác thì bắt đầu từ đầu.',
+    'Nếu học sinh nghỉ hẳn, xóa luôn tên trong Google Sheet để không ai đăng ký vào tên đó.']],
+  ['Tài khoản bị tạm khóa (Paused)',[
+    'Giáo viên bị Remove sẽ ở trạng thái Paused. Bấm Resume trong Users để mở lại.',
     'Không có dữ liệu nào bị xóa. Bấm Resume để mở lại, mọi bài làm, XP và flashcard vẫn còn nguyên.']],
   ['Google Sheet danh sách lớp',[
     'Form đăng ký của học sinh (chọn lớp → chọn tên) lấy danh sách từ Google Sheet. Chỉ học sinh có tên trong Sheet mới đăng ký được, mỗi tên chỉ đăng ký được một lần.',
@@ -3078,6 +3083,10 @@ function demoAdminRun(path,b){
     if(String(b.newPassword||'').length<6)err('The new password needs at least 6 characters.');
     if(em==='admin@demo.vn'){if(!b.oldPassword)err('Your current password is wrong.')}else if(!find(em))err('This email is not a student or teacher in the app.');
     return {ok:true}}
+  if(path==='admin/kick'){
+    var ki=-1;DEMO_ROSTER.forEach(function(r,i){if(r.email===em&&r.role==='student')ki=i});
+    if(ki<0)err('Only students can be kicked. To remove a teacher, use the Teachers tab.');
+    DEMO_ROSTER.splice(ki,1);return {ok:true}}
   if(path==='admin/active'){
     if(em==='admin@demo.vn')err('The admin account cannot be paused.');if(!find(em))err('This email is not a student or teacher in the app.');
     if(b.active===false)DEMO_ADM.off[em]=1;else delete DEMO_ADM.off[em];return {ok:true}}
@@ -3210,7 +3219,7 @@ function adListHTML(){
     if(u.role==='admin')acts='<button class="btn sm" type="button" data-act="ad-sub" data-v="me">My account</button>';
     else if(u.status!=='moved')acts='<button class="btn sm" type="button" data-act="ad-pw" data-email="'+e+'">Change password</button>'+
       (u.role==='student'?'<button class="btn sm" type="button" data-act="ad-cls" data-email="'+e+'">Edit class</button>':'')+
-      (u.status==='paused'?'<button class="btn sm" type="button" data-act="ad-on" data-email="'+e+'">Resume</button>':'<button class="btn sm bad" type="button" data-act="ad-off" data-email="'+e+'">Pause</button>');
+      (u.status==='paused'?'<button class="btn sm" type="button" data-act="ad-on" data-email="'+e+'">Resume</button>':u.role==='student'?'<button class="btn sm bad" type="button" data-act="ad-kick" data-email="'+e+'">Kick</button>':'');
     return '<tr><td data-l="Name"><b>'+esc(u.name||'—')+'</b>'+(u.src==='env'&&u.role==='teacher'?'<small>Listed in Cloudflare (TEACHERS)</small>':'')+'</td>'+
       '<td data-l="Email" class="mono" style="font-size:.82rem">'+e+'</td>'+
       '<td data-l="Class">'+(u.cls?esc(classTitle(u.cls))+(u.course?'<small>'+esc(u.course)+'</small>':''):'—')+'</td>'+
@@ -3283,9 +3292,9 @@ function adAct(a,t){
       run:function(){var v=($('#adNewPw').value||'').trim();if(v.length<6)return Promise.reject(new Error('The new password needs at least 6 characters.'));
         return adminApi('admin/password',{email:who,newPassword:v}).then(function(){return adDone('Password changed for '+nm+'.')})}};
     renderAdmin();var pi=$('#adNewPw');if(pi)pi.focus();return true}
-  if(a==='ad-off'){
-    AD.modal={title:'Pause this account?',text:nm+' ('+who+') can no longer sign in, and devices that are signed in are signed out within 10 minutes. Nothing is deleted. Use Resume to undo.',ok:'Pause',danger:true,
-      run:function(){return adminApi('admin/active',{email:who,active:false}).then(function(){return adDone(nm+' is paused.')})}};
+  if(a==='ad-kick'){
+    AD.modal={title:'Kick this student?',text:'The account of '+nm+' ('+who+') is deleted: the password stops working, they leave the class list, and devices that are signed in are signed out within 10 minutes. Their name is free again on the sign-in page, so they must register again to come back. Their past work and XP are kept and come back only if they register with the same email.',ok:'Kick',danger:true,
+      run:function(){return adminApi('admin/kick',{email:who}).then(function(){return adDone(nm+' was kicked.')})}};
     renderAdmin();return true}
   if(a==='ad-on'){adBusy(t,true);adminApi('admin/active',{email:who,active:true}).then(function(){return adDone(nm+' can sign in again.')},function(e){adBusy(t,false);adSay(e.message)});return true}
   if(a==='ad-trm'){

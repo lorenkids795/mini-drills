@@ -99,7 +99,7 @@ Mỗi tab ứng với một `<section id="v-...">`: `library` dùng `#v-lib`, c�
    - **Vai trò ở server** (`roleOf`): `ADMIN_EMAIL` → KV `staff` hoặc biến `TEACHERS` → `roster/{email}` (student). Claims `{em, role, nm, adm?}`; admin có `role:'teacher'` + `adm:true`.
    - **Vai trò ở client**: ở site thật luôn lấy từ `window.MD_USER` (`meFromToken()` trong `findUser()`, `isT` ở Boot). Boot **chờ** `MD_USER` rồi mới `signIn` (khung đăng nhập hiện "Signing you in…" qua `#v-login[data-wait]`). `CFG.teachers` chỉ còn dùng cho demo.
    - **Admin**: lần đăng nhập đầu tạo `acct:` từ `ADMIN_PASSWORD` (`seedAdmin`). Login trả thêm `adminKey` (KV `adm:<key>`, 12 giờ), lưu ở `sessionStorage['md-akey']`, gửi bằng header `X-Admin-Key`. Hết hạn → tab Admin hiện ô "Enter your admin password to continue" (`/api/admin/unlock`).
-   - **Tạm khóa / đổi email**: KV `off:<email>` = `'1'` hoặc `'moved:<email mới>'`. Login từ chối; `md-backend.js` gọi `GET /api/status?em=` lúc khởi động và 10 phút/lần, bị khóa thì `signOut()` và hiện lý do (`sessionStorage['md-ended']`).
+   - **Tạm khóa / đổi email / kick**: KV `off:<email>` = `'1'`, `'moved:<email mới>'` hoặc `'kicked'`. Trong Users, học sinh có nút **Kick** (không còn nút Pause). Login từ chối; `md-backend.js` gọi `GET /api/status?em=` lúc khởi động và 10 phút/lần, bị khóa thì `signOut()` và hiện lý do (`sessionStorage['md-ended']`).
    - Học sinh đăng ký lần đầu: chọn lớp, chọn tên (từ collection `names` chưa có ai nhận), rồi nhập email và mật khẩu. Server đặt `names/{id}.claimed=true` (có precondition `updateTime`) và tạo `roster/{email}`.
    - Giáo viên: email phải nằm trong biến môi trường `TEACHERS` và trong `MD_CONFIG.teachers`. Lần đầu tạo mật khẩu cần `ADMIN_SETUP_KEY`.
    - Giới hạn thử: sai 10 lần thì khóa 15 phút; tối đa 30 lần đăng ký mỗi IP mỗi giờ.
@@ -111,13 +111,14 @@ Mỗi tab ứng với một `<section id="v-...">`: `library` dùng `#v-lib`, c�
 | Method | Path | Mục đích |
 |---|---|---|
 | GET | `/api/names` | tên chưa có người nhận (form đăng ký) |
-| GET | `/api/status?em=` | `{ok}` / `{off}` / `{moved}` |
+| GET | `/api/status?em=` | `{ok}` / `{off}` / `{moved}` / `{kicked}` |
 | POST | `/api/login`, `/api/register` | đăng nhập, đăng ký (admin nhận thêm `adminKey`) |
 | POST | `/api/reset` | form cũ của giáo viên (xác thực bằng mật khẩu giáo viên); không đổi được mật khẩu admin |
 | POST | `/api/admin/unlock` | `{password}` → `adminKey` mới |
 | POST | `/api/admin/users` | mọi tài khoản + `status` (`active`/`paused`/`moved`) + `hasPassword` |
 | POST | `/api/admin/password` | `{email, newPassword}`; với chính admin cần thêm `oldPassword` |
-| POST | `/api/admin/active` | `{email, active}` → đặt/xóa `off:` |
+| POST | `/api/admin/active` | `{email, active}` → đặt/xóa `off:` (chỉ còn dùng cho Resume giáo viên bị Remove) |
+| POST | `/api/admin/kick` | `{email}`: xóa tài khoản học sinh (`acct:`, `roster/{email}`, trả tên: xóa `names/{id}` có `sid` hoặc đặt `claimed:false`), đặt `off:<email>='kicked'`. **Giữ** bài làm/XP/flashcard; đăng ký lại cùng email thì dữ liệu tự gắn lại. `register` cho phép email `kicked` và xóa cờ này |
 | POST | `/api/admin/sheet` | `{op}`: `get`, `check` + `url`, `save` + `url`, `refresh`, `unlink` → cột nhận được, 5 dòng đầu, tên chưa đăng ký theo lớp |
 | POST | `/api/admin/class` | `{email, cls, course}`: đổi lớp của học sinh đã đăng ký (`roster`) |
 | POST | `/api/admin/teachers` | `{op, name, email, password}`, `op` = `'add'` hoặc `'remove'` |

@@ -13,11 +13,12 @@
 3. [ ] **Tài khoản cũ**: giáo viên trong `TEACHERS` đăng nhập được như trước. Học sinh cũ đăng nhập được. Tải lại trang (F5) → vào thẳng app, không phải đăng nhập lại (có thể thấy "Signing you in…" trong 1–2 giây).
 4. [ ] **Đổi mật khẩu học sinh**: Admin → Users → tìm học sinh → Change password → Generate → Copy → Save password. Đăng nhập bằng mật khẩu mới: được. Bằng mật khẩu cũ: báo "Wrong email or password."
    - [ ] Nhập sai mật khẩu 10 lần → "Too many tries". Admin đổi mật khẩu → đăng nhập được ngay.
-5. [ ] **Tạm khóa**: học sinh đang mở app trên máy B. Admin → Users → Pause.
-   - [ ] Đăng nhập lại bằng tài khoản đó: báo "Your account is paused. Ask your teacher."
-   - [ ] Máy B bị đưa về trang đăng nhập, kèm thông báo, trong vòng 10 phút (tải lại trang thì thấy ngay).
-   - [ ] Resume → đăng nhập lại bình thường, XP và bài làm còn nguyên.
-   - [ ] Remove một giáo viên ở tab Teachers → giáo viên đó không đăng nhập được nữa.
+5. [ ] **Kick học sinh**: học sinh đang mở app trên máy B. Admin → Users → **Kick** → xác nhận.
+   - [ ] Học sinh biến mất khỏi Users và Leaderboard.
+   - [ ] Máy B bị đưa về trang đăng nhập với thông báo "Your account was removed…" trong vòng 10 phút (tải lại trang thì thấy ngay).
+   - [ ] Đăng nhập bằng mật khẩu cũ: báo "Wrong email or password."
+   - [ ] Tên học sinh hiện lại trong form đăng ký (đúng lớp). Đăng ký lại bằng **cùng email** → vào được, XP và bài làm cũ còn nguyên.
+   - [ ] Remove một giáo viên ở tab Teachers → giáo viên đó không đăng nhập được nữa. (Giáo viên trong `TEACHERS` thì hiện "Paused" ở Users, bấm Resume để mở lại.)
 6. [ ] **Phiên admin**: mở tab trình duyệt mới → Admin → Users → thấy ô "Enter your admin password to continue" → nhập mật khẩu → danh sách hiện ra (không bị đăng xuất khỏi app).
 7. [ ] **My account**: đổi mật khẩu admin (nhập mật khẩu hiện tại sai → báo lỗi; đúng → đổi được). Đăng xuất, đăng nhập bằng mật khẩu mới.
 8. [ ] **Không tự khóa admin**: dòng Admin trong Users không có nút Pause / Change password (chỉ có "My account").

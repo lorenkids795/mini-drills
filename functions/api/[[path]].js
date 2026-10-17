@@ -205,6 +205,10 @@ async function fsUpdate(env, col, id, obj, updateTime) {
   const r = await fs(env, 'PATCH', '/' + col + '/' + encodeURIComponent(id) + '?' + mask + pre, { fields: toFields(obj) });
   return r.ok;
 }
+async function fsDelete(env, col, id) {
+  const r = await fs(env, 'DELETE', '/' + col + '/' + encodeURIComponent(id));
+  if (!r.ok && r.status !== 404) throw new Error('firestore delete ' + r.status);
+}
 // create only if the document does not exist yet (false = it already exists)
 async function fsCreate(env, col, id, obj) {
   const r = await fs(env, 'PATCH', '/' + col + '/' + encodeURIComponent(id) + '?currentDocument.exists=false', { fields: toFields(obj) });
@@ -354,15 +358,17 @@ async function roleOf(env, email) {
   if (row && row.data.role !== 'teacher') return { role: 'student', adm: false, name: row.data.name };
   return null;
 }
-// '' | 'off' (paused by the admin) | 'moved' (email changed by the admin)
+// '' | 'off' (paused by the admin) | 'moved' (email changed by the admin) | 'kicked' (account deleted, may register again)
 async function offState(env, email) {
   const v = await env.MD_KV.get('off:' + email);
   if (!v) return '';
+  if (v === 'kicked') return 'kicked';
   return v.indexOf('moved:') === 0 ? 'moved' : 'off';
 }
 const OFF_MSG = {
   off: 'Your account is paused. Ask your teacher.',
   moved: 'Your email was changed by the admin. Sign in with your new email.',
+  kicked: 'Your account was removed. To come back, create your password again on the sign-in page.',
 };
 
 // The first admin login creates the password from ADMIN_PASSWORD. After that the password in KV is used.
@@ -444,7 +450,7 @@ async function register(env, body, ip) {
   if (email === adminEmail(env)) return fail('This is the admin email. Use Sign in.', 403);
   if (await env.MD_KV.get('acct:' + email)) return fail('This email already has a password. Use Sign in. If you forgot it, ask your teacher to reset it.', 409);
   const off = await offState(env, email);
-  if (off) return fail(OFF_MSG[off], 403);
+  if (off && off !== 'kicked') return fail(OFF_MSG[off], 403); // a kicked student may register again
 
   if (teachers(env).indexOf(email) >= 0) {
     const key = String(body.setupKey || '');
@@ -489,6 +495,7 @@ async function register(env, body, ip) {
     name = row.data.name;
   }
   await savePassword(env, email, pw);
+  if (off === 'kicked') await env.MD_KV.delete('off:' + email);
   return json({ token: await customToken(env, email, { role: 'student', name }), user: { email, name, role: 'student' } });
 }
 
@@ -526,7 +533,7 @@ async function adminUsers(env) {
   });
   await Promise.all(out.map(async (r) => {
     const off = await env.MD_KV.get('off:' + r.email);
-    r.status = !off ? 'active' : off.indexOf('moved:') === 0 ? 'moved' : 'paused';
+    r.status = !off || off === 'kicked' ? 'active' : off.indexOf('moved:') === 0 ? 'moved' : 'paused';
     r.hasPassword = !!(await env.MD_KV.get('acct:' + r.email));
   }));
   return json({ users: out, me: ad });
@@ -643,6 +650,27 @@ async function adminSheet(env, body) {
   return json(Object.assign({ linked: true, url: conf.url }, await sheetSummary(env, c)));
 }
 
+// Kick a student: delete the account (password, class-list entry) and free their name, so they must register again.
+// Learning data (attempts, XP, flashcards…) is kept: registering again with the same email brings it back.
+async function adminKick(env, body) {
+  const email = normEmail(body.email);
+  if (!emailOk(email)) return fail('Enter a valid email.');
+  if (email === adminEmail(env)) return fail('The admin account cannot be kicked.', 403);
+  const row = await fsGet(env, 'roster', email);
+  if (!row || row.data.role === 'teacher') return fail('Only students can be kicked. To remove a teacher, use the Teachers tab.', 404);
+  // free the name: Sheet claims (have sid) are deleted, old CSV names are marked unclaimed again
+  const names = (await fsList(env, 'names')).filter((n) => normEmail(n.email) === email);
+  for (const n of names) {
+    if (n.sid) await fsDelete(env, 'names', n.id);
+    else await fsUpdate(env, 'names', n.id, { claimed: false, email: '' });
+  }
+  await fsDelete(env, 'roster', email);
+  await env.MD_KV.delete('acct:' + email);
+  await env.MD_KV.delete('rl:' + email);
+  await env.MD_KV.put('off:' + email, 'kicked'); // open devices are signed out by /api/status
+  return json({ ok: true });
+}
+
 // Move a registered student to another class (the Sheet only matters before sign-up).
 async function adminClass(env, body) {
   const email = normEmail(body.email), cls = classLabel(String(body.cls || '').slice(0, 60)), course = String(body.course || '').trim().slice(0, 60);
@@ -663,7 +691,8 @@ export async function onRequest(ctx) {
     if (route === 'status' && request.method === 'GET') {
       const em = normEmail(url.searchParams.get('em'));
       const s = emailOk(em) ? await offState(env, em) : '';
-      return json(s === 'off' ? { off: true } : s === 'moved' ? { moved: true } : { ok: true });
+      const st = {}; st[s || 'ok'] = true; // { ok } | { off } | { moved } | { kicked }
+      return json(st);
     }
     if (request.method !== 'POST') return fail('Not found.', 404);
     let body = {};
@@ -683,6 +712,7 @@ export async function onRequest(ctx) {
       if (route === 'admin/teachers') return await adminTeachers(env, body);
       if (route === 'admin/sheet') return await adminSheet(env, body);
       if (route === 'admin/class') return await adminClass(env, body);
+      if (route === 'admin/kick') return await adminKick(env, body);
     }
     return fail('Not found.', 404);
   } catch (e) {
