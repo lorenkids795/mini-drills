@@ -620,8 +620,8 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
   <section id="v-roster" hidden>
     <div class="pad">
       <h3>Class list</h3>
-      <p class="h">In the live site this list syncs by itself from your published Google Sheet (CSV link). The demo cannot fetch outside links, so paste the CSV text here to try it. Columns: <span class="mono">email, name, course, class</span>.</p>
-      <textarea class="csv" id="csvIn" spellcheck="false" aria-label="CSV text" placeholder="email,name,course,class&#10;an@example.com,Nguyen Van An,Foundation,Class 6.0-A"></textarea>
+      <p class="h">Paste your class list as CSV. Columns: <span class="mono">name, course, class</span> (course is optional). Each student then picks their class and name on the sign-in page and sets their own email and password. If you already know a student's email, add an <span class="mono">email</span> column and fill it in for that student.</p>
+      <textarea class="csv" id="csvIn" spellcheck="false" aria-label="CSV text" placeholder="name,course,class&#10;Nguyen Van An,Foundation,Class 6.0-A&#10;Tran Thi Binh,Foundation,Class 6.0-A"></textarea>
       <div class="actions"><button class="btn pri" type="button" data-act="import-csv">Import list</button><span class="saved" id="rMsg" aria-live="polite"></span></div>
     </div>
     <div id="rosterBody" style="margin-top:20px"></div>
@@ -1608,14 +1608,20 @@ function importCSV(){
   var hd=rows[0].map(function(x){return x.trim().toLowerCase()});
   var col=function(names){for(var i=0;i<hd.length;i++)if(names.indexOf(hd[i])>=0)return i;return -1};
   var ci={email:col(['email','e-mail']),name:col(['name','full name','họ tên','họ và tên']),course:col(['course','khóa','khoá']),cls:col(['class','lớp'])};
-  if(ci.email<0||ci.name<0||ci.cls<0){msg.textContent='Header needs at least: email, name, class (course is optional).';return}
-  var out=[],seen={};
-  rows.slice(1).forEach(function(r){var e=(r[ci.email]||'').trim().toLowerCase();if(!/^\S+@\S+\.\S+$/.test(e)||seen[e])return;seen[e]=1;out.push({email:e,name:(r[ci.name]||'').trim()||e,role:'student',course:ci.course>=0?(r[ci.course]||'').trim():'',cls:(r[ci.cls]||'').trim()})});
-  if(!out.length){msg.textContent='No valid email rows found.';return}
-  var fin=function(){msg.textContent='Imported '+out.length+' students. Anyone not in the list can no longer sign in.';renderRoster()};
+  if(ci.name<0||ci.cls<0){msg.textContent='Header needs at least: name, class. Email and course are optional.';return}
+  var out=[],pend=[],seen={},slug=function(t){return String(t).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')};
+  rows.slice(1).forEach(function(r){
+    var e=ci.email>=0?(r[ci.email]||'').trim().toLowerCase():'',nm=(r[ci.name]||'').trim(),cl=(r[ci.cls]||'').trim(),co=ci.course>=0?(r[ci.course]||'').trim():'';
+    if(!cl)return;
+    if(/^\S+@\S+\.\S+$/.test(e)){if(!seen[e]){seen[e]=1;out.push({email:e,name:nm||e,role:'student',course:co,cls:cl})}}
+    else if(nm)pend.push({id:slug(cl+'-'+nm),name:nm,course:co,cls:cl});
+  });
+  if(!out.length&&!pend.length){msg.textContent='No valid rows found.';return}
+  var fin=function(){msg.textContent='Imported '+out.length+' students with email and '+pend.length+' names. Students pick their name on the sign-in page and set their own password.';renderRoster()};
   if(dbh){
     var ops=out.map(function(r){return dbh.doc('roster/'+r.email).set(Object.assign({ts:Date.now()},r))});
-    rosterDocs.forEach(function(d){if(!seen[d.email])ops.push(dbh.doc('roster/'+d.docId).delete())});
+    pend.forEach(function(p){ops.push(dbh.doc('names/'+p.id).set({name:p.name,course:p.course,cls:p.cls,ts:Date.now()},{merge:true}))});
+    rosterDocs.forEach(function(d){if(!seen[d.email]&&!d.self&&d.role!=='teacher'&&out.length)ops.push(dbh.doc('roster/'+d.docId).delete())});
     Promise.all(ops).then(fin,function(){localRoster=out;fin()});
   }else{localRoster=out;fin()}
 }
