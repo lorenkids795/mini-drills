@@ -26,7 +26,7 @@
 //   off:<email>    '1' = paused, 'moved:<new>'   blocks login; the app checks /api/status every 10 minutes
 //   adm:<key>      ADMIN_EMAIL, 12 h             admin session key, sent as X-Admin-Key to /api/admin/*
 //   sheet          { url, csv, ts }              Google Sheet class list; sheetcache = last read, 5 minutes
-//   ai:<attemptId> 'pending' | 'done', 2 days    one AI check per Writing submission
+//   ai:<attemptId> 'pending:<ts>' | 'done', 2 days  one AI check per Writing submission (pending older than 6 min = dead, may run again)
 //   aiq:<email>:<day>  AI checks used that day
 //   aipq:<email>:<day> AI practice exercises made that day (50)
 
@@ -726,7 +726,7 @@ const AI_PRACTICE_ITEMS = {
     properties: {
       sentence: { type: 'STRING' },
       answers: { type: 'ARRAY', items: { type: 'STRING' } },
-      clue_type: { type: 'STRING', enum: ['base_form', 'meaning', 'wrong_word'] },
+      clue_type: { type: 'STRING' },
     },
     required: ['sentence', 'answers', 'clue_type'],
   },
@@ -755,7 +755,7 @@ const AI_SCHEMA = {
           corrected_text: { type: 'STRING' },
           category: { type: 'STRING' },
           explanation: { type: 'STRING' },
-          type: { type: 'STRING', enum: ['Grammar', 'Vocabulary', 'Off-topic'] },
+          type: { type: 'STRING' },
           practice: AI_PRACTICE_ITEMS,
         },
         required: ['original_text', 'corrected_text', 'category', 'explanation', 'type', 'practice'],
@@ -795,30 +795,73 @@ function sentenceAt(text, i, len) {
   return out;
 }
 
-async function askGemini(env, prompt, schema) {
-  const model = String(env.GEMINI_MODEL || 'gemini-2.5-flash').trim();
+// Gemini call. Every failure has a short code (shown to the student as "code: …", logged for Cloudflare Real-time logs):
+// nokey, timeout, network, http<status> (400/403 key, 404 model, 429 quota, 5xx busy), blocked, empty, too_long, parse.
+// One automatic retry: without the schema if Gemini rejects it, without thinking settings if those are rejected,
+// or after a short wait when Gemini is busy / returned something unreadable.
+class AiError extends Error {
+  constructor(code, detail) { super(code + (detail ? ': ' + detail : '')); this.code = code; this.detail = String(detail || ''); }
+}
+const AI_TIMEOUT = 300000; // 5 minutes: long essays (corrections + 2 practice sentences per mistake) can be slow on a busy day
+const AI_SHAPE =
+  '\nReturn ONLY one JSON object, no other text, in this shape: {"corrections":[{"original_text":"...","corrected_text":"...","category":"...","explanation":"...","type":"Grammar","practice":[{"sentence":"... ___ (clue) ...","answers":["..."],"clue_type":"base_form"}]}],"vocabulary_upgrades":[{"original":"...","upgraded":"...","example":"...","note":"..."}]}\n';
+const PRACTICE_SHAPE = '\nReturn ONLY one JSON object, no other text, in this shape: {"practice":[{"sentence":"... ___ (clue) ...","answers":["..."],"clue_type":"base_form"}]}\n';
+function parseJsonLoose(raw) {
+  try { return JSON.parse(raw); } catch (e) { /* try the part between the first { and the last } */ }
+  const a = raw.indexOf('{'), b = raw.lastIndexOf('}');
+  if (a >= 0 && b > a) { try { return JSON.parse(raw.slice(a, b + 1)); } catch (e) { return null; } }
+  return null;
+}
+async function geminiOnce(env, model, prompt, schema, thinking) {
+  const gc = { temperature: 0.2, responseMimeType: 'application/json' };
+  if (schema) gc.responseSchema = schema;
+  // Gemini 2.5 Flash thinks by default, which is slow; correcting grammar does not need it
+  if (thinking && /^gemini-2\.5-flash/.test(model)) gc.thinkingConfig = { thinkingBudget: 0 };
   const ctl = new AbortController();
-  const timer = setTimeout(() => ctl.abort(), 25000);
+  const timer = setTimeout(() => ctl.abort(), AI_TIMEOUT);
+  let r, d;
   try {
-    const r = await fetch(
+    r = await fetch(
       'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) +
         ':generateContent?key=' + encodeURIComponent(env.GEMINI_KEY),
       {
         method: 'POST',
         signal: ctl.signal,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.2, responseMimeType: 'application/json', responseSchema: schema },
-        }),
+        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: gc }),
       });
-    if (!r.ok) throw new Error('gemini ' + r.status);
-    const d = await r.json();
-    const parts = (d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts) || [];
-    const raw = parts.map((p) => p.text || '').join('');
-    return { out: JSON.parse(raw), model };
+    if (!r.ok) throw new AiError('http' + r.status, (await r.text().catch(() => '')).slice(0, 400));
+    d = await r.json().catch(() => null);
+  } catch (e) {
+    if (e instanceof AiError) throw e;
+    throw new AiError(e && e.name === 'AbortError' ? 'timeout' : 'network', String((e && e.message) || e).slice(0, 200));
   } finally {
     clearTimeout(timer);
+  }
+  const cand = d && d.candidates && d.candidates[0];
+  if (!cand) throw new AiError('blocked', JSON.stringify((d && d.promptFeedback) || d || {}).slice(0, 200));
+  const raw = ((cand.content && cand.content.parts) || []).filter((p) => !p.thought).map((p) => p.text || '').join('');
+  const fr = String(cand.finishReason || '');
+  if (!raw.trim()) throw new AiError(fr === 'MAX_TOKENS' ? 'too_long' : (fr && fr !== 'STOP' ? 'blocked' : 'empty'), fr);
+  const out = parseJsonLoose(raw);
+  if (!out || typeof out !== 'object') throw new AiError(fr === 'MAX_TOKENS' ? 'too_long' : 'parse', raw.slice(0, 160));
+  return out;
+}
+async function askGemini(env, prompt, schema, shape) {
+  if (!env.GEMINI_KEY) throw new AiError('nokey', 'GEMINI_KEY is not set');
+  const model = String(env.GEMINI_MODEL || 'gemini-2.5-flash').trim(), t0 = Date.now();
+  try {
+    return { out: await geminiOnce(env, model, prompt, schema, true), model };
+  } catch (e) {
+    const c = e.code || 'error', det = e.detail || '';
+    const badThinking = c === 'http400' && /thinking/i.test(det);
+    const badSchema = c === 'http400' && !badThinking && /schema|response_schema|responseSchema|Invalid JSON payload|too many states|enum/i.test(det);
+    const busy = /^http(429|500|502|503|504)$/.test(c) || c === 'network' || c === 'empty' || c === 'parse';
+    console.log('[gemini] first try failed', model, c, det.slice(0, 200));
+    if (!(badThinking || badSchema || busy) || Date.now() - t0 > 25000) throw e; // retry only quick failures, never after a long wait
+    if (busy && /^http|network/.test(c)) await new Promise((res) => setTimeout(res, 1500));
+    const out = await geminiOnce(env, model, badSchema ? prompt + (shape || '') : prompt, badSchema ? null : schema, !badThinking);
+    return { out, model, retried: c };
   }
 }
 
@@ -930,10 +973,16 @@ function dayOf(tzoIn) {
   return { day, dayStart: Date.parse(day + 'T00:00:00Z') + tzo * 60000 };
 }
 
+// 502 { error: 'busy', code } + a log line (Cloudflare Pages -> Functions -> Real-time logs)
+function aiFail(code, where, detail) {
+  console.log('[ai] failed', code, where || '', String(detail || '').slice(0, 300));
+  return json({ error: 'busy', code }, 502);
+}
+
 async function aiCorrect(env, body) {
   const id = String(body.attemptId || '');
   if (!/^[A-Za-z0-9]{10,40}$/.test(id)) return fail('This submission was not found.', 404);
-  if (!env.GEMINI_KEY) return fail('busy', 502);
+  if (!env.GEMINI_KEY) return aiFail('nokey', id);
   const doc = await fsGet(env, 'attempts', id);
   if (!doc) return fail('This submission was not found.', 404);
   const att = doc.data, text = String(att.text || '');
@@ -945,28 +994,28 @@ async function aiCorrect(env, body) {
   if (!(Number(att.ts) > Date.now() - AI_MAX_AGE)) return fail('AI checks are only available within 2 hours of submitting.', 400);
   const em = normEmail(att.email);
   if (!emailOk(em)) return fail('This submission was not found.', 404);
-  const lock = await env.MD_KV.get('ai:' + id);
-  if (lock === 'pending') return fail('Your writing is already being checked. Wait a few seconds.', 409);
-  if (lock === 'done') return fail('busy', 502); // marked done but the result was not saved
+  // 'pending:<ts>' = a check is running. Older than 6 minutes (longer than the 5-minute Gemini limit) = that request died: run again.
+  const lock = String((await env.MD_KV.get('ai:' + id)) || '');
+  if (/^pending/.test(lock) && Date.now() - Number(lock.split(':')[1] || 0) < 360000) return fail('Your writing is already being checked. Wait a few seconds.', 409);
   const { day, dayStart } = dayOf(body.tzo);
   const limit = Math.max(1, parseInt(env.AI_DAILY_LIMIT || '10', 10) || 10);
   const qKey = 'aiq:' + em + ':' + day;
   if ((await count(env, qKey)) >= limit) return fail("You have used today's AI checks. Try again tomorrow.", 429);
-  await env.MD_KV.put('ai:' + id, 'pending', { expirationTtl: 172800 });
+  await env.MD_KV.put('ai:' + id, 'pending:' + Date.now(), { expirationTtl: 172800 });
   let ai;
   try {
     const task = String(body.task || '').slice(0, 1500);
-    const g = await askGemini(env, AI_PROMPT + '\nTASK:\n' + (task || '(not given)') + '\n\nSTUDENT ESSAY:\n' + text, AI_SCHEMA);
+    const g = await askGemini(env, AI_PROMPT + '\nTASK:\n' + (task || '(not given)') + '\n\nSTUDENT ESSAY:\n' + text, AI_SCHEMA, AI_SHAPE);
     ai = cleanAi(g.out, text, g.model);
   } catch (e) {
     await env.MD_KV.delete('ai:' + id); // a failed call may be tried again
-    return fail('busy', 502);
+    return aiFail(e.code || 'error', id, e.detail || e.message);
   }
   const fixes = ai.corrections.filter((c) => c.type !== 'Off-topic')
     .map((c) => ({ from: c.original_text, to: c.corrected_text, type: c.type, why: c.explanation }));
   if (!(await fsUpdate(env, 'attempts', id, { ai, fixes }))) {
     await env.MD_KV.delete('ai:' + id);
-    return fail('busy', 502);
+    return aiFail('save', id, 'attempts update failed');
   }
   await env.MD_KV.put('ai:' + id, 'done', { expirationTtl: 172800 });
   await bump(env, qKey, 172800);
@@ -988,7 +1037,7 @@ async function aiPractice(env, body) {
   const e = doc.data;
   if (Array.isArray(e.practice) && e.practice.length) return json({ practice: e.practice, again: true });
   if (e.type === 'Off-topic') return json({ practice: [] });
-  if (!env.GEMINI_KEY) return fail('busy', 502);
+  if (!env.GEMINI_KEY) return aiFail('nokey', id);
   const em = normEmail(e.email);
   if (!emailOk(em)) return fail('This mistake was not found.', 404);
   const qKey = 'aipq:' + em + ':' + dayOf(body.tzo).day;
@@ -999,10 +1048,10 @@ async function aiPractice(env, body) {
     const g = await askGemini(env, PRACTICE_PROMPT + '\nMISTAKE:\n' + JSON.stringify({
       original_text: c.original_text, corrected_text: c.corrected_text, category: String(e.category || ''),
       explanation: String(e.explanation || ''), context: String(e.context || ''),
-    }), PRACTICE_SCHEMA);
+    }), PRACTICE_SCHEMA, PRACTICE_SHAPE);
     practice = cleanPractice(g.out && g.out.practice, c);
   } catch (err) {
-    return fail('busy', 502);
+    return aiFail(err.code || 'error', id, err.detail || err.message);
   }
   await bump(env, qKey, 172800);
   if (!practice.length) return json({ practice: [] });
@@ -1012,6 +1061,20 @@ async function aiPractice(env, body) {
 
 // POST /api/admin/aitest { text, task }: the admin checks any essay with the real AI (same prompt, schema and filter
 // as /api/ai/correct). Nothing is saved, no student quota is used. KV aitest:<day>, 200 a day.
+const AI_WHY = {
+  nokey: 'GEMINI_KEY is not set on Cloudflare, or the site was not deployed again after adding it.',
+  timeout: 'Gemini did not answer within 5 minutes. Try again; if it keeps happening, try another GEMINI_MODEL.',
+  network: 'The server could not reach Gemini. Try again.',
+  http400: 'Gemini rejected the request: often a wrong GEMINI_KEY or a model that does not support these settings.',
+  http403: 'The key is not allowed: check GEMINI_KEY (Google AI Studio) and that the Gemini API is enabled.',
+  http404: 'Model not found: check GEMINI_MODEL (e.g. gemini-3.6-flash).',
+  http429: 'Gemini quota or rate limit reached. Wait a minute, or add billing in Google AI Studio.',
+  http5xx: 'Gemini is busy or down right now. Try again in a minute.',
+  blocked: 'Gemini refused to answer this text (safety filter).',
+  empty: 'Gemini returned an empty answer. Try again.',
+  too_long: 'The answer was cut off (too long). Try a shorter essay.',
+  parse: 'Gemini returned something that is not JSON. Try again or another GEMINI_MODEL.',
+};
 async function adminAiTest(env, body) {
   const text = String(body.text || '');
   if (text.trim().length < 8) return fail('Paste an essay first (at least a few words).');
@@ -1022,11 +1085,11 @@ async function adminAiTest(env, body) {
   const task = String(body.task || '').slice(0, 1500), t0 = Date.now();
   let g;
   try {
-    g = await askGemini(env, AI_PROMPT + '\nTASK:\n' + (task || '(not given)') + '\n\nSTUDENT ESSAY:\n' + text, AI_SCHEMA);
+    g = await askGemini(env, AI_PROMPT + '\nTASK:\n' + (task || '(not given)') + '\n\nSTUDENT ESSAY:\n' + text, AI_SCHEMA, AI_SHAPE);
   } catch (e) {
-    const m = String((e && e.message) || e);
-    return fail(m.indexOf('abort') >= 0 || (e && e.name === 'AbortError') ? 'Gemini did not answer within 25 seconds. Try again.'
-      : 'Gemini error (' + m + '). 400/403 = wrong GEMINI_KEY, 404 = wrong GEMINI_MODEL, 429 = Gemini quota.', 502);
+    const c = e.code || 'error', why = AI_WHY[c] || AI_WHY[c.replace(/\d+$/, (n) => n[0] + 'xx')] || '';
+    console.log('[ai] admin test failed', c, String(e.detail || e.message || '').slice(0, 300));
+    return json({ error: 'Gemini failed (code: ' + c + '). ' + why + (e.detail ? ' Details: ' + String(e.detail).slice(0, 300) : ''), code: c }, 502);
   }
   await bump(env, qKey, 172800);
   const ai = cleanAi(g.out, text, g.model);
@@ -1075,6 +1138,7 @@ export async function onRequest(ctx) {
     }
     return fail('Not found.', 404);
   } catch (e) {
-    return fail('Server error. Try again.', 500);
+    console.log('[api] server error', route, String((e && e.stack) || e).slice(0, 500));
+    return json({ error: 'Server error. Try again.', code: 'server' }, 500);
   }
 }

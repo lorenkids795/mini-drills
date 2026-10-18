@@ -1474,7 +1474,22 @@ function aiShow(ai,text,added,demo){
   var b=$('#fixes');if(!b)return;AIX=ai;markAnswer(text,ai);
   b.innerHTML=(demo?'<p class="banner">'+esc(demo===true?'Demo: sample AI result. On the live site the AI checks your own text.':demo)+'</p>':'')+aiHTML(ai,text)+(added?'<p class="saved" style="margin-top:8px">'+added+' mistake'+(added>1?'s were':' was')+' added to your <b>Error Notebook</b>. <button class="linkish" data-act="tab" data-tab="errors" type="button">Open it</button></p>':'');
 }
-function aiSay(msg){var b=$('#fixes');if(b)b.innerHTML='<p class="saved" aria-live="polite">'+esc(msg)+'</p>'}
+function aiSay(msg,code,retry){var b=$('#fixes');if(b)b.innerHTML='<p class="saved" aria-live="polite">'+esc(msg)+(code?' <span class="mono">(code: '+esc(code)+')</span>':'')+'</p>'+(retry?'<div class="actions" style="margin-top:6px"><button class="btn sm" data-act="ai-retry" type="button">Try again</button></div>':'')}
+// AIR = the submission being checked, so "Try again" can call the server again (the server allows it after a failure).
+// The server waits up to 5 minutes for Gemini; after 30 s the message says it is still working.
+var AIR=null,aiSlowT=null;
+function aiRun(){
+  var R=AIR,box=$('#fixes');if(!R||!box)return;
+  box.innerHTML='<p class="saved" id="aiWait" aria-live="polite">Checking your writing with AI. This usually takes 5 to 30 seconds…</p>';
+  clearTimeout(aiSlowT);aiSlowT=setTimeout(function(){var w=$('#aiWait');if(w&&AIR===R)w.textContent='Still checking… long answers can take a few minutes. You can stay on this page.'},30000);
+  adPost('ai/correct',{attemptId:R.id,task:R.ex.prompt||'',exTitle:R.ex.title||'',tzo:new Date().getTimezoneOffset()},'').then(function(d){
+    clearTimeout(aiSlowT);if(AIR!==R)return;
+    if(d._ok&&d.ai&&Array.isArray(d.ai.corrections)){aiShow(d.ai,R.text,d.added||0,false);return}
+    if((d._status===400||d._status===429)&&d.error){aiSay(d.error);return}
+    if(d._status===409&&d.error){aiSay(d.error,'',true);return}
+    aiSay('Automatic correction is not available right now. Your answer is saved.',d.code||('http'+d._status),true);
+  },function(){clearTimeout(aiSlowT);if(AIR===R)aiSay('Could not reach the server. Your answer is saved.','offline',true)});
+}
 function autoFix(text,ex,how){
   var box=$('#fixes');if(!box)return;
   var wait='<p class="saved" aria-live="polite">Checking your writing with AI. This takes about 5 to 20 seconds…</p>';
@@ -1488,11 +1503,7 @@ function autoFix(text,ex,how){
     return;
   }
   if(how!=='db'||!lastRef){aiSay('Automatic correction needs an internet connection.');return}
-  box.innerHTML=wait;
-  adPost('ai/correct',{attemptId:lastRef.id,task:ex.prompt||'',exTitle:ex.title||'',tzo:new Date().getTimezoneOffset()},'').then(function(d){
-    if(d._ok&&d.ai&&Array.isArray(d.ai.corrections)){aiShow(d.ai,text,d.added||0,false);return}
-    aiSay((d._status===400||d._status===409||d._status===429)&&d.error?d.error:'Automatic correction is not available right now.');
-  },function(){aiSay('Automatic correction is not available right now.')});
+  AIR={id:lastRef.id,text:text,ex:ex};aiRun();
 }
 function showWL(msg,bad){var e=$('#wLock');if(e){e.textContent=msg;e.className='banner lockmsg'+(bad?' bad':'')}}
 function leaveEvt(){
@@ -2079,6 +2090,7 @@ document.addEventListener('click',function(e){
   if(a==='afwd'){if(au)au.currentTime=Math.min(isFinite(au.duration)?au.duration:au.currentTime+5,au.currentTime+5);return}
   if(a==='submit')return gradeNow();
   if(a==='sub-w')return submitWriting();
+  if(a==='ai-retry'){aiRun();return}
   if(a==='ai-card'){var v=AIX&&(AIX.vocabulary_upgrades||[])[+t.dataset.i];if(v&&saveCard({w:String(v.upgraded).replace(/\//g,' ').trim(),ipa:'',pos:'',en:v.note||'',vi:'',ex:v.example||'',syn:[v.original],ant:[]}))t.disabled=true;return}
   if(a==='cx-copy'){var cv=CXP[t.dataset.k]||'',cno=function(){toast('Copy failed. Select the text and copy it by hand.')};try{navigator.clipboard.writeText(cv).then(function(){toast('Copied.')},cno)}catch(x){cno()}return}
   if(a==='fx-tip'){if(t.dataset.tip)toast(t.dataset.tip);fxHot(t);return}
@@ -3653,7 +3665,7 @@ function adAiTestHTML(){
     '<label class="lbl" for="atTask">Task (optional, helps the AI judge off-topic sentences)</label><input class="linkin" id="atTask" autocomplete="off" value="'+esc(AT.task)+'" placeholder="e.g. The table shows the percentage of households with internet access…">'+
     '<label class="lbl" for="atText" style="margin-top:10px">Essay</label><textarea class="wbox" id="atText" spellcheck="false" placeholder="Paste or type an essay here">'+esc(AT.text)+'</textarea>'+
     '<div class="actions" style="margin-top:8px"><button class="btn pri" data-act="ad-aitest" type="button"'+(AT.busy?' disabled':'')+'>'+(AT.busy?'Checking…':'Check with AI')+'</button>'+(AT.res||AT.err?'<button class="btn" data-act="ad-atclear" type="button">Clear result</button>':'')+
-    '<span class="saved" aria-live="polite">'+(AT.busy?'Waiting for Gemini, usually 5 to 20 seconds…':'')+'</span></div>'+
+    '<span class="saved" aria-live="polite">'+(AT.busy?'Waiting for Gemini: usually 5 to 30 seconds, long essays up to a few minutes (limit 5 minutes)…':'')+'</span></div>'+
     (AT.err?'<p class="banner" style="background:var(--bad-bg);color:var(--bad);margin-top:10px">'+esc(AT.err)+'</p>':'')+'</div>';
   if(!AT.res)return h;
   var d=AT.res,ai=d.ai||{corrections:[]},txt=d.text||'',items=aiItems(ai),found=fixSpans(txt,items).length;
