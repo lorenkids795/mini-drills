@@ -1010,6 +1010,33 @@ async function aiPractice(env, body) {
   return json({ practice });
 }
 
+// POST /api/admin/aitest { text, task }: the admin checks any essay with the real AI (same prompt, schema and filter
+// as /api/ai/correct). Nothing is saved, no student quota is used. KV aitest:<day>, 200 a day.
+async function adminAiTest(env, body) {
+  const text = String(body.text || '');
+  if (text.trim().length < 8) return fail('Paste an essay first (at least a few words).');
+  if (text.length > 6000) return fail('The essay is too long (6000 characters at most).');
+  if (!env.GEMINI_KEY) return fail('GEMINI_KEY is not set on Cloudflare (Settings → Variables and Secrets), or the site was not deployed again after adding it.');
+  const qKey = 'aitest:' + new Date().toISOString().slice(0, 10);
+  if ((await count(env, qKey)) >= 200) return fail('AI test limit reached for today (200).', 429);
+  const task = String(body.task || '').slice(0, 1500), t0 = Date.now();
+  let g;
+  try {
+    g = await askGemini(env, AI_PROMPT + '\nTASK:\n' + (task || '(not given)') + '\n\nSTUDENT ESSAY:\n' + text, AI_SCHEMA);
+  } catch (e) {
+    const m = String((e && e.message) || e);
+    return fail(m.indexOf('abort') >= 0 || (e && e.name === 'AbortError') ? 'Gemini did not answer within 25 seconds. Try again.'
+      : 'Gemini error (' + m + '). 400/403 = wrong GEMINI_KEY, 404 = wrong GEMINI_MODEL, 429 = Gemini quota.', 502);
+  }
+  await bump(env, qKey, 172800);
+  const ai = cleanAi(g.out, text, g.model);
+  const raw = Array.isArray(g.out && g.out.corrections) ? g.out.corrections : [];
+  const kept = {};
+  ai.corrections.forEach((c) => { kept[c.original_text] = 1; });
+  const dropped = raw.map((c) => String((c && c.original_text) || '')).filter((o) => o && !kept[o.trim()]).slice(0, 10);
+  return json({ ai, ms: Date.now() - t0, model: g.model, raw: raw.length, dropped });
+}
+
 export async function onRequest(ctx) {
   const { request, env } = ctx;
   const url = new URL(request.url);
@@ -1044,6 +1071,7 @@ export async function onRequest(ctx) {
       if (route === 'admin/sheet') return await adminSheet(env, body);
       if (route === 'admin/class') return await adminClass(env, body);
       if (route === 'admin/kick') return await adminKick(env, body);
+      if (route === 'admin/aitest') return await adminAiTest(env, body);
     }
     return fail('Not found.', 404);
   } catch (e) {

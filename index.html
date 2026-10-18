@@ -1401,7 +1401,7 @@ function correctionsHTML(text,items){
 // Your answer after the AI check: the textarea is swapped for the same text with the mistakes highlighted
 function markAnswer(text,ai){
   var ta=$('#wText');if(!ta||!ta.readOnly||ta.value!==text)return;
-  var items=aiItems(ai);if(!items.length)return;
+  var items=aiItems(ai);if(!fixSpans(text,items).length)return; // nothing found in the text: keep the textarea
   var v=$('#wMarked');
   if(!v){ta.insertAdjacentHTML('afterend','<p class="cxnote" id="wMarkedNote">Mistakes are highlighted in red. The numbers match the corrections below.</p><div class="essay wmarked" id="wMarked" aria-label="Your answer with the mistakes highlighted"></div>');v=$('#wMarked')}
   v.innerHTML=answerHTML(text,items);ta.style.display='none';
@@ -1432,6 +1432,34 @@ var DEMO_AI={
   vocabulary_upgrades:[
     {original:'very important',upgraded:'crucial',example:'Protecting nature is crucial for future generations.',note:'One strong word sounds more academic.'},
     {original:'a lot of',upgraded:'a great deal of',example:'Factories produce a great deal of waste.',note:'More formal, good for IELTS.'}]};
+// Demo only: a tiny rule-based checker, so the highlights work on the student's own text without the server.
+// Each rule: [regex (global), replacement(match, groups...), category, explanation, type]. The live site uses Gemini.
+var PAST={have:'had',has:'had',account:'accounted',experience:'experienced',increase:'increased',decrease:'decreased',rise:'rose',fall:'fell',see:'saw',show:'showed',reach:'reached',grow:'grew',become:'became',drop:'dropped',go:'went',remain:'remained'};
+var DEMO_RULES=[
+  [/\b(table|chart|graph|figure|diagram)\s+(illustrate|show|compare|describe|give|present)\b/gi,function(m,a,b){return a+' '+b+'s'},'Subject-Verb Agreement','A singular subject takes a verb with -s in the present simple.','Grammar'],
+  [/\bwho has\b/g,function(){return 'who have'},'Subject-Verb Agreement','A plural noun takes "have", not "has".','Grammar'],
+  [/\b[Ii]n term of\b/g,function(m){return m.charAt(0)+'n terms of'},'Collocation','The fixed phrase is "in terms of".','Vocabulary'],
+  [/\bthe most (highest|lowest|biggest|largest|smallest|greatest)\b/gi,function(m,a){return m.slice(0,4)+a},'Double Superlative','Do not use "most" with an -est adjective.','Grammar'],
+  [/\b(Country [A-Z]|[Ii]t|[Tt]he percentage|[Tt]he number|[Tt]he proportion) (have|has|account|experience|increase|decrease|rise|fall|see|reach|grow|remain)\b(?= (in|to|for|by|a|an|the|\d))/g,function(m,a,b){return a+' '+PAST[b]},'Past Simple Tense','The data are from the past, so use the past simple.','Grammar'],
+  [/\b(access|rate|number|percentage|figure) (increase|decrease|rise|fall|grow)\b(?= in| by| to| from)/g,function(m,a,b){return a+' '+PAST[b]},'Past Simple Tense','The change happened in the past, so use the past simple.','Grammar'],
+  [/\balso (experience|see|reach|increase|decrease|grow)\b/g,function(m,a){return 'also '+PAST[a]},'Past Simple Tense','Use the past simple for a finished period.','Grammar'],
+  [/\b(differences?|gaps?)( between [^.]{1,40}?) become\b/g,function(m,a,b){return a+b+' became'},'Past Simple Tense','Use the past simple for 2020.','Grammar'],
+  [/\bcompare with\b/g,function(){return 'compared with'},'Word Form','Use the past participle: "compared with".','Grammar'],
+  [/\b(this|the|that) figure were\b/gi,function(m,a){return a+' figure was'},'Subject-Verb Agreement','"Figure" is singular, so use "was".','Grammar'],
+  [/\bhad an access\b/g,function(){return 'had access'},'Articles','"Access" is uncountable: no "an".','Grammar']
+];
+function demoCorrections(text){
+  var out=[],seen={};
+  DEMO_RULES.forEach(function(r){
+    r[0].lastIndex=0;var m;
+    while((m=r[0].exec(text))&&out.length<15){
+      var to=r[1].apply(null,m);
+      if(to!==m[0]&&!seen[m.index]){seen[m.index]=1;out.push({original_text:m[0],corrected_text:to,category:r[2],explanation:r[3],type:r[4],at:m.index})}
+    }
+  });
+  DEMO_AI.corrections.forEach(function(c){var i=text.indexOf(c.original_text);if(i>=0&&!seen[i]){seen[i]=1;out.push(Object.assign({at:i},c))}});
+  return out.sort(function(a,b){return a.at-b.at}).slice(0,15).map(function(c){var x=Object.assign({},c);delete x.at;return x});
+}
 function aiFixes(ai,text){
   return (ai.corrections||[]).filter(function(c){return c.type!=='Off-topic'&&c.original_text&&c.corrected_text}).map(function(c){return {from:c.original_text,to:c.corrected_text,type:c.type,why:c.explanation||''}}).sort(function(a,b){return String(text||'').indexOf(a.from)-String(text||'').indexOf(b.from)});
 }
@@ -1444,7 +1472,7 @@ function aiHTML(ai,text){
 }
 function aiShow(ai,text,added,demo){
   var b=$('#fixes');if(!b)return;AIX=ai;markAnswer(text,ai);
-  b.innerHTML=(demo?'<p class="banner">Demo: sample AI result. On the live site the AI checks your own text.</p>':'')+aiHTML(ai,text)+(added?'<p class="saved" style="margin-top:8px">'+added+' mistake'+(added>1?'s were':' was')+' added to your <b>Error Notebook</b>. <button class="linkish" data-act="tab" data-tab="errors" type="button">Open it</button></p>':'');
+  b.innerHTML=(demo?'<p class="banner">'+esc(demo===true?'Demo: sample AI result. On the live site the AI checks your own text.':demo)+'</p>':'')+aiHTML(ai,text)+(added?'<p class="saved" style="margin-top:8px">'+added+' mistake'+(added>1?'s were':' was')+' added to your <b>Error Notebook</b>. <button class="linkish" data-act="tab" data-tab="errors" type="button">Open it</button></p>':'');
 }
 function aiSay(msg){var b=$('#fixes');if(b)b.innerHTML='<p class="saved" aria-live="polite">'+esc(msg)+'</p>'}
 function autoFix(text,ex,how){
@@ -1453,9 +1481,9 @@ function autoFix(text,ex,how){
   if(DEMO){
     box.innerHTML=wait;
     setTimeout(function(){
-      var ai=Object.assign({},DEMO_AI,{model:'demo',ts:Date.now()}),la=localAttempts[0];
+      var cs=demoCorrections(text),ai=Object.assign({},DEMO_AI,{corrections:cs.length?cs:DEMO_AI.corrections,model:'demo',ts:Date.now()}),la=localAttempts[0];
       if(la&&String(la.id).indexOf('local-')===0&&la.text===text){la.ai=ai;la.fixes=aiFixes(ai,text)}
-      aiShow(ai,text,(U&&U.role==='student')?errAddLocal(ai,text,ex,String((la&&la.id)||'local-'+Date.now())):0,true);
+      aiShow(ai,text,(U&&U.role==='student')?errAddLocal(ai,text,ex,String((la&&la.id)||'local-'+Date.now())):0,cs.length?'Demo: a built-in sample checker found these (a few simple rules). On the live site the AI checks your whole text.':'Demo: the sample mistakes are not in your text, so nothing is highlighted. On the live site the AI checks your own text.');
     },900);
     return;
   }
@@ -3539,6 +3567,7 @@ function demoAdminRun(path,b){
   var err=function(m){throw new Error(m)},em=String(b.email||'').trim().toLowerCase(),all=demoUsers();
   var find=function(e){return all.filter(function(u){return u.email===e})[0]};
   if(path==='admin/users')return {users:all,me:'admin@demo.vn'};
+  if(path==='admin/aitest'){var tx=String(b.text||'');if(tx.trim().length<8)err('Paste an essay first.');var dc=demoCorrections(tx).map(function(c){return Object.assign({},c,{context:enSentence(tx,c.original_text),practice:[]})});return {ai:{corrections:dc,vocabulary_upgrades:DEMO_AI.vocabulary_upgrades,model:'demo'},ms:250,model:'demo (built-in rules, not Gemini)',raw:dc.length,dropped:[]}}
   if(path==='admin/sheet'){
     var op=b.op||'get',su=String(b.url||'').trim();
     if(op==='check'||op==='save'){if(!/^https:\/\/docs\.google\.com\/spreadsheets\//.test(su))err('Paste the link of a Google Sheet (it starts with https://docs.google.com/spreadsheets/).');if(op==='save')DEMO_ADM.sheet=su;return Object.assign(demoSheetSum(su),{linked:op==='save',saved:op==='save'})}
@@ -3607,13 +3636,48 @@ function adLoad(force){
 function adDone(msg){AD.modal=null;AD.err='';toast(msg);return adLoad(true)}
 function adUser(email){return (AD.users||[]).filter(function(u){return u.email===email})[0]||{email:email,name:email}}
 
+/* Admin → AI test: paste any essay, check it with the real AI (/api/admin/aitest: same prompt, schema and filter as students).
+   Shows exactly what a student sees (Your answer, Corrections, Corrected essay, Vocabulary) + the Practice exercises. Nothing is saved. */
+var AT={text:'',task:'',busy:false,res:null,err:'',t0:0};
+function atPracticeHTML(ai){
+  var cs=(ai.corrections||[]).filter(function(c){return c.type!=='Off-topic'});if(!cs.length)return '';
+  return '<h4 class="tk">Practice exercises (Error Notebook)</h4><ul class="fxl">'+cs.map(function(c){
+    var ps=c.practice||[],fb=ps.length?null:enFallback({original:c.original_text,corrected:c.corrected_text,context:c.context});
+    return '<li><b class="aicat">'+esc(c.category||'')+'</b> <del class="fx-del">'+esc(c.original_text)+'</del> → <ins class="fx-ins">'+esc(c.corrected_text)+'</ins>'+
+      (ps.length?ps.map(function(p){return '<small>'+(p.own?'Box 1–2 (own sentence): ':'Box 3–5 (new sentence): ')+esc(p.sentence)+' → <b>'+esc((p.answers||[]).join(' / '))+'</b></small>'}).join('')
+        :'<small>No valid AI exercise. The app will use the simple one: '+esc(fb.sentence)+' → <b>'+esc(fb.answers.join(' / '))+'</b></small>')+'</li>';
+  }).join('')+'</ul>';
+}
+function adAiTestHTML(){
+  var h='<div class="sec" style="max-width:880px"><h3>AI test</h3><p class="sub">Paste an essay and check it with the real AI: the same prompt, the same filter and the same screen a student gets after submitting. Nothing is saved and no student quota is used (200 tests a day).</p>'+
+    '<label class="lbl" for="atTask">Task (optional, helps the AI judge off-topic sentences)</label><input class="linkin" id="atTask" autocomplete="off" value="'+esc(AT.task)+'" placeholder="e.g. The table shows the percentage of households with internet access…">'+
+    '<label class="lbl" for="atText" style="margin-top:10px">Essay</label><textarea class="wbox" id="atText" spellcheck="false" placeholder="Paste or type an essay here">'+esc(AT.text)+'</textarea>'+
+    '<div class="actions" style="margin-top:8px"><button class="btn pri" data-act="ad-aitest" type="button"'+(AT.busy?' disabled':'')+'>'+(AT.busy?'Checking…':'Check with AI')+'</button>'+(AT.res||AT.err?'<button class="btn" data-act="ad-atclear" type="button">Clear result</button>':'')+
+    '<span class="saved" aria-live="polite">'+(AT.busy?'Waiting for Gemini, usually 5 to 20 seconds…':'')+'</span></div>'+
+    (AT.err?'<p class="banner" style="background:var(--bad-bg);color:var(--bad);margin-top:10px">'+esc(AT.err)+'</p>':'')+'</div>';
+  if(!AT.res)return h;
+  var d=AT.res,ai=d.ai||{corrections:[]},txt=d.text||'',items=aiItems(ai),found=fixSpans(txt,items).length;
+  h+='<div class="sec" style="max-width:880px"><p class="cxnote" style="margin:0 0 8px">'+esc((d.model||'')+' · '+((d.ms||0)/1000).toFixed(1)+' s · AI returned '+(d.raw||0)+' mistake'+(d.raw===1?'':'s')+', kept '+ai.corrections.length+', highlighted '+found)+'</p>'+
+    ((d.dropped&&d.dropped.length)?'<p class="cxnote">Dropped because they are not in the essay word for word: '+d.dropped.map(function(x){return '“'+esc(x)+'”'}).join(', ')+'</p>':'')+
+    '<h4 class="tk">Your answer</h4>'+(found?'<p class="cxnote">Mistakes are highlighted in red. The numbers match the corrections below.</p><div class="essay wmarked">'+answerHTML(txt,items)+'</div>':'<div class="essay">'+esc(txt)+'</div>')+
+    aiHTML(ai,txt)+atPracticeHTML(ai)+'</div>';
+  return h;
+}
+function adAiTestRun(){
+  var tx=$('#atText'),tk=$('#atTask');AT.text=tx?tx.value:AT.text;AT.task=tk?tk.value:AT.task;
+  if(AT.text.trim().length<8){AT.err='Paste an essay first.';renderAdmin();return}
+  AT.busy=true;AT.err='';renderAdmin();
+  var sent=AT.text;
+  adminApi('admin/aitest',{text:sent,task:AT.task}).then(function(d){AT.busy=false;AT.res=Object.assign({text:sent},d);renderAdmin()},
+    function(e){AT.busy=false;AT.res=null;AT.err=(e&&e.message)||'Something went wrong. Try again.';renderAdmin()});
+}
 function renderAdmin(){
   var el=$('#v-admin');if(!U||!U.adm){el.innerHTML='';return}
-  var subs=[['guide','Guide'],['users','Users'],['teachers','Teachers'],['sheet','Google Sheet'],['me','My account']];
+  var subs=[['guide','Guide'],['users','Users'],['teachers','Teachers'],['sheet','Google Sheet'],['aitest','AI test'],['me','My account']];
   var needList=AD.sub==='users'||AD.sub==='teachers';
   if(needList&&!AD.locked&&!AD.users&&!AD.loadErr)adLoad();
   if(AD.sub==='sheet'&&!AD.locked&&!AD.sheet&&!AD.shErr)adSheetLoad();
-  var body=AD.sub==='guide'?adGuideHTML():AD.locked?adUnlockHTML():AD.sub==='teachers'?adTeachersHTML():AD.sub==='sheet'?adSheetHTML():AD.sub==='me'?adMeHTML():adUsersHTML();
+  var body=AD.sub==='guide'?adGuideHTML():AD.locked?adUnlockHTML():AD.sub==='teachers'?adTeachersHTML():AD.sub==='sheet'?adSheetHTML():AD.sub==='aitest'?adAiTestHTML():AD.sub==='me'?adMeHTML():adUsersHTML();
   el.innerHTML='<div class="pad adm"><div class="sechead"><h2>Admin</h2><span class="meta">Accounts, teachers and passwords</span></div>'+
     (DEMO?'<p class="adm-demo" role="note">Demo: changes are not saved.</p>':'')+
     '<div class="subtabs" role="tablist">'+subs.map(function(s){return '<button type="button" role="tab" data-act="ad-sub" data-v="'+s[0]+'" aria-selected="'+(AD.sub===s[0])+'">'+s[1]+'</button>'}).join('')+'</div>'+
@@ -3727,7 +3791,9 @@ function closeAdModal(){AD.modal=null;renderAdmin()}
 function adAct(a,t){
   if(a.indexOf('ad-')!==0)return false;
   var who=t.dataset.email||'',u=adUser(who),nm=u.name||who;
-  if(a==='ad-sub'){AD.sub=t.dataset.v;AD.err='';renderAdmin();return true}
+  if(a==='ad-sub'){if(AD.sub==='aitest'){var atx=$('#atText'),atk=$('#atTask');if(atx)AT.text=atx.value;if(atk)AT.task=atk.value}AD.sub=t.dataset.v;AD.err='';renderAdmin();return true}
+  if(a==='ad-aitest'){adAiTestRun();return true}
+  if(a==='ad-atclear'){AT.res=null;AT.err='';renderAdmin();return true}
   if(a==='ad-open-sheet'){AD.sub='sheet';AD.err='';showTab('admin');return true}
   if(a==='ad-sh-reload'){AD.shErr='';AD.sheet=null;renderAdmin();return true}
   if(a==='ad-copyhdr'){var hv=SHEET_TPL[0].join('\t'),hno=function(){adSay('Copy failed. Type the header by hand: '+SHEET_TPL[0].join(', '))};try{navigator.clipboard.writeText(hv).then(function(){toast('Header copied. Paste it into row 1 of your Sheet.')},hno)}catch(x){hno()}return true}

@@ -68,6 +68,7 @@ Chuẩn bị: thêm `GEMINI_KEY` (Secret) cho Preview + Production rồi deploy 
 22. [ ] Error Notebook: cuộn xuống giữa trang → bấm Practice một thẻ → **trang không nhảy**. Check đúng, sai, thử lại, Show answer → thẻ vẫn ở nguyên chỗ. Bấm Close → danh sách sắp xếp lại, vị trí cuộn gần như giữ nguyên.
 23. [ ] "Review all due" và "Practice this group" mở khung ở đầu danh sách; làm lần lượt nhiều lỗi mà trang không nhảy. "End review" đóng khung, giữ vị trí cuộn.
 24. [ ] Sau khi AI chấm xong, ô **Your answer** chuyển thành bài có chỗ sai tô đỏ (gạch sóng) kèm số 1, 2, 3…; cùng số xuất hiện ở bài đánh dấu, danh sách lỗi và Corrected essay. Bấm vào một lỗi → hiện lý do và mọi chỗ cùng số được viền sáng.
+25. [ ] **Admin → AI test**: dán một bài → Check with AI → sau 5–20 giây thấy dòng "model · thời gian · AI returned N, kept M, highlighted M", ô Your answer có highlight, Corrections, Corrected essay, Vocabulary và danh sách bài Practice. Firestore không có doc mới. Nếu báo lỗi: "GEMINI_KEY is not set" = chưa thêm biến/chưa deploy lại; "Gemini error (gemini 400/403)" = sai key; "404" = sai GEMINI_MODEL.
 
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

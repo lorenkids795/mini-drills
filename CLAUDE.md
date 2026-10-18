@@ -87,7 +87,7 @@ Các khối JS được ngăn bằng comment `/* ---------- Tên ---------- */`.
 
 - Student: `library` (Home) · `cards` · `errors` (Error Notebook) · `ranks` · `wheel` · `bag` · `set`
 - Teacher: `library` · `dash` · `asg` · `mark` · `roster` · `create` · `prize` · `xps`
-- Admin (teacher có `U.adm`): như Teacher, thêm `admin` ở cuối (`#v-admin`, `renderAdmin()`, tab con `AD.sub`: `guide` · `users` · `teachers` · `sheet` · `me`)
+- Admin (teacher có `U.adm`): như Teacher, thêm `admin` ở cuối (`#v-admin`, `renderAdmin()`, tab con `AD.sub`: `guide` · `users` · `teachers` · `sheet` · `aitest` · `me`)
 
 Mỗi tab ứng với một `<section id="v-...">`: `library` dùng `#v-lib`, các tab khác dùng `#v-<tên tab>`. `showTab(t)` ẩn hết các section, bật section của tab `t` rồi gọi `renderXxx()` tương ứng.
 
@@ -122,6 +122,7 @@ Mỗi tab ứng với một `<section id="v-...">`: `library` dùng `#v-lib`, c�
 | POST | `/api/admin/kick` | `{email}`: xóa tài khoản học sinh (`acct:`, `roster/{email}`, trả tên: xóa `names/{id}` có `sid` hoặc đặt `claimed:false`), đặt `off:<email>='kicked'`. **Giữ** bài làm/XP/flashcard; đăng ký lại cùng email thì dữ liệu tự gắn lại. `register` cho phép email `kicked` và xóa cờ này |
 | POST | `/api/admin/sheet` | `{op}`: `get`, `check` + `url`, `save` + `url`, `refresh`, `unlink` → cột nhận được, 5 dòng đầu, tên chưa đăng ký theo lớp |
 | POST | `/api/admin/class` | `{email, cls, course}`: đổi lớp của học sinh đã đăng ký (`roster`) |
+| POST | `/api/admin/aitest` | `{text, task}`: admin thử một bài bất kỳ với Gemini thật (cùng `AI_PROMPT`, `AI_SCHEMA`, `cleanAi`), **không ghi gì**, không tốn lượt HS; trả `{ai, ms, model, raw, dropped}`. KV `aitest:<ngày>`, 200/ngày. Frontend: Admin → AI test (`AT`, `adAiTestHTML`, `adAiTestRun`; demo dùng `demoCorrections`) |
 | POST | `/api/admin/teachers` | `{op, name, email, password}`, `op` = `'add'` hoặc `'remove'` |
 | POST | `/api/ai/practice` | `{errorId, tzo}`: đọc `errors/{id}`; có `practice` rồi thì trả luôn; chưa có thì Gemini tạo (`PRACTICE_PROMPT`), lọc bằng `cleanPractice`, lưu vào doc. KV `aipq:<email>:<ngày>`, 50/ngày |
 | POST | `/api/ai/correct` | `{attemptId, task, exTitle, tzo}`: không cần session; server đọc `attempts/{id}` (phải là `kind:'submission'`, có `text` 8–6000 ký tự, `ts` < 2 giờ). Gọi Gemini (`responseSchema`, timeout 25 s), lọc lỗi tìm thấy nguyên văn trong bài, ghi `attempts.ai` + `attempts.fixes` (dạng cũ) + collection `errors`. Trả `{ai, added}`. Đã chấm rồi thì trả kết quả cũ, không tốn lượt |
