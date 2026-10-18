@@ -470,6 +470,27 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .enrow{display:flex;gap:8px;align-items:center}.enrow input{flex:1;min-width:0}
 .enres{font-weight:600;margin:6px 0}.enres.ok{color:var(--good)}.enres.no{color:var(--bad)}
 .fcard.enrv{text-align:left}
+.eng{margin:0 0 20px}
+.engh{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;cursor:pointer;list-style:none;padding:6px 0}
+.engh::-webkit-details-marker{display:none}
+.engh::before{content:'\25B8';color:var(--muted);display:inline-block;transition:transform .15s}
+.eng[open]>.engh::before{transform:rotate(90deg)}
+.engn{color:var(--accent);font-weight:700;font-size:1.06rem}
+.engc{font-size:.74rem;background:var(--line);color:var(--ink);border-radius:999px;padding:.15rem .55rem;white-space:nowrap}.engc .d{color:var(--bad);font-weight:700}
+.engbr{display:none}.engh .btn{margin-left:auto}
+.engl{display:flex;flex-direction:column;gap:8px;margin:6px 0 0 6px;padding-left:12px;border-left:2px solid var(--line)}
+.errrow{display:flex;justify-content:space-between;align-items:flex-start;gap:6px 10px;flex-wrap:wrap}.errrow .errfix{margin:0;min-width:0}
+.enlbl{display:block;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+.enq{font-weight:600;font-size:1.08rem;line-height:2;margin:0 0 6px;overflow-wrap:anywhere}
+.enin{width:12ch;max-width:100%;border:0;border-bottom:2px solid var(--accent);border-radius:0;background:transparent;color:var(--ink);font:inherit;padding:0 .25em;text-align:center}
+.enin:focus{outline:none;background:var(--hl-soft)}
+.enclue{font-style:italic;font-weight:400;color:var(--muted)}
+.enfill{color:var(--good);border-bottom:2px solid var(--good);padding:0 .25em}
+.enmsg{min-height:1.2em;margin:6px 0 0;font-size:.9rem;color:var(--bad)}
+@keyframes enshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.enin.shake{animation:enshake .3s 2;border-color:var(--bad)}
+@media (prefers-reduced-motion:reduce){.enin.shake{animation:none}}
+@media (max-width:640px){.engbr{display:block;flex-basis:100%;height:0}.engh .btn{margin-left:18px}}
 .enprog{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:6px 0 12px}.enprog i{display:block;height:100%;background:var(--accent)}
 @media (max-width:640px){.errtop{flex-direction:column;align-items:flex-start}.ens{padding:10px}.ens b{font-size:1.35rem}.ens span{font-size:.64rem}}
 .cdots{display:inline-flex;gap:3px;vertical-align:middle}
@@ -1312,11 +1333,16 @@ function fixListHTML(fixes){return '<ul class="fxl">'+fixes.map(function(f){retu
 var AIX=null;
 var DEMO_AI={summary:{word_count:0,grammar_band_est:'Band 5.5',topic_relevance:'High',general_feedback:'Bài viết bám đề và có quan điểm rõ ràng. Em cần chú ý thì quá khứ của động từ và danh từ số nhiều bất quy tắc. Hãy dùng thêm từ nối để các ý liền mạch hơn.'},
   corrections:[
-    {original_text:'am disagree',corrected_text:'disagree',category:'Stative Verbs',explanation:"'Disagree' is a verb. Say 'I disagree', not 'I am disagree'.",type:'Grammar'},
-    {original_text:'protect the nature',corrected_text:'protecting nature',category:'Gerund as Subject & Articles',explanation:"Use the -ing form as a subject, and 'nature' has no article.",type:'Grammar'},
-    {original_text:'Many peoples',corrected_text:'Many people',category:'Irregular Plural Nouns',explanation:"'People' is already plural, so do not add -s.",type:'Grammar'},
-    {original_text:'is write',corrected_text:'wrote / was writing',category:'Verb Tense',explanation:'Use the past simple or past continuous for an action in the past.',type:'Grammar'},
-    {original_text:'go',corrected_text:'went',category:'Verb Tense',explanation:"The story happened in the past, so use 'went'.",type:'Grammar'}],
+    {original_text:'am disagree',corrected_text:'disagree',category:'Stative Verbs',explanation:"'Disagree' is a verb. Say 'I disagree', not 'I am disagree'.",type:'Grammar',context:'I am disagree with this opinion.',
+      practice:[{sentence:'I ___ (disagree) with this opinion.',answers:['disagree'],clue_type:'base_form',own:true},{sentence:'I strongly ___ (disagree) with the idea that children should not do housework.',answers:['disagree'],clue_type:'base_form',own:false}]},
+    {original_text:'protect the nature',corrected_text:'protecting nature',category:'Gerund as Subject & Articles',explanation:"Use the -ing form as a subject, and 'nature' has no article.",type:'Grammar',context:'Protect the nature is the duty of everyone.',
+      practice:[{sentence:'___ (protect) nature is the duty of everyone.',answers:['Protecting'],clue_type:'base_form',own:true},{sentence:'___ (protect) nature is the responsibility of every citizen.',answers:['Protecting'],clue_type:'base_form',own:false}]},
+    {original_text:'Many peoples',corrected_text:'Many people',category:'Irregular Plural Nouns',explanation:"'People' is already plural, so do not add -s.",type:'Grammar',context:'Many peoples think that factories bring more jobs.',
+      practice:[{sentence:'Many ___ (person) think that factories bring more jobs.',answers:['people'],clue_type:'base_form',own:true},{sentence:'Many ___ (person) believe that social media harms teenagers.',answers:['people'],clue_type:'base_form',own:false}]},
+    {original_text:'is write',corrected_text:'wrote / was writing',category:'Verb Tense',explanation:'Use the past simple or past continuous for an action in the past.',type:'Grammar',context:'Last year my brother is write a letter to the mayor.',
+      practice:[{sentence:'Last year my brother ___ (write) a letter to the mayor.',answers:['wrote','was writing'],clue_type:'base_form',own:true},{sentence:'Last year, my brother ___ (write) a short story for a school competition.',answers:['wrote','was writing'],clue_type:'base_form',own:false}]},
+    {original_text:'go',corrected_text:'went',category:'Past Simple Tense',explanation:"The story happened in the past, so use 'went'.",type:'Grammar',context:'Yesterday we go to the river to collect rubbish.',
+      practice:[{sentence:'Yesterday we ___ (go) to the river to collect rubbish.',answers:['went'],clue_type:'base_form',own:true},{sentence:'Yesterday I ___ (go) to the library to prepare for my exam.',answers:['went'],clue_type:'base_form',own:false}]}],
   vocabulary_upgrades:[
     {original:'very important',upgraded:'crucial',example:'Protecting nature is crucial for future generations.',note:'One strong word sounds more academic.'},
     {original:'a lot of',upgraded:'a great deal of',example:'Factories produce a great deal of waste.',note:'More formal, good for IELTS.'}],
@@ -1353,7 +1379,7 @@ function autoFix(text,ex,how){
     setTimeout(function(){
       var ai=Object.assign({},DEMO_AI,{summary:Object.assign({},DEMO_AI.summary,{word_count:wordCount(text)}),model:'demo',ts:Date.now()}),la=localAttempts[0];
       if(la&&String(la.id).indexOf('local-')===0&&la.text===text){la.ai=ai;la.fixes=aiFixes(ai,text)}
-      aiShow(ai,text,(U&&U.role==='student')?errAddLocal(ai,text,ex):0,true);
+      aiShow(ai,text,(U&&U.role==='student')?errAddLocal(ai,text,ex,String((la&&la.id)||'local-'+Date.now())):0,true);
     },900);
     return;
   }
@@ -1939,6 +1965,7 @@ document.addEventListener('click',function(e){
   if(e.target.id==='enModal'){EN.confirm=false;return renderErrors()}
   if(VP&&!e.target.closest('.vpop')){VP=null;showPop()}
   var t=e.target.closest('[data-act]');if(!t)return;var a=t.dataset.act,au=$('#aud');
+  if(t.tagName==='BUTTON'&&t.closest('summary'))e.preventDefault(); // a button in a <details> header must not open/close it
   if(extAct(a,t))return;
   if(a==='tab'){NAV.daily=null;DY=null;if(CV&&CV.where==='daily')CV=null;return showTab(t.dataset.tab)}
   if(a==='nav'){XED=null;var nb=t.dataset.book||null,nt=t.dataset.test||null,ns=t.dataset.skill||null,ne=t.dataset.ex||null;LIBX={book:nb,test:nt,skill:ns};NAV={book:ne?nb:null,test:ne?nt:null,skill:ne?ns:null,ex:ne};PANE='q';return showTab('library')}
@@ -1998,7 +2025,6 @@ document.addEventListener('click',function(e){
 });
 document.addEventListener('change',function(e){
   var d=e.target.dataset||{};
-  if(d.encat){EN.cat=e.target.value;renderErrors();return}
   if(d.f){F[d.f]=d.f==='sample'?e.target.checked:e.target.value;if(d.f==='course'){F.cls='all';F.stu='all'}if(d.f==='cls')F.stu='all';renderDash()}
   if(d.img)imgFrom(d.img,e.target.files[0]);
   if(e.target.id==='avFile')avFrom(e.target.files[0]);
@@ -2235,21 +2261,24 @@ function delCard(id){
   renderCards();
 }
 /* ---------- Error Notebook: AI mistakes, spaced repetition (Leitner boxes 1-5) ---------- */
-// errors/{slug(email)}_{hash} are created by the server (/api/ai/correct). The student only updates the review fields.
+// errors/{slug(email)}_{attemptId}_{i}: one doc per mistake, repeated mistakes are NOT merged (each has its own boxes).
+// Created by the server (/api/ai/correct). The student only updates the review fields.
 var errorDocs=[],localErr=[],sampleErr=[],ERR_DAYS=[0,1,3,7,14];
-var EN={f:'all',cat:'',open:null,res:null,rv:null,confirm:false,focus:false};
+function enNew(){return {f:'all',open:null,res:null,rv:null,confirm:false,focus:false,tries:null,gopen:{},prep:{},pcache:{}}}
+var EN=enNew();
 function dayStart(ts){var d=new Date(ts==null?Date.now():ts);d.setHours(0,0,0,0);return d.getTime()}
 function dayEnd(){return dayStart()+DAYMS-1}
 function addDaysTs(ts,n){var d=new Date(ts);d.setDate(d.getDate()+n);return d.getTime()}
 function enDay(ts){var d=new Date(ts);return d.getDate()+' '+MONTHS[d.getMonth()]}
-function errKey(email,orig,corr){return slug(email)+'_'+slug(orig+' '+corr).slice(0,40)}
 function makeSampleErr(){
-  var em='minhanh@demo.vn',t=dayStart(),now=Date.now();
-  var C=['I am disagree with this opinion.','Protect the nature is the duty of everyone.','Many peoples think that factories bring more jobs.','Last year my brother is write a letter to the mayor.','Yesterday we go to the river to collect rubbish.'];
-  var S=[[1,t-DAYMS,0,1],[2,t,0,2],[1,t-2*DAYMS,1,1],[3,addDaysTs(t,3),0,1],[5,addDaysTs(t,14),0,1]];
-  return DEMO_AI.corrections.map(function(c,i){
-    return {id:errKey(em,c.original_text,c.corrected_text),email:em,student:'Minh Anh',cls:'',original:c.original_text,corrected:c.corrected_text,category:c.category,explanation:c.explanation,type:c.type,context:C[i],attemptId:'',ex:'',exTitle:'Writing Task 2 · Environment',
-      box:S[i][0],due:S[i][1],reviews:S[i][0]-1,lapses:S[i][2],mastered:i===4,count:S[i][3],createdAt:now-(9-i)*DAYMS,lastSeen:now-(5-i)*DAYMS,lastPractice:0,sample:true};
+  var em='minhanh@demo.vn',t=dayStart(),now=Date.now(),cs=DEMO_AI.corrections.slice(),go=cs[4];
+  cs.push({original_text:'go',corrected_text:'went',category:go.category,explanation:go.explanation,type:'Grammar',context:'Last weekend my family go to the countryside.',
+    practice:[{sentence:'Last weekend my family ___ (go) to the countryside.',answers:['went'],clue_type:'base_form',own:true},go.practice[1]]});
+  var S=[[1,t-DAYMS,0],[2,t,0],[1,t-2*DAYMS,1],[5,addDaysTs(t,14),0],[1,t,0],[2,t-DAYMS,1]];
+  return cs.map(function(c,i){
+    var at=i<5?'demoA':'demoB';
+    return {id:slug(em)+'_'+at+'_'+(i<5?i:0),email:em,student:'Minh Anh',cls:'',original:c.original_text,corrected:c.corrected_text,category:c.category,explanation:c.explanation,type:c.type,context:c.context,practice:c.practice||[],
+      attemptId:at,ex:'',exTitle:i<5?'Writing Task 2 · Environment':'Writing · My weekend',box:S[i][0],due:S[i][1],reviews:S[i][0]-1,lapses:S[i][2],mastered:i===3,createdAt:now-(9-i)*DAYMS,lastPractice:0,sample:true};
   });
 }
 function errList(email){
@@ -2259,7 +2288,8 @@ function errList(email){
 }
 function errById(id){var l=errList(U.email);for(var i=0;i<l.length;i++)if(l[i].id===id)return l[i];return null}
 function errDue(e){return !e.mastered&&e.due<=dayEnd()}
-function errSort(a,b){var x=errDue(a),y=errDue(b);if(x!==y)return x?-1:1;return (a.due||0)-(b.due||0)}
+// due first, then by due date, then newest first
+function errSort(a,b){var x=errDue(a),y=errDue(b);if(x!==y)return x?-1:1;return ((a.due||0)-(b.due||0))||((b.createdAt||0)-(a.createdAt||0))}
 function setErr(e,patch){
   var rec=Object.assign({},e,patch),hit=false;
   [sampleErr,errorDocs,localErr].forEach(function(l){for(var i=0;i<l.length;i++)if(l[i].id===rec.id){l[i]=rec;hit=true}});
@@ -2277,23 +2307,23 @@ function enSentence(text,orig){
   if(e<text.length&&text.charAt(e)!=='\n')e++;
   return text.slice(s,e).trim().slice(0,300);
 }
-// Demo / offline: add the AI mistakes to localErr (same rules as the server: no duplicates, seen again -> box 1)
-function errAddLocal(ai,text,ex){
+// Demo / offline: one localErr entry per mistake of this attempt (same ids as the server: email_attempt_i)
+function errAddLocal(ai,text,ex,aid){
   var now=Date.now(),t=dayStart(),n=0;
-  (ai.corrections||[]).forEach(function(c){
-    var id=errKey(U.email,c.original_text,c.corrected_text),old=errById(id),ctx=c.context||enSentence(text,c.original_text)||c.original_text;
-    if(old)setErr(old,{count:(old.count||1)+1,lastSeen:now,box:1,due:t,mastered:false,context:ctx,exTitle:ex.title||''});
-    else localErr.push({id:id,email:U.email,student:U.name,cls:U.cls||'',original:c.original_text,corrected:c.corrected_text||'',category:c.category,explanation:c.explanation||'',type:c.type,context:ctx,attemptId:'',ex:ex.id,exTitle:ex.title||'',
-      box:1,due:t,reviews:0,lapses:0,mastered:false,count:1,createdAt:now,lastSeen:now,lastPractice:0,local:true});
-    n++;
+  (ai.corrections||[]).forEach(function(c,i){
+    var id=slug(U.email)+'_'+aid+'_'+i;n++;if(errById(id))return;
+    localErr.push({id:id,email:U.email,student:U.name,cls:U.cls||'',original:c.original_text,corrected:c.corrected_text||'',category:c.category,explanation:c.explanation||'',type:c.type,
+      context:enSentence(text,c.original_text)||c.context||c.original_text,practice:c.practice||[],attemptId:aid,ex:ex.id,exTitle:ex.title||'',
+      box:1,due:t,reviews:0,lapses:0,mastered:false,createdAt:now,lastPractice:0,local:true});
   });
   return n;
 }
-function errNorm(s){return String(s||'').toLowerCase().replace(/[‘’]/g,"'").replace(/\s+/g,' ').trim().replace(/[.,!?;:]+$/,'').trim()}
-function errOk(e,ans){var a=errNorm(ans);return !!a&&String(e.corrected||'').split(/\s\/\s|\|/).some(function(x){return errNorm(x)===a})}
+// lower case, one space, no punctuation at both ends, curly ' -> '
+function errNorm(s){return String(s||'').toLowerCase().replace(/[‘’]/g,"'").replace(/\s+/g,' ').trim().replace(/^[.,!?;:"()“”]+|[.,!?;:"()“”]+$/g,'').trim()}
+function errOkList(answers,ans){var a=errNorm(ans);return !!a&&(answers||[]).some(function(x){return errNorm(x)===a})}
 // Right: next box (box 5 -> mastered). Wrong: box 1, again tomorrow. XP once per mistake per day.
 function errRate(e,ok){
-  var now=Date.now(),t=dayStart(),box=Math.min(5,Math.max(1,e.box||1)),p,xp=0;
+  var now=Date.now(),t=dayStart(),box=Math.min(5,Math.max(1,+e.box||1)),p,xp=0;
   if(ok){
     p=box>=5?{box:5,mastered:true,due:addDaysTs(t,ERR_DAYS[4])}:{box:box+1,mastered:false,due:addDaysTs(t,ERR_DAYS[box])};
     p.reviews=(e.reviews||0)+1;
@@ -2302,86 +2332,155 @@ function errRate(e,ok){
   p.lastPractice=now;setErr(e,p);
   return {due:p.due,mastered:p.mastered,xp:xp};
 }
+/* Practice: practice[0] = the student's own sentence, practice[1] = a new sentence (same rule).
+   Box 1-2 -> practice[0], box 3-5 -> practice[1]; only one -> that one. No practice yet -> /api/ai/practice, else enFallback. */
+function enPick(e){
+  var L=(e.practice&&e.practice.length)?e.practice:(EN.pcache[e.id]||[]);
+  if(!L.length)return null;
+  return L.length===1||(+e.box||1)<=2?L[0]:L[1];
+}
+function enBase(w){
+  w=String(w||'').replace(/[^A-Za-z'-]/g,'');var l=w.toLowerCase();
+  if(l.length>5&&/ing$/.test(l))return w.slice(0,-3);
+  if(l.length>4&&/ed$/.test(l))return w.slice(0,-2);
+  if(l.length>3&&/s$/.test(l)&&!/ss$/.test(l))return w.slice(0,-1);
+  return w;
+}
+// Simple practice without AI: the student's sentence with the mistake blanked, clue = base of the first corrected word
+function enFallback(e){
+  var o=String(e.original||''),ctx=String(e.context||o),i=o?ctx.indexOf(o):-1;
+  if(i<0&&o)i=ctx.toLowerCase().indexOf(o.toLowerCase());
+  var ans=String(e.corrected||'').split(/\s\/\s|\|/).map(function(x){return x.trim()}).filter(Boolean);
+  var clue=enBase((ans[0]||'').split(' ')[0])||o,ow=o.split(/\s+/).pop()||o;
+  // irregular words (went, wrote): the clue would give the answer away, so use the student's word instead (go, write)
+  if(errOkList(ans,clue)&&!errOkList(ans,ow))clue=ow;
+  var s=i<0?'___ ('+clue+')':ctx.slice(0,i)+'___ ('+clue+')'+ctx.slice(i+o.length);
+  return {sentence:s,answers:ans.length?ans:[o],simple:true};
+}
+function enNeedsAi(e){return e.type!=='Off-topic'&&!DEMO&&!!dbh&&!e.sample&&!e.local&&!(e.practice&&e.practice.length)&&!EN.pcache[e.id]&&EN.prep[e.id]!=='fail'}
+function enPrep(e){
+  if(EN.prep[e.id]==='wait')return;EN.prep[e.id]='wait';
+  var fin=function(){EN.focus=true;if(TAB==='errors')renderErrors()};
+  adPost('ai/practice',{errorId:e.id,tzo:new Date().getTimezoneOffset()},'').then(function(d){
+    if(d._ok&&d.practice&&d.practice.length){EN.pcache[e.id]=d.practice;EN.prep[e.id]='done'}else EN.prep[e.id]='fail';fin();
+  },function(){EN.prep[e.id]='fail';fin()});
+}
 function enCtxHTML(e){
   var c=String(e.context||e.original||''),o=String(e.original||''),i=o?c.indexOf(o):-1;
   if(i<0)return '<mark class="enhl">'+esc(o)+'</mark>';
   return esc(c.slice(0,i))+'<mark class="enhl">'+esc(o)+'</mark>'+esc(c.slice(i+o.length));
 }
+function enFixHTML(e){return '<p class="errfix"><del>'+esc(e.original||'')+'</del>'+(e.corrected?'<span class="arr" aria-hidden="true">→</span><ins>'+esc(e.corrected)+'</ins>':'')+'</p>'+(e.explanation?'<p class="errwhy">'+esc(e.explanation)+'</p>':'')}
+function enDoneBtn(where){return '<div class="actions enact">'+(where==='card'?'<button class="btn sm" data-act="en-close" type="button" data-enfocus="1">Done</button>':'<button class="btn pri sm" data-act="en-next" type="button" data-enfocus="1">'+(EN.rv&&EN.rv.i+1<EN.rv.q.length?'Next':'Finish')+'</button>')+'</div>'}
 function enPracticeHTML(e,where){
-  var r=EN.res&&EN.res.id===e.id?EN.res:null,off=e.type==='Off-topic',id=esc(e.id);
-  var h='<div class="enp"><p class="enctx">'+enCtxHTML(e)+'</p>';
-  if(!r){
-    if(off)h+='<p class="errwhy">'+esc(e.explanation||'This sentence does not answer the task.')+'</p><div class="actions enact"><button class="btn pri sm" data-act="en-check" data-id="'+id+'" data-ok="1" type="button" data-enfocus="1">I understand</button>';
-    else h+='<label class="lbl" for="enIn">Rewrite the highlighted part correctly:</label><div class="enrow"><input id="enIn" class="linkin" autocomplete="off" autocapitalize="off" spellcheck="false" data-enid="'+id+'"><button class="btn pri sm" data-act="en-check" data-id="'+id+'" type="button">Check</button></div><div class="actions enact">';
-    if(where==='card')h+='<button class="btn sm" data-act="en-close" type="button">Cancel</button>';
-    return h+'</div><p class="err" id="enMsg" aria-live="polite"></p></div>';
+  var r=EN.res&&EN.res.id===e.id?EN.res:null,id=esc(e.id),h='<div class="enp">';
+  if(e.type==='Off-topic'){
+    h+='<p class="enctx">'+enCtxHTML(e)+'</p><p class="errwhy">'+esc(e.explanation||'This sentence does not answer the task.')+'</p>';
+    if(r)return h+'<p class="enres ok" aria-live="polite">Got it. '+(r.xp?'+'+r.xp+' XP · ':'')+(r.mastered?'Mastered 🎉':'next review '+enDay(r.due))+'</p>'+enDoneBtn(where)+'</div>';
+    return h+'<div class="actions enact"><button class="btn pri sm" data-act="en-check" data-id="'+id+'" data-ok="1" type="button" data-enfocus="1">I understand</button>'+(where==='card'?'<button class="btn sm" data-act="en-close" type="button">Cancel</button>':'')+'</div></div>';
   }
+  if(!r&&enNeedsAi(e)){setTimeout(function(){enPrep(e)},0);return h+'<p class="saved" aria-live="polite">Preparing your exercise…</p></div>'}
+  var p=(r&&r.p)||enPick(e)||enFallback(e),parts=String(p.sentence||'').split('___'),before=parts[0]||'',after=parts.slice(1).join('___');
+  var m=/^\s*\(([^()]*)\)/.exec(after),clue=m?m[1]:'',rest=m?after.slice(m[0].length):after,cl=clue?' <i class="enclue">('+esc(clue)+')</i>':'';
+  h+='<p class="enlbl">Fill in the blank</p>';
+  if(!r){
+    var tried=EN.tries&&EN.tries.id===e.id;
+    h+='<p class="enq">'+esc(before)+'<input id="enIn" class="enin" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Your answer" data-enid="'+id+'">'+cl+esc(rest)+'</p>';
+    h+='<div class="actions enact"><button class="btn pri sm" data-act="en-check" data-id="'+id+'" type="button">Check</button><button class="btn sm" data-act="en-show" data-id="'+id+'" type="button">Show answer</button>'+(where==='card'?'<button class="btn sm" data-act="en-close" type="button">Cancel</button>':'')+'</div>';
+    h+='<p class="enmsg" id="enMsg" aria-live="polite">'+(tried?esc('Not quite. Think about: '+(e.explanation||'the rule for this mistake.')):'')+'</p>';
+    if(p.simple)h+='<p class="saved" style="margin:4px 0 0">Simple practice (AI exercise not available)</p>';
+    return h+'</div>';
+  }
+  h+='<p class="enq">'+esc(before)+'<b class="enfill">'+esc(r.ok?r.ans:(p.answers||[''])[0])+'</b>'+cl+esc(rest)+'</p>';
   if(r.ok)h+='<p class="enres ok" aria-live="polite">Correct! '+(r.xp?'+'+r.xp+' XP · ':'')+(r.mastered?'Mastered 🎉':'next review '+enDay(r.due))+'</p>';
-  else h+='<p class="enres no" aria-live="polite">Not quite. Answer: <ins>'+esc(e.corrected||'')+'</ins></p><p class="errwhy">'+esc(e.explanation||'')+'</p><p class="saved" style="margin:4px 0 0">Back to box 1. You will see it again tomorrow.</p>';
-  return h+'<div class="actions enact">'+(where==='card'?'<button class="btn sm" data-act="en-close" type="button" data-enfocus="1">Done</button>':'<button class="btn pri sm" data-act="en-next" type="button" data-enfocus="1">'+(EN.rv&&EN.rv.i+1<EN.rv.q.length?'Next':'Finish')+'</button>')+'</div></div>';
+  else h+='<p class="enres no" aria-live="polite">'+(r.shown?'Here is the answer.':'Not quite. Here is the answer.')+'</p>';
+  h+=enFixHTML(e);
+  if(!r.ok)h+='<p class="saved" style="margin:4px 0 0">Back to box 1. You will see it again tomorrow.</p>';
+  return h+enDoneBtn(where)+'</div>';
 }
+function enBadge(e){
+  if(e.mastered)return '<span class="enb mast">Mastered</span>';
+  return errDue(e)?'<span class="enb due">Box '+(+e.box||1)+': review now</span>':'<span class="enb">Box '+(+e.box||1)+' · next '+enDay(e.due)+'</span>';
+}
+// Inside a category group: no category name on the card. While practising, the answer stays hidden.
 function errCardHTML(e){
-  var due=errDue(e),open=EN.open===e.id,hide=open&&!(EN.res&&EN.res.id===e.id);
-  var badge=e.mastered?'<span class="enb mast">Mastered</span>':due?'<span class="enb due">Box '+(+e.box||1)+': review now</span>':'<span class="enb">Box '+(+e.box||1)+' · next '+enDay(e.due)+'</span>';
-  var h='<article class="errc"><div class="errtop"><span class="errcat">Category: '+esc(e.category||'Other')+'</span>'+badge+'</div>';
-  if(!hide)h+='<p class="errfix"><del>'+esc(e.original||'')+'</del>'+(e.corrected?'<span class="arr" aria-hidden="true">→</span><ins>'+esc(e.corrected)+'</ins>':'')+'</p>'+(e.explanation?'<p class="errwhy">'+esc(e.explanation)+'</p>':'');
-  h+='<p class="errmeta">From: '+esc(e.exTitle||'Writing')+' · '+fmtD(e.lastSeen||e.createdAt||Date.now())+' · seen '+(+e.count||1)+'×</p>';
-  if(open)h+=enPracticeHTML(e,'card');
-  else h+='<div class="actions enact"><button class="btn '+(e.mastered?'':'pri ')+'sm" data-act="en-open" data-id="'+esc(e.id)+'" type="button">'+(e.mastered?'Practice again':'Practice This Error')+'</button></div>';
-  return h+'</article>';
+  var open=EN.open===e.id,h='<article class="errc">';
+  if(open)return h+'<div class="errrow"><span class="enlbl">Practice</span>'+enBadge(e)+'</div>'+enPracticeHTML(e,'card')+'</article>';
+  h+='<div class="errrow"><p class="errfix"><del>'+esc(e.original||'')+'</del>'+(e.corrected?'<span class="arr" aria-hidden="true">→</span><ins>'+esc(e.corrected)+'</ins>':'')+'</p>'+enBadge(e)+'</div>'+(e.explanation?'<p class="errwhy">'+esc(e.explanation)+'</p>':'');
+  return h+'<div class="actions enact"><button class="btn '+(e.mastered?'':'pri ')+'sm" data-act="en-open" data-id="'+esc(e.id)+'" type="button">'+(e.mastered?'Practice again':'Practice This Error')+'</button></div></article>';
 }
 function enReviewHTML(){
   var R=EN.rv,n=R.q.length;
   if(R.i>=n)return '<div class="fcard"><div class="big">Review complete</div><p>You fixed <b>'+R.ok+'</b> of '+n+'.</p><p class="muted">Mistakes you got wrong come back tomorrow.</p><div class="fbtns"><button class="btn pri" data-act="en-rvend" type="button" data-enfocus="1">Done</button></div></div>';
   var e=errById(R.q[R.i]);if(!e){R.i++;return enReviewHTML()}
-  return '<div class="fcard enrv"><span class="muted" style="font-size:.8rem">'+(R.i+1)+' of '+n+'</span><div class="enprog" aria-hidden="true"><i style="width:'+Math.round(R.i/n*100)+'%"></i></div><p class="errcat">Category: '+esc(e.category||'Other')+'</p>'+enPracticeHTML(e,'rv')+'</div>';
+  return '<div class="fcard enrv"><span class="muted" style="font-size:.8rem">'+(R.i+1)+' of '+n+(R.cat?' · '+esc(R.cat):'')+'</span><div class="enprog" aria-hidden="true"><i style="width:'+Math.round(R.i/n*100)+'%"></i></div><p class="errcat">'+esc(e.category||'Other')+'</p>'+enPracticeHTML(e,'rv')+'</div>';
 }
 function renderErrors(){
   var el=$('#v-errors');if(!el)return;
   if(!U||U.role!=='student'){el.innerHTML='<p class="saved pad">The Error Notebook belongs to students.</p>';return}
   if(EN.rv){el.innerHTML='<div class="pad"><button class="linkish" data-act="en-rvend" type="button">← Back to my notebook</button>'+enReviewHTML()+'</div>';enFocus();return}
-  var L=errList(U.email),due=L.filter(errDue),mast=L.filter(function(e){return e.mastered}),cats={};
-  L.forEach(function(e){cats[e.category||'Other']=1});cats=Object.keys(cats).sort();
-  if(EN.cat&&cats.indexOf(EN.cat)<0)EN.cat='';
+  var L=errList(U.email),due=L.filter(errDue),mast=L.filter(function(e){return e.mastered});
   var st=function(k,lbl,n,c){return '<button type="button" class="ens'+c+(EN.f===k?' on':'')+'" data-act="en-f" data-f="'+k+'" aria-pressed="'+(EN.f===k)+'"><b>'+n+'</b><span>'+lbl+'</span></button>'};
   var h='<div class="pad"><div class="sechead enhead"><div><h2>Error Notebook</h2><span class="meta">Spaced Repetition System (SRS)</span></div>'+(L.length?'<button class="btn bad sm" data-act="en-clear" type="button">Clear All</button>':'')+'</div>'+
     '<div class="enstats">'+st('all','Total errors',L.length,'')+st('due','Due today',due.length,' due')+st('mastered','Mastered',mast.length,' mast')+'</div>';
   if(!L.length){el.innerHTML=h+'<p class="saved">No errors yet. Submit a Writing task and AI will collect your mistakes here.</p></div>';return}
-  h+='<div class="actions enbar">'+(due.length?'<button class="btn pri" data-act="en-rv" type="button">Review all due ('+due.length+')</button>':'')+
-    (cats.length>1?'<select data-encat="1" aria-label="Filter by category"><option value="">All categories</option>'+cats.map(function(c){return '<option value="'+esc(c)+'"'+(EN.cat===c?' selected':'')+'>'+esc(c)+'</option>'}).join('')+'</select>':'')+'</div>';
-  var list=L.filter(function(e){return (EN.f==='all'||(EN.f==='due'?errDue(e):e.mastered))&&(!EN.cat||(e.category||'Other')===EN.cat)}).sort(errSort);
-  h+=list.length?'<div class="enlist">'+list.map(errCardHTML).join('')+'</div>':'<p class="saved">Nothing here with this filter.</p>';
+  if(due.length)h+='<div class="actions enbar"><button class="btn pri" data-act="en-rv" type="button">Review all due ('+due.length+')</button></div>';
+  // groups by category: most due first, then most mistakes, then A-Z. Counts use the whole group, cards follow the filter.
+  var G={};
+  L.forEach(function(e){var c=e.category||'Other',g=G[c]||(G[c]={name:c,all:[],due:0,mast:0});g.all.push(e);if(errDue(e))g.due++;if(e.mastered)g.mast++});
+  var gl=Object.keys(G).map(function(k){return G[k]}).sort(function(a,b){return (b.due-a.due)||(b.all.length-a.all.length)||a.name.localeCompare(b.name)});
+  var body=gl.map(function(g){
+    var list=g.all.filter(function(e){return EN.f==='all'||(EN.f==='due'?errDue(e):e.mastered)}).sort(errSort);
+    if(!list.length)return '';
+    var op=EN.gopen[g.name];if(op==null)op=g.mast<g.all.length;
+    return '<details class="eng" data-cat="'+esc(g.name)+'"'+(op?' open':'')+'><summary class="engh"><span class="engn">'+esc(g.name)+'</span><span class="engc">'+g.all.length+' error'+(g.all.length>1?'s':'')+' · <span class="'+(g.due?'d':'')+'">'+g.due+' due</span></span><span class="engbr" aria-hidden="true"></span>'+
+      (g.due?'<button class="btn sm" data-act="en-grp" data-cat="'+esc(g.name)+'" type="button">Practice this group ('+g.due+')</button>':'')+'</summary><div class="engl">'+list.map(errCardHTML).join('')+'</div></details>';
+  }).join('');
+  h+=body||'<p class="saved">Nothing here with this filter.</p>';
   if(EN.confirm)h+='<div class="modal" id="enModal" role="dialog" aria-modal="true" aria-labelledby="enMt"><div class="mbox" style="width:min(440px,100%)"><h3 id="enMt" style="font-size:1.1rem">Clear the Error Notebook?</h3><p>This deletes all '+L.length+' errors in your notebook. This cannot be undone.</p><div class="actions"><button class="btn" data-act="en-cancel" type="button" data-enfocus="1">Cancel</button><button class="btn bad" data-act="en-clear-go" type="button">Delete all</button></div></div></div>';
   el.innerHTML=h+'</div>';enFocus();
 }
 function enFocus(){if(!EN.focus)return;EN.focus=false;var f=$('#v-errors #enIn')||$('#v-errors [data-enfocus]');if(f)f.focus()}
-function enCheck(id,force){
+// how: '' = check the typed answer, 'ok' = Off-topic "I understand", 'show' = Show answer (counts as wrong).
+// The first wrong answer is not counted: hint + one more try. The second wrong answer -> box 1.
+function enCheck(id,how){
   var e=errById(id);if(!e)return;
-  var inp=$('#enIn');if(!force&&!(inp&&inp.value.trim())){var m=$('#enMsg');if(m)m.textContent='Type your answer first.';if(inp)inp.focus();return}
-  var ok=force||errOk(e,inp.value),r=errRate(e,ok);
-  EN.res={id:id,ok:ok,due:r.due,mastered:r.mastered,xp:r.xp};if(EN.rv&&ok)EN.rv.ok++;
-  EN.focus=true;renderErrors();
+  if(e.type==='Off-topic'||how==='ok'){var r0=errRate(e,true);EN.res={id:id,ok:true,due:r0.due,mastered:r0.mastered,xp:r0.xp};if(EN.rv)EN.rv.ok++;EN.tries=null;EN.focus=true;renderErrors();return}
+  var p=enPick(e)||enFallback(e),inp=$('#enIn'),v=inp?inp.value:'';
+  if(how!=='show'){
+    if(!String(v).trim()){var m0=$('#enMsg');if(m0)m0.textContent='Type your answer first.';if(inp)inp.focus();return}
+    if(errOkList(p.answers,v)){var r1=errRate(e,true);EN.res={id:id,ok:true,ans:String(v).trim(),p:p,due:r1.due,mastered:r1.mastered,xp:r1.xp};if(EN.rv)EN.rv.ok++;EN.tries=null;EN.focus=true;renderErrors();return}
+    if(!(EN.tries&&EN.tries.id===id)){
+      EN.tries={id:id};var m=$('#enMsg');if(m)m.textContent='Not quite. Think about: '+(e.explanation||'the rule for this mistake.');
+      if(inp){inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');inp.select();inp.focus()}
+      return;
+    }
+  }
+  var r2=errRate(e,false);EN.res={id:id,ok:false,shown:how==='show',p:p,due:r2.due};EN.tries=null;EN.focus=true;renderErrors();
 }
 function enClear(){
   var em=U.email,ids=errorDocs.filter(function(e){return e.email===em}).map(function(e){return e.id});
   sampleErr=sampleErr.filter(function(e){return e.email!==em});localErr=localErr.filter(function(e){return e.email!==em});errorDocs=errorDocs.filter(function(e){return e.email!==em});
   if(dbh)for(var i=0;i<ids.length;i+=400){var b=dbh.batch();ids.slice(i,i+400).forEach(function(id){b.delete(dbh.doc('errors/'+id))});b.commit().then(function(){},function(){toast('Could not delete on the server. Try again later.')})}
-  EN={f:'all',cat:'',open:null,res:null,rv:null,confirm:false,focus:false};toast('Error Notebook cleared.');renderErrors();
+  EN=enNew();toast('Error Notebook cleared.');renderErrors();
 }
-function enStartReview(){
-  var q=errList(U.email).filter(errDue).sort(errSort).map(function(e){return e.id});
-  EN.rv=q.length?{q:q,i:0,ok:0}:null;EN.open=null;EN.res=null;EN.focus=true;renderErrors();
+function enStartReview(cat){
+  var q=errList(U.email).filter(function(e){return errDue(e)&&(!cat||(e.category||'Other')===cat)}).sort(errSort).map(function(e){return e.id});
+  EN.rv=q.length?{q:q,i:0,ok:0,cat:cat||''}:null;EN.open=null;EN.res=null;EN.tries=null;EN.focus=true;renderErrors();
 }
+document.addEventListener('toggle',function(e){var d=e.target;if(d&&d.classList&&d.classList.contains('eng'))EN.gopen[d.getAttribute('data-cat')]=d.open},true);
 function enAct(a,t){
   if(a.indexOf('en-')!==0)return false;
-  if(a==='en-f'){EN.f=t.dataset.f;EN.open=null;EN.res=null;renderErrors();return true}
-  if(a==='en-open'){EN.open=t.dataset.id;EN.res=null;EN.focus=true;renderErrors();return true}
-  if(a==='en-close'){EN.open=null;EN.res=null;renderErrors();return true}
-  if(a==='en-check'){enCheck(t.dataset.id,t.dataset.ok==='1');return true}
-  if(a==='en-rv'){enStartReview();return true}
-  if(a==='en-home'){NAV.daily=null;DY=null;if(CV&&CV.where==='daily')CV=null;showTab('errors');enStartReview();return true}
-  if(a==='en-next'){if(EN.rv){EN.rv.i++;EN.res=null;EN.focus=true}renderErrors();return true}
-  if(a==='en-rvend'){EN.rv=null;EN.res=null;renderErrors();return true}
+  if(a==='en-f'){EN.f=t.dataset.f;EN.open=null;EN.res=null;EN.tries=null;renderErrors();return true}
+  if(a==='en-open'){EN.open=t.dataset.id;EN.res=null;EN.tries=null;EN.focus=true;renderErrors();return true}
+  if(a==='en-close'){EN.open=null;EN.res=null;EN.tries=null;renderErrors();return true}
+  if(a==='en-check'){enCheck(t.dataset.id,t.dataset.ok==='1'?'ok':'');return true}
+  if(a==='en-show'){enCheck(t.dataset.id,'show');return true}
+  if(a==='en-rv'){enStartReview('');return true}
+  if(a==='en-grp'){enStartReview(t.dataset.cat);return true}
+  if(a==='en-home'){NAV.daily=null;DY=null;if(CV&&CV.where==='daily')CV=null;showTab('errors');enStartReview('');return true}
+  if(a==='en-next'){if(EN.rv){EN.rv.i++;EN.res=null;EN.tries=null;EN.focus=true}renderErrors();return true}
+  if(a==='en-rvend'){EN.rv=null;EN.res=null;EN.tries=null;renderErrors();return true}
   if(a==='en-clear'){EN.confirm=true;EN.focus=true;renderErrors();return true}
   if(a==='en-cancel'){EN.confirm=false;renderErrors();return true}
   if(a==='en-clear-go'){enClear();return true}

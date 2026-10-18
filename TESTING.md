@@ -44,15 +44,20 @@ Chuẩn bị: thêm `GEMINI_KEY` (Secret) cho Preview + Production rồi deploy 
 1. [ ] Nộp một bài Writing có lỗi → trong khoảng 5–20 giây thấy tóm tắt (số từ, "Grammar (AI estimate)", Topic relevance, nhận xét tiếng Việt), phần sửa lỗi, từ vựng nâng cấp, bài đã sửa (bấm mở) và dòng "N mistakes were added…".
    - [ ] "+ Flashcard" → từ có trong tab Flashcards. "Copy" ở Improved essay → chép được.
 2. [ ] Tải lại trang → Home → Recent results ô Writing → "Open feedback" → kết quả AI vẫn còn. Giáo viên mở bài đó trong Marking → thấy "Auto corrections" và "AI summary (estimate)" (bấm để mở).
-3. [ ] Tab **Error Notebook**: số liệu 3 ô đúng; bấm từng ô thì lọc đúng; lọc theo Category được. Practice đúng → "Correct! +5 XP · next review …", box tăng, ngày ôn lùi lại. Sai → hiện đáp án, về box 1.
-4. [ ] Nộp bài khác có cùng lỗi → không tạo thẻ trùng, thẻ ghi "seen 2×" và về box 1.
+3. [ ] Tab **Error Notebook**: số liệu 3 ô đúng; bấm từng ô thì lọc đúng. Practice đúng → "Correct! +5 XP · next review …", box tăng, ngày ôn lùi lại.
+4. [ ] Error Notebook chia nhóm theo category, không còn chữ "Category:" và dòng "From … seen …". Nộp 2 bài cùng mắc lỗi *go → went* → nhóm Past Simple Tense (hoặc tên AI đặt) hiện **2 thẻ** riêng, chip ghi "2 errors · 2 due". Nút "Practice this group" ôn lần lượt các lỗi đến hạn của nhóm. Nhóm đã thuộc hết thì thu gọn sẵn.
 5. [ ] Nộp quá giới hạn trong ngày (mặc định 10; có thể tạm đặt `AI_DAILY_LIMIT` = `1` để thử) → "You have used today's AI checks. Try again tomorrow." Mở lại kết quả cũ không tốn thêm lượt.
 6. [ ] **Review all due** → làm lần lượt, có "1 of N", cuối hiện "You fixed X of N". Home có thẻ "Error review · N due" → bấm vào mở thẳng chế độ Review.
 7. [ ] **Clear All** → hộp xác nhận → notebook trống, tải lại vẫn trống. Học sinh khác không thấy lỗi của mình.
 8. [ ] 4 ô Recent results cao bằng nhau ở bố cục 2 cột (màn ~800px) và 4 cột (≥1080px); điện thoại giữ chiều cao tự nhiên.
 9. [ ] Đăng nhập student/teacher/admin và Google Sheet vẫn như trước. Giáo viên → Settings có dòng XP "Error Notebook".
 10. [ ] Demo (`demo: true`): Minh Anh có sẵn 5 lỗi mẫu trong Error Notebook; nộp bài Writing thấy kết quả AI mẫu. **Nhớ đổi lại `demo: false`.**
-11. [ ] Sáng/tối và điện thoại 390px: thẻ lỗi không tràn ngang, badge xuống dòng dưới Category.
+11. [ ] Sáng/tối và điện thoại 390px: thẻ lỗi không tràn ngang; header nhóm 2 dòng (tên + chip, rồi nút); ô điền trong câu không làm tràn ngang.
+12. [ ] Nộp bài có lỗi "protect the nature is important" → Practice hiện câu có chỗ trống ở đầu, gợi ý `(protect)`, phần sau câu đã viết đúng; gõ `protecting` → Correct, ô chuyển xanh, sau đó mới hiện `original → corrected` và giải thích.
+13. [ ] Lúc đang Practice không thấy đáp án; sai lần 1 → "Not quite. Think about: …", ô rung nhẹ, được thử lại; sai lần 2 (hoặc bấm "Show answer") → hiện đáp án điền vào câu và đưa về box 1.
+14. [ ] Lỗi lên box 3 trở lên → Practice dùng câu mới, khác câu trong bài.
+15. [ ] Lỗi cũ (lưu trước khi có tính năng này) → bấm Practice thấy "Preparing your exercise…", sau đó có bài; mở lại thì không gọi AI lần nữa.
+16. [ ] Ngắt mạng hoặc AI lỗi → vẫn có bài Practice dự phòng, kèm dòng "Simple practice (AI exercise not available)".
 
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

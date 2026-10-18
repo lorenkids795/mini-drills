@@ -28,6 +28,7 @@
 //   sheet          { url, csv, ts }              Google Sheet class list; sheetcache = last read, 5 minutes
 //   ai:<attemptId> 'pending' | 'done', 2 days    one AI check per Writing submission
 //   aiq:<email>:<day>  AI checks used that day
+//   aipq:<email>:<day> AI practice exercises made that day (50)
 
 const enc = new TextEncoder();
 const PBKDF2_ITER = 100000; // Workers maximum
@@ -708,6 +709,28 @@ async function adminClass(env, body) {
 // (only a signed-in student can create one), be a Writing submission, and be less than 2 hours old.
 // KV ai:<attemptId> = 'pending' | 'done' (2 days): one AI check per attempt.
 // KV aiq:<email>:<YYYY-MM-DD> = checks used today (limit AI_DAILY_LIMIT, default 10).
+// Shared by /api/ai/correct (inside each correction) and /api/ai/practice.
+const AI_PRACTICE_RULES =
+  'Practice rules (field "practice", exactly 2 items for every mistake that is not Off-topic; Off-topic gets []):\n' +
+  '- practice[0] uses the student\'s OWN sentence (the sentence that contains the mistake). Fix every OTHER mistake in that sentence, so only ONE blank is left, for this mistake.\n' +
+  '- practice[1] is a NEW natural sentence on a different IELTS-style topic that tests the same rule.\n' +
+  '- sentence: a complete English sentence of 8-25 words with exactly ONE "___". The blank replaces only the part to fix (at most 4 words). Right after the blank write the clue in brackets, e.g. "___ (protect) nature is the duty of every citizen."\n' +
+  '- The clue must NOT contain the answer. Grammar: the base form, e.g. (protect), (go), (person). Vocabulary (word choice, collocation): the Vietnamese meaning, e.g. (đưa ra quyết định), or the first letter and letter count, e.g. (m_ _ _). Spelling: the Vietnamese meaning.\n' +
+  '- Articles or words that belong to the mistake are part of the blank. Example: "protect the nature" -> "___ (protect) nature is ..." (the rest is already correct, no "the").\n' +
+  '- answers: every correct way to fill the blank (capital letter at the start of a sentence, equivalent tenses), e.g. ["Protecting"], ["wrote", "was writing"].\n' +
+  '- clue_type: "base_form", "meaning" or "wrong_word".\n';
+const AI_PRACTICE_ITEMS = {
+  type: 'ARRAY',
+  items: {
+    type: 'OBJECT',
+    properties: {
+      sentence: { type: 'STRING' },
+      answers: { type: 'ARRAY', items: { type: 'STRING' } },
+      clue_type: { type: 'STRING', enum: ['base_form', 'meaning', 'wrong_word'] },
+    },
+    required: ['sentence', 'answers', 'clue_type'],
+  },
+};
 const AI_PROMPT =
   'You are an IELTS Writing examiner and tutor. Read the task and the student essay below and return JSON that matches the schema.\n' +
   'Rules:\n' +
@@ -720,7 +743,8 @@ const AI_PROMPT =
   '- At most 15 corrections, most important first.\n' +
   '- vocabulary_upgrades: up to 6 simple words or phrases from the essay and a better IELTS alternative, with a short example sentence and a short note.\n' +
   '- summary.grammar_band_est looks like "Band 6.0". summary.topic_relevance is High, Medium or Low. summary.general_feedback: 2-4 short sentences in VIETNAMESE.\n' +
-  '- improved_essay: the essay corrected and slightly improved, keeping the student\'s ideas and structure.\n';
+  '- improved_essay: the essay corrected and slightly improved, keeping the student\'s ideas and structure.\n' +
+  AI_PRACTICE_RULES;
 const AI_SCHEMA = {
   type: 'OBJECT',
   properties: {
@@ -744,8 +768,9 @@ const AI_SCHEMA = {
           category: { type: 'STRING' },
           explanation: { type: 'STRING' },
           type: { type: 'STRING', enum: ['Grammar', 'Vocabulary', 'Off-topic'] },
+          practice: AI_PRACTICE_ITEMS,
         },
-        required: ['original_text', 'corrected_text', 'category', 'explanation', 'type'],
+        required: ['original_text', 'corrected_text', 'category', 'explanation', 'type', 'practice'],
       },
     },
     vocabulary_upgrades: {
@@ -784,7 +809,7 @@ function sentenceAt(text, i, len) {
   return out;
 }
 
-async function askGemini(env, task, text) {
+async function askGemini(env, prompt, schema) {
   const model = String(env.GEMINI_MODEL || 'gemini-2.5-flash').trim();
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), 25000);
@@ -797,8 +822,8 @@ async function askGemini(env, task, text) {
         signal: ctl.signal,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: AI_PROMPT + '\nTASK:\n' + (task || '(not given)') + '\n\nSTUDENT ESSAY:\n' + text }] }],
-          generationConfig: { temperature: 0.2, responseMimeType: 'application/json', responseSchema: AI_SCHEMA },
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.2, responseMimeType: 'application/json', responseSchema: schema },
         }),
       });
     if (!r.ok) throw new Error('gemini ' + r.status);
@@ -809,6 +834,37 @@ async function askGemini(env, task, text) {
   } finally {
     clearTimeout(timer);
   }
+}
+
+// Practice check: one ___ with a (clue) right after it, answers not empty and at most 4 words,
+// the clue must not give the answer away (except when the answer is the clue word itself and was already
+// in the mistake, e.g. "am disagree" -> "disagree"), and practice[0] filled in must not contain the mistake.
+const pNorm = (s) => String(s || '').toLowerCase().replace(/[‘’]/g, "'").replace(/[^\p{L}\p{N}' ]+/gu, ' ').replace(/\s+/g, ' ').trim();
+const pHas = (hay, needle) => (' ' + pNorm(hay) + ' ').indexOf(' ' + pNorm(needle) + ' ') >= 0;
+function cleanPractice(list, c) {
+  if (c.type === 'Off-topic' || !Array.isArray(list)) return [];
+  const out = [];
+  list.slice(0, 2).forEach((p, i) => {
+    let sentence = aiStr(p && p.sentence, 300).replace(/_{3,}/g, '___');
+    const answers = (Array.isArray(p && p.answers) ? p.answers : [])
+      .map((a) => aiStr(a, 60)).filter((a) => a && a.split(' ').length <= 4)
+      .filter((a, j, arr) => arr.indexOf(a) === j).slice(0, 6);
+    if (!sentence || sentence.split('___').length !== 2 || !answers.length) return;
+    const m = /___\s*\(([^()]{1,60})\)/.exec(sentence);
+    if (!m) return;
+    const clue = m[1];
+    const gives = answers.some((a) => pHas(clue, a) && !(pNorm(clue) === pNorm(a) && pHas(c.original_text, a)));
+    if (gives) return;
+    if (i === 0) {
+      const filled = sentence.replace(/___\s*\([^()]*\)/, answers[0]);
+      if (pHas(filled, c.original_text) && pNorm(c.original_text) !== pNorm(answers[0])) return;
+    }
+    const wc = sentence.replace(/\([^()]*\)/, '').split(/\s+/).filter(Boolean).length;
+    if (wc < 4 || wc > 40) return;
+    const ct = ['base_form', 'meaning', 'wrong_word'].indexOf(p.clue_type) >= 0 ? p.clue_type : 'base_form';
+    out.push({ sentence, answers, clue_type: ct, own: i === 0 });
+  });
+  return out;
 }
 
 // Do not trust the AI blindly: keep only mistakes found word for word in the essay, sorted by position.
@@ -826,10 +882,12 @@ function cleanAi(raw, text, model) {
       if (pos < 0 || !category || seen[original]) return null;
       if (type !== 'Off-topic' && (!corrected || corrected === original)) return null;
       seen[original] = 1;
-      return {
+      const out = {
         original_text: original, corrected_text: corrected,
         category, explanation: aiStr(c.explanation, 300), type, context: sentenceAt(text, pos, original.length), pos,
       };
+      out.practice = cleanPractice(c.practice, out);
+      return out;
     })
     .filter(Boolean)
     .sort((a, b) => a.pos - b.pos)
@@ -854,46 +912,44 @@ function cleanAi(raw, text, model) {
   };
 }
 
-// One errors/{slug(email)}_{hash} doc per mistake. Seen again -> count + 1 and back to box 1 (no duplicate).
+// One errors/{slug(email)}_{attemptId}_{i} doc per mistake (repeated mistakes are NOT merged; each has its own boxes).
+// The id is fixed per attempt + position, so running again never makes duplicates (existing docs are skipped).
 // 2 requests in total: batchGet (which already exist) + one atomic commit.
 async function saveErrors(env, att, attemptId, ai, meta) {
   if (!ai.corrections.length) return 0;
-  const em = normEmail(att.email), today = meta.dayStart, now = Date.now();
+  const em = normEmail(att.email), now = Date.now();
   const docBase = 'projects/' + env.FIREBASE_PROJECT_ID + '/databases/(default)/documents/errors/';
-  const rows = [], ids = {};
-  for (const c of ai.corrections) {
-    const h = (await sha256Hex(c.original_text.toLowerCase() + '|' + c.corrected_text.toLowerCase())).slice(0, 12);
-    const id = slug(em) + '_' + h;
-    if (ids[id]) continue;
-    ids[id] = 1;
-    rows.push({ id, c });
-  }
+  const rows = ai.corrections.map((c, i) => ({ id: slug(em) + '_' + attemptId + '_' + i, c }));
   const g = await fs(env, 'POST', ':batchGet', { documents: rows.map((r) => docBase + r.id) });
   if (!g.ok) throw new Error('firestore batchGet ' + g.status);
   const found = {};
   (await g.json()).forEach((x) => { if (x.found) found[x.found.name.split('/').pop()] = 1; });
-  const writes = rows.map((r) => {
-    const content = {
-      email: em, student: String(att.student || ''), cls: String(att.cls || ''),
-      original: r.c.original_text, corrected: r.c.corrected_text, category: r.c.category,
-      explanation: r.c.explanation, type: r.c.type, context: r.c.context,
-      attemptId, ex: String(att.ex || ''), exTitle: meta.exTitle,
-      box: 1, due: today, mastered: false, lastSeen: now,
-    };
-    if (found[r.id]) {
-      return {
-        update: { name: docBase + r.id, fields: toFields(content) },
-        updateMask: { fieldPaths: Object.keys(content) },
-        updateTransforms: [{ fieldPath: 'count', increment: { integerValue: '1' } }],
-        currentDocument: { exists: true },
-      };
-    }
-    const full = Object.assign(content, { reviews: 0, lapses: 0, count: 1, createdAt: now, lastPractice: 0 });
-    return { update: { name: docBase + r.id, fields: toFields(full) }, currentDocument: { exists: false } };
-  });
-  const r = await fs(env, 'POST', ':commit', { writes });
-  if (!r.ok) throw new Error('firestore commit ' + r.status);
+  const writes = rows.filter((r) => !found[r.id]).map((r) => ({
+    update: {
+      name: docBase + r.id,
+      fields: toFields({
+        email: em, student: String(att.student || ''), cls: String(att.cls || ''),
+        original: r.c.original_text, corrected: r.c.corrected_text, category: r.c.category,
+        explanation: r.c.explanation, type: r.c.type, context: r.c.context, practice: r.c.practice || [],
+        attemptId, ex: String(att.ex || ''), exTitle: meta.exTitle,
+        box: 1, due: meta.dayStart, reviews: 0, lapses: 0, mastered: false, createdAt: now, lastPractice: 0,
+      }),
+    },
+    currentDocument: { exists: false },
+  }));
+  if (writes.length) {
+    const r = await fs(env, 'POST', ':commit', { writes });
+    if (!r.ok) throw new Error('firestore commit ' + r.status);
+  }
   return rows.length;
+}
+
+// Student day from tzo (= getTimezoneOffset() in minutes, Vietnam = -420)
+function dayOf(tzoIn) {
+  let tzo = Number(tzoIn);
+  if (!isFinite(tzo) || Math.abs(tzo) > 840) tzo = -420;
+  const day = new Date(Date.now() - tzo * 60000).toISOString().slice(0, 10);
+  return { day, dayStart: Date.parse(day + 'T00:00:00Z') + tzo * 60000 };
 }
 
 async function aiCorrect(env, body) {
@@ -914,18 +970,15 @@ async function aiCorrect(env, body) {
   const lock = await env.MD_KV.get('ai:' + id);
   if (lock === 'pending') return fail('Your writing is already being checked. Wait a few seconds.', 409);
   if (lock === 'done') return fail('busy', 502); // marked done but the result was not saved
-  // day of the student (tzo = getTimezoneOffset() in minutes, Vietnam = -420)
-  let tzo = Number(body.tzo);
-  if (!isFinite(tzo) || Math.abs(tzo) > 840) tzo = -420;
-  const local = Date.now() - tzo * 60000, day = new Date(local).toISOString().slice(0, 10);
-  const dayStart = Date.parse(day + 'T00:00:00Z') + tzo * 60000;
+  const { day, dayStart } = dayOf(body.tzo);
   const limit = Math.max(1, parseInt(env.AI_DAILY_LIMIT || '10', 10) || 10);
   const qKey = 'aiq:' + em + ':' + day;
   if ((await count(env, qKey)) >= limit) return fail("You have used today's AI checks. Try again tomorrow.", 429);
   await env.MD_KV.put('ai:' + id, 'pending', { expirationTtl: 172800 });
   let ai;
   try {
-    const g = await askGemini(env, String(body.task || '').slice(0, 1500), text);
+    const task = String(body.task || '').slice(0, 1500);
+    const g = await askGemini(env, AI_PROMPT + '\nTASK:\n' + (task || '(not given)') + '\n\nSTUDENT ESSAY:\n' + text, AI_SCHEMA);
     ai = cleanAi(g.out, text, g.model);
   } catch (e) {
     await env.MD_KV.delete('ai:' + id); // a failed call may be tried again
@@ -942,6 +995,41 @@ async function aiCorrect(env, body) {
   let added = 0;
   try { added = await saveErrors(env, att, id, ai, { dayStart, exTitle: aiStr(body.exTitle, 120) }); } catch (e) { added = 0; }
   return json({ ai, added });
+}
+
+// POST /api/ai/practice { errorId, tzo }: makes the 2 practice items for a mistake saved before practice existed.
+// Same simple check as /api/ai/correct: the errors doc must exist. KV aipq:<email>:<day>, 50 a day.
+const PRACTICE_PROMPT =
+  'You write fill-in-the-blank practice for one IELTS student mistake. Return JSON that matches the schema.\n' + AI_PRACTICE_RULES;
+const PRACTICE_SCHEMA = { type: 'OBJECT', properties: { practice: AI_PRACTICE_ITEMS }, required: ['practice'] };
+async function aiPractice(env, body) {
+  const id = String(body.errorId || '');
+  if (!/^[A-Za-z0-9_-]{5,200}$/.test(id)) return fail('This mistake was not found.', 404);
+  const doc = await fsGet(env, 'errors', id);
+  if (!doc) return fail('This mistake was not found.', 404);
+  const e = doc.data;
+  if (Array.isArray(e.practice) && e.practice.length) return json({ practice: e.practice, again: true });
+  if (e.type === 'Off-topic') return json({ practice: [] });
+  if (!env.GEMINI_KEY) return fail('busy', 502);
+  const em = normEmail(e.email);
+  if (!emailOk(em)) return fail('This mistake was not found.', 404);
+  const qKey = 'aipq:' + em + ':' + dayOf(body.tzo).day;
+  if ((await count(env, qKey)) >= 50) return fail("You have used today's AI exercises. Try again tomorrow.", 429);
+  const c = { original_text: String(e.original || ''), corrected_text: String(e.corrected || ''), type: String(e.type || 'Grammar') };
+  let practice;
+  try {
+    const g = await askGemini(env, PRACTICE_PROMPT + '\nMISTAKE:\n' + JSON.stringify({
+      original_text: c.original_text, corrected_text: c.corrected_text, category: String(e.category || ''),
+      explanation: String(e.explanation || ''), context: String(e.context || ''),
+    }), PRACTICE_SCHEMA);
+    practice = cleanPractice(g.out && g.out.practice, c);
+  } catch (err) {
+    return fail('busy', 502);
+  }
+  await bump(env, qKey, 172800);
+  if (!practice.length) return json({ practice: [] });
+  await fsUpdate(env, 'errors', id, { practice });
+  return json({ practice });
 }
 
 export async function onRequest(ctx) {
@@ -966,6 +1054,7 @@ export async function onRequest(ctx) {
     if (route === 'reset') return await resetPassword(env, body);
     if (route === 'admin/unlock') return await adminUnlock(env, body);
     if (route === 'ai/correct') return await aiCorrect(env, body);
+    if (route === 'ai/practice') return await aiPractice(env, body);
     if (route.indexOf('admin/') === 0) {
       if (!(await adminKeyOk(env, request))) {
         return json({ error: 'Your admin session ended. Enter your admin password to continue.', needUnlock: true }, 401);

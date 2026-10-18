@@ -74,7 +74,7 @@ Các khối JS được ngăn bằng comment `/* ---------- Tên ---------- */`.
 | Teacher | `renderDash`, `renderAsg`/`saveAsg`, `renderMark`/`saveGrade`/`gradeOf`/`CRIT`, `renderRoster`/`importCSV`, `parseAI`/`addExercise` (Create) |
 | Shell | `tabsFor`, `showTab`, `signIn`, `refreshLive`, các listener `click`/`change`/`input`/`keydown` |
 | Vocabulary | `DICT`, `lookupWord`, popup `VP`/`showPop`, flashcard `CV`, `reviewHTML`, `rvRate`, `bsPress`, `renderCards` |
-| Error Notebook | `errorDocs`/`localErr`/`sampleErr`, `ERR_DAYS`, `EN` (state), `errList`, `errDue`, `errRate`, `errOk`, `setErr`, `renderErrors`, `errCardHTML`, `enPracticeHTML`, `enReviewHTML`, `enClear`, `enAct` (`data-act` bắt đầu bằng `en-`), `errAddLocal` (demo) |
+| Error Notebook | `errorDocs`/`localErr`/`sampleErr`, `ERR_DAYS`, `EN` (state), `errList`, `errDue`, `errRate`, `errOkList`, `setErr`, `renderErrors` (nhóm theo category, `<details class="eng">`, trạng thái mở `EN.gopen`), `errCardHTML`, `enBadge`, `enPracticeHTML`, `enPick`, `enFallback`, `enPrep` (gọi `/api/ai/practice`), `enCheck`, `enReviewHTML`, `enStartReview(cat)`, `enClear`, `enAct` (`data-act` bắt đầu bằng `en-`), `errAddLocal` (demo) |
 | Profile | `XPD` (giá trị XP mặc định), `xpv(key)`, `LV`, `lvOf`, `myProf`, `putProf`, `addXP`, `rollStreak`, `grantSpin` |
 | Daily Practice | `DTYPES`, `todaysTypes`, `dailyHTML`, `buildDaily`, `renderDailyTask`, `dyAct` |
 | Leaderboard | `renderRanks`, `RK` ('class' hoặc 'all') |
@@ -123,11 +123,12 @@ Mỗi tab ứng với một `<section id="v-...">`: `library` dùng `#v-lib`, c�
 | POST | `/api/admin/sheet` | `{op}`: `get`, `check` + `url`, `save` + `url`, `refresh`, `unlink` → cột nhận được, 5 dòng đầu, tên chưa đăng ký theo lớp |
 | POST | `/api/admin/class` | `{email, cls, course}`: đổi lớp của học sinh đã đăng ký (`roster`) |
 | POST | `/api/admin/teachers` | `{op, name, email, password}`, `op` = `'add'` hoặc `'remove'` |
+| POST | `/api/ai/practice` | `{errorId, tzo}`: đọc `errors/{id}`; có `practice` rồi thì trả luôn; chưa có thì Gemini tạo (`PRACTICE_PROMPT`), lọc bằng `cleanPractice`, lưu vào doc. KV `aipq:<email>:<ngày>`, 50/ngày |
 | POST | `/api/ai/correct` | `{attemptId, task, exTitle, tzo}`: không cần session; server đọc `attempts/{id}` (phải là `kind:'submission'`, có `text` 8–6000 ký tự, `ts` < 2 giờ). Gọi Gemini (`responseSchema`, timeout 25 s), lọc lỗi tìm thấy nguyên văn trong bài, ghi `attempts.ai` + `attempts.fixes` (dạng cũ) + collection `errors`. Trả `{ai, added}`. Đã chấm rồi thì trả kết quả cũ, không tốn lượt |
 
 Mọi `/api/admin/*` (trừ `unlock`) cần header `X-Admin-Key`. Ở frontend, mọi lời gọi admin đi qua **`adminApi(path, body)`** (demo: `demoAdminRun()` trên dữ liệu giả `DEMO_ADM`).
 
-KV: `acct:<email>` (mật khẩu), `rl:<email>` (đếm sai), `reg:<ip>`, `setup:<ip>`, `staff` (`{email:{name,ts}}`), `off:<email>`, `adm:<key>`, `sheet` (`{url, csv, ts}`), `sheetcache` (lần đọc gần nhất, dùng 5 phút), `ai:<attemptId>` (`pending`/`done`, 2 ngày: mỗi bài chấm AI 1 lần), `aiq:<email>:<YYYY-MM-DD>` (số lần AI trong ngày, giới hạn `AI_DAILY_LIMIT`).
+KV: `acct:<email>` (mật khẩu), `rl:<email>` (đếm sai), `reg:<ip>`, `setup:<ip>`, `staff` (`{email:{name,ts}}`), `off:<email>`, `adm:<key>`, `sheet` (`{url, csv, ts}`), `sheetcache` (lần đọc gần nhất, dùng 5 phút), `ai:<attemptId>` (`pending`/`done`, 2 ngày: mỗi bài chấm AI 1 lần), `aiq:<email>:<YYYY-MM-DD>` (số lần AI trong ngày, giới hạn `AI_DAILY_LIMIT`), `aipq:<email>:<YYYY-MM-DD>` (số bài Practice AI tạo trong ngày, 50).
 
 **Google Sheet (danh sách lớp)**: server đọc CSV qua link `export?format=csv&gid=` (Sheet chia sẻ "Anyone with the link"), không dùng Google API.
 - Tự tìm dòng tiêu đề trong 20 dòng đầu (`SHEET_COLS`, tên cột Việt/Anh, so khớp đã bỏ dấu).
@@ -145,7 +146,7 @@ Prompt AI (`AI_PROMPT`) và schema (`AI_SCHEMA`) nằm ở server, không ở cl
 | `attempts` | bài làm `{email, student, cls, ex, score, total, items, kind?, text?, link?, ts, grade?, fixes?, ai?}` (`ai` = `{summary, corrections, vocabulary_upgrades, improved_essay, model, ts}`, do server ghi) | HS đọc/tạo bài của mình, **không được ghi `grade`**, chỉ sửa được `fixes`; GV toàn quyền |
 | `hwdone`, `passes`, `cards`, `redeems` | dữ liệu riêng của HS (có trường `email`) | chỉ chủ sở hữu; GV đọc |
 | `profiles` | XP, streak, inv, title, avatar… | mọi người đã đăng nhập đọc được; chỉ chủ ghi |
-| `errors` | sổ lỗi, id `{slug(email)}_{12 ký tự đầu của sha256(original + dấu gạch đứng + corrected, chữ thường)}`: `{email, student, cls, original, corrected, category, explanation, type, context, attemptId, ex, exTitle, box, due, reviews, lapses, mastered, count, createdAt, lastSeen, lastPractice}` | chỉ server tạo; HS đọc, xóa lỗi của mình và chỉ sửa `box/due/reviews/lapses/mastered/lastPractice`; GV đọc/xóa |
+| `errors` | sổ lỗi, **mỗi lần mắc lỗi một doc** (không gộp), id `{slug(email)}_{attemptId}_{i}` (`i` = thứ tự lỗi trong bài): `{email, student, cls, original, corrected, category, explanation, type, context, practice[], attemptId, ex, exTitle, box, due, reviews, lapses, mastered, createdAt, lastPractice}`. `practice` = tối đa 2 bài `{sentence (một ___ + (gợi ý)), answers[], clue_type, own}`: [0] câu của HS, [1] câu mới. Doc cũ (id `{slug(email)}_{hash}`, có `count`/`lastSeen`) vẫn hiện bình thường | chỉ server tạo; HS đọc, xóa lỗi của mình và chỉ sửa `box/due/reviews/lapses/mastered/lastPractice`; GV đọc/xóa |
 | `wins` | marquee "vừa quay trúng" | đã đăng nhập: đọc và tạo |
 | `codes` | voucher | HS chỉ nhận được mã còn trống (`to:''` → email của mình) |
 | `names` | tên chờ HS nhận | chỉ GV và server |
@@ -160,7 +161,8 @@ Prompt AI (`AI_PROMPT`) và schema (`AI_SCHEMA`) nằm ở server, không ở cl
 - Bài Writing/Speaking là attempt có `kind:'submission'`, `score:0, total:0`; điểm nằm ở `gradeOf(a) → {overall, max(=9), crit{}, feedback, sticker, marks, link}`
 - `CRIT`: 4 tiêu chí band cho writing và speaking; 3 tiêu chí cho `readaloud`
 - XP: `xpv('key')` đọc `config/xp` và dùng `XPD` làm mặc định (có `errFix`=5). Bài tự chấm đạt khi `score/total >= .7`
-- Error Notebook (Leitner): `ERR_DAYS=[0,1,3,7,14]` cho box 1–5. Đúng: box+1, `due` = đầu ngày + `ERR_DAYS[box mới-1]`; đúng ở box 5 thì `mastered`. Sai: box 1, ôn lại ngày mai. "Due" = `!mastered && due <= cuối ngày hôm nay`. XP `errFix` tối đa 1 lần/lỗi/ngày. Gặp lại cùng lỗi: server `count+1`, về box 1
+- Error Notebook (Leitner): `ERR_DAYS=[0,1,3,7,14]` cho box 1–5. Đúng: box+1, `due` = đầu ngày + `ERR_DAYS[box mới-1]`; đúng ở box 5 thì `mastered`. Sai: box 1, ôn lại ngày mai. "Due" = `!mastered && due <= cuối ngày hôm nay`. XP `errFix` tối đa 1 lần/lỗi/ngày. Lỗi lặp lại là thẻ riêng, mỗi thẻ có box riêng.
+- Practice: box 1–2 dùng `practice[0]` (câu của HS), box 3–5 dùng `practice[1]` (câu mới); chỉ có 1 bài thì dùng bài đó. Chưa có `practice` → `/api/ai/practice`; AI lỗi/demo thiếu → `enFallback` (câu `context`, chỗ sai thành `___`, gợi ý = gốc của từ sửa, từ bất quy tắc thì lấy từ của HS). Sai lần 1 chưa tính (gợi ý + thử lại), sai lần 2 hoặc "Show answer" = sai. So khớp `errNorm` (chữ thường, gộp khoảng trắng, bỏ dấu câu hai đầu, `’`→`'`). Server lọc bài Practice bằng `cleanPractice` (đúng 1 `___` có ngoặc ngay sau, gợi ý không chứa đáp án trừ khi đáp án là chính từ gốc đã có trong lỗi, `practice[0]` điền xong không còn `original_text`)
 
 ---
 
@@ -210,7 +212,8 @@ Các thay đổi đã có trong code. **Không đảo ngược** nếu không đ
 
 7. **Admin (GĐ 1, 10/2026)**: vai trò admin, tab Admin (Guide/Users/Teachers/My account), Pause/Resume, đổi mật khẩu, thêm/xóa giáo viên, `/api/status`. GĐ 2 (Google Sheet, Edit class) đã xong. Còn lại: GĐ 3 đổi email (`migrateEmail`).
 8. **AI Auto-Correction + Error Notebook (10/2026)**: `/api/ai/correct` (Gemini) thay cho `window.claude.use('sample')`; kết quả hiện ngay dưới bài Writing (tóm tắt + band ước lượng, sửa lỗi, từ vựng nâng cấp có "+ Flashcard", bài đã sửa). Học sinh mở lại qua "Open feedback" ở Recent results (`showFb` hiện cả AI). Tab **Error Notebook** (thống kê lọc được, Practice trong thẻ, Review all due, Clear All). Home có thẻ `.dtask` "Error review · N due". Modal Marking của GV có phần "AI summary (estimate)" thu gọn; "Auto corrections" cũ vẫn giữ. 4 ô Recent results cao bằng nhau (`grid-auto-rows:1fr` từ 641px). Band AI **không** tính vào Recent results.
-   - Email là khóa dữ liệu ở: `roster/{email}`, `profiles/{slug(email)}`, `cards/{slug(email)}_{word}`, `hwdone/{slug(email)}_{asgId}`, `passes/{slug(email)}_{asgId}`, `errors/{slug(email)}_{hash}` (Error Notebook, có trường `email`), trường `email` của `attempts`/`redeems`, `codes.to`, `names.email`, **`classes.removed[]`**, KV `acct:`/`rl:`/`staff`.
+9. **Error Notebook GĐ 4 (10/2026)**: bỏ gộp lỗi trùng (mỗi lần mắc lỗi một doc `errors/{slug(email)}_{attemptId}_{i}`); danh sách chia nhóm theo category (`<details>`, chip "N errors · M due", nút "Practice this group (M)"), bỏ dropdown Category, bỏ chữ "Category:" và dòng "From … seen …". Practice mới: câu đầy đủ có ô điền ngay trong câu + gợi ý trong ngoặc, AI tạo 2 bài mỗi lỗi (`practice` trong schema, `AI_PRACTICE_RULES`), endpoint `/api/ai/practice` cho lỗi cũ, phương án dự phòng `enFallback`. Demo: 6 lỗi mẫu, có 2 thẻ *go → went*.
+   - Email là khóa dữ liệu ở: `roster/{email}`, `profiles/{slug(email)}`, `cards/{slug(email)}_{word}`, `hwdone/{slug(email)}_{asgId}`, `passes/{slug(email)}_{asgId}`, `errors/{slug(email)}_{attemptId}_{i}` (Error Notebook, có trường `email`; doc cũ dạng `{slug(email)}_{hash}`), trường `email` của `attempts`/`redeems`, `codes.to`, `names.email`, **`classes.removed[]`**, KV `acct:`/`rl:`/`staff`.
 
 ## 8. Giới hạn đã biết / chưa làm
 
