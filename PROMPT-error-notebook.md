@@ -212,3 +212,136 @@ Báo cáo mỗi giai đoạn theo mẫu: **Đã làm gì → File/hàm đã sử
 8. Đăng nhập student/teacher/admin và Google Sheet vẫn hoạt động như trước. Chế độ demo chạy được với 5 lỗi mẫu.
 
 Chỗ nào chưa rõ thì chọn cách **đơn giản và an toàn nhất**, ghi giả định rồi làm tiếp. Chỉ hỏi tôi trước khi xóa file hoặc làm điều có thể mất dữ liệu.
+# BỔ SUNG (GĐ 4): Error Notebook chia nhóm theo category, hiện mọi lần mắc lỗi, Practice có ngữ cảnh và buộc học sinh phải suy nghĩ
+
+> Làm **sau khi GĐ 3 của `PROMPT-error-notebook.md` đã xong**. Vẫn giữ mọi quy ước trong `CLAUDE.md`: ES5, `esc()`, `data-act`, biến màu `--*`, sửa bằng Edit. Không tự chạy server hay trình duyệt, chỉ kiểm tra cú pháp. Trả lời bằng tiếng Việt.
+
+---
+
+## 1. Error Notebook chia nhóm theo category, mỗi lần mắc lỗi là một thẻ riêng
+
+### 1.1 Dữ liệu: KHÔNG gộp lỗi trùng nữa
+- Hiện tại server gộp lỗi trùng vào một doc (id `<slug(email)>_<hash>`, tăng `count`, đưa về box 1). **Bỏ cơ chế gộp này.**
+- **Mỗi lần mắc lỗi tạo một doc riêng**:
+  - Id: `<slug(email)>_<attemptId>_<i>`, với `i` là thứ tự của lỗi trong bài. Vẫn bắt đầu bằng `slug(email)` để khớp quy ước đổi email.
+  - Mỗi doc có SRS riêng (box, due…) và `context`/`practice` riêng, lấy từ câu của chính lần mắc lỗi đó.
+  - Gọi `/api/ai/correct` lại cho cùng một bài thì không tạo trùng: id cố định theo `attemptId` + `i`, nên ghi đè hoặc bỏ qua.
+- Trường `count` và `lastSeen` không dùng nữa. Doc mới không ghi hai trường này. Doc cũ còn trường đó thì giữ nguyên, không cần chuyển đổi: mỗi doc cũ hiển thị thành một thẻ như bình thường.
+- Cập nhật `DEMO` cho khớp: thêm vài lỗi lặp lại (ví dụ 2 lần *go → went* ở 2 bài khác nhau) để thấy cả hai thẻ đều hiện.
+
+### 1.2 Giao diện: nhóm theo category
+- **Bỏ hẳn dòng "From: {exTitle} · {ngày} · seen {count}×"** trên thẻ lỗi.
+- **Bỏ tiền tố `Category: `** ở mọi chỗ: phần kết quả AI sau khi nộp bài, modal Marking. Grep `Category:` để chắc không sót.
+- 3 ô thống kê (Total, Due today, Mastered) và cách lọc khi bấm vào ô **giữ nguyên**. Total là tổng số lần mắc lỗi.
+- **Bỏ dropdown lọc Category**, vì danh sách đã chia nhóm.
+- Danh sách lỗi chia thành **từng nhóm theo category**:
+  - **Header của nhóm** (dùng `<details>`, mở sẵn; nhóm nào đã thuộc hết thì thu gọn sẵn):
+    - Bên trái: tên category (chữ đậm, màu `--accent`, cỡ lớn hơn chữ thường một chút)
+    - Bên cạnh: chip nhỏ "N errors · M due" (nền `--line`; phần "M due" màu `--bad` khi M > 0)
+    - Bên phải: nút `btn sm` **"Practice this group (M)"** để ôn lần lượt các lỗi đến hạn trong nhóm, cùng giao diện với "Review all due". Ẩn khi M = 0.
+  - **Thứ tự các nhóm**: nhóm có nhiều lỗi đến hạn lên trước, rồi đến nhóm có tổng số lỗi nhiều hơn, cuối cùng theo tên A–Z.
+  - **Thẻ lỗi trong nhóm**: không lặp lại tên category, vì đã có ở header.
+    - Dòng 1: `<del>` original → `<ins>` corrected ở bên trái; badge BOX ở bên phải (giữ nguyên kiểu badge cũ: REVIEW NOW / NEXT … / MASTERED)
+    - Dòng 2: explanation, màu `--muted`
+    - Nút **Practice This Error**
+    - Sắp xếp trong nhóm: lỗi đến hạn trước, rồi theo `due` tăng dần, rồi mới nhất trước. **Lỗi lặp lại vẫn hiện đủ từng thẻ.**
+  - Thẻ trong nhóm thụt vào một chút hoặc có viền trái mảnh màu `--line`, để thấy rõ chúng thuộc nhóm nào. Khoảng cách giữa các nhóm lớn hơn khoảng cách giữa các thẻ.
+- Khi đang lọc (Due/Mastered), chỉ hiện các nhóm còn thẻ sau khi lọc. Chip "N errors · M due" vẫn tính trên toàn bộ nhóm.
+- Hiển thị tốt ở 390px: header xuống 2 dòng (tên + chip ở dòng trên, nút ở dòng dưới). Dark mode dùng biến màu.
+
+---
+
+## 2. Bài Practice mới: câu đầy đủ, chỗ sai để trống, gợi ý trong ngoặc
+
+### Mục tiêu
+Học sinh phải **tự áp dụng quy tắc**, không được chép lại đáp án đang hiện sẵn trên màn hình. Ví dụ với lỗi *protect the nature → protecting nature* (Gerund as Subject & Articles):
+
+> **___ (protect) nature is the responsibility of every citizen.**
+> Đáp án: `Protecting`
+
+Một số ví dụ khác:
+
+| Lỗi | Câu Practice | Đáp án |
+|---|---|---|
+| am disagree → disagree | I strongly ___ (disagree) with the idea that children should not do housework. | `disagree` |
+| Many peoples → Many people | Many ___ (person) believe that social media harms teenagers. | `people` |
+| is write → wrote / was writing | Last year, my brother ___ (write) a short story for a school competition. | `wrote` / `was writing` |
+| go → went | Yesterday I ___ (go) to the library to prepare for my exam. | `went` |
+
+### 2.1 AI tạo bài Practice (sửa schema ở server)
+Thêm vào mỗi phần tử của `corrections` trong `responseSchema` và `AI_PROMPT`:
+
+```json
+"practice": [
+  {
+    "sentence": "câu tiếng Anh HOÀN CHỈNH, có đúng MỘT chỗ trống ___ ở vị trí lỗi, ngay sau chỗ trống là gợi ý trong ngoặc",
+    "answers": ["đáp án đúng", "biến thể chấp nhận được"],
+    "clue_type": "base_form | meaning | wrong_word"
+  }
+]
+```
+
+Mỗi lỗi có **2 bài Practice**:
+- `practice[0]`: dùng **chính câu của học sinh** (lấy từ `context`). Mọi lỗi **khác** trong câu đó phải được sửa sẵn, để chỉ còn lại đúng một chỗ trống cho lỗi đang luyện.
+- `practice[1]`: một **câu mới** cùng quy tắc nhưng khác ngữ cảnh, theo đề tài kiểu IELTS, để kiểm tra học sinh có hiểu quy tắc thật không.
+
+Quy tắc viết vào `AI_PROMPT`:
+- Câu tự nhiên, đúng chuẩn IELTS, dài 8–25 từ. Chỉ có **một** `___`, và chỗ trống chỉ thay **phần cần sửa**: không quá 4 từ.
+- Gợi ý trong ngoặc **không được chứa đáp án**:
+  - Ngữ pháp: dùng dạng gốc của từ, ví dụ `(protect)`, `(go)`, `(person)`.
+  - Từ vựng (word choice, collocation): dùng nghĩa tiếng Việt, ví dụ `(đưa ra quyết định)`, hoặc chữ cái đầu kèm số chữ cái, ví dụ `(m_ _ _)`.
+  - Chính tả: dùng nghĩa tiếng Việt.
+- Phần mạo từ hoặc cụm từ đi kèm cũng tính là một phần của lỗi. Ví dụ "protect the nature": chỗ trống là chủ ngữ, câu phía sau đã viết đúng sẵn ("nature", không có "the").
+- `answers` gồm mọi biến thể đúng, như hoa/thường đầu câu hoặc thì tương đương được chấp nhận.
+- `Off-topic`: `practice: []`.
+
+### 2.2 Kiểm tra ở server trước khi lưu (bỏ bài Practice không đạt)
+- Câu có đúng **một** `___`, có ngoặc gợi ý ngay sau chỗ trống, và `answers` không rỗng.
+- Gợi ý **không chứa** đáp án. So sánh sau khi chuyển chữ thường và bỏ dấu câu. Ngoại lệ: những lỗi mà đáp án trùng dạng gốc. Ví dụ *am disagree → disagree*, gợi ý `(disagree)` vẫn hợp lệ, vì cái khó là bỏ "am".
+- Ở `practice[0]`, khi điền đáp án vào chỗ trống thì câu thu được **không được chứa** `original_text`.
+- Bài không đạt thì bỏ. Nếu cả 2 bài đều bị bỏ thì dùng phương án dự phòng ở mục 2.4.
+- Lưu `practice` vào doc `errors` (cùng các trường khác do server ghi). `practice` **không** nằm trong danh sách trường học sinh được sửa theo rules.
+
+### 2.3 Lỗi đã lưu từ trước (chưa có `practice`)
+- Thêm `POST /api/ai/practice` `{errorId}`. Endpoint này dùng cách xác thực đơn giản như `/api/ai/correct`: đọc doc `errors/{errorId}`. Tiếp theo:
+  - Doc đã có `practice` thì trả về luôn.
+  - Chưa có thì gọi Gemini với prompt ngắn, chỉ tạo `practice` từ `{original, corrected, category, explanation, context}`, rồi lưu vào doc.
+  - Giới hạn riêng: KV `aipq:<email>:<ngày>`, 50 lần mỗi ngày.
+- Client gọi endpoint này khi học sinh bấm Practice mà lỗi chưa có `practice`. Trong lúc chờ, hiện "Preparing your exercise…".
+
+### 2.4 Phương án dự phòng (AI lỗi hoặc chế độ demo)
+- Lấy `context`, thay `original` bằng `___`, rồi thêm gợi ý `(…)` là **từ gốc của đáp án**: lấy từ đầu tiên của `corrected`, bỏ đuôi -ing/-ed/-s đơn giản. Nếu không làm được thì dùng `original`.
+- Ghi chú nhỏ: "Simple practice (AI exercise not available)".
+- **Demo**: 5 lỗi mẫu có sẵn `practice` viết tay đúng như các ví dụ ở trên.
+
+### 2.5 Giao diện Practice (trong thẻ lỗi và trong "Review all due")
+- **Khi đang làm bài, ẩn dòng `original → corrected` và phần explanation của thẻ đó**, để học sinh không nhìn đáp án. Chỉ hiện tên category và câu Practice.
+- Hiển thị: dòng nhỏ "Fill in the blank" ở trên. Câu in đậm, cỡ chữ lớn hơn chữ thường một chút. Ở vị trí `___` là **ô input nằm ngay trong câu** (inline, rộng vừa đủ khoảng 12 ký tự, viền dưới màu `--accent`), và gợi ý `(protect)` in nghiêng màu `--muted` ngay sau ô.
+- Chọn bài nào: box 1–2 dùng `practice[0]` (câu của học sinh); box 3–5 dùng `practice[1]` (câu mới). Nếu chỉ có một bài thì dùng bài đó.
+- Enter hoặc nút **Check**. So khớp:
+  - chữ thường, gộp khoảng trắng thừa, bỏ dấu câu ở hai đầu
+  - chuẩn hóa dấu nháy cong `’` thành `'`
+  - chấp nhận mọi phần tử trong `answers`
+- **Đúng**: ô input chuyển màu `--good`. Hiện "Correct! +5 XP · next review {ngày}", sau đó hiện lại `original → corrected` và explanation để củng cố. Cập nhật SRS như cũ.
+- **Sai**:
+  - Lần 1 chưa tính sai. Hiện "Not quite. Think about: {explanation}", ô input rung nhẹ (tắt khi người dùng bật `prefers-reduced-motion`), cho thử **thêm 1 lần**.
+  - Lần 2 vẫn sai: hiện đáp án đúng điền vào câu (chữ `--good`) cùng explanation, rồi đặt lại box 1 như cũ.
+- Có nút nhỏ **"Show answer"** (tính là sai). Không có nút bỏ qua mà vẫn được tính là đúng.
+- `Off-topic`: giữ cách cũ (explanation + "I understand").
+- Hiển thị tốt ở 390px: câu xuống dòng tự nhiên, ô input không làm tràn ngang. Dark mode dùng biến màu.
+
+---
+
+## 3. Kiểm tra và tài liệu
+
+- `node --check "functions/api/[[path]].js"`; tách `<script>` inline ra để `node --check`. Grep để chắc không có `let`, `const`, `=>` ở frontend, và mọi chuỗi mới đưa vào `innerHTML` đều qua `esc()`.
+- Thêm vào `TESTING.md`:
+  1. Error Notebook chia nhóm theo category, không còn chữ "Category:" và dòng "From … seen …". Nộp 2 bài cùng mắc lỗi *go → went* → nhóm Past Simple Tense hiện **2 thẻ** riêng, chip ghi "2 errors · 2 due". Nút "Practice this group" ôn lần lượt các lỗi đến hạn của nhóm. (Thay mục "seen 2×" cũ trong `TESTING.md` bằng mục này.)
+  2. Nộp bài có lỗi "protect the nature is important" → Practice hiện câu có chỗ trống ở đầu, gợi ý `(protect)`, phần sau câu đã viết đúng; gõ `protecting` → Correct.
+  3. Lúc đang Practice không thấy đáp án; sai lần 1 được thử lại; sai lần 2 thì hiện đáp án và đưa về box 1.
+  4. Lỗi lên box 3 trở lên → Practice dùng câu mới, khác câu trong bài.
+  5. Lỗi cũ (lưu trước khi có tính năng này) → bấm Practice thấy "Preparing your exercise…", sau đó có bài; mở lại thì không gọi AI lần nữa.
+  6. Ngắt mạng hoặc AI lỗi → vẫn có bài Practice dự phòng.
+- Cập nhật `CLAUDE.md`: mỗi lần mắc lỗi là một doc `errors/<slug(email)>_<attemptId>_<i>` (không gộp nữa), giao diện nhóm theo category, trường `practice` của collection `errors`, endpoint `/api/ai/practice`, quy tắc chọn bài theo box, mục lịch sử thay đổi.
+
+Báo cáo theo mẫu: **Đã làm gì → File/hàm đã sửa → Việc tôi cần làm trên Cloudflare/Firebase (nếu có) → Cách test**.

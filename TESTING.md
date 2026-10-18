@@ -39,5 +39,20 @@
 10. [ ] **Unlink** → form đăng ký quay về danh sách cũ; nối lại → hoạt động như trước.
 11. [ ] Demo (`demo: true`): Admin → Google Sheet → dán link bất kỳ dạng docs.google.com/spreadsheets/... → thấy dữ liệu mẫu. **Nhớ đổi lại `demo: false`.**
 
+## AI Auto-Correction + Error Notebook
+Chuẩn bị: thêm `GEMINI_KEY` (Secret) cho Preview + Production rồi deploy lại; dán lại `firestore.rules` vào Firebase Console → Publish.
+1. [ ] Nộp một bài Writing có lỗi → trong khoảng 5–20 giây thấy tóm tắt (số từ, "Grammar (AI estimate)", Topic relevance, nhận xét tiếng Việt), phần sửa lỗi, từ vựng nâng cấp, bài đã sửa (bấm mở) và dòng "N mistakes were added…".
+   - [ ] "+ Flashcard" → từ có trong tab Flashcards. "Copy" ở Improved essay → chép được.
+2. [ ] Tải lại trang → Home → Recent results ô Writing → "Open feedback" → kết quả AI vẫn còn. Giáo viên mở bài đó trong Marking → thấy "Auto corrections" và "AI summary (estimate)" (bấm để mở).
+3. [ ] Tab **Error Notebook**: số liệu 3 ô đúng; bấm từng ô thì lọc đúng; lọc theo Category được. Practice đúng → "Correct! +5 XP · next review …", box tăng, ngày ôn lùi lại. Sai → hiện đáp án, về box 1.
+4. [ ] Nộp bài khác có cùng lỗi → không tạo thẻ trùng, thẻ ghi "seen 2×" và về box 1.
+5. [ ] Nộp quá giới hạn trong ngày (mặc định 10; có thể tạm đặt `AI_DAILY_LIMIT` = `1` để thử) → "You have used today's AI checks. Try again tomorrow." Mở lại kết quả cũ không tốn thêm lượt.
+6. [ ] **Review all due** → làm lần lượt, có "1 of N", cuối hiện "You fixed X of N". Home có thẻ "Error review · N due" → bấm vào mở thẳng chế độ Review.
+7. [ ] **Clear All** → hộp xác nhận → notebook trống, tải lại vẫn trống. Học sinh khác không thấy lỗi của mình.
+8. [ ] 4 ô Recent results cao bằng nhau ở bố cục 2 cột (màn ~800px) và 4 cột (≥1080px); điện thoại giữ chiều cao tự nhiên.
+9. [ ] Đăng nhập student/teacher/admin và Google Sheet vẫn như trước. Giáo viên → Settings có dòng XP "Error Notebook".
+10. [ ] Demo (`demo: true`): Minh Anh có sẵn 5 lỗi mẫu trong Error Notebook; nộp bài Writing thấy kết quả AI mẫu. **Nhớ đổi lại `demo: false`.**
+11. [ ] Sáng/tối và điện thoại 390px: thẻ lỗi không tràn ngang, badge xuống dòng dưới Category.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

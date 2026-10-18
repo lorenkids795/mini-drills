@@ -7,7 +7,7 @@
 - Phần xác thực nằm trong thư mục `functions/` (Cloudflare Pages Functions), tự chạy khi deploy.
 
 ## 1. GitHub
-Upload cả thư mục này (index.html, md-config.js, md-backend.js, README.md, thư mục `functions/`). Thư mục `functions/api/[[path]].js` phải giữ đúng tên và đúng chỗ. `firestore.rules` không cần đưa lên GitHub.
+Upload cả thư mục này (index.html, md-config.js, md-backend.js, README.md, thư mục `functions/`). Không cần `ai-worker.js` (đã bỏ). Thư mục `functions/api/[[path]].js` phải giữ đúng tên và đúng chỗ. `firestore.rules` không cần đưa lên GitHub.
 
 ## 2. Firebase (Spark, miễn phí)
 1. Build → Authentication → **Get started** (không cần bật Google; chỉ cần Authentication đã được khởi tạo).
@@ -41,6 +41,18 @@ Upload cả thư mục này (index.html, md-config.js, md-backend.js, README.md,
 4. Admin → **Google Sheet** → dán link → **Save & check**. Form đăng ký của học sinh dùng danh sách này ngay; sau khi sửa Sheet, tối đa 5 phút là cập nhật (hoặc bấm **Refresh now**).
 5. Khi đã nối Sheet, khung nhập CSV ở tab Students của giáo viên được ẩn đi. Học sinh đã đăng ký từ trước vẫn đăng nhập bình thường.
 
+## 3d. AI chữa bài Writing (Gemini) + Error Notebook
+1. Lấy key: mở https://aistudio.google.com/apikey → đăng nhập Google → **Create API key** → copy.
+2. Cloudflare Pages → Settings → **Variables and Secrets** (cho cả **Preview** và **Production**):
+   - `GEMINI_KEY` (Secret): key vừa copy
+   - `GEMINI_MODEL` (Text, tùy chọn): mặc định `gemini-2.5-flash`
+   - `AI_DAILY_LIMIT` (Text, tùy chọn): số lần AI chấm mỗi học sinh mỗi ngày, mặc định `10`
+3. Deploy lại.
+4. Firebase → Firestore → **Rules**: dán lại `firestore.rules` (có thêm khối `errors`) → **Publish**.
+- Học sinh nộp bài Writing → sau 5–20 giây thấy band ước lượng, lỗi được sửa, từ vựng nâng cấp và bài đã sửa. Các lỗi được đưa vào tab **Error Notebook** để ôn lại (box 1–5: hôm nay, 1, 3, 7, 14 ngày).
+- Mỗi bài chỉ chấm AI 1 lần, chỉ trong 2 giờ sau khi nộp. Band AI chỉ là ước lượng, không tính vào điểm.
+- `ai-worker.js` không còn dùng (AI chạy qua `/api/ai/correct`).
+
 ## 4. Dùng
 - Giáo viên: mở site → tab **Teacher** → "First time? Create your teacher password" → nhập email, mật khẩu mới và setup key.
 - Tab **Students** → dán danh sách CSV với cột `name, course, class` → Import. Học sinh tự chọn tên trên trang đăng nhập.
@@ -51,5 +63,5 @@ Upload cả thư mục này (index.html, md-config.js, md-backend.js, README.md,
 - Học sinh nhập email tự do: ai biết tên và lớp thì có thể đăng ký trước tên đó. Giáo viên kiểm tra tab Students nếu thấy lạ.
 - Danh sách tên chưa đăng ký của từng lớp hiển thị công khai trên trang đăng nhập (không kèm email).
 - Sau khi giáo viên đổi mật khẩu, thiết bị đang đăng nhập sẵn của học sinh vẫn dùng tiếp được. (Muốn đẩy thiết bị ra: admin bấm Pause, tối đa 10 phút.)
-- AI chấm Writing tự động / tra từ AI chưa chạy trên site thật. Chưa có email nhắc 20:00.
+- AI chữa lỗi Writing chạy trên site thật (cần `GEMINI_KEY`). Tra từ bằng AI (`aiLookup`) vẫn chưa chạy. Chưa có email nhắc 20:00.
 - Rules: học sinh chỉ đọc/ghi bài của mình, giáo viên đọc tất cả. Bảng `roster` (tên và email cả lớp) vẫn đọc được bởi mọi người đã đăng nhập.

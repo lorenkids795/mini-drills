@@ -35,14 +35,14 @@ Giao diện người dùng viết bằng **tiếng Anh**. Chú thích trong code
 
 ```
 /
-├── index.html            # ~2990 dòng: TOÀN BỘ app (HTML khung + CSS + JS). Đa số thay đổi nằm ở đây
+├── index.html            # ~3600 dòng: TOÀN BỘ app (HTML khung + CSS + JS). Đa số thay đổi nằm ở đây
 ├── md-config.js          # window.MD_CONFIG = { demo, teachers[], api:'/api', firebase:{...} }
 ├── md-backend.js         # Adapter Firebase + UI đăng nhập thật + form "Reset a student password"
 ├── firestore.rules       # Security rules (dán tay vào Firebase Console, không tự deploy)
 ├── README.md             # Hướng dẫn deploy (tiếng Việt)
 ├── CLAUDE.md             # File này
 ├── TESTING.md            # Checklist để người dùng tự test trên bản Preview của Cloudflare Pages
-├── ai-worker.js          # Worker riêng (AI chữa lỗi Writing), không thuộc luồng đăng nhập
+├── ai-worker.js          # DEPRECATED, không dùng (AI chạy qua /api/ai/correct). Chưa xóa vì chưa được đồng ý
 └── functions/api/[[path]].js   # Route: xem mục 4 "Endpoint /api"
 ```
 
@@ -70,10 +70,11 @@ Các khối JS được ngăn bằng comment `/* ---------- Tên ---------- */`.
 | Attempts and progress | `attemptsOf(email)`, `doneMap`, `prog`, `progHTML`, `scoreColor`, `pctColor` |
 | Library views | `homeworkHTML`, `actionsHTML`, `recentHTML` (+ `rsInfo`, `rsCell`), `renderLib` |
 | Player | `renderPlayer`, `qHTML`, `gradeNow`, `saveAttempt` |
-| Writing and speaking | `renderWriting`, `submitWriting`, `renderSpeaking`, `startTimer` |
+| Writing and speaking | `renderWriting`, `submitWriting`, `renderSpeaking`, `startTimer`, AI: `autoFix(text,ex,how)`, `aiHTML`/`aiSumHTML`, `aiShow`, `aiFixes`, `aiOf`, `AIX`, `DEMO_AI` |
 | Teacher | `renderDash`, `renderAsg`/`saveAsg`, `renderMark`/`saveGrade`/`gradeOf`/`CRIT`, `renderRoster`/`importCSV`, `parseAI`/`addExercise` (Create) |
 | Shell | `tabsFor`, `showTab`, `signIn`, `refreshLive`, các listener `click`/`change`/`input`/`keydown` |
 | Vocabulary | `DICT`, `lookupWord`, popup `VP`/`showPop`, flashcard `CV`, `reviewHTML`, `rvRate`, `bsPress`, `renderCards` |
+| Error Notebook | `errorDocs`/`localErr`/`sampleErr`, `ERR_DAYS`, `EN` (state), `errList`, `errDue`, `errRate`, `errOk`, `setErr`, `renderErrors`, `errCardHTML`, `enPracticeHTML`, `enReviewHTML`, `enClear`, `enAct` (`data-act` bắt đầu bằng `en-`), `errAddLocal` (demo) |
 | Profile | `XPD` (giá trị XP mặc định), `xpv(key)`, `LV`, `lvOf`, `myProf`, `putProf`, `addXP`, `rollStreak`, `grantSpin` |
 | Daily Practice | `DTYPES`, `todaysTypes`, `dailyHTML`, `buildDaily`, `renderDailyTask`, `dyAct` |
 | Leaderboard | `renderRanks`, `RK` ('class' hoặc 'all') |
@@ -84,7 +85,7 @@ Các khối JS được ngăn bằng comment `/* ---------- Tên ---------- */`.
 
 ### Tab theo vai trò (`tabsFor()`)
 
-- Student: `library` (Home) · `cards` · `ranks` · `wheel` · `bag` · `set`
+- Student: `library` (Home) · `cards` · `errors` (Error Notebook) · `ranks` · `wheel` · `bag` · `set`
 - Teacher: `library` · `dash` · `asg` · `mark` · `roster` · `create` · `prize` · `xps`
 - Admin (teacher có `U.adm`): như Teacher, thêm `admin` ở cuối (`#v-admin`, `renderAdmin()`, tab con `AD.sub`: `guide` · `users` · `teachers` · `sheet` · `me`)
 
@@ -122,10 +123,11 @@ Mỗi tab ứng với một `<section id="v-...">`: `library` dùng `#v-lib`, c�
 | POST | `/api/admin/sheet` | `{op}`: `get`, `check` + `url`, `save` + `url`, `refresh`, `unlink` → cột nhận được, 5 dòng đầu, tên chưa đăng ký theo lớp |
 | POST | `/api/admin/class` | `{email, cls, course}`: đổi lớp của học sinh đã đăng ký (`roster`) |
 | POST | `/api/admin/teachers` | `{op, name, email, password}`, `op` = `'add'` hoặc `'remove'` |
+| POST | `/api/ai/correct` | `{attemptId, task, exTitle, tzo}`: không cần session; server đọc `attempts/{id}` (phải là `kind:'submission'`, có `text` 8–6000 ký tự, `ts` < 2 giờ). Gọi Gemini (`responseSchema`, timeout 25 s), lọc lỗi tìm thấy nguyên văn trong bài, ghi `attempts.ai` + `attempts.fixes` (dạng cũ) + collection `errors`. Trả `{ai, added}`. Đã chấm rồi thì trả kết quả cũ, không tốn lượt |
 
 Mọi `/api/admin/*` (trừ `unlock`) cần header `X-Admin-Key`. Ở frontend, mọi lời gọi admin đi qua **`adminApi(path, body)`** (demo: `demoAdminRun()` trên dữ liệu giả `DEMO_ADM`).
 
-KV: `acct:<email>` (mật khẩu), `rl:<email>` (đếm sai), `reg:<ip>`, `setup:<ip>`, `staff` (`{email:{name,ts}}`), `off:<email>`, `adm:<key>`, `sheet` (`{url, csv, ts}`), `sheetcache` (lần đọc gần nhất, dùng 5 phút).
+KV: `acct:<email>` (mật khẩu), `rl:<email>` (đếm sai), `reg:<ip>`, `setup:<ip>`, `staff` (`{email:{name,ts}}`), `off:<email>`, `adm:<key>`, `sheet` (`{url, csv, ts}`), `sheetcache` (lần đọc gần nhất, dùng 5 phút), `ai:<attemptId>` (`pending`/`done`, 2 ngày: mỗi bài chấm AI 1 lần), `aiq:<email>:<YYYY-MM-DD>` (số lần AI trong ngày, giới hạn `AI_DAILY_LIMIT`).
 
 **Google Sheet (danh sách lớp)**: server đọc CSV qua link `export?format=csv&gid=` (Sheet chia sẻ "Anyone with the link"), không dùng Google API.
 - Tự tìm dòng tiêu đề trong 20 dòng đầu (`SHEET_COLS`, tên cột Việt/Anh, so khớp đã bỏ dấu).
@@ -133,15 +135,17 @@ KV: `acct:<email>` (mật khẩu), `rl:<email>` (đếm sai), `reg:<ip>`, `setup
 - Mã dòng = `'s'+sha256(lớp|HỌ TÊN giữ dấu)` (hoặc cột `id`). **Không dùng `slug()`** vì tên chỉ khác dấu sẽ trùng.
 - Khi có Sheet: `/api/names` trả dòng chưa ai nhận (`takenSet`: `names/{id}.claimed`, `roster.sid`, hoặc trùng lớp + tên trong roster). `/api/register` đọc lại Sheet, tạo `names/{id}` bằng `fsCreate` (`currentDocument.exists=false`), rồi tạo `roster/{email}` có `sid`, `teacher`. Không có Sheet thì dùng luồng `names` cũ.
 - Server ghi `config/sheet = {linked}` để tab Students của giáo viên ẩn khung CSV (`renderRoster`).
-Biến môi trường thêm: `ADMIN_EMAIL` (Text), `ADMIN_PASSWORD` (Secret).
+Biến môi trường thêm: `ADMIN_EMAIL` (Text), `ADMIN_PASSWORD` (Secret), `GEMINI_KEY` (Secret), `GEMINI_MODEL` (Text, mặc định `gemini-2.5-flash`), `AI_DAILY_LIMIT` (Text, mặc định 10).
+Prompt AI (`AI_PROMPT`) và schema (`AI_SCHEMA`) nằm ở server, không ở client. `toFields`/`fromFields` dùng `toValue`/`fromValue` đệ quy (mapValue/arrayValue); giá trị phẳng ghi như cũ.
 
 ### Collection Firestore và quyền (xem `firestore.rules`)
 
 | Collection | Nội dung | Quyền |
 |---|---|---|
-| `attempts` | bài làm `{email, student, cls, ex, score, total, items, kind?, text?, link?, ts, grade?, fixes?}` | HS đọc/tạo bài của mình, **không được ghi `grade`**, chỉ sửa được `fixes`; GV toàn quyền |
+| `attempts` | bài làm `{email, student, cls, ex, score, total, items, kind?, text?, link?, ts, grade?, fixes?, ai?}` (`ai` = `{summary, corrections, vocabulary_upgrades, improved_essay, model, ts}`, do server ghi) | HS đọc/tạo bài của mình, **không được ghi `grade`**, chỉ sửa được `fixes`; GV toàn quyền |
 | `hwdone`, `passes`, `cards`, `redeems` | dữ liệu riêng của HS (có trường `email`) | chỉ chủ sở hữu; GV đọc |
 | `profiles` | XP, streak, inv, title, avatar… | mọi người đã đăng nhập đọc được; chỉ chủ ghi |
+| `errors` | sổ lỗi, id `{slug(email)}_{12 ký tự đầu của sha256(original + dấu gạch đứng + corrected, chữ thường)}`: `{email, student, cls, original, corrected, category, explanation, type, context, attemptId, ex, exTitle, box, due, reviews, lapses, mastered, count, createdAt, lastSeen, lastPractice}` | chỉ server tạo; HS đọc, xóa lỗi của mình và chỉ sửa `box/due/reviews/lapses/mastered/lastPractice`; GV đọc/xóa |
 | `wins` | marquee "vừa quay trúng" | đã đăng nhập: đọc và tạo |
 | `codes` | voucher | HS chỉ nhận được mã còn trống (`to:''` → email của mình) |
 | `names` | tên chờ HS nhận | chỉ GV và server |
@@ -155,7 +159,8 @@ Biến môi trường thêm: `ADMIN_EMAIL` (Text), `ADMIN_PASSWORD` (Secret).
 - Câu hỏi: `gap {q, ans:[...]}` · `mcq {q, opts, ans:index}` · `tfng {q, ans:'True'|'False'|'Not Given'}` · `match {q, opts, ans}` · có thể kèm `tag`
 - Bài Writing/Speaking là attempt có `kind:'submission'`, `score:0, total:0`; điểm nằm ở `gradeOf(a) → {overall, max(=9), crit{}, feedback, sticker, marks, link}`
 - `CRIT`: 4 tiêu chí band cho writing và speaking; 3 tiêu chí cho `readaloud`
-- XP: `xpv('key')` đọc `config/xp` và dùng `XPD` làm mặc định. Bài tự chấm đạt khi `score/total >= .7`
+- XP: `xpv('key')` đọc `config/xp` và dùng `XPD` làm mặc định (có `errFix`=5). Bài tự chấm đạt khi `score/total >= .7`
+- Error Notebook (Leitner): `ERR_DAYS=[0,1,3,7,14]` cho box 1–5. Đúng: box+1, `due` = đầu ngày + `ERR_DAYS[box mới-1]`; đúng ở box 5 thì `mastered`. Sai: box 1, ôn lại ngày mai. "Due" = `!mastered && due <= cuối ngày hôm nay`. XP `errFix` tối đa 1 lần/lỗi/ngày. Gặp lại cùng lỗi: server `count+1`, về box 1
 
 ---
 
@@ -204,11 +209,15 @@ Các thay đổi đã có trong code. **Không đảo ngược** nếu không đ
 6. **Inventory**: đã xóa nút "Open file" cho vật phẩm `mat` và `custom` có `url` (nhánh `act=''` trong `renderBag()`).
 
 7. **Admin (GĐ 1, 10/2026)**: vai trò admin, tab Admin (Guide/Users/Teachers/My account), Pause/Resume, đổi mật khẩu, thêm/xóa giáo viên, `/api/status`. GĐ 2 (Google Sheet, Edit class) đã xong. Còn lại: GĐ 3 đổi email (`migrateEmail`).
+8. **AI Auto-Correction + Error Notebook (10/2026)**: `/api/ai/correct` (Gemini) thay cho `window.claude.use('sample')`; kết quả hiện ngay dưới bài Writing (tóm tắt + band ước lượng, sửa lỗi, từ vựng nâng cấp có "+ Flashcard", bài đã sửa). Học sinh mở lại qua "Open feedback" ở Recent results (`showFb` hiện cả AI). Tab **Error Notebook** (thống kê lọc được, Practice trong thẻ, Review all due, Clear All). Home có thẻ `.dtask` "Error review · N due". Modal Marking của GV có phần "AI summary (estimate)" thu gọn; "Auto corrections" cũ vẫn giữ. 4 ô Recent results cao bằng nhau (`grid-auto-rows:1fr` từ 641px). Band AI **không** tính vào Recent results.
    - Email là khóa dữ liệu ở: `roster/{email}`, `profiles/{slug(email)}`, `cards/{slug(email)}_{word}`, `hwdone/{slug(email)}_{asgId}`, `passes/{slug(email)}_{asgId}`, `errors/{slug(email)}_{hash}` (Error Notebook, có trường `email`), trường `email` của `attempts`/`redeems`, `codes.to`, `names.email`, **`classes.removed[]`**, KV `acct:`/`rl:`/`staff`.
 
 ## 8. Giới hạn đã biết / chưa làm
 
-- AI chấm Writing và `aiLookup` (tra từ bằng AI) gọi `window.claude`, nên chỉ chạy trong Claude Artifact, chưa chạy trên site thật.
+- AI chữa lỗi Writing chạy qua `/api/ai/correct` (cần `GEMINI_KEY`). `aiLookup` (tra từ bằng AI) vẫn gọi `window.claude` nên chưa chạy trên site thật.
+- AI chỉ chấm được trong 2 giờ sau khi nộp, mỗi bài 1 lần. Band AI chỉ là ước lượng.
+- `/api/ai/correct` không kiểm tra token: ai có `attemptId` (id ngẫu nhiên, chỉ chủ bài và GV đọc được) thì gọi được, nhưng vẫn bị giới hạn 1 lần/bài và `AI_DAILY_LIMIT`/ngày.
+- `admin/kick` giữ lại `errors` như các dữ liệu học tập khác; đổi email (`migrateEmail`, chưa làm) phải chuyển cả `errors`.
 - Chưa gửi email nhắc lúc 20:00 (mới có checkbox và phần Preview trong Inventory).
 - Collection `roster` đọc được bởi mọi người đã đăng nhập. Ai biết tên và lớp có thể nhận tên của học sinh khác trước.
 - Học sinh hiện không có nút mở file Materials (do mục 7.6).

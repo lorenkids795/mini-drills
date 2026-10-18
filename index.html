@@ -1120,7 +1120,7 @@ function rsCell(sk,list){
   h+='<div class="rs-bars" role="group" aria-label="Last '+rec.length+' '+SNAME[sk]+' results, oldest first">'+rec.map(function(a,i){
     var x=ri[i],e=exOf(a.ex),g=gradeOf(a),lc=locOf(a.ex),ht=x.pend?100:Math.max(8,x.pct),
       tip=(e?e.title:a.ex)+' · '+x.txt+' · '+fmtDM(a.ts),
-      act=hasFb(g)?' data-act="fb-open" data-id="'+esc(a.id)+'"':(lc?' data-act="nav" data-book="'+lc.book+'" data-test="'+lc.test+'" data-skill="'+lc.skill+'" data-ex="'+esc(a.ex)+'"':'');
+      act=(hasFb(g)||aiOf(a))?' data-act="fb-open" data-id="'+esc(a.id)+'"':(lc?' data-act="nav" data-book="'+lc.book+'" data-test="'+lc.test+'" data-skill="'+lc.skill+'" data-ex="'+esc(a.ex)+'"':'');
     var cls='rb '+(x.pend?'pd':(x.ok?'ok':'no')),at=' class="'+cls+'" style="height:'+ht+'%" title="'+esc(tip)+'" aria-label="'+esc(tip)+'"';
     return act?'<button type="button"'+at+act+'></button>':'<span role="img"'+at+'></span>';
   }).join('')+'</div>';
@@ -1129,7 +1129,7 @@ function rsCell(sk,list){
     (lc?'<button class="t" type="button" data-act="nav" data-book="'+lc.book+'" data-test="'+lc.test+'" data-skill="'+lc.skill+'" data-ex="'+esc(a.ex)+'">'+ttl+'</button>':'<span class="t">'+ttl+'</span>')+
     '<span class="mono" style="color:'+(x.pend?'var(--muted)':(x.ok?'var(--good)':'var(--bad)'))+'">'+esc(x.txt)+'</span><span class="muted">· '+fmtDM(a.ts)+'</span>'+
     (g&&g.sticker?'<img class="stk-s" src="'+esc(g.sticker)+'" alt="Sticker">':'')+
-    (hasFb(g)?'<span class="linkish fbo" data-act="fb-open" data-id="'+esc(a.id)+'" role="button" tabindex="0">Open feedback</span>':'')+'</div>'+
+    ((hasFb(g)||aiOf(a))?'<span class="linkish fbo" data-act="fb-open" data-id="'+esc(a.id)+'" role="button" tabindex="0">Open feedback</span>':'')+'</div>'+
     (g&&g.feedback?'<p class="rfb" style="margin:2px 0 0">'+esc(g.feedback)+'</p>':'')+'</div>';
   return h+'</article>';
 }
@@ -1324,11 +1324,16 @@ var DEMO_AI={summary:{word_count:0,grammar_band_est:'Band 5.5',topic_relevance:'
 function aiFixes(ai,text){
   return (ai.corrections||[]).filter(function(c){return c.type!=='Off-topic'&&c.original_text&&c.corrected_text}).map(function(c){return {from:c.original_text,to:c.corrected_text,type:c.type,why:c.explanation||''}}).sort(function(a,b){return String(text||'').indexOf(a.from)-String(text||'').indexOf(b.from)});
 }
-function aiHTML(ai,text){
-  var s=ai.summary||{},cs=ai.corrections||[],vu=ai.vocabulary_upgrades||[],rel=String(s.topic_relevance||''),fx=aiFixes(ai,text);
-  var h='<div class="aib"><h4 class="tk">AI feedback</h4><p class="aisum"><span><span class="mono">'+esc(String(s.word_count!=null?s.word_count:wordCount(text)))+'</span> words</span><span>Grammar (AI estimate): <b>'+esc(s.grammar_band_est||'')+'</b></span><span>Topic relevance <span class="aichip '+(rel==='High'?'good':rel==='Low'?'bad':'warn')+'">'+esc(rel||'?')+'</span></span></p>';
+var aiOf=function(a){return !!(a&&a.ai&&a.ai.summary)};
+function aiSumHTML(ai,text){
+  var s=ai.summary||{},rel=String(s.topic_relevance||'');
+  var h='<p class="aisum"><span><span class="mono">'+esc(String(s.word_count!=null?s.word_count:wordCount(text)))+'</span> words</span><span>Grammar (AI estimate): <b>'+esc(s.grammar_band_est||'')+'</b></span><span>Topic relevance <span class="aichip '+(rel==='High'?'good':rel==='Low'?'bad':'warn')+'">'+esc(rel||'?')+'</span></span></p>';
   if(s.general_feedback)h+='<p class="aifb">'+esc(s.general_feedback)+'</p>';
-  h+='<p class="saved" style="margin:0 0 6px">This is an AI estimate. Your official band comes from your teacher.</p>';
+  return h+'<p class="saved" style="margin:0 0 6px">This is an AI estimate. The official band comes from the teacher.</p>';
+}
+function aiHTML(ai,text){
+  var cs=ai.corrections||[],vu=ai.vocabulary_upgrades||[],fx=aiFixes(ai,text);
+  var h='<div class="aib"><h4 class="tk">AI feedback</h4>'+aiSumHTML(ai,text);
   if(cs.length)h+='<h4 class="tk">Corrections</h4>'+(fx.length?'<div class="subtext">'+fixHTML(text,fx)+'</div>':'')+'<ul class="fxl">'+cs.map(function(c){return '<li><b class="aicat">'+esc(c.category||'')+'</b> <del>'+esc(c.original_text||'')+'</del>'+(c.corrected_text?' → <ins>'+esc(c.corrected_text)+'</ins>':'')+'<small>'+esc(c.type==='Off-topic'?'Off-topic · ':'')+esc(c.explanation||'')+'</small></li>'}).join('')+'</ul>';
   else h+='<p class="okline">No mistakes found. Nice writing.</p>';
   if(vu.length)h+='<h4 class="tk">Vocabulary upgrades</h4><ul class="fxl aivu">'+vu.map(function(v,i){return '<li><div><span>'+esc(v.original||'')+' → <ins>'+esc(v.upgraded||'')+'</ins></span>'+((v.example||v.note)?'<small>'+esc(v.example||'')+((v.example&&v.note)?' · ':'')+esc(v.note||'')+'</small>':'')+'</div>'+((U&&U.role==='student')?'<button class="btn sm" type="button" data-act="ai-card" data-i="'+i+'">+ Flashcard</button>':'')+'</li>'}).join('')+'</ul>';
@@ -1696,9 +1701,9 @@ function mkSheet(word){
 function closeFb(){var a=$('#fbBg'),b=$('#fbBox');if(a)a.remove();if(b)b.remove()}
 function showFb(id){
   closeFb();var a=attemptsOf(U.email).filter(function(x){return x.id===id})[0];if(!a)return;
-  var g=gradeOf(a),e=exOf(a.ex);if(!g||!e)return;
-  var ms=markSrc(a,e),has=ms!=null&&g.marks&&Object.keys(g.marks).length;
-  document.body.insertAdjacentHTML('beforeend','<div class="msbg" id="fbBg" data-act="fb-close"></div><div class="fbbox" id="fbBox" role="dialog" aria-label="Teacher feedback"><div class="sechead"><div><h3 style="font-size:1.1rem">'+esc(e.title)+'</h3><span class="muted" style="font-size:.85rem">Teacher feedback · '+fmtD(a.ts)+'</span></div><button class="iconbtn" data-act="fb-close" type="button">Close</button></div><div class="score" style="margin-bottom:8px"><b>'+esc(g.max?fmtS(g.overall)+' / '+g.max:g.overall)+'</b><span class="muted">'+(g.max?'score':'band')+'</span></div>'+(g.sticker?'<img class="stk-s" src="'+g.sticker+'" alt="Sticker">':'')+(g.link?'<h4 class="tk">Voice feedback</h4>'+vocEmbed(g.link):'')+(g.feedback?'<h4 class="tk">Note</h4><p style="margin:0">'+esc(g.feedback)+'</p>':'')+(has?'<h4 class="tk">Marked words</h4>'+legendHTML(e)+'<div class="mkpass ro" style="margin-top:6px">'+wordsHTML(ms,g.marks,false)+'</div>':'')+'</div>');
+  var g=gradeOf(a),e=exOf(a.ex),ai=aiOf(a)?a.ai:null;if((!g&&!ai)||!e)return;if(ai)AIX=ai;
+  var ms=markSrc(a,e),has=g&&ms!=null&&g.marks&&Object.keys(g.marks).length;
+  document.body.insertAdjacentHTML('beforeend','<div class="msbg" id="fbBg" data-act="fb-close"></div><div class="fbbox" id="fbBox" role="dialog" aria-label="Teacher feedback"><div class="sechead"><div><h3 style="font-size:1.1rem">'+esc(e.title)+'</h3><span class="muted" style="font-size:.85rem">'+(g?'Teacher feedback':'AI feedback')+' · '+fmtD(a.ts)+'</span></div><button class="iconbtn" data-act="fb-close" type="button">Close</button></div>'+(g?'<div class="score" style="margin-bottom:8px"><b>'+esc(g.max?fmtS(g.overall)+' / '+g.max:g.overall)+'</b><span class="muted">'+(g.max?'score':'band')+'</span></div>'+(g.sticker?'<img class="stk-s" src="'+g.sticker+'" alt="Sticker">':'')+(g.link?'<h4 class="tk">Voice feedback</h4>'+vocEmbed(g.link):'')+(g.feedback?'<h4 class="tk">Note</h4><p style="margin:0">'+esc(g.feedback)+'</p>':'')+(has?'<h4 class="tk">Marked words</h4>'+legendHTML(e)+'<div class="mkpass ro" style="margin-top:6px">'+wordsHTML(ms,g.marks,false)+'</div>':''):'')+(ai?aiHTML(ai,a.text||''):'')+'</div>');
 }
 function mkAct(a,t){
   if(a==='mk-word'){MK.pw=+t.dataset.w;mkSheet(t.textContent);return true}
@@ -1725,6 +1730,7 @@ function modalHTML(a){
   else h+='<div style="margin:10px 0">'+vocEmbed(a.link)+'</div><h4 class="tk">Transcript</h4><div class="subtext" style="max-height:170px">'+(a.transcript?esc(a.transcript):'<span class="muted">No transcript yet. On the live site it appears here automatically from the recording.</span>')+'</div>'+(a.notes?'<p class="saved" style="margin:0 0 8px">Student notes: '+esc(a.notes)+'</p>':'');
   if(ms!=null)h+='<h4 class="tk">'+(rd?'Mark mistakes on the passage':'Student answer · tap a word to mark')+'</h4>'+legendHTML(e)+'<div class="mkpass" id="mkText">'+wordsHTML(ms,MK.marks,true)+'</div><p class="saved" id="mkCnt" style="margin:6px 0 8px">'+markCnt()+(rd?'':' · '+(a.words||wordCount(a.text))+' words')+'</p>';
   if(!rd&&e.skill==='writing'&&a.fixes&&a.fixes.length)h+='<h4 class="tk">Auto corrections</h4><div class="subtext">'+fixHTML(a.text||'',a.fixes)+'</div>'+fixListHTML(a.fixes);
+  if(!rd&&e.skill==='writing'&&aiOf(a))h+='<details class="aiimp"><summary>AI summary (estimate)</summary>'+aiSumHTML(a.ai,a.text||'')+(a.ai.improved_essay?'<h4 class="tk">Improved essay (AI)</h4><div class="subtext">'+esc(a.ai.improved_essay)+'</div>':'')+'</details>';
   h+='<p class="banner" style="margin-top:6px">Marking is optional. If you skip it, this still counts as done.</p>';
   h+=cr.map(function(c,i){var v=(g&&g.scores&&g.scores[i]!=null)?g.scores[i]:6;return '<div class="rub"><label for="rb'+i+'">'+esc(c)+'</label><span class="mono" data-cv="'+i+'">'+fmtS(v)+'</span><input type="range" id="rb'+i+'" data-crit="'+i+'" min="0" max="'+mx+'" step="'+st+'" value="'+v+'"></div>'}).join('');
   h+='<div class="rub"><span>Overall '+(rd?'(out of 10)':'band')+'</span><span class="band" id="mkOverall">'+(g?fmtS(g.overall):6)+'</span></div>';
@@ -2373,6 +2379,7 @@ function enAct(a,t){
   if(a==='en-close'){EN.open=null;EN.res=null;renderErrors();return true}
   if(a==='en-check'){enCheck(t.dataset.id,t.dataset.ok==='1');return true}
   if(a==='en-rv'){enStartReview();return true}
+  if(a==='en-home'){NAV.daily=null;DY=null;if(CV&&CV.where==='daily')CV=null;showTab('errors');enStartReview();return true}
   if(a==='en-next'){if(EN.rv){EN.rv.i++;EN.res=null;EN.focus=true}renderErrors();return true}
   if(a==='en-rvend'){EN.rv=null;EN.res=null;renderErrors();return true}
   if(a==='en-clear'){EN.confirm=true;EN.focus=true;renderErrors();return true}
@@ -2454,13 +2461,13 @@ function onHwDone(asgId){
 var DTYPES={wotd:{i:'📘',t:'Word of the Day',s:'1 new word + 1 quiz question'},syn:{i:'🔁',t:'Pick the synonym',s:'4 quick questions'},dict:{i:'🎧',t:'Mini-Dictation',s:'Listen, then type it exactly'},para:{i:'✍️',t:'Sentence Paraphrasing',s:'Same meaning, new words'},read:{i:'⏱️',t:'5-Min Reading Challenge',s:'100 words · 2 questions'},review:{i:'🗂️',t:'Daily Review',s:'Spaced-repetition flashcards'}};
 function todaysTypes(email){var ks=['wotd','syn','dict','para','read'],h=hashOf(email+todayKey()),a=h%5,b=(a+1+((h>>>3)%4))%5;return [ks[a],ks[b]]}
 function dailyHTML(){
-  var p=myProf(),lv=lvOf(p.xp),done=p.days[todayKey()]||[],tt=todaysTypes(U.email).concat(['review']),due=dueCards(U.email).length;
+  var p=myProf(),lv=lvOf(p.xp),done=p.days[todayKey()]||[],tt=todaysTypes(U.email).concat(['review']),due=dueCards(U.email).length,edue=errList(U.email).filter(errDue).length;
   return '<section class="daily" aria-label="Daily practice"><div class="dtop"><div class="dstat"><span class="flame" aria-hidden="true">'+(p.streak?'🔥':'🕯️')+'</span><b aria-label="'+p.streak+' day streak">'+p.streak+'</b></div>'+
   '<div class="dlv"><b>'+esc(lv.name)+(p.title?' <span class="ttl">'+esc(p.title)+'</span>':'')+'</b><div class="prog"><i style="width:'+lv.pct+'%"></i></div><small>'+p.xp+' XP'+(lv.next?' · '+(lv.next-p.xp)+' to '+LV[lv.i+1][0]:' · top rank')+'</small><div class="lad">'+LV.map(function(r,i){return '<span class="'+(i===lv.i?'on':(i<lv.i?'past':''))+'">'+(i<lv.i?'✓ ':'')+r[0]+'</span>'}).join('')+'</div></div></div>'+
   '<h2>Daily practice<small>5–10 min</small></h2><div class="dgrid">'+tt.map(function(k){
     var d=DTYPES[k],dn=done.indexOf(k)>=0,off=k==='review'&&!due&&!dn;
     return '<button class="dtask'+(dn?' dn':'')+'" data-act="dstart" data-t="'+k+'" type="button"'+(off?' disabled':'')+'><b>'+esc(d.t)+'</b></button>';
-  }).join('')+'</div></section>';
+  }).join('')+(edue?'<button class="dtask" data-act="en-home" type="button"><b>Error review · '+edue+' due</b></button>':'')+'</div></section>';
 }
 function shuf(a,r){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(r()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
 var DICTS=['The library opens at nine on weekdays and closes at five on Saturdays.','Residents can borrow up to twelve books for a period of three weeks.','Our next meeting will take place on Thursday afternoon in the main hall.','Please bring a bank statement dated within the last three months.'];
