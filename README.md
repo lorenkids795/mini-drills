@@ -53,6 +53,22 @@ Upload cả thư mục này (index.html, md-config.js, md-backend.js, README.md,
 - Mỗi bài chỉ chấm AI 1 lần, chỉ trong 2 giờ sau khi nộp. AI không cho điểm band; điểm do giáo viên chấm.
 - `ai-worker.js` không còn dùng (AI chạy qua `/api/ai/correct`).
 
+## 3e. Khi AI báo "User location is not supported" (trạm trung chuyển Apps Script)
+Cloudflare có thể chạy `/api` ở máy chủ thuộc khu vực Gemini chặn (vd. Hồng Kông, hay gặp với người dùng ở Việt Nam). Khi đó Admin → AI test báo `code: http400 … User location is not supported`. Cách xử lý: cho Google Apps Script (chạy trên máy chủ Google ở Mỹ, miễn phí) gọi Gemini thay.
+1. Mở https://script.google.com → **New project** → xóa code mẫu → dán toàn bộ file `gemini-relay.gs` trong repo → **Save**.
+2. Biểu tượng bánh răng **Project Settings** → **Script Properties** → **Add script property**:
+   - `GEMINI_KEY` = key Gemini (aistudio.google.com/apikey)
+   - `RELAY_SECRET` = một câu dài ngẫu nhiên do bạn tự đặt (vd. 30 ký tự bất kỳ)
+3. **Deploy** → **New deployment** → bánh răng chọn **Web app** → Execute as: **Me** → Who has access: **Anyone** → **Deploy** → cho phép quyền truy cập (Advanced → Go to … nếu Google cảnh báo).
+4. Copy **Web app URL** (đuôi `/exec`). Dán vào trình duyệt: phải thấy `{"ok":true,...}`.
+5. Cloudflare Pages → Settings → Variables and Secrets (Preview + Production):
+   - `GEMINI_PROXY_URL` (Text) = link `/exec`
+   - `GEMINI_PROXY_SECRET` (Secret) = đúng câu `RELAY_SECRET` ở bước 2
+   - `GEMINI_MODEL` vẫn dùng như cũ. `GEMINI_KEY` trên Cloudflare không còn cần (key nằm trong script).
+6. Deploy lại site → Admin → AI test → dòng thống kê ghi **"via Apps Script relay"**.
+- Sửa code trong script xong phải **Deploy → Manage deployments → Edit (bút chì) → Version: New version → Deploy**, nếu không bản cũ vẫn chạy (link `/exec` giữ nguyên).
+- Muốn quay lại gọi trực tiếp: xóa biến `GEMINI_PROXY_URL` rồi deploy lại.
+
 ## 4. Dùng
 - Giáo viên: mở site → tab **Teacher** → "First time? Create your teacher password" → nhập email, mật khẩu mới và setup key.
 - Tab **Students** → dán danh sách CSV với cột `name, course, class` → Import. Học sinh tự chọn tên trên trang đăng nhập.

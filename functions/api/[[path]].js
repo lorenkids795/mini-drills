@@ -14,6 +14,9 @@
 //   GEMINI_KEY             secret  Google AI Studio key, for /api/ai/correct (AI Writing correction)
 //   GEMINI_MODEL           text    optional, default gemini-2.5-flash
 //   AI_DAILY_LIMIT         text    optional, AI checks per student per day, default 10
+//   GEMINI_PROXY_URL       text    optional, Google Apps Script relay (gemini-relay.gs) /exec link. Use it when Gemini answers
+//                                  "User location is not supported" (Cloudflare served from a blocked region, e.g. Hong Kong)
+//   GEMINI_PROXY_SECRET    secret  same value as RELAY_SECRET in the script; then GEMINI_KEY lives in the script, not here
 // Pages -> Settings -> Bindings: KV namespace, variable name MD_KV
 //
 // Roles at login, in order: ADMIN_EMAIL -> KV "staff" or TEACHERS -> Firestore roster/{email} (student).
@@ -796,12 +799,13 @@ function sentenceAt(text, i, len) {
 }
 
 // Gemini call. Every failure has a short code (shown to the student as "code: …", logged for Cloudflare Real-time logs):
-// nokey, timeout, network, http<status> (400/403 key, 404 model, 429 quota, 5xx busy), blocked, empty, too_long, parse.
+// nokey, timeout, network, relay, http<status> (400/403 key or blocked location, 404 model, 429 quota, 5xx busy), blocked, empty, too_long, parse.
 // One automatic retry: without the schema if Gemini rejects it, without thinking settings if those are rejected,
 // or after a short wait when Gemini is busy / returned something unreadable.
 class AiError extends Error {
   constructor(code, detail) { super(code + (detail ? ': ' + detail : '')); this.code = code; this.detail = String(detail || ''); }
 }
+const aiReady = (env) => !!(env.GEMINI_KEY || env.GEMINI_PROXY_URL); // key on Cloudflare, or in the Apps Script relay
 const AI_TIMEOUT = 300000; // 5 minutes: long essays (corrections + 2 practice sentences per mistake) can be slow on a busy day
 const AI_SHAPE =
   '\nReturn ONLY one JSON object, no other text, in this shape: {"corrections":[{"original_text":"...","corrected_text":"...","category":"...","explanation":"...","type":"Grammar","practice":[{"sentence":"... ___ (clue) ...","answers":["..."],"clue_type":"base_form"}]}],"vocabulary_upgrades":[{"original":"...","upgraded":"...","example":"...","note":"..."}]}\n';
@@ -819,19 +823,33 @@ async function geminiOnce(env, model, prompt, schema, thinking) {
   if (thinking && /^gemini-2\.5-flash/.test(model)) gc.thinkingConfig = { thinkingBudget: 0 };
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), AI_TIMEOUT);
+  const req = { contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: gc };
   let r, d;
   try {
-    r = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) +
-        ':generateContent?key=' + encodeURIComponent(env.GEMINI_KEY),
-      {
+    if (env.GEMINI_PROXY_URL) {
+      // Relay (gemini-relay.gs on Google Apps Script, runs in the US): it always answers 200 with { status, body } or { relayError }
+      r = await fetch(String(env.GEMINI_PROXY_URL).trim(), {
         method: 'POST',
         signal: ctl.signal,
+        redirect: 'follow', // Apps Script answers POST with a redirect to the result
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: gc }),
+        body: JSON.stringify({ secret: String(env.GEMINI_PROXY_SECRET || ''), model, body: req }),
       });
-    if (!r.ok) throw new AiError('http' + r.status, (await r.text().catch(() => '')).slice(0, 400));
-    d = await r.json().catch(() => null);
+      const txt = await r.text().catch(() => '');
+      let j = null;
+      try { j = JSON.parse(txt); } catch (e) { /* not JSON = wrong URL or the script is not shared with "Anyone" */ }
+      if (!r.ok || !j) throw new AiError('relay', 'HTTP ' + r.status + ' ' + txt.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').slice(0, 200));
+      if (j.relayError) throw new AiError('relay', String(j.relayError).slice(0, 300));
+      if (Number(j.status) !== 200) throw new AiError('http' + Number(j.status || 0), String(j.body || '').slice(0, 400));
+      try { d = JSON.parse(j.body); } catch (e) { d = null; }
+    } else {
+      r = await fetch(
+        'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) +
+          ':generateContent?key=' + encodeURIComponent(env.GEMINI_KEY),
+        { method: 'POST', signal: ctl.signal, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(req) });
+      if (!r.ok) throw new AiError('http' + r.status, (await r.text().catch(() => '')).slice(0, 400));
+      d = await r.json().catch(() => null);
+    }
   } catch (e) {
     if (e instanceof AiError) throw e;
     throw new AiError(e && e.name === 'AbortError' ? 'timeout' : 'network', String((e && e.message) || e).slice(0, 200));
@@ -848,10 +866,10 @@ async function geminiOnce(env, model, prompt, schema, thinking) {
   return out;
 }
 async function askGemini(env, prompt, schema, shape) {
-  if (!env.GEMINI_KEY) throw new AiError('nokey', 'GEMINI_KEY is not set');
+  if (!aiReady(env)) throw new AiError('nokey', 'GEMINI_KEY / GEMINI_PROXY_URL is not set');
   const model = String(env.GEMINI_MODEL || 'gemini-2.5-flash').trim(), t0 = Date.now();
   try {
-    return { out: await geminiOnce(env, model, prompt, schema, true), model };
+    return { out: await geminiOnce(env, model, prompt, schema, true), model, via: env.GEMINI_PROXY_URL ? 'relay' : 'direct' };
   } catch (e) {
     const c = e.code || 'error', det = e.detail || '';
     const badThinking = c === 'http400' && /thinking/i.test(det);
@@ -861,7 +879,7 @@ async function askGemini(env, prompt, schema, shape) {
     if (!(badThinking || badSchema || busy) || Date.now() - t0 > 25000) throw e; // retry only quick failures, never after a long wait
     if (busy && /^http|network/.test(c)) await new Promise((res) => setTimeout(res, 1500));
     const out = await geminiOnce(env, model, badSchema ? prompt + (shape || '') : prompt, badSchema ? null : schema, !badThinking);
-    return { out, model, retried: c };
+    return { out, model, via: env.GEMINI_PROXY_URL ? 'relay' : 'direct', retried: c };
   }
 }
 
@@ -982,7 +1000,7 @@ function aiFail(code, where, detail) {
 async function aiCorrect(env, body) {
   const id = String(body.attemptId || '');
   if (!/^[A-Za-z0-9]{10,40}$/.test(id)) return fail('This submission was not found.', 404);
-  if (!env.GEMINI_KEY) return aiFail('nokey', id);
+  if (!aiReady(env)) return aiFail('nokey', id);
   const doc = await fsGet(env, 'attempts', id);
   if (!doc) return fail('This submission was not found.', 404);
   const att = doc.data, text = String(att.text || '');
@@ -1037,7 +1055,7 @@ async function aiPractice(env, body) {
   const e = doc.data;
   if (Array.isArray(e.practice) && e.practice.length) return json({ practice: e.practice, again: true });
   if (e.type === 'Off-topic') return json({ practice: [] });
-  if (!env.GEMINI_KEY) return aiFail('nokey', id);
+  if (!aiReady(env)) return aiFail('nokey', id);
   const em = normEmail(e.email);
   if (!emailOk(em)) return fail('This mistake was not found.', 404);
   const qKey = 'aipq:' + em + ':' + dayOf(body.tzo).day;
@@ -1065,7 +1083,8 @@ const AI_WHY = {
   nokey: 'GEMINI_KEY is not set on Cloudflare, or the site was not deployed again after adding it.',
   timeout: 'Gemini did not answer within 5 minutes. Try again; if it keeps happening, try another GEMINI_MODEL.',
   network: 'The server could not reach Gemini. Try again.',
-  http400: 'Gemini rejected the request: often a wrong GEMINI_KEY or a model that does not support these settings.',
+  http400: 'Gemini rejected the request: a wrong GEMINI_KEY, a model that does not support these settings, or "User location is not supported" (Cloudflare runs in a blocked region: set up the Apps Script relay, README 3e).',
+  relay: 'The Apps Script relay failed: check GEMINI_PROXY_URL (the /exec link), GEMINI_PROXY_SECRET = RELAY_SECRET in the script, and that the web app is deployed for "Anyone".',
   http403: 'The key is not allowed: check GEMINI_KEY (Google AI Studio) and that the Gemini API is enabled.',
   http404: 'Model not found: check GEMINI_MODEL (e.g. gemini-3.6-flash).',
   http429: 'Gemini quota or rate limit reached. Wait a minute, or add billing in Google AI Studio.',
@@ -1079,7 +1098,7 @@ async function adminAiTest(env, body) {
   const text = String(body.text || '');
   if (text.trim().length < 8) return fail('Paste an essay first (at least a few words).');
   if (text.length > 6000) return fail('The essay is too long (6000 characters at most).');
-  if (!env.GEMINI_KEY) return fail('GEMINI_KEY is not set on Cloudflare (Settings → Variables and Secrets), or the site was not deployed again after adding it.');
+  if (!aiReady(env)) return fail('GEMINI_KEY (or GEMINI_PROXY_URL) is not set on Cloudflare (Settings → Variables and Secrets), or the site was not deployed again after adding it.');
   const qKey = 'aitest:' + new Date().toISOString().slice(0, 10);
   if ((await count(env, qKey)) >= 200) return fail('AI test limit reached for today (200).', 429);
   const task = String(body.task || '').slice(0, 1500), t0 = Date.now();
@@ -1097,7 +1116,7 @@ async function adminAiTest(env, body) {
   const kept = {};
   ai.corrections.forEach((c) => { kept[c.original_text] = 1; });
   const dropped = raw.map((c) => String((c && c.original_text) || '')).filter((o) => o && !kept[o.trim()]).slice(0, 10);
-  return json({ ai, ms: Date.now() - t0, model: g.model, raw: raw.length, dropped });
+  return json({ ai, ms: Date.now() - t0, model: g.model + (g.via === 'relay' ? ' via Apps Script relay' : ' direct'), raw: raw.length, dropped });
 }
 
 export async function onRequest(ctx) {
