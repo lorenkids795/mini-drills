@@ -204,7 +204,7 @@ Các thay đổi đã có trong code. **Không đảo ngược** nếu không đ
 6. **Inventory**: đã xóa nút "Open file" cho vật phẩm `mat` và `custom` có `url` (nhánh `act=''` trong `renderBag()`).
 
 7. **Admin (GĐ 1, 10/2026)**: vai trò admin, tab Admin (Guide/Users/Teachers/My account), Pause/Resume, đổi mật khẩu, thêm/xóa giáo viên, `/api/status`. GĐ 2 (Google Sheet, Edit class) đã xong. Còn lại: GĐ 3 đổi email (`migrateEmail`).
-   - Email là khóa dữ liệu ở: `roster/{email}`, `profiles/{slug(email)}`, `cards/{slug(email)}_{word}`, `hwdone/{slug(email)}_{asgId}`, `passes/{slug(email)}_{asgId}`, trường `email` của `attempts`/`redeems`, `codes.to`, `names.email`, **`classes.removed[]`**, KV `acct:`/`rl:`/`staff`.
+   - Email là khóa dữ liệu ở: `roster/{email}`, `profiles/{slug(email)}`, `cards/{slug(email)}_{word}`, `hwdone/{slug(email)}_{asgId}`, `passes/{slug(email)}_{asgId}`, `errors/{slug(email)}_{hash}` (Error Notebook, có trường `email`), trường `email` của `attempts`/`redeems`, `codes.to`, `names.email`, **`classes.removed[]`**, KV `acct:`/`rl:`/`staff`.
 
 ## 8. Giới hạn đã biết / chưa làm
 

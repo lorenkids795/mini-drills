@@ -444,6 +444,34 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .cstats div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column}
 .cstats b{font-family:var(--mono);font-size:1.5rem;font-weight:500}
 .cstats span{font-size:.76rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.enhead{align-items:flex-start;gap:10px}
+.enstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:8px 0 12px}
+.ens{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;text-align:left;color:var(--ink);font:inherit;cursor:pointer;min-width:0}
+.ens b{font-family:var(--mono);font-size:1.7rem;font-weight:500;line-height:1.15}
+.ens span{font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.ens.due{background:var(--bad-bg);color:var(--bad)}.ens.mast{background:var(--good-bg);color:var(--good)}
+.ens.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.enbar{margin:0 0 14px;flex-wrap:wrap}
+.enbar select{border:1px solid var(--line);border-radius:8px;padding:.45rem .6rem;background:var(--surface);color:var(--ink);font:inherit;font-size:.9rem;max-width:100%}
+.enlist{display:flex;flex-direction:column;gap:12px}
+.errc{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0}
+.errtop{display:flex;justify-content:space-between;align-items:center;gap:6px 10px;flex-wrap:wrap}
+.errcat{color:var(--accent);font-weight:700;font-size:.92rem;margin:0}
+.enb{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.2rem .5rem;border-radius:4px;background:var(--line);color:var(--ink);white-space:nowrap}
+.enb.due{background:var(--bad-bg);color:var(--bad)}.enb.mast{background:var(--good-bg);color:var(--good)}
+.errfix{margin:8px 0 4px;font-size:1.02rem;line-height:1.5;overflow-wrap:anywhere}
+.errfix ins{background:none;padding:0}.errfix .arr{color:var(--muted);margin:0 .4em}
+.errwhy{margin:2px 0;color:var(--muted);font-size:.9rem}
+.errmeta{margin:6px 0 0;font-size:.78rem;color:var(--muted)}
+.enact{margin:8px 0 0}
+.enp{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.enctx{margin:0 0 8px;line-height:1.6}
+.enhl{background:var(--hl-soft);color:inherit;padding:0 .15em;border-radius:3px}
+.enrow{display:flex;gap:8px;align-items:center}.enrow input{flex:1;min-width:0}
+.enres{font-weight:600;margin:6px 0}.enres.ok{color:var(--good)}.enres.no{color:var(--bad)}
+.fcard.enrv{text-align:left}
+.enprog{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:6px 0 12px}.enprog i{display:block;height:100%;background:var(--accent)}
+@media (max-width:640px){.errtop{flex-direction:column;align-items:flex-start}.ens{padding:10px}.ens b{font-size:1.35rem}.ens span{font-size:.64rem}}
 .cdots{display:inline-flex;gap:3px;vertical-align:middle}
 .cdots i{width:8px;height:8px;border-radius:50%;background:var(--line);display:inline-block}
 .cdots i.on{background:var(--good)}
@@ -684,6 +712,7 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 
   <section id="v-set" hidden></section>
   <section id="v-cards" hidden></section>
+  <section id="v-errors" hidden></section>
   <section id="v-ranks" hidden></section>
   <section id="v-wheel" hidden></section>
   <section id="v-bag" hidden></section>
@@ -1308,7 +1337,7 @@ function aiHTML(ai,text){
 }
 function aiShow(ai,text,added,demo){
   var b=$('#fixes');if(!b)return;AIX=ai;
-  b.innerHTML=(demo?'<p class="banner">Demo: sample AI result. On the live site the AI checks your own text.</p>':'')+aiHTML(ai,text)+(added?'<p class="saved" style="margin-top:8px">'+added+' mistake'+(added>1?'s were':' was')+' added to your <b>Error Notebook</b>.</p>':'');
+  b.innerHTML=(demo?'<p class="banner">Demo: sample AI result. On the live site the AI checks your own text.</p>':'')+aiHTML(ai,text)+(added?'<p class="saved" style="margin-top:8px">'+added+' mistake'+(added>1?'s were':' was')+' added to your <b>Error Notebook</b>. <button class="linkish" data-act="tab" data-tab="errors" type="button">Open it</button></p>':'');
 }
 function aiSay(msg){var b=$('#fixes');if(b)b.innerHTML='<p class="saved" aria-live="polite">'+esc(msg)+'</p>'}
 function autoFix(text,ex,how){
@@ -1319,7 +1348,7 @@ function autoFix(text,ex,how){
     setTimeout(function(){
       var ai=Object.assign({},DEMO_AI,{summary:Object.assign({},DEMO_AI.summary,{word_count:wordCount(text)}),model:'demo',ts:Date.now()}),la=localAttempts[0];
       if(la&&String(la.id).indexOf('local-')===0&&la.text===text){la.ai=ai;la.fixes=aiFixes(ai,text)}
-      aiShow(ai,text,ai.corrections.length,true);
+      aiShow(ai,text,(U&&U.role==='student')?errAddLocal(ai,text,ex):0,true);
     },900);
     return;
   }
@@ -1861,17 +1890,17 @@ function addExercise(){
 function setThemeLbl(d){$('#themeBtn').innerHTML='<span class="lt">'+(d?'Light mode':'Dark mode')+'</span><span class="ic">'+(d?'☀':'☾')+'</span>'}
 function applyTheme(t){document.documentElement.setAttribute('data-theme',t);lsSet('md-theme',t);setThemeLbl(t==='dark')}
 function curDark(){var t=document.documentElement.getAttribute('data-theme');if(t)return t==='dark';return !!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)}
-function tabsFor(){return U.role==='teacher'?[['library','Library'],['dash','Dashboard'],['asg','Assignments'],['mark','Marking'],['roster','Students'],['create','Create'],['prize','Prizes'],['xps','Settings']].concat(U.adm?[['admin','Admin']]:[]):[['library','Home'],['cards','Flashcards'],['ranks','Leaderboard'],['wheel','Lucky Wheel'],['bag','Inventory'],['set','Settings']]}
+function tabsFor(){return U.role==='teacher'?[['library','Library'],['dash','Dashboard'],['asg','Assignments'],['mark','Marking'],['roster','Students'],['create','Create'],['prize','Prizes'],['xps','Settings']].concat(U.adm?[['admin','Admin']]:[]):[['library','Home'],['cards','Flashcards'],['errors','Error Notebook'],['ranks','Leaderboard'],['wheel','Lucky Wheel'],['bag','Inventory'],['set','Settings']]}
 function showTab(t){
   TAB=t;stopAudio();clearTimer();MK.open=false;
-  ['login','lib','cards','ranks','wheel','bag','set','prize','xps','dash','asg','mark','roster','create','admin'].forEach(function(n){$('#v-'+n).hidden=true});
+  ['login','lib','cards','errors','ranks','wheel','bag','set','prize','xps','dash','asg','mark','roster','create','admin'].forEach(function(n){$('#v-'+n).hidden=true});
   if(!U){var lv=$('#v-login');lv.hidden=false;if(!DEMO&&lsGet('md-email')&&!window.MD_USER){lv.setAttribute('data-wait','');setTimeout(function(){lv.removeAttribute('data-wait')},10000)}else lv.removeAttribute('data-wait');$('#tabs').hidden=true;$('#who').hidden=true;return}
   $('#v-login').removeAttribute('data-wait');if(t==='admin'&&!U.adm){t='library';TAB=t}
   $('#tabs').hidden=tabsFor().length<2;$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b><span class="rl"> · '+(U.adm?'admin':U.role)+'</span>';
   $('#tabs').innerHTML=tabsFor().map(function(x){return '<button role="tab" data-act="tab" data-tab="'+x[0]+'" aria-selected="'+(x[0]===t)+'">'+x[1]+'</button>'}).join('');
-  var id={library:'lib',cards:'cards',ranks:'ranks',wheel:'wheel',bag:'bag',set:'set',prize:'prize',xps:'xps',dash:'dash',asg:'asg',mark:'mark',roster:'roster',create:'create',admin:'admin'}[t];$('#v-'+id).hidden=false;updMarq();
+  var id={library:'lib',cards:'cards',errors:'errors',ranks:'ranks',wheel:'wheel',bag:'bag',set:'set',prize:'prize',xps:'xps',dash:'dash',asg:'asg',mark:'mark',roster:'roster',create:'create',admin:'admin'}[t];$('#v-'+id).hidden=false;updMarq();
   if(t==='admin')renderAdmin();
-  if(t==='library')renderLib();if(t==='cards')renderCards();if(t==='ranks')renderRanks();if(t==='wheel')renderWheel();if(t==='bag')renderBag();if(t==='set')renderSettings();if(t==='prize')renderPrize();if(t==='xps')renderXps();if(t==='dash')renderDash();if(t==='roster')renderRoster();if(t==='mark')renderMark();
+  if(t==='library')renderLib();if(t==='cards')renderCards();if(t==='errors')renderErrors();if(t==='ranks')renderRanks();if(t==='wheel')renderWheel();if(t==='bag')renderBag();if(t==='set')renderSettings();if(t==='prize')renderPrize();if(t==='xps')renderXps();if(t==='dash')renderDash();if(t==='roster')renderRoster();if(t==='mark')renderMark();
   if(t==='asg'){AG.form=null;AG.open=null;AG.cur=null;AG.sub='list';renderAsg()}
 }
 function signIn(email){
@@ -1886,6 +1915,7 @@ function refreshLive(){
   else if(TAB==='roster')renderRoster();
   else if(TAB==='library'&&!NAV.ex&&!NAV.daily)renderLib();
   else if(TAB==='cards'&&!CV)renderCards();
+  else if(TAB==='errors'){var ec=document.activeElement;if(!EN.confirm&&!(ec&&ec.closest&&ec.closest('#v-errors')&&/INPUT|SELECT/.test(ec.tagName)))renderErrors()}
   else if(TAB==='ranks')renderRanks();
   else if(TAB==='wheel'&&!WH.busy)renderWheel();
   else if(TAB==='bag'){var bc=document.activeElement;if(!(bc&&bc.closest&&bc.closest('#v-bag')&&/INPUT|SELECT/.test(bc.tagName)))renderBag()}
@@ -1900,6 +1930,7 @@ function populateBookTest(){
 document.addEventListener('click',function(e){
   if(e.target.id==='mkModal'){MK.open=false;return renderMark()}
   if(e.target.id==='adModal')return closeAdModal();
+  if(e.target.id==='enModal'){EN.confirm=false;return renderErrors()}
   if(VP&&!e.target.closest('.vpop')){VP=null;showPop()}
   var t=e.target.closest('[data-act]');if(!t)return;var a=t.dataset.act,au=$('#aud');
   if(extAct(a,t))return;
@@ -1961,6 +1992,7 @@ document.addEventListener('click',function(e){
 });
 document.addEventListener('change',function(e){
   var d=e.target.dataset||{};
+  if(d.encat){EN.cat=e.target.value;renderErrors();return}
   if(d.f){F[d.f]=d.f==='sample'?e.target.checked:e.target.value;if(d.f==='course'){F.cls='all';F.stu='all'}if(d.f==='cls')F.stu='all';renderDash()}
   if(d.img)imgFrom(d.img,e.target.files[0]);
   if(e.target.id==='avFile')avFrom(e.target.files[0]);
@@ -2001,6 +2033,8 @@ document.addEventListener('keydown',function(e){
     if(CV.flip)bsPress();
     return;
   }
+  if(e.key==='Enter'&&e.target&&e.target.id==='enIn'){e.preventDefault();enCheck(e.target.dataset.enid);return}
+  if(e.key==='Escape'&&EN.confirm&&TAB==='errors'){EN.confirm=false;renderErrors();return}
   if(e.key==='Escape'&&VP){VP=null;showPop();return}
   if(e.key==='Escape'&&MK.open){MK.open=false;renderMark();return}
   if(e.key==='Escape'&&AD.modal&&TAB==='admin'){closeAdModal();return}
@@ -2194,9 +2228,161 @@ function delCard(id){
   if(dbh)dbh.doc('cards/'+id).delete().then(function(){},function(){});
   renderCards();
 }
+/* ---------- Error Notebook: AI mistakes, spaced repetition (Leitner boxes 1-5) ---------- */
+// errors/{slug(email)}_{hash} are created by the server (/api/ai/correct). The student only updates the review fields.
+var errorDocs=[],localErr=[],sampleErr=[],ERR_DAYS=[0,1,3,7,14];
+var EN={f:'all',cat:'',open:null,res:null,rv:null,confirm:false,focus:false};
+function dayStart(ts){var d=new Date(ts==null?Date.now():ts);d.setHours(0,0,0,0);return d.getTime()}
+function dayEnd(){return dayStart()+DAYMS-1}
+function addDaysTs(ts,n){var d=new Date(ts);d.setDate(d.getDate()+n);return d.getTime()}
+function enDay(ts){var d=new Date(ts);return d.getDate()+' '+MONTHS[d.getMonth()]}
+function errKey(email,orig,corr){return slug(email)+'_'+slug(orig+' '+corr).slice(0,40)}
+function makeSampleErr(){
+  var em='minhanh@demo.vn',t=dayStart(),now=Date.now();
+  var C=['I am disagree with this opinion.','Protect the nature is the duty of everyone.','Many peoples think that factories bring more jobs.','Last year my brother is write a letter to the mayor.','Yesterday we go to the river to collect rubbish.'];
+  var S=[[1,t-DAYMS,0,1],[2,t,0,2],[1,t-2*DAYMS,1,1],[3,addDaysTs(t,3),0,1],[5,addDaysTs(t,14),0,1]];
+  return DEMO_AI.corrections.map(function(c,i){
+    return {id:errKey(em,c.original_text,c.corrected_text),email:em,student:'Minh Anh',cls:'',original:c.original_text,corrected:c.corrected_text,category:c.category,explanation:c.explanation,type:c.type,context:C[i],attemptId:'',ex:'',exTitle:'Writing Task 2 · Environment',
+      box:S[i][0],due:S[i][1],reviews:S[i][0]-1,lapses:S[i][2],mastered:i===4,count:S[i][3],createdAt:now-(9-i)*DAYMS,lastSeen:now-(5-i)*DAYMS,lastPractice:0,sample:true};
+  });
+}
+function errList(email){
+  var m={};
+  sampleErr.concat(errorDocs,localErr).forEach(function(e){if(e.email===email)m[e.id]=e});
+  return Object.keys(m).map(function(k){return m[k]});
+}
+function errById(id){var l=errList(U.email);for(var i=0;i<l.length;i++)if(l[i].id===id)return l[i];return null}
+function errDue(e){return !e.mastered&&e.due<=dayEnd()}
+function errSort(a,b){var x=errDue(a),y=errDue(b);if(x!==y)return x?-1:1;return (a.due||0)-(b.due||0)}
+function setErr(e,patch){
+  var rec=Object.assign({},e,patch),hit=false;
+  [sampleErr,errorDocs,localErr].forEach(function(l){for(var i=0;i<l.length;i++)if(l[i].id===rec.id){l[i]=rec;hit=true}});
+  if(!hit)localErr.push(rec);
+  if(dbh&&!rec.sample&&!rec.local)dbh.doc('errors/'+rec.id).update(patch).then(function(){},function(){
+    if(!localErr.some(function(x){return x.id===rec.id}))localErr.push(rec);setStatus('local');
+  });
+}
+// The sentence that holds the mistake (same split as the server: . ! ? and new lines)
+function enSentence(text,orig){
+  text=String(text||'');var i=text.indexOf(orig);if(i<0)return '';
+  var s=i,e=i+orig.length;
+  while(s>0&&!/[.!?\n]/.test(text.charAt(s-1)))s--;
+  while(e<text.length&&!/[.!?\n]/.test(text.charAt(e)))e++;
+  if(e<text.length&&text.charAt(e)!=='\n')e++;
+  return text.slice(s,e).trim().slice(0,300);
+}
+// Demo / offline: add the AI mistakes to localErr (same rules as the server: no duplicates, seen again -> box 1)
+function errAddLocal(ai,text,ex){
+  var now=Date.now(),t=dayStart(),n=0;
+  (ai.corrections||[]).forEach(function(c){
+    var id=errKey(U.email,c.original_text,c.corrected_text),old=errById(id),ctx=c.context||enSentence(text,c.original_text)||c.original_text;
+    if(old)setErr(old,{count:(old.count||1)+1,lastSeen:now,box:1,due:t,mastered:false,context:ctx,exTitle:ex.title||''});
+    else localErr.push({id:id,email:U.email,student:U.name,cls:U.cls||'',original:c.original_text,corrected:c.corrected_text||'',category:c.category,explanation:c.explanation||'',type:c.type,context:ctx,attemptId:'',ex:ex.id,exTitle:ex.title||'',
+      box:1,due:t,reviews:0,lapses:0,mastered:false,count:1,createdAt:now,lastSeen:now,lastPractice:0,local:true});
+    n++;
+  });
+  return n;
+}
+function errNorm(s){return String(s||'').toLowerCase().replace(/[‘’]/g,"'").replace(/\s+/g,' ').trim().replace(/[.,!?;:]+$/,'').trim()}
+function errOk(e,ans){var a=errNorm(ans);return !!a&&String(e.corrected||'').split(/\s\/\s|\|/).some(function(x){return errNorm(x)===a})}
+// Right: next box (box 5 -> mastered). Wrong: box 1, again tomorrow. XP once per mistake per day.
+function errRate(e,ok){
+  var now=Date.now(),t=dayStart(),box=Math.min(5,Math.max(1,e.box||1)),p,xp=0;
+  if(ok){
+    p=box>=5?{box:5,mastered:true,due:addDaysTs(t,ERR_DAYS[4])}:{box:box+1,mastered:false,due:addDaysTs(t,ERR_DAYS[box])};
+    p.reviews=(e.reviews||0)+1;
+    if((e.lastPractice||0)<t){xp=xpv('errFix');if(xp)addXP(xp,'Mistake fixed')}
+  }else p={box:1,mastered:false,due:addDaysTs(t,1),lapses:(e.lapses||0)+1};
+  p.lastPractice=now;setErr(e,p);
+  return {due:p.due,mastered:p.mastered,xp:xp};
+}
+function enCtxHTML(e){
+  var c=String(e.context||e.original||''),o=String(e.original||''),i=o?c.indexOf(o):-1;
+  if(i<0)return '<mark class="enhl">'+esc(o)+'</mark>';
+  return esc(c.slice(0,i))+'<mark class="enhl">'+esc(o)+'</mark>'+esc(c.slice(i+o.length));
+}
+function enPracticeHTML(e,where){
+  var r=EN.res&&EN.res.id===e.id?EN.res:null,off=e.type==='Off-topic',id=esc(e.id);
+  var h='<div class="enp"><p class="enctx">'+enCtxHTML(e)+'</p>';
+  if(!r){
+    if(off)h+='<p class="errwhy">'+esc(e.explanation||'This sentence does not answer the task.')+'</p><div class="actions enact"><button class="btn pri sm" data-act="en-check" data-id="'+id+'" data-ok="1" type="button" data-enfocus="1">I understand</button>';
+    else h+='<label class="lbl" for="enIn">Rewrite the highlighted part correctly:</label><div class="enrow"><input id="enIn" class="linkin" autocomplete="off" autocapitalize="off" spellcheck="false" data-enid="'+id+'"><button class="btn pri sm" data-act="en-check" data-id="'+id+'" type="button">Check</button></div><div class="actions enact">';
+    if(where==='card')h+='<button class="btn sm" data-act="en-close" type="button">Cancel</button>';
+    return h+'</div><p class="err" id="enMsg" aria-live="polite"></p></div>';
+  }
+  if(r.ok)h+='<p class="enres ok" aria-live="polite">Correct! '+(r.xp?'+'+r.xp+' XP · ':'')+(r.mastered?'Mastered 🎉':'next review '+enDay(r.due))+'</p>';
+  else h+='<p class="enres no" aria-live="polite">Not quite. Answer: <ins>'+esc(e.corrected||'')+'</ins></p><p class="errwhy">'+esc(e.explanation||'')+'</p><p class="saved" style="margin:4px 0 0">Back to box 1. You will see it again tomorrow.</p>';
+  return h+'<div class="actions enact">'+(where==='card'?'<button class="btn sm" data-act="en-close" type="button" data-enfocus="1">Done</button>':'<button class="btn pri sm" data-act="en-next" type="button" data-enfocus="1">'+(EN.rv&&EN.rv.i+1<EN.rv.q.length?'Next':'Finish')+'</button>')+'</div></div>';
+}
+function errCardHTML(e){
+  var due=errDue(e),open=EN.open===e.id,hide=open&&!(EN.res&&EN.res.id===e.id);
+  var badge=e.mastered?'<span class="enb mast">Mastered</span>':due?'<span class="enb due">Box '+(+e.box||1)+': review now</span>':'<span class="enb">Box '+(+e.box||1)+' · next '+enDay(e.due)+'</span>';
+  var h='<article class="errc"><div class="errtop"><span class="errcat">Category: '+esc(e.category||'Other')+'</span>'+badge+'</div>';
+  if(!hide)h+='<p class="errfix"><del>'+esc(e.original||'')+'</del>'+(e.corrected?'<span class="arr" aria-hidden="true">→</span><ins>'+esc(e.corrected)+'</ins>':'')+'</p>'+(e.explanation?'<p class="errwhy">'+esc(e.explanation)+'</p>':'');
+  h+='<p class="errmeta">From: '+esc(e.exTitle||'Writing')+' · '+fmtD(e.lastSeen||e.createdAt||Date.now())+' · seen '+(+e.count||1)+'×</p>';
+  if(open)h+=enPracticeHTML(e,'card');
+  else h+='<div class="actions enact"><button class="btn '+(e.mastered?'':'pri ')+'sm" data-act="en-open" data-id="'+esc(e.id)+'" type="button">'+(e.mastered?'Practice again':'Practice This Error')+'</button></div>';
+  return h+'</article>';
+}
+function enReviewHTML(){
+  var R=EN.rv,n=R.q.length;
+  if(R.i>=n)return '<div class="fcard"><div class="big">Review complete</div><p>You fixed <b>'+R.ok+'</b> of '+n+'.</p><p class="muted">Mistakes you got wrong come back tomorrow.</p><div class="fbtns"><button class="btn pri" data-act="en-rvend" type="button" data-enfocus="1">Done</button></div></div>';
+  var e=errById(R.q[R.i]);if(!e){R.i++;return enReviewHTML()}
+  return '<div class="fcard enrv"><span class="muted" style="font-size:.8rem">'+(R.i+1)+' of '+n+'</span><div class="enprog" aria-hidden="true"><i style="width:'+Math.round(R.i/n*100)+'%"></i></div><p class="errcat">Category: '+esc(e.category||'Other')+'</p>'+enPracticeHTML(e,'rv')+'</div>';
+}
+function renderErrors(){
+  var el=$('#v-errors');if(!el)return;
+  if(!U||U.role!=='student'){el.innerHTML='<p class="saved pad">The Error Notebook belongs to students.</p>';return}
+  if(EN.rv){el.innerHTML='<div class="pad"><button class="linkish" data-act="en-rvend" type="button">← Back to my notebook</button>'+enReviewHTML()+'</div>';enFocus();return}
+  var L=errList(U.email),due=L.filter(errDue),mast=L.filter(function(e){return e.mastered}),cats={};
+  L.forEach(function(e){cats[e.category||'Other']=1});cats=Object.keys(cats).sort();
+  if(EN.cat&&cats.indexOf(EN.cat)<0)EN.cat='';
+  var st=function(k,lbl,n,c){return '<button type="button" class="ens'+c+(EN.f===k?' on':'')+'" data-act="en-f" data-f="'+k+'" aria-pressed="'+(EN.f===k)+'"><b>'+n+'</b><span>'+lbl+'</span></button>'};
+  var h='<div class="pad"><div class="sechead enhead"><div><h2>Error Notebook</h2><span class="meta">Spaced Repetition System (SRS)</span></div>'+(L.length?'<button class="btn bad sm" data-act="en-clear" type="button">Clear All</button>':'')+'</div>'+
+    '<div class="enstats">'+st('all','Total errors',L.length,'')+st('due','Due today',due.length,' due')+st('mastered','Mastered',mast.length,' mast')+'</div>';
+  if(!L.length){el.innerHTML=h+'<p class="saved">No errors yet. Submit a Writing task and AI will collect your mistakes here.</p></div>';return}
+  h+='<div class="actions enbar">'+(due.length?'<button class="btn pri" data-act="en-rv" type="button">Review all due ('+due.length+')</button>':'')+
+    (cats.length>1?'<select data-encat="1" aria-label="Filter by category"><option value="">All categories</option>'+cats.map(function(c){return '<option value="'+esc(c)+'"'+(EN.cat===c?' selected':'')+'>'+esc(c)+'</option>'}).join('')+'</select>':'')+'</div>';
+  var list=L.filter(function(e){return (EN.f==='all'||(EN.f==='due'?errDue(e):e.mastered))&&(!EN.cat||(e.category||'Other')===EN.cat)}).sort(errSort);
+  h+=list.length?'<div class="enlist">'+list.map(errCardHTML).join('')+'</div>':'<p class="saved">Nothing here with this filter.</p>';
+  if(EN.confirm)h+='<div class="modal" id="enModal" role="dialog" aria-modal="true" aria-labelledby="enMt"><div class="mbox" style="width:min(440px,100%)"><h3 id="enMt" style="font-size:1.1rem">Clear the Error Notebook?</h3><p>This deletes all '+L.length+' errors in your notebook. This cannot be undone.</p><div class="actions"><button class="btn" data-act="en-cancel" type="button" data-enfocus="1">Cancel</button><button class="btn bad" data-act="en-clear-go" type="button">Delete all</button></div></div></div>';
+  el.innerHTML=h+'</div>';enFocus();
+}
+function enFocus(){if(!EN.focus)return;EN.focus=false;var f=$('#v-errors #enIn')||$('#v-errors [data-enfocus]');if(f)f.focus()}
+function enCheck(id,force){
+  var e=errById(id);if(!e)return;
+  var inp=$('#enIn');if(!force&&!(inp&&inp.value.trim())){var m=$('#enMsg');if(m)m.textContent='Type your answer first.';if(inp)inp.focus();return}
+  var ok=force||errOk(e,inp.value),r=errRate(e,ok);
+  EN.res={id:id,ok:ok,due:r.due,mastered:r.mastered,xp:r.xp};if(EN.rv&&ok)EN.rv.ok++;
+  EN.focus=true;renderErrors();
+}
+function enClear(){
+  var em=U.email,ids=errorDocs.filter(function(e){return e.email===em}).map(function(e){return e.id});
+  sampleErr=sampleErr.filter(function(e){return e.email!==em});localErr=localErr.filter(function(e){return e.email!==em});errorDocs=errorDocs.filter(function(e){return e.email!==em});
+  if(dbh)for(var i=0;i<ids.length;i+=400){var b=dbh.batch();ids.slice(i,i+400).forEach(function(id){b.delete(dbh.doc('errors/'+id))});b.commit().then(function(){},function(){toast('Could not delete on the server. Try again later.')})}
+  EN={f:'all',cat:'',open:null,res:null,rv:null,confirm:false,focus:false};toast('Error Notebook cleared.');renderErrors();
+}
+function enStartReview(){
+  var q=errList(U.email).filter(errDue).sort(errSort).map(function(e){return e.id});
+  EN.rv=q.length?{q:q,i:0,ok:0}:null;EN.open=null;EN.res=null;EN.focus=true;renderErrors();
+}
+function enAct(a,t){
+  if(a.indexOf('en-')!==0)return false;
+  if(a==='en-f'){EN.f=t.dataset.f;EN.open=null;EN.res=null;renderErrors();return true}
+  if(a==='en-open'){EN.open=t.dataset.id;EN.res=null;EN.focus=true;renderErrors();return true}
+  if(a==='en-close'){EN.open=null;EN.res=null;renderErrors();return true}
+  if(a==='en-check'){enCheck(t.dataset.id,t.dataset.ok==='1');return true}
+  if(a==='en-rv'){enStartReview();return true}
+  if(a==='en-next'){if(EN.rv){EN.rv.i++;EN.res=null;EN.focus=true}renderErrors();return true}
+  if(a==='en-rvend'){EN.rv=null;EN.res=null;renderErrors();return true}
+  if(a==='en-clear'){EN.confirm=true;EN.focus=true;renderErrors();return true}
+  if(a==='en-cancel'){EN.confirm=false;renderErrors();return true}
+  if(a==='en-clear-go'){enClear();return true}
+  return false;
+}
 /* ---------- Profile: XP, levels, streak, spins ---------- */
 var XPV={},SPIN_XP=300;
-var XPD={d_wotd:10,d_syn:10,d_dict:10,d_para:10,d_read:10,review:15,exFirst:25,exLow:5,lesson:40,lessonLow:5,wri:30,spk:30,hwDone:50},localXp=null;
+var XPD={d_wotd:10,d_syn:10,d_dict:10,d_para:10,d_read:10,review:15,exFirst:25,exLow:5,lesson:40,lessonLow:5,wri:30,spk:30,hwDone:50,errFix:5},localXp=null;
 function xpv(k){var d=cfgGet('xp'),m=localXp||(d&&d.vals)||{};return m[k]!=null&&m[k]!==''?+m[k]:XPD[k]}
 var LV=[['Beginner',0],['Learner',200],['Explorer',500],['Achiever',1000],['Expert',2000],['Master',4000]];
 function lvOf(xp){var i=0;while(i<LV.length-1&&xp>=LV[i+1][1])i++;var base=LV[i][1],nx=LV[i+1]?LV[i+1][1]:null;return {i:i,name:LV[i][0],base:base,next:nx,pct:nx?Math.min(100,Math.round((xp-base)/(nx-base)*100)):100}}
@@ -2656,7 +2842,8 @@ function saveSettings(){
 /* click routing for the new features */
 var XPROWS=[['Daily practice',[['d_wotd','Word of the Day'],['d_syn','Pick the synonym'],['d_dict','Mini-Dictation'],['d_para','Paraphrase'],['d_read','5-Min Reading Challenge'],['review','Daily Review (15 cards)']]],
  ['Exercises',[['exFirst','Reading / Listening exercise, first time, 70% or more'],['exLow','Reading / Listening exercise, first time, under 70%'],['lesson','5-stage Listening lesson, 70% or more'],['lessonLow','5-stage Listening lesson, under 70%'],['wri','Writing submission'],['spk','Speaking submission']]],
- ['Homework',[['hwDone','Marking a week of homework "I\'m done" (100% finished)']]]];
+ ['Homework',[['hwDone','Marking a week of homework "I\'m done" (100% finished)']]],
+ ['Error Notebook',[['errFix','Fixing a mistake in the Error Notebook (once per mistake per day)']]]];
 function renderXps(){
   var el=$('#v-xps');if(!U||U.role!=='teacher'){el.innerHTML='';return}
   var h='<div class="pad"><div class="sechead"><h2>Settings</h2><span class="meta">XP students earn</span></div><div class="sec"><p class="sub">Each reward is given once per task (daily tasks once per day). Leave a box empty to use the default.</p>';
@@ -2710,6 +2897,7 @@ function xSave(){
 }
 function extAct(a,t){
   if(adAct(a,t))return true;
+  if(enAct(a,t))return true;
   if(mkAct(a,t))return true;
   if(a==='lx'){var lv=t.dataset.l,v=t.dataset.v;
     if(lv==='book')LIBX=LIBX.book===v?{}:{book:v};
@@ -3367,7 +3555,7 @@ function adAct(a,t){
 }
 
 /* ---------- Boot ---------- */
-if(DEMO){sampleData=makeSample().concat(makeSubs());samplePass=makeSamplePass();sampleCards=makeSampleCards();sampleProf=makeSampleProf();makeSampleExtras()}
+if(DEMO){sampleData=makeSample().concat(makeSubs());samplePass=makeSamplePass();sampleCards=makeSampleCards();sampleErr=makeSampleErr();sampleProf=makeSampleProf();makeSampleExtras()}
 $('#promptText').textContent=LPROMPT;
 var th=lsGet('md-theme');if(th==='dark'||th==='light')applyTheme(th);else setThemeLbl(curDark());
 rebuildCustom();
@@ -3393,6 +3581,7 @@ populateBookTest();
     db.collection('classes').onSnapshot(function(s){classDocs=toDocs(s);classDocs.forEach(function(d){delete localClasses[d.docId]});refreshLive()},function(){});
     db.collection('profiles').onSnapshot(function(s){profDocs=toDocs(s);profDocs.forEach(function(d){var lp=localProf[d.email];if(lp&&!lp._dirty)delete localProf[d.email]});refreshLive()},function(){});
     own('cards').onSnapshot(function(s){cardDocs=toDocs(s);refreshLive()},function(){});
+    if(!isT)own('errors').onSnapshot(function(s){errorDocs=toDocs(s);refreshLive()},function(){});
     db.collection('wins').onSnapshot(function(s){winDocs=toDocs(s);updMarq()},function(){});
     db.collection('codes').onSnapshot(function(s){codeDocs=toDocs(s);if(TAB==='prize')refreshLive()},function(){});
     own('redeems').onSnapshot(function(s){redDocs=toDocs(s);if(TAB==='prize')refreshLive()},function(){});

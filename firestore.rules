@@ -84,6 +84,15 @@ service cloud.firestore {
     }
 
     // ---- Nội dung do giáo viên quản lý: mọi người đã đăng nhập đọc, chỉ teacher ghi ----
+    // ---- Sổ lỗi (Error Notebook): chỉ server tạo; học sinh chỉ sửa trạng thái ôn tập và được xóa lỗi của mình ----
+    match /errors/{id} {
+      allow read: if teacher() || ownsOld();
+      allow create: if false;   // chỉ server tạo (service account)
+      allow update: if ownsOld() && request.resource.data.diff(resource.data).affectedKeys()
+                     .hasOnly(['box','due','reviews','lapses','mastered','lastPractice']);
+      allow delete: if teacher() || ownsOld();
+    }
+
     match /names/{id}       { allow read, write: if teacher(); }
     match /roster/{id}      { allow read: if signedIn(); allow write: if teacher(); }
     match /exercises/{id}   { allow read: if signedIn(); allow write: if teacher(); }
