@@ -473,6 +473,13 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .fx-ins{color:var(--good);font-weight:700;text-decoration:none;background:var(--good-bg);border-radius:3px;padding:0 2px}
 .fx-new{color:var(--good);font-weight:700;background:var(--good-bg);border-radius:3px;padding:0 2px}
 .fx-off{color:inherit;background:var(--hl-soft);border-bottom:2px dotted var(--warn);padding:0 1px;cursor:help}
+.fx-bad{color:var(--bad);background:var(--bad-bg);border-radius:3px;padding:0 2px;text-decoration:underline wavy var(--bad);text-decoration-thickness:1px;text-underline-offset:4px;cursor:help}
+.fx-n{display:inline-block;min-width:1.4em;padding:0 .3em;margin-left:2px;border-radius:999px;background:var(--ink);color:var(--surface);font-family:var(--mono);font-size:.62rem;font-weight:700;line-height:1.45em;text-align:center;vertical-align:super;text-decoration:none}
+.fxl li>.fx-n{vertical-align:baseline;margin:0 6px 0 0}
+.fxl li[data-fn]{cursor:pointer}
+.fx-hot{outline:2px solid var(--accent);outline-offset:1px;border-radius:4px}
+.wmarked{max-width:100%;min-height:120px;margin-top:4px}
+@media (prefers-reduced-motion:no-preference){.fx-hot{transition:outline-color .2s}}
 .cxhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;max-width:72ch}.cxhead .tk{margin:0}
 .cxnote{margin:2px 0 0;font-size:.82rem;color:var(--muted)}
 .enrvbox{background:var(--surface);border:1px solid var(--accent);border-radius:12px;padding:14px 16px;margin:0 0 18px;scroll-margin-top:12px}
@@ -1342,49 +1349,71 @@ function aiItems(ai){return ((ai&&ai.corrections)||[]).filter(function(c){return
 function fixSpans(text,items){
   text=String(text||'');var sp=[];
   items.forEach(function(f){
-    var i=text.indexOf(f.from),n=0;
-    while(i>=0&&n<50&&sp.some(function(s){return i<s.i+s.len&&s.i<i+f.from.length})){i=text.indexOf(f.from,i+1);n++}
+    f.n=0;var i=text.indexOf(f.from),k=0;
+    while(i>=0&&k<50&&sp.some(function(s){return i<s.i+s.len&&s.i<i+f.from.length})){i=text.indexOf(f.from,i+1);k++}
     if(i>=0)sp.push({i:i,len:f.from.length,f:f});
   });
-  return sp.sort(function(a,b){return a.i-b.i});
+  // number = order in the essay; the same number is shown in Your answer, the marked essay, the list and the corrected essay
+  return sp.sort(function(a,b){return a.i-b.i}).map(function(s,j){s.n=s.f.n=j+1;return s});
 }
 var firstAlt=function(s){return String(s||'').split(/\s\/\s|\|/)[0].trim()};
 var fixTip=function(f){return (f.cat?f.cat+': ':'')+(f.why||'')};
-// Marked essay: red struck-through mistake + green highlighted fix; Off-topic sentences get a dotted mark. Hover / tap = the reason.
-function fixHTML(text,items){
+function fxBadge(n){return n?'<sup class="fx-n" aria-hidden="true">'+n+'</sup>':''}
+function fxAttrs(f,n){var tip=esc(fixTip(f));return ' title="'+tip+'" data-act="fx-tip" data-tip="'+tip+'" data-fn="'+n+'"'}
+/* mode 'fix' = marked essay (red struck-through mistake + green fix), 'bad' = Your answer (mistakes only, red),
+   'new' = corrected essay (fixes in green). Off-topic sentences get a dotted mark (left as they are in 'new'). Hover / tap = the reason. */
+function marksHTML(text,sp,mode){
   text=String(text||'');var out='',pos=0;
-  fixSpans(text,items).forEach(function(s){
-    var f=s.f,tip=esc(fixTip(f));out+=esc(text.slice(pos,s.i));
-    if(f.off)out+='<mark class="fx-off" title="'+tip+'" data-act="fx-tip" data-tip="'+tip+'">'+esc(text.substr(s.i,s.len))+'</mark>';
-    else out+='<span class="fx" title="'+tip+'" data-act="fx-tip" data-tip="'+tip+'"><del class="fx-del">'+esc(text.substr(s.i,s.len))+'</del> <ins class="fx-ins">'+esc(f.to)+'</ins></span>';
+  sp.forEach(function(s){
+    var f=s.f,orig=text.substr(s.i,s.len),at=fxAttrs(f,s.n),nb=fxBadge(s.n);out+=esc(text.slice(pos,s.i));
+    if(f.off)out+=mode==='new'?esc(orig):'<mark class="fx-off"'+at+'>'+esc(orig)+nb+'</mark>';
+    else if(mode==='bad')out+='<mark class="fx-bad"'+at+'>'+esc(orig)+nb+'</mark>';
+    else if(mode==='new')out+=f.to?'<mark class="fx-new"'+at+'>'+esc(firstAlt(f.to))+nb+'</mark>':esc(orig);
+    else out+='<span class="fx"'+at+'><del class="fx-del">'+esc(orig)+'</del> <ins class="fx-ins">'+esc(f.to)+'</ins>'+nb+'</span>';
     pos=s.i+s.len;
   });
   return out+esc(text.slice(pos));
 }
+function fixHTML(text,items,sp){return marksHTML(text,sp||fixSpans(text,items),'fix')}
+function answerHTML(text,items,sp){return marksHTML(text,sp||fixSpans(text,items),'bad')}
 // Corrected essay, built from the student's text (no AI rewrite): each fix -> first option, in green.
-function correctedHTML(text,items){
-  text=String(text||'');var out='',plain='',pos=0,n=0;
-  fixSpans(text,items.filter(function(f){return !f.off&&f.to})).forEach(function(s){
-    var to=firstAlt(s.f.to),gap=text.slice(pos,s.i);
-    out+=esc(gap)+'<mark class="fx-new">'+esc(to)+'</mark>';plain+=gap+to;pos=s.i+s.len;n++;
-  });
-  return {html:out+esc(text.slice(pos)),plain:plain+text.slice(pos),n:n};
+function correctedHTML(text,items,sp){
+  text=String(text||'');sp=sp||fixSpans(text,items);var plain='',pos=0,n=0;
+  sp.forEach(function(s){if(s.f.off||!s.f.to)return;plain+=text.slice(pos,s.i)+firstAlt(s.f.to);pos=s.i+s.len;n++});
+  return {html:marksHTML(text,sp,'new'),plain:plain+text.slice(pos),n:n};
 }
 var CXP={},cxN=0;
-function correctedBlockHTML(text,items){
-  var c=correctedHTML(text,items);if(!c.n)return '';
+function correctedBlockHTML(text,items,sp){
+  var c=correctedHTML(text,items,sp);if(!c.n)return '';
   var k='c'+(++cxN);CXP[k]=c.plain;
-  return '<div class="cxhead"><h4 class="tk">Corrected essay</h4><button class="btn sm" type="button" data-act="cx-copy" data-k="'+k+'">Copy</button></div><p class="cxnote">Green = corrected parts ('+c.n+' change'+(c.n>1?'s':'')+')</p><div class="essay">'+c.html+'</div>';
+  return '<div class="cxhead"><h4 class="tk">Corrected essay</h4><button class="btn sm" type="button" data-act="cx-copy" data-k="'+k+'">Copy</button></div><p class="cxnote">Green = corrected parts ('+c.n+' change'+(c.n>1?'s':'')+'). Numbers match the list above.</p><div class="essay">'+c.html+'</div>';
 }
 function fixListHTML(items){
-  return '<ul class="fxl">'+items.map(function(f){return '<li>'+(f.cat?'<b class="aicat">'+esc(f.cat)+'</b> ':'')+'<del class="fx-del">'+esc(f.from)+'</del>'+(f.to&&!f.off?' → <ins class="fx-ins">'+esc(f.to)+'</ins>':'')+'<small>'+(f.off?'Off-topic · ':'')+esc(f.why||'')+'</small></li>'}).join('')+'</ul>';
+  return '<ul class="fxl">'+items.map(function(f){return '<li'+(f.n?' data-act="fx-tip" data-fn="'+f.n+'" data-tip="'+esc(fixTip(f))+'"':'')+'>'+(f.n?'<span class="fx-n">'+f.n+'</span>':'')+(f.cat?'<b class="aicat">'+esc(f.cat)+'</b> ':'')+'<del class="fx-del">'+esc(f.from)+'</del>'+(f.to&&!f.off?' → <ins class="fx-ins">'+esc(f.to)+'</ins>':'')+'<small>'+(f.off?'Off-topic · ':'')+esc(f.why||'')+'</small></li>'}).join('')+'</ul>';
 }
 // Corrections + Corrected essay (students after submitting / Open feedback, and the teacher Marking modal)
 function correctionsHTML(text,items){
   if(!items.length)return '<p class="okline">No mistakes found. Nice writing.</p>';
-  var ord=fixSpans(text,items).map(function(s){return s.f});
+  var sp=fixSpans(text,items),ord=sp.map(function(s){return s.f});
   items.forEach(function(f){if(ord.indexOf(f)<0)ord.push(f)});
-  return '<h4 class="tk">Corrections</h4><div class="essay">'+fixHTML(text,items)+'</div>'+fixListHTML(ord)+correctedBlockHTML(text,items);
+  return '<h4 class="tk">Corrections</h4><p class="cxnote">Red = mistake, green = correction. Tap one to see why.</p><div class="essay">'+fixHTML(text,items,sp)+'</div>'+fixListHTML(ord)+correctedBlockHTML(text,items,sp);
+}
+// Your answer after the AI check: the textarea is swapped for the same text with the mistakes highlighted
+function markAnswer(text,ai){
+  var ta=$('#wText');if(!ta||!ta.readOnly||ta.value!==text)return;
+  var items=aiItems(ai);if(!items.length)return;
+  var v=$('#wMarked');
+  if(!v){ta.insertAdjacentHTML('afterend','<p class="cxnote" id="wMarkedNote">Mistakes are highlighted in red. The numbers match the corrections below.</p><div class="essay wmarked" id="wMarked" aria-label="Your answer with the mistakes highlighted"></div>');v=$('#wMarked')}
+  v.innerHTML=answerHTML(text,items);ta.style.display='none';
+}
+// Tap a mistake / correction: show the reason and light up every place with the same number
+var fxHotT=null;
+function fxHot(t){
+  var n=t.getAttribute('data-fn');if(!n)return;
+  var root=t.closest('.fbbox,.mbox,#libBody')||document;
+  Array.prototype.forEach.call(document.querySelectorAll('.fx-hot'),function(x){x.classList.remove('fx-hot')});
+  Array.prototype.forEach.call(root.querySelectorAll('[data-fn="'+n+'"]'),function(x){x.classList.add('fx-hot')});
+  clearTimeout(fxHotT);fxHotT=setTimeout(function(){Array.prototype.forEach.call(document.querySelectorAll('.fx-hot'),function(x){x.classList.remove('fx-hot')})},1800);
 }
 // AI correction runs on the server (/api/ai/correct, Gemini). Demo: DEMO_AI sample.
 var AIX=null;
@@ -1414,7 +1443,7 @@ function aiHTML(ai,text){
   return h+'</div>';
 }
 function aiShow(ai,text,added,demo){
-  var b=$('#fixes');if(!b)return;AIX=ai;
+  var b=$('#fixes');if(!b)return;AIX=ai;markAnswer(text,ai);
   b.innerHTML=(demo?'<p class="banner">Demo: sample AI result. On the live site the AI checks your own text.</p>':'')+aiHTML(ai,text)+(added?'<p class="saved" style="margin-top:8px">'+added+' mistake'+(added>1?'s were':' was')+' added to your <b>Error Notebook</b>. <button class="linkish" data-act="tab" data-tab="errors" type="button">Open it</button></p>':'');
 }
 function aiSay(msg){var b=$('#fixes');if(b)b.innerHTML='<p class="saved" aria-live="polite">'+esc(msg)+'</p>'}
@@ -2024,7 +2053,7 @@ document.addEventListener('click',function(e){
   if(a==='sub-w')return submitWriting();
   if(a==='ai-card'){var v=AIX&&(AIX.vocabulary_upgrades||[])[+t.dataset.i];if(v&&saveCard({w:String(v.upgraded).replace(/\//g,' ').trim(),ipa:'',pos:'',en:v.note||'',vi:'',ex:v.example||'',syn:[v.original],ant:[]}))t.disabled=true;return}
   if(a==='cx-copy'){var cv=CXP[t.dataset.k]||'',cno=function(){toast('Copy failed. Select the text and copy it by hand.')};try{navigator.clipboard.writeText(cv).then(function(){toast('Copied.')},cno)}catch(x){cno()}return}
-  if(a==='fx-tip'){if(t.dataset.tip)toast(t.dataset.tip);return}
+  if(a==='fx-tip'){if(t.dataset.tip)toast(t.dataset.tip);fxHot(t);return}
   if(a==='sub-s')return submitSpeaking();
   if(a==='timer')return startTimer();
   if(a==='retry'){renderPlayer();return}

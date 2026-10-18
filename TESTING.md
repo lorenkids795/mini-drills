@@ -67,6 +67,7 @@ Chuẩn bị: thêm `GEMINI_KEY` (Secret) cho Preview + Production rồi deploy 
 21. [ ] Giáo viên mở bài trong Marking → thấy đủ các khối trên với cùng kiểu chữ và màu.
 22. [ ] Error Notebook: cuộn xuống giữa trang → bấm Practice một thẻ → **trang không nhảy**. Check đúng, sai, thử lại, Show answer → thẻ vẫn ở nguyên chỗ. Bấm Close → danh sách sắp xếp lại, vị trí cuộn gần như giữ nguyên.
 23. [ ] "Review all due" và "Practice this group" mở khung ở đầu danh sách; làm lần lượt nhiều lỗi mà trang không nhảy. "End review" đóng khung, giữ vị trí cuộn.
+24. [ ] Sau khi AI chấm xong, ô **Your answer** chuyển thành bài có chỗ sai tô đỏ (gạch sóng) kèm số 1, 2, 3…; cùng số xuất hiện ở bài đánh dấu, danh sách lỗi và Corrected essay. Bấm vào một lỗi → hiện lý do và mọi chỗ cùng số được viền sáng.
 
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.
