@@ -11,6 +11,9 @@
 //   ADMIN_SETUP_KEY        secret  any long phrase only the teacher knows (first-time teacher password)
 //   ADMIN_EMAIL            text    the one admin account (a teacher who also manages users)
 //   ADMIN_PASSWORD         secret  the admin's first password (used once, when acct:<ADMIN_EMAIL> does not exist yet)
+//   GEMINI_KEY             secret  Google AI Studio key, for /api/ai/correct (AI Writing correction)
+//   GEMINI_MODEL           text    optional, default gemini-2.5-flash
+//   AI_DAILY_LIMIT         text    optional, AI checks per student per day, default 10
 // Pages -> Settings -> Bindings: KV namespace, variable name MD_KV
 //
 // Roles at login, in order: ADMIN_EMAIL -> KV "staff" or TEACHERS -> Firestore roster/{email} (student).
@@ -23,6 +26,8 @@
 //   off:<email>    '1' = paused, 'moved:<new>'   blocks login; the app checks /api/status every 10 minutes
 //   adm:<key>      ADMIN_EMAIL, 12 h             admin session key, sent as X-Admin-Key to /api/admin/*
 //   sheet          { url, csv, ts }              Google Sheet class list; sheetcache = last read, 5 minutes
+//   ai:<attemptId> 'pending' | 'done', 2 days    one AI check per Writing submission
+//   aiq:<email>:<day>  AI checks used that day
 
 const enc = new TextEncoder();
 const PBKDF2_ITER = 100000; // Workers maximum
@@ -143,23 +148,40 @@ async function customToken(env, email, who) {
 const fsBase = (env) =>
   'https://firestore.googleapis.com/v1/projects/' + env.FIREBASE_PROJECT_ID + '/databases/(default)/documents';
 
+// JS value <-> Firestore REST value. Flat values work as before (whole numbers -> integerValue, null -> '');
+// objects become mapValue and arrays arrayValue, so attempts.ai can be stored as real data.
+function toValue(v) {
+  if (typeof v === 'boolean') return { booleanValue: v };
+  if (typeof v === 'number') {
+    if (!isFinite(v)) return { integerValue: '0' };
+    return Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v };
+  }
+  if (Array.isArray(v)) return { arrayValue: { values: v.map(toValue) } };
+  if (v && typeof v === 'object') return { mapValue: { fields: toFields(v) } };
+  return { stringValue: String(v == null ? '' : v) };
+}
+function fromValue(v) {
+  if (!v || typeof v !== 'object') return undefined;
+  if ('stringValue' in v) return v.stringValue;
+  if ('booleanValue' in v) return v.booleanValue;
+  if ('integerValue' in v) return Number(v.integerValue);
+  if ('doubleValue' in v) return Number(v.doubleValue);
+  if ('timestampValue' in v) return v.timestampValue;
+  if ('nullValue' in v) return null;
+  if ('mapValue' in v) return fromFields(v.mapValue.fields);
+  if ('arrayValue' in v) return (v.arrayValue.values || []).map(fromValue);
+  return undefined;
+}
 function toFields(obj) {
   const f = {};
-  Object.keys(obj).forEach((k) => {
-    const v = obj[k];
-    if (typeof v === 'boolean') f[k] = { booleanValue: v };
-    else if (typeof v === 'number') f[k] = { integerValue: String(Math.round(v)) };
-    else f[k] = { stringValue: String(v == null ? '' : v) };
-  });
+  Object.keys(obj).forEach((k) => { f[k] = toValue(obj[k]); });
   return f;
 }
 function fromFields(fields) {
   const o = {};
   Object.keys(fields || {}).forEach((k) => {
-    const v = fields[k];
-    if ('stringValue' in v) o[k] = v.stringValue;
-    else if ('booleanValue' in v) o[k] = v.booleanValue;
-    else if ('integerValue' in v) o[k] = Number(v.integerValue);
+    const v = fromValue(fields[k]);
+    if (v !== undefined) o[k] = v;
   });
   return o;
 }
@@ -681,6 +703,247 @@ async function adminClass(env, body) {
   return json({ ok: true, cls });
 }
 
+/* ---------- AI writing correction (Gemini) ---------- */
+// POST /api/ai/correct { attemptId, task, exTitle, tzo }. No session: the attempt must exist in Firestore
+// (only a signed-in student can create one), be a Writing submission, and be less than 2 hours old.
+// KV ai:<attemptId> = 'pending' | 'done' (2 days): one AI check per attempt.
+// KV aiq:<email>:<YYYY-MM-DD> = checks used today (limit AI_DAILY_LIMIT, default 10).
+const AI_PROMPT =
+  'You are an IELTS Writing examiner and tutor. Read the task and the student essay below and return JSON that matches the schema.\n' +
+  'Rules:\n' +
+  '- corrections: real mistakes only. Never invent mistakes. If the essay has no mistakes, return "corrections": [].\n' +
+  '- original_text must be copied EXACTLY from the essay (same spelling, case and punctuation), as short as possible but long enough to be found in the essay.\n' +
+  '- corrected_text is the fixed words. Two good options may be written as "wrote / was writing". For an Off-topic sentence, corrected_text may be "".\n' +
+  '- category is a short error-notebook label, for example: Stative Verbs, Gerund as Subject & Articles, Irregular Plural Nouns, Subject-Verb Agreement, Verb Tense, Articles, Prepositions, Collocation, Word Form, Spelling, Punctuation, Off-topic.\n' +
+  '- type: "Grammar" (includes punctuation), "Vocabulary" (word choice, collocation, spelling) or "Off-topic" (a sentence that does not answer the task).\n' +
+  '- explanation: one short sentence in simple English.\n' +
+  '- At most 15 corrections, most important first.\n' +
+  '- vocabulary_upgrades: up to 6 simple words or phrases from the essay and a better IELTS alternative, with a short example sentence and a short note.\n' +
+  '- summary.grammar_band_est looks like "Band 6.0". summary.topic_relevance is High, Medium or Low. summary.general_feedback: 2-4 short sentences in VIETNAMESE.\n' +
+  '- improved_essay: the essay corrected and slightly improved, keeping the student\'s ideas and structure.\n';
+const AI_SCHEMA = {
+  type: 'OBJECT',
+  properties: {
+    summary: {
+      type: 'OBJECT',
+      properties: {
+        word_count: { type: 'NUMBER' },
+        grammar_band_est: { type: 'STRING' },
+        topic_relevance: { type: 'STRING', enum: ['High', 'Medium', 'Low'] },
+        general_feedback: { type: 'STRING' },
+      },
+      required: ['grammar_band_est', 'topic_relevance', 'general_feedback'],
+    },
+    corrections: {
+      type: 'ARRAY',
+      items: {
+        type: 'OBJECT',
+        properties: {
+          original_text: { type: 'STRING' },
+          corrected_text: { type: 'STRING' },
+          category: { type: 'STRING' },
+          explanation: { type: 'STRING' },
+          type: { type: 'STRING', enum: ['Grammar', 'Vocabulary', 'Off-topic'] },
+        },
+        required: ['original_text', 'corrected_text', 'category', 'explanation', 'type'],
+      },
+    },
+    vocabulary_upgrades: {
+      type: 'ARRAY',
+      items: {
+        type: 'OBJECT',
+        properties: {
+          original: { type: 'STRING' },
+          upgraded: { type: 'STRING' },
+          example: { type: 'STRING' },
+          note: { type: 'STRING' },
+        },
+        required: ['original', 'upgraded'],
+      },
+    },
+    improved_essay: { type: 'STRING' },
+  },
+  required: ['summary', 'corrections', 'vocabulary_upgrades', 'improved_essay'],
+};
+const AI_MAX_AGE = 2 * 3600 * 1000;
+const aiStr = (v, n) => String(v == null ? '' : v).replace(/\s+/g, ' ').trim().slice(0, n);
+const wordCountOf = (t) => String(t || '').trim().split(/\s+/).filter(Boolean).length; // same as wordCount() in the app
+const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); // same as slug() in the app
+
+// The sentence that contains text[i .. i+len] (split on . ! ? and new lines), at most 300 characters.
+function sentenceAt(text, i, len) {
+  let s = i, e = i + len;
+  while (s > 0 && !/[.!?\n]/.test(text[s - 1])) s--;
+  while (e < text.length && !/[.!?\n]/.test(text[e])) e++;
+  if (e < text.length && text[e] !== '\n') e++;
+  let out = text.slice(s, e).trim();
+  if (out.length > 300) {
+    const a = Math.max(s, i - 120);
+    out = (a > s ? '…' : '') + text.slice(a, Math.min(e, a + 298)).trim() + '…';
+  }
+  return out;
+}
+
+async function askGemini(env, task, text) {
+  const model = String(env.GEMINI_MODEL || 'gemini-2.5-flash').trim();
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 25000);
+  try {
+    const r = await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) +
+        ':generateContent?key=' + encodeURIComponent(env.GEMINI_KEY),
+      {
+        method: 'POST',
+        signal: ctl.signal,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: AI_PROMPT + '\nTASK:\n' + (task || '(not given)') + '\n\nSTUDENT ESSAY:\n' + text }] }],
+          generationConfig: { temperature: 0.2, responseMimeType: 'application/json', responseSchema: AI_SCHEMA },
+        }),
+      });
+    if (!r.ok) throw new Error('gemini ' + r.status);
+    const d = await r.json();
+    const parts = (d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts) || [];
+    const raw = parts.map((p) => p.text || '').join('');
+    return { out: JSON.parse(raw), model };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// Do not trust the AI blindly: keep only mistakes found word for word in the essay, sorted by position.
+function cleanAi(raw, text, model) {
+  const s = (raw && raw.summary) || {};
+  const rel = ['High', 'Medium', 'Low'].indexOf(s.topic_relevance) >= 0 ? s.topic_relevance : 'Medium';
+  const seen = {};
+  const corrections = (Array.isArray(raw && raw.corrections) ? raw.corrections : [])
+    .map((c) => {
+      const type = ['Grammar', 'Vocabulary', 'Off-topic'].indexOf(c && c.type) >= 0 ? c.type : 'Grammar';
+      const original = String((c && c.original_text) || '').trim().slice(0, 400);
+      const corrected = aiStr(c && c.corrected_text, 400);
+      const category = aiStr(c && c.category, 60);
+      const pos = original ? text.indexOf(original) : -1;
+      if (pos < 0 || !category || seen[original]) return null;
+      if (type !== 'Off-topic' && (!corrected || corrected === original)) return null;
+      seen[original] = 1;
+      return {
+        original_text: original, corrected_text: corrected,
+        category, explanation: aiStr(c.explanation, 300), type, context: sentenceAt(text, pos, original.length), pos,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.pos - b.pos)
+    .slice(0, 15)
+    .map((c) => { delete c.pos; return c; });
+  const vocabulary_upgrades = (Array.isArray(raw && raw.vocabulary_upgrades) ? raw.vocabulary_upgrades : [])
+    .map((v) => ({ original: aiStr(v && v.original, 80), upgraded: aiStr(v && v.upgraded, 80), example: aiStr(v && v.example, 240), note: aiStr(v && v.note, 200) }))
+    .filter((v) => v.original && v.upgraded && v.original !== v.upgraded)
+    .slice(0, 8);
+  return {
+    summary: {
+      word_count: wordCountOf(text),
+      grammar_band_est: aiStr(s.grammar_band_est, 20) || 'Band ?',
+      topic_relevance: rel,
+      general_feedback: aiStr(s.general_feedback, 800),
+    },
+    corrections,
+    vocabulary_upgrades,
+    improved_essay: String((raw && raw.improved_essay) || '').trim().slice(0, 8000),
+    model,
+    ts: Date.now(),
+  };
+}
+
+// One errors/{slug(email)}_{hash} doc per mistake. Seen again -> count + 1 and back to box 1 (no duplicate).
+// 2 requests in total: batchGet (which already exist) + one atomic commit.
+async function saveErrors(env, att, attemptId, ai, meta) {
+  if (!ai.corrections.length) return 0;
+  const em = normEmail(att.email), today = meta.dayStart, now = Date.now();
+  const docBase = 'projects/' + env.FIREBASE_PROJECT_ID + '/databases/(default)/documents/errors/';
+  const rows = [], ids = {};
+  for (const c of ai.corrections) {
+    const h = (await sha256Hex(c.original_text.toLowerCase() + '|' + c.corrected_text.toLowerCase())).slice(0, 12);
+    const id = slug(em) + '_' + h;
+    if (ids[id]) continue;
+    ids[id] = 1;
+    rows.push({ id, c });
+  }
+  const g = await fs(env, 'POST', ':batchGet', { documents: rows.map((r) => docBase + r.id) });
+  if (!g.ok) throw new Error('firestore batchGet ' + g.status);
+  const found = {};
+  (await g.json()).forEach((x) => { if (x.found) found[x.found.name.split('/').pop()] = 1; });
+  const writes = rows.map((r) => {
+    const content = {
+      email: em, student: String(att.student || ''), cls: String(att.cls || ''),
+      original: r.c.original_text, corrected: r.c.corrected_text, category: r.c.category,
+      explanation: r.c.explanation, type: r.c.type, context: r.c.context,
+      attemptId, ex: String(att.ex || ''), exTitle: meta.exTitle,
+      box: 1, due: today, mastered: false, lastSeen: now,
+    };
+    if (found[r.id]) {
+      return {
+        update: { name: docBase + r.id, fields: toFields(content) },
+        updateMask: { fieldPaths: Object.keys(content) },
+        updateTransforms: [{ fieldPath: 'count', increment: { integerValue: '1' } }],
+        currentDocument: { exists: true },
+      };
+    }
+    const full = Object.assign(content, { reviews: 0, lapses: 0, count: 1, createdAt: now, lastPractice: 0 });
+    return { update: { name: docBase + r.id, fields: toFields(full) }, currentDocument: { exists: false } };
+  });
+  const r = await fs(env, 'POST', ':commit', { writes });
+  if (!r.ok) throw new Error('firestore commit ' + r.status);
+  return rows.length;
+}
+
+async function aiCorrect(env, body) {
+  const id = String(body.attemptId || '');
+  if (!/^[A-Za-z0-9]{10,40}$/.test(id)) return fail('This submission was not found.', 404);
+  if (!env.GEMINI_KEY) return fail('busy', 502);
+  const doc = await fsGet(env, 'attempts', id);
+  if (!doc) return fail('This submission was not found.', 404);
+  const att = doc.data, text = String(att.text || '');
+  if (att.kind !== 'submission' || !text) return fail('Only Writing submissions can be checked.', 400);
+  // already checked: return the saved result, no new Gemini call, no quota used
+  if (att.ai && typeof att.ai === 'object' && att.ai.summary) return json({ ai: att.ai, added: (att.ai.corrections || []).length, again: true });
+  if (text.trim().length < 8) return fail('Your answer is too short for an AI check.', 400);
+  if (text.length > 6000) return fail('Your answer is too long for an AI check (6000 characters at most).', 400);
+  if (!(Number(att.ts) > Date.now() - AI_MAX_AGE)) return fail('AI checks are only available within 2 hours of submitting.', 400);
+  const em = normEmail(att.email);
+  if (!emailOk(em)) return fail('This submission was not found.', 404);
+  const lock = await env.MD_KV.get('ai:' + id);
+  if (lock === 'pending') return fail('Your writing is already being checked. Wait a few seconds.', 409);
+  if (lock === 'done') return fail('busy', 502); // marked done but the result was not saved
+  // day of the student (tzo = getTimezoneOffset() in minutes, Vietnam = -420)
+  let tzo = Number(body.tzo);
+  if (!isFinite(tzo) || Math.abs(tzo) > 840) tzo = -420;
+  const local = Date.now() - tzo * 60000, day = new Date(local).toISOString().slice(0, 10);
+  const dayStart = Date.parse(day + 'T00:00:00Z') + tzo * 60000;
+  const limit = Math.max(1, parseInt(env.AI_DAILY_LIMIT || '10', 10) || 10);
+  const qKey = 'aiq:' + em + ':' + day;
+  if ((await count(env, qKey)) >= limit) return fail("You have used today's AI checks. Try again tomorrow.", 429);
+  await env.MD_KV.put('ai:' + id, 'pending', { expirationTtl: 172800 });
+  let ai;
+  try {
+    const g = await askGemini(env, String(body.task || '').slice(0, 1500), text);
+    ai = cleanAi(g.out, text, g.model);
+  } catch (e) {
+    await env.MD_KV.delete('ai:' + id); // a failed call may be tried again
+    return fail('busy', 502);
+  }
+  const fixes = ai.corrections.filter((c) => c.type !== 'Off-topic')
+    .map((c) => ({ from: c.original_text, to: c.corrected_text, type: c.type, why: c.explanation }));
+  if (!(await fsUpdate(env, 'attempts', id, { ai, fixes }))) {
+    await env.MD_KV.delete('ai:' + id);
+    return fail('busy', 502);
+  }
+  await env.MD_KV.put('ai:' + id, 'done', { expirationTtl: 172800 });
+  await bump(env, qKey, 172800);
+  let added = 0;
+  try { added = await saveErrors(env, att, id, ai, { dayStart, exTitle: aiStr(body.exTitle, 120) }); } catch (e) { added = 0; }
+  return json({ ai, added });
+}
+
 export async function onRequest(ctx) {
   const { request, env } = ctx;
   const url = new URL(request.url);
@@ -702,6 +965,7 @@ export async function onRequest(ctx) {
     if (route === 'register') return await register(env, body, ip);
     if (route === 'reset') return await resetPassword(env, body);
     if (route === 'admin/unlock') return await adminUnlock(env, body);
+    if (route === 'ai/correct') return await aiCorrect(env, body);
     if (route.indexOf('admin/') === 0) {
       if (!(await adminKeyOk(env, request))) {
         return json({ error: 'Your admin session ended. Enter your admin password to continue.', needUnlock: true }, 401);

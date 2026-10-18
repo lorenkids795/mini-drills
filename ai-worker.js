@@ -1,3 +1,4 @@
+// DEPRECATED – không dùng, AI chạy qua /api/ai/correct (functions/api/[[path]].js).
 // Cloudflare Worker. Holds the AI key. Students call it only after Google sign-in.
 // Deploy: Workers → Create → paste this file.
 // Settings → Variables:

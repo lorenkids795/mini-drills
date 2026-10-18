@@ -409,6 +409,13 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .fxl{list-style:none;margin:8px 0;padding:0;font-size:.88rem}
 .fxl li{padding:.35rem 0;border-bottom:1px solid var(--line)}
 .fxl small{display:block;color:var(--muted)}
+.aisum{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin:6px 0;font-size:.9rem}
+.aichip{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.1rem .45rem;border-radius:3px;margin-left:4px}
+.aichip.good{background:var(--good-bg);color:var(--good)}.aichip.bad{background:var(--bad-bg);color:var(--bad)}.aichip.warn{background:var(--hl-soft);color:var(--warn)}
+.aifb{margin:6px 0;line-height:1.55}
+.aicat{color:var(--accent);font-size:.8rem;margin-right:4px}
+.aivu li{display:flex;gap:10px;align-items:center;justify-content:space-between}.aivu li>div{min-width:0}.aivu .btn{flex:none}
+.aiimp{margin:10px 0}.aiimp summary{cursor:pointer;font-weight:600;padding:4px 0}
 .chips2{display:flex;gap:6px;flex-wrap:wrap}
 
 /* ---- vocab popup, flashcards ---- */
@@ -531,6 +538,7 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .rs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 @media (min-width:1080px){.rs-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media (max-width:640px){.rs-grid{grid-template-columns:minmax(0,1fr)}}
+@media (min-width:641px){.rs-grid{grid-auto-rows:1fr}}
 .rs{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:12px;min-width:0}
 .rs-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:2px 12px;align-items:center}
 .rs-top .sq{width:38px;height:38px;border-radius:10px;color:#fff;display:grid;place-items:center;font-weight:700;font-size:.95rem;grid-column:1;grid-row:1/3}.rs-top>b{grid-column:2;grid-row:1;font-size:.98rem;align-self:end}
@@ -1265,27 +1273,62 @@ function vocEmbed(link){
   var m=/(?:vocaroo\.com|voca\.ro)\/(?:i\/|embed\/)?([A-Za-z0-9_-]+)/i.exec(link||'');if(!m)return '';
   return '<iframe class="voc" src="https://vocaroo.com/embed/'+m[1]+'?autoplay=0" title="Vocaroo recording" allow="autoplay"></iframe><p class="saved" style="margin:4px 0 0"><a href="'+esc(link)+'" target="_blank" rel="noopener">Open in a new tab</a> if the player does not load.</p>';
 }
-var FIXP='You are an IELTS Writing tutor. Find the grammar, spelling, punctuation and word-choice mistakes in the student text below. Reply with only a JSON array (at most 15 items, most important first) of objects {"from": exact words copied from the text, "to": the corrected words, "type": "grammar" | "spelling" | "punctuation" | "word choice", "why": one short sentence in simple English}. Keep "from" as short as possible but long enough to be found exactly in the text. Example: [{"from":"is write","to":"is writing","type":"grammar","why":"Use the -ing form after is."}]. If there are no mistakes reply [].\n\nSTUDENT TEXT:\n';
 function fixHTML(text,fixes){
   var out='',pos=0;
   fixes.forEach(function(f){var i=f.from?text.indexOf(f.from,pos):-1;if(i<0)return;out+=esc(text.slice(pos,i))+'<del>'+esc(f.from)+'</del><ins>'+esc(f.to)+'</ins>';pos=i+f.from.length});
   return out+esc(text.slice(pos));
 }
 function fixListHTML(fixes){return '<ul class="fxl">'+fixes.map(function(f){return '<li><del>'+esc(f.from)+'</del> → <ins>'+esc(f.to)+'</ins><small>'+esc(f.type||'')+' · '+esc(f.why||'')+'</small></li>'}).join('')+'</ul>'}
-function autoFix(text){
+// AI correction runs on the server (/api/ai/correct, Gemini). Demo: DEMO_AI sample.
+var AIX=null;
+var DEMO_AI={summary:{word_count:0,grammar_band_est:'Band 5.5',topic_relevance:'High',general_feedback:'Bài viết bám đề và có quan điểm rõ ràng. Em cần chú ý thì quá khứ của động từ và danh từ số nhiều bất quy tắc. Hãy dùng thêm từ nối để các ý liền mạch hơn.'},
+  corrections:[
+    {original_text:'am disagree',corrected_text:'disagree',category:'Stative Verbs',explanation:"'Disagree' is a verb. Say 'I disagree', not 'I am disagree'.",type:'Grammar'},
+    {original_text:'protect the nature',corrected_text:'protecting nature',category:'Gerund as Subject & Articles',explanation:"Use the -ing form as a subject, and 'nature' has no article.",type:'Grammar'},
+    {original_text:'Many peoples',corrected_text:'Many people',category:'Irregular Plural Nouns',explanation:"'People' is already plural, so do not add -s.",type:'Grammar'},
+    {original_text:'is write',corrected_text:'wrote / was writing',category:'Verb Tense',explanation:'Use the past simple or past continuous for an action in the past.',type:'Grammar'},
+    {original_text:'go',corrected_text:'went',category:'Verb Tense',explanation:"The story happened in the past, so use 'went'.",type:'Grammar'}],
+  vocabulary_upgrades:[
+    {original:'very important',upgraded:'crucial',example:'Protecting nature is crucial for future generations.',note:'One strong word sounds more academic.'},
+    {original:'a lot of',upgraded:'a great deal of',example:'Factories produce a great deal of waste.',note:'More formal, good for IELTS.'}],
+  improved_essay:'Some people believe that economic growth matters more than protecting nature. I disagree with this view.\n\nMany people think that factories bring jobs. However, protecting nature is crucial because clean air and water are the basis of a healthy life. Last year my town wrote a plan to clean the river, and many families went there every weekend.\n\nIn conclusion, governments should support growth without harming the environment.'};
+function aiFixes(ai,text){
+  return (ai.corrections||[]).filter(function(c){return c.type!=='Off-topic'&&c.original_text&&c.corrected_text}).map(function(c){return {from:c.original_text,to:c.corrected_text,type:c.type,why:c.explanation||''}}).sort(function(a,b){return String(text||'').indexOf(a.from)-String(text||'').indexOf(b.from)});
+}
+function aiHTML(ai,text){
+  var s=ai.summary||{},cs=ai.corrections||[],vu=ai.vocabulary_upgrades||[],rel=String(s.topic_relevance||''),fx=aiFixes(ai,text);
+  var h='<div class="aib"><h4 class="tk">AI feedback</h4><p class="aisum"><span><span class="mono">'+esc(String(s.word_count!=null?s.word_count:wordCount(text)))+'</span> words</span><span>Grammar (AI estimate): <b>'+esc(s.grammar_band_est||'')+'</b></span><span>Topic relevance <span class="aichip '+(rel==='High'?'good':rel==='Low'?'bad':'warn')+'">'+esc(rel||'?')+'</span></span></p>';
+  if(s.general_feedback)h+='<p class="aifb">'+esc(s.general_feedback)+'</p>';
+  h+='<p class="saved" style="margin:0 0 6px">This is an AI estimate. Your official band comes from your teacher.</p>';
+  if(cs.length)h+='<h4 class="tk">Corrections</h4>'+(fx.length?'<div class="subtext">'+fixHTML(text,fx)+'</div>':'')+'<ul class="fxl">'+cs.map(function(c){return '<li><b class="aicat">'+esc(c.category||'')+'</b> <del>'+esc(c.original_text||'')+'</del>'+(c.corrected_text?' → <ins>'+esc(c.corrected_text)+'</ins>':'')+'<small>'+esc(c.type==='Off-topic'?'Off-topic · ':'')+esc(c.explanation||'')+'</small></li>'}).join('')+'</ul>';
+  else h+='<p class="okline">No mistakes found. Nice writing.</p>';
+  if(vu.length)h+='<h4 class="tk">Vocabulary upgrades</h4><ul class="fxl aivu">'+vu.map(function(v,i){return '<li><div><span>'+esc(v.original||'')+' → <ins>'+esc(v.upgraded||'')+'</ins></span>'+((v.example||v.note)?'<small>'+esc(v.example||'')+((v.example&&v.note)?' · ':'')+esc(v.note||'')+'</small>':'')+'</div>'+((U&&U.role==='student')?'<button class="btn sm" type="button" data-act="ai-card" data-i="'+i+'">+ Flashcard</button>':'')+'</li>'}).join('')+'</ul>';
+  if(ai.improved_essay)h+='<details class="aiimp"><summary>Improved essay</summary><div class="subtext">'+esc(ai.improved_essay)+'</div><button class="btn sm" type="button" data-act="ai-copy">Copy</button></details>';
+  return h+'</div>';
+}
+function aiShow(ai,text,added,demo){
+  var b=$('#fixes');if(!b)return;AIX=ai;
+  b.innerHTML=(demo?'<p class="banner">Demo: sample AI result. On the live site the AI checks your own text.</p>':'')+aiHTML(ai,text)+(added?'<p class="saved" style="margin-top:8px">'+added+' mistake'+(added>1?'s were':' was')+' added to your <b>Error Notebook</b>.</p>':'');
+}
+function aiSay(msg){var b=$('#fixes');if(b)b.innerHTML='<p class="saved" aria-live="polite">'+esc(msg)+'</p>'}
+function autoFix(text,ex,how){
   var box=$('#fixes');if(!box)return;
-  var c=window.claude;if(!c||!c.use){box.innerHTML='';return}
-  Promise.resolve(c.use('sample')).then(function(sample){
-    if(!sample){box.innerHTML='';return}
-    box.innerHTML='<p class="saved">Checking your grammar and word choice…</p>';
-    return sample.json(FIXP+text).then(function(fx){
-      if(!Array.isArray(fx))throw {code:'invalid_json'};
-      fx=fx.filter(function(f){return f&&typeof f.from==='string'&&typeof f.to==='string'&&text.indexOf(f.from)>=0&&f.from!==f.to}).sort(function(a,b){return text.indexOf(a.from)-text.indexOf(b.from)});
-      var b=$('#fixes');if(!b)return;
-      b.innerHTML=fx.length?'<h4 class="tk">Corrections</h4><div class="subtext">'+fixHTML(text,fx)+'</div>'+fixListHTML(fx):'<p class="okline">No mistakes found. Nice writing.</p>';
-      if(lastRef&&lastRef.update)lastRef.update({fixes:fx});else if(localAttempts[0]&&String(localAttempts[0].id).indexOf('local-')===0)localAttempts[0].fixes=fx;
-    });
-  }).catch(function(e){var b=$('#fixes');if(b)b.innerHTML=(e&&e.code==='not_granted')?'':'<p class="saved">Automatic correction is not available right now.</p>'});
+  var wait='<p class="saved" aria-live="polite">Checking your writing with AI. This takes about 5 to 20 seconds…</p>';
+  if(DEMO){
+    box.innerHTML=wait;
+    setTimeout(function(){
+      var ai=Object.assign({},DEMO_AI,{summary:Object.assign({},DEMO_AI.summary,{word_count:wordCount(text)}),model:'demo',ts:Date.now()}),la=localAttempts[0];
+      if(la&&String(la.id).indexOf('local-')===0&&la.text===text){la.ai=ai;la.fixes=aiFixes(ai,text)}
+      aiShow(ai,text,ai.corrections.length,true);
+    },900);
+    return;
+  }
+  if(how!=='db'||!lastRef){aiSay('Automatic correction needs an internet connection.');return}
+  box.innerHTML=wait;
+  adPost('ai/correct',{attemptId:lastRef.id,task:ex.prompt||'',exTitle:ex.title||'',tzo:new Date().getTimezoneOffset()},'').then(function(d){
+    if(d._ok&&d.ai&&d.ai.summary){aiShow(d.ai,text,d.added||0,false);return}
+    aiSay((d._status===400||d._status===409||d._status===429)&&d.error?d.error:'Automatic correction is not available right now.');
+  },function(){aiSay('Automatic correction is not available right now.')});
 }
 function showWL(msg,bad){var e=$('#wLock');if(e){e.textContent=msg;e.className='banner lockmsg'+(bad?' bad':'')}}
 function leaveEvt(){
@@ -1316,7 +1359,7 @@ function submitWriting(){
   done=true;WL.on=false;setLock(false);if(U.role==='student')lsSet('md-wl-'+U.email+'-'+ex.id,'0');$('#wText').readOnly=true;$('#submit').disabled=true;
   $('#result').innerHTML='<div class="result"><p style="margin:0"><b>Submitted.</b> Your teacher will review it.</p><div id="fixes"></div>'+nextBtns()+'</div>';
   if(U.role==='teacher')return;
-  saveAttempt({email:U.email,student:U.name,course:U.course,cls:U.cls,ex:ex.id,score:0,total:0,items:[],kind:'submission',text:t,words:wordCount(t),ts:Date.now()}).then(function(h){var m=$('#saveMsg');if(m)m.textContent=h==='db'?'Saved.':'Kept for this session only.';autoFix(t)});onAttemptSaved(ex,0,0,false);
+  saveAttempt({email:U.email,student:U.name,course:U.course,cls:U.cls,ex:ex.id,score:0,total:0,items:[],kind:'submission',text:t,words:wordCount(t),ts:Date.now()}).then(function(h){var m=$('#saveMsg');if(m)m.textContent=h==='db'?'Saved.':'Kept for this session only.';autoFix(t,ex,h)});onAttemptSaved(ex,0,0,false);
 }
 function renderSpeaking(ex,head,ban){
   $('#libBody').innerHTML='<div class="pane single">'+head+ban+'<h3 style="font-size:1rem">Part 1</h3><ol class="sp-q">'+ex.part1.map(function(q){return '<li>'+esc(q)+'</li>'}).join('')+'</ol>'+
@@ -1869,6 +1912,8 @@ document.addEventListener('click',function(e){
   if(a==='afwd'){if(au)au.currentTime=Math.min(isFinite(au.duration)?au.duration:au.currentTime+5,au.currentTime+5);return}
   if(a==='submit')return gradeNow();
   if(a==='sub-w')return submitWriting();
+  if(a==='ai-card'){var v=AIX&&(AIX.vocabulary_upgrades||[])[+t.dataset.i];if(v&&saveCard({w:String(v.upgraded).replace(/\//g,' ').trim(),ipa:'',pos:'',en:v.note||'',vi:'',ex:v.example||'',syn:[v.original],ant:[]}))t.disabled=true;return}
+  if(a==='ai-copy'){var iv=(AIX&&AIX.improved_essay)||'',cno=function(){toast('Copy failed. Select the text and copy it by hand.')};try{navigator.clipboard.writeText(iv).then(function(){toast('Copied.')},cno)}catch(x){cno()}return}
   if(a==='sub-s')return submitSpeaking();
   if(a==='timer')return startTimer();
   if(a==='retry'){renderPlayer();return}
