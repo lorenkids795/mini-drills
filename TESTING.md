@@ -41,9 +41,9 @@
 
 ## AI Auto-Correction + Error Notebook
 Chuẩn bị: thêm `GEMINI_KEY` (Secret) cho Preview + Production rồi deploy lại; dán lại `firestore.rules` vào Firebase Console → Publish.
-1. [ ] Nộp một bài Writing có lỗi → trong khoảng 5–20 giây thấy tóm tắt (số từ, "Grammar (AI estimate)", Topic relevance, nhận xét tiếng Việt), phần sửa lỗi, từ vựng nâng cấp, bài đã sửa (bấm mở) và dòng "N mistakes were added…".
-   - [ ] "+ Flashcard" → từ có trong tab Flashcards. "Copy" ở Improved essay → chép được.
-2. [ ] Tải lại trang → Home → Recent results ô Writing → "Open feedback" → kết quả AI vẫn còn. Giáo viên mở bài đó trong Marking → thấy "Auto corrections" và "AI summary (estimate)" (bấm để mở).
+1. [ ] Nộp một bài Writing có lỗi → trong khoảng 5–20 giây thấy Corrections, Corrected essay, Vocabulary upgrades và dòng "N mistakes were added…".
+   - [ ] "+ Flashcard" → từ có trong tab Flashcards. "Copy" ở Corrected essay → chép được văn bản sạch.
+2. [ ] Tải lại trang → Home → Recent results ô Writing → "Open feedback" → kết quả AI vẫn còn. Giáo viên mở bài đó trong Marking → thấy "Auto corrections" (bài đánh dấu, danh sách lỗi, Corrected essay).
 3. [ ] Tab **Error Notebook**: số liệu 3 ô đúng; bấm từng ô thì lọc đúng. Practice đúng → "Correct! +5 XP · next review …", box tăng, ngày ôn lùi lại.
 4. [ ] Error Notebook chia nhóm theo category, không còn chữ "Category:" và dòng "From … seen …". Nộp 2 bài cùng mắc lỗi *go → went* → nhóm Past Simple Tense (hoặc tên AI đặt) hiện **2 thẻ** riêng, chip ghi "2 errors · 2 due". Nút "Practice this group" ôn lần lượt các lỗi đến hạn của nhóm. Nhóm đã thuộc hết thì thu gọn sẵn.
 5. [ ] Nộp quá giới hạn trong ngày (mặc định 10; có thể tạm đặt `AI_DAILY_LIMIT` = `1` để thử) → "You have used today's AI checks. Try again tomorrow." Mở lại kết quả cũ không tốn thêm lượt.
@@ -58,6 +58,15 @@ Chuẩn bị: thêm `GEMINI_KEY` (Secret) cho Preview + Production rồi deploy 
 14. [ ] Lỗi lên box 3 trở lên → Practice dùng câu mới, khác câu trong bài.
 15. [ ] Lỗi cũ (lưu trước khi có tính năng này) → bấm Practice thấy "Preparing your exercise…", sau đó có bài; mở lại thì không gọi AI lần nữa.
 16. [ ] Ngắt mạng hoặc AI lỗi → vẫn có bài Practice dự phòng, kèm dòng "Simple practice (AI exercise not available)".
+
+### Giao diện sửa lỗi + Practice không nhảy trang (GĐ 5)
+17. [ ] Nộp bài có lỗi → phần Corrections: chỗ sai đỏ gạch ngang, chỗ sửa xanh có nền highlight; rê chuột (máy tính) hoặc chạm (điện thoại) thấy lý do.
+18. [ ] Mục "Corrected essay" hiện bài đã sửa, chỗ sửa tô xanh, đúng số "N changes"; nút Copy cho ra văn bản sạch (không có HTML).
+19. [ ] Không còn khối tóm tắt AI (band estimate, topic relevance, nhận xét) và "Improved essay", ở cả học sinh lẫn modal Marking. Mở một bài cũ đã chấm AI trước đây → vẫn hiện bình thường, không lỗi.
+20. [ ] Bài gốc, Corrections và Corrected essay có **cùng cỡ chữ và giãn dòng**, giữ nguyên xuống dòng và đoạn văn. Kiểm tra ở 390px và ở dark mode.
+21. [ ] Giáo viên mở bài trong Marking → thấy đủ các khối trên với cùng kiểu chữ và màu.
+22. [ ] Error Notebook: cuộn xuống giữa trang → bấm Practice một thẻ → **trang không nhảy**. Check đúng, sai, thử lại, Show answer → thẻ vẫn ở nguyên chỗ. Bấm Close → danh sách sắp xếp lại, vị trí cuộn gần như giữ nguyên.
+23. [ ] "Review all due" và "Practice this group" mở khung ở đầu danh sách; làm lần lượt nhiều lỗi mà trang không nhảy. "End review" đóng khung, giữ vị trí cuộn.
 
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

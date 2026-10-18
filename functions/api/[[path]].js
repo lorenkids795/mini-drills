@@ -742,22 +742,10 @@ const AI_PROMPT =
   '- explanation: one short sentence in simple English.\n' +
   '- At most 15 corrections, most important first.\n' +
   '- vocabulary_upgrades: up to 6 simple words or phrases from the essay and a better IELTS alternative, with a short example sentence and a short note.\n' +
-  '- summary.grammar_band_est looks like "Band 6.0". summary.topic_relevance is High, Medium or Low. summary.general_feedback: 2-4 short sentences in VIETNAMESE.\n' +
-  '- improved_essay: the essay corrected and slightly improved, keeping the student\'s ideas and structure.\n' +
   AI_PRACTICE_RULES;
 const AI_SCHEMA = {
   type: 'OBJECT',
   properties: {
-    summary: {
-      type: 'OBJECT',
-      properties: {
-        word_count: { type: 'NUMBER' },
-        grammar_band_est: { type: 'STRING' },
-        topic_relevance: { type: 'STRING', enum: ['High', 'Medium', 'Low'] },
-        general_feedback: { type: 'STRING' },
-      },
-      required: ['grammar_band_est', 'topic_relevance', 'general_feedback'],
-    },
     corrections: {
       type: 'ARRAY',
       items: {
@@ -786,13 +774,11 @@ const AI_SCHEMA = {
         required: ['original', 'upgraded'],
       },
     },
-    improved_essay: { type: 'STRING' },
   },
-  required: ['summary', 'corrections', 'vocabulary_upgrades', 'improved_essay'],
+  required: ['corrections', 'vocabulary_upgrades'],
 };
 const AI_MAX_AGE = 2 * 3600 * 1000;
 const aiStr = (v, n) => String(v == null ? '' : v).replace(/\s+/g, ' ').trim().slice(0, n);
-const wordCountOf = (t) => String(t || '').trim().split(/\s+/).filter(Boolean).length; // same as wordCount() in the app
 const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); // same as slug() in the app
 
 // The sentence that contains text[i .. i+len] (split on . ! ? and new lines), at most 300 characters.
@@ -869,8 +855,6 @@ function cleanPractice(list, c) {
 
 // Do not trust the AI blindly: keep only mistakes found word for word in the essay, sorted by position.
 function cleanAi(raw, text, model) {
-  const s = (raw && raw.summary) || {};
-  const rel = ['High', 'Medium', 'Low'].indexOf(s.topic_relevance) >= 0 ? s.topic_relevance : 'Medium';
   const seen = {};
   const corrections = (Array.isArray(raw && raw.corrections) ? raw.corrections : [])
     .map((c) => {
@@ -897,16 +881,10 @@ function cleanAi(raw, text, model) {
     .map((v) => ({ original: aiStr(v && v.original, 80), upgraded: aiStr(v && v.upgraded, 80), example: aiStr(v && v.example, 240), note: aiStr(v && v.note, 200) }))
     .filter((v) => v.original && v.upgraded && v.original !== v.upgraded)
     .slice(0, 8);
+  // attempts.ai = { corrections, vocabulary_upgrades, model, ts } (no summary / improved essay any more)
   return {
-    summary: {
-      word_count: wordCountOf(text),
-      grammar_band_est: aiStr(s.grammar_band_est, 20) || 'Band ?',
-      topic_relevance: rel,
-      general_feedback: aiStr(s.general_feedback, 800),
-    },
     corrections,
     vocabulary_upgrades,
-    improved_essay: String((raw && raw.improved_essay) || '').trim().slice(0, 8000),
     model,
     ts: Date.now(),
   };
@@ -961,7 +939,7 @@ async function aiCorrect(env, body) {
   const att = doc.data, text = String(att.text || '');
   if (att.kind !== 'submission' || !text) return fail('Only Writing submissions can be checked.', 400);
   // already checked: return the saved result, no new Gemini call, no quota used
-  if (att.ai && typeof att.ai === 'object' && att.ai.summary) return json({ ai: att.ai, added: (att.ai.corrections || []).length, again: true });
+  if (att.ai && typeof att.ai === 'object' && Array.isArray(att.ai.corrections)) return json({ ai: att.ai, added: (att.ai.corrections || []).length, again: true });
   if (text.trim().length < 8) return fail('Your answer is too short for an AI check.', 400);
   if (text.length > 6000) return fail('Your answer is too long for an AI check (6000 characters at most).', 400);
   if (!(Number(att.ts) > Date.now() - AI_MAX_AGE)) return fail('AI checks are only available within 2 hours of submitting.', 400);

@@ -70,7 +70,7 @@ Các khối JS được ngăn bằng comment `/* ---------- Tên ---------- */`.
 | Attempts and progress | `attemptsOf(email)`, `doneMap`, `prog`, `progHTML`, `scoreColor`, `pctColor` |
 | Library views | `homeworkHTML`, `actionsHTML`, `recentHTML` (+ `rsInfo`, `rsCell`), `renderLib` |
 | Player | `renderPlayer`, `qHTML`, `gradeNow`, `saveAttempt` |
-| Writing and speaking | `renderWriting`, `submitWriting`, `renderSpeaking`, `startTimer`, AI: `autoFix(text,ex,how)`, `aiHTML`/`aiSumHTML`, `aiShow`, `aiFixes`, `aiOf`, `AIX`, `DEMO_AI` |
+| Writing and speaking | `renderWriting`, `submitWriting`, `renderSpeaking`, `startTimer`, AI: `autoFix(text,ex,how)`, `aiHTML`, `aiShow`, `aiFixes`, `aiOf`, `AIX`, `DEMO_AI`. Sửa lỗi: `aiItems`/`fixItems` → item `{from,to,cat,why,off}`, `fixSpans` (vị trí đã sắp, không chồng nhau), `fixHTML`, `correctedHTML`, `correctedBlockHTML` (Copy qua `CXP`), `fixListHTML`, `correctionsHTML` |
 | Teacher | `renderDash`, `renderAsg`/`saveAsg`, `renderMark`/`saveGrade`/`gradeOf`/`CRIT`, `renderRoster`/`importCSV`, `parseAI`/`addExercise` (Create) |
 | Shell | `tabsFor`, `showTab`, `signIn`, `refreshLive`, các listener `click`/`change`/`input`/`keydown` |
 | Vocabulary | `DICT`, `lookupWord`, popup `VP`/`showPop`, flashcard `CV`, `reviewHTML`, `rvRate`, `bsPress`, `renderCards` |
@@ -143,7 +143,7 @@ Prompt AI (`AI_PROMPT`) và schema (`AI_SCHEMA`) nằm ở server, không ở cl
 
 | Collection | Nội dung | Quyền |
 |---|---|---|
-| `attempts` | bài làm `{email, student, cls, ex, score, total, items, kind?, text?, link?, ts, grade?, fixes?, ai?}` (`ai` = `{summary, corrections, vocabulary_upgrades, improved_essay, model, ts}`, do server ghi) | HS đọc/tạo bài của mình, **không được ghi `grade`**, chỉ sửa được `fixes`; GV toàn quyền |
+| `attempts` | bài làm `{email, student, cls, ex, score, total, items, kind?, text?, link?, ts, grade?, fixes?, ai?}` (`ai` = `{corrections, vocabulary_upgrades, model, ts}`, do server ghi; bài cũ có thể còn `summary`/`improved_essay`, không hiển thị) | HS đọc/tạo bài của mình, **không được ghi `grade`**, chỉ sửa được `fixes`; GV toàn quyền |
 | `hwdone`, `passes`, `cards`, `redeems` | dữ liệu riêng của HS (có trường `email`) | chỉ chủ sở hữu; GV đọc |
 | `profiles` | XP, streak, inv, title, avatar… | mọi người đã đăng nhập đọc được; chỉ chủ ghi |
 | `errors` | sổ lỗi, **mỗi lần mắc lỗi một doc** (không gộp), id `{slug(email)}_{attemptId}_{i}` (`i` = thứ tự lỗi trong bài): `{email, student, cls, original, corrected, category, explanation, type, context, practice[], attemptId, ex, exTitle, box, due, reviews, lapses, mastered, createdAt, lastPractice}`. `practice` = tối đa 2 bài `{sentence (một ___ + (gợi ý)), answers[], clue_type, own}`: [0] câu của HS, [1] câu mới. Doc cũ (id `{slug(email)}_{hash}`, có `count`/`lastSeen`) vẫn hiện bình thường | chỉ server tạo; HS đọc, xóa lỗi của mình và chỉ sửa `box/due/reviews/lapses/mastered/lastPractice`; GV đọc/xóa |
@@ -204,7 +204,8 @@ Các thay đổi đã có trong code. **Không đảo ngược** nếu không đ
 3. **Recent Results By Skill**: `recentHTML()` chia 4 ô L/R/W/S qua `rsCell(sk, list)` và `rsInfo(a)`; CSS nằm trong `.rs-*`.
    - Ngưỡng đạt: `RS_PASS_PCT=70` (L/R), `RS_PASS_BAND=6` (W/S, quy về thang 9). `RS_BARS=12` là số cột hiển thị.
    - Cột biểu đồ là `<button>` có `data-act="fb-open"` (nếu bài có feedback) hoặc `data-act="nav"`.
-   - Bài đang chờ chấm có class `.pd`. Ô không có bài hiện "No X results yet. Your first one will show here."
+   - Bài đang chờ chấm có class `.pd`. Ô không có bài hiện "No X results yet. Your first one will show here." trong khung nét đứt `.rs-empty`, dòng phụ "Nothing yet".
+   - (10/2026) Tiêu đề đổi thành "Recent results". Số trung bình lớn tô `--good`/`--bad` theo cùng ngưỡng đạt; W/S ghi "N tasks marked" và nhãn "band". Dòng Latest: tên bài bên trái, điểm + ngày bên phải (`.rs-sd`). Biểu đồ cao 110px (90px trên điện thoại), cột rộng tối đa 38px; ô `.rs` có `min-height:300px`, padding 22px 24px.
    - Phân trang cũ (`RP`, `data-act="rpage"`) không còn dùng nhưng handler vẫn để lại, vô hại.
 4. **Flashcard**: Space để lật thẻ; **Backspace 1 lần = Got it**; **Backspace 2 lần trong `BS_GAP=300`ms = Forgot**. Lần nhấn đầu chờ 300ms rồi mới chấm. Bỏ qua `e.repeat`. Enter không còn là phím tắt. Hàm: `bsPress()`, `bsClear()`.
 5. **Leaderboard**: hạng 1–3 có class `.rk.top1/.top2/.top3`, tô nền cả hàng vàng kim/bạc/đồng và hiện số thứ tự thay cho emoji huy chương. Hàng của người dùng `.rk.me` giữ nền `--hl-soft` và có thêm viền `--accent`.
@@ -213,12 +214,13 @@ Các thay đổi đã có trong code. **Không đảo ngược** nếu không đ
 7. **Admin (GĐ 1, 10/2026)**: vai trò admin, tab Admin (Guide/Users/Teachers/My account), Pause/Resume, đổi mật khẩu, thêm/xóa giáo viên, `/api/status`. GĐ 2 (Google Sheet, Edit class) đã xong. Còn lại: GĐ 3 đổi email (`migrateEmail`).
 8. **AI Auto-Correction + Error Notebook (10/2026)**: `/api/ai/correct` (Gemini) thay cho `window.claude.use('sample')`; kết quả hiện ngay dưới bài Writing (tóm tắt + band ước lượng, sửa lỗi, từ vựng nâng cấp có "+ Flashcard", bài đã sửa). Học sinh mở lại qua "Open feedback" ở Recent results (`showFb` hiện cả AI). Tab **Error Notebook** (thống kê lọc được, Practice trong thẻ, Review all due, Clear All). Home có thẻ `.dtask` "Error review · N due". Modal Marking của GV có phần "AI summary (estimate)" thu gọn; "Auto corrections" cũ vẫn giữ. 4 ô Recent results cao bằng nhau (`grid-auto-rows:1fr` từ 641px). Band AI **không** tính vào Recent results.
 9. **Error Notebook GĐ 4 (10/2026)**: bỏ gộp lỗi trùng (mỗi lần mắc lỗi một doc `errors/{slug(email)}_{attemptId}_{i}`); danh sách chia nhóm theo category (`<details>`, chip "N errors · M due", nút "Practice this group (M)"), bỏ dropdown Category, bỏ chữ "Category:" và dòng "From … seen …". Practice mới: câu đầy đủ có ô điền ngay trong câu + gợi ý trong ngoặc, AI tạo 2 bài mỗi lỗi (`practice` trong schema, `AI_PRACTICE_RULES`), endpoint `/api/ai/practice` cho lỗi cũ, phương án dự phòng `enFallback`. Demo: 6 lỗi mẫu, có 2 thẻ *go → went*.
+10. **GĐ 5 (10/2026)**: bỏ `summary` (band estimate, topic relevance, nhận xét) và `improved_essay` khỏi schema AI, prompt và giao diện (HS và modal Marking). Kết quả AI chỉ còn Corrections + **Corrected essay** (tạo tất định từ bài gốc bằng `correctedHTML`, chỗ sửa `<mark class="fx-new">`, nút Copy văn bản sạch) + Vocabulary upgrades. Class chung **`.essay`** (font `--font`, 1rem, line-height 1.75, `pre-wrap`, tối đa 72ch) cho mọi khối bài viết; chỗ sai `.fx-del`, chỗ sửa `.fx-ins` (nền `--good-bg`), cặp sửa bọc `.fx` có `title` + `data-act="fx-tip"` (toast trên điện thoại), câu lạc đề `.fx-off`. Error Notebook: biến **`EP`** `{id, where:'card'|'rv', tries, res}`; khi `EP` hoặc Review đang mở thì **không vẽ lại cả tab** (`refreshLive` chỉ gọi `enUpdateCounts`), chỉ vẽ lại thẻ bằng `renderErrCard(id)` (thay `outerHTML`) hoặc khung Review `#enRv` (`renderRv`); thẻ vừa làm giữ nguyên chỗ (nút Next due error / Close), chỉ sắp xếp lại khi Close/đổi tab; vẽ lại cả tab dùng `renderErrorsKeep()` (giữ `scrollY`); focus bằng `{preventScroll:true}`. Review all due / Practice this group mở khung cố định ở đầu danh sách.
    - Email là khóa dữ liệu ở: `roster/{email}`, `profiles/{slug(email)}`, `cards/{slug(email)}_{word}`, `hwdone/{slug(email)}_{asgId}`, `passes/{slug(email)}_{asgId}`, `errors/{slug(email)}_{attemptId}_{i}` (Error Notebook, có trường `email`; doc cũ dạng `{slug(email)}_{hash}`), trường `email` của `attempts`/`redeems`, `codes.to`, `names.email`, **`classes.removed[]`**, KV `acct:`/`rl:`/`staff`.
 
 ## 8. Giới hạn đã biết / chưa làm
 
 - AI chữa lỗi Writing chạy qua `/api/ai/correct` (cần `GEMINI_KEY`). `aiLookup` (tra từ bằng AI) vẫn gọi `window.claude` nên chưa chạy trên site thật.
-- AI chỉ chấm được trong 2 giờ sau khi nộp, mỗi bài 1 lần. Band AI chỉ là ước lượng.
+- AI chỉ chấm được trong 2 giờ sau khi nộp, mỗi bài 1 lần. AI không cho band (đã bỏ `summary`/`improved_essay` ở GĐ 5).
 - `/api/ai/correct` không kiểm tra token: ai có `attemptId` (id ngẫu nhiên, chỉ chủ bài và GV đọc được) thì gọi được, nhưng vẫn bị giới hạn 1 lần/bài và `AI_DAILY_LIMIT`/ngày.
 - `admin/kick` giữ lại `errors` như các dữ liệu học tập khác; đổi email (`migrateEmail`, chưa làm) phải chuyển cả `errors`.
 - Chưa gửi email nhắc lúc 20:00 (mới có checkbox và phần Preview trong Inventory).

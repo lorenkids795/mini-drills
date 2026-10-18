@@ -409,13 +409,8 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .fxl{list-style:none;margin:8px 0;padding:0;font-size:.88rem}
 .fxl li{padding:.35rem 0;border-bottom:1px solid var(--line)}
 .fxl small{display:block;color:var(--muted)}
-.aisum{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin:6px 0;font-size:.9rem}
-.aichip{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.1rem .45rem;border-radius:3px;margin-left:4px}
-.aichip.good{background:var(--good-bg);color:var(--good)}.aichip.bad{background:var(--bad-bg);color:var(--bad)}.aichip.warn{background:var(--hl-soft);color:var(--warn)}
-.aifb{margin:6px 0;line-height:1.55}
 .aicat{color:var(--accent);font-size:.8rem;margin-right:4px}
 .aivu li{display:flex;gap:10px;align-items:center;justify-content:space-between}.aivu li>div{min-width:0}.aivu .btn{flex:none}
-.aiimp{margin:10px 0}.aiimp summary{cursor:pointer;font-weight:600;padding:4px 0}
 .chips2{display:flex;gap:6px;flex-wrap:wrap}
 
 /* ---- vocab popup, flashcards ---- */
@@ -470,6 +465,18 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .enrow{display:flex;gap:8px;align-items:center}.enrow input{flex:1;min-width:0}
 .enres{font-weight:600;margin:6px 0}.enres.ok{color:var(--good)}.enres.no{color:var(--bad)}
 .fcard.enrv{text-align:left}
+.essay{font-family:var(--font);font-size:1rem;line-height:1.75;white-space:pre-wrap;overflow-wrap:anywhere;max-width:72ch;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:8px 0 12px}
+.mkpass.essay{white-space:normal;border-left-width:1px;padding:14px 16px}
+@media (max-width:640px){.essay{max-width:100%}}
+.fx{cursor:help}
+.fx-del{color:var(--bad);text-decoration:line-through;background:var(--bad-bg);border-radius:3px;padding:0 2px;font-weight:400}
+.fx-ins{color:var(--good);font-weight:700;text-decoration:none;background:var(--good-bg);border-radius:3px;padding:0 2px}
+.fx-new{color:var(--good);font-weight:700;background:var(--good-bg);border-radius:3px;padding:0 2px}
+.fx-off{color:inherit;background:var(--hl-soft);border-bottom:2px dotted var(--warn);padding:0 1px;cursor:help}
+.cxhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;max-width:72ch}.cxhead .tk{margin:0}
+.cxnote{margin:2px 0 0;font-size:.82rem;color:var(--muted)}
+.enrvbox{background:var(--surface);border:1px solid var(--accent);border-radius:12px;padding:14px 16px;margin:0 0 18px;scroll-margin-top:12px}
+.enrvh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 6px}
 .eng{margin:0 0 20px}
 .engh{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;cursor:pointer;list-style:none;padding:6px 0}
 .engh::-webkit-details-marker{display:none}
@@ -586,26 +593,28 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .rs-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
 .rs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 @media (min-width:1080px){.rs-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
-@media (max-width:640px){.rs-grid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){.rs-grid{grid-template-columns:minmax(0,1fr)}.rs{min-height:0;padding:18px;gap:14px}.rs-bars{height:90px;gap:6px}.rs-empty{min-height:110px}}
 @media (min-width:641px){.rs-grid{grid-auto-rows:1fr}}
-.rs{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.rs{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px 24px;display:flex;flex-direction:column;gap:18px;min-width:0;min-height:300px}
 .rs-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:2px 12px;align-items:center}
-.rs-top .sq{width:38px;height:38px;border-radius:10px;color:#fff;display:grid;place-items:center;font-weight:700;font-size:.95rem;grid-column:1;grid-row:1/3}.rs-top>b{grid-column:2;grid-row:1;font-size:.98rem;align-self:end}
-.rs-top>small{grid-column:2;grid-row:2;color:var(--muted);font-size:.78rem;align-self:start}
+.rs-top .sq{width:44px;height:44px;border-radius:12px;color:#fff;display:grid;place-items:center;font-weight:700;font-size:.95rem;grid-column:1;grid-row:1/3}.rs-top>b{grid-column:2;grid-row:1;font-size:1.12rem;align-self:end}
+.rs-top>small{grid-column:2;grid-row:2;color:var(--muted);font-size:.85rem;align-self:start}
 .rs-avg{grid-column:3;grid-row:1/3;text-align:right;line-height:1.1;align-self:start}
-.rs-avg b{display:block;font-family:var(--mono);font-size:1.35rem;font-weight:500}
-.rs-avg small{font-size:.7rem;text-transform:uppercase;letter-spacing:.05em}
-.rs-bars{display:flex;align-items:flex-end;gap:4px;height:46px;padding-bottom:2px;border-bottom:1px solid var(--line)}
-.rs-bars .rb{flex:1 1 0;max-width:22px;min-height:4px;border:0;padding:0;border-radius:3px 3px 0 0;background:var(--bad);display:block}
+.rs-avg b{display:block;font-family:var(--mono);font-size:1.85rem;font-weight:600;line-height:1.05}
+.rs-avg small{font-size:.85rem}
+.rs-bars{display:flex;align-items:flex-end;gap:8px;height:110px;padding-bottom:0;border-bottom:1px solid var(--line)}
+.rs-bars .rb{flex:1 1 0;max-width:38px;min-height:6px;border:0;padding:0;border-radius:6px 6px 0 0;background:var(--bad);display:block}
 .rs-bars .rb.ok{background:var(--good)}
 .rs-bars .rb.pd{background:transparent;border:1px dashed var(--muted);border-bottom:0}
 .rs-bars button.rb:hover{filter:brightness(1.12)}
-.rs-bars.empty{align-items:center;justify-content:center;color:var(--muted);font-size:.78rem}
-.rs-last{display:flex;flex-direction:column;gap:2px;font-size:.86rem;min-width:0;margin-top:auto}
+.rs-empty{flex:1;min-height:150px;display:flex;align-items:center;justify-content:center;text-align:center;border:1.5px dashed var(--line);border-radius:12px;color:var(--muted);font-size:.92rem;line-height:1.6;padding:12px}
+.rs-last{display:flex;flex-direction:column;gap:4px;font-size:.95rem;min-width:0;margin-top:auto}
 .rs-last .stk-s{height:22px;width:auto}
 .rs-last .rfb{font-size:.82rem;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .rs-last .lbl2{font-size:.7rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
-.rs-last .row2{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;min-width:0}
+.rs-last .row2{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;min-width:0}
+.rs-last .row2 .t{flex:1 1 0}
+.rs-sd{margin-left:auto;display:inline-flex;gap:10px;align-items:baseline;white-space:nowrap}.rs-sd .mono{font-weight:600}
 .rs-last .row2 .t{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
 .rs-last button.t{background:none;border:0;padding:0;color:inherit;text-align:left;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
 .rs-last button.t:hover{text-decoration-color:var(--accent)}
@@ -1131,11 +1140,14 @@ function rsCell(sk,list){
   // list: this skill's attempts, newest first
   var band=sk==='writing'||sk==='speaking',inf=list.map(rsInfo),n=list.length,passed=0,sum=0,cnt=0;
   inf.forEach(function(x){if(x.ok)passed++;if(!x.pend){sum+=band?x.band:x.pct;cnt++}});
-  var avg=cnt?(band?fmtS(Math.round(sum/cnt*2)/2):Math.round(sum/cnt)+'%'):'–';
+  var av=cnt?sum/cnt:null,avg=av==null?'–':(band?fmtS(Math.round(av*2)/2):Math.round(av)+'%');
+  // the big number turns green / red with the same pass rule as the bars
+  var avc=av==null?'var(--muted)':((band?av>=RS_PASS_BAND:av>=RS_PASS_PCT)?'var(--good)':'var(--bad)');
+  var sub=!n?'Nothing yet':(band?cnt+' task'+(cnt===1?'':'s')+' marked'+(n>cnt?' · '+(n-cnt)+' waiting':''):n+' exercise'+(n===1?'':'s')+' · '+passed+' passed');
   var h='<article class="rs" aria-label="'+SNAME[sk]+' results"><div class="rs-top"><span class="sq sk-'+sk+'" aria-hidden="true">'+SKL[sk]+'</span><b>'+SNAME[sk]+'</b>'+
-    '<small>'+n+' exercise'+(n===1?'':'s')+' · '+passed+' passed</small>'+
-    '<div class="rs-avg"><b>'+avg+'</b><small class="muted">'+(band?'avg band':'average')+'</small></div></div>';
-  if(!n)return h+'<div class="rs-bars empty" aria-hidden="true"></div><div class="rs-last"><span class="lbl2">Latest</span><span class="muted">No '+SNAME[sk]+' results yet. Your first one will show here.</span></div></article>';
+    '<small>'+sub+'</small>'+
+    '<div class="rs-avg"><b style="color:'+avc+'">'+avg+'</b>'+(cnt?'<small class="muted">'+(band?'band':'average')+'</small>':'')+'</div></div>';
+  if(!n)return h+'<div class="rs-empty">No '+SNAME[sk]+' results yet.<br>Your first one will show here.</div></article>';
   // bars: oldest -> newest, left to right; each bar opens feedback (if any) or the exercise
   var rec=list.slice(0,RS_BARS).reverse(),ri=inf.slice(0,RS_BARS).reverse();
   h+='<div class="rs-bars" role="group" aria-label="Last '+rec.length+' '+SNAME[sk]+' results, oldest first">'+rec.map(function(a,i){
@@ -1148,7 +1160,7 @@ function rsCell(sk,list){
   var a=list[0],x=inf[0],e=exOf(a.ex),g=gradeOf(a),lc=locOf(a.ex),ttl=esc(e?e.title:a.ex);
   h+='<div class="rs-last"><span class="lbl2">Latest</span><div class="row2">'+
     (lc?'<button class="t" type="button" data-act="nav" data-book="'+lc.book+'" data-test="'+lc.test+'" data-skill="'+lc.skill+'" data-ex="'+esc(a.ex)+'">'+ttl+'</button>':'<span class="t">'+ttl+'</span>')+
-    '<span class="mono" style="color:'+(x.pend?'var(--muted)':(x.ok?'var(--good)':'var(--bad)'))+'">'+esc(x.txt)+'</span><span class="muted">· '+fmtDM(a.ts)+'</span>'+
+    '<span class="rs-sd"><span class="mono" style="color:'+(x.pend?'var(--muted)':(x.ok?'var(--good)':'var(--bad)'))+'">'+esc(x.txt)+'</span><span class="muted">'+fmtDM(a.ts)+'</span></span>'+
     (g&&g.sticker?'<img class="stk-s" src="'+esc(g.sticker)+'" alt="Sticker">':'')+
     ((hasFb(g)||aiOf(a))?'<span class="linkish fbo" data-act="fb-open" data-id="'+esc(a.id)+'" role="button" tabindex="0">Open feedback</span>':'')+'</div>'+
     (g&&g.feedback?'<p class="rfb" style="margin:2px 0 0">'+esc(g.feedback)+'</p>':'')+'</div>';
@@ -1159,7 +1171,7 @@ function recentHTML(){
   attemptsOf(U.email).filter(function(a){return a.total>0||a.kind==='submission'}).sort(function(a,b){return b.ts-a.ts}).forEach(function(a){
     var e=exOf(a.ex),sk=e&&by[e.skill]?e.skill:'reading';by[sk].push(a);
   });
-  return '<section class="recent" aria-label="Recent results by skill"><div class="rs-head"><h3>Recent results by skill</h3></div><div class="rs-grid">'+
+  return '<section class="recent" aria-label="Recent results"><div class="rs-head"><h3>Recent results</h3></div><div class="rs-grid">'+
     SKORDER.map(function(sk){return rsCell(sk,by[sk])}).join('')+'</div></section>';
 }
 function setLock(b){try{document.body.classList.toggle('locked',b)}catch(e){}}
@@ -1323,15 +1335,60 @@ function vocEmbed(link){
   var m=/(?:vocaroo\.com|voca\.ro)\/(?:i\/|embed\/)?([A-Za-z0-9_-]+)/i.exec(link||'');if(!m)return '';
   return '<iframe class="voc" src="https://vocaroo.com/embed/'+m[1]+'?autoplay=0" title="Vocaroo recording" allow="autoplay"></iframe><p class="saved" style="margin:4px 0 0"><a href="'+esc(link)+'" target="_blank" rel="noopener">Open in a new tab</a> if the player does not load.</p>';
 }
-function fixHTML(text,fixes){
-  var out='',pos=0;
-  fixes.forEach(function(f){var i=f.from?text.indexOf(f.from,pos):-1;if(i<0)return;out+=esc(text.slice(pos,i))+'<del>'+esc(f.from)+'</del><ins>'+esc(f.to)+'</ins>';pos=i+f.from.length});
+/* Corrections: one item = {from, to, cat, why, off}. Built from attempts.ai.corrections (aiItems) or the old attempts.fixes (fixItems).
+   fixSpans finds every item in the text (in order, no overlaps), so the marked essay and the corrected essay always match. */
+function fixItems(fixes){return (fixes||[]).filter(function(f){return f&&f.from}).map(function(f){return {from:String(f.from),to:String(f.to||''),cat:f.type||'',why:f.why||'',off:false}})}
+function aiItems(ai){return ((ai&&ai.corrections)||[]).filter(function(c){return c&&c.original_text}).map(function(c){return {from:String(c.original_text),to:String(c.corrected_text||''),cat:c.category||c.type||'',why:c.explanation||'',off:c.type==='Off-topic'}})}
+function fixSpans(text,items){
+  text=String(text||'');var sp=[];
+  items.forEach(function(f){
+    var i=text.indexOf(f.from),n=0;
+    while(i>=0&&n<50&&sp.some(function(s){return i<s.i+s.len&&s.i<i+f.from.length})){i=text.indexOf(f.from,i+1);n++}
+    if(i>=0)sp.push({i:i,len:f.from.length,f:f});
+  });
+  return sp.sort(function(a,b){return a.i-b.i});
+}
+var firstAlt=function(s){return String(s||'').split(/\s\/\s|\|/)[0].trim()};
+var fixTip=function(f){return (f.cat?f.cat+': ':'')+(f.why||'')};
+// Marked essay: red struck-through mistake + green highlighted fix; Off-topic sentences get a dotted mark. Hover / tap = the reason.
+function fixHTML(text,items){
+  text=String(text||'');var out='',pos=0;
+  fixSpans(text,items).forEach(function(s){
+    var f=s.f,tip=esc(fixTip(f));out+=esc(text.slice(pos,s.i));
+    if(f.off)out+='<mark class="fx-off" title="'+tip+'" data-act="fx-tip" data-tip="'+tip+'">'+esc(text.substr(s.i,s.len))+'</mark>';
+    else out+='<span class="fx" title="'+tip+'" data-act="fx-tip" data-tip="'+tip+'"><del class="fx-del">'+esc(text.substr(s.i,s.len))+'</del> <ins class="fx-ins">'+esc(f.to)+'</ins></span>';
+    pos=s.i+s.len;
+  });
   return out+esc(text.slice(pos));
 }
-function fixListHTML(fixes){return '<ul class="fxl">'+fixes.map(function(f){return '<li><del>'+esc(f.from)+'</del> → <ins>'+esc(f.to)+'</ins><small>'+esc(f.type||'')+' · '+esc(f.why||'')+'</small></li>'}).join('')+'</ul>'}
+// Corrected essay, built from the student's text (no AI rewrite): each fix -> first option, in green.
+function correctedHTML(text,items){
+  text=String(text||'');var out='',plain='',pos=0,n=0;
+  fixSpans(text,items.filter(function(f){return !f.off&&f.to})).forEach(function(s){
+    var to=firstAlt(s.f.to),gap=text.slice(pos,s.i);
+    out+=esc(gap)+'<mark class="fx-new">'+esc(to)+'</mark>';plain+=gap+to;pos=s.i+s.len;n++;
+  });
+  return {html:out+esc(text.slice(pos)),plain:plain+text.slice(pos),n:n};
+}
+var CXP={},cxN=0;
+function correctedBlockHTML(text,items){
+  var c=correctedHTML(text,items);if(!c.n)return '';
+  var k='c'+(++cxN);CXP[k]=c.plain;
+  return '<div class="cxhead"><h4 class="tk">Corrected essay</h4><button class="btn sm" type="button" data-act="cx-copy" data-k="'+k+'">Copy</button></div><p class="cxnote">Green = corrected parts ('+c.n+' change'+(c.n>1?'s':'')+')</p><div class="essay">'+c.html+'</div>';
+}
+function fixListHTML(items){
+  return '<ul class="fxl">'+items.map(function(f){return '<li>'+(f.cat?'<b class="aicat">'+esc(f.cat)+'</b> ':'')+'<del class="fx-del">'+esc(f.from)+'</del>'+(f.to&&!f.off?' → <ins class="fx-ins">'+esc(f.to)+'</ins>':'')+'<small>'+(f.off?'Off-topic · ':'')+esc(f.why||'')+'</small></li>'}).join('')+'</ul>';
+}
+// Corrections + Corrected essay (students after submitting / Open feedback, and the teacher Marking modal)
+function correctionsHTML(text,items){
+  if(!items.length)return '<p class="okline">No mistakes found. Nice writing.</p>';
+  var ord=fixSpans(text,items).map(function(s){return s.f});
+  items.forEach(function(f){if(ord.indexOf(f)<0)ord.push(f)});
+  return '<h4 class="tk">Corrections</h4><div class="essay">'+fixHTML(text,items)+'</div>'+fixListHTML(ord)+correctedBlockHTML(text,items);
+}
 // AI correction runs on the server (/api/ai/correct, Gemini). Demo: DEMO_AI sample.
 var AIX=null;
-var DEMO_AI={summary:{word_count:0,grammar_band_est:'Band 5.5',topic_relevance:'High',general_feedback:'Bài viết bám đề và có quan điểm rõ ràng. Em cần chú ý thì quá khứ của động từ và danh từ số nhiều bất quy tắc. Hãy dùng thêm từ nối để các ý liền mạch hơn.'},
+var DEMO_AI={
   corrections:[
     {original_text:'am disagree',corrected_text:'disagree',category:'Stative Verbs',explanation:"'Disagree' is a verb. Say 'I disagree', not 'I am disagree'.",type:'Grammar',context:'I am disagree with this opinion.',
       practice:[{sentence:'I ___ (disagree) with this opinion.',answers:['disagree'],clue_type:'base_form',own:true},{sentence:'I strongly ___ (disagree) with the idea that children should not do housework.',answers:['disagree'],clue_type:'base_form',own:false}]},
@@ -1345,25 +1402,15 @@ var DEMO_AI={summary:{word_count:0,grammar_band_est:'Band 5.5',topic_relevance:'
       practice:[{sentence:'Yesterday we ___ (go) to the river to collect rubbish.',answers:['went'],clue_type:'base_form',own:true},{sentence:'Yesterday I ___ (go) to the library to prepare for my exam.',answers:['went'],clue_type:'base_form',own:false}]}],
   vocabulary_upgrades:[
     {original:'very important',upgraded:'crucial',example:'Protecting nature is crucial for future generations.',note:'One strong word sounds more academic.'},
-    {original:'a lot of',upgraded:'a great deal of',example:'Factories produce a great deal of waste.',note:'More formal, good for IELTS.'}],
-  improved_essay:'Some people believe that economic growth matters more than protecting nature. I disagree with this view.\n\nMany people think that factories bring jobs. However, protecting nature is crucial because clean air and water are the basis of a healthy life. Last year my town wrote a plan to clean the river, and many families went there every weekend.\n\nIn conclusion, governments should support growth without harming the environment.'};
+    {original:'a lot of',upgraded:'a great deal of',example:'Factories produce a great deal of waste.',note:'More formal, good for IELTS.'}]};
 function aiFixes(ai,text){
   return (ai.corrections||[]).filter(function(c){return c.type!=='Off-topic'&&c.original_text&&c.corrected_text}).map(function(c){return {from:c.original_text,to:c.corrected_text,type:c.type,why:c.explanation||''}}).sort(function(a,b){return String(text||'').indexOf(a.from)-String(text||'').indexOf(b.from)});
 }
-var aiOf=function(a){return !!(a&&a.ai&&a.ai.summary)};
-function aiSumHTML(ai,text){
-  var s=ai.summary||{},rel=String(s.topic_relevance||'');
-  var h='<p class="aisum"><span><span class="mono">'+esc(String(s.word_count!=null?s.word_count:wordCount(text)))+'</span> words</span><span>Grammar (AI estimate): <b>'+esc(s.grammar_band_est||'')+'</b></span><span>Topic relevance <span class="aichip '+(rel==='High'?'good':rel==='Low'?'bad':'warn')+'">'+esc(rel||'?')+'</span></span></p>';
-  if(s.general_feedback)h+='<p class="aifb">'+esc(s.general_feedback)+'</p>';
-  return h+'<p class="saved" style="margin:0 0 6px">This is an AI estimate. The official band comes from the teacher.</p>';
-}
+// attempts.ai = {corrections, vocabulary_upgrades, model, ts}. Old results may still have summary / improved_essay: they are not shown.
+var aiOf=function(a){return !!(a&&a.ai&&Array.isArray(a.ai.corrections))};
 function aiHTML(ai,text){
-  var cs=ai.corrections||[],vu=ai.vocabulary_upgrades||[],fx=aiFixes(ai,text);
-  var h='<div class="aib"><h4 class="tk">AI feedback</h4>'+aiSumHTML(ai,text);
-  if(cs.length)h+='<h4 class="tk">Corrections</h4>'+(fx.length?'<div class="subtext">'+fixHTML(text,fx)+'</div>':'')+'<ul class="fxl">'+cs.map(function(c){return '<li><b class="aicat">'+esc(c.category||'')+'</b> <del>'+esc(c.original_text||'')+'</del>'+(c.corrected_text?' → <ins>'+esc(c.corrected_text)+'</ins>':'')+'<small>'+esc(c.type==='Off-topic'?'Off-topic · ':'')+esc(c.explanation||'')+'</small></li>'}).join('')+'</ul>';
-  else h+='<p class="okline">No mistakes found. Nice writing.</p>';
-  if(vu.length)h+='<h4 class="tk">Vocabulary upgrades</h4><ul class="fxl aivu">'+vu.map(function(v,i){return '<li><div><span>'+esc(v.original||'')+' → <ins>'+esc(v.upgraded||'')+'</ins></span>'+((v.example||v.note)?'<small>'+esc(v.example||'')+((v.example&&v.note)?' · ':'')+esc(v.note||'')+'</small>':'')+'</div>'+((U&&U.role==='student')?'<button class="btn sm" type="button" data-act="ai-card" data-i="'+i+'">+ Flashcard</button>':'')+'</li>'}).join('')+'</ul>';
-  if(ai.improved_essay)h+='<details class="aiimp"><summary>Improved essay</summary><div class="subtext">'+esc(ai.improved_essay)+'</div><button class="btn sm" type="button" data-act="ai-copy">Copy</button></details>';
+  var vu=ai.vocabulary_upgrades||[],h='<div class="aib">'+correctionsHTML(text,aiItems(ai));
+  if(vu.length)h+='<h4 class="tk">Vocabulary upgrades</h4><ul class="fxl aivu">'+vu.map(function(v,i){return '<li><div><span>'+esc(v.original||'')+' → <ins class="fx-ins">'+esc(v.upgraded||'')+'</ins></span>'+((v.example||v.note)?'<small>'+esc(v.example||'')+((v.example&&v.note)?' · ':'')+esc(v.note||'')+'</small>':'')+'</div>'+((U&&U.role==='student')?'<button class="btn sm" type="button" data-act="ai-card" data-i="'+i+'">+ Flashcard</button>':'')+'</li>'}).join('')+'</ul>';
   return h+'</div>';
 }
 function aiShow(ai,text,added,demo){
@@ -1377,7 +1424,7 @@ function autoFix(text,ex,how){
   if(DEMO){
     box.innerHTML=wait;
     setTimeout(function(){
-      var ai=Object.assign({},DEMO_AI,{summary:Object.assign({},DEMO_AI.summary,{word_count:wordCount(text)}),model:'demo',ts:Date.now()}),la=localAttempts[0];
+      var ai=Object.assign({},DEMO_AI,{model:'demo',ts:Date.now()}),la=localAttempts[0];
       if(la&&String(la.id).indexOf('local-')===0&&la.text===text){la.ai=ai;la.fixes=aiFixes(ai,text)}
       aiShow(ai,text,(U&&U.role==='student')?errAddLocal(ai,text,ex,String((la&&la.id)||'local-'+Date.now())):0,true);
     },900);
@@ -1386,7 +1433,7 @@ function autoFix(text,ex,how){
   if(how!=='db'||!lastRef){aiSay('Automatic correction needs an internet connection.');return}
   box.innerHTML=wait;
   adPost('ai/correct',{attemptId:lastRef.id,task:ex.prompt||'',exTitle:ex.title||'',tzo:new Date().getTimezoneOffset()},'').then(function(d){
-    if(d._ok&&d.ai&&d.ai.summary){aiShow(d.ai,text,d.added||0,false);return}
+    if(d._ok&&d.ai&&Array.isArray(d.ai.corrections)){aiShow(d.ai,text,d.added||0,false);return}
     aiSay((d._status===400||d._status===409||d._status===429)&&d.error?d.error:'Automatic correction is not available right now.');
   },function(){aiSay('Automatic correction is not available right now.')});
 }
@@ -1729,7 +1776,7 @@ function showFb(id){
   closeFb();var a=attemptsOf(U.email).filter(function(x){return x.id===id})[0];if(!a)return;
   var g=gradeOf(a),e=exOf(a.ex),ai=aiOf(a)?a.ai:null;if((!g&&!ai)||!e)return;if(ai)AIX=ai;
   var ms=markSrc(a,e),has=g&&ms!=null&&g.marks&&Object.keys(g.marks).length;
-  document.body.insertAdjacentHTML('beforeend','<div class="msbg" id="fbBg" data-act="fb-close"></div><div class="fbbox" id="fbBox" role="dialog" aria-label="Teacher feedback"><div class="sechead"><div><h3 style="font-size:1.1rem">'+esc(e.title)+'</h3><span class="muted" style="font-size:.85rem">'+(g?'Teacher feedback':'AI feedback')+' · '+fmtD(a.ts)+'</span></div><button class="iconbtn" data-act="fb-close" type="button">Close</button></div>'+(g?'<div class="score" style="margin-bottom:8px"><b>'+esc(g.max?fmtS(g.overall)+' / '+g.max:g.overall)+'</b><span class="muted">'+(g.max?'score':'band')+'</span></div>'+(g.sticker?'<img class="stk-s" src="'+g.sticker+'" alt="Sticker">':'')+(g.link?'<h4 class="tk">Voice feedback</h4>'+vocEmbed(g.link):'')+(g.feedback?'<h4 class="tk">Note</h4><p style="margin:0">'+esc(g.feedback)+'</p>':'')+(has?'<h4 class="tk">Marked words</h4>'+legendHTML(e)+'<div class="mkpass ro" style="margin-top:6px">'+wordsHTML(ms,g.marks,false)+'</div>':''):'')+(ai?aiHTML(ai,a.text||''):'')+'</div>');
+  document.body.insertAdjacentHTML('beforeend','<div class="msbg" id="fbBg" data-act="fb-close"></div><div class="fbbox" id="fbBox" role="dialog" aria-label="Teacher feedback"><div class="sechead"><div><h3 style="font-size:1.1rem">'+esc(e.title)+'</h3><span class="muted" style="font-size:.85rem">'+(g?'Teacher feedback':'AI feedback')+' · '+fmtD(a.ts)+'</span></div><button class="iconbtn" data-act="fb-close" type="button">Close</button></div>'+(g?'<div class="score" style="margin-bottom:8px"><b>'+esc(g.max?fmtS(g.overall)+' / '+g.max:g.overall)+'</b><span class="muted">'+(g.max?'score':'band')+'</span></div>'+(g.sticker?'<img class="stk-s" src="'+g.sticker+'" alt="Sticker">':'')+(g.link?'<h4 class="tk">Voice feedback</h4>'+vocEmbed(g.link):'')+(g.feedback?'<h4 class="tk">Note</h4><p style="margin:0">'+esc(g.feedback)+'</p>':'')+(has?'<h4 class="tk">Marked words</h4>'+legendHTML(e)+'<div class="mkpass ro'+(e.kind==='readaloud'?'':' essay')+'" style="margin-top:6px">'+wordsHTML(ms,g.marks,false)+'</div>':''):'')+(ai?aiHTML(ai,a.text||''):'')+'</div>');
 }
 function mkAct(a,t){
   if(a==='mk-word'){MK.pw=+t.dataset.w;mkSheet(t.textContent);return true}
@@ -1754,9 +1801,8 @@ function modalHTML(a){
   if(rd)h+=(e.focus?'<p class="banner"><b>Focus:</b> '+esc(e.focus)+'</p>':'')+'<h4 class="tk">Student recording</h4><div style="margin:6px 0 10px">'+(vocEmbed(a.link)||'<p class="saved">No recording link.</p>')+'</div>';
   else if(e.skill==='writing')h+='<h4 class="tk">Task</h4>'+writingTask(e);
   else h+='<div style="margin:10px 0">'+vocEmbed(a.link)+'</div><h4 class="tk">Transcript</h4><div class="subtext" style="max-height:170px">'+(a.transcript?esc(a.transcript):'<span class="muted">No transcript yet. On the live site it appears here automatically from the recording.</span>')+'</div>'+(a.notes?'<p class="saved" style="margin:0 0 8px">Student notes: '+esc(a.notes)+'</p>':'');
-  if(ms!=null)h+='<h4 class="tk">'+(rd?'Mark mistakes on the passage':'Student answer · tap a word to mark')+'</h4>'+legendHTML(e)+'<div class="mkpass" id="mkText">'+wordsHTML(ms,MK.marks,true)+'</div><p class="saved" id="mkCnt" style="margin:6px 0 8px">'+markCnt()+(rd?'':' · '+(a.words||wordCount(a.text))+' words')+'</p>';
-  if(!rd&&e.skill==='writing'&&a.fixes&&a.fixes.length)h+='<h4 class="tk">Auto corrections</h4><div class="subtext">'+fixHTML(a.text||'',a.fixes)+'</div>'+fixListHTML(a.fixes);
-  if(!rd&&e.skill==='writing'&&aiOf(a))h+='<details class="aiimp"><summary>AI summary (estimate)</summary>'+aiSumHTML(a.ai,a.text||'')+(a.ai.improved_essay?'<h4 class="tk">Improved essay (AI)</h4><div class="subtext">'+esc(a.ai.improved_essay)+'</div>':'')+'</details>';
+  if(ms!=null)h+='<h4 class="tk">'+(rd?'Mark mistakes on the passage':'Student answer · tap a word to mark')+'</h4>'+legendHTML(e)+'<div class="mkpass'+(rd?'':' essay')+'" id="mkText">'+wordsHTML(ms,MK.marks,true)+'</div><p class="saved" id="mkCnt" style="margin:6px 0 8px">'+markCnt()+(rd?'':' · '+(a.words||wordCount(a.text))+' words')+'</p>';
+  if(!rd&&e.skill==='writing'&&(aiOf(a)||(a.fixes&&a.fixes.length)))h+='<h4 class="tk">Auto corrections</h4>'+correctionsHTML(a.text||'',aiOf(a)?aiItems(a.ai):fixItems(a.fixes));
   h+='<p class="banner" style="margin-top:6px">Marking is optional. If you skip it, this still counts as done.</p>';
   h+=cr.map(function(c,i){var v=(g&&g.scores&&g.scores[i]!=null)?g.scores[i]:6;return '<div class="rub"><label for="rb'+i+'">'+esc(c)+'</label><span class="mono" data-cv="'+i+'">'+fmtS(v)+'</span><input type="range" id="rb'+i+'" data-crit="'+i+'" min="0" max="'+mx+'" step="'+st+'" value="'+v+'"></div>'}).join('');
   h+='<div class="rub"><span>Overall '+(rd?'(out of 10)':'band')+'</span><span class="band" id="mkOverall">'+(g?fmtS(g.overall):6)+'</span></div>';
@@ -1932,7 +1978,7 @@ function showTab(t){
   $('#tabs').innerHTML=tabsFor().map(function(x){return '<button role="tab" data-act="tab" data-tab="'+x[0]+'" aria-selected="'+(x[0]===t)+'">'+x[1]+'</button>'}).join('');
   var id={library:'lib',cards:'cards',errors:'errors',ranks:'ranks',wheel:'wheel',bag:'bag',set:'set',prize:'prize',xps:'xps',dash:'dash',asg:'asg',mark:'mark',roster:'roster',create:'create',admin:'admin'}[t];$('#v-'+id).hidden=false;updMarq();
   if(t==='admin')renderAdmin();
-  if(t==='library')renderLib();if(t==='cards')renderCards();if(t==='errors')renderErrors();if(t==='ranks')renderRanks();if(t==='wheel')renderWheel();if(t==='bag')renderBag();if(t==='set')renderSettings();if(t==='prize')renderPrize();if(t==='xps')renderXps();if(t==='dash')renderDash();if(t==='roster')renderRoster();if(t==='mark')renderMark();
+  if(t==='library')renderLib();if(t==='cards')renderCards();if(t==='errors'){EP=null;EN.rv=null;renderErrors()}if(t==='ranks')renderRanks();if(t==='wheel')renderWheel();if(t==='bag')renderBag();if(t==='set')renderSettings();if(t==='prize')renderPrize();if(t==='xps')renderXps();if(t==='dash')renderDash();if(t==='roster')renderRoster();if(t==='mark')renderMark();
   if(t==='asg'){AG.form=null;AG.open=null;AG.cur=null;AG.sub='list';renderAsg()}
 }
 function signIn(email){
@@ -1947,7 +1993,7 @@ function refreshLive(){
   else if(TAB==='roster')renderRoster();
   else if(TAB==='library'&&!NAV.ex&&!NAV.daily)renderLib();
   else if(TAB==='cards'&&!CV)renderCards();
-  else if(TAB==='errors'){var ec=document.activeElement;if(!EN.confirm&&!(ec&&ec.closest&&ec.closest('#v-errors')&&/INPUT|SELECT/.test(ec.tagName)))renderErrors()}
+  else if(TAB==='errors'){var ec=document.activeElement;if(EP||EN.rv||EN.confirm)enUpdateCounts();else if(!(ec&&ec.closest&&ec.closest('#v-errors')&&/INPUT|SELECT/.test(ec.tagName)))renderErrorsKeep()}
   else if(TAB==='ranks')renderRanks();
   else if(TAB==='wheel'&&!WH.busy)renderWheel();
   else if(TAB==='bag'){var bc=document.activeElement;if(!(bc&&bc.closest&&bc.closest('#v-bag')&&/INPUT|SELECT/.test(bc.tagName)))renderBag()}
@@ -1962,7 +2008,7 @@ function populateBookTest(){
 document.addEventListener('click',function(e){
   if(e.target.id==='mkModal'){MK.open=false;return renderMark()}
   if(e.target.id==='adModal')return closeAdModal();
-  if(e.target.id==='enModal'){EN.confirm=false;return renderErrors()}
+  if(e.target.id==='enModal'){EN.confirm=false;return renderErrorsKeep()}
   if(VP&&!e.target.closest('.vpop')){VP=null;showPop()}
   var t=e.target.closest('[data-act]');if(!t)return;var a=t.dataset.act,au=$('#aud');
   if(t.tagName==='BUTTON'&&t.closest('summary'))e.preventDefault(); // a button in a <details> header must not open/close it
@@ -1977,7 +2023,8 @@ document.addEventListener('click',function(e){
   if(a==='submit')return gradeNow();
   if(a==='sub-w')return submitWriting();
   if(a==='ai-card'){var v=AIX&&(AIX.vocabulary_upgrades||[])[+t.dataset.i];if(v&&saveCard({w:String(v.upgraded).replace(/\//g,' ').trim(),ipa:'',pos:'',en:v.note||'',vi:'',ex:v.example||'',syn:[v.original],ant:[]}))t.disabled=true;return}
-  if(a==='ai-copy'){var iv=(AIX&&AIX.improved_essay)||'',cno=function(){toast('Copy failed. Select the text and copy it by hand.')};try{navigator.clipboard.writeText(iv).then(function(){toast('Copied.')},cno)}catch(x){cno()}return}
+  if(a==='cx-copy'){var cv=CXP[t.dataset.k]||'',cno=function(){toast('Copy failed. Select the text and copy it by hand.')};try{navigator.clipboard.writeText(cv).then(function(){toast('Copied.')},cno)}catch(x){cno()}return}
+  if(a==='fx-tip'){if(t.dataset.tip)toast(t.dataset.tip);return}
   if(a==='sub-s')return submitSpeaking();
   if(a==='timer')return startTimer();
   if(a==='retry'){renderPlayer();return}
@@ -2066,7 +2113,7 @@ document.addEventListener('keydown',function(e){
     return;
   }
   if(e.key==='Enter'&&e.target&&e.target.id==='enIn'){e.preventDefault();enCheck(e.target.dataset.enid);return}
-  if(e.key==='Escape'&&EN.confirm&&TAB==='errors'){EN.confirm=false;renderErrors();return}
+  if(e.key==='Escape'&&EN.confirm&&TAB==='errors'){EN.confirm=false;renderErrorsKeep();return}
   if(e.key==='Escape'&&VP){VP=null;showPop();return}
   if(e.key==='Escape'&&MK.open){MK.open=false;renderMark();return}
   if(e.key==='Escape'&&AD.modal&&TAB==='admin'){closeAdModal();return}
@@ -2264,7 +2311,7 @@ function delCard(id){
 // errors/{slug(email)}_{attemptId}_{i}: one doc per mistake, repeated mistakes are NOT merged (each has its own boxes).
 // Created by the server (/api/ai/correct). The student only updates the review fields.
 var errorDocs=[],localErr=[],sampleErr=[],ERR_DAYS=[0,1,3,7,14];
-function enNew(){return {f:'all',open:null,res:null,rv:null,confirm:false,focus:false,tries:null,gopen:{},prep:{},pcache:{}}}
+function enNew(){return {f:'all',rv:null,confirm:false,gopen:{},prep:{},pcache:{}}}
 var EN=enNew();
 function dayStart(ts){var d=new Date(ts==null?Date.now():ts);d.setHours(0,0,0,0);return d.getTime()}
 function dayEnd(){return dayStart()+DAYMS-1}
@@ -2360,7 +2407,7 @@ function enFallback(e){
 function enNeedsAi(e){return e.type!=='Off-topic'&&!DEMO&&!!dbh&&!e.sample&&!e.local&&!(e.practice&&e.practice.length)&&!EN.pcache[e.id]&&EN.prep[e.id]!=='fail'}
 function enPrep(e){
   if(EN.prep[e.id]==='wait')return;EN.prep[e.id]='wait';
-  var fin=function(){EN.focus=true;if(TAB==='errors')renderErrors()};
+  var fin=function(){if(TAB==='errors'&&EP&&EP.id===e.id)renderPractice()};
   adPost('ai/practice',{errorId:e.id,tzo:new Date().getTimezoneOffset()},'').then(function(d){
     if(d._ok&&d.practice&&d.practice.length){EN.pcache[e.id]=d.practice;EN.prep[e.id]='done'}else EN.prep[e.id]='fail';fin();
   },function(){EN.prep[e.id]='fail';fin()});
@@ -2370,13 +2417,25 @@ function enCtxHTML(e){
   if(i<0)return '<mark class="enhl">'+esc(o)+'</mark>';
   return esc(c.slice(0,i))+'<mark class="enhl">'+esc(o)+'</mark>'+esc(c.slice(i+o.length));
 }
-function enFixHTML(e){return '<p class="errfix"><del>'+esc(e.original||'')+'</del>'+(e.corrected?'<span class="arr" aria-hidden="true">→</span><ins>'+esc(e.corrected)+'</ins>':'')+'</p>'+(e.explanation?'<p class="errwhy">'+esc(e.explanation)+'</p>':'')}
-function enDoneBtn(where){return '<div class="actions enact">'+(where==='card'?'<button class="btn sm" data-act="en-close" type="button" data-enfocus="1">Done</button>':'<button class="btn pri sm" data-act="en-next" type="button" data-enfocus="1">'+(EN.rv&&EN.rv.i+1<EN.rv.q.length?'Next':'Finish')+'</button>')+'</div>'}
+function enFixHTML(e){return '<p class="errfix"><del class="fx-del">'+esc(e.original||'')+'</del>'+(e.corrected?'<span class="arr" aria-hidden="true">→</span><ins class="fx-ins">'+esc(e.corrected)+'</ins>':'')+'</p>'+(e.explanation?'<p class="errwhy">'+esc(e.explanation)+'</p>':'')}
+// another due mistake shown on the page after this one (page order), '' = none
+function enNextDueId(id){
+  var ids=Array.prototype.map.call(document.querySelectorAll('#v-errors article.errc'),function(a){return a.getAttribute('data-eid')}),i=ids.indexOf(id);
+  var order=ids.slice(i+1).concat(ids.slice(0,Math.max(0,i)));
+  for(var k=0;k<order.length;k++){var e=errById(order[k]);if(e&&errDue(e))return order[k]}
+  return '';
+}
+function enDoneBtn(where,id){
+  if(where==='rv')return '<div class="actions enact"><button class="btn pri sm" data-act="en-next" type="button" data-enfocus="1">'+(EN.rv&&EN.rv.i+1<EN.rv.q.length?'Next':'Finish')+'</button></div>';
+  return '<div class="actions enact">'+(enNextDueId(id)?'<button class="btn pri sm" data-act="en-nextdue" type="button" data-enfocus="1">Next due error</button>':'')+'<button class="btn sm" data-act="en-close" type="button"'+(enNextDueId(id)?'':' data-enfocus="1"')+'>Close</button></div>';
+}
+// EP = {id, where:'card'|'rv', tries, res}: the mistake being practised. While EP is open the list is not redrawn or re-sorted.
+var EP=null;
 function enPracticeHTML(e,where){
-  var r=EN.res&&EN.res.id===e.id?EN.res:null,id=esc(e.id),h='<div class="enp">';
+  var on=EP&&EP.id===e.id,r=on?EP.res:null,id=esc(e.id),h='<div class="enp">';
   if(e.type==='Off-topic'){
     h+='<p class="enctx">'+enCtxHTML(e)+'</p><p class="errwhy">'+esc(e.explanation||'This sentence does not answer the task.')+'</p>';
-    if(r)return h+'<p class="enres ok" aria-live="polite">Got it. '+(r.xp?'+'+r.xp+' XP · ':'')+(r.mastered?'Mastered 🎉':'next review '+enDay(r.due))+'</p>'+enDoneBtn(where)+'</div>';
+    if(r)return h+'<p class="enres ok" aria-live="polite">Got it. '+(r.xp?'+'+r.xp+' XP · ':'')+(r.mastered?'Mastered 🎉':'next review '+enDay(r.due))+'</p>'+enDoneBtn(where,e.id)+'</div>';
     return h+'<div class="actions enact"><button class="btn pri sm" data-act="en-check" data-id="'+id+'" data-ok="1" type="button" data-enfocus="1">I understand</button>'+(where==='card'?'<button class="btn sm" data-act="en-close" type="button">Cancel</button>':'')+'</div></div>';
   }
   if(!r&&enNeedsAi(e)){setTimeout(function(){enPrep(e)},0);return h+'<p class="saved" aria-live="polite">Preparing your exercise…</p></div>'}
@@ -2384,7 +2443,7 @@ function enPracticeHTML(e,where){
   var m=/^\s*\(([^()]*)\)/.exec(after),clue=m?m[1]:'',rest=m?after.slice(m[0].length):after,cl=clue?' <i class="enclue">('+esc(clue)+')</i>':'';
   h+='<p class="enlbl">Fill in the blank</p>';
   if(!r){
-    var tried=EN.tries&&EN.tries.id===e.id;
+    var tried=on&&EP.tries>0;
     h+='<p class="enq">'+esc(before)+'<input id="enIn" class="enin" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Your answer" data-enid="'+id+'">'+cl+esc(rest)+'</p>';
     h+='<div class="actions enact"><button class="btn pri sm" data-act="en-check" data-id="'+id+'" type="button">Check</button><button class="btn sm" data-act="en-show" data-id="'+id+'" type="button">Show answer</button>'+(where==='card'?'<button class="btn sm" data-act="en-close" type="button">Cancel</button>':'')+'</div>';
     h+='<p class="enmsg" id="enMsg" aria-live="polite">'+(tried?esc('Not quite. Think about: '+(e.explanation||'the rule for this mistake.')):'')+'</p>';
@@ -2396,7 +2455,7 @@ function enPracticeHTML(e,where){
   else h+='<p class="enres no" aria-live="polite">'+(r.shown?'Here is the answer.':'Not quite. Here is the answer.')+'</p>';
   h+=enFixHTML(e);
   if(!r.ok)h+='<p class="saved" style="margin:4px 0 0">Back to box 1. You will see it again tomorrow.</p>';
-  return h+enDoneBtn(where)+'</div>';
+  return h+enDoneBtn(where,e.id)+'</div>';
 }
 function enBadge(e){
   if(e.mastered)return '<span class="enb mast">Mastered</span>';
@@ -2404,85 +2463,129 @@ function enBadge(e){
 }
 // Inside a category group: no category name on the card. While practising, the answer stays hidden.
 function errCardHTML(e){
-  var open=EN.open===e.id,h='<article class="errc">';
+  var open=EP&&EP.where==='card'&&EP.id===e.id,h='<article class="errc" id="ec_'+esc(e.id)+'" data-eid="'+esc(e.id)+'">';
   if(open)return h+'<div class="errrow"><span class="enlbl">Practice</span>'+enBadge(e)+'</div>'+enPracticeHTML(e,'card')+'</article>';
-  h+='<div class="errrow"><p class="errfix"><del>'+esc(e.original||'')+'</del>'+(e.corrected?'<span class="arr" aria-hidden="true">→</span><ins>'+esc(e.corrected)+'</ins>':'')+'</p>'+enBadge(e)+'</div>'+(e.explanation?'<p class="errwhy">'+esc(e.explanation)+'</p>':'');
+  h+='<div class="errrow"><p class="errfix"><del class="fx-del">'+esc(e.original||'')+'</del>'+(e.corrected?'<span class="arr" aria-hidden="true">→</span><ins class="fx-ins">'+esc(e.corrected)+'</ins>':'')+'</p>'+enBadge(e)+'</div>'+(e.explanation?'<p class="errwhy">'+esc(e.explanation)+'</p>':'');
   return h+'<div class="actions enact"><button class="btn '+(e.mastered?'':'pri ')+'sm" data-act="en-open" data-id="'+esc(e.id)+'" type="button">'+(e.mastered?'Practice again':'Practice This Error')+'</button></div></article>';
 }
-function enReviewHTML(){
-  var R=EN.rv,n=R.q.length;
-  if(R.i>=n)return '<div class="fcard"><div class="big">Review complete</div><p>You fixed <b>'+R.ok+'</b> of '+n+'.</p><p class="muted">Mistakes you got wrong come back tomorrow.</p><div class="fbtns"><button class="btn pri" data-act="en-rvend" type="button" data-enfocus="1">Done</button></div></div>';
-  var e=errById(R.q[R.i]);if(!e){R.i++;return enReviewHTML()}
-  return '<div class="fcard enrv"><span class="muted" style="font-size:.8rem">'+(R.i+1)+' of '+n+(R.cat?' · '+esc(R.cat):'')+'</span><div class="enprog" aria-hidden="true"><i style="width:'+Math.round(R.i/n*100)+'%"></i></div><p class="errcat">'+esc(e.category||'Other')+'</p>'+enPracticeHTML(e,'rv')+'</div>';
+// Review all due / Practice this group: a fixed box at the top of the list; each next mistake replaces its content.
+function rvHTML(){
+  var R=EN.rv,n=R.q.length,hd='<div class="enrvh"><b>'+(R.cat?esc(R.cat):'Review all due')+'</b><button class="btn sm" data-act="en-rvend" type="button">End review</button></div>';
+  if(R.i>=n)return hd+'<p class="enres ok" aria-live="polite">Review complete. You fixed <b>'+R.ok+'</b> of '+n+'.</p><p class="muted" style="margin:0">Mistakes you got wrong come back tomorrow.</p><div class="actions enact"><button class="btn pri sm" data-act="en-rvend" type="button" data-enfocus="1">Done</button></div>';
+  var e=errById(R.q[R.i]);if(!e){R.i++;if(EP)EP.id=R.q[R.i]||'';return rvHTML()}
+  return hd+'<span class="muted" style="font-size:.8rem">'+(R.i+1)+' of '+n+'</span><div class="enprog" aria-hidden="true"><i style="width:'+Math.round(R.i/n*100)+'%"></i></div><p class="errcat">'+esc(e.category||'Other')+'</p>'+enPracticeHTML(e,'rv');
+}
+function grpChipHTML(g){return g.all.length+' error'+(g.all.length>1?'s':'')+' · <span class="'+(g.due?'d':'')+'">'+g.due+' due</span>'}
+function errGroups(L){
+  var G={};
+  L.forEach(function(e){var c=e.category||'Other',g=G[c]||(G[c]={name:c,all:[],due:0,mast:0});g.all.push(e);if(errDue(e))g.due++;if(e.mastered)g.mast++});
+  return G;
 }
 function renderErrors(){
   var el=$('#v-errors');if(!el)return;
   if(!U||U.role!=='student'){el.innerHTML='<p class="saved pad">The Error Notebook belongs to students.</p>';return}
-  if(EN.rv){el.innerHTML='<div class="pad"><button class="linkish" data-act="en-rvend" type="button">← Back to my notebook</button>'+enReviewHTML()+'</div>';enFocus();return}
   var L=errList(U.email),due=L.filter(errDue),mast=L.filter(function(e){return e.mastered});
   var st=function(k,lbl,n,c){return '<button type="button" class="ens'+c+(EN.f===k?' on':'')+'" data-act="en-f" data-f="'+k+'" aria-pressed="'+(EN.f===k)+'"><b>'+n+'</b><span>'+lbl+'</span></button>'};
   var h='<div class="pad"><div class="sechead enhead"><div><h2>Error Notebook</h2><span class="meta">Spaced Repetition System (SRS)</span></div>'+(L.length?'<button class="btn bad sm" data-act="en-clear" type="button">Clear All</button>':'')+'</div>'+
     '<div class="enstats">'+st('all','Total errors',L.length,'')+st('due','Due today',due.length,' due')+st('mastered','Mastered',mast.length,' mast')+'</div>';
   if(!L.length){el.innerHTML=h+'<p class="saved">No errors yet. Submit a Writing task and AI will collect your mistakes here.</p></div>';return}
-  if(due.length)h+='<div class="actions enbar"><button class="btn pri" data-act="en-rv" type="button">Review all due ('+due.length+')</button></div>';
+  if(EN.rv)h+='<section class="enrvbox" id="enRv" aria-label="Review">'+rvHTML()+'</section>';
+  else if(due.length)h+='<div class="actions enbar"><button class="btn pri" data-act="en-rv" type="button">Review all due ('+due.length+')</button></div>';
   // groups by category: most due first, then most mistakes, then A-Z. Counts use the whole group, cards follow the filter.
-  var G={};
-  L.forEach(function(e){var c=e.category||'Other',g=G[c]||(G[c]={name:c,all:[],due:0,mast:0});g.all.push(e);if(errDue(e))g.due++;if(e.mastered)g.mast++});
-  var gl=Object.keys(G).map(function(k){return G[k]}).sort(function(a,b){return (b.due-a.due)||(b.all.length-a.all.length)||a.name.localeCompare(b.name)});
+  var G=errGroups(L),gl=Object.keys(G).map(function(k){return G[k]}).sort(function(a,b){return (b.due-a.due)||(b.all.length-a.all.length)||a.name.localeCompare(b.name)});
   var body=gl.map(function(g){
     var list=g.all.filter(function(e){return EN.f==='all'||(EN.f==='due'?errDue(e):e.mastered)}).sort(errSort);
     if(!list.length)return '';
     var op=EN.gopen[g.name];if(op==null)op=g.mast<g.all.length;
-    return '<details class="eng" data-cat="'+esc(g.name)+'"'+(op?' open':'')+'><summary class="engh"><span class="engn">'+esc(g.name)+'</span><span class="engc">'+g.all.length+' error'+(g.all.length>1?'s':'')+' · <span class="'+(g.due?'d':'')+'">'+g.due+' due</span></span><span class="engbr" aria-hidden="true"></span>'+
+    return '<details class="eng" data-cat="'+esc(g.name)+'"'+(op?' open':'')+'><summary class="engh"><span class="engn">'+esc(g.name)+'</span><span class="engc">'+grpChipHTML(g)+'</span><span class="engbr" aria-hidden="true"></span>'+
       (g.due?'<button class="btn sm" data-act="en-grp" data-cat="'+esc(g.name)+'" type="button">Practice this group ('+g.due+')</button>':'')+'</summary><div class="engl">'+list.map(errCardHTML).join('')+'</div></details>';
   }).join('');
   h+=body||'<p class="saved">Nothing here with this filter.</p>';
   if(EN.confirm)h+='<div class="modal" id="enModal" role="dialog" aria-modal="true" aria-labelledby="enMt"><div class="mbox" style="width:min(440px,100%)"><h3 id="enMt" style="font-size:1.1rem">Clear the Error Notebook?</h3><p>This deletes all '+L.length+' errors in your notebook. This cannot be undone.</p><div class="actions"><button class="btn" data-act="en-cancel" type="button" data-enfocus="1">Cancel</button><button class="btn bad" data-act="en-clear-go" type="button">Delete all</button></div></div></div>';
-  el.innerHTML=h+'</div>';enFocus();
+  el.innerHTML=h+'</div>';
 }
-function enFocus(){if(!EN.focus)return;EN.focus=false;var f=$('#v-errors #enIn')||$('#v-errors [data-enfocus]');if(f)f.focus()}
+// Full redraw that keeps the scroll position (used only when the list really has to change)
+function renderErrorsKeep(){
+  var y=window.pageYOffset||0;renderErrors();window.scrollTo(0,y);
+  if(window.requestAnimationFrame)requestAnimationFrame(function(){if(Math.abs((window.pageYOffset||0)-y)>2)window.scrollTo(0,y)});
+}
+// While practising: only the numbers change (3 stat boxes + group chips), nothing moves.
+function enUpdateCounts(){
+  if(!U||U.role!=='student')return;
+  var L=errList(U.email),n={all:L.length,due:L.filter(errDue).length,mastered:L.filter(function(e){return e.mastered}).length},G=errGroups(L);
+  Array.prototype.forEach.call(document.querySelectorAll('#v-errors .ens'),function(b){var v=n[b.getAttribute('data-f')],x=b.querySelector('b');if(x&&v!=null)x.textContent=v});
+  Array.prototype.forEach.call(document.querySelectorAll('#v-errors details.eng'),function(d){var g=G[d.getAttribute('data-cat')],c=d.querySelector('.engc');if(g&&c)c.innerHTML=grpChipHTML(g)});
+}
+function enFocusIn(root){
+  var f=root&&(root.querySelector('#enIn')||root.querySelector('[data-enfocus]'));if(!f)return;
+  try{f.focus({preventScroll:true})}catch(x){f.focus()}
+}
+// Redraw only the card (or the review box) being practised
+function renderErrCard(id){
+  var old=document.getElementById('ec_'+id),e=errById(id);
+  if(!old||!e){renderErrorsKeep();return null}
+  old.outerHTML=errCardHTML(e);return document.getElementById('ec_'+id);
+}
+function renderRv(){var b=$('#enRv');if(!b){renderErrorsKeep();b=$('#enRv')}else b.innerHTML=rvHTML();enFocusIn(b);return b}
+function renderPractice(){if(!EP)return;if(EP.where==='rv'){renderRv();return}var c=renderErrCard(EP.id);enFocusIn(c)}
+var reducedMotion=function(){return !!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)};
+function enOpenCard(id){
+  if(EN.rv){EN.rv=null;EP=null;renderErrorsKeep()}
+  var prev=EP&&EP.where==='card'?EP.id:'';
+  EP={id:id,where:'card',tries:0,res:null};
+  if(prev&&prev!==id)renderErrCard(prev);
+  var c=renderErrCard(id);if(!c)return;
+  if(c.scrollIntoView)c.scrollIntoView({block:'nearest'});
+  enFocusIn(c);
+}
+function enCloseCard(){EP=null;renderErrorsKeep()}
 // how: '' = check the typed answer, 'ok' = Off-topic "I understand", 'show' = Show answer (counts as wrong).
 // The first wrong answer is not counted: hint + one more try. The second wrong answer -> box 1.
 function enCheck(id,how){
-  var e=errById(id);if(!e)return;
-  if(e.type==='Off-topic'||how==='ok'){var r0=errRate(e,true);EN.res={id:id,ok:true,due:r0.due,mastered:r0.mastered,xp:r0.xp};if(EN.rv)EN.rv.ok++;EN.tries=null;EN.focus=true;renderErrors();return}
+  var e=errById(id);if(!e||!EP||EP.id!==id||EP.res)return;
+  if(e.type==='Off-topic'||how==='ok'){var r0=errRate(e,true);EP.res={ok:true,due:r0.due,mastered:r0.mastered,xp:r0.xp};if(EN.rv)EN.rv.ok++;enUpdateCounts();renderPractice();return}
   var p=enPick(e)||enFallback(e),inp=$('#enIn'),v=inp?inp.value:'';
   if(how!=='show'){
-    if(!String(v).trim()){var m0=$('#enMsg');if(m0)m0.textContent='Type your answer first.';if(inp)inp.focus();return}
-    if(errOkList(p.answers,v)){var r1=errRate(e,true);EN.res={id:id,ok:true,ans:String(v).trim(),p:p,due:r1.due,mastered:r1.mastered,xp:r1.xp};if(EN.rv)EN.rv.ok++;EN.tries=null;EN.focus=true;renderErrors();return}
-    if(!(EN.tries&&EN.tries.id===id)){
-      EN.tries={id:id};var m=$('#enMsg');if(m)m.textContent='Not quite. Think about: '+(e.explanation||'the rule for this mistake.');
-      if(inp){inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');inp.select();inp.focus()}
+    if(!String(v).trim()){var m0=$('#enMsg');if(m0)m0.textContent='Type your answer first.';if(inp)enFocusIn(inp.parentNode);return}
+    if(errOkList(p.answers,v)){var r1=errRate(e,true);EP.res={ok:true,ans:String(v).trim(),p:p,due:r1.due,mastered:r1.mastered,xp:r1.xp};if(EN.rv)EN.rv.ok++;enUpdateCounts();renderPractice();return}
+    if(!EP.tries){
+      EP.tries=1;var m=$('#enMsg');if(m)m.textContent='Not quite. Think about: '+(e.explanation||'the rule for this mistake.');
+      if(inp){inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');inp.select();try{inp.focus({preventScroll:true})}catch(x){inp.focus()}}
       return;
     }
   }
-  var r2=errRate(e,false);EN.res={id:id,ok:false,shown:how==='show',p:p,due:r2.due};EN.tries=null;EN.focus=true;renderErrors();
+  var r2=errRate(e,false);EP.res={ok:false,shown:how==='show',p:p,due:r2.due};enUpdateCounts();renderPractice();
 }
 function enClear(){
   var em=U.email,ids=errorDocs.filter(function(e){return e.email===em}).map(function(e){return e.id});
   sampleErr=sampleErr.filter(function(e){return e.email!==em});localErr=localErr.filter(function(e){return e.email!==em});errorDocs=errorDocs.filter(function(e){return e.email!==em});
   if(dbh)for(var i=0;i<ids.length;i+=400){var b=dbh.batch();ids.slice(i,i+400).forEach(function(id){b.delete(dbh.doc('errors/'+id))});b.commit().then(function(){},function(){toast('Could not delete on the server. Try again later.')})}
-  EN=enNew();toast('Error Notebook cleared.');renderErrors();
+  EN=enNew();EP=null;toast('Error Notebook cleared.');renderErrorsKeep();
 }
 function enStartReview(cat){
   var q=errList(U.email).filter(function(e){return errDue(e)&&(!cat||(e.category||'Other')===cat)}).sort(errSort).map(function(e){return e.id});
-  EN.rv=q.length?{q:q,i:0,ok:0,cat:cat||''}:null;EN.open=null;EN.res=null;EN.tries=null;EN.focus=true;renderErrors();
+  if(!q.length){toast('Nothing is due right now.');return}
+  EN.rv={q:q,i:0,ok:0,cat:cat||''};EP={id:q[0],where:'rv',tries:0,res:null};
+  renderErrorsKeep();
+  var b=$('#enRv');if(b){if(b.scrollIntoView)b.scrollIntoView({block:'start',behavior:reducedMotion()?'auto':'smooth'});enFocusIn(b)}
 }
+function enEndReview(){EN.rv=null;EP=null;renderErrorsKeep()}
 document.addEventListener('toggle',function(e){var d=e.target;if(d&&d.classList&&d.classList.contains('eng'))EN.gopen[d.getAttribute('data-cat')]=d.open},true);
 function enAct(a,t){
   if(a.indexOf('en-')!==0)return false;
-  if(a==='en-f'){EN.f=t.dataset.f;EN.open=null;EN.res=null;EN.tries=null;renderErrors();return true}
-  if(a==='en-open'){EN.open=t.dataset.id;EN.res=null;EN.tries=null;EN.focus=true;renderErrors();return true}
-  if(a==='en-close'){EN.open=null;EN.res=null;EN.tries=null;renderErrors();return true}
+  if(a==='en-f'){EN.f=t.dataset.f;EN.rv=null;EP=null;renderErrorsKeep();return true}
+  if(a==='en-open'){enOpenCard(t.dataset.id);return true}
+  if(a==='en-close'){enCloseCard();return true}
+  if(a==='en-nextdue'){var nx=EP&&enNextDueId(EP.id);if(nx)enOpenCard(nx);else enCloseCard();return true}
   if(a==='en-check'){enCheck(t.dataset.id,t.dataset.ok==='1'?'ok':'');return true}
   if(a==='en-show'){enCheck(t.dataset.id,'show');return true}
   if(a==='en-rv'){enStartReview('');return true}
   if(a==='en-grp'){enStartReview(t.dataset.cat);return true}
   if(a==='en-home'){NAV.daily=null;DY=null;if(CV&&CV.where==='daily')CV=null;showTab('errors');enStartReview('');return true}
-  if(a==='en-next'){if(EN.rv){EN.rv.i++;EN.res=null;EN.tries=null;EN.focus=true}renderErrors();return true}
-  if(a==='en-rvend'){EN.rv=null;EN.res=null;EN.tries=null;renderErrors();return true}
-  if(a==='en-clear'){EN.confirm=true;EN.focus=true;renderErrors();return true}
-  if(a==='en-cancel'){EN.confirm=false;renderErrors();return true}
+  if(a==='en-next'){if(EN.rv){EN.rv.i++;EP=EN.rv.i<EN.rv.q.length?{id:EN.rv.q[EN.rv.i],where:'rv',tries:0,res:null}:null}renderRv();return true}
+  if(a==='en-rvend'){enEndReview();return true}
+  if(a==='en-clear'){EN.confirm=true;renderErrorsKeep();var cb=$('#enModal');if(cb)enFocusIn(cb);return true}
+  if(a==='en-cancel'){EN.confirm=false;renderErrorsKeep();return true}
   if(a==='en-clear-go'){enClear();return true}
   return false;
 }

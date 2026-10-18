@@ -49,8 +49,8 @@ Upload cả thư mục này (index.html, md-config.js, md-backend.js, README.md,
    - `AI_DAILY_LIMIT` (Text, tùy chọn): số lần AI chấm mỗi học sinh mỗi ngày, mặc định `10`
 3. Deploy lại.
 4. Firebase → Firestore → **Rules**: dán lại `firestore.rules` (có thêm khối `errors`) → **Publish**.
-- Học sinh nộp bài Writing → sau 5–20 giây thấy band ước lượng, lỗi được sửa, từ vựng nâng cấp và bài đã sửa. Các lỗi được đưa vào tab **Error Notebook** để ôn lại (box 1–5: hôm nay, 1, 3, 7, 14 ngày).
-- Mỗi bài chỉ chấm AI 1 lần, chỉ trong 2 giờ sau khi nộp. Band AI chỉ là ước lượng, không tính vào điểm.
+- Học sinh nộp bài Writing → sau 5–20 giây thấy bài có đánh dấu chỗ sai/chỗ sửa, bài đã sửa (Corrected essay, chỗ sửa tô xanh) và từ vựng nâng cấp. Các lỗi được đưa vào tab **Error Notebook** để ôn lại (box 1–5: hôm nay, 1, 3, 7, 14 ngày).
+- Mỗi bài chỉ chấm AI 1 lần, chỉ trong 2 giờ sau khi nộp. AI không cho điểm band; điểm do giáo viên chấm.
 - `ai-worker.js` không còn dùng (AI chạy qua `/api/ai/correct`).
 
 ## 4. Dùng
