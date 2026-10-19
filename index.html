@@ -263,6 +263,24 @@ pre.prompt{margin:0 0 10px;background:var(--surface);border:1px solid var(--line
 .create textarea{width:100%;min-height:220px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:.8rem;font-family:var(--mono);font-size:.8rem;line-height:1.55;resize:vertical}
 .create .row{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-top:10px}
 .errs{margin:10px 0 0;padding-left:1.1rem;color:var(--bad);font-size:.86rem}
+#promptText{min-height:260px}
+.cpt{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+.cpt button{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:99px;padding:.32rem .9rem;font:inherit;font-size:.85rem;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.cpt button:hover{color:var(--ink)}
+.cpt button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cpt.sub button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.create textarea.bad{border-color:var(--bad)}
+.cperr{margin:10px 0 0;border:1px solid var(--bad);background:var(--bad-bg);border-radius:10px;padding:10px 14px;color:var(--bad);font-size:.88rem}.cperr .errs{margin:6px 0 0}
+.pvframe{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg);margin-top:10px}
+.pvbar{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--surface);font-size:.78rem;color:var(--muted)}
+.pvdot{width:8px;height:8px;border-radius:50%;background:var(--good)}
+.pvpane{padding:14px 16px}
+.pvaud .pvtrack{flex:1;height:6px;border-radius:9px;background:var(--line);min-width:60px}
+.pvaud .abtn[disabled]{opacity:.55;cursor:not-allowed}
+button.lsstep{background:none;font:inherit;font-size:.8rem;cursor:pointer}button.lsstep.cur{background:var(--ink)}
+.pvmsg{margin:10px 0 0;font-size:.88rem;font-weight:600;color:var(--muted)}
+@keyframes cpfade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:no-preference){.cpanim{animation:cpfade .18s ease}}
 .okmsg{margin:10px 0 0;color:var(--good);font-size:.88rem;font-weight:600}
 .passes{margin-top:16px;border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px;font-size:.88rem}
 .passes .prow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
@@ -490,7 +508,13 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .engh::before{content:'\25B8';color:var(--muted);display:inline-block;transition:transform .15s}
 .eng[open]>.engh::before{transform:rotate(90deg)}
 .engn{color:var(--accent);font-weight:700;font-size:1.06rem}
-.engc{font-size:.74rem;background:var(--line);color:var(--ink);border-radius:999px;padding:.15rem .55rem;white-space:nowrap}.engc .d{color:var(--bad);font-weight:700}
+.eng1{margin:0 0 14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 16px}
+.engh1{display:flex;align-items:center;gap:10px;cursor:pointer;list-style:none;padding:10px 0}
+.engh1::-webkit-details-marker{display:none}
+.engh1::before{content:'\25B8';color:var(--muted);display:inline-block;transition:transform .15s}
+.eng1[open]>.engh1::before{transform:rotate(90deg)}
+.engn1{color:var(--ink);font-weight:800;font-size:1.05rem;letter-spacing:.08em;text-transform:uppercase}
+.eng1b{padding:4px 0 8px}.eng1b>.eng:last-child{margin-bottom:6px}
 .engbr{display:none}.engh .btn{margin-left:auto}
 .engl{display:flex;flex-direction:column;gap:8px;margin:6px 0 0 6px;padding-left:12px;border-left:2px solid var(--line)}
 .errrow{display:flex;justify-content:space-between;align-items:flex-start;gap:6px 10px;flex-wrap:wrap}.errrow .errfix{margin:0;min-width:0}
@@ -583,7 +607,10 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .lsq{margin:10px 0 6px;font-weight:600;font-size:.92rem}.lsh{font-size:1.05rem;margin:18px 0 4px}
 .lsseg{line-height:2;background:var(--bg);border-radius:8px;padding:8px 10px}.lscl{line-height:2.4}
 .lshw{cursor:pointer;border-radius:3px;padding:1px 2px}.lshw.on{background:var(--hl)}.lshw.tg{outline:2px solid var(--good);background:var(--good-bg)}.lshw.wr{background:var(--bad-bg);text-decoration:line-through}
-.lsflash{margin-top:10px;font-size:.9rem;font-style:italic;color:#0000ff}.lsflash b,.lsflash small,.lsflash i{color:#0000ff}.lsexp{font-style:italic;color:#0000ff;margin:6px 0 0}
+.lsc .opts{gap:2px}.lsc .opt{border-color:transparent;padding:.4rem .8rem}.lsc .opt:hover{border-color:transparent;background:var(--hl-soft)}
+.lsc .opt:has(input:checked){border-color:transparent}.lsc .opt.good,.lsc .opt.bad{border-color:transparent}
+.lsseg .gap{margin:.2em .15em;padding:.15em .35em;vertical-align:middle}.lsseg.lscl{line-height:2.6}
+.lsflash{margin-top:10px;font-size:.9rem;color:#0000ff}.lsflash .lsfh{font-size:1.5rem;font-weight:800;line-height:1.25;margin:0 0 2px}.lsflash .lsfd{margin:0 0 8px}.lsflash .lsfl{font-size:.8rem;font-weight:700;margin:6px 0 2px}.lsflash .lsfu{list-style:none;margin:0;padding:0 0 0 22px}.lsflash .lsfu li{margin:2px 0}.lsflash .lsfe{margin-top:10px;font-style:italic}.lsflash b,.lsflash small,.lsflash i{color:#0000ff}.lsexp{font-style:italic;color:#0000ff;margin:6px 0 0}
 .lsc .opt.good,.lsc .opt.good:has(input:checked){background:var(--good-bg);border-color:var(--good);color:var(--good);font-weight:600}.lsc .opt.bad,.lsc .opt.bad:has(input:checked){background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
 .lsw b{font-size:1.2rem}.lsscore{cursor:default;display:inline-block}.lshw.tg.on{background:var(--good);color:#fff}
 .lsdemo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;font-size:.8rem;color:var(--muted)}
@@ -779,9 +806,16 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
       <div>
         <div class="step">
           <h3>1. Copy the prompt</h3>
-          <p>Choose a prompt, paste it with your exam text (transcript with questions and answers) into ChatGPT or Claude. The Listening 5-stage prompt builds a full lesson: vocabulary, autopsy, dictation, summary, re-test.</p>
-          <pre class="prompt" id="promptText"></pre>
-          <button class="btn sm" type="button" data-act="copy-prompt" data-p="l">Copy: Listening 5-stage lesson</button> <button class="btn sm" type="button" data-act="copy-prompt" data-p="q">Copy: quick questions</button> <span class="saved" id="copyMsg"></span>
+          <p>Pick a skill and a prompt, paste it with your exam text into ChatGPT or Claude, and bring the JSON answer back to step 2. Admins can edit the prompt and save it as a template.</p>
+          <div class="cpt" id="cpSkills" role="tablist" aria-label="Skill"></div>
+          <div class="cpt sub" id="cpPresets" role="tablist" aria-label="Prompt preset"></div>
+          <textarea id="promptText" spellcheck="false" aria-label="Prompt text"></textarea>
+          <div class="row" style="margin-top:8px">
+            <button class="btn sm pri" type="button" data-act="copy-prompt">Copy prompt</button>
+            <button class="btn sm" type="button" data-act="cp-save" id="cpSave">Save Template</button>
+            <button class="btn sm" type="button" data-act="cp-reset" id="cpReset">Reset to Default</button>
+            <span class="saved" id="copyMsg" aria-live="polite"></span>
+          </div>
         </div>
         <div class="step">
           <h3>2. Paste the AI answer</h3>
@@ -792,11 +826,14 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
             <button class="btn" type="button" data-act="check-json">Check format</button>
             <button class="btn" type="button" data-act="load-example">Example: quick</button>
             <button class="btn" type="button" data-act="load-lexample">Example: Listening lesson</button>
+            <button class="btn" type="button" data-act="load-wexample">Example: Writing</button>
+            <button class="btn" type="button" data-act="load-sexample">Example: Speaking</button>
           </div>
         </div>
       </div>
       <div>
         <h3>3. Preview and add</h3>
+        <div class="cpt" id="cpView" role="tablist" aria-label="Preview mode"><button type="button" role="tab" data-act="cp-view" data-v="sum" aria-selected="true">Summary View</button><button type="button" role="tab" data-act="cp-view" data-v="stu" aria-selected="false">Student View Preview</button></div>
         <div id="createPrev"><p>The preview appears here after you check the format.</p></div>
       </div>
     </div>
@@ -920,7 +957,10 @@ function locOf(id){
 }
 function locLabel(l){var b=BOOKS.filter(function(x){return x.id===l.book})[0];return (b?b.short:l.book)+' · '+TNAME[l.test]+' · '+SNAME[l.skill]}
 function rawEx(id){return customDocs.concat(localCustom).filter(function(d){return 'c_'+d.id===id})[0]||null}
+function tblOf(d){if(!d.tableJson)return null;try{return JSON.parse(d.tableJson)}catch(e){return null}}
 function exJSON(d){
+  if(d.kind==='writing'){var j={title:d.title,skill:'writing',prompt:d.prompt,hint:d.hint||'',minWords:d.minWords},tb=tblOf(d);if(tb)j.table=tb;return j}
+  if(d.kind==='speaking')return {title:d.title,skill:'speaking',hint:d.hint||'',part1:d.part1,cue:d.cue};
   if(d.lesson)return Object.assign({title:d.title,skill:'listening',material:d.material,audio_url:d.audio||''},d.lesson);
   return {title:d.title,skill:d.skill,material:d.material,audio_url:d.audio||'',questions:(d.qs||[]).map(function(q){
     var o={type:q.type,q:q.q};
@@ -930,7 +970,12 @@ function exJSON(d){
 function rebuildCustom(){
   customEx=[];customMap={};
   customDocs.concat(localCustom).forEach(function(d){
-    var skill=d.skill==='listening'?'listening':'reading';
+    var skill=d.skill==='listening'?'listening':(d.skill==='writing'||d.skill==='speaking'?d.skill:'reading');
+    if(d.kind==='writing'||d.kind==='speaking'){
+      var w={id:'c_'+d.id,bookId:d.bookId,testId:d.testId,skill:skill,title:d.title,kind:d.kind,hint:d.hint||'',qs:[]};
+      if(d.kind==='writing'){w.prompt=d.prompt||'';w.minWords=d.minWords||150;w.table=tblOf(d)}else{w.part1=d.part1||[];w.cue=d.cue||{title:'',points:[]}}
+      customEx.push(w);customMap[w.id]=w;return;
+    }
     var o={id:'c_'+d.id,bookId:d.bookId,testId:d.testId,skill:skill,title:d.title,kind:'list',hint:'',qs:d.qs||[],material:{type:skill==='listening'?'audio':'passage',labelled:true,paras:String(d.material||'').split(/\n\s*\n/).filter(Boolean),lines:String(d.material||'').split(/\n+/).filter(Boolean).map(function(t){var m=t.match(/^([A-Za-z ]{1,14}):\s*(.*)$/);return m?[m[1],m[2]]:['',t]})}};
     o.audio=d.audio||'';
     if(d.lesson){o.kind='lesson';o.lesson=d.lesson}
@@ -1971,6 +2016,22 @@ var PROMPT=['You are an IELTS exercise formatter. I will paste a reading passage
 '- True/False/Not Given: {"type":"tfng","q":"Statement.","ans":"True"}  (True, False or Not Given)',
 '- Matching: {"type":"match","q":"Item to match","opts":["A","B","C","D"],"ans":"C"}  (ans = the matching option)',
 'Optional on any question: "tag":"short error category, for example Paraphrase, Spelling or Numbers".'].join('\n');
+var WPROMPT=['You are an IELTS Writing task formatter and examiner. I will paste an IELTS Writing task (Task 1 or Task 2), with any table data.',
+'Convert it into ONE JSON object. Output only the JSON: no explanation, no code fences.','',
+'Format:','{"title":"short task title","skill":"writing","prompt":"the full task question","hint":"one line of advice for the student","minWords":150,"table":[["Header 1","Header 2"],["row","value"]]}','',
+'Rules:',
+'- Task 1: "minWords" 150. Task 2: "minWords" 250.',
+'- "table" is optional. Add it only when the task gives a table: the first row holds the headers. Leave it out otherwise.',
+'- "hint" names what the essay is graded on: Task Response, Coherence and Cohesion, Lexical Resource, Grammar.',
+'- Do not write a model answer. Student essays are corrected by AI (mistakes go to the Error Notebook) and then marked by the teacher.'].join('\n');
+var SPROMPT=['You are an IELTS Speaking examiner. I will give you a topic. Build a short mock drill: Part 1 questions and one Part 2 cue card.',
+'Output ONE JSON object only: no explanation, no code fences.','',
+'Format:','{"title":"Parts 1 and 2: topic","skill":"speaking","hint":"Record your answers on Vocaroo, then paste the link below.","part1":["Question 1?","Question 2?","Question 3?"],"cue":{"title":"Describe ...","points":["what it is","when and where","why it matters","and explain how you feel about it."]}}','',
+'Rules:',
+'- "part1": 3 to 5 natural questions on the topic.',
+'- "cue.points": 3 or 4 short prompts after "You should say". The last one starts with "and explain".'].join('\n');
+var EXAMPLE_W=JSON.stringify({title:'Task 1: internet access',skill:'writing',prompt:'The table below shows the percentage of households with internet access in three countries in 2005 and 2020. Summarise the information by selecting and reporting the main features.',hint:'Graded on Task Response, Coherence, Lexical Resource and Grammar.',minWords:150,table:[['Country','2005','2020'],['Country A','35%','92%'],['Country B','18%','71%'],['Country C','52%','95%']]},null,2);
+var EXAMPLE_S=JSON.stringify({title:'Parts 1 and 2: free time',skill:'speaking',hint:'Record your answers on Vocaroo, then paste the link below.',part1:['Do you prefer spending your free time indoors or outdoors?','What did you do last weekend?','Has the way you spend free time changed since you were a child?'],cue:{title:'Describe a hobby you would like to start.',points:['what the hobby is','why you are interested in it','what you would need to get started','and explain how you think it would help you.']}},null,2);
 var EXAMPLE=JSON.stringify({title:'Short reading: city bees',skill:'reading',material:'Bees have been kept on city rooftops for over a decade. Supporters say rooftops are quiet and safe for hives.\n\nCritics argue that too many hives compete for the same flowers, leaving less food for wild bees.',questions:[
  {type:'tfng',q:'Rooftops are noisy places for hives.',ans:'False'},
  {type:'tfng',q:'Wild bees may find less food when there are many hives.',ans:'True'},
@@ -1983,8 +2044,9 @@ function parseAI(txt){
   var o;try{o=JSON.parse(txt)}catch(e){return {errs:['This is not valid JSON ('+e.message+'). Ask the AI to output only the JSON.']}}
   if(!o||typeof o!=='object')return {errs:['Expected a JSON object.']};
   if(o.stage_1_vocabulary||o.stage_2_autopsy){var rl=parseLesson(o);if(rl.data)rl.data.audio=nz(o.audio_url)?o.audio_url.trim():'';return rl}
+  if(o.skill==='writing'||o.skill==='speaking')return parseWS(o);
   if(!o.title||typeof o.title!=='string')errs.push('Missing "title".');
-  if(o.skill!=='reading'&&o.skill!=='listening')errs.push('"skill" must be "reading" or "listening".');
+  if(o.skill!=='reading'&&o.skill!=='listening')errs.push('"skill" must be "listening", "reading", "writing" or "speaking".');
   if(!o.material||typeof o.material!=='string')errs.push('Missing "material" (the passage or transcript).');
   if(!Array.isArray(o.questions)||!o.questions.length)errs.push('"questions" must be a non-empty list.');
   var qs=[];
@@ -2006,19 +2068,176 @@ function parseAI(txt){
   if(errs.length)return {errs:errs};
   return {errs:[],data:{title:o.title,skill:o.skill,material:o.material,qs:qs,audio:(typeof o.audio_url==='string'?o.audio_url.trim():'')}};
 }
+function parseWS(o){
+  var e=[];
+  if(!nz(o.title))e.push('Missing "title".');
+  if(o.skill==='writing'){
+    if(!nz(o.prompt))e.push('Missing "prompt" (the task question).');
+    var tb=o.table;
+    if(tb!=null&&(!isArr(tb)||tb.length<2||!tb.every(function(r){return isArr(r)&&r.length>=2})))e.push('"table" must be a list of rows (each row a list of at least 2 cells), first row = headers.');
+    var mw=o.minWords==null?(tb?150:250):+o.minWords;
+    if(!(mw>=1&&mw<=1000))e.push('"minWords" must be a number between 1 and 1000.');
+    if(e.length)return {errs:e};
+    return {errs:[],data:{title:o.title,skill:'writing',kind:'writing',material:'',qs:[],audio:'',prompt:o.prompt,hint:nz(o.hint)?o.hint:'',minWords:mw,table:tb?tb.map(function(r){return r.map(String)}):null}};
+  }
+  if(!isArr(o.part1)||!o.part1.length||!o.part1.every(nz))e.push('"part1" must be a non-empty list of questions (text).');
+  var c=o.cue;
+  if(!c||typeof c!=='object'||!nz(c.title)||!isArr(c.points)||!c.points.length||!c.points.every(nz))e.push('"cue" needs a "title" and a non-empty "points" list.');
+  if(e.length)return {errs:e};
+  return {errs:[],data:{title:o.title,skill:'speaking',kind:'speaking',material:'',qs:[],audio:'',hint:nz(o.hint)?o.hint:'',part1:o.part1.map(String),cue:{title:c.title,points:c.points.map(String)}}};
+}
+// extra fields for Writing / Speaking records
+function exExtra(rec,d){
+  if(d.kind==='writing'){rec.kind='writing';rec.prompt=d.prompt;rec.hint=d.hint||'';rec.minWords=d.minWords;if(d.table)rec.tableJson=JSON.stringify(d.table)}
+  else if(d.kind==='speaking'){rec.kind='speaking';rec.part1=d.part1;rec.cue=d.cue;rec.hint=d.hint||''}
+  return rec;
+}
 function previewHTML(d){
+  if(d.kind==='writing'||d.kind==='speaking')return wsPreview(d);
   if(d.lesson)return lessonPreview(d);
   var ex={id:'prev',skill:d.skill,title:d.title,kind:'list',qs:d.qs};
   var ans=d.qs.map(function(q,i){return (i+1)+'. '+(q.type==='gap'?q.ans.join(' / '):q.opts[q.ans])}).join('  ·  ');
   return '<p class="okmsg">Format OK: '+d.qs.length+' questions, skill: '+d.skill+'.</p><div class="pane" style="margin-top:10px"><div class="phead"><h2>'+esc(d.title)+'</h2></div>'+qHTML(ex).replace(/ data-id=/g,' disabled data-id=')+'<p class="saved" style="margin-top:8px"><b>Answer key:</b> '+esc(ans)+'</p></div>'+
   '<div class="actions"><button class="btn pri" data-act="add-ex" type="button">Add to '+esc($('#cBook').selectedOptions[0].textContent)+' · '+esc($('#cTest').selectedOptions[0].textContent)+'</button><span class="saved" id="addMsg"></span></div>';
 }
-function checkJSON(){var r=parseAI($('#jsonIn').value);parsed=r.data||null;$('#createPrev').innerHTML=r.errs.length?'<ul class="errs">'+r.errs.map(function(e){return '<li>'+esc(e)+'</li>'}).join('')+'</ul>':previewHTML(r.data);
-  if(EDIT){var b=$('#createPrev [data-act="add-ex"]');if(b){b.textContent='Save changes';b.insertAdjacentHTML('afterend',' <button class="btn" data-act="ex-cancel" type="button">Cancel edit</button>')}else $('#createPrev').insertAdjacentHTML('beforeend','<div class="actions"><button class="btn" data-act="ex-cancel" type="button">Cancel edit</button></div>')}}
+var CP={skill:'listening',preset:'l5',view:'sum',draft:{},last:null,pvSt:0};
+function addBarHTML(){
+  return '<div class="actions"><button class="btn pri" data-act="add-ex" type="button">Add to '+esc($('#cBook').selectedOptions[0].textContent)+' · '+esc($('#cTest').selectedOptions[0].textContent)+'</button><span class="saved" id="addMsg"></span></div>';
+}
+function checkJSON(){var r=parseAI($('#jsonIn').value);parsed=r.data||null;CP.last=r;CP.pvSt=0;renderPrev()}
+function renderPrev(){
+  var box=$('#createPrev'),r=CP.last,j=$('#jsonIn');if(!box)return;
+  $$('#cpView button').forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.v===CP.view))});
+  if(j)j.classList.toggle('bad',!!(r&&r.errs.length));
+  if(!r)box.innerHTML='<p>The preview appears here after you check the format.</p>';
+  else if(r.errs.length)box.innerHTML='<div class="cperr" role="alert"><b>Invalid format: fix '+r.errs.length+' issue'+(r.errs.length>1?'s':'')+' before adding.</b><ul class="errs">'+r.errs.map(function(e){return '<li>'+esc(e)+'</li>'}).join('')+'</ul></div>';
+  else box.innerHTML=CP.view==='stu'?'<p class="okmsg">Format OK. This is how students will see it.</p>'+pvHTML(r.data)+addBarHTML():previewHTML(r.data);
+  var fr=$('#createPrev .pvframe');if(fr)fr.classList.add('cpanim');
+  if(EDIT&&r&&!r.errs.length){var b=$('#createPrev [data-act="add-ex"]');if(b){b.textContent='Save changes';b.insertAdjacentHTML('afterend',' <button class="btn" data-act="ex-cancel" type="button">Cancel edit</button>')}else $('#createPrev').insertAdjacentHTML('beforeend','<div class="actions"><button class="btn" data-act="ex-cancel" type="button">Cancel edit</button></div>')}
+}
+/* ---- Create: skill prompts (editable by admins) ---- */
+function cpPresets(){
+  var q=PROMPT;
+  return {listening:[{id:'l5',name:'5-stage lesson',def:LPROMPT},{id:'lq',name:'Quick questions',def:q.replace('"reading" or "listening"','"listening"')}],
+    reading:[{id:'rq',name:'Passage & questions',def:q.replace('"reading" or "listening"','"reading"')}],
+    writing:[{id:'wg',name:'Essay grading task',def:WPROMPT}],
+    speaking:[{id:'sm',name:'Mock drill',def:SPROMPT}]};
+}
+function tplGet(){try{return JSON.parse(lsGet('md-ptpl')||'{}')||{}}catch(e){return {}}}
+function cpCur(){var l=cpPresets()[CP.skill]||[],i;for(i=0;i<l.length;i++)if(l[i].id===CP.preset)return l[i];return l[0]}
+function cpCanEdit(){return !!(U&&U.adm)}
+function cpStash(){var ta=$('#promptText'),p=cpCur();if(ta&&p&&cpCanEdit())CP.draft[p.id]=ta.value}
+function renderCpPrompt(){
+  var pr=cpPresets(),l=pr[CP.skill],p=cpCur(),ta=$('#promptText');if(!ta)return;
+  CP.preset=p.id;
+  $('#cpSkills').innerHTML=SKILLS.map(function(k){return '<button type="button" role="tab" data-act="cp-skill" data-v="'+k+'" aria-selected="'+(k===CP.skill)+'">'+SNAME[k]+'</button>'}).join('');
+  $('#cpPresets').innerHTML=l.map(function(x){return '<button type="button" role="tab" data-act="cp-preset" data-id="'+x.id+'" aria-selected="'+(x.id===CP.preset)+'">'+esc(x.name)+'</button>'}).join('');
+  var ed=cpCanEdit(),saved=tplGet()[p.id]!=null;
+  ta.value=CP.draft[p.id]!=null?CP.draft[p.id]:(saved?tplGet()[p.id]:p.def);ta.readOnly=!ed;
+  $('#cpSave').hidden=!ed;$('#cpReset').hidden=!ed;
+  $('#copyMsg').textContent=ed?(saved?'Using your saved template.':'Default prompt. You can edit it.'):'Read only. Ask an admin to change prompts.';
+  if(ta.classList){ta.classList.remove('cpanim');void ta.offsetWidth;ta.classList.add('cpanim')}
+}
+function cpSave(){
+  if(!cpCanEdit())return;var p=cpCur(),ta=$('#promptText'),t=tplGet();
+  if(!String(ta.value).trim()){$('#copyMsg').textContent='The prompt cannot be empty.';return}
+  t[p.id]=ta.value;lsSet('md-ptpl',JSON.stringify(t));delete CP.draft[p.id];$('#copyMsg').textContent='Template saved on this device.';
+}
+function cpReset(){
+  if(!cpCanEdit())return;var p=cpCur(),t=tplGet();delete t[p.id];lsSet('md-ptpl',JSON.stringify(t));delete CP.draft[p.id];
+  renderCpPrompt();$('#copyMsg').textContent='Reset to the default prompt.';
+}
+/* ---- Create: Student View preview (preview only, nothing is saved) ---- */
+function pvMat(d){return {type:d.skill==='listening'?'audio':'passage',labelled:true,paras:String(d.material||'').split(/\n\s*\n/).filter(Boolean),lines:String(d.material||'').split(/\n+/).filter(Boolean).map(function(t){var m=t.match(/^([A-Za-z ]{1,14}):\s*(.*)$/);return m?[m[1],m[2]]:['',t]})}}
+function pvAudio(d){
+  return '<div class="abar pvaud"><div class="arow"><button class="abtn" type="button" disabled aria-label="Back 5 seconds">−5s</button><button class="abtn play" type="button" disabled aria-label="Play">▶</button><button class="abtn" type="button" disabled aria-label="Forward 5 seconds">+5s</button><div class="pvtrack" aria-hidden="true"></div><span class="atime">0:00 / --:--</span></div><p class="muted" style="margin:6px 0 0;font-size:.8rem">Audio player placeholder. '+(d&&d.audio?'File: '+esc(d.audio):'No audio link yet: students hear the recording you add to the exercise.')+'</p></div>';
+}
+function pvRadios(name,opts,cor){
+  return '<div class="opts">'+opts.map(function(o,k){return '<label class="opt"><input type="radio" name="pv_'+esc(name)+'" value="'+k+'" data-cor="'+(k===cor?1:0)+'"><span>'+esc(o)+'</span></label>'}).join('')+'</div>';
+}
+function pvGap(ans){return '<input class="gap" data-pa="'+esc(ans)+'" style="--w:'+gapW({ans:[ans]})+'ch" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Answer">'}
+function pvBlanks(txt,answers){var parts=String(txt).split(/_{3,}/),h='';parts.forEach(function(x,i){h+=lsLab(x);if(i<parts.length-1)h+=pvGap(answers[i]!=null?answers[i]:'')});return h}
+function pvStage(d,st){
+  var L=d.lesson,h='';
+  if(st===0){
+    h+='<p class="muted">Guess the meaning from the context, then answer the check question.</p>';
+    L.stage_1_vocabulary.forEach(function(v,i){
+      h+='<div class="lsc"><div class="lsw"><b>'+(i+1)+'. '+esc(v.target_word)+'</b></div><p class="ex">'+lsHl(v.context_sentence,v.target_word)+'</p><p class="lsq">What does it mean?</p>'+pvRadios('v'+i+'g',v.guessing_options,v.correct_option_index)+'<p class="lsq">'+esc(v.ccq.question)+'</p>'+pvRadios('v'+i+'c',v.ccq.options,v.ccq.correct_index)+'</div>';
+    });
+  }
+  if(st===1){
+    h+='<h3 class="lsh">2.1 Highlight the part that confirms the answer</h3><p class="muted">Students tap the words in the transcript that prove the answer.</p>';
+    L.stage_2_autopsy.paraphrase_highlight.forEach(function(p,i){h+='<div class="lsc"><p class="lsq"><b>'+(i+1)+'.</b> '+esc(p.question_text)+'</p><div class="lsseg">'+esc(String(p.transcript_segment).replace(/\n+/g,' '))+'</div></div>'});
+    h+='<h3 class="lsh">2.2 Trap alert</h3>';
+    L.stage_2_autopsy.trap_alert.forEach(function(p,i){h+='<div class="lsc"><div class="lsseg">'+lsLab(p.transcript_segment)+'</div><p class="lsq"><b>'+(i+1)+'.</b> '+esc(p.question)+'</p>'+pvRadios('t'+i,p.options,p.correct_index)+'</div>'});
+  }
+  if(st===2)h+='<p class="muted">Listen and fill in the blanks.</p>'+pvAudio(d)+'<div class="lsseg lscl" style="margin-top:10px">'+pvBlanks(L.stage_3_dictation.cloze_material,L.stage_3_dictation.answers)+'</div>';
+  if(st===3)h+=pvAudio(d)+'<p class="muted" style="margin-top:10px">Complete the summary. Word bank:</p><div class="wchips" style="margin-bottom:10px">'+L.stage_4_summary.summary_answers.slice().sort().map(function(w){return '<span class="wc">'+esc(w)+'</span>'}).join('')+'</div><div class="lsseg">'+pvBlanks(L.stage_4_summary.guided_summary_text,L.stage_4_summary.summary_answers)+'</div>';
+  if(st===4){
+    var R=L.stage_5_retest;
+    h+=pvAudio(d)+'<h3 class="lsh">'+esc(R.title)+'</h3><p class="muted">'+esc(R.instructions)+'</p>'+R.questions.map(function(q,j){
+      var t=String(q).replace(/^\s*\d+\s*[.)]\s*/,''),ans=R.answers[j],parts=t.split(/_{2,}/),body=parts.length>1?parts.map(function(x,i){return esc(x)+(i<parts.length-1?pvGap(ans):'')}).join(''):esc(t)+' '+pvGap(ans);
+      return '<div class="qrow"><span class="qn">'+(j+1)+'</span><span>'+body+'</span></div>'}).join('');
+  }
+  return h;
+}
+function pvHTML(d){
+  var kind=d.kind||'list',h='',st=CP.pvSt;
+  var head='<div class="phead"><span class="chip">'+esc(SNAME[d.skill]||d.skill)+'</span><h2>'+esc(d.title)+'</h2>'+(d.hint?'<p>'+esc(d.hint)+'</p>':'')+'</div>';
+  if(kind==='writing'){
+    h=writingTask(d)+'<label class="lbl" for="pvW">Your answer</label><textarea class="wbox" id="pvW" spellcheck="true"></textarea><div class="wmeta"><span id="pvWc"><span class="mono">0</span> words <span class="low">· minimum '+d.minWords+'</span></span><span>Drafts save automatically on this device.</span></div><div class="actions"><button class="btn pri" data-act="pv-submit" type="button">Submit</button></div>';
+  }else if(kind==='speaking'){
+    h='<h3 style="font-size:1rem">Part 1</h3><ol class="sp-q">'+d.part1.map(function(q){return '<li>'+esc(q)+'</li>'}).join('')+'</ol><h3 style="font-size:1rem">Part 2</h3><div class="cue"><b>'+esc(d.cue.title)+'</b><div style="margin-top:6px">You should say:</div><ul>'+d.cue.points.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>'+
+    '<div class="arow"><button class="btn sm" type="button" disabled>Start 1:00 preparation</button><span class="timer">1:00</span></div><label class="lbl" for="pvN">Notes (for your preparation only)</label><textarea class="wbox" id="pvN" style="min-height:90px"></textarea><label class="lbl" for="pvL">Vocaroo link</label><input class="linkin" id="pvL" placeholder="https://vocaroo.com/..." autocomplete="off"><p class="err" id="pvErr"></p><div class="actions"><button class="btn pri" data-act="pv-submit" type="button">Submit</button></div>';
+  }else if(kind==='lesson'){
+    var bar='<div class="lsbar" role="tablist" aria-label="Lesson stages">'+STG.map(function(n,i){return '<button type="button" role="tab" class="lsstep'+(i===st?' cur':'')+'" aria-selected="'+(i===st)+'" data-act="pv-stage" data-i="'+i+'">'+(i+1)+'. '+n+'</button>'}).join('')+'</div>';
+    h=bar+'<div id="lsBody">'+pvStage(d,st)+'</div><div class="actions"><button class="btn pri" data-act="pv-check" type="button">Check answers</button>'+(st<4?'<button class="btn" data-act="pv-stage" data-i="'+(st+1)+'" type="button">Next: '+STG[st+1]+' →</button>':'')+'</div>';
+  }else{
+    var ex={id:'prev',skill:d.skill,title:d.title,kind:'list',qs:d.qs},body=qHTML(ex);
+    if(d.skill==='listening')h=pvAudio(d)+'<details class="tdet"><summary>Show transcript</summary><div class="tr">'+pvMat(d).lines.map(function(l){return '<div>'+(l[0]?'<b>'+esc(l[0])+'</b>':'')+esc(l[1])+'</div>'}).join('')+'</div></details>'+body;
+    else h='<div class="pane mat" style="margin-bottom:12px">'+passageHTML(pvMat(d))+'</div>'+body;
+    h+='<div class="actions"><button class="btn pri" data-act="pv-check" type="button">Submit</button></div>';
+  }
+  return '<div class="pvframe"><div class="pvbar"><span class="pvdot" aria-hidden="true"></span>Student view · preview only, nothing is saved</div><div class="pane single pvpane" id="pvPane">'+head+h+'<div id="pvRes" aria-live="polite"></div></div></div>';
+}
+function pvMark(el,ok){el.classList.remove('ok','bad');el.classList.add(ok?'ok':'bad')}
+function pvCheck(){
+  var root=$('#pvPane'),d=CP.last&&CP.last.data,ok=0,tot=0;if(!root||!d)return;
+  if(!d.kind||d.kind==='list'){
+    d.qs.forEach(function(q){
+      var good;tot++;
+      if(q.type==='gap'){var el=$('[data-id="'+q.id+'"]',root);good=gapOk(q,el.value);pvMark(el,good)}
+      else if(q.type==='match'){var se=$('[data-id="'+q.id+'"]',root);good=+se.value===q.ans;pvMark(se,good)}
+      else{var c=$('input[name="'+q.id+'"]:checked',root);good=!!c&&+c.value===q.ans;$$('input[name="'+q.id+'"]',root).forEach(function(i,k){var l=i.closest('.opt');l.classList.remove('good','bad');if(c&&k===q.ans)l.classList.add('good');else if(c&&+c.value===k)l.classList.add('bad')})}
+      if(good)ok++;
+    });
+  }else{
+    var names={};$$('input[type=radio]',root).forEach(function(r){names[r.name]=1});
+    Object.keys(names).forEach(function(n){
+      var c=$('input[name="'+n+'"]:checked',root);tot++;if(c&&c.getAttribute('data-cor')==='1')ok++;
+      $$('input[name="'+n+'"]',root).forEach(function(r){var l=r.closest('.opt');l.classList.remove('good','bad');if(c&&r.getAttribute('data-cor')==='1')l.classList.add('good');else if(c&&r===c)l.classList.add('bad')});
+    });
+    $$('input[data-pa]',root).forEach(function(i){tot++;var good=lsOkText(i.value,i.getAttribute('data-pa'));if(good)ok++;pvMark(i,good)});
+  }
+  $('#pvRes').innerHTML='<p class="pvmsg">Preview result: '+ok+'/'+tot+' correct. Nothing was saved.</p>';
+}
+function pvSubmit(){
+  var d=CP.last&&CP.last.data,r=$('#pvRes');if(!d||!r)return;
+  if(d.kind==='writing'){var w=$('#pvW');if(!wordCount(w.value)){r.innerHTML='<p class="err">Write something before you submit.</p>';return}r.innerHTML='<p class="pvmsg">Submitted in preview ('+wordCount(w.value)+' words). Nothing was saved.</p>';return}
+  var l=$('#pvL').value.trim();
+  if(!/^https?:\/\/(www\.)?(vocaroo\.com|voca\.ro)\/\S+/i.test(l)){$('#pvErr').textContent='Paste a Vocaroo link, for example https://vocaroo.com/abc123.';r.innerHTML='';return}
+  $('#pvErr').textContent='';r.innerHTML='<p class="pvmsg">Submitted in preview. Nothing was saved.</p>';
+}
+function wsPreview(d){
+  var w=d.kind==='writing';
+  return '<p class="okmsg">Format OK: '+(w?'Writing task, minimum '+d.minWords+' words'+(d.table?', with a data table':''):'Speaking drill, '+d.part1.length+' Part 1 questions and a Part 2 cue card')+'.</p><div class="pane" style="margin-top:10px"><div class="phead"><span class="chip">'+SNAME[d.skill]+'</span><h2>'+esc(d.title)+'</h2></div>'+
+    (w?writingTask(d):'<ol class="sp-q">'+d.part1.map(function(q){return '<li>'+esc(q)+'</li>'}).join('')+'</ol><div class="cue"><b>'+esc(d.cue.title)+'</b><ul>'+d.cue.points.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>')+'</div>'+addBarHTML();
+}
 function addExercise(){
   if(!parsed)return;
   var rec={bookId:$('#cBook').value,testId:$('#cTest').value,skill:parsed.skill,title:parsed.title,material:parsed.material,qs:parsed.qs,ts:Date.now()};
   if(parsed.lesson)rec.lesson=parsed.lesson;
+  exExtra(rec,parsed);
   rec.audio=parsed.audio||'';
   if(EDIT){
     var E=EDIT,upd=Object.assign({},rec,{ts:E.ts||rec.ts}),done=function(){
@@ -2042,11 +2261,11 @@ function showTab(t){
   ['login','lib','cards','errors','ranks','wheel','bag','set','prize','xps','dash','asg','mark','roster','create','admin'].forEach(function(n){$('#v-'+n).hidden=true});
   if(!U){var lv=$('#v-login');lv.hidden=false;if(!DEMO&&lsGet('md-email')&&!window.MD_USER){lv.setAttribute('data-wait','');setTimeout(function(){lv.removeAttribute('data-wait')},10000)}else lv.removeAttribute('data-wait');$('#tabs').hidden=true;$('#who').hidden=true;return}
   $('#v-login').removeAttribute('data-wait');if(t==='admin'&&!U.adm){t='library';TAB=t}
-  $('#tabs').hidden=tabsFor().length<2;$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b><span class="rl"> · '+(U.adm?'admin':U.role)+'</span>';
+  $('#tabs').hidden=tabsFor().length<2;$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b>'+(U.adm?'':'<span class="rl"> · '+U.role+'</span>');
   $('#tabs').innerHTML=tabsFor().map(function(x){return '<button role="tab" data-act="tab" data-tab="'+x[0]+'" aria-selected="'+(x[0]===t)+'">'+x[1]+'</button>'}).join('');
   var id={library:'lib',cards:'cards',errors:'errors',ranks:'ranks',wheel:'wheel',bag:'bag',set:'set',prize:'prize',xps:'xps',dash:'dash',asg:'asg',mark:'mark',roster:'roster',create:'create',admin:'admin'}[t];$('#v-'+id).hidden=false;updMarq();
   if(t==='admin')renderAdmin();
-  if(t==='library')renderLib();if(t==='cards')renderCards();if(t==='errors'){EP=null;EN.rv=null;renderErrors()}if(t==='ranks')renderRanks();if(t==='wheel')renderWheel();if(t==='bag')renderBag();if(t==='set')renderSettings();if(t==='prize')renderPrize();if(t==='xps')renderXps();if(t==='dash')renderDash();if(t==='roster')renderRoster();if(t==='mark')renderMark();
+  if(t==='library')renderLib();if(t==='cards')renderCards();if(t==='errors'){EP=null;EN.rv=null;renderErrors()}if(t==='ranks')renderRanks();if(t==='wheel')renderWheel();if(t==='bag')renderBag();if(t==='set')renderSettings();if(t==='prize')renderPrize();if(t==='xps')renderXps();if(t==='dash')renderDash();if(t==='roster')renderRoster();if(t==='create'){renderCpPrompt();renderPrev()}if(t==='mark')renderMark();
   if(t==='asg'){AG.form=null;AG.open=null;AG.cur=null;AG.sub='list';renderAsg()}
 }
 function signIn(email){
@@ -2131,9 +2350,19 @@ document.addEventListener('click',function(e){
   if(a==='save-asg')return saveAsg();
   if(a==='import-csv')return importCSV();
   if(a==='copy-prompt'){
-    var ok=function(){$('#copyMsg').textContent='Copied.'},no=function(){var r=document.createRange();r.selectNodeContents($('#promptText'));var s=getSelection();s.removeAllRanges();s.addRange(r);$('#copyMsg').textContent='Select and copy the text above.'};
-    var pt=t.dataset.p==='q'?PROMPT:LPROMPT;$('#promptText').textContent=pt;try{navigator.clipboard.writeText(pt).then(ok,no)}catch(x){no()}return;
+    var ta=$('#promptText'),ok=function(){$('#copyMsg').textContent='Copied.'},no=function(){ta.select();$('#copyMsg').textContent='Select and copy the text above.'};
+    try{navigator.clipboard.writeText(ta.value).then(ok,no)}catch(x){no()}return;
   }
+  if(a==='cp-skill'){cpStash();CP.skill=t.dataset.v;CP.preset=cpPresets()[CP.skill][0].id;return renderCpPrompt()}
+  if(a==='cp-preset'){cpStash();CP.preset=t.dataset.id;return renderCpPrompt()}
+  if(a==='cp-save')return cpSave();
+  if(a==='cp-reset')return cpReset();
+  if(a==='cp-view'){CP.view=t.dataset.v;if(!CP.last&&$('#jsonIn').value.trim())return checkJSON();return renderPrev()}
+  if(a==='pv-stage'){CP.pvSt=+t.dataset.i;return renderPrev()}
+  if(a==='pv-check')return pvCheck();
+  if(a==='pv-submit')return pvSubmit();
+  if(a==='load-wexample'){$('#jsonIn').value=EXAMPLE_W;return checkJSON()}
+  if(a==='load-sexample'){$('#jsonIn').value=EXAMPLE_S;return checkJSON()}
   if(a==='load-lexample'){$('#jsonIn').value=EXAMPLE_L;return checkJSON()}
   if(a==='load-example'){$('#jsonIn').value=EXAMPLE;return checkJSON()}
   if(a==='check-json')return checkJSON();
@@ -2535,19 +2764,27 @@ function errCardHTML(e){
   var open=EP&&EP.where==='card'&&EP.id===e.id,h='<article class="errc" id="ec_'+esc(e.id)+'" data-eid="'+esc(e.id)+'">';
   if(open)return h+'<div class="errrow"><span class="enlbl">Practice</span>'+enBadge(e)+'</div>'+enPracticeHTML(e,'card')+'</article>';
   h+='<div class="errrow"><p class="errfix"><del class="fx-del">'+esc(e.original||'')+'</del>'+(e.corrected?'<span class="arr" aria-hidden="true">→</span><ins class="fx-ins">'+esc(e.corrected)+'</ins>':'')+'</p>'+enBadge(e)+'</div>'+(e.explanation?'<p class="errwhy">'+esc(e.explanation)+'</p>':'');
-  return h+'<div class="actions enact"><button class="btn '+(e.mastered?'':'pri ')+'sm" data-act="en-open" data-id="'+esc(e.id)+'" type="button">'+(e.mastered?'Practice again':'Practice This Error')+'</button></div></article>';
+  return h+'</article>';
 }
 // Review all due / Practice this group: a fixed box at the top of the list; each next mistake replaces its content.
 function rvHTML(){
   var R=EN.rv,n=R.q.length,hd='<div class="enrvh"><b>'+(R.cat?esc(R.cat):'Review all due')+'</b><button class="btn sm" data-act="en-rvend" type="button">End review</button></div>';
   if(R.i>=n)return hd+'<p class="enres ok" aria-live="polite">Review complete. You fixed <b>'+R.ok+'</b> of '+n+'.</p><p class="muted" style="margin:0">Mistakes you got wrong come back tomorrow.</p><div class="actions enact"><button class="btn pri sm" data-act="en-rvend" type="button" data-enfocus="1">Done</button></div>';
   var e=errById(R.q[R.i]);if(!e){R.i++;if(EP)EP.id=R.q[R.i]||'';return rvHTML()}
-  return hd+'<span class="muted" style="font-size:.8rem">'+(R.i+1)+' of '+n+'</span><div class="enprog" aria-hidden="true"><i style="width:'+Math.round(R.i/n*100)+'%"></i></div><p class="errcat">'+esc(e.category||'Other')+'</p>'+enPracticeHTML(e,'rv');
+  return hd+'<span class="muted" style="font-size:.8rem">'+(R.i+1)+' of '+n+'</span><div class="enprog" aria-hidden="true"><i style="width:'+Math.round(R.i/n*100)+'%"></i></div><p class="errcat">'+esc(errSub(e))+'</p>'+enPracticeHTML(e,'rv');
 }
-function grpChipHTML(g){return g.all.length+' error'+(g.all.length>1?'s':'')+' · <span class="'+(g.due?'d':'')+'">'+g.due+' due</span>'}
+var ERR_TAX=[['Grammar',['Prepositions','Subject-Verb Agreement','Verb Form & Modal Verbs','Passive Voice','Participles','Comparatives & Superlatives','Articles','Countable & Plural Nouns']],['Vocabulary',['Word Form','Word Choice','Collocations','Spelling']]];
+var ERR_MAP=[['Spelling',/spell|typo/],['Collocations',/colloc/],['Word Form',/word form|part of speech|derivat|affix|suffix|prefix/],['Word Choice',/word choice|vocab|register|synonym|confus|meaning|idiom|phrase/],['Passive Voice',/passive/],['Participles',/participle/],['Comparatives & Superlatives',/compar|superlat/],['Prepositions',/preposition/],['Subject-Verb Agreement',/agree|subject.?verb|s-v/],['Verb Form & Modal Verbs',/gerund|infinitiv|tense|modal|auxiliar|verb|stative|conditional/],['Articles',/article|determiner/],['Countable & Plural Nouns',/plural|countable|noun/]];
+// A category written by the AI is mapped to one of the 12 fixed sub-categories (by keyword, then by type).
+function errSub(e){
+  var c=String(e.category||'').toLowerCase().replace(/[‐-―]/g,'-');
+  for(var i=0;i<ERR_MAP.length;i++)if(ERR_MAP[i][1].test(c))return ERR_MAP[i][0];
+  return String(e.type||'').toLowerCase()==='vocabulary'?'Word Choice':'Verb Form & Modal Verbs';
+}
+function errMain(sub){for(var i=0;i<ERR_TAX.length;i++)if(ERR_TAX[i][1].indexOf(sub)>-1)return ERR_TAX[i][0];return 'Grammar'}
 function errGroups(L){
   var G={};
-  L.forEach(function(e){var c=e.category||'Other',g=G[c]||(G[c]={name:c,all:[],due:0,mast:0});g.all.push(e);if(errDue(e))g.due++;if(e.mastered)g.mast++});
+  L.forEach(function(e){var c=errSub(e),g=G[c]||(G[c]={name:c,all:[],due:0,mast:0});g.all.push(e);if(errDue(e))g.due++;if(e.mastered)g.mast++});
   return G;
 }
 function renderErrors(){
@@ -2560,14 +2797,19 @@ function renderErrors(){
   if(!L.length){el.innerHTML=h+'<p class="saved">No errors yet. Submit a Writing task and AI will collect your mistakes here.</p></div>';return}
   if(EN.rv)h+='<section class="enrvbox" id="enRv" aria-label="Review">'+rvHTML()+'</section>';
   else if(due.length)h+='<div class="actions enbar"><button class="btn pri" data-act="en-rv" type="button">Review all due ('+due.length+')</button></div>';
-  // groups by category: most due first, then most mistakes, then A-Z. Counts use the whole group, cards follow the filter.
-  var G=errGroups(L),gl=Object.keys(G).map(function(k){return G[k]}).sort(function(a,b){return (b.due-a.due)||(b.all.length-a.all.length)||a.name.localeCompare(b.name)});
-  var body=gl.map(function(g){
-    var list=g.all.filter(function(e){return EN.f==='all'||(EN.f==='due'?errDue(e):e.mastered)}).sort(errSort);
-    if(!list.length)return '';
-    var op=EN.gopen[g.name];if(op==null)op=g.mast<g.all.length;
-    return '<details class="eng" data-cat="'+esc(g.name)+'"'+(op?' open':'')+'><summary class="engh"><span class="engn">'+esc(g.name)+'</span><span class="engc">'+grpChipHTML(g)+'</span><span class="engbr" aria-hidden="true"></span>'+
-      (g.due?'<button class="btn sm" data-act="en-grp" data-cat="'+esc(g.name)+'" type="button">Practice this group ('+g.due+')</button>':'')+'</summary><div class="engl">'+list.map(errCardHTML).join('')+'</div></details>';
+  // 2 tiers: GRAMMAR / VOCABULARY -> sub-category -> error cards. Only sub-categories that have cards after the filter are shown.
+  var G=errGroups(L);
+  var body=ERR_TAX.map(function(t){
+    var k1='L1:'+t[0],due1=0,subs=t[1].map(function(n){
+      var g=G[n];if(!g)return '';
+      var list=g.all.filter(function(e){return EN.f==='all'||(EN.f==='due'?errDue(e):e.mastered)}).sort(errSort);
+      if(!list.length)return '';
+      due1+=g.due;
+      return '<details class="eng" data-cat="'+esc(n)+'"'+(EN.gopen[n]?' open':'')+'><summary class="engh"><span class="engn">'+esc(n)+'</span><span class="engbr" aria-hidden="true"></span>'+
+        (g.due?'<button class="btn sm" data-act="en-grp" data-cat="'+esc(n)+'" type="button">Practice this group ('+g.due+')</button>':'')+'</summary><div class="engl">'+list.map(errCardHTML).join('')+'</div></details>';
+    }).join('');
+    if(!subs)return '';
+    return '<details class="eng1" data-cat="'+esc(k1)+'"'+(EN.gopen[k1]?' open':'')+'><summary class="engh1"><span class="engn1">'+esc(t[0])+'</span></summary><div class="eng1b">'+subs+'</div></details>';
   }).join('');
   h+=body||'<p class="saved">Nothing here with this filter.</p>';
   if(EN.confirm)h+='<div class="modal" id="enModal" role="dialog" aria-modal="true" aria-labelledby="enMt"><div class="mbox" style="width:min(440px,100%)"><h3 id="enMt" style="font-size:1.1rem">Clear the Error Notebook?</h3><p>This deletes all '+L.length+' errors in your notebook. This cannot be undone.</p><div class="actions"><button class="btn" data-act="en-cancel" type="button" data-enfocus="1">Cancel</button><button class="btn bad" data-act="en-clear-go" type="button">Delete all</button></div></div></div>';
@@ -2581,9 +2823,8 @@ function renderErrorsKeep(){
 // While practising: only the numbers change (3 stat boxes + group chips), nothing moves.
 function enUpdateCounts(){
   if(!U||U.role!=='student')return;
-  var L=errList(U.email),n={all:L.length,due:L.filter(errDue).length,mastered:L.filter(function(e){return e.mastered}).length},G=errGroups(L);
+  var L=errList(U.email),n={all:L.length,due:L.filter(errDue).length,mastered:L.filter(function(e){return e.mastered}).length};
   Array.prototype.forEach.call(document.querySelectorAll('#v-errors .ens'),function(b){var v=n[b.getAttribute('data-f')],x=b.querySelector('b');if(x&&v!=null)x.textContent=v});
-  Array.prototype.forEach.call(document.querySelectorAll('#v-errors details.eng'),function(d){var g=G[d.getAttribute('data-cat')],c=d.querySelector('.engc');if(g&&c)c.innerHTML=grpChipHTML(g)});
 }
 function enFocusIn(root){
   var f=root&&(root.querySelector('#enIn')||root.querySelector('[data-enfocus]'));if(!f)return;
@@ -2632,14 +2873,14 @@ function enClear(){
   EN=enNew();EP=null;toast('Error Notebook cleared.');renderErrorsKeep();
 }
 function enStartReview(cat){
-  var q=errList(U.email).filter(function(e){return errDue(e)&&(!cat||(e.category||'Other')===cat)}).sort(errSort).map(function(e){return e.id});
+  var q=errList(U.email).filter(function(e){return errDue(e)&&(!cat||errSub(e)===cat)}).sort(errSort).map(function(e){return e.id});
   if(!q.length){toast('Nothing is due right now.');return}
   EN.rv={q:q,i:0,ok:0,cat:cat||''};EP={id:q[0],where:'rv',tries:0,res:null};
   renderErrorsKeep();
   var b=$('#enRv');if(b){if(b.scrollIntoView)b.scrollIntoView({block:'start',behavior:reducedMotion()?'auto':'smooth'});enFocusIn(b)}
 }
 function enEndReview(){EN.rv=null;EP=null;renderErrorsKeep()}
-document.addEventListener('toggle',function(e){var d=e.target;if(d&&d.classList&&d.classList.contains('eng'))EN.gopen[d.getAttribute('data-cat')]=d.open},true);
+document.addEventListener('toggle',function(e){var d=e.target;if(d&&d.classList&&(d.classList.contains('eng')||d.classList.contains('eng1')))EN.gopen[d.getAttribute('data-cat')]=d.open},true);
 function enAct(a,t){
   if(a.indexOf('en-')!==0)return false;
   if(a==='en-f'){EN.f=t.dataset.f;EN.rv=null;EP=null;renderErrorsKeep();return true}
@@ -3167,7 +3408,7 @@ document.addEventListener('input',function(e){var t=e.target;if(!XED||!t||!t.dat
 function xSave(){
   var r=parseAI(JSON.stringify(XED.data));
   if(r.errs.length){$('#xerr').innerHTML='<ul class="errs">'+r.errs.map(function(e){return '<li>'+esc(e)+'</li>'}).join('')+'</ul>';window.scrollTo&&window.scrollTo(0,0);return}
-  var E=XED,d=r.data,upd={bookId:E.bookId,testId:E.testId,skill:d.skill,title:d.title,material:d.material,qs:d.qs,ts:E.ts};if(d.lesson)upd.lesson=d.lesson;upd.audio=d.audio||'';
+  var E=XED,d=r.data,upd={bookId:E.bookId,testId:E.testId,skill:d.skill,title:d.title,material:d.material,qs:d.qs,ts:E.ts};if(d.lesson)upd.lesson=d.lesson;exExtra(upd,d);upd.audio=d.audio||'';
   var done=function(){
     var rl=function(l){for(var i=0;i<l.length;i++)if(l[i].id===E.id){l[i]=Object.assign({id:E.id,docId:E.docId},upd);return true}return false};
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
@@ -3396,7 +3637,7 @@ function lsBody(){
       h+='<div class="lsc"><div class="lsw"><b>'+(i+1)+'. '+esc(v.target_word)+'</b></div>'+'<p class="ex">'+lsHl(v.context_sentence,v.target_word)+'</p>'+
       '<p class="lsq">What does it mean?</p>'+lsRadios(gid,v.guessing_options,LS.ord[gid],v.correct_option_index)+
       '<p class="lsq">'+esc(v.ccq.question)+'</p>'+lsRadios(cid,v.ccq.options,LS.ord[cid],v.ccq.correct_index);
-      if(chk){var f=v.flashcard,pm=/\(([a-z]+)\)/i.exec(f.word_family||''),ps=pm?' ('+pm[1]+')':'';h+='<div class="lsflash"><div><b>'+esc(v.target_word)+'</b>'+ps+' '+esc(f.meaning_en)+' → '+esc(f.meaning_vi||'')+'</div>'+(f.word_family?'<div>'+esc(f.word_family)+'</div>':'')+(f.collocations?'<div>'+esc(f.collocations)+'</div>':'')+(f.new_example?'<div>'+lsHl(f.new_example,v.target_word)+'</div>':'')+'</div>'}
+      if(chk){var f=v.flashcard,pm=/\(([a-z]+)\)/i.exec(f.word_family||''),ps=pm?' ('+pm[1]+')':'',wf=String(f.word_family||'').split(/\s*,\s*/).filter(Boolean),cl=String(f.collocations||'').split(/\s*[,;]\s*/).filter(Boolean),stars=function(a){return '<ul class="lsfu">'+a.map(function(x){return '<li>★ '+esc(x)+'</li>'}).join('')+'</ul>'};if(wf.length>1)wf=wf.slice(1);h+='<div class="lsflash"><div class="lsfh">'+esc(v.target_word)+ps+'</div><div class="lsfd">'+esc(f.meaning_en)+' → '+esc(f.meaning_vi||'')+'</div>'+(wf.length?'<div class="lsfl">word family:</div>'+stars(wf):'')+(cl.length?'<div class="lsfl">collocation:</div>'+stars(cl):'')+(f.new_example?'<div class="lsfe">e.g. '+lsHl(f.new_example,v.target_word)+'</div>':'')+'</div>'}
       h+='</div>';
     });
     if(chk&&LS.student)h+='<div class="actions"><button class="btn" data-act="ls-saveall" type="button">Save these words to Flashcards</button></div>';
@@ -3422,7 +3663,7 @@ function lsBody(){
     lsText(L.stage_3_dictation.cloze_material,function(j){return lsGap('d'+j,L.stage_3_dictation.answers[j])})+'</div>';
   }
   if(st===3){
-    h+=audioBar()+'<p class="muted" style="margin-top:10px">Complete the summary. Word bank:</p><div class="wchips" style="margin-bottom:10px">'+LS.bank.map(function(w){return '<span class="wc">'+esc(w)+'</span>'}).join('')+'</div><div class="lsseg">'+lsText(L.stage_4_summary.guided_summary_text,function(j){return lsGap('s'+j,L.stage_4_summary.summary_answers[j])})+'</div>';
+    h+=audioBar()+'<p class="muted" style="margin-top:10px">Complete the summary. Word bank:</p><div class="wchips" style="margin-bottom:10px">'+LS.bank.map(function(w){return '<span class="wc">'+esc(w)+'</span>'}).join('')+'</div><div class="lsseg lscl">'+lsText(L.stage_4_summary.guided_summary_text,function(j){return lsGap('s'+j,L.stage_4_summary.summary_answers[j])})+'</div>';
   }
   if(st===4){
     var R=L.stage_5_retest;
@@ -3690,7 +3931,7 @@ function renderAdmin(){
   if(needList&&!AD.locked&&!AD.users&&!AD.loadErr)adLoad();
   if(AD.sub==='sheet'&&!AD.locked&&!AD.sheet&&!AD.shErr)adSheetLoad();
   var body=AD.sub==='guide'?adGuideHTML():AD.locked?adUnlockHTML():AD.sub==='teachers'?adTeachersHTML():AD.sub==='sheet'?adSheetHTML():AD.sub==='aitest'?adAiTestHTML():AD.sub==='me'?adMeHTML():adUsersHTML();
-  el.innerHTML='<div class="pad adm"><div class="sechead"><h2>Admin</h2><span class="meta">Accounts, teachers and passwords</span></div>'+
+  el.innerHTML='<div class="pad adm"><div class="sechead"><h2>Admin</h2></div>'+
     (DEMO?'<p class="adm-demo" role="note">Demo: changes are not saved.</p>':'')+
     '<div class="subtabs" role="tablist">'+subs.map(function(s){return '<button type="button" role="tab" data-act="ad-sub" data-v="'+s[0]+'" aria-selected="'+(AD.sub===s[0])+'">'+s[1]+'</button>'}).join('')+'</div>'+
     body+'<p class="msg" id="adMsg" aria-live="polite">'+esc(AD.err)+'</p>'+adModalHTML()+'</div>';
@@ -3872,7 +4113,8 @@ function adAct(a,t){
 
 /* ---------- Boot ---------- */
 if(DEMO){sampleData=makeSample().concat(makeSubs());samplePass=makeSamplePass();sampleCards=makeSampleCards();sampleErr=makeSampleErr();sampleProf=makeSampleProf();makeSampleExtras()}
-$('#promptText').textContent=LPROMPT;
+renderCpPrompt();
+document.addEventListener('input',function(e){var t=e.target;if(t&&t.id==='pvW'){var c=$('#pvWc'),d=CP.last&&CP.last.data;if(c&&d)c.innerHTML='<span class="mono">'+wordCount(t.value)+'</span> words'+(wordCount(t.value)<d.minWords?' <span class="low">· minimum '+d.minWords+'</span>':'')}});
 var th=lsGet('md-theme');if(th==='dark'||th==='light')applyTheme(th);else setThemeLbl(curDark());
 rebuildCustom();
 if(!DEMO){var dd=document.querySelector('.demo-ids'),lf=$('#loginForm'),nf=document.querySelector('.note-foot');if(dd)dd.hidden=true;if(lf)lf.hidden=true;if(nf)nf.hidden=true}
