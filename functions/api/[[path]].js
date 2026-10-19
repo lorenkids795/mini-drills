@@ -417,6 +417,111 @@ async function adminKeyOk(env, request) {
   return !!em && em === adminEmail(env);
 }
 
+/* ---------- staff key (teachers + admin): same idea as adminKey ---------- */
+// KV stf:<key> = email (12 hours). Sent as X-Staff-Key for staff uploads (voice feedback, lesson audio) and staff AI tools.
+async function newStaffKey(env, email) {
+  const k = b64url(crypto.getRandomValues(new Uint8Array(32)));
+  await env.MD_KV.put('stf:' + k, email, { expirationTtl: 43200 });
+  return k;
+}
+// -> the teacher's email, or '' (missing / expired key, or the account is no longer a teacher / is paused)
+async function staffEmail(env, request) {
+  const k = request.headers.get('X-Staff-Key') || '';
+  if (!/^[A-Za-z0-9_-]{40,}$/.test(k)) return '';
+  const em = await env.MD_KV.get('stf:' + k);
+  if (!em || (await offState(env, em))) return '';
+  const who = await roleOf(env, em);
+  return who && who.role === 'teacher' ? em : '';
+}
+const staffLocked = () => json({ error: 'Your session ended. Enter your password to continue.', needUnlock: true }, 401);
+// POST /api/staff/unlock { email, password } -> { staffKey }
+async function staffUnlock(env, body) {
+  const email = normEmail(body.email);
+  if (!emailOk(email)) return fail('Enter a valid email.');
+  await seedAdmin(env, email);
+  const st = await checkPassword(env, email, String(body.password || ''));
+  if (st === 'locked') return fail('Too many tries. Wait 15 minutes and try again.', 429);
+  if (st !== 'ok') return fail('Wrong password.', 401);
+  const off = await offState(env, email);
+  if (off) return fail(OFF_MSG[off], 403);
+  const who = await roleOf(env, email);
+  if (!who || who.role !== 'teacher') return fail('Only teachers can do this.', 403);
+  return json({ staffKey: await newStaffKey(env, email) });
+}
+
+/* ---------- audio files (recordings, voice feedback, lesson audio) ---------- */
+// Stored in KV aud:<id> (metadata {type, size, by, kind, ts}); with an R2 binding MD_AUDIO, in R2 instead (same id).
+// id = 22 random base64url characters (128 bits): the link itself is the permission to listen.
+const AUDIO_TYPES = ['audio/webm', 'audio/ogg', 'audio/mp4', 'audio/mpeg', 'audio/wav', 'audio/x-m4a'];
+const AUDIO_MAX = 8 * 1024 * 1024; // about 10 minutes of opus
+const AUDIO_KINDS = ['speaking', 'feedback', 'lesson'];
+async function audioPut(env, id, buf, meta, ttl) {
+  if (env.MD_AUDIO) { // R2 has no per-file expiry: use an R2 lifecycle rule if old student recordings must go
+    const cm = {};
+    Object.keys(meta).forEach((k) => { cm[k] = String(meta[k]); });
+    await env.MD_AUDIO.put('aud/' + id, buf, { httpMetadata: { contentType: meta.type }, customMetadata: cm });
+    return;
+  }
+  const opt = { metadata: meta };
+  if (ttl) opt.expirationTtl = ttl;
+  await env.MD_KV.put('aud:' + id, buf, opt);
+}
+// -> { buf: ArrayBuffer, meta } | null
+async function audioGet(env, id) {
+  if (env.MD_AUDIO) {
+    const o = await env.MD_AUDIO.get('aud/' + id);
+    if (!o) return null;
+    const meta = Object.assign({}, o.customMetadata || {});
+    meta.type = (o.httpMetadata && o.httpMetadata.contentType) || meta.type || 'audio/webm';
+    return { buf: await o.arrayBuffer(), meta };
+  }
+  const r = await env.MD_KV.getWithMetadata('aud:' + id, 'arrayBuffer');
+  if (!r || !r.value) return null;
+  return { buf: r.value, meta: r.metadata || {} };
+}
+// POST /api/audio?kind=speaking|feedback|lesson, body = the file, Content-Type = its audio type.
+// Students (speaking): no key, 20 uploads per IP per hour, kept 365 days. Staff (feedback, lesson): X-Staff-Key, kept.
+async function audioUpload(env, request, url, ip) {
+  const kind = String(url.searchParams.get('kind') || '');
+  if (AUDIO_KINDS.indexOf(kind) < 0) return fail('Unknown audio kind.');
+  const type = String(request.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase();
+  if (AUDIO_TYPES.indexOf(type) < 0) return fail('This audio type is not supported (' + (type || 'unknown') + '). Use mp3, m4a, wav, webm or ogg.', 415);
+  if (Number(request.headers.get('Content-Length') || 0) > AUDIO_MAX) return fail('The file is too big (8 MB at most).', 413);
+  let by = 'student', ttl = 365 * 86400;
+  if (kind === 'speaking') {
+    if ((await bump(env, 'aup:' + ip, 3600)) > 20) return fail('Too many uploads from this network. Try again in an hour.', 429);
+  } else {
+    by = await staffEmail(env, request);
+    if (!by) return staffLocked();
+    ttl = 0;
+  }
+  const buf = await request.arrayBuffer();
+  if (buf.byteLength > AUDIO_MAX) return fail('The file is too big (8 MB at most).', 413);
+  if (buf.byteLength < 200) return fail('The recording is empty. Record again.');
+  const id = b64url(crypto.getRandomValues(new Uint8Array(16))); // 22 characters
+  await audioPut(env, id, buf, { type, size: buf.byteLength, by, kind, ts: Date.now() }, ttl);
+  return json({ id, url: '/api/audio/' + id, size: buf.byteLength });
+}
+// GET /api/audio/<id>: the file, with Range support (206) so Safari / iPhone can play and seek.
+async function audioServe(env, request, id) {
+  const a = await audioGet(env, id);
+  if (!a) return new Response('Not found', { status: 404, headers: { 'Cache-Control': 'no-store' } });
+  const total = a.buf.byteLength, head = request.method === 'HEAD';
+  const base = { 'Content-Type': a.meta.type || 'audio/webm', 'Accept-Ranges': 'bytes', 'Cache-Control': 'private, max-age=31536000, immutable' };
+  const m = /^bytes=(\d*)-(\d*)$/.exec(String(request.headers.get('Range') || '').trim());
+  if (m && (m[1] !== '' || m[2] !== '')) {
+    let s, e;
+    if (m[1] === '') { s = Math.max(0, total - Number(m[2])); e = total - 1; } // last N bytes
+    else { s = Number(m[1]); e = m[2] === '' ? total - 1 : Math.min(Number(m[2]), total - 1); }
+    if (s >= total || s > e) return new Response(null, { status: 416, headers: Object.assign({}, base, { 'Content-Range': 'bytes */' + total }) });
+    return new Response(head ? null : a.buf.slice(s, e + 1), {
+      status: 206,
+      headers: Object.assign({}, base, { 'Content-Range': 'bytes ' + s + '-' + e + '/' + total, 'Content-Length': String(e - s + 1) }),
+    });
+  }
+  return new Response(head ? null : a.buf, { status: 200, headers: Object.assign({}, base, { 'Content-Length': String(total) }) });
+}
+
 /* ---------- routes ---------- */
 // Names a new student can pick. With a Sheet linked: Sheet rows nobody has taken yet, classes in time order.
 async function listNames(env) {
@@ -465,6 +570,7 @@ async function login(env, body) {
   if (!who) return fail('This email is not on the class list. Ask your teacher.', 403);
   const res = { token: await customToken(env, email, who), user: { email, name: who.name, role: who.role, adm: !!who.adm } };
   if (who.adm) res.adminKey = await newAdminKey(env, email);
+  if (who.role === 'teacher') res.staffKey = await newStaffKey(env, email); // teachers and admin
   return json(res);
 }
 
@@ -486,7 +592,7 @@ async function register(env, body, ip) {
       return fail('Wrong teacher setup key.', 403);
     }
     await savePassword(env, email, pw);
-    return json({ token: await customToken(env, email, { role: 'teacher', name: 'Teacher' }), user: { email, name: 'Teacher', role: 'teacher' } });
+    return json({ token: await customToken(env, email, { role: 'teacher', name: 'Teacher' }), user: { email, name: 'Teacher', role: 'teacher' }, staffKey: await newStaffKey(env, email) });
   }
 
   let name = '';
@@ -691,7 +797,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-10-19d';
+const API_VERSION = '2026-10-20b';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -889,7 +995,8 @@ async function geminiOnce(env, model, prompt, schema, thinking, ms) {
   const gc = genConfig(model, schema, thinking);
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), ms || AI_TIMEOUT);
-  const req = { contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: gc };
+  // prompt = text, or a list of parts (e.g. [{ inline_data: { mime_type, data } }, { text }] for audio)
+  const req = { contents: [{ role: 'user', parts: Array.isArray(prompt) ? prompt : [{ text: prompt }] }], generationConfig: gc };
   let r, d;
   try {
     if (env.GEMINI_PROXY_URL) {
@@ -942,7 +1049,8 @@ async function askGemini(env, prompt, schema, shape) {
     for (let k = 0; k < 2; k++) {
       try {
         const left = Math.max(20000, AI_TIMEOUT - (Date.now() - t0)); // all models together stay within AI_TIMEOUT
-        const out = await geminiOnce(env, model, useSchema ? prompt : prompt + (shape || ''), useSchema ? schema : null, thinking, left);
+        const p2 = useSchema || !shape ? prompt : Array.isArray(prompt) ? prompt.concat([{ text: shape }]) : prompt + shape;
+        const out = await geminiOnce(env, model, p2, useSchema ? schema : null, thinking, left);
         return { out, model, via, retried: tried.join(', ') };
       } catch (e) {
         last = e;
@@ -1081,6 +1189,84 @@ function dayOf(tzoIn) {
   if (!isFinite(tzo) || Math.abs(tzo) > 840) tzo = -420;
   const day = new Date(Date.now() - tzo * 60000).toISOString().slice(0, 10);
   return { day, dayStart: Date.parse(day + 'T00:00:00Z') + tzo * 60000 };
+}
+
+// POST /api/ai/lesson { title, transcript, questions, prompt, tzo } (X-Staff-Key): Gemini writes a 5-stage Listening lesson.
+// The prompt is sent by the app (LPROMPT, or the template an admin saved in Create), so there is only ONE copy of it:
+// the same text teachers copy by hand. The app then checks the JSON fully with parseLesson. KV ail:<email>:<day>, 30 a day.
+const LESSON_KEYS = ['stage_1_vocabulary', 'stage_2_autopsy', 'stage_3_dictation', 'stage_4_summary', 'stage_5_retest'];
+async function aiLesson(env, request, body) {
+  const em = await staffEmail(env, request);
+  if (!em) return staffLocked();
+  if (!aiReady(env)) return json({ error: AI_WHY.nokey, code: 'nokey' }, 502);
+  const transcript = String(body.transcript || '').trim(), questions = String(body.questions || '').trim();
+  const title = String(body.title || '').replace(/\s+/g, ' ').trim().slice(0, 120), prompt = String(body.prompt || '').trim();
+  if (transcript.length < 150) return fail('Paste the whole transcript first (a few sentences at least).');
+  if (transcript.length > 20000) return fail('The transcript is too long (20,000 characters at most).');
+  if (questions.length > 8000) return fail('The questions are too long (8,000 characters at most).');
+  if (prompt.length < 200 || prompt.length > 40000) return fail('The lesson prompt is missing. Reload the page and try again.');
+  const qKey = 'ail:' + em + ':' + dayOf(body.tzo).day;
+  if ((await count(env, qKey)) >= 30) return fail('You have used today\'s 30 AI lesson runs. Try again tomorrow.', 429);
+  await bump(env, qKey, 172800);
+  const full = prompt + '\n\n' + (title ? 'TITLE: ' + title + '\n\n' : '') + 'TRANSCRIPT:\n' + transcript + '\n\n' +
+    (questions ? 'ORIGINAL QUESTIONS AND ANSWERS:\n' + questions
+      : 'ORIGINAL QUESTIONS AND ANSWERS: not given. For stage_2 write each question_text yourself as a short IELTS note line about a key detail, ' +
+        'with its answer filled in; for stage_3 blank useful words; for stage_5 write 10 questions about details in the transcript.');
+  let g;
+  try {
+    g = await askGemini(env, full, null, '');
+  } catch (e) {
+    const c = e.code || 'server';
+    console.log('[ai] lesson failed', c, String(e.detail || e.message || '').slice(0, 300));
+    return json({ error: 'The AI could not write the lesson (code: ' + c + '). ' + (AI_WHY[c] || AI_WHY[c.replace(/\d+$/, (n) => n[0] + 'xx')] || 'Try again.'), code: c }, 502);
+  }
+  const o = g.out && typeof g.out === 'object' ? g.out : {};
+  const miss = LESSON_KEYS.filter((k) => !o[k] || typeof o[k] !== 'object');
+  if (miss.length) return json({ error: 'The AI answer was incomplete (missing ' + miss.join(', ') + '). Press Try again.', code: 'shape' }, 502);
+  if (!o.material) o.material = transcript;
+  if (title) o.title = title;
+  o.skill = 'listening';
+  return json({ lesson: o, model: g.model });
+}
+
+// POST /api/ai/transcribe { audioId, tzo } (X-Staff-Key): Gemini writes the transcript of an uploaded listening file.
+// The file is sent inline (base64). Shares the ail:<email>:<day> limit (30 a day) with /api/ai/lesson.
+const TRANSCRIBE_PROMPT = 'Transcribe this IELTS listening recording verbatim. Label speakers (e.g. MAN:, WOMAN:, or names if spoken). ' +
+  'Keep numbers and spellings exactly as spoken. Put each turn on its own line, with a blank line between turns. ' +
+  'Return JSON: {"transcript": "the plain text transcript"}.';
+const GEMINI_AUDIO = { 'audio/mpeg': 'audio/mp3', 'audio/wav': 'audio/wav', 'audio/ogg': 'audio/ogg', 'audio/webm': 'audio/webm', 'audio/mp4': 'audio/mp4', 'audio/x-m4a': 'audio/mp4' };
+function b64std(buf) {
+  const b = new Uint8Array(buf);
+  let s = '';
+  for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+async function aiTranscribe(env, request, body) {
+  const em = await staffEmail(env, request);
+  if (!em) return staffLocked();
+  if (!aiReady(env)) return json({ error: AI_WHY.nokey, code: 'nokey' }, 502);
+  const id = String(body.audioId || '');
+  if (!/^[A-Za-z0-9_-]{22}$/.test(id)) return fail('Upload or record the audio first.');
+  const a = await audioGet(env, id);
+  if (!a) return fail('This audio file was not found. Upload it again.', 404);
+  if (a.buf.byteLength > AUDIO_MAX) return fail('The file is too big to transcribe (8 MB at most).', 413);
+  const qKey = 'ail:' + em + ':' + dayOf(body.tzo).day;
+  if ((await count(env, qKey)) >= 30) return fail('You have used today\'s 30 AI lesson runs. Try again tomorrow.', 429);
+  await bump(env, qKey, 172800);
+  const mime = GEMINI_AUDIO[a.meta.type] || a.meta.type || 'audio/mp3';
+  const parts = [{ inline_data: { mime_type: mime, data: b64std(a.buf) } }, { text: TRANSCRIBE_PROMPT }];
+  let g;
+  try {
+    g = await askGemini(env, parts, { type: 'OBJECT', properties: { transcript: { type: 'STRING' } }, required: ['transcript'] }, '');
+  } catch (e) {
+    const c = e.code || 'server';
+    console.log('[ai] transcribe failed', c, mime, String(e.detail || e.message || '').slice(0, 300));
+    const hint = c === 'http400' ? ' Gemini could not read this audio: try an mp3 or wav file.' : '';
+    return json({ error: 'The AI could not transcribe the audio (code: ' + c + ').' + hint + ' ' + (AI_WHY[c] || AI_WHY[c.replace(/\d+$/, (n) => n[0] + 'xx')] || ''), code: c }, 502);
+  }
+  const t = String((g.out && g.out.transcript) || '').trim();
+  if (t.length < 20) return json({ error: 'The AI returned an empty transcript. Check that the file has speech, then try again.', code: 'empty' }, 502);
+  return json({ transcript: t.slice(0, 20000), model: g.model });
 }
 
 // 502 { error: 'busy', code } + a log line (Cloudflare Pages -> Functions -> Real-time logs)
@@ -1224,7 +1410,11 @@ export async function onRequest(ctx) {
       const st = {}; st[s || 'ok'] = true; // { ok } | { off } | { moved } | { kicked }
       return json(st);
     }
+    const am = /^audio\/([A-Za-z0-9_-]{22})$/.exec(route);
+    if (am && (request.method === 'GET' || request.method === 'HEAD')) return await audioServe(env, request, am[1]);
     if (request.method !== 'POST') return fail('Not found.', 404);
+    // audio upload: the body is the file, not JSON
+    if (route === 'audio') return await audioUpload(env, request, url, request.headers.get('CF-Connecting-IP') || 'x');
     let body = {};
     try { body = await request.json(); } catch (e) { return fail('Bad request.'); }
     const ip = request.headers.get('CF-Connecting-IP') || 'x';
@@ -1232,8 +1422,11 @@ export async function onRequest(ctx) {
     if (route === 'register') return await register(env, body, ip);
     if (route === 'reset') return await resetPassword(env, body);
     if (route === 'admin/unlock') return await adminUnlock(env, body);
+    if (route === 'staff/unlock') return await staffUnlock(env, body);
     if (route === 'ai/correct') return await aiCorrect(env, body);
     if (route === 'ai/practice') return await aiPractice(env, body);
+    if (route === 'ai/lesson') return await aiLesson(env, request, body);
+    if (route === 'ai/transcribe') return await aiTranscribe(env, request, body);
     if (route.indexOf('admin/') === 0) {
       if (!(await adminKeyOk(env, request))) {
         return json({ error: 'Your admin session ended. Enter your admin password to continue.', needUnlock: true }, 401);

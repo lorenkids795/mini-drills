@@ -551,6 +551,30 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .fx-hot{outline:2px solid var(--accent);outline-offset:1px;border-radius:4px}
 .wmarked{max-width:100%;min-height:120px;margin-top:4px}
 .banner.subdone{background:var(--good-bg);color:var(--good)}
+.alstep{border:1.5px solid var(--accent);border-radius:12px;padding:16px;background:var(--surface)}.alstep h3{margin-top:0}
+.alstep textarea{min-height:180px}
+.alstep .field{margin-bottom:8px}.alstep .field input{width:100%}
+.alq{margin-top:8px}.alq summary{cursor:pointer;color:var(--muted);font-size:.9rem;padding:4px 0}.alq textarea{min-height:110px;margin-top:6px}
+.alerr{color:var(--bad)}
+.subfb{margin:0 0 12px;font-size:.95rem}
+.rec{margin:10px 0 18px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.reclbl{margin:0 0 8px;font-size:.76rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.recrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.btn.recbtn{border-radius:999px;display:inline-flex;align-items:center;gap:8px;font-weight:600;border:1.5px solid var(--bad);color:var(--bad);background:var(--surface);padding:.5rem 1.1rem}
+.btn.recbtn:hover{background:var(--bad-bg)}
+.recdot{width:11px;height:11px;border-radius:50%;background:var(--bad);display:inline-block;flex:none}
+.recdot.on{animation:recblink 1s steps(2,start) infinite}
+@keyframes recblink{to{visibility:hidden}}
+@media (prefers-reduced-motion:reduce){.recdot.on{animation:none}}
+.recmax{font-size:.82rem;color:var(--muted)}
+.rect{font-size:1rem;font-weight:600}
+.recmeter{flex:1 1 80px;max-width:180px;height:6px;border-radius:9px;background:var(--line);overflow:hidden}
+.recmeter i{display:block;height:100%;width:0;background:var(--good);transition:width .1s}
+.recaud{display:block;width:100%;max-width:480px;margin:4px 0 8px}
+.recok{color:var(--good);font-weight:600;font-size:.9rem}
+.recerr{color:var(--bad);font-size:.88rem;margin:8px 0 0}
+.vocalt{margin:6px 0 12px}.vocalt summary{cursor:pointer;color:var(--muted);font-size:.88rem;padding:4px 0}
+.spaud{margin:6px 0 12px}.spp{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:2px}
 .wver{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}.wver .lbl{margin:0}
 .wver select{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:.45rem .6rem;font:inherit;font-size:.9rem;max-width:100%;min-width:0}
 .subst{margin:4px 0 12px;font-size:.95rem}.subst.ok b{color:var(--good)}
@@ -888,6 +912,8 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
   <section id="v-create" hidden>
     <div class="create">
       <div>
+        <div class="step alstep" id="audBox" hidden></div>
+        <div class="step alstep" id="alBox" hidden></div>
         <div class="step">
           <h3>1. Copy the prompt</h3>
           <p>Pick a skill and a prompt, paste it with your exam text into ChatGPT or Claude, and bring the JSON answer back to step 2. Admins can edit the prompt and save it as a template.</p>
@@ -1348,6 +1374,7 @@ function libTestHTML(bk,t,dm,stu){
 }
 function renderLib(){
   stopAudio();clearTimer();WL.on=false;setLock(false);crumbs();
+  if(!NAV.ex&&!NAV.daily){recClearAll();REC_EX=null} // left the exercise: drop its recorders (microphone off)
   if(NAV.daily)return renderDailyTask();
   if(NAV.ex)return renderPlayer();
   if(XED)return renderEditor();
@@ -1385,6 +1412,220 @@ function initAudio(){
   a.addEventListener('error',function(){$('#aMsg').textContent='The audio could not be loaded. Check the audio link of this exercise.'});
 }
 
+/* ---------- Recorder (Speaking answers, voice feedback, lesson audio) + audio upload + staff key ----------
+   recorderHTML(rid, opts) draws one recorder; its state lives in REC[rid]; buttons use data-act="rec-*" (recAct).
+   opts = {max: seconds, kind: 'speaking'|'feedback'|'lesson', label, upload: true = also "Upload a file", onChange(rid)}
+   REC[rid].st: 'idle' | 'rec' (recording) | 'done' (recorded, not uploaded) | 'up' (uploading) | 'saved' | 'err' (upload failed, kept)
+   Saved file: REC[rid].saved = {id, url:'/api/audio/<id>', size, dur, type}. */
+var REC={},RECV=null,REC_EX=null; // RECV = the rid recording now; REC_EX = the exercise the recorders belong to
+var AUD_MIMES=['audio/webm;codecs=opus','audio/ogg;codecs=opus','audio/mp4'];
+var AUD_OK=['audio/webm','audio/ogg','audio/mp4','audio/mpeg','audio/wav','audio/x-m4a'],AUD_MAX=8*1024*1024;
+function recSupported(){return !!(window.MediaRecorder&&navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)}
+function recMime(){
+  if(!window.MediaRecorder||!MediaRecorder.isTypeSupported)return '';
+  for(var i=0;i<AUD_MIMES.length;i++){try{if(MediaRecorder.isTypeSupported(AUD_MIMES[i]))return AUD_MIMES[i]}catch(e){}}
+  return '';
+}
+function recBase(t){return String(t||'').split(';')[0].trim().toLowerCase()}
+// a chosen file -> one of the types the server accepts ('' = not allowed)
+function audFileType(f){
+  var t=recBase(f.type),n=String(f.name||'').toLowerCase();
+  var map={'audio/mp3':'audio/mpeg','audio/x-mp3':'audio/mpeg','audio/x-wav':'audio/wav','audio/wave':'audio/wav','audio/vnd.wave':'audio/wav','audio/m4a':'audio/x-m4a','audio/aac':'audio/mp4','audio/x-m4b':'audio/x-m4a'};
+  t=map[t]||t;
+  if(!t){if(/\.mp3$/.test(n))t='audio/mpeg';else if(/\.m4a$/.test(n))t='audio/x-m4a';else if(/\.wav$/.test(n))t='audio/wav';else if(/\.(webm|weba)$/.test(n))t='audio/webm';else if(/\.(ogg|oga|opus)$/.test(n))t='audio/ogg'}
+  return AUD_OK.indexOf(t)>=0?t:'';
+}
+// only our own audio links (and local blob: links in demo / before upload) go into src
+function audioTagHTML(url,cls){var u=String(url||'');return /^(\/api\/audio\/[A-Za-z0-9_-]{22}|blob:)/.test(u)?'<audio class="recaud'+(cls?' '+cls:'')+'" controls preload="none" src="'+esc(u)+'"></audio>':''}
+function recorderHTML(rid,opts){
+  var R=REC[rid];if(!R){R=REC[rid]={st:'idle',err:'',pct:0};if(opts.saved&&opts.saved.url){R.st='saved';R.saved=opts.saved}}
+  R.opts=opts;
+  return '<div class="rec" id="rec_'+esc(rid)+'">'+recInner(rid)+'</div>';
+}
+function recInner(rid){
+  var R=REC[rid],o=R.opts,r=esc(rid),mx=fmtT(o.max),h=o.label?'<p class="reclbl">'+esc(o.label)+'</p>':'';
+  var redo='<button class="btn sm" type="button" data-act="rec-redo" data-rid="'+r+'">Re-record</button>';
+  var file=o.upload?'<button class="btn sm" type="button" data-act="rec-file" data-rid="'+r+'">Upload a file</button><input type="file" accept="audio/*" class="recfile" id="recf_'+r+'" data-rid="'+r+'" hidden>':'';
+  var err=R.err?'<p class="recerr" role="alert">'+esc(R.err)+'</p>':'';
+  if(R.st==='rec')return h+'<div class="recrow recing" aria-live="polite"><span class="recdot on" aria-hidden="true"></span><span class="mono rect" id="rect_'+r+'">'+fmtT(Math.floor((Date.now()-R.t0)/1000))+' / '+mx+'</span>'+
+    '<span class="recmeter" aria-hidden="true"><i id="recm_'+r+'"></i></span><button class="btn sm" type="button" data-act="rec-stop" data-rid="'+r+'">■ Stop</button></div>';
+  if(R.st==='done')return h+audioTagHTML(R.url)+'<div class="recrow"><button class="btn pri sm" type="button" data-act="rec-use" data-rid="'+r+'">Use this recording</button>'+redo+'</div>'+err;
+  if(R.st==='up')return h+audioTagHTML(R.url)+'<p class="saved" aria-live="polite">Uploading… <span id="recp_'+r+'">'+R.pct+'</span>%</p>';
+  if(R.st==='saved')return h+audioTagHTML(R.saved.url)+'<div class="recrow"><span class="recok" aria-live="polite">Saved ✓</span>'+redo+'</div>';
+  if(R.st==='err')return h+audioTagHTML(R.url)+err+'<div class="recrow"><button class="btn pri sm" type="button" data-act="rec-use" data-rid="'+r+'">Retry</button>'+redo+'</div>';
+  if(!recSupported())return h+'<p class="saved">Recording is not available in this browser.</p>'+(file?'<div class="recrow">'+file+'</div>':'')+err;
+  return h+'<div class="recrow"><button class="btn recbtn" type="button" data-act="rec-start" data-rid="'+r+'"><span class="recdot" aria-hidden="true"></span>Record</button><span class="recmax">Max '+mx+'</span>'+file+'</div>'+err;
+}
+function recRender(rid){
+  var R=REC[rid];if(!R)return;
+  var b=document.getElementById('rec_'+rid);if(b)b.innerHTML=recInner(rid);
+  if(R.opts&&R.opts.onChange)R.opts.onChange(rid);
+}
+function recErrMsg(e){
+  var n=(e&&e.name)||'';
+  if(n==='NotAllowedError'||n==='SecurityError'||n==='PermissionDeniedError')return 'Microphone is blocked. Allow it in the browser address bar, then try again. On iPhone: Settings → Safari → Microphone → Allow.';
+  if(n==='NotFoundError'||n==='DevicesNotFoundError')return 'No microphone was found. Connect one, then try again.';
+  if(n==='NotReadableError'||n==='TrackStartError')return 'The microphone is busy in another app. Close that app, then try again.';
+  return 'Could not start recording'+(e&&e.message?': '+e.message:'.')+' Try again.';
+}
+// getUserMedia must run inside the click (iOS); the stream is stopped as soon as recording ends
+function recStart(rid){
+  var R=REC[rid];if(!R||R.st==='rec')return;
+  if(RECV&&RECV!==rid)recStop(RECV);
+  if(!recSupported()){R.err='Recording is not available in this browser.';recRender(rid);return}
+  R.err='';
+  var fail=function(e){R.st='idle';R.err=recErrMsg(e);recRender(rid)};
+  try{
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+      if(REC[rid]!==R){stream.getTracks().forEach(function(t){t.stop()});return}
+      var mime=recMime(),mr;
+      try{mr=mime?new MediaRecorder(stream,{mimeType:mime}):new MediaRecorder(stream)}catch(x){mr=new MediaRecorder(stream)}
+      R.stream=stream;R.mr=mr;R.chunks=[];R.dur=0;
+      mr.ondataavailable=function(ev){if(ev.data&&ev.data.size)R.chunks.push(ev.data)};
+      mr.onstop=function(){recEnd(rid)};
+      mr.start(1000);R.t0=Date.now();R.st='rec';RECV=rid;recMeter(R,stream);recRender(rid);
+      R.tick=setInterval(function(){recTick(rid)},250);
+    },fail);
+  }catch(e){fail(e)}
+}
+function recMeter(R,stream){
+  try{var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+    R.ac=new AC();var src=R.ac.createMediaStreamSource(stream);R.an=R.ac.createAnalyser();R.an.fftSize=256;R.abuf=new Uint8Array(R.an.fftSize);src.connect(R.an);
+  }catch(e){R.an=null}
+}
+function recTick(rid){
+  var R=REC[rid];if(!R||R.st!=='rec')return;
+  var s=(Date.now()-R.t0)/1000,t=document.getElementById('rect_'+rid);if(t)t.textContent=fmtT(Math.floor(s))+' / '+fmtT(R.opts.max);
+  if(R.an){try{R.an.getByteTimeDomainData(R.abuf);var pk=0;for(var i=0;i<R.abuf.length;i++){var v=Math.abs(R.abuf[i]-128);if(v>pk)pk=v}
+    var m=document.getElementById('recm_'+rid);if(m)m.style.width=Math.min(100,Math.round(pk/128*160))+'%'}catch(e){}}
+  if(s>=R.opts.max)recStop(rid);
+}
+function recRelease(R){
+  clearInterval(R.tick);R.tick=null;
+  if(R.stream)R.stream.getTracks().forEach(function(t){try{t.stop()}catch(e){}});R.stream=null;
+  if(R.ac){try{R.ac.close()}catch(e){}}R.ac=null;R.an=null;
+}
+function recStop(rid){
+  var R=REC[rid];if(!R||R.st!=='rec')return;
+  R.dur=Math.max(1,Math.round((Date.now()-R.t0)/1000));
+  try{if(R.mr&&R.mr.state!=='inactive')R.mr.stop();else recEnd(rid)}catch(e){recEnd(rid)}
+}
+function recEnd(rid){
+  var R=REC[rid];if(!R||R.st!=='rec')return;
+  recRelease(R);if(RECV===rid)RECV=null;
+  var type=recBase((R.mr&&R.mr.mimeType)||recMime())||'audio/webm',blob=new Blob(R.chunks||[],{type:type});
+  R.mr=null;R.chunks=null;
+  if(!blob.size){R.st='idle';R.err='Nothing was recorded. Try again.';recRender(rid);return}
+  recLocal(R,blob,type);recRender(rid);
+}
+function recLocal(R,blob,type){
+  if(R.url){try{URL.revokeObjectURL(R.url)}catch(e){}}
+  R.blob=blob;R.type=type;R.url=URL.createObjectURL(blob);R.st='done';R.err='';R.saved=null;
+}
+function recUse(rid){
+  var R=REC[rid];if(!R||!R.blob)return;
+  R.st='up';R.pct=0;R.err='';recRender(rid);
+  audioUpload(R.blob,R.opts.kind,function(p){R.pct=p;var e=document.getElementById('recp_'+rid);if(e)e.textContent=p}).then(function(d){
+    if(REC[rid]!==R)return;
+    R.saved={id:d.id,url:d.url,size:d.size||R.blob.size,dur:R.dur||0,type:R.type};R.st='saved';recRender(rid);
+  },function(e){
+    if(REC[rid]!==R)return;
+    if(e&&e.needUnlock){R.st='err';R.err='Your session ended: enter your password, then press Retry.';recRender(rid);staffUnlock(function(){recUse(rid)});return}
+    R.st='err';R.err=(e&&e.message)||'Upload failed. Press Retry.';recRender(rid);
+  });
+}
+function recFile(rid,f){
+  var R=REC[rid];if(!R||!f)return;
+  var t=audFileType(f);
+  if(!t){R.err='This file type is not supported. Use mp3, m4a, wav, webm or ogg.';recRender(rid);return}
+  if(f.size>AUD_MAX){R.err='The file is too big (8 MB at most).';recRender(rid);return}
+  recLocal(R,new Blob([f],{type:t}),t);R.dur=0;
+  try{var au=new Audio();au.preload='metadata';au.onloadedmetadata=function(){if(isFinite(au.duration))R.dur=Math.round(au.duration)};au.src=R.url}catch(e){}
+  recRender(rid);
+}
+function recReset(rid){
+  var R=REC[rid];if(!R)return;
+  if(R.st==='rec'){R.st='idle';try{if(R.mr&&R.mr.state!=='inactive'){R.mr.onstop=null;R.mr.stop()}}catch(e){}}
+  recRelease(R);if(RECV===rid)RECV=null;
+  if(R.url){try{URL.revokeObjectURL(R.url)}catch(e){}}
+  delete REC[rid];
+}
+function recClearAll(){Object.keys(REC).forEach(recReset);REC={};RECV=null}
+function recStopAll(){if(RECV)recStop(RECV)}
+// a recording that is not uploaded yet (would be lost when leaving)
+function recUnsaved(){return Object.keys(REC).some(function(k){var s=REC[k].st;return s==='done'||s==='err'||s==='up'||s==='rec'})}
+function recAct(a,t){
+  if(a.indexOf('rec-')!==0)return false;
+  var rid=t.dataset.rid,R=REC[rid];if(!R)return true;
+  if(a==='rec-start')recStart(rid);
+  else if(a==='rec-stop')recStop(rid);
+  else if(a==='rec-use')recUse(rid);
+  else if(a==='rec-redo'){var o=R.opts;recReset(rid);REC[rid]={st:'idle',err:'',pct:0,opts:o};recRender(rid)}
+  else if(a==='rec-file'){var fi=document.getElementById('recf_'+rid);if(fi)fi.click()}
+  return true;
+}
+document.addEventListener('change',function(e){var t=e.target;if(t&&t.classList&&t.classList.contains('recfile')){recFile(t.getAttribute('data-rid'),t.files&&t.files[0]);t.value=''}});
+// leaving the page or the browser tab: stop recording (the microphone turns off); warn about recordings not saved yet
+document.addEventListener('visibilitychange',function(){if(document.hidden)recStopAll()});
+window.addEventListener('beforeunload',function(e){if(recUnsaved()){e.preventDefault();e.returnValue=''}});
+var REC_LEAVE='You have a recording that is not saved yet. Leave without it?';
+
+// Upload one audio Blob -> {id, url, size}. XHR so the progress can be shown. Demo: a local blob: link, nothing is sent.
+function audioUpload(blob,kind,prog){
+  return new Promise(function(ok,no){
+    if(DEMO){var p=0,iv=setInterval(function(){p=Math.min(100,p+20);if(prog)prog(p);if(p>=100){clearInterval(iv);ok({id:'demo'+Date.now().toString(36),url:URL.createObjectURL(blob),size:blob.size,demo:true})}},150);return}
+    var x=new XMLHttpRequest();
+    x.open('POST',API_BASE+'/audio?kind='+encodeURIComponent(kind));
+    x.setRequestHeader('Content-Type',recBase(blob.type)||'audio/webm');
+    if(kind!=='speaking'){var k=stfKey();if(k)x.setRequestHeader('X-Staff-Key',k)}
+    if(x.upload)x.upload.onprogress=function(e){if(e.lengthComputable&&prog)prog(Math.round(e.loaded/e.total*100))};
+    x.onload=function(){
+      var d={};try{d=JSON.parse(x.responseText)}catch(e){}
+      if(x.status===401&&d.needUnlock){var er=new Error(d.error||'Enter your password to continue.');er.needUnlock=true;no(er);return}
+      if(x.status>=200&&x.status<300&&d.id)ok(d);
+      else no(new Error((d.error||'Upload failed.')+' (code: http'+x.status+')'));
+    };
+    x.onerror=function(){no(new Error('Upload failed: no connection. Check your internet, then press Retry.'))};
+    x.send(blob);
+  });
+}
+
+// Staff key (teachers + admin): sessionStorage md-skey, header X-Staff-Key. When it has ended: "Enter your password to continue".
+function stfKey(){try{return sessionStorage.getItem('md-skey')||''}catch(e){return ''}}
+function staffApi(path,body){
+  if(DEMO)return Promise.reject(new Error('This needs the live site (demo mode).'));
+  var go=function(){return adPost(path,body,'',{'X-Staff-Key':stfKey()})};
+  return go().then(function(d){
+    if(d._status===401&&d.needUnlock)return new Promise(function(ok,no){staffUnlock(function(){go().then(ok,no)},function(){no(new Error(d.error))})}).then(function(d2){return staffChk(d2)});
+    return staffChk(d);
+  });
+}
+function staffChk(d){if(!d._ok)throw new Error(d.error||'Something went wrong. Try again.');return d}
+var STFQ=null; // the waiting callbacks of the password box
+function staffUnlock(onOk,onNo){
+  STFQ={ok:onOk,no:onNo};var old=$('#stfModal');if(old)old.remove();
+  document.body.insertAdjacentHTML('beforeend','<div class="modal" id="stfModal" role="dialog" aria-modal="true" aria-labelledby="stfT"><div class="mbox" style="width:min(420px,100%)"><h3 id="stfT" style="font-size:1.1rem;margin-bottom:8px">Enter your password to continue</h3><p>Your teacher session has ended. This keeps uploads and the AI tools safe.</p>'+
+    '<label class="field" for="stfPw">Password<input id="stfPw" type="password" autocomplete="current-password"></label><p class="msg" id="stfMsg" aria-live="polite" style="color:var(--bad);min-height:1.3em;margin:8px 0 0"></p>'+
+    '<div class="actions"><button class="btn pri" type="button" data-act="stf-ok">Continue</button><button class="btn" type="button" data-act="stf-cancel">Cancel</button></div></div></div>');
+  var i=$('#stfPw');if(i)i.focus();
+}
+function staffUnlockRun(btn){
+  var pw=($('#stfPw')&&$('#stfPw').value)||'',m=$('#stfMsg');if(!pw){if(m)m.textContent='Enter your password.';return}
+  if(btn){btn.disabled=true;btn.textContent='Checking…'}
+  adPost('staff/unlock',{email:U.email,password:pw},'').then(function(d){
+    if(!d._ok||!d.staffKey){if(btn){btn.disabled=false;btn.textContent='Continue'}if(m)m.textContent=d.error||'Something went wrong. Try again.';return}
+    try{sessionStorage.setItem('md-skey',d.staffKey)}catch(e){}
+    var q=STFQ;STFQ=null;var md=$('#stfModal');if(md)md.remove();toast('Unlocked.');if(q&&q.ok)q.ok();
+  },function(e){if(btn){btn.disabled=false;btn.textContent='Continue'}if(m)m.textContent=e.message});
+}
+function audAct(a,t){
+  if(recAct(a,t))return true;
+  if(a==='stf-ok'){staffUnlockRun(t);return true}
+  if(a==='stf-cancel'){var q=STFQ;STFQ=null;var md=$('#stfModal');if(md)md.remove();if(q&&q.no)q.no();return true}
+  return false;
+}
+document.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target&&e.target.id==='stfPw'){e.preventDefault();staffUnlockRun($('#stfModal [data-act="stf-ok"]'))}});
+
 /* ---------- Player ---------- */
 var normT=function(s){return String(s==null?'':s).toLowerCase().replace(/[’‘]/g,"'").replace(/£/g,'').trim().replace(/\s+/g,' ').replace(/\.$/,'')};
 var gapOk=function(q,v){var n=normT(v);return q.ans.some(function(a){return normT(a)===n})};
@@ -1420,8 +1661,9 @@ function lockInfo(id){
 }
 function renderPlayer(){
   var ex=exOf(NAV.ex);done=false;
+  if(REC_EX!==NAV.ex){recClearAll();REC_EX=NAV.ex} // recorders belong to one exercise
   var lk=lockInfo(NAV.ex);if(WNEW!==NAV.ex)WNEW=null;if(WVER&&WVER.ex!==NAV.ex)WVER=null;
-  if(lk&&!(ex.kind==='writing'&&mySub(ex.id))){
+  if(lk&&!((ex.kind==='writing'||ex.kind==='speaking'||ex.kind==='readaloud')&&mySub(ex.id))){
     $('#libBody').innerHTML='<div class="pane single"><div class="phead"><span class="chip">'+SNAME[ex.skill]+'</span><h2>'+esc(ex.title)+'</h2></div><div class="banner" style="background:var(--bad-bg);color:var(--bad)"><b>Locked.</b> This exercise belongs to <b>'+esc(asgName(lk))+'</b>, which was due '+fmtDue(effDue(lk,U.email))+'. After the deadline it can only be opened with a late pass.</div><div class="actions"><button class="btn" data-act="nav" data-book="'+NAV.book+'" data-test="'+NAV.test+'" data-skill="'+NAV.skill+'" type="button">Back to the list</button></div></div>';
     return;
   }
@@ -1429,7 +1671,7 @@ function renderPlayer(){
   var head='<div class="phead"><span class="chip">'+SNAME[ex.skill]+'</span><h2>'+esc(ex.title)+'</h2><p>'+esc(ex.hint)+'</p></div>';
   var tail='<div class="actions"><button class="btn pri" data-act="submit" id="submit" type="button">Submit</button><span class="saved" id="saveMsg"></span></div><div id="result"></div>';
   if(ex.kind==='writing')return renderWriting(ex,head,ban);
-  if(ex.kind==='speaking')return renderSpeaking(ex,head,ban);
+  if(ex.kind==='speaking'||ex.kind==='readaloud')return renderSpeaking(ex,head,ban);
   if(ex.kind==='lesson')return renderLesson(ex,head,ban);
   if(ex.skill==='listening'){
     var tr=(ex.material.lines||[]).map(function(l){return '<div>'+(l[0]?'<b>'+esc(l[0])+'</b>':'')+esc(l[1])+'</div>'}).join('');
@@ -1719,10 +1961,10 @@ function versionsHTML(list,a){
   }).join('')+'</select></div>'+(a.id!==list[0].id?'<p class="banner">You are viewing an older version. Your latest one is Version '+list.length+'.</p>':'');
 }
 function subStatusHTML(a){
-  var d=new Date(a.ts||Date.now()),g=gradeOf(a),marked=g&&g.overall!=null&&g.overall!=='';
-  var h='<p class="banner subdone" role="status"><b>Submitted</b> on '+subDate(a)+'</p>';
-  if(!marked)return h+'<p class="subst">Waiting for your teacher to mark it.</p>';
-  return h+'<p class="subst ok">Marked: <b>'+esc(rsInfo(a).txt)+'</b> · <button class="linkish" data-act="fb-open" data-id="'+esc(a.id)+'" type="button">Open feedback</button></p>';
+  // no "Submitted on …" banner and no "Waiting for your teacher" line (the date is in the Version dropdown); only the mark once there is one
+  var g=gradeOf(a),marked=g&&g.overall!=null&&g.overall!=='';
+  if(!marked)return '';
+  return '<p class="subst ok">Marked: <b>'+esc(rsInfo(a).txt)+'</b> · <button class="linkish" data-act="fb-open" data-id="'+esc(a.id)+'" type="button">Open feedback</button></p>'+(g.feedback?'<p class="subfb"><b>Teacher note:</b> '+esc(g.feedback)+'</p>':'')+voiceFbHTML(g);
 }
 // Review mode: the submitted text (read only) + the saved AI result. The AI is not called again.
 function renderSubmittedWriting(ex,head,ban,a,lk,list){
@@ -1766,25 +2008,82 @@ function submitWriting(){
   if(U.role==='teacher')return;
   saveAttempt({email:U.email,student:U.name,course:U.course,cls:U.cls,ex:ex.id,score:0,total:0,items:[],kind:'submission',text:t,words:wordCount(t),ts:Date.now()}).then(function(h){var m=$('#saveMsg');if(m)m.textContent=h==='db'?'Saved.':'Kept for this session only.';autoFix(t,ex,h)});onAttemptSaved(ex,0,0,false);
 }
+// Recorder parts: Part 1 / Part 2 (/ Part 3) = 3 / 3 / 4 minutes; read aloud 2 minutes; any other shape: 1 recording, 5 minutes
+function spParts(ex){
+  if(ex.kind==='readaloud')return [{part:'Recording',max:120}];
+  var P=[];
+  if(ex.part1&&ex.part1.length)P.push({part:'Part 1',max:180});
+  if(ex.cue)P.push({part:'Part 2',max:180});
+  if(ex.part3&&ex.part3.length)P.push({part:'Part 3',max:240});
+  return P.length?P:[{part:'Recording',max:300}];
+}
+function spRid(ex,i){return 'sp_'+ex.id+'_'+i}
+// recordings already uploaded for this task -> attempt.audio
+function spAudio(ex){
+  return spParts(ex).map(function(p,i){var R=REC[spRid(ex,i)];return R&&R.st==='saved'?{part:p.part,id:R.saved.id,url:R.saved.url,dur:R.saved.dur||0,type:R.saved.type||''}:null}).filter(Boolean);
+}
+// Submit is on once one recording is saved (or a Vocaroo link is pasted)
+function spSync(){
+  var ex=NAV.ex&&exOf(NAV.ex),b=$('#submit'),li=$('#spLink');if(!ex||!b||done)return;
+  var ok=spAudio(ex).length>0||VOCRE.test(li?li.value.trim():'');b.disabled=!ok;
+  var hint=$('#spHint');if(hint)hint.textContent=ok?'':'Record your answer, then press "Use this recording" to save it.';
+}
 function renderSpeaking(ex,head,ban){
-  $('#libBody').innerHTML='<div class="pane single">'+head+ban+'<h3 style="font-size:1rem">Part 1</h3><ol class="sp-q">'+ex.part1.map(function(q){return '<li>'+esc(q)+'</li>'}).join('')+'</ol>'+
-  '<h3 style="font-size:1rem">Part 2</h3><div class="cue"><b>'+esc(ex.cue.title)+'</b><div style="margin-top:6px">You should say:</div><ul>'+ex.cue.points.map(function(p){return '<li>'+esc(p)+'</li>'}).join('')+'</ul></div>'+
-  '<div class="arow"><button class="btn sm" data-act="timer" type="button">Start 1:00 preparation</button><span class="timer" id="tmr">1:00</span></div>'+
-  '<label class="lbl" for="spNotes">Notes (for your preparation only)</label><textarea class="wbox" id="spNotes" style="min-height:90px"></textarea>'+
-  '<label class="lbl" for="spLink">Vocaroo link</label><p class="muted" style="margin:0 0 8px;font-size:.86rem">Record at <a href="https://vocaroo.com" target="_blank" rel="noopener">vocaroo.com</a>, click Save &amp; Share, copy the link and paste it here.</p><input class="linkin" id="spLink" placeholder="https://vocaroo.com/..." autocomplete="off">'+
-  '<div id="spPrev"></div><p class="err" id="spErr"></p><div class="actions"><button class="btn pri" data-act="sub-s" id="submit" type="button">Submit</button><span class="saved" id="saveMsg"></span></div><div id="result"></div></div>';
+  var subs=mySubs(ex.id),sub=subs[0]||null,lk=sub&&lockInfo(ex.id);
+  if(sub&&(WNEW!==ex.id||lk)){
+    var pick=WVER&&WVER.ex===ex.id&&subs.filter(function(x){return x.id===WVER.id})[0];
+    return renderSubmittedSpeaking(ex,head,ban,pick||sub,lk,subs);
+  }
+  if(sub)ban+='<p class="banner">New version: your earlier submission is kept. <button class="linkish" data-act="w-view" type="button">Back to my submission</button></p>';
+  var P=spParts(ex),can=recSupported();
+  var rec=function(i){return can?recorderHTML(spRid(ex,i),{max:P[i].max,kind:'speaking',label:'Your answer · '+P[i].part+' (max '+fmtT(P[i].max)+')',onChange:spSync}):''};
+  var h='<div class="pane single">'+head+ban,i=0;
+  if(ex.kind==='readaloud')h+=(ex.focus?'<p class="banner"><b>Focus:</b> '+esc(ex.focus)+'</p>':'')+'<div class="essay" style="margin-bottom:6px">'+esc(ex.text||'')+'</div>'+rec(i++);
+  else{
+    if(ex.part1&&ex.part1.length)h+='<h3 style="font-size:1rem">Part 1</h3><ol class="sp-q">'+ex.part1.map(function(q){return '<li>'+esc(q)+'</li>'}).join('')+'</ol>'+rec(i++);
+    if(ex.cue)h+='<h3 style="font-size:1rem">Part 2</h3><div class="cue"><b>'+esc(ex.cue.title)+'</b><div style="margin-top:6px">You should say:</div><ul>'+(ex.cue.points||[]).map(function(p){return '<li>'+esc(p)+'</li>'}).join('')+'</ul></div>'+
+      '<div class="arow"><button class="btn sm" data-act="timer" type="button">Start 1:00 preparation</button><span class="timer" id="tmr">1:00</span></div>'+
+      '<label class="lbl" for="spNotes">Notes (for your preparation only)</label><textarea class="wbox" id="spNotes" style="min-height:90px"></textarea>'+rec(i++);
+    if(ex.part3&&ex.part3.length)h+='<h3 style="font-size:1rem">Part 3</h3><ol class="sp-q">'+ex.part3.map(function(q){return '<li>'+esc(q)+'</li>'}).join('')+'</ol>'+rec(i++);
+    if(!i)h+=rec(0);
+  }
+  var voc='<label class="lbl" for="spLink">Vocaroo link</label><p class="muted" style="margin:0 0 8px;font-size:.86rem">Record at <a href="https://vocaroo.com" target="_blank" rel="noopener">vocaroo.com</a>, click Save &amp; Share, copy the link and paste it here.</p><input class="linkin" id="spLink" placeholder="https://vocaroo.com/..." autocomplete="off"><div id="spPrev"></div>';
+  h+=(can?'<details class="vocalt"><summary>Recording does not work? Paste a Vocaroo link instead</summary>'+voc+'</details>':'<p class="banner">Recording is not available in this browser. Record on vocaroo.com and paste the link below.</p>'+voc)+
+    '<p class="saved" id="spHint" aria-live="polite"></p><p class="err" id="spErr"></p><div class="actions"><button class="btn pri" data-act="sub-s" id="submit" type="button" disabled>Submit</button><span class="saved" id="saveMsg"></span></div><div id="result"></div></div>';
+  $('#libBody').innerHTML=h;spSync();
+}
+// recordings of a submission (new: attempt.audio; old: Vocaroo link)
+function subAudioHTML(a){
+  var h=((a&&a.audio)||[]).map(function(x){return '<div class="spaud"><span class="spp">'+esc(x.part||'Recording')+(x.dur?' · '+fmtT(x.dur):'')+'</span>'+(audioTagHTML(x.url)||'<p class="saved">This recording cannot be played.</p>')+'</div>'}).join('');
+  if(a&&a.link)h+=vocEmbed(a.link)||'<p class="saved">'+esc(a.link)+'</p>';
+  return h||'<p class="saved">No recording.</p>';
+}
+function renderSubmittedSpeaking(ex,head,ban,a,lk,list){
+  done=true;list=list||[a];var n=((a.audio||[]).length)+(a.link?1:0);
+  $('#libBody').innerHTML='<div class="pane single">'+head+ban+versionsHTML(list,a)+subStatusHTML(a)+
+    '<p class="lbl">Your recording'+(n>1?'s':'')+'</p>'+subAudioHTML(a)+
+    (a.notes?'<p class="lbl">Your notes</p><div class="essay">'+esc(a.notes)+'</div>':'')+
+    (lk?'':'<div class="actions"><button class="btn sm" data-act="sp-new" data-ex="'+esc(ex.id)+'" type="button">Record a new version</button></div>')+nextBtns(true)+'</div>';
 }
 function startTimer(){
   clearTimer();var left=60,el=$('#tmr');el.textContent='1:00';
   timerId=setInterval(function(){left--;var e=$('#tmr');if(!e){clearTimer();return}e.textContent=fmtT(left);if(left<=0){clearTimer();e.textContent='0:00 · time is up'}},1000);
 }
 function submitSpeaking(){
-  if(done)return;var ex=exOf(NAV.ex),link=$('#spLink').value.trim();
-  if(!/^https?:\/\/(www\.)?(vocaroo\.com|voca\.ro)\/\S+/i.test(link)){$('#spErr').textContent='Paste a Vocaroo link, for example https://vocaroo.com/abc123.';return}
-  $('#spErr').textContent='';done=true;clearTimer();$('#submit').disabled=true;$('#spLink').readOnly=true;
-  $('#result').innerHTML='<div class="result"><p style="margin:0"><b>Submitted.</b> Your teacher will listen and give feedback.</p>'+nextBtns()+'</div>';
+  if(done)return;var ex=exOf(NAV.ex),li=$('#spLink'),link=li?li.value.trim():'',au=spAudio(ex),er=$('#spErr');
+  if(link&&!VOCRE.test(link)){er.textContent='Paste a Vocaroo link, for example https://vocaroo.com/abc123.';return}
+  if(!au.length&&!link){er.textContent='Record your answer and press "Use this recording", or paste a Vocaroo link.';return}
+  if(RECV){er.textContent='Stop the recording first.';return}
+  if(Object.keys(REC).some(function(k){var st=REC[k].st;return st==='done'||st==='err'||st==='up'})&&!confirm('A recording is not saved yet (press "Use this recording"). Submit without it?'))return;
+  er.textContent='';done=true;clearTimer();$('#submit').disabled=true;if(li)li.readOnly=true;WNEW=null;WVER=null;
+  $('#result').innerHTML='<div class="result"><p style="margin:0"><b>Submitted.</b> Your teacher will listen and give feedback.</p>'+nextBtns(U.role==='student')+'</div>';
   if(U.role==='teacher')return;
-  saveAttempt({email:U.email,student:U.name,course:U.course,cls:U.cls,ex:ex.id,score:0,total:0,items:[],kind:'submission',link:link,notes:$('#spNotes').value,ts:Date.now()}).then(function(h){var m=$('#saveMsg');if(m)m.textContent=h==='db'?'Saved.':'Kept for this session only.'});onAttemptSaved(ex,0,0,false);
+  var rec={email:U.email,student:U.name,course:U.course,cls:U.cls,ex:ex.id,score:0,total:0,items:[],kind:'submission',notes:($('#spNotes')&&$('#spNotes').value)||'',ts:Date.now()};
+  if(link)rec.link=link;if(au.length)rec.audio=au;
+  saveAttempt(rec).then(function(h){var m=$('#saveMsg');if(m)m.textContent=h==='db'?'Saved.':'Kept for this session only.';
+    // the recordings now belong to the submission: the next version starts with empty recorders
+    spParts(ex).forEach(function(p,i){var R=REC[spRid(ex,i)];if(R&&R.st==='saved')recReset(spRid(ex,i))});
+  });onAttemptSaved(ex,0,0,false);
 }
 
 /* ---------- Teacher dashboard (3 sub-tabs) ---------- */
@@ -2052,7 +2351,9 @@ function makeSamplePass(){
 }
 var initials=function(n){return String(n).split(/\s+/).filter(Boolean).slice(-2).map(function(w){return w[0]}).join('').toUpperCase()};
 var gLabel=function(g){return g.max?fmtS(g.overall)+' / '+g.max:'Band '+g.overall};
-var hasFb=function(g){return !!(g&&(g.link||(g.marks&&Object.keys(g.marks).length)))};
+var hasFb=function(g){return !!(g&&(g.link||(g.voice&&g.voice.url)||(g.marks&&Object.keys(g.marks).length)))};
+// the teacher's recorded voice feedback (grade.voice), for students
+function voiceFbHTML(g){var t=g&&g.voice&&audioTagHTML(g.voice.url);return t?'<div class="spaud"><span class="spp">Teacher\'s voice feedback'+(g.voice.dur?' · '+fmtT(g.voice.dur):'')+'</span>'+t+'</div>':''}
 var VOCRE=/^https?:\/\/(www\.)?(vocaroo\.com|voca\.ro)\/\S+/i;
 function mkLabels(e){return e.kind==='readaloud'?['Wrong word or sound','Wrong stress','Unclear or swallowed']:['Grammar or spelling','Word choice','Unclear or awkward']}
 function markSrc(a,e){return e.kind==='readaloud'?e.text:(e.skill==='writing'?(a.text||''):null)}
@@ -2074,7 +2375,7 @@ function showFb(id){
   closeFb();var a=attemptsOf(U.email).filter(function(x){return x.id===id})[0];if(!a)return;
   var g=gradeOf(a),e=exOf(a.ex),ai=aiOf(a)?a.ai:null;if((!g&&!ai)||!e)return;if(ai)AIX=ai;
   var ms=markSrc(a,e),has=g&&ms!=null&&g.marks&&Object.keys(g.marks).length;
-  document.body.insertAdjacentHTML('beforeend','<div class="msbg" id="fbBg" data-act="fb-close"></div><div class="fbbox" id="fbBox" role="dialog" aria-label="Teacher feedback"><div class="sechead"><div><h3 style="font-size:1.1rem">'+esc(e.title)+'</h3><span class="muted" style="font-size:.85rem">'+(g?'Teacher feedback':'AI feedback')+' · '+fmtD(a.ts)+'</span></div><button class="iconbtn" data-act="fb-close" type="button">Close</button></div>'+(g?'<div class="score" style="margin-bottom:8px"><b>'+esc(g.max?fmtS(g.overall)+' / '+g.max:g.overall)+'</b><span class="muted">'+(g.max?'score':'band')+'</span></div>'+(g.sticker?'<img class="stk-s" src="'+g.sticker+'" alt="Sticker">':'')+(g.link?'<h4 class="tk">Voice feedback</h4>'+vocEmbed(g.link):'')+(g.feedback?'<h4 class="tk">Note</h4><p style="margin:0">'+esc(g.feedback)+'</p>':'')+(has?'<h4 class="tk">Marked words</h4>'+legendHTML(e)+'<div class="mkpass ro'+(e.kind==='readaloud'?'':' essay')+'" style="margin-top:6px">'+wordsHTML(ms,g.marks,false)+'</div>':''):'')+(ai?aiHTML(ai,a.text||''):'')+'</div>');
+  document.body.insertAdjacentHTML('beforeend','<div class="msbg" id="fbBg" data-act="fb-close"></div><div class="fbbox" id="fbBox" role="dialog" aria-label="Teacher feedback"><div class="sechead"><div><h3 style="font-size:1.1rem">'+esc(e.title)+'</h3><span class="muted" style="font-size:.85rem">'+(g?'Teacher feedback':'AI feedback')+' · '+fmtD(a.ts)+'</span></div><button class="iconbtn" data-act="fb-close" type="button">Close</button></div>'+(g?'<div class="score" style="margin-bottom:8px"><b>'+esc(g.max?fmtS(g.overall)+' / '+g.max:g.overall)+'</b><span class="muted">'+(g.max?'score':'band')+'</span></div>'+(g.sticker?'<img class="stk-s" src="'+g.sticker+'" alt="Sticker">':'')+((g.voice&&g.voice.url)||g.link?'<h4 class="tk">Voice feedback</h4>'+voiceFbHTML(g)+(g.link?vocEmbed(g.link):''):'')+(g.feedback?'<h4 class="tk">Note</h4><p style="margin:0">'+esc(g.feedback)+'</p>':'')+(has?'<h4 class="tk">Marked words</h4>'+legendHTML(e)+'<div class="mkpass ro'+(e.kind==='readaloud'?'':' essay')+'" style="margin-top:6px">'+wordsHTML(ms,g.marks,false)+'</div>':''):'')+(ai?aiHTML(ai,a.text||''):'')+'</div>');
 }
 function mkAct(a,t){
   if(a==='mk-word'){MK.pw=+t.dataset.w;mkSheet(t.textContent);return true}
@@ -2097,16 +2398,17 @@ document.addEventListener('keydown',function(e){
 function modalHTML(a){
   var e=exOf(a.ex),g=gradeOf(a),cr=CRIT[critKey(e)],mx=gMax(e),st=gStep(e),ms=markSrc(a,e),rd=e.kind==='readaloud';
   var h='<div class="modal" id="mkModal" role="dialog" aria-modal="true" aria-label="Submission"><div class="mbox"><div class="sechead"><div><h3 style="font-size:1.15rem">'+esc(a.student)+'</h3><span class="muted" style="font-size:.85rem">'+esc(a.cls)+' · '+esc(e.title)+' · '+fmtD(a.ts)+(a.sample?' · sample':'')+'</span></div><button class="iconbtn" data-act="mclose" type="button">Close</button></div>';
-  if(rd)h+=(e.focus?'<p class="banner"><b>Focus:</b> '+esc(e.focus)+'</p>':'')+'<h4 class="tk">Student recording</h4><div style="margin:6px 0 10px">'+(vocEmbed(a.link)||'<p class="saved">No recording link.</p>')+'</div>';
+  if(rd)h+=(e.focus?'<p class="banner"><b>Focus:</b> '+esc(e.focus)+'</p>':'')+'<h4 class="tk">Student recording</h4><div style="margin:6px 0 10px">'+subAudioHTML(a)+'</div>';
   else if(e.skill==='writing')h+='<h4 class="tk">Task</h4>'+writingTask(e);
-  else h+='<div style="margin:10px 0">'+vocEmbed(a.link)+'</div><h4 class="tk">Transcript</h4><div class="subtext" style="max-height:170px">'+(a.transcript?esc(a.transcript):'<span class="muted">No transcript yet. On the live site it appears here automatically from the recording.</span>')+'</div>'+(a.notes?'<p class="saved" style="margin:0 0 8px">Student notes: '+esc(a.notes)+'</p>':'');
+  else h+='<h4 class="tk">Student recording</h4><div style="margin:6px 0 10px">'+subAudioHTML(a)+'</div><h4 class="tk">Transcript</h4><div class="subtext" style="max-height:170px">'+(a.transcript?esc(a.transcript):'<span class="muted">No transcript yet. On the live site it appears here automatically from the recording.</span>')+'</div>'+(a.notes?'<p class="saved" style="margin:0 0 8px">Student notes: '+esc(a.notes)+'</p>':'');
   if(ms!=null)h+='<h4 class="tk">'+(rd?'Mark mistakes on the passage':'Student answer · tap a word to mark')+'</h4>'+legendHTML(e)+'<div class="mkpass'+(rd?'':' essay')+'" id="mkText">'+wordsHTML(ms,MK.marks,true)+'</div><p class="saved" id="mkCnt" style="margin:6px 0 8px">'+markCnt()+(rd?'':' · '+(a.words||wordCount(a.text))+' words')+'</p>';
   if(!rd&&e.skill==='writing'&&(aiOf(a)||(a.fixes&&a.fixes.length)))h+='<h4 class="tk">Auto corrections</h4>'+correctionsHTML(a.text||'',aiOf(a)?aiItems(a.ai):fixItems(a.fixes),true);
   h+='<p class="banner" style="margin-top:6px">Marking is optional. If you skip it, this still counts as done.</p>';
   h+=cr.map(function(c,i){var v=(g&&g.scores&&g.scores[i]!=null)?g.scores[i]:6;return '<div class="rub"><label for="rb'+i+'">'+esc(c)+'</label><span class="mono" data-cv="'+i+'">'+fmtS(v)+'</span><input type="range" id="rb'+i+'" data-crit="'+i+'" min="0" max="'+mx+'" step="'+st+'" value="'+v+'"></div>'}).join('');
   h+='<div class="rub"><span>Overall '+(rd?'(out of 10)':'band')+'</span><span class="band" id="mkOverall">'+(g?fmtS(g.overall):6)+'</span></div>';
   h+='<div class="stkrow"><div class="stk" id="stkBox" tabindex="0" role="button" aria-label="Paste a sticker image"></div><div class="stkbtn"><span class="lbl" style="margin:0">Sticker</span><button class="btn sm" data-act="stk-file" type="button">Choose image</button><button class="btn sm" data-act="stk-clear" type="button">Remove</button><input type="file" id="stkFile" accept="image/*" hidden></div></div>';
-  h+='<label class="lbl" for="mkLink">Voice feedback (Vocaroo link, optional)</label><input class="linkin" id="mkLink" placeholder="https://vocaroo.com/..." autocomplete="off" inputmode="url" value="'+esc(MK.link||'')+'"><div id="mkLinkPrev">'+(VOCRE.test(MK.link||'')?vocEmbed(MK.link):'')+'</div>';
+  h+='<h4 class="tk">Voice feedback (optional)</h4>'+recorderHTML('fb_'+a.id,{max:180,kind:'feedback',saved:g&&g.voice})+
+    '<details class="vocalt"'+(MK.link?' open':'')+'><summary>Or paste a Vocaroo link</summary><input class="linkin" id="mkLink" aria-label="Vocaroo link" placeholder="https://vocaroo.com/..." autocomplete="off" inputmode="url" value="'+esc(MK.link||'')+'"><div id="mkLinkPrev">'+(VOCRE.test(MK.link||'')?vocEmbed(MK.link):'')+'</div></details>';
   h+='<label class="lbl" for="mkFb">Written note (optional)</label><textarea class="wbox" id="mkFb" style="min-height:80px">'+esc(g?g.feedback||'':'')+'</textarea><div class="actions"><button class="btn pri" data-act="save-grade" type="button">'+(g?'Update grade':'Save grade')+'</button><span class="saved" id="mkMsg" aria-live="polite"></span></div></div></div>';
   return h;
 }
@@ -2143,7 +2445,10 @@ function saveGrade(){
   var a=curSub();if(!a)return;var e=exOf(a.ex),msg=$('#mkMsg'),link=($('#mkLink').value||'').trim();
   if(link&&!VOCRE.test(link)){if(msg)msg.textContent='The link must be a Vocaroo link, for example https://vocaroo.com/abc123.';return}
   var sc=$$('#v-mark [data-crit]').map(function(x){return +x.value}),ov=roundFor(sc.reduce(function(s,v){return s+v},0)/sc.length,e);
+  var fr=REC['fb_'+a.id];
+  if(fr&&(fr.st==='rec'||fr.st==='done'||fr.st==='up'||fr.st==='err')){if(msg)msg.textContent='Voice feedback: press "Use this recording" first (or Re-record to remove it).';return}
   var g={scores:sc,overall:ov,feedback:$('#mkFb').value.trim(),sticker:MK.sticker||'',link:link,marks:Object.assign({},MK.marks||{}),by:U.name,ts:Date.now()};
+  g.voice=fr&&fr.st==='saved'?{id:fr.saved.id,url:fr.saved.url,dur:fr.saved.dur||0,type:fr.saved.type||''}:null; // teacher's recorded feedback
   if(e.kind==='readaloud')g.max=10;
   var fin=function(){renderMark();var m=$('#mkMsg');if(m)m.textContent='Saved. The student sees '+gLabel(g)+'.'};
   var loc=function(){gradesLocal[a.id]=g;fin()};
@@ -2290,7 +2595,7 @@ var CP={skill:'listening',preset:'l5',view:'sum',draft:{},last:null,pvSt:0};
 function addBarHTML(){
   return '<div class="actions"><button class="btn pri" data-act="add-ex" type="button">Add to '+esc($('#cBook').selectedOptions[0].textContent)+' · '+esc($('#cTest').selectedOptions[0].textContent)+'</button><span class="saved" id="addMsg"></span></div>';
 }
-function checkJSON(){var r=parseAI($('#jsonIn').value);parsed=r.data||null;CP.last=r;CP.pvSt=0;renderPrev()}
+function checkJSON(){var r=parseAI($('#jsonIn').value);if(r.data&&r.data.skill==='listening'&&!r.data.audio&&CP.aud)r.data.audio=CP.aud.url;parsed=r.data||null;CP.last=r;CP.pvSt=0;renderPrev()}
 function renderPrev(){
   var box=$('#createPrev'),r=CP.last,j=$('#jsonIn');if(!box)return;
   $$('#cpView button').forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.v===CP.view))});
@@ -2323,7 +2628,84 @@ function renderCpPrompt(){
   $('#cpSave').hidden=!ed;$('#cpReset').hidden=!ed;
   $('#copyMsg').textContent=ed?(saved?'Using your saved template.':'Default prompt. You can edit it.'):'Read only. Ask an admin to change prompts.';
   if(ta.classList){ta.classList.remove('cpanim');void ta.offsetWidth;ta.classList.add('cpanim')}
+  renderAudBox();renderAutoL();
 }
+// CP.aud = {id, url, ...}: audio uploaded in Create, added as audio_url to the Listening exercise (kept in localStorage md-craud)
+CP.aud=(function(){try{var o=JSON.parse(lsGet('md-craud')||'null');return o&&o.url?o:null}catch(e){return null}})();
+function renderAudBox(){
+  var b=$('#audBox');if(!b)return;b.hidden=CP.skill!=='listening';if(b.hidden)return;
+  if(REC.cr_aud&&$('#rec_cr_aud'))return; // already drawn (and the recorder state is alive)
+  b.innerHTML='<h3>Audio (optional)</h3><p>Upload the mp3 / m4a / wav (8 MB at most) or record it here. It is attached to the Listening exercise you add below, so there is no need to put files in the repo.</p>'+
+    recorderHTML('cr_aud',{max:600,kind:'lesson',upload:true,saved:CP.aud,onChange:cpAudChanged})+'<p class="saved" id="audNote" style="margin:4px 0 0"></p>';
+  cpAudNote();
+}
+function cpAudNote(){var n=$('#audNote');if(n)n.textContent=CP.aud?'Attached: every Listening exercise you add from here uses this audio until you press Re-record.':''}
+function cpAudChanged(rid){
+  var R=REC[rid],was=CP.aud&&CP.aud.url;
+  CP.aud=R&&R.st==='saved'?R.saved:null;
+  try{lsSet('md-craud',CP.aud?JSON.stringify(CP.aud):'')}catch(e){}
+  cpAudNote();alStatus();
+  if(CP.aud&&CP.aud.url!==was)cpAudApply();
+}
+// put audio_url into the JSON of step 2 (Listening only), then check it again
+function cpAudApply(){
+  var j=$('#jsonIn');if(!CP.aud||!j||!j.value.trim())return;
+  try{var o=JSON.parse(j.value.trim().replace(/^```(?:json)?/i,'').replace(/```$/,'').trim());
+    if(o&&typeof o==='object'&&(o.skill==='listening'||o.stage_1_vocabulary)){o.audio_url=CP.aud.url;j.value=JSON.stringify(o,null,2);checkJSON()}
+  }catch(e){}
+}
+/* Auto-create a 5-stage Listening lesson: paste the transcript -> /api/ai/lesson (Gemini, same prompt as preset l5:
+   LPROMPT or the admin's saved template) -> the JSON goes into step 2 and is checked by parseAI / parseLesson -> preview -> Add.
+   Draft (title, transcript, questions) is kept in localStorage md-al. */
+var AL=(function(){var o={};try{o=JSON.parse(lsGet('md-al')||'{}')||{}}catch(e){o={}}o.busy=false;o.msg='';o.bad=false;return o})();
+function alShow(){return CP.skill==='listening'&&cpCur().id==='l5'}
+function renderAutoL(){
+  var b=$('#alBox');if(!b)return;b.hidden=!alShow();if(b.hidden)return;
+  if(!$('#alTr'))b.innerHTML='<h3>Auto-create a 5-stage lesson (AI)</h3><p>Paste the transcript and press Generate. The AI follows the 5-stage prompt in step 1; the lesson then appears in the preview, ready to add. You can still do it by hand with steps 1 and 2.</p>'+
+    '<label class="field" for="alTitle">Title (optional)<input id="alTitle" maxlength="120" autocomplete="off" value="'+esc(AL.title||'')+'"></label>'+
+    '<div class="row" style="justify-content:space-between;align-items:end;margin:6px 0 0"><label class="lbl" for="alTr" style="margin:0">Transcript</label><button class="btn sm" type="button" data-act="al-trn" id="alTrn">Transcribe from audio (AI)</button></div><textarea id="alTr" spellcheck="false" placeholder="AMBER: Hello William, this is Amber…">'+esc(AL.tr||'')+'</textarea>'+
+    '<details class="alq"'+(AL.q?' open':'')+'><summary>Original questions and answer key (optional, recommended)</summary><textarea id="alQ" spellcheck="false" placeholder="1. Name of the agency: ______  Answer: Bankside">'+esc(AL.q||'')+'</textarea>'+
+    '<p class="saved" style="margin:4px 0 0">With the answers, the dictation never blanks a word the original test already asked.</p></details>'+
+    '<div class="row" style="margin-top:10px"><button class="btn pri" type="button" data-act="al-gen" id="alGo">Generate 5-stage lesson</button><span class="saved" id="alMsg" aria-live="polite"></span></div>';
+  alStatus();
+}
+function alStatus(){
+  var m=$('#alMsg'),g=$('#alGo');
+  if(m){m.textContent=AL.msg||'';m.className='saved'+(AL.bad?' alerr':'')}
+  if(g){g.disabled=!!AL.busy;g.textContent=AL.busy&&AL.busy!=='tr'?'Generating…':(AL.bad&&AL.tried?'Try again':'Generate 5-stage lesson')}
+  var tb=$('#alTrn');if(tb){tb.disabled=!!AL.busy||!CP.aud;tb.title=CP.aud?'':'Upload or record the audio first (Audio box above).';tb.textContent=AL.busy==='tr'?'Transcribing…':'Transcribe from audio (AI)'}
+}
+// the AI writes the transcript of the audio in the Audio box; the teacher can edit it before generating
+function alTranscribe(){
+  if(AL.busy||!CP.aud)return;
+  AL.busy='tr';AL.bad=false;AL.msg='Transcribing the audio… this can take up to a minute.';alStatus();
+  var fin=function(t,model){AL.busy=false;AL.tr=t;var ta=$('#alTr');if(ta)ta.value=t;alSave();AL.msg='Transcript ready'+(model?' ('+model+')':'')+'. Check it, fix names or numbers if needed, then press Generate.';alStatus()};
+  var no=function(e){AL.busy=false;AL.bad=true;AL.msg=(e&&e.message)||'Something went wrong. Try again.';alStatus()};
+  if(DEMO){setTimeout(function(){try{fin(JSON.parse(EXAMPLE_L).material,'demo: sample transcript')}catch(e){no(e)}},1000);return}
+  staffApi('ai/transcribe',{audioId:CP.aud.id,tzo:new Date().getTimezoneOffset()}).then(function(d){fin(d.transcript,d.model)},no);
+}
+function alSave(){try{lsSet('md-al',JSON.stringify({title:AL.title||'',tr:AL.tr||'',q:AL.q||''}))}catch(e){}}
+function alPrompt(){var p=cpPresets().listening[0],t=tplGet();return CP.draft[p.id]!=null?CP.draft[p.id]:(t[p.id]!=null?t[p.id]:p.def)}
+function alGen(){
+  if(AL.busy)return;
+  var tr=String(AL.tr||'').trim();
+  if(tr.length<150){AL.bad=true;AL.msg='Paste the whole transcript first.';alStatus();return}
+  AL.busy=true;AL.bad=false;AL.tried=true;AL.msg='Writing the lesson… this usually takes 20 to 60 seconds. Stay on this page.';alStatus();
+  var fin=function(o,model){
+    AL.busy=false;if(CP.aud)o.audio_url=CP.aud.url;$('#jsonIn').value=JSON.stringify(o,null,2);checkJSON();
+    var r=CP.last;
+    if(r&&r.errs&&r.errs.length){AL.bad=true;AL.msg='The AI lesson has a few problems (listed in the preview). Press Try again, or fix the JSON in step 2.'}
+    else{AL.bad=false;AL.msg='Done'+(model?' ('+model+')':'')+'. Check the preview, choose Book and Test in step 2, then press Add.'}
+    alStatus();var pv=$('#createPrev');if(pv&&pv.scrollIntoView)pv.scrollIntoView({behavior:'smooth',block:'start'});
+  };
+  var no=function(e){AL.busy=false;AL.bad=true;AL.msg=(e&&e.message)||'Something went wrong. Try again.';alStatus()};
+  if(DEMO){setTimeout(function(){try{var o=JSON.parse(EXAMPLE_L);if(AL.title)o.title=AL.title;fin(o,'demo: sample lesson, the live site uses Gemini')}catch(e){no(e)}},1200);return}
+  staffApi('ai/lesson',{title:AL.title||'',transcript:tr,questions:AL.q||'',prompt:alPrompt(),tzo:new Date().getTimezoneOffset()}).then(function(d){fin(d.lesson,d.model)},no);
+}
+document.addEventListener('input',function(e){
+  var id=e.target&&e.target.id;
+  if(id==='alTitle'||id==='alTr'||id==='alQ'){AL[id==='alTitle'?'title':id==='alTr'?'tr':'q']=e.target.value;alSave()}
+});
 function cpSave(){
   if(!cpCanEdit())return;var p=cpCur(),ta=$('#promptText'),t=tplGet();
   if(!String(ta.value).trim()){$('#copyMsg').textContent='The prompt cannot be empty.';return}
@@ -2443,7 +2825,7 @@ function applyTheme(t){document.documentElement.setAttribute('data-theme',t);lsS
 function curDark(){var t=document.documentElement.getAttribute('data-theme');if(t)return t==='dark';return !!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)}
 function tabsFor(){return U.role==='teacher'?[['library','Library'],['dash','Dashboard'],['asg','Assignments'],['mark','Marking'],['roster','Students'],['create','Create'],['prize','Prizes'],['xps','Settings']].concat(U.adm?[['admin','Admin']]:[]):[['library','Home'],['cards','Flashcards'],['errors','Error Notebook'],['ranks','Leaderboard'],['wheel','Lucky Wheel'],['bag','Inventory'],['set','Settings']]}
 function showTab(t){
-  TAB=t;stopAudio();clearTimer();MK.open=false;
+  TAB=t;stopAudio();clearTimer();MK.open=false;recClearAll();
   ['login','lib','cards','errors','ranks','wheel','bag','set','prize','xps','dash','asg','mark','roster','create','admin'].forEach(function(n){$('#v-'+n).hidden=true});
   if(!U){var lv=$('#v-login');lv.hidden=false;if(!DEMO&&lsGet('md-email')&&!window.MD_USER){lv.setAttribute('data-wait','');setTimeout(function(){lv.removeAttribute('data-wait')},10000)}else lv.removeAttribute('data-wait');$('#tabs').hidden=true;$('#who').hidden=true;return}
   $('#v-login').removeAttribute('data-wait');if(t==='admin'&&!U.adm){t='library';TAB=t}
@@ -2486,6 +2868,7 @@ document.addEventListener('click',function(e){
   if(FXP&&!e.target.closest('#fxPop')&&!e.target.closest('[data-why]'))fxPopClose();
   var t=e.target.closest('[data-act]');if(!t)return;var a=t.dataset.act,au=$('#aud');
   if(t.tagName==='BUTTON'&&t.closest('summary'))e.preventDefault(); // a button in a <details> header must not open/close it
+  if((a==='tab'||a==='nav'||a==='next'||a==='logout'||a==='lx'||a==='daily')&&recUnsaved()&&!confirm(REC_LEAVE))return;
   if(extAct(a,t))return;
   if(a==='tab'){NAV.daily=null;DY=null;if(CV&&CV.where==='daily')CV=null;return showTab(t.dataset.tab)}
   if(a==='nav'){XED=null;var nb=t.dataset.book||null,nt=t.dataset.test||null,ns=t.dataset.skill||null,ne=t.dataset.ex||null;LIBX={book:nb,test:nt,skill:ns};NAV={book:ne?nb:null,test:ne?nt:null,skill:ne?ns:null,ex:ne};PANE='q';return showTab('library')}
@@ -2499,6 +2882,7 @@ document.addEventListener('click',function(e){
   if(a==='ai-retry'){aiRun();return}
   if(a==='w-new'){var wsub=mySubs(t.dataset.ex).filter(function(x){return x.id===t.dataset.id})[0]||mySub(t.dataset.ex),wk='md-draft-'+U.email+'-'+t.dataset.ex;WNEW=t.dataset.ex;if(wsub&&(!lsGet(wk)||wsub!==mySub(t.dataset.ex)))lsSet(wk,wsub.text||''); /* from an older version: start from that text */renderPlayer();window.scrollTo&&window.scrollTo(0,0);return}
   if(a==='w-view'){WNEW=null;renderPlayer();return}
+  if(a==='sp-new'){var sx=exOf(t.dataset.ex);if(sx)spParts(sx).forEach(function(p,i){recReset(spRid(sx,i))});WNEW=t.dataset.ex;renderPlayer();window.scrollTo&&window.scrollTo(0,0);return}
   if(a==='ai-card'){var v=AIX&&(AIX.vocabulary_upgrades||[])[+t.dataset.i];if(!v)return;saveCard({w:vuWord(v),ipa:'',pos:'',en:v.note||'',vi:'',ex:v.example||'',syn:[v.original],ant:[]});if(vuHas(v)){t.disabled=true;t.textContent='Added ✓'}return}
   if(a==='cx-copy'){var cv=CXP[t.dataset.k]||'',cno=function(){toast('Copy failed. Select the text and copy it by hand.')};try{navigator.clipboard.writeText(cv).then(function(){toast('Copied.')},cno)}catch(x){cno()}return}
   if(a==='fx-tip'){if(t.getAttribute('data-why')!=null)fxPopOpen(t);fxHot(t);return}
@@ -2545,6 +2929,8 @@ document.addEventListener('click',function(e){
   if(a==='cp-skill'){cpStash();CP.skill=t.dataset.v;CP.preset=cpPresets()[CP.skill][0].id;return renderCpPrompt()}
   if(a==='cp-preset'){cpStash();CP.preset=t.dataset.id;return renderCpPrompt()}
   if(a==='cp-save')return cpSave();
+  if(a==='al-gen')return alGen();
+  if(a==='al-trn')return alTranscribe();
   if(a==='cp-reset')return cpReset();
   if(a==='cp-view'){CP.view=t.dataset.v;if(!CP.last&&$('#jsonIn').value.trim())return checkJSON();return renderPrev()}
   if(a==='pv-stage'){CP.pvSt=+t.dataset.i;return renderPrev()}
@@ -2580,7 +2966,7 @@ document.addEventListener('input',function(e){
   if(e.target.dataset&&e.target.dataset.crit!==undefined)updBand();
   if(e.target.id==='fDd'){var nmI=$('#fNm'),dp=e.target.value.split('-');if(nmI&&dp.length===3)nmI.placeholder=asgName({due:new Date(+dp[0],+dp[1]-1,+dp[2]).getTime()})}
   if(e.target.id==='csColor'||e.target.id==='csName'){var pc=$('#csPrev');if(pc){var cc=$('#csColor').value;pc.querySelector('.covl').style.background=cc;pc.querySelector('.cn').textContent=$('#csName').value}}
-  if(e.target.id==='spLink'){var pv=$('#spPrev');if(pv)pv.innerHTML=vocEmbed(e.target.value)}
+  if(e.target.id==='spLink'){var pv=$('#spPrev');if(pv)pv.innerHTML=vocEmbed(e.target.value);spSync()}
   if(e.target.id==='mkLink'){MK.link=e.target.value.trim();var lp=$('#mkLinkPrev');if(lp)lp.innerHTML=VOCRE.test(MK.link)?vocEmbed(MK.link):''}
   if(e.target.id==='wText'){lsSet('md-draft-'+U.email+'-'+NAV.ex,e.target.value);updWords()}
 });
@@ -3624,6 +4010,7 @@ function xSave(){
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
 function extAct(a,t){
+  if(audAct(a,t))return true;
   if(adAct(a,t))return true;
   if(enAct(a,t))return true;
   if(mkAct(a,t))return true;
@@ -4066,8 +4453,8 @@ function demoAdminRun(path,b){
   }
   err('Unknown action.');
 }
-function adPost(path,body,key){
-  var hd={'Content-Type':'application/json'};if(key)hd['X-Admin-Key']=key;
+function adPost(path,body,key,more){
+  var hd={'Content-Type':'application/json'};if(key)hd['X-Admin-Key']=key;if(more)Object.keys(more).forEach(function(k){if(more[k])hd[k]=more[k]});
   return fetch(API_BASE+'/'+path,{method:'POST',headers:hd,body:JSON.stringify(body||{})}).then(function(r){
     return r.json().catch(function(){return {_nojson:true}}).then(function(d){d._status=r.status;d._ok=r.ok;return d})
   },function(){throw new Error('No connection. Check your internet and try again.')});

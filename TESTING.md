@@ -153,5 +153,33 @@ Chuẩn bị: deploy bản mới (có `functions/`). Không cần sửa Firebase
 2. [ ] Mỗi lỗi trong danh sách 3 dòng: (số) tên loại lỗi / lỗi gốc → sửa / giải thích. Cỡ chữ ngang phần Vocabulary upgrades.
 3. [ ] Giống vậy ở Open feedback, modal Marking của giáo viên và Admin → AI test. Kiểm tra 390px và dark mode.
 
+## GĐ 7 — Phần A: ghi âm Speaking (dùng tài khoản test)
+1. [ ] Học sinh mở bài Speaking → mỗi Part có khung **● Record** (Part 1, Part 2: tối đa 3:00). Bấm Record → trình duyệt hỏi quyền micro → cho phép → chấm đỏ nhấp nháy, đồng hồ `0:10 / 3:00`, thanh âm lượng nhảy → **■ Stop** → nghe lại → **Use this recording** → "Uploading… %" → "Saved ✓". Nút Submit bật lên → Submit.
+   - [ ] Chrome máy tính · [ ] Chrome Android · [ ] Safari iPhone
+2. [ ] Ghi tới hết thời gian tối đa → tự dừng. Re-record → ghi lại được.
+3. [ ] Chặn quyền micro (biểu tượng ổ khóa trên thanh địa chỉ) → bấm Record → câu "Microphone is blocked…" kèm hướng dẫn iPhone. Mục "Recording does not work? Paste a Vocaroo link instead" vẫn dùng được để nộp.
+4. [ ] Đang ghi mà chuyển tab khác của app (hoặc bấm Back) → hỏi xác nhận nếu có bản ghi chưa lưu; ghi âm dừng, micro tắt (biểu tượng micro trên trình duyệt biến mất).
+5. [ ] Ngắt mạng rồi bấm Use this recording → báo lỗi + nút **Retry**; bật mạng → Retry → Saved ✓ (không phải ghi lại).
+6. [ ] Mở lại bài Speaking đã nộp → "Submitted on …", nghe được từng Part và **tua được** (thử trên iPhone). Nộp thêm bằng **Record a new version** → có dropdown Version.
+7. [ ] Giáo viên mở bài trong Marking → thấy trình phát "Part 1", "Part 2". Bài cũ (link Vocaroo) vẫn hiện trình phát Vocaroo.
+8. [ ] Mở `https://<site>/api/audio/<id>` của một bản ghi → phát được. Học sinh upload quá 20 file trong 1 giờ (cùng mạng) → "Too many uploads from this network. Try again in an hour."
+9. [ ] Đăng nhập student / teacher / admin, AI chấm Writing, Error Notebook vẫn chạy như trước.
+
+## Tự tạo bài Listening 5 giai đoạn
+1. [ ] Giáo viên → Create → Listening → 5-stage lesson → thấy thẻ "Auto-create a 5-stage lesson (AI)" ở trên cùng. Chọn Reading thì thẻ ẩn đi.
+2. [ ] Dán transcript (có thể thêm câu hỏi + đáp án gốc), nhập Title → **Generate** → "Writing the lesson…" → sau 20–60 giây ô JSON ở bước 2 được điền, preview hiện đủ 5 giai đoạn → chọn Book, Test → Add → học sinh mở bài làm được đủ 5 giai đoạn.
+3. [ ] Nếu preview báo lỗi (AI viết thiếu/sai) → bấm **Try again**, hoặc sửa JSON ở bước 2 rồi Check format.
+4. [ ] Tải lại trang → transcript và câu hỏi vẫn còn (nháp). Cách cũ: Copy prompt + dán JSON vẫn chạy.
+5. [ ] Phiên đăng nhập quá 12 giờ → bấm Generate → hiện ô "Enter your password to continue" → nhập đúng → tạo bài tiếp được.
+
+## GĐ 7 — Phần B: Voice feedback + audio bài nghe + phiên âm
+1. [ ] Giáo viên mở một bài (Writing hoặc Speaking) trong Marking → khung "Voice feedback" → Record → Stop → Use this recording → Saved ✓ → Save grade. Bấm Save khi chưa "Use this recording" → báo nhắc.
+2. [ ] Học sinh mở lại bài đó (hoặc Open feedback ở Recent results) → thấy trình phát "Teacher's voice feedback", nghe được.
+3. [ ] Mở lại bài đã chấm trong Marking → bản ghi cũ vẫn hiện (Saved ✓); Re-record rồi Save mà không ghi lại → học sinh không còn thấy voice feedback.
+4. [ ] Create → Listening → khung **Audio** → Upload a file (mp3) → Use this recording → Saved ✓. Nếu ô JSON ở bước 2 đang có bài Listening → `audio_url` tự đổi thành `/api/audio/…`. Add → học sinh mở bài nghe được audio, tua ±5 giây được.
+5. [ ] Trong thẻ Auto-create → **Transcribe from audio (AI)** → sau ≤ 1 phút ô Transcript được điền (có nhãn MAN:/WOMAN: hoặc tên). Sửa lại nếu cần → Generate → preview → Add → bài có cả audio lẫn 5 giai đoạn.
+6. [ ] File ghi âm từ trình duyệt (webm/m4a) mà Transcribe báo lỗi http400 → thử lại với file mp3/wav.
+7. [ ] Gọi `/api/ai/transcribe` hoặc `/api/ai/lesson` không có đăng nhập giáo viên → bị từ chối (401).
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

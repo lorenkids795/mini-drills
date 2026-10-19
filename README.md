@@ -71,11 +71,18 @@ Cloudflare có thể chạy `/api` ở máy chủ thuộc khu vực Gemini chặ
 - Sửa code trong script xong phải **Deploy → Manage deployments → Edit (bút chì) → Version: New version → Deploy**, nếu không bản cũ vẫn chạy (link `/exec` giữ nguyên).
 - Muốn quay lại gọi trực tiếp: xóa biến `GEMINI_PROXY_URL` rồi deploy lại.
 
+## 3f. Ghi âm trên web (Speaking, nhận xét bằng giọng nói, audio bài nghe)
+- File ghi âm lưu trong **KV** (`MD_KV`) đang có, không cần cài thêm. Mỗi file tối đa 8 MB (khoảng 10 phút).
+- Gói miễn phí của Cloudflare KV có **1 GB** dung lượng và **1.000 lần ghi/ngày**. Bài Speaking của học sinh tự xóa sau 365 ngày. Khoảng 1 phút ghi âm ≈ 0,5–1 MB, nên 1 GB đủ cho khoảng 1.000–2.000 phút.
+- Khi cần nhiều chỗ hơn, bật **R2**: Cloudflare → R2 → tạo bucket (vd. `md-audio`) → Pages project → Settings → **Bindings** → Add → **R2 bucket** → Variable name: `MD_AUDIO` → chọn bucket → deploy lại. Từ đó file mới lưu vào R2 (file cũ trong KV không tự chuyển). R2 không tự xóa file cũ: nếu muốn, tạo **Lifecycle rule** trong bucket.
+- Giáo viên/admin cần phiên đăng nhập còn hạn (12 giờ) để upload; hết hạn thì app tự hỏi lại mật khẩu.
+
 ## 4. Dùng
 - Giáo viên: mở site → tab **Teacher** → "First time? Create your teacher password" → nhập email, mật khẩu mới và setup key.
 - Tab **Students** → dán danh sách CSV với cột `name, course, class` → Import. Học sinh tự chọn tên trên trang đăng nhập.
 - Nếu đã biết email học sinh, thêm cột `email`: học sinh bấm "My teacher already added my email" để đặt mật khẩu.
-- Audio nghe: bỏ file mp3 vào thư mục `audio/` trong repo, trong JSON thêm `"audio_url": "audio/ten-file.mp3"`.
+- Audio nghe: ở tab **Create** → Listening → khung **Audio** → Upload a file (mp3/m4a/wav, tối đa 8 MB) hoặc Record. Audio tự gắn vào bài. Cách cũ (bỏ mp3 vào thư mục `audio/` và ghi `"audio_url": "audio/ten-file.mp3"`) vẫn dùng được.
+- Bài Listening 5 giai đoạn: Create → Listening → 5-stage lesson → (có audio thì bấm **Transcribe from audio**) → dán/sửa transcript → **Generate 5-stage lesson** → kiểm tra preview → Add.
 
 ## Giới hạn
 - Học sinh nhập email tự do: ai biết tên và lớp thì có thể đăng ký trước tên đó. Giáo viên kiểm tra tab Students nếu thấy lạ.

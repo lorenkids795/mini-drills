@@ -39,6 +39,8 @@
   }
   function enter(res) {
     try { if (res.adminKey) sessionStorage.setItem('md-akey', res.adminKey); else sessionStorage.removeItem('md-akey'); } catch (e) {}
+    // teachers and admin: staffKey for /api/audio (feedback, lesson) and the staff AI tools (see staffApi in index.html)
+    try { if (res.staffKey) sessionStorage.setItem('md-skey', res.staffKey); else sessionStorage.removeItem('md-skey'); } catch (e) {}
     return ready.then(function (fb) { return fb.auth().signInWithCustomToken(res.token); });
   }
 
@@ -212,7 +214,7 @@
     fetch(API + '/status?em=' + encodeURIComponent(em)).then(function (r) { return r.json(); }).then(function (d) {
       var why = d && d.moved ? 'moved' : d && d.off ? 'off' : d && d.kicked ? 'kicked' : '';
       if (!why) return;
-      try { sessionStorage.setItem('md-ended', why); sessionStorage.removeItem('md-akey'); localStorage.removeItem('md-email'); } catch (e) {}
+      try { sessionStorage.setItem('md-ended', why); sessionStorage.removeItem('md-akey'); sessionStorage.removeItem('md-skey'); localStorage.removeItem('md-email'); } catch (e) {}
       fb.auth().signOut().then(function () { location.reload(); });
     }, function () { /* offline: try again next time */ });
   }
@@ -245,7 +247,7 @@
       document.addEventListener('click', function (ev) {
         var t = ev.target.closest && ev.target.closest('[data-act="logout"],#btnLogout,.logout');
         if (t) {
-          try { localStorage.removeItem('md-email'); sessionStorage.removeItem('md-akey'); } catch (e) {}
+          try { localStorage.removeItem('md-email'); sessionStorage.removeItem('md-akey'); sessionStorage.removeItem('md-skey'); } catch (e) {}
           fb.auth().signOut().then(function () { location.reload(); });
         }
       }, true);
