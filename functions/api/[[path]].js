@@ -564,7 +564,7 @@ async function adminUsers(env) {
     r.status = !off ? 'active' : off === 'kicked' ? 'kicked' : off.indexOf('moved:') === 0 ? 'moved' : 'paused';
     r.hasPassword = !!(await env.MD_KV.get('acct:' + r.email));
   }));
-  return json({ users: out, me: ad });
+  return json({ users: out, me: ad, ver: API_VERSION });
 }
 
 // Set a new password for anyone. For the admin's own account the current password is needed too.
@@ -690,6 +690,9 @@ async function rosterRow(env, email) {
   return hit ? { id: hit.id, data: hit } : null;
 }
 
+// Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
+const API_VERSION = '2026-10-19d';
+
 async function adminKick(env, body) {
   const email = normEmail(body.email);
   if (!emailOk(email)) return fail('Enter a valid email.');
@@ -705,6 +708,19 @@ async function adminKick(env, body) {
   for (const n of names) {
     if (n.sid) await fsDelete(env, 'names', n.id);
     else await fsUpdate(env, 'names', n.id, { claimed: false, email: '' });
+  }
+  // A student who never claimed a name (added by CSV with an email) and no Sheet linked: put the name back
+  // in the sign-up list, so they can register again by picking it. With a Sheet, the Sheet row is free again by itself.
+  if (!teacher && row && !names.length && row.data.name && row.data.cls) {
+    let sheet = null;
+    try { sheet = await sheetRows(env, false); } catch (e) { sheet = null; }
+    if (!sheet) {
+      const id = slug(row.data.cls + '-' + row.data.name) || 'name';
+      const rec = { name: row.data.name, cls: row.data.cls, course: row.data.course || '', claimed: false, email: '', ts: Date.now() };
+      const old = await fsGet(env, 'names', id);
+      if (!old) await fsPut(env, 'names', id, rec);
+      else if (old.data.claimed) await fsPut(env, 'names', id + '-' + Date.now().toString(36), rec); // same name taken by someone else
+    }
   }
   if (row) await fsDelete(env, 'roster', row.id);
   await env.MD_KV.delete('acct:' + email);

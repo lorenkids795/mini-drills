@@ -122,5 +122,18 @@ Chuẩn bị: deploy bản mới (có `functions/`). Không cần sửa Firebase
 3. [ ] Đang xem Version 1 → Write a new version → ô soạn có sẵn bài của Version 1 → nộp → mở lại thấy bản mới nhất được chọn sẵn.
 4. [ ] Mở bài khác rồi quay lại → mặc định là bản mới nhất. Kiểm tra ô Version ở 390px (không tràn ngang) và dark mode.
 
+## Admin phản hồi ngay + Recent results 2×2
+1. [ ] Admin → Users: dòng đếm ghi "… accounts · server 2026-10-19d". Nếu thấy banner "This site still runs an older server" → chưa deploy thư mục `functions/` mới.
+2. [ ] Change password cho 1 học sinh và 1 giáo viên → modal đóng ngay khi lưu xong, có toast; đăng nhập bằng mật khẩu mới được.
+3. [ ] Kick 1 học sinh → modal đóng ngay, học sinh biến mất ngay khỏi danh sách (không cần tải lại). Trang đăng ký → tên học sinh đó **vẫn còn** trong lớp → đăng ký lại được (kể cả học sinh do giáo viên thêm bằng CSV có email).
+4. [ ] Làm bước 2–3 trên điện thoại (390px): bảng Users thành thẻ, nút không tràn, bấm dễ.
+5. [ ] Home → Recent results by skill: 4 ô xếp **2×2**, ô khá vuông, biểu đồ cột như ảnh mẫu, ở cả máy tính và điện thoại.
+
+## Library dạng thẻ Test
+1. [ ] Home (học sinh) → Library → bấm một sách → mỗi Test là một thẻ: mũi tên, "Test 1" + số bài, thanh tiến độ và %. Bấm thẻ → mở (viền accent, mũi tên xoay), bấm lại → đóng.
+2. [ ] Trong thẻ: 4 tab Listening / Reading / Writing / Speaking có số bài; tab không có bài bị mờ. Mỗi bài có icon theo màu kỹ năng, tên, mô tả nhỏ và % (hoặc Band / Not started / Locked) bên phải; bấm vào mở bài.
+3. [ ] Giáo viên: không có thanh %; bài tự tạo có nút Sửa / Xóa; tab trống có "+ Add exercise" mở tab Create.
+4. [ ] 390px và dark mode: thanh tab cuộn ngang được, không tràn trang.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.
