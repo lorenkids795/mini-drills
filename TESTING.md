@@ -135,5 +135,11 @@ Chuẩn bị: deploy bản mới (có `functions/`). Không cần sửa Firebase
 3. [ ] Giáo viên: không có thanh %; bài tự tạo có nút Sửa / Xóa; tab trống có "+ Add exercise" mở tab Create.
 4. [ ] 390px và dark mode: thanh tab cuộn ngang được, không tràn trang.
 
+## Chỉnh Library + Recent results
+1. [ ] Library → mở một Test: tiêu đề "Test 1" to hơn, không còn dòng "8 exercises"; chữ trên tab Listening/Reading/… to và rõ.
+2. [ ] Học sinh: mỗi bài bên phải ghi % (chưa làm = 0%, làm xong 100% màu xanh). Giáo viên **và Admin**: mỗi bài có icon Sửa và Xóa; bấm Xóa → "Delete?" (bấm lần nữa để xóa, sau 4 giây tự trở lại icon) (bài có sẵn thì icon mờ, rê chuột thấy "Built-in exercise…").
+3. [ ] Recent results by skill: 4 ô 2×2 trải hết chiều ngang trang, ô gần vuông, biểu đồ cao theo ô; dưới tên Listening/Reading/Writing/Speaking không còn dòng thống kê.
+4. [ ] Kiểm tra 390px (4 ô vuông nhỏ, chữ không tràn) và dark mode.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.
