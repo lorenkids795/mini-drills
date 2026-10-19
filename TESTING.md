@@ -72,5 +72,35 @@ Chuẩn bị: thêm `GEMINI_KEY` (Secret) cho Preview + Production rồi deploy 
 26. [ ] Nếu AI lỗi, học sinh thấy "Automatic correction is not available right now. Your answer is saved. (code: …)" và nút **Try again**; bấm lại chạy được. Chờ quá 30 giây thì câu báo đổi thành "Still checking…" (giới hạn 5 phút). Mã lỗi: `nokey` (chưa có GEMINI_KEY), `http403`/`http400` (sai key), `http404` (sai GEMINI_MODEL), `http429` (hết quota), `http5xx`/`timeout` (Gemini bận/chậm), `save` (không ghi được Firestore), `server` (lỗi server, xem Real-time logs).
 27. [ ] (Nếu bị "User location is not supported") Làm theo README 3e. Mở link `/exec` thấy `{"ok":true}`. Admin → AI test chạy được và ghi "via Apps Script relay". Học sinh nộp bài → có kết quả AI. Sai `GEMINI_PROXY_SECRET` → báo `code: relay`.
 
+## GĐ 6 — Phần A: Kick + xem lại bài Writing
+1. [ ] Admin → Users → **Kick** một học sinh test → modal ghi rõ hậu quả → bấm Kick → nút đổi thành "Kicking…" → có toast "… was kicked." và học sinh biến mất khỏi danh sách. Kiểm tra cả bản điện thoại (bảng dạng thẻ). Nếu báo "The server does not know this action yet…" thì bản deploy chưa có thư mục `functions/` mới nhất.
+2. [ ] Change password, Edit class, Resume trong cùng bảng vẫn chạy.
+3. [ ] Nộp bài Writing → quay lại Library hoặc Home → mở lại bài đó → thấy "Submitted on …", bài đã nộp (chỉ đọc, giữ xuống dòng, chỗ sai tô đỏ) cùng Corrections, Corrected essay, Vocabulary upgrades; **không** bị chấm AI lại (không tốn lượt).
+4. [ ] Bấm **Write a new version** → ô soạn có sẵn bài cũ, có dòng "Back to my submission" → nộp → mở lại thấy bản mới nhất; Recent results vẫn còn bản cũ.
+5. [ ] Mở lại ngay khi AI chưa chấm xong → "AI check in progress…" + nút **Check again** → bấm thì hiện kết quả.
+6. [ ] Giáo viên chấm xong → học sinh mở lại thấy "Marked: Band …" và nút Open feedback. Bài homework đã quá hạn vẫn mở xem được nhưng không có nút viết lại.
+7. [ ] Giáo viên mở bài Writing ở Library (Preview) → vẫn là ô soạn thảo như cũ.
+
+## GĐ 6 — Phần B: giải thích tiếng Việt + Vocabulary upgrades
+Chuẩn bị: deploy bản mới (có `functions/`). Không cần sửa Firebase rules hay biến môi trường.
+1. [ ] Nộp bài Writing có lỗi (vd. "could accessing", "most highest", "18 percents") → bấm/chạm một chỗ sửa trong bài → popover nhỏ cạnh chữ: dòng trên là category (màu accent), dòng dưới là giải thích **tiếng Việt** ngắn, dễ hiểu (vd. "Sau could phải là V nguyên mẫu."). Không còn tooltip trình duyệt hay toast.
+2. [ ] Popover đóng khi bấm ra ngoài, nhấn Esc, cuộn trang, hoặc bấm chỗ sửa khác (popover chuyển sang chỗ mới). Dùng phím Tab đến chỗ sửa rồi Enter cũng mở được.
+3. [ ] Ở 390px: popover không tràn khỏi màn hình; chỗ sửa ở cuối màn hình thì popover hiện phía trên.
+4. [ ] Danh sách lỗi dưới bài: số tròn · category · gạch đỏ → xanh, dòng dưới là giải thích tiếng Việt. Error Notebook (thẻ, Practice, "Not quite. Think about…") cũng tiếng Việt.
+5. [ ] Bài cũ (chấm AI trước bản này) → vẫn hiện, giải thích bằng tiếng Anh, không lỗi.
+6. [ ] Giáo viên mở bài trong Marking → giải thích tiếng Việt; rê chuột lên dòng giải thích thấy bản tiếng Anh.
+7. [ ] Admin → AI test → kết quả cũng có popover và giải thích tiếng Việt.
+8. [ ] Vocabulary upgrades: tiêu đề "VOCABULARY UPGRADES"; mỗi mục một hàng 2 cột (trái: từ gốc nhỏ + từ mới to, đậm; phải: câu ví dụ có cụm mới in đậm, ghi chú nghiêng, nút "+ Flashcard"). Bấm "+ Flashcard" → nút thành "Added ✓" và bị khóa; mở lại bài vẫn là "Added ✓". Trên điện thoại xếp 1 cột.
+9. [ ] Kiểm tra dark mode cho popover và Vocabulary upgrades.
+
+## GĐ 6 — Phần C: Leaderboard podium (XP + Streak)
+1. [ ] Leaderboard → My class: top 3 là 3 thẻ theo thứ tự **2 | 1 | 3**; thẻ hạng 1 ở giữa cao hơn, viền màu accent, có bóng; huy hiệu số vàng/bạc/đồng ở góc trên trái.
+2. [ ] Avatar hạng 1 to nhất, hạng 2 và 3 bằng nhau. Tên, danh hiệu (Achiever/Explorer/Learner…) và "1250 XP" cùng cỡ chữ, và dòng cuối của 3 thẻ nằm trên cùng một đường ngang.
+3. [ ] Bảng XP không còn 🔥 và badge danh hiệu phụ (vd. "Grammar Nazi"); badge đó vẫn có trong Inventory.
+4. [ ] Hạng 4 trở đi: số hạng · avatar nhỏ · tên + danh hiệu · "310 XP". Hàng của mình nền nhạt màu accent, viền accent, số hạng màu accent, có "(you)". Mình ở top 3 → thẻ podium có nền vàng nhạt và "(you)".
+5. [ ] Bấm **Streak** → xếp theo streak, podium ghi "🔥 12 days", danh sách ghi "🔥 4". My class / Everyone vẫn chạy với cả 2 bảng. Tải lại trang (F5) → vẫn nhớ bảng Streak.
+6. [ ] Lớp chỉ có 1–2 học sinh → chỉ hiện số thẻ có thật, hạng 1 vẫn ở giữa. Mình ngoài top 13 → có dòng "⋯" rồi hàng của mình.
+7. [ ] 390px: 3 thẻ vẫn nằm cạnh nhau, tên dài bị cắt bằng "…", không tràn ngang; nút XP/Streak xuống dòng dưới các tab nếu thiếu chỗ. Dark mode: chữ và nền đọc rõ.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

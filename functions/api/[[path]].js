@@ -678,19 +678,29 @@ async function adminSheet(env, body) {
 
 // Kick a student: delete the account (password, class-list entry) and free their name, so they must register again.
 // Learning data (attempts, XP, flashcards…) is kept: registering again with the same email brings it back.
+// roster/{email} for a student. Users lists rows by their email field (or id), so an older row whose id is not the
+// normalized email (capital letters, spaces) is found by that field too. -> { id, data } | null
+async function rosterRow(env, email) {
+  const row = await fsGet(env, 'roster', email);
+  if (row) return { id: email, data: row.data };
+  const hit = (await fsList(env, 'roster')).filter((r) => normEmail(r.email || r.id) === email)[0];
+  return hit ? { id: hit.id, data: hit } : null;
+}
+
 async function adminKick(env, body) {
   const email = normEmail(body.email);
   if (!emailOk(email)) return fail('Enter a valid email.');
   if (email === adminEmail(env)) return fail('The admin account cannot be kicked.', 403);
-  const row = await fsGet(env, 'roster', email);
-  if (!row || row.data.role === 'teacher') return fail('Only students can be kicked. To remove a teacher, use the Teachers tab.', 404);
+  const row = await rosterRow(env, email);
+  if (!row) return fail('This student is not on the class list any more. Reload the list.', 404);
+  if (row.data.role === 'teacher') return fail('Only students can be kicked. To remove a teacher, use the Teachers tab.', 400);
   // free the name: Sheet claims (have sid) are deleted, old CSV names are marked unclaimed again
   const names = (await fsList(env, 'names')).filter((n) => normEmail(n.email) === email);
   for (const n of names) {
     if (n.sid) await fsDelete(env, 'names', n.id);
     else await fsUpdate(env, 'names', n.id, { claimed: false, email: '' });
   }
-  await fsDelete(env, 'roster', email);
+  await fsDelete(env, 'roster', row.id);
   await env.MD_KV.delete('acct:' + email);
   await env.MD_KV.delete('rl:' + email);
   await env.MD_KV.put('off:' + email, 'kicked'); // open devices are signed out by /api/status
@@ -701,9 +711,9 @@ async function adminKick(env, body) {
 async function adminClass(env, body) {
   const email = normEmail(body.email), cls = classLabel(String(body.cls || '').slice(0, 60)), course = String(body.course || '').trim().slice(0, 60);
   if (!cls) return fail('Choose a class.');
-  const row = await fsGet(env, 'roster', email);
+  const row = await rosterRow(env, email);
   if (!row || row.data.role === 'teacher') return fail('This student was not found.', 404);
-  if (!(await fsUpdate(env, 'roster', email, { cls, course }))) return fail('Could not save. Try again.', 500);
+  if (!(await fsUpdate(env, 'roster', row.id, { cls, course }))) return fail('Could not save. Try again.', 500);
   return json({ ok: true, cls });
 }
 
@@ -743,6 +753,15 @@ const AI_PROMPT =
   '- category is a short error-notebook label, for example: Stative Verbs, Gerund as Subject & Articles, Irregular Plural Nouns, Subject-Verb Agreement, Verb Tense, Articles, Prepositions, Collocation, Word Form, Spelling, Punctuation, Off-topic.\n' +
   '- type: "Grammar" (includes punctuation), "Vocabulary" (word choice, collocation, spelling) or "Off-topic" (a sentence that does not answer the task).\n' +
   '- explanation: one short sentence in simple English.\n' +
+  '- explanation_vi: the same idea in Vietnamese, ONE sentence of at most about 20 words, the way a teacher talks to a 13-16 year old student. ' +
+  'Name the exact word in brackets or quotes. Only use these simple labels: V nguyên mẫu, V-ing, V3/V-ed, danh từ, tính từ, trạng từ, số ít, số nhiều. ' +
+  'NEVER use grammar terms such as absolute clause, participle clause, stative verb, base verb, direct object, uncountable, gerund, auxiliary: say it in plain words instead. Examples:\n' +
+  '  could accessing -> could access: "Sau could phải là V nguyên mẫu."\n' +
+  '  illustrate about -> illustrates: "Sau illustrate không dùng about."\n' +
+  '  most highest -> highest: "highest đã là \'cao nhất\' rồi, không thêm most."\n' +
+  '  18 percents -> 18 percent: "percent không thêm s, kể cả khi có số đứng trước."\n' +
+  '  Despite of -> Despite: "Despite không đi với of (hoặc dùng In spite of)."\n' +
+  '  with Country C stayed -> with Country C staying: "Sau with + danh từ, động từ dùng V-ing."\n' +
   '- At most 15 corrections, most important first.\n' +
   '- vocabulary_upgrades: up to 6 simple words or phrases from the essay and a better IELTS alternative, with a short example sentence and a short note.\n' +
   AI_PRACTICE_RULES;
@@ -758,10 +777,11 @@ const AI_SCHEMA = {
           corrected_text: { type: 'STRING' },
           category: { type: 'STRING' },
           explanation: { type: 'STRING' },
+          explanation_vi: { type: 'STRING' },
           type: { type: 'STRING' },
           practice: AI_PRACTICE_ITEMS,
         },
-        required: ['original_text', 'corrected_text', 'category', 'explanation', 'type', 'practice'],
+        required: ['original_text', 'corrected_text', 'category', 'explanation', 'explanation_vi', 'type', 'practice'],
       },
     },
     vocabulary_upgrades: {
@@ -808,7 +828,7 @@ class AiError extends Error {
 const aiReady = (env) => !!(env.GEMINI_KEY || env.GEMINI_PROXY_URL); // key on Cloudflare, or in the Apps Script relay
 const AI_TIMEOUT = 300000; // 5 minutes: long essays (corrections + 2 practice sentences per mistake) can be slow on a busy day
 const AI_SHAPE =
-  '\nReturn ONLY one JSON object, no other text, in this shape: {"corrections":[{"original_text":"...","corrected_text":"...","category":"...","explanation":"...","type":"Grammar","practice":[{"sentence":"... ___ (clue) ...","answers":["..."],"clue_type":"base_form"}]}],"vocabulary_upgrades":[{"original":"...","upgraded":"...","example":"...","note":"..."}]}\n';
+  '\nReturn ONLY one JSON object, no other text, in this shape: {"corrections":[{"original_text":"...","corrected_text":"...","category":"...","explanation":"...","explanation_vi":"...","type":"Grammar","practice":[{"sentence":"... ___ (clue) ...","answers":["..."],"clue_type":"base_form"}]}],"vocabulary_upgrades":[{"original":"...","upgraded":"...","example":"...","note":"..."}]}\n';
 const PRACTICE_SHAPE = '\nReturn ONLY one JSON object, no other text, in this shape: {"practice":[{"sentence":"... ___ (clue) ...","answers":["..."],"clue_type":"base_form"}]}\n';
 function parseJsonLoose(raw) {
   try { return JSON.parse(raw); } catch (e) { /* try the part between the first { and the last } */ }
@@ -914,6 +934,14 @@ function cleanPractice(list, c) {
   return out;
 }
 
+// explanation_vi: one short Vietnamese sentence, cut at about 160 characters (on a word boundary)
+function viShort(v) {
+  const t = aiStr(v, 400);
+  if (t.length <= 160) return t;
+  const cut = t.slice(0, 158), sp = cut.lastIndexOf(' ');
+  return (sp > 100 ? cut.slice(0, sp) : cut).replace(/[,;:\s]+$/, '') + '…';
+}
+
 // Do not trust the AI blindly: keep only mistakes found word for word in the essay, sorted by position.
 function cleanAi(raw, text, model) {
   const seen = {};
@@ -931,6 +959,7 @@ function cleanAi(raw, text, model) {
         original_text: original, corrected_text: corrected,
         category, explanation: aiStr(c.explanation, 300), type, context: sentenceAt(text, pos, original.length), pos,
       };
+      out.explanation_vi = viShort(c.explanation_vi) || out.explanation; // Vietnamese for students; English when missing
       out.practice = cleanPractice(c.practice, out);
       return out;
     })
@@ -969,7 +998,7 @@ async function saveErrors(env, att, attemptId, ai, meta) {
       fields: toFields({
         email: em, student: String(att.student || ''), cls: String(att.cls || ''),
         original: r.c.original_text, corrected: r.c.corrected_text, category: r.c.category,
-        explanation: r.c.explanation, type: r.c.type, context: r.c.context, practice: r.c.practice || [],
+        explanation: r.c.explanation, explanation_vi: r.c.explanation_vi || r.c.explanation, type: r.c.type, context: r.c.context, practice: r.c.practice || [],
         attemptId, ex: String(att.ex || ''), exTitle: meta.exTitle,
         box: 1, due: meta.dayStart, reviews: 0, lapses: 0, mastered: false, createdAt: now, lastPractice: 0,
       }),

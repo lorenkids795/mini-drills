@@ -428,7 +428,22 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .fxl li{padding:.35rem 0;border-bottom:1px solid var(--line)}
 .fxl small{display:block;color:var(--muted)}
 .aicat{color:var(--accent);font-size:.8rem;margin-right:4px}
-.aivu li{display:flex;gap:10px;align-items:center;justify-content:space-between}.aivu li>div{min-width:0}.aivu .btn{flex:none}
+.vu{margin:6px 0 4px;border-top:1px solid var(--line)}
+.vur{display:grid;grid-template-columns:32% minmax(0,1fr);gap:20px;padding:16px 0;border-bottom:1px solid var(--line)}
+.vul{min-width:0;display:flex;flex-direction:column;gap:2px}
+.vuo{font-size:.82rem;color:var(--muted)}
+.vuu{font-size:1.35rem;font-weight:700;color:var(--ink);line-height:1.25;overflow-wrap:anywhere}
+.vurt{min-width:0}
+.vue{margin:0;font-size:1rem;line-height:1.6;color:var(--ink)}
+.vue b{font-weight:700}
+.vun{margin:4px 0 0;font-size:.85rem;font-style:italic;color:var(--muted)}
+.vurt .btn{margin-top:10px}
+@media (max-width:640px){.vur{grid-template-columns:minmax(0,1fr);gap:6px;padding:14px 0}.vuu{font-size:1.2rem}}
+.fxpop{position:fixed;z-index:90;max-width:min(320px,calc(100vw - 16px));background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px 12px;box-shadow:0 8px 24px rgba(10,15,30,.18);font-size:.92rem;line-height:1.45}
+.fxpop .fxpc{display:block;font-size:.74rem;font-weight:700;color:var(--accent);margin-bottom:2px}
+.fxpop p{margin:0}
+[data-act="fx-tip"][tabindex]{cursor:pointer}
+[data-act="fx-tip"][tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-radius:4px}
 .chips2{display:flex;gap:6px;flex-wrap:wrap}
 
 /* ---- vocab popup, flashcards ---- */
@@ -497,6 +512,8 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .fxl li[data-fn]{cursor:pointer}
 .fx-hot{outline:2px solid var(--accent);outline-offset:1px;border-radius:4px}
 .wmarked{max-width:100%;min-height:120px;margin-top:4px}
+.banner.subdone{background:var(--good-bg);color:var(--good)}
+.subst{margin:4px 0 12px;font-size:.95rem}.subst.ok b{color:var(--good)}
 @media (prefers-reduced-motion:no-preference){.fx-hot{transition:outline-color .2s}}
 .cxhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;max-width:72ch}.cxhead .tk{margin:0}
 .cxnote{margin:2px 0 0;font-size:.82rem;color:var(--muted)}
@@ -562,21 +579,45 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .dword{font-family:var(--mono);font-size:1rem;padding:.1rem .3rem;border-radius:3px}
 .dw-ok{background:var(--good-bg);color:var(--good)}
 .dw-bad{background:var(--bad-bg);color:var(--bad);text-decoration:line-through}
-.rk{display:grid;grid-template-columns:2rem auto minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:.6rem .8rem;border-bottom:1px solid var(--line);font-size:.92rem}
-.rk .n{font-family:var(--mono);color:var(--muted);text-align:center}
-/* top 3: full-row metallic tint; the "you" row keeps its own highlight (rule order below wins) */
-.rk.top1{background:linear-gradient(100deg,var(--gold-a),var(--gold-b) 55%,var(--gold-a));box-shadow:inset 4px 0 0 var(--gold-e)}
-.rk.top2{background:linear-gradient(100deg,var(--silv-a),var(--silv-b) 55%,var(--silv-a));box-shadow:inset 4px 0 0 var(--silv-e)}
-.rk.top3{background:linear-gradient(100deg,var(--brz-a),var(--brz-b) 55%,var(--brz-a));box-shadow:inset 4px 0 0 var(--brz-e)}
-.rk.top1 .n,.rk.top2 .n,.rk.top3 .n{color:var(--ink);font-weight:700;font-size:1rem}
-.rk.me{background:var(--hl-soft);box-shadow:inset 0 0 0 2px var(--accent)}
-.rk.me.top1{box-shadow:inset 4px 0 0 var(--gold-e),inset 0 0 0 2px var(--accent)}.rk.me.top2{box-shadow:inset 4px 0 0 var(--silv-e),inset 0 0 0 2px var(--accent)}.rk.me.top3{box-shadow:inset 4px 0 0 var(--brz-e),inset 0 0 0 2px var(--accent)}
 .fcard .btn.good.kpress{box-shadow:0 0 0 3px var(--good-bg)}
-.rk .av{width:34px;height:34px;border-radius:50%;background:var(--hl);color:#14213d;display:grid;place-items:center;font-weight:700;font-size:.8rem}
-.rk small{display:block;color:var(--muted);font-size:.76rem}
 .ttl{font-size:.7rem;font-weight:600;background:var(--ink);color:var(--bg);border-radius:99px;padding:.05rem .5rem;margin-left:6px;white-space:nowrap}
+/* Leaderboard: tabs + XP/Streak switch, podium 2|1|3 (text lines aligned at the bottom), list from rank 4 */
+.rkbar{display:flex;align-items:flex-end;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin:10px 0 22px}
+.rkbar .subtabs{border-bottom:0;margin:0}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:6px;background:var(--surface)}
+.seg button{border:0;background:none;color:var(--muted);padding:.35rem .95rem;font-weight:600;font-size:.85rem;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:end;margin:30px 0 16px}
+.pod{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px;min-width:0;min-height:232px;padding:24px 12px 18px;background:var(--surface);border:1px solid var(--line);border-radius:14px;text-align:center}
+.pod1{grid-column:2;grid-row:1;min-height:256px;border:2px solid var(--accent);box-shadow:0 8px 24px rgba(10,15,30,.12)}
+.pod2{grid-column:1;grid-row:1}.pod3{grid-column:3;grid-row:1}
+.pod.me{background:var(--hl-soft)}
+.podn{position:absolute;top:10px;left:10px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-size:.78rem;font-weight:700;color:var(--ink)}
+.pod1 .podn{background:var(--gold-a)}.pod2 .podn{background:var(--silv-a)}.pod3 .podn{background:var(--brz-a)}
+.podt{margin-top:auto;display:flex;flex-direction:column;gap:2px;width:100%;min-width:0;font-size:1rem;line-height:1.4}
+.podnm{font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.podlv{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.podv{color:var(--ink);white-space:nowrap}.podv b{font-weight:700}
 .rklist{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-@media (max-width:560px){.rk{grid-template-columns:1.6rem auto minmax(0,1fr) auto}.rk .lv{display:none}}
+.rk{display:grid;grid-template-columns:2rem auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:.65rem .9rem;border-bottom:1px solid var(--line);font-size:.95rem}
+.rklist .rk:last-child{border-bottom:0}
+.rk .n{font-family:var(--mono);color:var(--muted);text-align:center}
+.rkn{min-width:0}
+.rkn b{display:block;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rk small{display:block;color:var(--muted);font-size:.78rem}
+.rkv{white-space:nowrap;text-align:right}.rkv b{font-weight:700}.rkv .u,.podv .u{color:var(--muted);font-weight:400}
+.rk.me{background:var(--hl-soft);background:color-mix(in srgb,var(--accent) 10%,var(--surface));box-shadow:inset 0 0 0 1.5px var(--accent)}
+.rk.me .n{color:var(--accent);font-weight:700}
+@media (max-width:640px){
+  .podium{gap:8px;margin-top:22px}
+  .pod{min-height:178px;padding:18px 6px 12px;gap:10px;border-radius:12px}
+  .pod1{min-height:198px}
+  .pod .avw{--s:56px!important}.pod1 .avw{--s:72px!important}
+  .podn{top:6px;left:6px;width:20px;height:20px;font-size:.7rem}
+  .podt{font-size:.85rem}
+  .rk{grid-template-columns:1.6rem auto minmax(0,1fr) auto;gap:10px;padding:.6rem .7rem}
+}
 /* ---- wheel, inventory, marquee ---- */
 .wheelbox{display:flex;flex-direction:column;align-items:center;gap:12px;padding:10px 0}
 .wwrap{position:relative;width:min(440px,92vw);aspect-ratio:1}
@@ -1318,8 +1359,8 @@ function lockInfo(id){
 }
 function renderPlayer(){
   var ex=exOf(NAV.ex);done=false;
-  var lk=lockInfo(NAV.ex);
-  if(lk){
+  var lk=lockInfo(NAV.ex);if(WNEW!==NAV.ex)WNEW=null;
+  if(lk&&!(ex.kind==='writing'&&mySub(ex.id))){
     $('#libBody').innerHTML='<div class="pane single"><div class="phead"><span class="chip">'+SNAME[ex.skill]+'</span><h2>'+esc(ex.title)+'</h2></div><div class="banner" style="background:var(--bad-bg);color:var(--bad)"><b>Locked.</b> This exercise belongs to <b>'+esc(asgName(lk))+'</b>, which was due '+fmtDue(effDue(lk,U.email))+'. After the deadline it can only be opened with a late pass.</div><div class="actions"><button class="btn" data-act="nav" data-book="'+NAV.book+'" data-test="'+NAV.test+'" data-skill="'+NAV.skill+'" type="button">Back to the list</button></div></div>';
     return;
   }
@@ -1366,9 +1407,9 @@ function gradeNow(){
   saveAttempt({email:U.email,student:U.name,course:U.course,cls:U.cls,ex:ex.id,score:score,total:res.length,items:res.map(function(r){return {i:r.q.id,ok:r.ok?1:0}}),ts:Date.now()}).then(function(how){var m=$('#saveMsg');if(m)m.textContent=how==='db'?'Saved to your class history.':'Kept for this session only (no data store).'});onAttemptSaved(ex,score,res.length,ft);
 }
 function peekUse(){var p=myProf();if(p.peek>0){p.peek--;putProf(p);toast('👀 Answer Peek used');return true}return false}
-function nextBtns(){
+function nextBtns(noRetry){
   var ids=exIds(NAV.book,NAV.test,NAV.skill),nx=ids[ids.indexOf(NAV.ex)+1];
-  return '<div class="actions"><button class="btn" data-act="retry" type="button">Try again</button>'+(nx?'<button class="btn pri" data-act="next" data-ex="'+nx+'" type="button">Next: '+esc(exOf(nx).title)+'</button>':'<button class="btn pri" data-act="nav" data-book="'+NAV.book+'" data-test="'+NAV.test+'" data-skill="'+NAV.skill+'" type="button">Back to list</button>')+'</div>';
+  return '<div class="actions">'+(noRetry?'':'<button class="btn" data-act="retry" type="button">Try again</button>')+(nx?'<button class="btn pri" data-act="next" data-ex="'+nx+'" type="button">Next: '+esc(exOf(nx).title)+'</button>':'<button class="btn pri" data-act="nav" data-book="'+NAV.book+'" data-test="'+NAV.test+'" data-skill="'+NAV.skill+'" type="button">Back to list</button>')+'</div>';
 }
 var lastRef=null;
 function saveAttempt(rec){
@@ -1389,8 +1430,8 @@ function vocEmbed(link){
 }
 /* Corrections: one item = {from, to, cat, why, off}. Built from attempts.ai.corrections (aiItems) or the old attempts.fixes (fixItems).
    fixSpans finds every item in the text (in order, no overlaps), so the marked essay and the corrected essay always match. */
-function fixItems(fixes){return (fixes||[]).filter(function(f){return f&&f.from}).map(function(f){return {from:String(f.from),to:String(f.to||''),cat:f.type||'',why:f.why||'',off:false}})}
-function aiItems(ai){return ((ai&&ai.corrections)||[]).filter(function(c){return c&&c.original_text}).map(function(c){return {from:String(c.original_text),to:String(c.corrected_text||''),cat:c.category||c.type||'',why:c.explanation||'',off:c.type==='Off-topic'}})}
+function fixItems(fixes){return (fixes||[]).filter(function(f){return f&&f.from}).map(function(f){return {from:String(f.from),to:String(f.to||''),cat:f.type||'',why:f.why||'',vi:'',off:false}})}
+function aiItems(ai){return ((ai&&ai.corrections)||[]).filter(function(c){return c&&c.original_text}).map(function(c){return {from:String(c.original_text),to:String(c.corrected_text||''),cat:c.category||c.type||'',why:c.explanation||'',vi:c.explanation_vi||'',off:c.type==='Off-topic'}})}
 function fixSpans(text,items){
   text=String(text||'');var sp=[];
   items.forEach(function(f){
@@ -1402,9 +1443,9 @@ function fixSpans(text,items){
   return sp.sort(function(a,b){return a.i-b.i}).map(function(s,j){s.n=s.f.n=j+1;return s});
 }
 var firstAlt=function(s){return String(s||'').split(/\s\/\s|\|/)[0].trim()};
-var fixTip=function(f){return (f.cat?f.cat+': ':'')+(f.why||'')};
+var fixWhy=function(f){return f.vi||f.why||''}; // Vietnamese reason first (explanation_vi), English for old results
 function fxBadge(n){return n?'<sup class="fx-n" aria-hidden="true">'+n+'</sup>':''}
-function fxAttrs(f,n){var tip=esc(fixTip(f));return ' title="'+tip+'" data-act="fx-tip" data-tip="'+tip+'" data-fn="'+n+'"'}
+function fxAttrs(f,n){return ' tabindex="0" role="button" aria-haspopup="dialog" data-act="fx-tip" data-fn="'+n+'" data-cat="'+esc(f.off?'Off-topic':f.cat)+'" data-why="'+esc(fixWhy(f))+'"'}
 /* mode 'fix' = marked essay (red struck-through mistake + green fix), 'bad' = Your answer (mistakes only, red),
    'new' = corrected essay (fixes in green). Off-topic sentences get a dotted mark (left as they are in 'new'). Hover / tap = the reason. */
 function marksHTML(text,sp,mode){
@@ -1433,15 +1474,15 @@ function correctedBlockHTML(text,items,sp){
   var k='c'+(++cxN);CXP[k]=c.plain;
   return '<div class="cxhead"><h4 class="tk">Corrected essay</h4><button class="btn sm" type="button" data-act="cx-copy" data-k="'+k+'">Copy</button></div><p class="cxnote">Green = corrected parts ('+c.n+' change'+(c.n>1?'s':'')+'). Numbers match the list above.</p><div class="essay">'+c.html+'</div>';
 }
-function fixListHTML(items){
-  return '<ul class="fxl">'+items.map(function(f){return '<li'+(f.n?' data-act="fx-tip" data-fn="'+f.n+'" data-tip="'+esc(fixTip(f))+'"':'')+'>'+(f.n?'<span class="fx-n">'+f.n+'</span>':'')+(f.cat?'<b class="aicat">'+esc(f.cat)+'</b> ':'')+'<del class="fx-del">'+esc(f.from)+'</del>'+(f.to&&!f.off?' → <ins class="fx-ins">'+esc(f.to)+'</ins>':'')+'<small>'+(f.off?'Off-topic · ':'')+esc(f.why||'')+'</small></li>'}).join('')+'</ul>';
+function fixListHTML(items,en){
+  return '<ul class="fxl">'+items.map(function(f){return '<li'+(f.n?' data-act="fx-tip" data-fn="'+f.n+'"':'')+'>'+(f.n?'<span class="fx-n">'+f.n+'</span>':'')+(f.cat?'<b class="aicat">'+esc(f.cat)+'</b> ':'')+'<del class="fx-del">'+esc(f.from)+'</del>'+(f.to&&!f.off?' → <ins class="fx-ins">'+esc(f.to)+'</ins>':'')+'<small'+(en&&f.vi&&f.why&&f.vi!==f.why?' title="'+esc(f.why)+'"':'')+'>'+(f.off?'Off-topic · ':'')+esc(fixWhy(f))+'</small></li>'}).join('')+'</ul>';
 }
 // Corrections + Corrected essay (students after submitting / Open feedback, and the teacher Marking modal)
-function correctionsHTML(text,items){
+function correctionsHTML(text,items,en){
   if(!items.length)return '<p class="okline">No mistakes found. Nice writing.</p>';
   var sp=fixSpans(text,items),ord=sp.map(function(s){return s.f});
   items.forEach(function(f){if(ord.indexOf(f)<0)ord.push(f)});
-  return '<h4 class="tk">Corrections</h4><p class="cxnote">Red = mistake, green = correction. Tap one to see why.</p><div class="essay">'+fixHTML(text,items,sp)+'</div>'+fixListHTML(ord)+correctedBlockHTML(text,items,sp);
+  return '<h4 class="tk">Corrections</h4><p class="cxnote">Red = mistake, green = correction. Tap one to see why.</p><div class="essay">'+fixHTML(text,items,sp)+'</div>'+fixListHTML(ord,en)+correctedBlockHTML(text,items,sp);
 }
 // Your answer after the AI check: the textarea is swapped for the same text with the mistakes highlighted
 function markAnswer(text,ai){
@@ -1451,6 +1492,26 @@ function markAnswer(text,ai){
   if(!v){ta.insertAdjacentHTML('afterend','<p class="cxnote" id="wMarkedNote">Mistakes are highlighted in red. The numbers match the corrections below.</p><div class="essay wmarked" id="wMarked" aria-label="Your answer with the mistakes highlighted"></div>');v=$('#wMarked')}
   v.innerHTML=answerHTML(text,items);ta.style.display='none';
 }
+// Tap / Enter on a correction in an essay: a small popover next to it (category + Vietnamese reason).
+// Closes on a tap outside, Esc, scrolling, or another correction. Placed below the word, or above when there is no room.
+var FXP=null;
+function fxPopClose(){var p=$('#fxPop');if(p)p.remove();if(FXP)FXP.removeAttribute('aria-expanded');FXP=null}
+function fxPopOpen(t){
+  if(FXP===t){fxPopClose();return}fxPopClose();
+  var why=t.getAttribute('data-why')||'',cat=t.getAttribute('data-cat')||'';if(!why&&!cat)return;
+  document.body.insertAdjacentHTML('beforeend','<div class="fxpop" id="fxPop" role="dialog" aria-live="polite" aria-label="Why this was corrected">'+(cat?'<span class="fxpc">'+esc(cat)+'</span>':'')+'<p>'+esc(why)+'</p></div>');
+  var p=$('#fxPop'),rs=t.getClientRects(),r=rs.length?rs[rs.length-1]:t.getBoundingClientRect(),r0=rs.length?rs[0]:r;
+  var W=document.documentElement.clientWidth||window.innerWidth,Hh=window.innerHeight,pw=p.offsetWidth,ph=p.offsetHeight;
+  var top=r.bottom+8;if(top+ph>Hh-8&&r0.top-ph-8>=8){top=r0.top-ph-8;r=r0}
+  p.style.left=Math.max(8,Math.min(r.left,W-pw-8))+'px';p.style.top=Math.max(8,top)+'px';
+  FXP=t;t.setAttribute('aria-expanded','true');
+}
+document.addEventListener('scroll',function(){if(FXP)fxPopClose()},true);
+window.addEventListener('resize',function(){if(FXP)fxPopClose()});
+document.addEventListener('keydown',function(e){
+  var t=e.target;
+  if((e.key==='Enter'||e.key===' ')&&t&&t.getAttribute&&t.getAttribute('data-act')==='fx-tip'&&t.getAttribute('data-why')!=null){e.preventDefault();fxPopOpen(t);fxHot(t)}
+});
 // Tap a mistake / correction: show the reason and light up every place with the same number
 var fxHotT=null;
 function fxHot(t){
@@ -1464,34 +1525,34 @@ function fxHot(t){
 var AIX=null;
 var DEMO_AI={
   corrections:[
-    {original_text:'am disagree',corrected_text:'disagree',category:'Stative Verbs',explanation:"'Disagree' is a verb. Say 'I disagree', not 'I am disagree'.",type:'Grammar',context:'I am disagree with this opinion.',
+    {original_text:'am disagree',corrected_text:'disagree',category:'Stative Verbs',explanation:"'Disagree' is a verb. Say 'I disagree', not 'I am disagree'.",explanation_vi:"disagree đã là động từ, không thêm am phía trước.",type:'Grammar',context:'I am disagree with this opinion.',
       practice:[{sentence:'I ___ (disagree) with this opinion.',answers:['disagree'],clue_type:'base_form',own:true},{sentence:'I strongly ___ (disagree) with the idea that children should not do housework.',answers:['disagree'],clue_type:'base_form',own:false}]},
-    {original_text:'protect the nature',corrected_text:'protecting nature',category:'Gerund as Subject & Articles',explanation:"Use the -ing form as a subject, and 'nature' has no article.",type:'Grammar',context:'Protect the nature is the duty of everyone.',
+    {original_text:'protect the nature',corrected_text:'protecting nature',category:'Gerund as Subject & Articles',explanation:"Use the -ing form as a subject, and 'nature' has no article.",explanation_vi:"Đứng đầu câu làm chủ ngữ thì dùng V-ing (protecting); nature không cần the.",type:'Grammar',context:'Protect the nature is the duty of everyone.',
       practice:[{sentence:'___ (protect) nature is the duty of everyone.',answers:['Protecting'],clue_type:'base_form',own:true},{sentence:'___ (protect) nature is the responsibility of every citizen.',answers:['Protecting'],clue_type:'base_form',own:false}]},
-    {original_text:'Many peoples',corrected_text:'Many people',category:'Irregular Plural Nouns',explanation:"'People' is already plural, so do not add -s.",type:'Grammar',context:'Many peoples think that factories bring more jobs.',
+    {original_text:'Many peoples',corrected_text:'Many people',category:'Irregular Plural Nouns',explanation:"'People' is already plural, so do not add -s.",explanation_vi:"people đã là số nhiều rồi, không thêm s.",type:'Grammar',context:'Many peoples think that factories bring more jobs.',
       practice:[{sentence:'Many ___ (person) think that factories bring more jobs.',answers:['people'],clue_type:'base_form',own:true},{sentence:'Many ___ (person) believe that social media harms teenagers.',answers:['people'],clue_type:'base_form',own:false}]},
-    {original_text:'is write',corrected_text:'wrote / was writing',category:'Verb Tense',explanation:'Use the past simple or past continuous for an action in the past.',type:'Grammar',context:'Last year my brother is write a letter to the mayor.',
+    {original_text:'is write',corrected_text:'wrote / was writing',category:'Verb Tense',explanation:'Use the past simple or past continuous for an action in the past.',explanation_vi:"Việc đã xảy ra năm ngoái nên dùng quá khứ (wrote), không dùng is write.",type:'Grammar',context:'Last year my brother is write a letter to the mayor.',
       practice:[{sentence:'Last year my brother ___ (write) a letter to the mayor.',answers:['wrote','was writing'],clue_type:'base_form',own:true},{sentence:'Last year, my brother ___ (write) a short story for a school competition.',answers:['wrote','was writing'],clue_type:'base_form',own:false}]},
-    {original_text:'go',corrected_text:'went',category:'Past Simple Tense',explanation:"The story happened in the past, so use 'went'.",type:'Grammar',context:'Yesterday we go to the river to collect rubbish.',
+    {original_text:'go',corrected_text:'went',category:'Past Simple Tense',explanation:"The story happened in the past, so use 'went'.",explanation_vi:"Chuyện xảy ra hôm qua nên dùng quá khứ: go thành went.",type:'Grammar',context:'Yesterday we go to the river to collect rubbish.',
       practice:[{sentence:'Yesterday we ___ (go) to the river to collect rubbish.',answers:['went'],clue_type:'base_form',own:true},{sentence:'Yesterday I ___ (go) to the library to prepare for my exam.',answers:['went'],clue_type:'base_form',own:false}]}],
   vocabulary_upgrades:[
     {original:'very important',upgraded:'crucial',example:'Protecting nature is crucial for future generations.',note:'One strong word sounds more academic.'},
     {original:'a lot of',upgraded:'a great deal of',example:'Factories produce a great deal of waste.',note:'More formal, good for IELTS.'}]};
 // Demo only: a tiny rule-based checker, so the highlights work on the student's own text without the server.
-// Each rule: [regex (global), replacement(match, groups...), category, explanation, type]. The live site uses Gemini.
+// Each rule: [regex (global), replacement(match, groups...), category, explanation, type, explanation_vi]. The live site uses Gemini.
 var PAST={have:'had',has:'had',account:'accounted',experience:'experienced',increase:'increased',decrease:'decreased',rise:'rose',fall:'fell',see:'saw',show:'showed',reach:'reached',grow:'grew',become:'became',drop:'dropped',go:'went',remain:'remained'};
 var DEMO_RULES=[
-  [/\b(table|chart|graph|figure|diagram)\s+(illustrate|show|compare|describe|give|present)\b/gi,function(m,a,b){return a+' '+b+'s'},'Subject-Verb Agreement','A singular subject takes a verb with -s in the present simple.','Grammar'],
-  [/\bwho has\b/g,function(){return 'who have'},'Subject-Verb Agreement','A plural noun takes "have", not "has".','Grammar'],
-  [/\b[Ii]n term of\b/g,function(m){return m.charAt(0)+'n terms of'},'Collocation','The fixed phrase is "in terms of".','Vocabulary'],
-  [/\bthe most (highest|lowest|biggest|largest|smallest|greatest)\b/gi,function(m,a){return m.slice(0,4)+a},'Double Superlative','Do not use "most" with an -est adjective.','Grammar'],
-  [/\b(Country [A-Z]|[Ii]t|[Tt]he percentage|[Tt]he number|[Tt]he proportion) (have|has|account|experience|increase|decrease|rise|fall|see|reach|grow|remain)\b(?= (in|to|for|by|a|an|the|\d))/g,function(m,a,b){return a+' '+PAST[b]},'Past Simple Tense','The data are from the past, so use the past simple.','Grammar'],
-  [/\b(access|rate|number|percentage|figure) (increase|decrease|rise|fall|grow)\b(?= in| by| to| from)/g,function(m,a,b){return a+' '+PAST[b]},'Past Simple Tense','The change happened in the past, so use the past simple.','Grammar'],
-  [/\balso (experience|see|reach|increase|decrease|grow)\b/g,function(m,a){return 'also '+PAST[a]},'Past Simple Tense','Use the past simple for a finished period.','Grammar'],
-  [/\b(differences?|gaps?)( between [^.]{1,40}?) become\b/g,function(m,a,b){return a+b+' became'},'Past Simple Tense','Use the past simple for 2020.','Grammar'],
-  [/\bcompare with\b/g,function(){return 'compared with'},'Word Form','Use the past participle: "compared with".','Grammar'],
-  [/\b(this|the|that) figure were\b/gi,function(m,a){return a+' figure was'},'Subject-Verb Agreement','"Figure" is singular, so use "was".','Grammar'],
-  [/\bhad an access\b/g,function(){return 'had access'},'Articles','"Access" is uncountable: no "an".','Grammar']
+  [/\b(table|chart|graph|figure|diagram)\s+(illustrate|show|compare|describe|give|present)\b/gi,function(m,a,b){return a+' '+b+'s'},'Subject-Verb Agreement','A singular subject takes a verb with -s in the present simple.','Grammar','Chủ ngữ số ít (the table) thì động từ thêm s.'],
+  [/\bwho has\b/g,function(){return 'who have'},'Subject-Verb Agreement','A plural noun takes "have", not "has".','Grammar','Danh từ số nhiều đi với have, không dùng has.'],
+  [/\b[Ii]n term of\b/g,function(m){return m.charAt(0)+'n terms of'},'Collocation','The fixed phrase is "in terms of".','Vocabulary','Cụm cố định là in terms of (có s).'],
+  [/\bthe most (highest|lowest|biggest|largest|smallest|greatest)\b/gi,function(m,a){return m.slice(0,4)+a},'Double Superlative','Do not use "most" with an -est adjective.','Grammar','highest đã là \'cao nhất\' rồi, không thêm most.'],
+  [/\b(Country [A-Z]|[Ii]t|[Tt]he percentage|[Tt]he number|[Tt]he proportion) (have|has|account|experience|increase|decrease|rise|fall|see|reach|grow|remain)\b(?= (in|to|for|by|a|an|the|\d))/g,function(m,a,b){return a+' '+PAST[b]},'Past Simple Tense','The data are from the past, so use the past simple.','Grammar','Số liệu ở quá khứ nên động từ dùng V-ed / quá khứ.'],
+  [/\b(access|rate|number|percentage|figure) (increase|decrease|rise|fall|grow)\b(?= in| by| to| from)/g,function(m,a,b){return a+' '+PAST[b]},'Past Simple Tense','The change happened in the past, so use the past simple.','Grammar','Sự thay đổi đã xảy ra nên dùng quá khứ.'],
+  [/\balso (experience|see|reach|increase|decrease|grow)\b/g,function(m,a){return 'also '+PAST[a]},'Past Simple Tense','Use the past simple for a finished period.','Grammar','Khoảng thời gian đã kết thúc nên dùng quá khứ.'],
+  [/\b(differences?|gaps?)( between [^.]{1,40}?) become\b/g,function(m,a,b){return a+b+' became'},'Past Simple Tense','Use the past simple for 2020.','Grammar','Năm 2020 đã qua nên dùng became.'],
+  [/\bcompare with\b/g,function(){return 'compared with'},'Word Form','Use the past participle: "compared with".','Grammar','Dùng compared with (V3), không dùng compare with.'],
+  [/\b(this|the|that) figure were\b/gi,function(m,a){return a+' figure was'},'Subject-Verb Agreement','"Figure" is singular, so use "was".','Grammar','figure là số ít nên dùng was.'],
+  [/\bhad an access\b/g,function(){return 'had access'},'Articles','"Access" is uncountable: no "an".','Grammar','access không đếm từng cái được nên không dùng an.']
 ];
 function demoCorrections(text){
   var out=[],seen={};
@@ -1499,7 +1560,7 @@ function demoCorrections(text){
     r[0].lastIndex=0;var m;
     while((m=r[0].exec(text))&&out.length<15){
       var to=r[1].apply(null,m);
-      if(to!==m[0]&&!seen[m.index]){seen[m.index]=1;out.push({original_text:m[0],corrected_text:to,category:r[2],explanation:r[3],type:r[4],at:m.index})}
+      if(to!==m[0]&&!seen[m.index]){seen[m.index]=1;out.push({original_text:m[0],corrected_text:to,category:r[2],explanation:r[3],explanation_vi:r[5]||'',type:r[4],at:m.index})}
     }
   });
   DEMO_AI.corrections.forEach(function(c){var i=text.indexOf(c.original_text);if(i>=0&&!seen[i]){seen[i]=1;out.push(Object.assign({at:i},c))}});
@@ -1510,13 +1571,28 @@ function aiFixes(ai,text){
 }
 // attempts.ai = {corrections, vocabulary_upgrades, model, ts}. Old results may still have summary / improved_essay: they are not shown.
 var aiOf=function(a){return !!(a&&a.ai&&Array.isArray(a.ai.corrections))};
+// Vocabulary upgrades: the flashcard word, whether it is saved, and the example with the new phrase in bold
+function vuWord(v){return String(v.upgraded||'').replace(/\//g,' ').replace(/\s+/g,' ').trim()}
+function vuHas(v){var w=vuWord(v);return !!U&&cardList(U.email).some(function(c){return c.word===w})}
+function vuBold(ex,up){
+  ex=String(ex||'');var lo=ex.toLowerCase(),alts=[String(up||'')].concat(String(up||'').split(/\s*\/\s*/)),i=-1,n=0;
+  for(var k=0;k<alts.length&&i<0;k++){var a=alts[k].trim().toLowerCase();if(a){i=lo.indexOf(a);n=a.length}}
+  if(i<0)return esc(ex);
+  while(i+n<ex.length&&/[A-Za-z]/.test(ex.charAt(i+n)))n++; // demonstrate -> demonstrates
+  return esc(ex.slice(0,i))+'<b>'+esc(ex.slice(i,i+n))+'</b>'+esc(ex.slice(i+n));
+}
 function aiHTML(ai,text){
   var vu=ai.vocabulary_upgrades||[],h='<div class="aib">'+correctionsHTML(text,aiItems(ai));
-  if(vu.length)h+='<h4 class="tk">Vocabulary upgrades</h4><ul class="fxl aivu">'+vu.map(function(v,i){return '<li><div><span>'+esc(v.original||'')+' → <ins class="fx-ins">'+esc(v.upgraded||'')+'</ins></span>'+((v.example||v.note)?'<small>'+esc(v.example||'')+((v.example&&v.note)?' · ':'')+esc(v.note||'')+'</small>':'')+'</div>'+((U&&U.role==='student')?'<button class="btn sm" type="button" data-act="ai-card" data-i="'+i+'">+ Flashcard</button>':'')+'</li>'}).join('')+'</ul>';
+  if(vu.length)h+='<h4 class="tk">Vocabulary upgrades</h4><div class="vu">'+vu.map(function(v,i){
+    var stu=U&&U.role==='student',got=stu&&vuHas(v);
+    return '<div class="vur"><div class="vul"><span class="vuo">'+esc(v.original||'')+'</span><b class="vuu">'+esc(v.upgraded||'')+'</b></div><div class="vurt">'+
+      (v.example?'<p class="vue">'+vuBold(v.example,v.upgraded)+'</p>':'')+(v.note?'<p class="vun">'+esc(v.note)+'</p>':'')+
+      (stu?'<button class="btn sm" type="button" data-act="ai-card" data-i="'+i+'"'+(got?' disabled':'')+'>'+(got?'Added ✓':'+ Flashcard')+'</button>':'')+'</div></div>'}).join('')+'</div>';
   return h+'</div>';
 }
 function aiShow(ai,text,added,demo){
   var b=$('#fixes');if(!b)return;AIX=ai;markAnswer(text,ai);
+  var ws=$('#wSub'),wi=aiItems(ai);if(ws&&fixSpans(text,wi).length){ws.innerHTML=answerHTML(text,wi);var wn=$('#wSubNote');if(wn)wn.hidden=false}
   b.innerHTML=(demo?'<p class="banner">'+esc(demo===true?'Demo: sample AI result. On the live site the AI checks your own text.':demo)+'</p>':'')+aiHTML(ai,text)+(added?'<p class="saved" style="margin-top:8px">'+added+' mistake'+(added>1?'s were':' was')+' added to your <b>Error Notebook</b>. <button class="linkish" data-act="tab" data-tab="errors" type="button">Open it</button></p>':'');
 }
 function aiSay(msg,code,retry){var b=$('#fixes');if(b)b.innerHTML='<p class="saved" aria-live="polite">'+esc(msg)+(code?' <span class="mono">(code: '+esc(code)+')</span>':'')+'</p>'+(retry?'<div class="actions" style="margin-top:6px"><button class="btn sm" data-act="ai-retry" type="button">Try again</button></div>':'')}
@@ -1561,7 +1637,39 @@ function leaveEvt(){
     showWL('You left the page 3 times, so the exercise restarted from the beginning.',true);
   }else{lsSet(key,String(WL.n));showWL('You left the page ('+WL.n+'/3). On the 3rd time you will have to start over.',true)}
 }
+// Student: the newest submission for this exercise (null for teachers, who always get the editor in preview mode)
+function mySub(exId){
+  if(!U||U.role!=='student')return null;
+  var l=attemptsOf(U.email).filter(function(a){return a.ex===exId&&a.kind==='submission'}).sort(function(a,b){return (b.ts||0)-(a.ts||0)});
+  return l[0]||null;
+}
+var WNEW=null; // exercise id after "Write a new version" (reset when another exercise opens)
+function subStatusHTML(a){
+  var d=new Date(a.ts||Date.now()),g=gradeOf(a),marked=g&&g.overall!=null&&g.overall!=='';
+  var h='<p class="banner subdone" role="status"><b>Submitted</b> on '+fmtD(a.ts)+'/'+d.getFullYear()+' at '+pad(d.getHours())+':'+pad(d.getMinutes())+'</p>';
+  if(!marked)return h+'<p class="subst">Waiting for your teacher to mark it.</p>';
+  return h+'<p class="subst ok">Marked: <b>'+esc(rsInfo(a).txt)+'</b> · <button class="linkish" data-act="fb-open" data-id="'+esc(a.id)+'" type="button">Open feedback</button></p>';
+}
+// Review mode: the submitted text (read only) + the saved AI result. The AI is not called again.
+function renderSubmittedWriting(ex,head,ban,a,lk){
+  WL.on=false;setLock(false);done=true;
+  var txt=String(a.text||''),ai=aiOf(a)?a.ai:null,items=ai?aiItems(ai):fixItems(a.fixes),found=items.length&&fixSpans(txt,items).length;
+  var live=!DEMO&&!!dbh&&String(a.id).indexOf('local-')!==0&&Date.now()-(a.ts||0)<2*3600e3;
+  var h='<div class="pane single">'+head+ban+subStatusHTML(a)+writingTask(ex)+'<p class="lbl">Your answer</p>'+
+    '<p class="cxnote" id="wSubNote"'+(found?'':' hidden')+'>Mistakes are highlighted in red. The numbers match the corrections below.</p>'+
+    '<div class="essay wmarked" id="wSub">'+(found?answerHTML(txt,items):esc(txt))+'</div>'+
+    '<div class="wmeta"><span><span class="mono">'+(a.words||wordCount(txt))+'</span> words</span></div><div id="fixes">';
+  if(ai){AIX=ai;h+=aiHTML(ai,txt)}
+  else if(items.length)h+='<div class="aib">'+correctionsHTML(txt,items)+'</div>';
+  else if(live){AIR={id:a.id,text:txt,ex:ex};h+='<p class="saved" aria-live="polite">AI check in progress… If nothing shows up in a minute, press Check again.</p><div class="actions" style="margin-top:6px"><button class="btn sm" data-act="ai-retry" type="button">Check again</button></div>'}
+  else h+='<p class="saved">No AI corrections for this answer.</p>';
+  h+='</div>'+(lk?'':'<div class="actions"><button class="btn sm" data-act="w-new" data-ex="'+esc(ex.id)+'" type="button">Write a new version</button></div>');
+  $('#libBody').innerHTML=h+nextBtns(true)+'</div>';
+}
 function renderWriting(ex,head,ban){
+  var sub=mySub(ex.id),lk=sub&&lockInfo(ex.id);
+  if(sub&&(WNEW!==ex.id||lk))return renderSubmittedWriting(ex,head,ban,sub,lk);
+  if(sub)ban+='<p class="banner">New version: your earlier submission is kept. <button class="linkish" data-act="w-view" type="button">Back to my submission</button></p>';
   var key='md-draft-'+U.email+'-'+ex.id,draft=lsGet(key)||'',lock=U.role==='student';
   WL.n=lock?(+lsGet('md-wl-'+U.email+'-'+ex.id)||0):0;WL.on=lock;if(lock){setLock(true);$('#crumbs').innerHTML=''}
   $('#libBody').innerHTML='<div class="pane single">'+head+ban+(lock?'<p class="banner lockmsg" id="wLock">Stay on this page until you submit. If you leave it 3 times, the exercise restarts.'+(WL.n?' Left so far: '+WL.n+'/3.':'')+'</p>':'')+writingTask(ex)+
@@ -1576,8 +1684,8 @@ function updWords(){
 function submitWriting(){
   if(done)return;var ex=exOf(NAV.ex),t=$('#wText').value;
   if(!wordCount(t)){$('#saveMsg').textContent='Write something before you submit.';return}
-  done=true;WL.on=false;setLock(false);if(U.role==='student')lsSet('md-wl-'+U.email+'-'+ex.id,'0');$('#wText').readOnly=true;$('#submit').disabled=true;
-  $('#result').innerHTML='<div class="result"><p style="margin:0"><b>Submitted.</b> Your teacher will review it.</p><div id="fixes"></div>'+nextBtns()+'</div>';
+  done=true;WL.on=false;setLock(false);WNEW=null;if(U.role==='student'){lsSet('md-wl-'+U.email+'-'+ex.id,'0');lsSet('md-draft-'+U.email+'-'+ex.id,'')}$('#wText').readOnly=true;$('#submit').disabled=true;
+  $('#result').innerHTML='<div class="result"><p style="margin:0"><b>Submitted.</b> Your teacher will review it.</p><div id="fixes"></div>'+nextBtns(U.role==='student')+'</div>';
   if(U.role==='teacher')return;
   saveAttempt({email:U.email,student:U.name,course:U.course,cls:U.cls,ex:ex.id,score:0,total:0,items:[],kind:'submission',text:t,words:wordCount(t),ts:Date.now()}).then(function(h){var m=$('#saveMsg');if(m)m.textContent=h==='db'?'Saved.':'Kept for this session only.';autoFix(t,ex,h)});onAttemptSaved(ex,0,0,false);
 }
@@ -1906,6 +2014,7 @@ function mkAct(a,t){
 }
 document.addEventListener('keydown',function(e){
   if(e.key!=='Escape')return;
+  if(FXP){fxPopClose();e.stopImmediatePropagation();return}
   if($('#mkSheet')){closeMkSheet();e.stopImmediatePropagation()}else if($('#fbBox')){closeFb();e.stopImmediatePropagation()}
 },true);
 function modalHTML(a){
@@ -1915,7 +2024,7 @@ function modalHTML(a){
   else if(e.skill==='writing')h+='<h4 class="tk">Task</h4>'+writingTask(e);
   else h+='<div style="margin:10px 0">'+vocEmbed(a.link)+'</div><h4 class="tk">Transcript</h4><div class="subtext" style="max-height:170px">'+(a.transcript?esc(a.transcript):'<span class="muted">No transcript yet. On the live site it appears here automatically from the recording.</span>')+'</div>'+(a.notes?'<p class="saved" style="margin:0 0 8px">Student notes: '+esc(a.notes)+'</p>':'');
   if(ms!=null)h+='<h4 class="tk">'+(rd?'Mark mistakes on the passage':'Student answer · tap a word to mark')+'</h4>'+legendHTML(e)+'<div class="mkpass'+(rd?'':' essay')+'" id="mkText">'+wordsHTML(ms,MK.marks,true)+'</div><p class="saved" id="mkCnt" style="margin:6px 0 8px">'+markCnt()+(rd?'':' · '+(a.words||wordCount(a.text))+' words')+'</p>';
-  if(!rd&&e.skill==='writing'&&(aiOf(a)||(a.fixes&&a.fixes.length)))h+='<h4 class="tk">Auto corrections</h4>'+correctionsHTML(a.text||'',aiOf(a)?aiItems(a.ai):fixItems(a.fixes));
+  if(!rd&&e.skill==='writing'&&(aiOf(a)||(a.fixes&&a.fixes.length)))h+='<h4 class="tk">Auto corrections</h4>'+correctionsHTML(a.text||'',aiOf(a)?aiItems(a.ai):fixItems(a.fixes),true);
   h+='<p class="banner" style="margin-top:6px">Marking is optional. If you skip it, this still counts as done.</p>';
   h+=cr.map(function(c,i){var v=(g&&g.scores&&g.scores[i]!=null)?g.scores[i]:6;return '<div class="rub"><label for="rb'+i+'">'+esc(c)+'</label><span class="mono" data-cv="'+i+'">'+fmtS(v)+'</span><input type="range" id="rb'+i+'" data-crit="'+i+'" min="0" max="'+mx+'" step="'+st+'" value="'+v+'"></div>'}).join('');
   h+='<div class="rub"><span>Overall '+(rd?'(out of 10)':'band')+'</span><span class="band" id="mkOverall">'+(g?fmtS(g.overall):6)+'</span></div>';
@@ -2297,6 +2406,7 @@ document.addEventListener('click',function(e){
   if(e.target.id==='adModal')return closeAdModal();
   if(e.target.id==='enModal'){EN.confirm=false;return renderErrorsKeep()}
   if(VP&&!e.target.closest('.vpop')){VP=null;showPop()}
+  if(FXP&&!e.target.closest('#fxPop')&&!e.target.closest('[data-why]'))fxPopClose();
   var t=e.target.closest('[data-act]');if(!t)return;var a=t.dataset.act,au=$('#aud');
   if(t.tagName==='BUTTON'&&t.closest('summary'))e.preventDefault(); // a button in a <details> header must not open/close it
   if(extAct(a,t))return;
@@ -2310,9 +2420,11 @@ document.addEventListener('click',function(e){
   if(a==='submit')return gradeNow();
   if(a==='sub-w')return submitWriting();
   if(a==='ai-retry'){aiRun();return}
-  if(a==='ai-card'){var v=AIX&&(AIX.vocabulary_upgrades||[])[+t.dataset.i];if(v&&saveCard({w:String(v.upgraded).replace(/\//g,' ').trim(),ipa:'',pos:'',en:v.note||'',vi:'',ex:v.example||'',syn:[v.original],ant:[]}))t.disabled=true;return}
+  if(a==='w-new'){var wsub=mySub(t.dataset.ex),wk='md-draft-'+U.email+'-'+t.dataset.ex;WNEW=t.dataset.ex;if(wsub&&!lsGet(wk))lsSet(wk,wsub.text||'');renderPlayer();window.scrollTo&&window.scrollTo(0,0);return}
+  if(a==='w-view'){WNEW=null;renderPlayer();return}
+  if(a==='ai-card'){var v=AIX&&(AIX.vocabulary_upgrades||[])[+t.dataset.i];if(!v)return;saveCard({w:vuWord(v),ipa:'',pos:'',en:v.note||'',vi:'',ex:v.example||'',syn:[v.original],ant:[]});if(vuHas(v)){t.disabled=true;t.textContent='Added ✓'}return}
   if(a==='cx-copy'){var cv=CXP[t.dataset.k]||'',cno=function(){toast('Copy failed. Select the text and copy it by hand.')};try{navigator.clipboard.writeText(cv).then(function(){toast('Copied.')},cno)}catch(x){cno()}return}
-  if(a==='fx-tip'){if(t.dataset.tip)toast(t.dataset.tip);fxHot(t);return}
+  if(a==='fx-tip'){if(t.getAttribute('data-why')!=null)fxPopOpen(t);fxHot(t);return}
   if(a==='sub-s')return submitSpeaking();
   if(a==='timer')return startTimer();
   if(a==='retry'){renderPlayer();return}
@@ -2617,12 +2729,12 @@ function addDaysTs(ts,n){var d=new Date(ts);d.setDate(d.getDate()+n);return d.ge
 function enDay(ts){var d=new Date(ts);return d.getDate()+' '+MONTHS[d.getMonth()]}
 function makeSampleErr(){
   var em='minhanh@demo.vn',t=dayStart(),now=Date.now(),cs=DEMO_AI.corrections.slice(),go=cs[4];
-  cs.push({original_text:'go',corrected_text:'went',category:go.category,explanation:go.explanation,type:'Grammar',context:'Last weekend my family go to the countryside.',
+  cs.push({original_text:'go',corrected_text:'went',category:go.category,explanation:go.explanation,explanation_vi:go.explanation_vi,type:'Grammar',context:'Last weekend my family go to the countryside.',
     practice:[{sentence:'Last weekend my family ___ (go) to the countryside.',answers:['went'],clue_type:'base_form',own:true},go.practice[1]]});
   var S=[[1,t-DAYMS,0],[2,t,0],[1,t-2*DAYMS,1],[5,addDaysTs(t,14),0],[1,t,0],[2,t-DAYMS,1]];
   return cs.map(function(c,i){
     var at=i<5?'demoA':'demoB';
-    return {id:slug(em)+'_'+at+'_'+(i<5?i:0),email:em,student:'Minh Anh',cls:'',original:c.original_text,corrected:c.corrected_text,category:c.category,explanation:c.explanation,type:c.type,context:c.context,practice:c.practice||[],
+    return {id:slug(em)+'_'+at+'_'+(i<5?i:0),email:em,student:'Minh Anh',cls:'',original:c.original_text,corrected:c.corrected_text,category:c.category,explanation:c.explanation,explanation_vi:c.explanation_vi||'',type:c.type,context:c.context,practice:c.practice||[],
       attemptId:at,ex:'',exTitle:i<5?'Writing Task 2 · Environment':'Writing · My weekend',box:S[i][0],due:S[i][1],reviews:S[i][0]-1,lapses:S[i][2],mastered:i===3,createdAt:now-(9-i)*DAYMS,lastPractice:0,sample:true};
   });
 }
@@ -2657,7 +2769,7 @@ function errAddLocal(ai,text,ex,aid){
   var now=Date.now(),t=dayStart(),n=0;
   (ai.corrections||[]).forEach(function(c,i){
     var id=slug(U.email)+'_'+aid+'_'+i;n++;if(errById(id))return;
-    localErr.push({id:id,email:U.email,student:U.name,cls:U.cls||'',original:c.original_text,corrected:c.corrected_text||'',category:c.category,explanation:c.explanation||'',type:c.type,
+    localErr.push({id:id,email:U.email,student:U.name,cls:U.cls||'',original:c.original_text,corrected:c.corrected_text||'',category:c.category,explanation:c.explanation||'',explanation_vi:c.explanation_vi||'',type:c.type,
       context:enSentence(text,c.original_text)||c.context||c.original_text,practice:c.practice||[],attemptId:aid,ex:ex.id,exTitle:ex.title||'',
       box:1,due:t,reviews:0,lapses:0,mastered:false,createdAt:now,lastPractice:0,local:true});
   });
@@ -2715,7 +2827,8 @@ function enCtxHTML(e){
   if(i<0)return '<mark class="enhl">'+esc(o)+'</mark>';
   return esc(c.slice(0,i))+'<mark class="enhl">'+esc(o)+'</mark>'+esc(c.slice(i+o.length));
 }
-function enFixHTML(e){return '<p class="errfix"><del class="fx-del">'+esc(e.original||'')+'</del>'+(e.corrected?'<span class="arr" aria-hidden="true">→</span><ins class="fx-ins">'+esc(e.corrected)+'</ins>':'')+'</p>'+(e.explanation?'<p class="errwhy">'+esc(e.explanation)+'</p>':'')}
+function enWhy(e){return e.explanation_vi||e.explanation||''}
+function enFixHTML(e){return '<p class="errfix"><del class="fx-del">'+esc(e.original||'')+'</del>'+(e.corrected?'<span class="arr" aria-hidden="true">→</span><ins class="fx-ins">'+esc(e.corrected)+'</ins>':'')+'</p>'+(enWhy(e)?'<p class="errwhy">'+esc(enWhy(e))+'</p>':'')}
 // another due mistake shown on the page after this one (page order), '' = none
 function enNextDueId(id){
   var ids=Array.prototype.map.call(document.querySelectorAll('#v-errors article.errc'),function(a){return a.getAttribute('data-eid')}),i=ids.indexOf(id);
@@ -2732,7 +2845,7 @@ var EP=null;
 function enPracticeHTML(e,where){
   var on=EP&&EP.id===e.id,r=on?EP.res:null,id=esc(e.id),h='<div class="enp">';
   if(e.type==='Off-topic'){
-    h+='<p class="enctx">'+enCtxHTML(e)+'</p><p class="errwhy">'+esc(e.explanation||'This sentence does not answer the task.')+'</p>';
+    h+='<p class="enctx">'+enCtxHTML(e)+'</p><p class="errwhy">'+esc(enWhy(e)||'This sentence does not answer the task.')+'</p>';
     if(r)return h+'<p class="enres ok" aria-live="polite">Got it. '+(r.xp?'+'+r.xp+' XP · ':'')+(r.mastered?'Mastered 🎉':'next review '+enDay(r.due))+'</p>'+enDoneBtn(where,e.id)+'</div>';
     return h+'<div class="actions enact"><button class="btn pri sm" data-act="en-check" data-id="'+id+'" data-ok="1" type="button" data-enfocus="1">I understand</button>'+(where==='card'?'<button class="btn sm" data-act="en-close" type="button">Cancel</button>':'')+'</div></div>';
   }
@@ -2744,7 +2857,7 @@ function enPracticeHTML(e,where){
     var tried=on&&EP.tries>0;
     h+='<p class="enq">'+esc(before)+'<input id="enIn" class="enin" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Your answer" data-enid="'+id+'">'+cl+esc(rest)+'</p>';
     h+='<div class="actions enact"><button class="btn pri sm" data-act="en-check" data-id="'+id+'" type="button">Check</button><button class="btn sm" data-act="en-show" data-id="'+id+'" type="button">Show answer</button>'+(where==='card'?'<button class="btn sm" data-act="en-close" type="button">Cancel</button>':'')+'</div>';
-    h+='<p class="enmsg" id="enMsg" aria-live="polite">'+(tried?esc('Not quite. Think about: '+(e.explanation||'the rule for this mistake.')):'')+'</p>';
+    h+='<p class="enmsg" id="enMsg" aria-live="polite">'+(tried?esc('Not quite. Think about: '+(enWhy(e)||'the rule for this mistake.')):'')+'</p>';
     if(p.simple)h+='<p class="saved" style="margin:4px 0 0">Simple practice (AI exercise not available)</p>';
     return h+'</div>';
   }
@@ -2763,7 +2876,7 @@ function enBadge(e){
 function errCardHTML(e){
   var open=EP&&EP.where==='card'&&EP.id===e.id,h='<article class="errc" id="ec_'+esc(e.id)+'" data-eid="'+esc(e.id)+'">';
   if(open)return h+'<div class="errrow"><span class="enlbl">Practice</span>'+enBadge(e)+'</div>'+enPracticeHTML(e,'card')+'</article>';
-  h+='<div class="errrow"><p class="errfix"><del class="fx-del">'+esc(e.original||'')+'</del>'+(e.corrected?'<span class="arr" aria-hidden="true">→</span><ins class="fx-ins">'+esc(e.corrected)+'</ins>':'')+'</p>'+enBadge(e)+'</div>'+(e.explanation?'<p class="errwhy">'+esc(e.explanation)+'</p>':'');
+  h+='<div class="errrow"><p class="errfix"><del class="fx-del">'+esc(e.original||'')+'</del>'+(e.corrected?'<span class="arr" aria-hidden="true">→</span><ins class="fx-ins">'+esc(e.corrected)+'</ins>':'')+'</p>'+enBadge(e)+'</div>'+(enWhy(e)?'<p class="errwhy">'+esc(enWhy(e))+'</p>':'');
   return h+'</article>';
 }
 // Review all due / Practice this group: a fixed box at the top of the list; each next mistake replaces its content.
@@ -2859,7 +2972,7 @@ function enCheck(id,how){
     if(!String(v).trim()){var m0=$('#enMsg');if(m0)m0.textContent='Type your answer first.';if(inp)enFocusIn(inp.parentNode);return}
     if(errOkList(p.answers,v)){var r1=errRate(e,true);EP.res={ok:true,ans:String(v).trim(),p:p,due:r1.due,mastered:r1.mastered,xp:r1.xp};if(EN.rv)EN.rv.ok++;enUpdateCounts();renderPractice();return}
     if(!EP.tries){
-      EP.tries=1;var m=$('#enMsg');if(m)m.textContent='Not quite. Think about: '+(e.explanation||'the rule for this mistake.');
+      EP.tries=1;var m=$('#enMsg');if(m)m.textContent='Not quite. Think about: '+(enWhy(e)||'the rule for this mistake.');
       if(inp){inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');inp.select();try{inp.focus({preventScroll:true})}catch(x){inp.focus()}}
       return;
     }
@@ -3108,19 +3221,37 @@ function dyAct(a,t){
 }
 
 /* ---------- Leaderboard ---------- */
-var RK='class';
+var RK='class',RKM=(function(){try{return lsGet('md-rkm')==='streak'?'streak':'xp'}catch(e){return 'xp'}})(); // RKM: 'xp' | 'streak'
+// value shown for one student: podium (big) "1250 XP" / "🔥 12 days", list "310 XP" / "🔥 4"
+function rkVal(x,big){
+  if(RKM==='streak')return big?'🔥 <b>'+x.st+'</b> day'+(x.st===1?'':'s'):'🔥 <b>'+x.st+'</b>';
+  return '<b>'+x.xp+'</b> <span class="u">XP</span>';
+}
+function rkName(x,me){return esc(nameOf(x.s.email))+(me?' (you)':'')}
 function renderRanks(){
   var el=$('#v-ranks');if(!U||U.role!=='student'){el.innerHTML='<p class="saved pad">The leaderboard is for students.</p>';return}
-  var A=students().filter(function(s){return RK==='all'||s.cls===U.cls}).map(function(s){var p=profFor(s.email);return {s:s,p:p,xp:p.xp}}).sort(function(a,b){return b.xp-a.xp||(a.s.name<b.s.name?-1:1)});
-  var row=function(x,i){
-    var pr=x.p,me=x.s.email===U.email;
-    return '<div class="rk'+(i<3?' top'+(i+1):'')+(me?' me':'')+'"><span class="n"'+(i<3?' aria-label="Rank '+(i+1)+'"':'')+'>'+(i+1)+'</span>'+avatarHTML(x.s.email,38)+'<span><b>'+esc(nameOf(x.s.email))+(me?' (you)':'')+'</b>'+(pr.title?'<span class="ttl">'+esc(pr.title)+'</span>':'')+'<small>'+esc(RK==='all'?classTitle(x.s.cls):lvOf(pr.xp).name)+'</small></span><span class="mono">'+(pr.streak?'🔥 '+pr.streak:'–')+'</span><span class="mono lv"><b>'+pr.xp+'</b> XP</span></div>';
-  };
+  var byName=function(a,b){return a.s.name<b.s.name?-1:a.s.name>b.s.name?1:0};
+  var A=students().filter(function(s){return RK==='all'||s.cls===U.cls}).map(function(s){var p=profFor(s.email);return {s:s,xp:+p.xp||0,st:+p.streak||0,best:+p.best||0}})
+    .sort(RKM==='streak'?function(a,b){return b.st-a.st||b.best-a.best||b.xp-a.xp||byName(a,b)}:function(a,b){return b.xp-a.xp||byName(a,b)});
   var me=-1;A.forEach(function(x,i){if(x.s.email===U.email)me=i});
-  var h='<div class="pad"><div class="sechead"><h2>Leaderboard</h2><span class="meta">Ranked by XP</span></div><div class="subtabs" role="tablist"><button role="tab" data-act="rk-set" data-v="class" aria-selected="'+(RK==='class')+'">My class</button><button role="tab" data-act="rk-set" data-v="all" aria-selected="'+(RK==='all')+'">Everyone</button></div><div class="rklist">';
-  h+=A.slice(0,10).map(row).join('');
-  if(me>=10)h+='<div class="rk gap">⋯</div>'+row(A[me],me);
-  el.innerHTML=h+'</div></div>';
+  var pod=function(i){
+    var x=A[i];if(!x)return '';var m=i===me;
+    return '<div class="pod pod'+(i+1)+(m?' me':'')+'"><span class="podn" aria-label="Rank '+(i+1)+'">'+(i+1)+'</span>'+avatarHTML(x.s.email,i?80:112)+
+      '<div class="podt"><b class="podnm" title="'+esc(nameOf(x.s.email))+'">'+rkName(x,m)+'</b><span class="podlv">'+esc(lvOf(x.xp).name)+'</span><span class="podv">'+rkVal(x,true)+'</span></div></div>';
+  };
+  var row=function(x,i){
+    var m=i===me;
+    return '<div class="rk'+(m?' me':'')+'"><span class="n">'+(i+1)+'</span>'+avatarHTML(x.s.email,36)+'<span class="rkn"><b>'+rkName(x,m)+'</b><small>'+esc(lvOf(x.xp).name)+'</small></span><span class="rkv">'+rkVal(x,false)+'</span></div>';
+  };
+  var tab=function(v,l){return '<button role="tab" data-act="rk-set" data-v="'+v+'" aria-selected="'+(RK===v)+'">'+l+'</button>'};
+  var seg=function(v,l){return '<button type="button" data-act="rk-mode" data-v="'+v+'" aria-pressed="'+(RKM===v)+'">'+l+'</button>'};
+  var h='<div class="pad"><div class="sechead"><h2>Leaderboard</h2><span class="meta">Ranked by '+(RKM==='streak'?'streak':'XP')+'</span></div>'+
+    '<div class="rkbar"><div class="subtabs" role="tablist">'+tab('class','My class')+tab('all','Everyone')+'</div><div class="seg" role="group" aria-label="Rank by">'+seg('xp','XP')+seg('streak','Streak')+'</div></div>';
+  if(!A.length){el.innerHTML=h+'<p class="saved">No students here yet.</p></div>';return}
+  h+='<div class="podium">'+pod(1)+pod(0)+pod(2)+'</div>';
+  var L=A.slice(3,13).map(function(x,j){return row(x,j+3)}).join('');
+  if(me>=13)L+='<div class="rk gap">⋯</div>'+row(A[me],me);
+  el.innerHTML=h+(L?'<div class="rklist">'+L+'</div>':'')+'</div>';
 }
 /* ---------- Prizes: tiers, wheel, inventory, marquee, reminders, teacher setup ---------- */
 var PZ={freeze:{i:'🧊',n:'Streak Freeze',d:'Protects your streak once. Used automatically.'},hint:{i:'💡',n:'Free Hint Pass',d:'Opens a Writing hint without the mini-quiz. Applies automatically once hints are switched on.'},ext:{i:'⏳',n:'1-day Extension',d:'Adds 24 hours to one weekly homework.'},title:{i:'🏷️',n:'Leaderboard title',d:'Shown next to your name.'},ctitle:{i:'✏️',n:'Custom title',d:'Write your own title for the leaderboard.'},peek:{i:'👀',n:'Answer Peek',d:'Shows the correct answers right after one failed submit.'},mat:{i:'📚',n:'Study material',d:'Exclusive file from your teacher.'},pen:{i:'🖍️',n:'Highlighter pen',d:'A small gift from your teacher.'},vip:{i:'⭐',n:'VIP Essay Correction',d:'Detailed correction, down to the comma, for one Writing task.'},tea:{i:'🧋',n:'Bubble tea or coffee voucher',d:'Worth up to 40k VND.'},mock20:{i:'🎤',n:'Mock Speaking 1-on-1 · 20% off',d:'15-minute session discount code.'},mock25:{i:'🎤',n:'Mock Speaking 1-on-1 · 25% off',d:'15-minute session discount code.'},xp:{i:'✨',n:'Bonus XP',d:'+100 XP'},custom:{i:'🎁',n:'Prize',d:'A prize from your teacher.'}};
@@ -3448,6 +3579,7 @@ function extAct(a,t){
   if(a==='rv-end'){var wh=CV&&CV.where;CV=null;if(wh==='daily'){NAV.daily=null;renderLib()}else renderCards();return true}
   if(a==='card-del'){delCard(t.dataset.id);return true}
   if(a==='rk-set'){RK=t.dataset.v;renderRanks();return true}
+  if(a==='rk-mode'){RKM=t.dataset.v==='streak'?'streak':'xp';try{lsSet('md-rkm',RKM)}catch(e){}renderRanks();return true}
   if(a==='wh-spin'){doSpin(false);return true}
   if(a==='wh-spinxp'){doSpin(true);return true}
   if(a==='bag-equip'){var it=itemById(t.dataset.id),p=myProf();if(it){p.title=it.text;putProf(p)}renderBag();return true}
@@ -3856,7 +3988,7 @@ function demoAdminRun(path,b){
 function adPost(path,body,key){
   var hd={'Content-Type':'application/json'};if(key)hd['X-Admin-Key']=key;
   return fetch(API_BASE+'/'+path,{method:'POST',headers:hd,body:JSON.stringify(body||{})}).then(function(r){
-    return r.json().catch(function(){return {}}).then(function(d){d._status=r.status;d._ok=r.ok;return d})
+    return r.json().catch(function(){return {_nojson:true}}).then(function(d){d._status=r.status;d._ok=r.ok;return d})
   },function(){throw new Error('No connection. Check your internet and try again.')});
 }
 // Every admin call goes through here. Demo: local fake data. Real site: X-Admin-Key from the admin login (sessionStorage).
@@ -3865,6 +3997,8 @@ function adminApi(path,body){
   var key='';try{key=sessionStorage.getItem('md-akey')||''}catch(e){}
   return adPost(path,body,key).then(function(d){
     if(d._status===401&&d.needUnlock){AD.locked=true;AD.modal=null;if(TAB==='admin')renderAdmin();throw new Error(d.error)}
+    // no JSON / unknown route = the site was deployed without the latest functions/ folder
+    if(d._nojson||(d._status===404&&d.error==='Not found.'))throw new Error('The server does not know this action yet ('+path+', code: http'+d._status+'). Deploy the latest version of the site (with the functions/ folder) and try again.');
     if(!d._ok)throw new Error(d.error||'Something went wrong. Try again.');
     return d;
   });
@@ -3876,7 +4010,7 @@ function adUnlock(btn){
   p.then(function(d){try{sessionStorage.setItem('md-akey',d.adminKey)}catch(e){}AD.locked=false;AD.users=null;AD.loadErr='';AD.err='';toast('Admin tools unlocked.');renderAdmin()},
     function(e){adBusy(btn,false);adSay(e.message)});
 }
-function adBusy(btn,on){if(!btn)return;if(on){btn.setAttribute('data-lbl',btn.textContent);btn.disabled=true;btn.textContent='Saving…'}else{btn.disabled=false;if(btn.getAttribute('data-lbl'))btn.textContent=btn.getAttribute('data-lbl')}}
+function adBusy(btn,on,lbl){if(!btn)return;if(on){btn.setAttribute('data-lbl',btn.textContent);btn.disabled=true;btn.textContent=lbl||'Saving…'}else{btn.disabled=false;if(btn.getAttribute('data-lbl'))btn.textContent=btn.getAttribute('data-lbl')}}
 function adSay(m){AD.err=m||'';var el=$('#adMsg');if(el)el.textContent=AD.err}
 var adLoading=null;
 function adLoad(force){
@@ -4083,7 +4217,7 @@ function adAct(a,t){
         return adminApi('admin/password',{email:who,newPassword:v}).then(function(){return adDone('Password changed for '+nm+'.')})}};
     renderAdmin();var pi=$('#adNewPw');if(pi)pi.focus();return true}
   if(a==='ad-kick'){
-    AD.modal={title:'Kick this student?',text:'The account of '+nm+' ('+who+') is deleted: the password stops working, they leave the class list, and devices that are signed in are signed out within 10 minutes. Their name is free again on the sign-in page, so they must register again to come back. Their past work and XP are kept and come back only if they register with the same email.',ok:'Kick',danger:true,
+    AD.modal={title:'Kick this student?',text:'The account of '+nm+' ('+who+') is deleted: the password stops working, they leave the class list, and devices that are signed in are signed out within 10 minutes. Their name is free again on the sign-in page, so they must register again to come back. Their past work and XP are kept and come back only if they register with the same email.',ok:'Kick',busy:'Kicking…',danger:true,
       run:function(){return adminApi('admin/kick',{email:who}).then(function(){return adDone(nm+' was kicked.')})}};
     renderAdmin();return true}
   if(a==='ad-on'){adBusy(t,true);adminApi('admin/active',{email:who,active:true}).then(function(){return adDone(nm+' can sign in again.')},function(e){adBusy(t,false);adSay(e.message)});return true}
@@ -4106,7 +4240,7 @@ function adAct(a,t){
     adBusy(t,true);adSay('');
     adminApi('admin/password',{email:U.email,oldPassword:o,newPassword:n}).then(function(){adBusy(t,false);$('#pwOld').value='';$('#pwNew').value='';$('#pwNew2').value='';toast('Your password was changed.')},function(e){adBusy(t,false);adSay(e.message)});
     return true}
-  if(a==='ad-ok'){var m=AD.modal;if(!m||!m.run)return true;adBusy(t,true);var mm=$('#adMMsg');if(mm)mm.textContent='';
+  if(a==='ad-ok'){var m=AD.modal;if(!m||!m.run)return true;adBusy(t,true,m.busy);var mm=$('#adMMsg');if(mm)mm.textContent='';
     m.run().then(function(){},function(e){adBusy(t,false);var m2=$('#adMMsg');if(m2)m2.textContent=e.message||'Something went wrong.'});return true}
   return false;
 }
