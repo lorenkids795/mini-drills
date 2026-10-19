@@ -12,7 +12,8 @@
 //   ADMIN_EMAIL            text    the one admin account (a teacher who also manages users)
 //   ADMIN_PASSWORD         secret  the admin's first password (used once, when acct:<ADMIN_EMAIL> does not exist yet)
 //   GEMINI_KEY             secret  Google AI Studio key, for /api/ai/correct (AI Writing correction)
-//   GEMINI_MODEL           text    optional, default gemini-2.5-flash
+//   GEMINI_MODELS          text    optional, free models tried in order, default gemini-3.8-flash,gemini-3.6-flash,gemini-3.5-flash-lite
+//   GEMINI_MODEL           text    optional, old setting: one model tried before the default list (delete it if it is gemini-2.5-flash)
 //   AI_DAILY_LIMIT         text    optional, AI checks per student per day, default 10
 //   GEMINI_PROXY_URL       text    optional, Google Apps Script relay (gemini-relay.gs) /exec link. Use it when Gemini answers
 //                                  "User location is not supported" (Cloudflare served from a blocked region, e.g. Hong Kong)
@@ -559,7 +560,8 @@ async function adminUsers(env) {
   });
   await Promise.all(out.map(async (r) => {
     const off = await env.MD_KV.get('off:' + r.email);
-    r.status = !off || off === 'kicked' ? 'active' : off.indexOf('moved:') === 0 ? 'moved' : 'paused';
+    // 'kicked' is only seen for a teacher still listed in the TEACHERS variable (kicked students leave the roster)
+    r.status = !off ? 'active' : off === 'kicked' ? 'kicked' : off.indexOf('moved:') === 0 ? 'moved' : 'paused';
     r.hasPassword = !!(await env.MD_KV.get('acct:' + r.email));
   }));
   return json({ users: out, me: ad });
@@ -574,7 +576,7 @@ async function adminPassword(env, body) {
     const st = await checkPassword(env, email, String(body.oldPassword || ''));
     if (st === 'locked') return fail('Too many tries. Wait 15 minutes and try again.', 429);
     if (st !== 'ok') return fail('Your current password is wrong.', 401);
-  } else if (!(await roleOf(env, email))) {
+  } else if (!(await roleOf(env, email)) && !(await rosterRow(env, email))) {
     return fail('This email is not a student or teacher in the app.', 404);
   }
   await savePassword(env, email, pw);
@@ -676,7 +678,8 @@ async function adminSheet(env, body) {
   return json(Object.assign({ linked: true, url: conf.url }, await sheetSummary(env, c)));
 }
 
-// Kick a student: delete the account (password, class-list entry) and free their name, so they must register again.
+// Kick a student or a teacher: delete the account (password, class-list entry / staff entry) and free the Sheet name,
+// so the person must register again by picking their name (a teacher is added again in Admin → Teachers).
 // Learning data (attempts, XP, flashcards…) is kept: registering again with the same email brings it back.
 // roster/{email} for a student. Users lists rows by their email field (or id), so an older row whose id is not the
 // normalized email (capital letters, spaces) is found by that field too. -> { id, data } | null
@@ -691,20 +694,23 @@ async function adminKick(env, body) {
   const email = normEmail(body.email);
   if (!emailOk(email)) return fail('Enter a valid email.');
   if (email === adminEmail(env)) return fail('The admin account cannot be kicked.', 403);
+  // students (roster) and teachers (KV staff, TEACHERS variable, or a teacher row in roster) can both be kicked
+  const st = await staffMap(env), envTeacher = teachers(env).indexOf(email) >= 0;
   const row = await rosterRow(env, email);
-  if (!row) return fail('This student is not on the class list any more. Reload the list.', 404);
-  if (row.data.role === 'teacher') return fail('Only students can be kicked. To remove a teacher, use the Teachers tab.', 400);
+  const teacher = !!st[email] || envTeacher || !!(row && row.data.role === 'teacher');
+  if (!teacher && !row) return fail('This account was not found. Reload the list.', 404);
+  if (st[email]) { delete st[email]; await env.MD_KV.put('staff', JSON.stringify(st)); }
   // free the name: Sheet claims (have sid) are deleted, old CSV names are marked unclaimed again
   const names = (await fsList(env, 'names')).filter((n) => normEmail(n.email) === email);
   for (const n of names) {
     if (n.sid) await fsDelete(env, 'names', n.id);
     else await fsUpdate(env, 'names', n.id, { claimed: false, email: '' });
   }
-  await fsDelete(env, 'roster', row.id);
+  if (row) await fsDelete(env, 'roster', row.id);
   await env.MD_KV.delete('acct:' + email);
   await env.MD_KV.delete('rl:' + email);
   await env.MD_KV.put('off:' + email, 'kicked'); // open devices are signed out by /api/status
-  return json({ ok: true });
+  return json({ ok: true, role: teacher ? 'teacher' : 'student', envTeacher });
 }
 
 // Move a registered student to another class (the Sheet only matters before sign-up).
@@ -836,13 +842,37 @@ function parseJsonLoose(raw) {
   if (a >= 0 && b > a) { try { return JSON.parse(raw.slice(a, b + 1)); } catch (e) { return null; } }
   return null;
 }
-async function geminiOnce(env, model, prompt, schema, thinking) {
-  const gc = { temperature: 0.2, responseMimeType: 'application/json' };
+// Free-tier models, tried in this order (all "Free of charge" on the Gemini API Free Tier, checked 10/2026).
+// GEMINI_MODELS (comma list) replaces the list; the old GEMINI_MODEL (one model) is tried first.
+// Paid-only models (Pro, Argon, Gemini 4…) are never used, even when written in a variable.
+const AI_MODELS = ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite'];
+const PAID_ONLY = /(^|-)pro(-|$)|argon|^gemini-[4-9]/i;
+function aiModels(env) {
+  const want = env.GEMINI_MODELS ? String(env.GEMINI_MODELS).split(',') : [String(env.GEMINI_MODEL || '')].concat(AI_MODELS);
+  const out = [];
+  want.map((m) => m.trim()).filter(Boolean).forEach((m) => {
+    if (PAID_ONLY.test(m)) { console.log('[gemini] skipped paid-only model', m); return; }
+    if (out.indexOf(m) < 0) out.push(m);
+  });
+  return out.length ? out : AI_MODELS.slice();
+}
+// Grammar correction does not need long thinking: as little as each model allows (faster, fewer tokens).
+// Gemini 3+: Google recommends keeping the default temperature, so it is only lowered for older models.
+function genConfig(model, schema, thinking) {
+  const gc = { responseMimeType: 'application/json' };
+  if (!/^gemini-[3-9]/.test(model)) gc.temperature = 0.2;
   if (schema) gc.responseSchema = schema;
-  // Gemini 2.5 Flash thinks by default, which is slow; correcting grammar does not need it
-  if (thinking && /^gemini-2\.5-flash/.test(model)) gc.thinkingConfig = { thinkingBudget: 0 };
+  if (thinking) {
+    if (/^gemini-2\.5-flash/.test(model)) gc.thinkingConfig = { thinkingBudget: 0 };
+    else if (/^gemini-3\.[89]/.test(model)) gc.thinkingConfig = { thinkingLevel: 'low' }; // 3.8: low is the lowest
+    else if (/^gemini-3/.test(model)) gc.thinkingConfig = { thinkingLevel: 'minimal' };
+  }
+  return gc;
+}
+async function geminiOnce(env, model, prompt, schema, thinking, ms) {
+  const gc = genConfig(model, schema, thinking);
   const ctl = new AbortController();
-  const timer = setTimeout(() => ctl.abort(), AI_TIMEOUT);
+  const timer = setTimeout(() => ctl.abort(), ms || AI_TIMEOUT);
   const req = { contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: gc };
   let r, d;
   try {
@@ -887,20 +917,37 @@ async function geminiOnce(env, model, prompt, schema, thinking) {
 }
 async function askGemini(env, prompt, schema, shape) {
   if (!aiReady(env)) throw new AiError('nokey', 'GEMINI_KEY / GEMINI_PROXY_URL is not set');
-  const model = String(env.GEMINI_MODEL || 'gemini-2.5-flash').trim(), t0 = Date.now();
-  try {
-    return { out: await geminiOnce(env, model, prompt, schema, true), model, via: env.GEMINI_PROXY_URL ? 'relay' : 'direct' };
-  } catch (e) {
-    const c = e.code || 'error', det = e.detail || '';
-    const badThinking = c === 'http400' && /thinking/i.test(det);
-    const badSchema = c === 'http400' && !badThinking && /schema|response_schema|responseSchema|Invalid JSON payload|too many states|enum/i.test(det);
-    const busy = /^http(429|500|502|503|504)$/.test(c) || c === 'network' || c === 'empty' || c === 'parse';
-    console.log('[gemini] first try failed', model, c, det.slice(0, 200));
-    if (!(badThinking || badSchema || busy) || Date.now() - t0 > 25000) throw e; // retry only quick failures, never after a long wait
-    if (busy && /^http|network/.test(c)) await new Promise((res) => setTimeout(res, 1500));
-    const out = await geminiOnce(env, model, badSchema ? prompt + (shape || '') : prompt, badSchema ? null : schema, !badThinking);
-    return { out, model, via: env.GEMINI_PROXY_URL ? 'relay' : 'direct', retried: c };
+  const models = aiModels(env), t0 = Date.now(), via = env.GEMINI_PROXY_URL ? 'relay' : 'direct', tried = [];
+  let last = null;
+  for (let i = 0; i < models.length; i++) {
+    const model = models[i];
+    if (i && Date.now() - t0 > 90000) break; // never start another model after a long wait
+    let thinking = true, useSchema = true;
+    for (let k = 0; k < 2; k++) {
+      try {
+        const left = Math.max(20000, AI_TIMEOUT - (Date.now() - t0)); // all models together stay within AI_TIMEOUT
+        const out = await geminiOnce(env, model, useSchema ? prompt : prompt + (shape || ''), useSchema ? schema : null, thinking, left);
+        return { out, model, via, retried: tried.join(', ') };
+      } catch (e) {
+        last = e;
+        const c = e.code || 'error', det = e.detail || '';
+        console.log('[gemini] failed', model, c, det.slice(0, 200));
+        tried.push(model + ' ' + c);
+        // same model once more: without the thinking setting, or without the schema (JSON shape in the prompt instead)
+        if (k === 0 && c === 'http400' && /thinking/i.test(det)) { thinking = false; continue; }
+        if (k === 0 && c === 'http400' && /schema|response_schema|responseSchema|Invalid JSON payload|too many states|enum/i.test(det)) { useSchema = false; continue; }
+        break;
+      }
+    }
+    // Next model when this one is busy, over its free quota, unknown, or answered badly.
+    // Stop at once for problems every model would have: wrong key (403), blocked location / bad key (400), timeout, safety, relay.
+    const c = last.code || '', det = last.detail || '';
+    const next = /^http(404|429|500|502|503|504)$/.test(c) || ['network', 'empty', 'parse', 'too_long'].indexOf(c) >= 0 ||
+      (c === 'http400' && !/location|api[ _]?key/i.test(det));
+    if (!next) throw last;
+    if (/^http(429|5)/.test(c)) await new Promise((res) => setTimeout(res, 800));
   }
+  throw last;
 }
 
 // Practice check: one ___ with a (clue) right after it, answers not empty and at most 4 words,
@@ -1110,18 +1157,18 @@ async function aiPractice(env, body) {
 // as /api/ai/correct). Nothing is saved, no student quota is used. KV aitest:<day>, 200 a day.
 const AI_WHY = {
   nokey: 'GEMINI_KEY is not set on Cloudflare, or the site was not deployed again after adding it.',
-  timeout: 'Gemini did not answer within 5 minutes. Try again; if it keeps happening, try another GEMINI_MODEL.',
+  timeout: 'Gemini did not answer within 5 minutes. Try again in a few minutes.',
   network: 'The server could not reach Gemini. Try again.',
   http400: 'Gemini rejected the request: a wrong GEMINI_KEY, a model that does not support these settings, or "User location is not supported" (Cloudflare runs in a blocked region: set up the Apps Script relay, README 3e).',
   relay: 'The Apps Script relay failed: check GEMINI_PROXY_URL (the /exec link), GEMINI_PROXY_SECRET = RELAY_SECRET in the script, and that the web app is deployed for "Anyone".',
   http403: 'The key is not allowed: check GEMINI_KEY (Google AI Studio) and that the Gemini API is enabled.',
-  http404: 'Model not found: check GEMINI_MODEL (e.g. gemini-3.6-flash).',
-  http429: 'Gemini quota or rate limit reached. Wait a minute, or add billing in Google AI Studio.',
-  http5xx: 'Gemini is busy or down right now. Try again in a minute.',
+  http404: 'Model not found or not available to this key: check GEMINI_MODELS (default gemini-3.8-flash, gemini-3.6-flash, gemini-3.5-flash-lite).',
+  http429: 'The free Gemini quota of every model in the list is used up for now. Wait a minute (per-minute limit) or until tomorrow (daily limit).',
+  http5xx: 'Every Gemini model in the list is busy right now. Try again in a few minutes.',
   blocked: 'Gemini refused to answer this text (safety filter).',
   empty: 'Gemini returned an empty answer. Try again.',
   too_long: 'The answer was cut off (too long). Try a shorter essay.',
-  parse: 'Gemini returned something that is not JSON. Try again or another GEMINI_MODEL.',
+  parse: 'Gemini returned something that is not JSON. Try again.',
 };
 async function adminAiTest(env, body) {
   const text = String(body.text || '');

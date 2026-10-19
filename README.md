@@ -45,7 +45,9 @@ Upload cả thư mục này (index.html, md-config.js, md-backend.js, README.md,
 1. Lấy key: mở https://aistudio.google.com/apikey → đăng nhập Google → **Create API key** → copy.
 2. Cloudflare Pages → Settings → **Variables and Secrets** (cho cả **Preview** và **Production**):
    - `GEMINI_KEY` (Secret): key vừa copy
-   - `GEMINI_MODEL` (Text, tùy chọn): mặc định `gemini-2.5-flash`
+   - Model: **không cần đặt**. Server tự thử lần lượt 3 model miễn phí `gemini-3.8-flash` → `gemini-3.6-flash` → `gemini-3.5-flash-lite` (model này bận hoặc hết lượt miễn phí thì chuyển model sau). Muốn đổi danh sách: `GEMINI_MODELS` (Text, cách nhau bằng dấu phẩy). Model trả phí (Pro, Argon, Gemini 4) luôn bị bỏ qua.
+   - Nếu trước đây đã đặt `GEMINI_MODEL` = `gemini-2.5-flash` thì **xóa biến đó** (Google đã hạn chế model 2.5).
+   - Muốn chắc chắn không mất tiền: tạo key ở project Google **chưa bật thanh toán (billing)**; khi đó Google chỉ cho dùng gói Free Tier.
    - `AI_DAILY_LIMIT` (Text, tùy chọn): số lần AI chấm mỗi học sinh mỗi ngày, mặc định `10`
 3. Deploy lại.
 4. Firebase → Firestore → **Rules**: dán lại `firestore.rules` (có thêm khối `errors`) → **Publish**.
@@ -64,7 +66,7 @@ Cloudflare có thể chạy `/api` ở máy chủ thuộc khu vực Gemini chặ
 5. Cloudflare Pages → Settings → Variables and Secrets (Preview + Production):
    - `GEMINI_PROXY_URL` (Text) = link `/exec`
    - `GEMINI_PROXY_SECRET` (Secret) = đúng câu `RELAY_SECRET` ở bước 2
-   - `GEMINI_MODEL` vẫn dùng như cũ. `GEMINI_KEY` trên Cloudflare không còn cần (key nằm trong script).
+   - `GEMINI_MODELS` vẫn dùng như cũ (không cần sửa script khi đổi model). `GEMINI_KEY` trên Cloudflare không còn cần (key nằm trong script).
 6. Deploy lại site → Admin → AI test → dòng thống kê ghi **"via Apps Script relay"**.
 - Sửa code trong script xong phải **Deploy → Manage deployments → Edit (bút chì) → Version: New version → Deploy**, nếu không bản cũ vẫn chạy (link `/exec` giữ nguyên).
 - Muốn quay lại gọi trực tiếp: xóa biến `GEMINI_PROXY_URL` rồi deploy lại.

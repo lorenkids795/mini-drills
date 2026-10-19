@@ -102,5 +102,19 @@ Chuẩn bị: deploy bản mới (có `functions/`). Không cần sửa Firebase
 6. [ ] Lớp chỉ có 1–2 học sinh → chỉ hiện số thẻ có thật, hạng 1 vẫn ở giữa. Mình ngoài top 13 → có dòng "⋯" rồi hàng của mình.
 7. [ ] 390px: 3 thẻ vẫn nằm cạnh nhau, tên dài bị cắt bằng "…", không tràn ngang; nút XP/Streak xuống dòng dưới các tab nếu thiếu chỗ. Dark mode: chữ và nền đọc rõ.
 
+## Gemini fallback (chỉ model miễn phí)
+1. [ ] Cloudflare → Variables and Secrets: nếu có `GEMINI_MODEL` = `gemini-2.5-flash` thì xóa (Preview + Production), rồi deploy lại.
+2. [ ] Admin → AI test → dòng thống kê ghi `gemini-3.8-flash direct` (hoặc `… via Apps Script relay`). Nếu 3.8 đang bận, dòng này ghi `gemini-3.6-flash` hoặc `gemini-3.5-flash-lite`: đó là fallback đang chạy.
+3. [ ] Cloudflare → Functions → Real-time logs: khi một model bận thấy `[gemini] failed gemini-3.8-flash http503 …`, ngay sau đó là model kế tiếp.
+4. [ ] Khi cả 3 model đều bận, học sinh thấy "The AI is very busy right now. Your answer is saved. Try again in a few minutes. (code: http503)" và nút Try again.
+5. [ ] Google AI Studio → project của key: **chưa bật billing** (Free Tier) để không bao giờ bị tính tiền.
+
+## Kick giáo viên/học sinh + Recent results kiểu cũ
+1. [ ] Admin → Users: mọi học sinh và giáo viên (trừ Admin) có **Change password** và **Kick**. Change password chạy cho cả học sinh lẫn giáo viên.
+2. [ ] Kick một giáo viên do admin thêm → modal "Kick this teacher?" → Kick → giáo viên biến mất khỏi Users và Teachers, không đăng nhập được nữa. Thêm lại ở Admin → Teachers → đăng nhập được.
+3. [ ] Kick giáo viên có trong biến `TEACHERS` → dòng đó hiện "Removed" + nút Resume (muốn xóa hẳn thì bỏ email khỏi `TEACHERS` trên Cloudflare). Resume + Change password → đăng nhập lại được.
+4. [ ] Kick học sinh → biến mất; tên hiện lại ở form đăng ký (đúng lớp trong Sheet); đăng ký lại bằng tên đó → vào được.
+5. [ ] Home → khung "RECENT RESULTS BY SKILL" giống ảnh mẫu: ô gọn, icon nhỏ, % Listening/Reading xanh hoặc đỏ, band Writing màu accent, ô Speaking trống có khung nét đứt, dòng LATEST: tên bài bên trái, điểm + ngày bên phải. Kiểm tra cả 390px và dark mode.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.
