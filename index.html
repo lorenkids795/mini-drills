@@ -513,6 +513,8 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .fx-hot{outline:2px solid var(--accent);outline-offset:1px;border-radius:4px}
 .wmarked{max-width:100%;min-height:120px;margin-top:4px}
 .banner.subdone{background:var(--good-bg);color:var(--good)}
+.wver{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}.wver .lbl{margin:0}
+.wver select{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:.45rem .6rem;font:inherit;font-size:.9rem;max-width:100%;min-width:0}
 .subst{margin:4px 0 12px;font-size:.95rem}.subst.ok b{color:var(--good)}
 @media (prefers-reduced-motion:no-preference){.fx-hot{transition:outline-color .2s}}
 .cxhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;max-width:72ch}.cxhead .tk{margin:0}
@@ -1359,7 +1361,7 @@ function lockInfo(id){
 }
 function renderPlayer(){
   var ex=exOf(NAV.ex);done=false;
-  var lk=lockInfo(NAV.ex);if(WNEW!==NAV.ex)WNEW=null;
+  var lk=lockInfo(NAV.ex);if(WNEW!==NAV.ex)WNEW=null;if(WVER&&WVER.ex!==NAV.ex)WVER=null;
   if(lk&&!(ex.kind==='writing'&&mySub(ex.id))){
     $('#libBody').innerHTML='<div class="pane single"><div class="phead"><span class="chip">'+SNAME[ex.skill]+'</span><h2>'+esc(ex.title)+'</h2></div><div class="banner" style="background:var(--bad-bg);color:var(--bad)"><b>Locked.</b> This exercise belongs to <b>'+esc(asgName(lk))+'</b>, which was due '+fmtDue(effDue(lk,U.email))+'. After the deadline it can only be opened with a late pass.</div><div class="actions"><button class="btn" data-act="nav" data-book="'+NAV.book+'" data-test="'+NAV.test+'" data-skill="'+NAV.skill+'" type="button">Back to the list</button></div></div>';
     return;
@@ -1639,24 +1641,35 @@ function leaveEvt(){
   }else{lsSet(key,String(WL.n));showWL('You left the page ('+WL.n+'/3). On the 3rd time you will have to start over.',true)}
 }
 // Student: the newest submission for this exercise (null for teachers, who always get the editor in preview mode)
-function mySub(exId){
-  if(!U||U.role!=='student')return null;
-  var l=attemptsOf(U.email).filter(function(a){return a.ex===exId&&a.kind==='submission'}).sort(function(a,b){return (b.ts||0)-(a.ts||0)});
-  return l[0]||null;
+// mySubs: every version the student submitted, newest first (Version 1 = the oldest)
+function mySubs(exId){
+  if(!U||U.role!=='student')return [];
+  return attemptsOf(U.email).filter(function(a){return a.ex===exId&&a.kind==='submission'}).sort(function(a,b){return (b.ts||0)-(a.ts||0)});
 }
+function mySub(exId){return mySubs(exId)[0]||null}
 var WNEW=null; // exercise id after "Write a new version" (reset when another exercise opens)
+var WVER=null; // {ex, id}: the version picked in the Version dropdown (reset when another exercise opens or a new version is sent)
+function subDate(a){var d=new Date(a.ts||Date.now());return fmtD(a.ts)+'/'+d.getFullYear()+' at '+pad(d.getHours())+':'+pad(d.getMinutes())}
+// Version dropdown (only when there are 2 versions or more)
+function versionsHTML(list,a){
+  if(list.length<2)return '';
+  return '<div class="wver"><label class="lbl" for="wVer">Version</label><select id="wVer">'+list.map(function(x,i){
+    var g=gradeOf(x),mk=g&&g.overall!=null&&g.overall!=='';
+    return '<option value="'+esc(x.id)+'"'+(x.id===a.id?' selected':'')+'>Version '+(list.length-i)+(i?'':' (latest)')+' · '+subDate(x)+' · '+(mk?esc(rsInfo(x).txt):'not marked yet')+'</option>';
+  }).join('')+'</select></div>'+(a.id!==list[0].id?'<p class="banner">You are viewing an older version. Your latest one is Version '+list.length+'.</p>':'');
+}
 function subStatusHTML(a){
   var d=new Date(a.ts||Date.now()),g=gradeOf(a),marked=g&&g.overall!=null&&g.overall!=='';
-  var h='<p class="banner subdone" role="status"><b>Submitted</b> on '+fmtD(a.ts)+'/'+d.getFullYear()+' at '+pad(d.getHours())+':'+pad(d.getMinutes())+'</p>';
+  var h='<p class="banner subdone" role="status"><b>Submitted</b> on '+subDate(a)+'</p>';
   if(!marked)return h+'<p class="subst">Waiting for your teacher to mark it.</p>';
   return h+'<p class="subst ok">Marked: <b>'+esc(rsInfo(a).txt)+'</b> · <button class="linkish" data-act="fb-open" data-id="'+esc(a.id)+'" type="button">Open feedback</button></p>';
 }
 // Review mode: the submitted text (read only) + the saved AI result. The AI is not called again.
-function renderSubmittedWriting(ex,head,ban,a,lk){
-  WL.on=false;setLock(false);done=true;
+function renderSubmittedWriting(ex,head,ban,a,lk,list){
+  WL.on=false;setLock(false);done=true;list=list||[a];
   var txt=String(a.text||''),ai=aiOf(a)?a.ai:null,items=ai?aiItems(ai):fixItems(a.fixes),found=items.length&&fixSpans(txt,items).length;
   var live=!DEMO&&!!dbh&&String(a.id).indexOf('local-')!==0&&Date.now()-(a.ts||0)<2*3600e3;
-  var h='<div class="pane single">'+head+ban+subStatusHTML(a)+writingTask(ex)+'<p class="lbl">Your answer</p>'+
+  var h='<div class="pane single">'+head+ban+versionsHTML(list,a)+subStatusHTML(a)+writingTask(ex)+'<p class="lbl">Your answer</p>'+
     '<p class="cxnote" id="wSubNote"'+(found?'':' hidden')+'>Mistakes are highlighted in red. The numbers match the corrections below.</p>'+
     '<div class="essay wmarked" id="wSub">'+(found?answerHTML(txt,items):esc(txt))+'</div>'+
     '<div class="wmeta"><span><span class="mono">'+(a.words||wordCount(txt))+'</span> words</span></div><div id="fixes">';
@@ -1664,12 +1677,15 @@ function renderSubmittedWriting(ex,head,ban,a,lk){
   else if(items.length)h+='<div class="aib">'+correctionsHTML(txt,items)+'</div>';
   else if(live){AIR={id:a.id,text:txt,ex:ex};h+='<p class="saved" aria-live="polite">AI check in progress… If nothing shows up in a minute, press Check again.</p><div class="actions" style="margin-top:6px"><button class="btn sm" data-act="ai-retry" type="button">Check again</button></div>'}
   else h+='<p class="saved">No AI corrections for this answer.</p>';
-  h+='</div>'+(lk?'':'<div class="actions"><button class="btn sm" data-act="w-new" data-ex="'+esc(ex.id)+'" type="button">Write a new version</button></div>');
+  h+='</div>'+(lk?'':'<div class="actions"><button class="btn sm" data-act="w-new" data-ex="'+esc(ex.id)+'" data-id="'+esc(a.id)+'" type="button">Write a new version</button></div>');
   $('#libBody').innerHTML=h+nextBtns(true)+'</div>';
 }
 function renderWriting(ex,head,ban){
-  var sub=mySub(ex.id),lk=sub&&lockInfo(ex.id);
-  if(sub&&(WNEW!==ex.id||lk))return renderSubmittedWriting(ex,head,ban,sub,lk);
+  var subs=mySubs(ex.id),sub=subs[0]||null,lk=sub&&lockInfo(ex.id);
+  if(sub&&(WNEW!==ex.id||lk)){
+    var pick=WVER&&WVER.ex===ex.id&&subs.filter(function(x){return x.id===WVER.id})[0];
+    return renderSubmittedWriting(ex,head,ban,pick||sub,lk,subs);
+  }
   if(sub)ban+='<p class="banner">New version: your earlier submission is kept. <button class="linkish" data-act="w-view" type="button">Back to my submission</button></p>';
   var key='md-draft-'+U.email+'-'+ex.id,draft=lsGet(key)||'',lock=U.role==='student';
   WL.n=lock?(+lsGet('md-wl-'+U.email+'-'+ex.id)||0):0;WL.on=lock;if(lock){setLock(true);$('#crumbs').innerHTML=''}
@@ -1685,7 +1701,7 @@ function updWords(){
 function submitWriting(){
   if(done)return;var ex=exOf(NAV.ex),t=$('#wText').value;
   if(!wordCount(t)){$('#saveMsg').textContent='Write something before you submit.';return}
-  done=true;WL.on=false;setLock(false);WNEW=null;if(U.role==='student'){lsSet('md-wl-'+U.email+'-'+ex.id,'0');lsSet('md-draft-'+U.email+'-'+ex.id,'')}$('#wText').readOnly=true;$('#submit').disabled=true;
+  done=true;WL.on=false;setLock(false);WNEW=null;WVER=null;if(U.role==='student'){lsSet('md-wl-'+U.email+'-'+ex.id,'0');lsSet('md-draft-'+U.email+'-'+ex.id,'')}$('#wText').readOnly=true;$('#submit').disabled=true;
   $('#result').innerHTML='<div class="result"><p style="margin:0"><b>Submitted.</b> Your teacher will review it.</p><div id="fixes"></div>'+nextBtns(U.role==='student')+'</div>';
   if(U.role==='teacher')return;
   saveAttempt({email:U.email,student:U.name,course:U.course,cls:U.cls,ex:ex.id,score:0,total:0,items:[],kind:'submission',text:t,words:wordCount(t),ts:Date.now()}).then(function(h){var m=$('#saveMsg');if(m)m.textContent=h==='db'?'Saved.':'Kept for this session only.';autoFix(t,ex,h)});onAttemptSaved(ex,0,0,false);
@@ -2421,7 +2437,7 @@ document.addEventListener('click',function(e){
   if(a==='submit')return gradeNow();
   if(a==='sub-w')return submitWriting();
   if(a==='ai-retry'){aiRun();return}
-  if(a==='w-new'){var wsub=mySub(t.dataset.ex),wk='md-draft-'+U.email+'-'+t.dataset.ex;WNEW=t.dataset.ex;if(wsub&&!lsGet(wk))lsSet(wk,wsub.text||'');renderPlayer();window.scrollTo&&window.scrollTo(0,0);return}
+  if(a==='w-new'){var wsub=mySubs(t.dataset.ex).filter(function(x){return x.id===t.dataset.id})[0]||mySub(t.dataset.ex),wk='md-draft-'+U.email+'-'+t.dataset.ex;WNEW=t.dataset.ex;if(wsub&&(!lsGet(wk)||wsub!==mySub(t.dataset.ex)))lsSet(wk,wsub.text||''); /* from an older version: start from that text */renderPlayer();window.scrollTo&&window.scrollTo(0,0);return}
   if(a==='w-view'){WNEW=null;renderPlayer();return}
   if(a==='ai-card'){var v=AIX&&(AIX.vocabulary_upgrades||[])[+t.dataset.i];if(!v)return;saveCard({w:vuWord(v),ipa:'',pos:'',en:v.note||'',vi:'',ex:v.example||'',syn:[v.original],ant:[]});if(vuHas(v)){t.disabled=true;t.textContent='Added ✓'}return}
   if(a==='cx-copy'){var cv=CXP[t.dataset.k]||'',cno=function(){toast('Copy failed. Select the text and copy it by hand.')};try{navigator.clipboard.writeText(cv).then(function(){toast('Copied.')},cno)}catch(x){cno()}return}
@@ -2483,6 +2499,7 @@ document.addEventListener('click',function(e){
 });
 document.addEventListener('change',function(e){
   var d=e.target.dataset||{};
+  if(e.target.id==='wVer'){WVER={ex:NAV.ex,id:e.target.value};renderPlayer();var wv=$('#wVer');if(wv)wv.focus();return}
   if(d.f){F[d.f]=d.f==='sample'?e.target.checked:e.target.value;if(d.f==='course'){F.cls='all';F.stu='all'}if(d.f==='cls')F.stu='all';renderDash()}
   if(d.img)imgFrom(d.img,e.target.files[0]);
   if(e.target.id==='avFile')avFrom(e.target.files[0]);

@@ -116,5 +116,11 @@ Chuẩn bị: deploy bản mới (có `functions/`). Không cần sửa Firebase
 4. [ ] Kick học sinh → biến mất; tên hiện lại ở form đăng ký (đúng lớp trong Sheet); đăng ký lại bằng tên đó → vào được.
 5. [ ] Home → khung "RECENT RESULTS BY SKILL" giống ảnh mẫu: ô gọn, icon nhỏ, % Listening/Reading xanh hoặc đỏ, band Writing màu accent, ô Speaking trống có khung nét đứt, dòng LATEST: tên bài bên trái, điểm + ngày bên phải. Kiểm tra cả 390px và dark mode.
 
+## Writing: xem lại theo phiên bản
+1. [ ] Bài mới nộp 1 lần → không có ô Version. Bấm Write a new version, nộp thêm → mở lại thấy ô **Version** ở đầu: "Version 2 (latest) · ngày giờ · …", "Version 1 · …".
+2. [ ] Chọn Version 1 → hiện đúng bài cũ, điểm và kết quả AI của bản đó, kèm dòng "You are viewing an older version". Không gọi AI lại.
+3. [ ] Đang xem Version 1 → Write a new version → ô soạn có sẵn bài của Version 1 → nộp → mở lại thấy bản mới nhất được chọn sẵn.
+4. [ ] Mở bài khác rồi quay lại → mặc định là bản mới nhất. Kiểm tra ô Version ở 390px (không tràn ngang) và dark mode.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.
