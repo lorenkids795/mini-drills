@@ -57,6 +57,9 @@ button{cursor:pointer}
 @media (prefers-reduced-motion:reduce){.status[data-s="wait"] i{animation:none}}
 .status span{display:none}
 .iconbtn{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:.3rem .65rem;font-size:.82rem;font-weight:500}
+#themeBtn,#logoutBtn{border:0;background:transparent;color:var(--muted);padding:.35rem .6rem;cursor:pointer}
+#themeBtn:hover,#logoutBtn:hover{background:var(--line);color:var(--ink)}
+#themeBtn:focus-visible,#logoutBtn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .who{display:flex;align-items:center;gap:8px}
 .who b{color:var(--ink);font-weight:600}
 
@@ -95,11 +98,11 @@ button{cursor:pointer}
 .tile.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 .lpanel{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px}
 .lts{display:flex;flex-direction:column;gap:10px;margin-top:12px}
-.lt{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface);transition:border-color .2s}
-.lt.open{border-color:var(--accent)}
+.ltc{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface);transition:border-color .2s}
+.ltc.open{border-color:var(--accent)}
 .lth{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;background:none;border:0;color:inherit;font:inherit;text-align:left;cursor:pointer}
 .lth .chev{color:var(--muted);display:inline-flex;transition:transform .2s;flex:none;width:16px;justify-content:center}
-.lt.open .lth .chev{transform:rotate(90deg)}
+.ltc.open .lth .chev{transform:rotate(90deg)}
 .lth .t{flex:1;min-width:0;font-weight:600;font-size:1.12rem}
 .ltbar{width:110px;height:6px;border-radius:9px;background:var(--line);overflow:hidden;flex:none}
 .ltbar i{display:block;height:100%;background:var(--good);border-radius:9px}
@@ -122,7 +125,7 @@ button{cursor:pointer}
 .lpv.done{color:var(--good)}
 .lsn .act{display:flex;gap:2px;padding-right:8px}.lsn .act .ib{padding:8px}.lsn .act .ib:disabled{opacity:.35;cursor:default}
 .lnone{text-align:center;color:var(--muted);font-size:.85rem;padding:22px 8px;border:1px dashed var(--line);border-radius:12px}
-@media (max-width:520px){.lpanel{padding:14px}.ltbar{width:60px}.lth{padding:12px;gap:10px}.lth .t{font-size:1.02rem}.ltb{padding:0 10px 12px}.lsnb{gap:10px;padding:10px}.lico{width:32px;height:32px}.ltab{padding:8px 10px;font-size:.88rem}.lpv{min-width:36px;font-size:.8rem}.lsn .act .ib{padding:6px}}.lpanel h3{font-size:1.05rem;margin-bottom:6px}
+@media (max-width:520px){.lpanel{padding:14px}.ltbar{width:60px}.lth{padding:12px;gap:10px}.lth .t{font-size:1.02rem}.ltb{padding:0 10px 12px}.lsnb{gap:10px;padding:10px}.lico{width:32px;height:32px}.ltabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;overflow:visible}.ltab{padding:8px 2px;font-size:.8rem;overflow:hidden;text-overflow:ellipsis}.lsnb .n{font-size:.86rem}.lsnb .d{font-size:.72rem}.tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.lpv{min-width:36px;font-size:.8rem}.lsn .act .ib{padding:6px}}.lpanel h3{font-size:1.05rem;margin-bottom:6px}
 .lsub{margin:0 0 6px 16px;border-left:3px solid var(--accent);padding-left:8px}.lrow.open{background:var(--bg)}
 .xed .xf{border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:8px 0;background:var(--surface)}.xed .xf .xf{background:var(--bg)}
 .xed .xl{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:6px 0 3px}.xed .xl small{font-weight:400}
@@ -453,9 +456,15 @@ button.rt{text-align:left;width:100%;cursor:pointer;font:inherit;color:inherit}
 button.rt:hover{border-color:var(--accent)}
 del{color:var(--bad);text-decoration:line-through}
 ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good-bg);border-radius:3px;padding:0 .15em}
-.fxl{list-style:none;margin:8px 0;padding:0;font-size:.88rem}
-.fxl li{padding:.35rem 0;border-bottom:1px solid var(--line)}
-.fxl small{display:block;color:var(--muted)}
+.fxl{list-style:none;margin:8px 0;padding:0;font-size:1rem}
+.fxl li{padding:.75rem 0;border-bottom:1px solid var(--line)}
+.fxl small{display:block;color:var(--muted);font-size:.92rem;line-height:1.5;margin-top:3px}
+.fxl .fxc{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.fxl .fxc .aicat{font-size:.9rem;font-weight:700;margin:0}
+.fxl .fxp{font-size:1rem;line-height:1.55;overflow-wrap:anywhere}
+h4.tk.sect{font-size:1.12rem;font-weight:700;text-transform:none;letter-spacing:0;color:var(--ink);margin:26px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+.cxhead h4.tk.sect{margin:0;padding-bottom:0;border-bottom:0}
+.aib>h4.tk.sect:first-child{margin-top:8px}
 .aicat{color:var(--accent);font-size:.8rem;margin-right:4px}
 .vu{margin:6px 0 4px;border-top:1px solid var(--line)}
 .vur{display:grid;grid-template-columns:32% minmax(0,1fr);gap:20px;padding:16px 0;border-bottom:1px solid var(--line)}
@@ -537,7 +546,7 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .fx-off{color:inherit;background:var(--hl-soft);border-bottom:2px dotted var(--warn);padding:0 1px;cursor:help}
 .fx-bad{color:var(--bad);background:var(--bad-bg);border-radius:3px;padding:0 2px;text-decoration:underline wavy var(--bad);text-decoration-thickness:1px;text-underline-offset:4px;cursor:help}
 .fx-n{display:inline-block;min-width:1.4em;padding:0 .3em;margin-left:2px;border-radius:999px;background:var(--ink);color:var(--surface);font-family:var(--mono);font-size:.62rem;font-weight:700;line-height:1.45em;text-align:center;vertical-align:super;text-decoration:none}
-.fxl li>.fx-n{vertical-align:baseline;margin:0 6px 0 0}
+.fxl .fxc .fx-n{margin:0}
 .fxl li[data-fn]{cursor:pointer}
 .fx-hot{outline:2px solid var(--accent);outline-offset:1px;border-radius:4px}
 .wmarked{max-width:100%;min-height:120px;margin-top:4px}
@@ -546,7 +555,7 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .wver select{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:.45rem .6rem;font:inherit;font-size:.9rem;max-width:100%;min-width:0}
 .subst{margin:4px 0 12px;font-size:.95rem}.subst.ok b{color:var(--good)}
 @media (prefers-reduced-motion:no-preference){.fx-hot{transition:outline-color .2s}}
-.cxhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;max-width:72ch}.cxhead .tk{margin:0}
+.cxhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:26px;padding-bottom:6px;border-bottom:2px solid var(--line)}.cxhead .tk{margin:0}
 .cxnote{margin:2px 0 0;font-size:.82rem;color:var(--muted)}
 .enrvbox{background:var(--surface);border:1px solid var(--accent);border-radius:12px;padding:14px 16px;margin:0 0 18px;scroll-margin-top:12px}
 .enrvh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 6px}
@@ -698,14 +707,14 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 /* ---- Recent results by skill ---- */
 .rs-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
 .rs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.rs{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:14px;min-width:0;aspect-ratio:4/3;min-height:220px}
+.rs{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:14px;min-width:0;aspect-ratio:3/2;min-height:220px}
 .rs-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:2px 12px;align-items:center}
-.rs-top .sq{width:30px;height:30px;border-radius:8px;color:#fff;display:grid;place-items:center;font-weight:700;font-size:.82rem;grid-column:1;grid-row:1/3;align-self:center}.rs-top>b{grid-column:2;grid-row:1/3;font-size:1.05rem;align-self:center}
+.rs-top .sq{width:34px;height:34px;border-radius:9px;color:#fff;display:grid;place-items:center;font-weight:700;font-size:.9rem;grid-column:1;grid-row:1/3;align-self:center}.rs-top>b{grid-column:2;grid-row:1/3;font-size:1.22rem;align-self:center}
 .rs-top>small{grid-column:2;grid-row:2;color:var(--muted);font-size:.78rem;align-self:start}
 .rs-avg{grid-column:3;grid-row:1/3;text-align:right;line-height:1.1;align-self:start}
 .rs-avg b{display:block;font-family:var(--mono);font-size:1.45rem;font-weight:600;line-height:1.05}
 .rs-avg small{font-size:.72rem}
-.rs-bars{display:flex;align-items:flex-end;gap:6px;flex:1 1 auto;min-height:70px;padding-bottom:0;border-bottom:1px solid var(--line)}
+.rs-bars{display:flex;align-items:flex-end;gap:6px;flex:0 1 120px;height:120px;min-height:60px;margin-top:auto;padding-bottom:0;border-bottom:1px solid var(--line)}
 .rs-bars .rb{flex:1 1 0;max-width:22px;min-height:5px;border:0;padding:0;border-radius:3px 3px 0 0;background:var(--bad);display:block}
 .rs-bars .rb.ok{background:var(--good)}
 .rs-bars .rb.pd{background:transparent;border:1px dashed var(--muted);border-bottom:0}
@@ -724,7 +733,8 @@ ins{color:var(--good);text-decoration:none;font-weight:600;background:var(--good
 .rs-last .muted{font-size:.78rem}
 .rs-last .fbo{font-size:.8rem}
 .rs-empty{flex:1 1 auto}
-@media (max-width:640px){.rs-grid{gap:8px}.rs{aspect-ratio:1/1;min-height:170px;padding:12px;gap:8px;border-radius:12px}.rs-top{gap:1px 8px}.rs-top .sq{width:24px;height:24px;font-size:.72rem;border-radius:6px}.rs-top>b{font-size:.9rem}.rs-avg b{font-size:1.1rem}.rs-avg small{font-size:.62rem}.rs-bars{min-height:40px;gap:3px}.rs-empty{min-height:60px;font-size:.72rem;padding:8px}.rs-last{font-size:.76rem}.rs-sd{gap:6px}.rs-last .muted{font-size:.68rem}}
+.rs-bars+.rs-last{margin-top:0}
+@media (max-width:640px){.rs-grid{gap:8px}.rs{aspect-ratio:1/1;min-height:170px;padding:12px;gap:8px;border-radius:12px}.rs-top{gap:1px 8px}.rs-top .sq{width:24px;height:24px;font-size:.72rem;border-radius:6px}.rs-top>b{font-size:.9rem}.rs-avg b{font-size:1.1rem}.rs-avg small{font-size:.62rem}.rs-bars{min-height:40px;height:56px;flex-basis:56px;gap:3px}.rs-empty{min-height:60px;font-size:.72rem;padding:8px}.rs-last{font-size:.76rem}.rs-sd{gap:6px}.rs-last .muted{font-size:.68rem}}
 @media (max-width:359px){.rs-grid{grid-template-columns:minmax(0,1fr)}.rs{aspect-ratio:auto}}
 .dtask:disabled{opacity:.5;cursor:default}
 .lad{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
@@ -1195,7 +1205,7 @@ function homeworkHTML(){
     var a=x.a,p=passFor(U.email,a.id),shown=x.over?x.ids.filter(function(i){return !x.dm[i]}):x.ids;
     h+='<div class="hw'+(x.over?' late':'')+'"><div class="sechead"><span class="chips2"><span class="chip">'+esc(asgName(a))+'</span>'+(x.over?'<span class="chip" style="background:var(--bad-bg);color:var(--bad)">Missing</span>':'')+'</span><span class="meta">'+(x.over?'Was due':'Due')+' <b>'+fmtDue(x.due)+'</b>'+(x.over?'':' · '+leftOf(x.due))+'</span></div><div class="lrows">'+shown.map(function(id){
       var e=exOf(id),l=locOf(id),d=x.dm[id],bad=!d&&x.over;
-      return '<button class="lrow" data-act="nav" data-book="'+l.book+'" data-test="'+l.test+'" data-skill="'+l.skill+'" data-ex="'+id+'"><span><b>'+esc(e.title)+'</b><small>'+esc(locLabel(l))+'</small></span>'+pcHTML(e,d,bad,bad?'Missed':'To do')+'</button>';
+      return '<button class="lrow" data-act="nav" data-book="'+l.book+'" data-test="'+l.test+'" data-skill="'+l.skill+'" data-ex="'+id+'"><span><b>'+esc(e.title)+'</b></span>'+pcHTML(e,d,bad,bad?'Missed':'To do')+'</button>';
     }).join('')+'</div>';
     if(p)h+='<p class="due" style="margin:10px 0 0">Extended with your '+PASS[p.kind].label+'.</p>';
     h+=actionsHTML(x)+'</div>';
@@ -1316,14 +1326,14 @@ function lpvHTML(e,d,id){
 function libTestHTML(bk,t,dm,stu){
   var ids=allIdsTest(bk.id,t),pr=prog(ids,dm),open=LIBX.test===t;
   var cur=LIBX.skill&&exIds(bk.id,t,LIBX.skill).length?LIBX.skill:(SKILLS.filter(function(s){return exIds(bk.id,t,s).length})[0]||LIBX.skill||SKILLS[0]);
-  var h='<div class="lt'+(open?' open':'')+'"><button class="lth" type="button" data-act="lx" data-l="test" data-v="'+t+'" aria-expanded="'+open+'">'+
+  var h='<div class="ltc'+(open?' open':'')+'"><button class="lth" type="button" data-act="lx" data-l="test" data-v="'+t+'" aria-expanded="'+open+'">'+
     '<span class="chev" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5l11 7-11 7z"/></svg></span>'+
     '<span class="t">'+TNAME[t]+'</span>'+
     (stu?'<span class="ltbar" aria-hidden="true"><i style="width:'+pr.p+'%"></i></span><span class="ltpct">'+pr.p+'%</span>':'')+'</button>';
   if(!open)return h+'</div>';
   h+='<div class="ltb"><div class="ltabs" role="tablist" aria-label="Skills">'+SKILLS.map(function(s){
     var n=exIds(bk.id,t,s).length;
-    return '<button class="ltab'+(n?'':' empty')+'" type="button" role="tab" data-act="lx" data-l="skill" data-v="'+s+'" aria-selected="'+(s===cur)+'"'+(!n&&stu?' disabled':'')+'>'+SNAME[s]+'<b>'+n+'</b></button>';
+    return '<button class="ltab'+(n?'':' empty')+'" type="button" role="tab" data-act="lx" data-l="skill" data-v="'+s+'" aria-selected="'+(s===cur)+'"'+(!n&&stu?' disabled':'')+'>'+SNAME[s]+'</button>';
   }).join('')+'</div>';
   var list=exIds(bk.id,t,cur);
   if(!list.length)return h+'<div class="lnone">No '+SNAME[cur]+' exercises yet.'+(U.role==='teacher'?' <button class="linkish" type="button" data-act="tab" data-tab="create">+ Add exercise</button>':'')+'</div></div></div>';
@@ -1523,17 +1533,18 @@ var CXP={},cxN=0;
 function correctedBlockHTML(text,items,sp){
   var c=correctedHTML(text,items,sp);if(!c.n)return '';
   var k='c'+(++cxN);CXP[k]=c.plain;
-  return '<div class="cxhead"><h4 class="tk">Corrected essay</h4><button class="btn sm" type="button" data-act="cx-copy" data-k="'+k+'">Copy</button></div><p class="cxnote">Green = corrected parts ('+c.n+' change'+(c.n>1?'s':'')+'). Numbers match the list above.</p><div class="essay">'+c.html+'</div>';
+  return '<div class="cxhead"><h4 class="tk sect">Corrected essay</h4><button class="btn sm" type="button" data-act="cx-copy" data-k="'+k+'">Copy</button></div><p class="cxnote">Green = corrected parts ('+c.n+' change'+(c.n>1?'s':'')+'). Numbers match the list above.</p><div class="essay">'+c.html+'</div>';
 }
 function fixListHTML(items,en){
-  return '<ul class="fxl">'+items.map(function(f){return '<li'+(f.n?' data-act="fx-tip" data-fn="'+f.n+'"':'')+'>'+(f.n?'<span class="fx-n">'+f.n+'</span>':'')+(f.cat?'<b class="aicat">'+esc(f.cat)+'</b> ':'')+'<del class="fx-del">'+esc(f.from)+'</del>'+(f.to&&!f.off?' → <ins class="fx-ins">'+esc(f.to)+'</ins>':'')+'<small'+(en&&f.vi&&f.why&&f.vi!==f.why?' title="'+esc(f.why)+'"':'')+'>'+(f.off?'Off-topic · ':'')+esc(fixWhy(f))+'</small></li>'}).join('')+'</ul>';
+  // each mistake on 3 lines: number + category / mistake -> fix / reason
+  return '<ul class="fxl">'+items.map(function(f){return '<li'+(f.n?' data-act="fx-tip" data-fn="'+f.n+'"':'')+'>'+((f.n||f.cat)?'<div class="fxc">'+(f.n?'<span class="fx-n">'+f.n+'</span>':'')+(f.cat?'<b class="aicat">'+esc(f.cat)+'</b>':'')+'</div>':'')+'<div class="fxp"><del class="fx-del">'+esc(f.from)+'</del>'+(f.to&&!f.off?' → <ins class="fx-ins">'+esc(f.to)+'</ins>':'')+'</div><small'+(en&&f.vi&&f.why&&f.vi!==f.why?' title="'+esc(f.why)+'"':'')+'>'+(f.off?'Off-topic · ':'')+esc(fixWhy(f))+'</small></li>'}).join('')+'</ul>';
 }
 // Corrections + Corrected essay (students after submitting / Open feedback, and the teacher Marking modal)
 function correctionsHTML(text,items,en){
   if(!items.length)return '<p class="okline">No mistakes found. Nice writing.</p>';
   var sp=fixSpans(text,items),ord=sp.map(function(s){return s.f});
   items.forEach(function(f){if(ord.indexOf(f)<0)ord.push(f)});
-  return '<h4 class="tk">Corrections</h4><p class="cxnote">Red = mistake, green = correction. Tap one to see why.</p><div class="essay">'+fixHTML(text,items,sp)+'</div>'+fixListHTML(ord,en)+correctedBlockHTML(text,items,sp);
+  return '<h4 class="tk sect">Corrections</h4><p class="cxnote">Red = mistake, green = correction. Tap one to see why.</p><div class="essay">'+fixHTML(text,items,sp)+'</div>'+fixListHTML(ord,en)+correctedBlockHTML(text,items,sp);
 }
 // Your answer after the AI check: the textarea is swapped for the same text with the mistakes highlighted
 function markAnswer(text,ai){
@@ -1634,7 +1645,7 @@ function vuBold(ex,up){
 }
 function aiHTML(ai,text){
   var vu=ai.vocabulary_upgrades||[],h='<div class="aib">'+correctionsHTML(text,aiItems(ai));
-  if(vu.length)h+='<h4 class="tk">Vocabulary upgrades</h4><div class="vu">'+vu.map(function(v,i){
+  if(vu.length)h+='<h4 class="tk sect">Vocabulary upgrades</h4><div class="vu">'+vu.map(function(v,i){
     var stu=U&&U.role==='student',got=stu&&vuHas(v);
     return '<div class="vur"><div class="vul"><span class="vuo">'+esc(v.original||'')+'</span><b class="vuu">'+esc(v.upgraded||'')+'</b></div><div class="vurt">'+
       (v.example?'<p class="vue">'+vuBold(v.example,v.upgraded)+'</p>':'')+(v.note?'<p class="vun">'+esc(v.note)+'</p>':'')+

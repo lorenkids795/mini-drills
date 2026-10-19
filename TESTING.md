@@ -141,5 +141,17 @@ Chuẩn bị: deploy bản mới (có `functions/`). Không cần sửa Firebase
 3. [ ] Recent results by skill: 4 ô 2×2 trải hết chiều ngang trang, ô gần vuông, biểu đồ cao theo ô; dưới tên Listening/Reading/Writing/Speaking không còn dòng thống kê.
 4. [ ] Kiểm tra 390px (4 ô vuông nhỏ, chữ không tràn) và dark mode.
 
+## Library trên điện thoại + chỉnh nhỏ
+1. [ ] **Điện thoại**: Home → Library → chọn sách → thấy các thẻ Test; mở Test → 4 tab kỹ năng vừa một hàng (không cần cuộn), danh sách bài đọc rõ, không tràn ngang. Lưới sách 2 cột.
+2. [ ] Tab Listening/Reading/Writing/Speaking không còn số đếm.
+3. [ ] Homework: mỗi bài chỉ hiện tên bài, không còn dòng nhỏ "Cam 14 · Test 1 · …".
+4. [ ] Nút Dark mode và Sign out ở góc trên: không còn viền, rê chuột thì có nền nhạt. Trên điện thoại vẫn hiện icon ☾ và ⎋.
+5. [ ] Recent results trên máy tính: tên kỹ năng to hơn, biểu đồ thấp hơn và nằm sát dòng LATEST, ô thấp hơn trước một chút nhưng vẫn gần vuông.
+
+## Kết quả AI dễ đọc hơn
+1. [ ] Nộp bài Writing → các tiêu đề "Corrections", "Corrected essay", "Vocabulary upgrades" to, đậm, có gạch dưới.
+2. [ ] Mỗi lỗi trong danh sách 3 dòng: (số) tên loại lỗi / lỗi gốc → sửa / giải thích. Cỡ chữ ngang phần Vocabulary upgrades.
+3. [ ] Giống vậy ở Open feedback, modal Marking của giáo viên và Admin → AI test. Kiểm tra 390px và dark mode.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.
