@@ -797,7 +797,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-10-21d';
+const API_VERSION = '2026-10-21e';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -1335,7 +1335,7 @@ async function aiReading(env, request, body) {
     'so "sums" and "why" must each have exactly ' + P.length + ' items.\n\nPASSAGE:\n' + P.map((t, i) => '[P' + i + '] ' + t).join('\n\n');
   let g;
   try {
-    g = await askGemini(env, full, RSCHEMA, '', 60000);
+    g = await askGemini(env, full, RSCHEMA, '', AI_TIMEOUT); // 5 minutes, like the Writing check and the Listening lesson
   } catch (e) {
     const c = e.code || 'server';
     console.log('[ai] reading failed', c, String(e.detail || e.message || '').slice(0, 300));

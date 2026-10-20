@@ -2943,7 +2943,7 @@ function rdStatus(){
   var m=$('#rdMsg'),g=$('#rdGo'),c=$('#rdCnt');
   if(c)c.innerHTML=rdCountHTML();
   if(m){m.textContent=RD.msg||'';m.className='saved'+(RD.bad?' alerr':'')}
-  if(g){g.disabled=!!RD.busy;g.textContent=RD.busy?'Generating… (about 20–40 s)':(RD.bad&&RD.tried?'Try again':'Generate reading lesson')}
+  if(g){g.disabled=!!RD.busy;g.textContent=RD.busy?'Generating…':(RD.bad&&RD.tried?'Try again':'Generate reading lesson')}
 }
 /* The AI never copies the passage back (long texts always came back slightly changed). The lesson text is built here from
    the teacher's own passage (rdBuild): paragraphs = blocks separated by a blank line (same split as the server, readingParas),
@@ -3014,15 +3014,17 @@ function rdGen(){
   if(RD.busy)return;var tx=String(RD.tx||'').trim();
   if(wordCount(tx)<80){RD.bad=true;RD.msg='Paste the whole passage first (at least 80 words).';rdStatus();return}
   if(rdParas(tx).length<2){RD.bad=true;RD.msg='Leave a blank line between the paragraphs of the passage.';rdStatus();return}
-  RD.busy=true;RD.bad=false;RD.tried=true;RD.msg='Writing the lesson… Stay on this page.';rdStatus();
+  RD.busy=true;RD.bad=false;RD.tried=true;RD.msg='Writing the lesson… usually 20 to 60 seconds. Stay on this page.';rdStatus();
+  clearTimeout(RD.slowT);RD.slowT=setTimeout(function(){if(RD.busy){RD.msg='Still writing… long passages can take a few minutes (the limit is 5 minutes). Stay on this page.';rdStatus()}},40000);
   var fin=function(o,model,demo){
+    clearTimeout(RD.slowT);
     RD.busy=false;if(RD.title)o.title=RD.title;rdApply(JSON.stringify(o,null,2),demo?'':tx);
     var r=CP.last;
     if(r&&r.errs&&r.errs.length){RD.bad=true;RD.msg='The AI lesson has a few problems (listed in the preview). Press Try again.'}
     else{RD.bad=false;RD.msg='Done'+(model?' ('+model+')':'')+'. Check the preview, choose Book and Test, then press Add.'}
     rdStatus();var pv=$('#createPrev');if(pv&&pv.scrollIntoView)pv.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
   };
-  var no=function(e){RD.busy=false;RD.bad=true;RD.msg=(e&&e.message)||'Something went wrong. Try again.';rdStatus()};
+  var no=function(e){clearTimeout(RD.slowT);RD.busy=false;RD.bad=true;RD.msg=(e&&e.message)||'Something went wrong. Try again.';rdStatus()};
   if(DEMO){setTimeout(function(){try{fin(JSON.parse(EXAMPLE_R),'demo: the sample lesson, the live site uses Gemini on your passage',true)}catch(e){no(e)}},1200);return}
   staffApi('ai/reading',{title:RD.title||'',passage:tx,tzo:new Date().getTimezoneOffset()}).then(function(d){fin(d.lesson||{},d.model)},no);
 }
@@ -4947,7 +4949,7 @@ function rmStage2(){
   h+='<div class="lsc">'+D.paras.map(function(p,i){return '<p class="rmlbl">Paragraph '+(i+1)+'</p><p class="rmp" style="margin-bottom:.9em">'+rmPara(i,true)+'</p>'}).join('')+'</div>';
   if(!chk&&RM.fail!==1)h+='<p class="muted" id="rmPnCnt">Answered '+Object.keys(RM.pr).length+' of '+D.prons.length+'</p>';
   if(chk)h+='<h3 class="lsh">Answers</h3>'+D.prons.map(function(x,i){var ok=RM.res['n'+i];
-    return '<div class="lsc rmal '+(ok?'ok':'no')+'"><b>'+(ok?'✓ ':'✗ ')+(i+1)+'. '+esc(x.w)+'</b> → '+esc(x.opts[x.a])+(ok?'':'<br><span class="muted">You chose: '+esc(x.opts[RM.pr[i]])+'</span>')+(x.why?'<p class="lsexp">'+esc(x.why)+'</p>':'')+'</div>'}).join('');
+    return '<div class="lsc rmal '+(ok?'ok':'no')+'"><b>'+(ok?'✓ ':'✗ ')+(i+1)+'. '+esc(x.w)+'</b> → '+esc(x.opts[x.a])+(ok?'':'<br><span class="muted">You chose: '+esc(RM.pr[i]!=null?x.opts[RM.pr[i]]:'(no answer)')+'</span>')+(x.why?'<p class="lsexp">'+esc(x.why)+'</p>':'')+'</div>'}).join('');
   return h;
 }
 function rmCard(x){
@@ -5005,13 +5007,15 @@ function rmFinal(){
 }
 function rmDraw(){
   var st=RM.st,chk=RM.chk[st],D=RM.D;
-  var bar='<div class="lsbar">'+RST.map(function(n,i){return '<span class="lsstep'+(i===st&&!RM.fin?' cur':(RM.chk[i]?' dn':''))+'"'+(i===st&&!RM.fin?' aria-current="step"':'')+'>'+(RM.chk[i]&&(i!==st||RM.fin)?'✓ ':(i+1)+'. ')+n+'</span>'}).join('')+'</div>';
+  // preview (RM.root, like the Listening preview): the stage bar is clickable, every stage can be opened and checked, no 70% gate
+  var pv=!!RM.root,tg=pv?'button':'span';
+  var bar='<div class="lsbar"'+(pv?' role="tablist" aria-label="Lesson stages"':'')+'>'+RST.map(function(n,i){var cur=i===st&&!RM.fin;return '<'+tg+' class="lsstep'+(cur?' cur':(RM.chk[i]?' dn':''))+'"'+(pv?' type="button" role="tab" data-act="rm-goto" data-i="'+i+'" aria-selected="'+cur+'"':(cur?' aria-current="step"':''))+'>'+(RM.chk[i]&&(i!==st||RM.fin)?'✓ ':(i+1)+'. ')+n+'</'+tg+'>'}).join('')+'</div>';
   var demo=DEMO&&!chk&&RM.fail!==st&&!RM.fin?'<div class="lsdemo">Demo helper: <button class="btn sm" data-act="rm-demo" data-m="ok" type="button">Fill all correct</button><button class="btn sm" data-act="rm-demo" data-m="half" type="button">Half wrong</button><button class="btn sm" data-act="rm-demo" data-m="bad" type="button">All wrong</button></div>':'';
   var chip='<span class="btn pri lsscore">Stage '+(st+1)+': '+rmScore(st)+'</span> ',act;
   if(RM.fin)act='';
   else if(RM.fail===st)act='<div class="actions">'+chip+'<button class="btn" data-act="rm-retry" type="button">Try again</button></div><p class="muted" style="margin:6px 0 0">You need at least 70% to move on. The correct answers stay hidden until you reach it, so read again and retry.</p>';
-  else if(!chk)act='<div class="actions"><button class="btn pri" data-act="rm-check" type="button">Check answers</button></div><p class="err" id="rmMsg" aria-live="polite"></p>';
-  else if(st<3)act='<div class="actions">'+chip+'<button class="btn pri" data-act="rm-next" type="button">Next: '+RST[st+1]+' →</button></div>';
+  else if(!chk)act='<div class="actions"><button class="btn pri" data-act="rm-check" type="button">Check answers</button>'+(pv&&st<3?'<button class="btn" data-act="rm-next" type="button">Next: '+RST[st+1]+' →</button>':'')+'</div><p class="err" id="rmMsg" aria-live="polite"></p>';
+  else if(st<3)act='<div class="actions">'+chip+'<button class="btn pri" data-act="rm-next" type="button">Next: '+RST[st+1]+' →</button>'+(pv?'<button class="btn" data-act="rm-retry" type="button">Try this stage again</button>':'')+'</div>';
   else{var s=rmOutOk();act='<div class="actions">'+chip+'<button class="btn pri" id="rmFin" data-act="rm-finish" type="button"'+(s.ok?'':' disabled')+'>Finish lesson</button></div><p class="muted" id="rmWhy" aria-live="polite">'+esc(s.why)+'</p>'}
   var host=RM.root?document.getElementById(RM.root):$('#libBody');if(!host)return;
   host.innerHTML='<div class="pane single rm">'+RM.head+RM.ban+bar+demo+'<div id="rmBody">'+[rmStage1,rmStage2,rmStage3,rmStage4][st]()+'</div>'+act+'<div id="result">'+(RM.fin?rmFinal():'')+'</div></div>';
@@ -5032,10 +5036,10 @@ function rmCollect(){
 }
 function rmCheck(){
   var st=RM.st;rmCollect();
-  if(!rmAnswered(st)){var m=$('#rmMsg');if(m)m.textContent='Answer every item first.';return}
+  if(!RM.root&&!rmAnswered(st)){var m=$('#rmMsg');if(m)m.textContent='Answer every item first.';return} // preview: unanswered = wrong, answers shown
   rmIds(RM.D,st).forEach(function(id){RM.res[id]=!!rmGrade(id)});
   var a=rmIds(RM.D,st),sc=a.filter(function(x){return RM.res[x]}).length;
-  if(sc/a.length<.7){RM.fail=st;rmKeep(rmDraw);return}
+  if(!RM.root&&sc/a.length<.7){RM.fail=st;rmKeep(rmDraw);return}
   RM.fail=-1;RM.chk[st]=1;rmKeep(rmDraw);
 }
 function rmFinish(){
@@ -5128,7 +5132,8 @@ function rmAct(a,t){
   if(a==='rm-check'){rmCheck();return true}
   if(a==='rm-retry'){rmIds(D,RM.st).forEach(function(id){delete RM.res[id]});
     if(RM.st===0){RM.o={};RM.seq=[]}else if(RM.st===1)RM.pr={};else if(RM.st===2){RM.g={};RM.c={}}else{RM.w={};RM.sel=null}
-    RM.fail=-1;rmDraw();rmTop();return true}
+    RM.fail=-1;RM.chk[RM.st]=0;rmDraw();rmTop();return true}
+  if(a==='rm-goto'){RM.st=+t.dataset.i;RM.fail=-1;RM.fin=false;rmSheetClose();rmDraw();rmTop();return true}
   if(a==='rm-next'){RM.st++;rmDraw();rmTop();return true}
   if(a==='rm-restart'){if(RM.pv)rmPreview(RM.pv);rmTop();return true}
   if(a==='rm-finish'){rmFinish();return true}
