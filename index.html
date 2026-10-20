@@ -2915,11 +2915,11 @@ function alGen(){
   staffApi('ai/lesson',{title:AL.title||'',transcript:tr,questions:AL.q||'',prompt:alPrompt(),tzo:new Date().getTimezoneOffset()}).then(function(d){fin(d.lesson,d.model)},no);
 }
 /* Auto-create a 4-stage Reading lesson: passage -> /api/ai/reading (Gemini, RPROMPT on the server) -> parseReading -> preview -> Add.
-   The passage must stay word for word (rdSame). Advanced: copy the same RPROMPT (from the server) and paste a JSON answer by hand.
+   The lesson text is always built from the teacher's passage (rdBuild), never copied by the AI. Advanced: copy the same RPROMPT (from the server) and paste a JSON answer by hand.
    Draft (title, passage, pasted JSON) is kept in localStorage md-rd. */
 var RD=(function(){var o={};try{o=JSON.parse(lsGet('md-rd')||'{}')||{}}catch(e){o={}}o.busy=false;o.msg='';o.bad=false;return o})();
 function rdSave(){try{lsSet('md-rd',JSON.stringify({title:RD.title||'',tx:RD.tx||'',json:RD.json||''}))}catch(e){}}
-function rdCounts(t){return {w:wordCount(t),p:String(t||'').split(/\n\s*\n/).filter(function(x){return x.trim()}).length}}
+function rdCounts(t){return {w:wordCount(t),p:rdParas(t).length}}
 function rdCountHTML(){
   var c=rdCounts(RD.tx),w=[];if(c.p&&c.p<3)w.push('fewer than 3 paragraphs');if(c.p>12)w.push('more than 12 paragraphs');if(c.w>1200)w.push('more than 1200 words');
   return '<span><span class="mono">'+c.w+'</span> words · <span class="mono">'+c.p+'</span> paragraph'+(c.p===1?'':'s')+'</span>'+(w.length?'<span class="low">'+esc(w.join(', '))+': best with 3–12 paragraphs and up to 1200 words</span>':'');
@@ -2933,7 +2933,7 @@ function renderRdBox(){
     '<p class="lbl">3. Generate</p><div class="row" style="margin-top:0"><button class="btn pri" type="button" data-act="rd-gen" id="rdGo">Generate reading lesson</button><span class="saved" id="rdMsg" aria-live="polite"></span></div>'+
     '<details class="alq"><summary>Advanced: copy the prompt / paste JSON</summary><p class="saved">To make the lesson in another AI chat: copy the prompt, add the passage after it, then paste the JSON answer here.</p>'+
     '<div class="row" style="margin-top:4px"><button class="btn sm" type="button" data-act="rd-copy">Copy prompt</button><span class="saved" id="rdCopyMsg" aria-live="polite"></span></div>'+
-    '<textarea id="rdJson" spellcheck="false" aria-label="Lesson JSON" placeholder="{&quot;title&quot;: &quot;…&quot;, &quot;paras&quot;: […], …}">'+esc(RD.json||'')+'</textarea>'+
+    '<textarea id="rdJson" spellcheck="false" aria-label="Lesson JSON" placeholder="{&quot;title&quot;: &quot;…&quot;, &quot;sums&quot;: […], &quot;prons&quot;: […], …}">'+esc(RD.json||'')+'</textarea>'+
     '<div class="row"><button class="btn sm" type="button" data-act="rd-check">Check JSON</button></div></details>';
   rdStatus();
 }
@@ -2943,16 +2943,75 @@ function rdStatus(){
   if(m){m.textContent=RD.msg||'';m.className='saved'+(RD.bad?' alerr':'')}
   if(g){g.disabled=!!RD.busy;g.textContent=RD.busy?'Generating… (about 20–40 s)':(RD.bad&&RD.tried?'Try again':'Generate reading lesson')}
 }
-// the lesson must keep the passage word for word (only {{…}} marks are added)
-function rdSame(o,tx){if(!o||!isArr(o.paras))return true;var n=function(s){return String(s).toLowerCase().replace(/\{\{|\}\}/g,'').replace(/[^a-z0-9]+/g,' ').trim()};return n(o.paras.join(' '))===n(tx)}
+/* The AI never copies the passage back (long texts always came back slightly changed). The lesson text is built here from
+   the teacher's own passage (rdBuild): paragraphs = blocks separated by a blank line (same split as the server, readingParas),
+   each pronoun the AI named is found as a whole word in its paragraph (or the nearest one) and wrapped in {{…}};
+   names that are nowhere in the passage are dropped. Small count slips are fixed too (sums + sum_extra, why). */
+function rdParas(t){return String(t||'').replace(/\r\n?/g,'\n').split(/\n\s*\n/).map(function(x){return x.trim()}).filter(Boolean)}
+function rdWordRe(w){
+  var e=String(w).trim().replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/\s+/g,'\\s+').replace(/['\u2019]/g,"['\u2019]");
+  return new RegExp('(^|[^A-Za-z0-9\'\u2019])('+e+')(?=$|[^A-Za-z0-9\'\u2019])','gi');
+}
+// [start, end] of w in t as a whole word, not inside a range already marked; the first one at or after "from" is preferred
+function rdFind(t,w,from,taken){
+  var re=rdWordRe(w),m,first=null;
+  while((m=re.exec(t))){
+    var s=m.index+m[1].length,e=s+m[2].length;if(re.lastIndex===m.index)re.lastIndex++;
+    if(taken.some(function(r){return s<r[1]&&r[0]<e}))continue;
+    if(!first)first=[s,e];if(s>=from)return [s,e];
+  }
+  return first;
+}
+// a multiple-choice item the app can use: at least 2 options and a valid answer index ("B" or "2" are accepted too)
+function rdMcq(x){
+  if(!x||typeof x!=='object'||!isArr(x.opts))return null;
+  var opts=x.opts.map(function(s){return String(s==null?'':s).trim()}),a=x.a;
+  if(typeof a==='string'&&/^\s*[A-Da-d]\s*$/.test(a))a=a.trim().toUpperCase().charCodeAt(0)-65;
+  a=+a;if(opts.length<2||opts.some(function(s){return !s})||!(a>=0&&a<opts.length&&a%1===0))return null;
+  return Object.assign({},x,{opts:opts,a:a});
+}
+function rdBuild(o,passage){
+  var P=rdParas(passage),N=P.length,out=Object.assign({},o),taken=P.map(function(){return []}),last=P.map(function(){return 0}),marks=[];
+  if(typeof out.title!=='string'||!out.title.trim())out.title=RD.title||'Reading lesson';
+  if(typeof out.wprompt!=='string'||!out.wprompt.trim())out.wprompt='Do you agree with the main idea of this passage? Why or why not?';
+  // words: unusable items (no valid answer) are dropped; a missing English meaning = the right option
+  if(isArr(o.words))out.words=o.words.map(rdMcq).filter(function(x){return x&&typeof x.w==='string'&&x.w.trim()}).map(function(x){if(typeof x.en!=='string'||!x.en.trim())x.en=x.opts[x.a];return x});
+  (isArr(o.prons)?o.prons:[]).map(rdMcq).forEach(function(x){
+    if(!x||typeof x.w!=='string'||!x.w.trim())return;
+    var p0=+x.p;if(!(p0>=0&&p0<N&&p0%1===0))p0=0;
+    for(var d=0;d<N;d++){
+      var cand=d?[p0-d,p0+d]:[p0];
+      for(var k=0;k<cand.length;k++){var p=cand[k];if(p<0||p>=N)continue;
+        var r=rdFind(P[p],x.w,last[p],taken[p]);if(r){taken[p].push(r);last[p]=r[1];marks.push({p:p,s:r[0],e:r[1],x:x});return}}
+    }
+  });
+  marks.sort(function(a,b){return a.p-b.p||a.s-b.s});
+  out.paras=P.map(function(t,p){
+    marks.filter(function(m){return m.p===p}).sort(function(a,b){return b.s-a.s}).forEach(function(m){t=t.slice(0,m.s)+'{{'+t.slice(m.s,m.e)+'}}'+t.slice(m.e)});
+    return t;
+  });
+  out.prons=marks.map(function(m){return Object.assign({},m.x,{p:m.p,w:P[m.p].slice(m.s,m.e)})});
+  var S=(isArr(o.sums)?o.sums:[]).map(function(x){return String(x==null?'':x).trim()}).filter(Boolean),ex=typeof o.sum_extra==='string'?o.sum_extra.trim():'';
+  if(!ex&&S.length>N)ex=S[N];
+  out.sums=S.length>=N&&ex?S.slice(0,N).concat([ex]):S; // fewer summaries than paragraphs: parseReading reports it
+  var Y=(isArr(o.why)?o.why:[]).map(function(x){return String(x==null?'':x)});
+  while(Y.length<N)Y.push('');out.why=Y.slice(0,N);
+  delete out.sum_extra;
+  return out;
+}
+// AI answer or pasted JSON -> lesson. With the passage in step 1 the text always comes from it (even if the JSON has "paras").
 function rdApply(txt,passage){
+  var o=null;try{o=JSON.parse(String(txt||'').trim().replace(/^```(?:json)?/i,'').replace(/```$/,'').trim())}catch(e){}
+  if(o&&typeof o==='object'&&!isArr(o)){
+    if(passage)txt=JSON.stringify(rdBuild(o,passage),null,2);
+    else if(!isArr(o.paras)){CP.raw=String(txt||'');CP.last={errs:['Paste the passage in step 1 first: the lesson text is built from it.']};parsed=null;renderPrev();return}
+  }
   checkJSON(txt);
-  if(passage&&CP.last&&CP.last.data){var o=null;try{o=JSON.parse(txt)}catch(e){}
-    if(o&&!rdSame(o,passage)){CP.last={errs:['The AI changed the wording of the passage. The lesson must keep the passage word for word. Press Try again.']};parsed=null;renderPrev()}}
 }
 function rdGen(){
   if(RD.busy)return;var tx=String(RD.tx||'').trim();
   if(wordCount(tx)<80){RD.bad=true;RD.msg='Paste the whole passage first (at least 80 words).';rdStatus();return}
+  if(rdParas(tx).length<2){RD.bad=true;RD.msg='Leave a blank line between the paragraphs of the passage.';rdStatus();return}
   RD.busy=true;RD.bad=false;RD.tried=true;RD.msg='Writing the lesson… Stay on this page.';rdStatus();
   var fin=function(o,model,demo){
     RD.busy=false;if(RD.title)o.title=RD.title;rdApply(JSON.stringify(o,null,2),demo?'':tx);
@@ -4729,7 +4788,7 @@ function parseReading(o){
   // every {{…}} in the paragraphs, in order, must match "prons" (same words, same paragraph p)
   var marks=[];P.forEach(function(t,pi){var re=/\{\{([^{}]+)\}\}/g,m;while((m=re.exec(t)))marks.push({w:m[1],p:pi})});
   var R=o.prons;
-  if(!isArr(R)||!R.length)bad('"prons" must be a non-empty list.');
+  if(!isArr(R)||!R.length)bad('The Pronouns stage needs at least 1 pronoun or reference phrase that is in the passage. Press Try again.');
   else{
     if(marks.length!==R.length)bad('The paragraphs have '+marks.length+' words in {{…}} but "prons" has '+R.length+' items.');
     R=R.map(function(x){return x&&typeof x==='object'?Object.assign({},x):x});
@@ -4742,8 +4801,8 @@ function parseReading(o){
       else if(!(x.a>=0&&x.a<x.opts.length&&x.a%1===0))bad(n+'"a" is not a valid option number.');
     });
   }
-  if(!isArr(o.sums)||!o.sums.every(str)||o.sums.length!==P.length+1)bad('"sums" must have '+(P.length+1)+' summaries: one per paragraph, in order, plus 1 extra.');
-  if(!isArr(o.why)||o.why.length!==P.length||!o.why.every(str))bad('"why" must have one explanation per paragraph ('+P.length+').');
+  if(!isArr(o.sums)||!o.sums.every(str)||o.sums.length!==P.length+1)bad('Stage 1 needs one summary for each of the '+P.length+' paragraphs plus 1 extra ('+(P.length+1)+'), but there '+(isArr(o.sums)&&o.sums.length===1?'is ':'are ')+(isArr(o.sums)?o.sums.length:0)+'. Press Try again.');
+  if(!isArr(o.why)||o.why.length!==P.length||!o.why.every(function(x){return typeof x==='string'}))bad('"why" must have one explanation per paragraph ('+P.length+').'); // an empty one is allowed (not shown)
   // Words and phrases: the AI often gives the wrong paragraph number (counts from 1, or the word is in the next paragraph).
   // The right paragraph is looked up (rmFindP, nearest first); an item that is nowhere in the passage is dropped,
   // and the lesson is refused only when too few items are left.
@@ -4868,7 +4927,7 @@ function rmStage1(){
   D.paras.forEach(function(p,i){
     var v=RM.o[i],ok=chk&&RM.res['o'+i];
     h+='<div class="lsc"><p class="rmlbl">Paragraph '+(i+1)+'</p><p class="rmp">'+rmPara(i,false)+'</p>'+rmSlot('rm-slot',i,v!=null?D.sums[v]:null,lock,chk,ok,'Choose a summary')+
-      (chk&&!ok?'<span class="fix rmfix">→ '+esc(D.sums[i])+'</span>':'')+(chk?'<p class="lsexp">'+esc(D.why[i])+'</p>':'')+'</div>';
+      (chk&&!ok?'<span class="fix rmfix">→ '+esc(D.sums[i])+'</span>':'')+(chk&&D.why[i]?'<p class="lsexp">'+esc(D.why[i])+'</p>':'')+'</div>';
   });
   h+='<h3 class="lsh">1.2 Put the paragraphs in order</h3><p class="muted">Each line opens one paragraph. Tap them in the order they appear in the passage. Tap again to undo.</p><div class="rmord">'+
     RM.firstOrd.map(function(pi){

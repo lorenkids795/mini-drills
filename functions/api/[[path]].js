@@ -797,7 +797,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-10-21c';
+const API_VERSION = '2026-10-21d';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -1272,36 +1272,42 @@ async function aiTranscribe(env, request, body) {
 
 // POST /api/ai/reading { title, passage, tzo } (X-Staff-Key): Gemini writes a 4-stage Reading lesson (kind 'reading-ms').
 // { op: 'prompt' } returns RPROMPT, so the "copy prompt" button in Create uses this same text. Shares ail:<email>:<day> (30 a day).
-// Only a rough check here (keys present); the app checks everything with parseReading and that the passage was not rewritten.
+// The AI never copies the passage back (long texts always came back slightly changed). It gets the paragraphs numbered
+// [P0], [P1]… and only names words / phrases in them; the app builds the lesson text from the teacher's own passage
+// (rdBuild in index.html) and checks everything with parseReading. Paragraphs = blocks separated by a blank line (same split as the app).
+const readingParas = (t) => String(t || '').replace(/\r\n?/g, '\n').split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean);
 const RPROMPT =
   'You are an expert IELTS Reading teacher and a strict JSON formatter. I will give you an IELTS-style reading passage. ' +
+  'Its paragraphs are numbered [P0], [P1], [P2]… (when you get a passage without numbers: paragraphs are separated by a blank line, number them from 0 yourself). ' +
   'Build a 4-stage reading lesson (Structure, Pronouns, Vocabulary, Output). Output ONLY one JSON object, no markdown fences, no text outside the JSON.\n\n' +
   'Rules:\n' +
-  '- NEVER rewrite the passage. "paras" = the passage paragraphs word for word, in order (paragraphs are separated by a blank line). ' +
-  'The only change: put {{ }} around 4 to 6 pronouns or reference phrases (this policy, it, their, they, this trend…) that the reader must understand to follow the argument. Do not mark the same words twice in one paragraph.\n' +
-  '- Every "p" counts paragraphs from 0 (the first paragraph is 0, the second is 1). Every "w" and "ph" must be copied from THAT paragraph word for word, in the same word form (obligations is not obligation).\n' +
-  '- "sums": one short summary sentence per paragraph, in paragraph order, using DIFFERENT words from the passage (a paraphrase), then ONE extra plausible but wrong summary at the end. So sums has (number of paragraphs + 1) items.\n' +
-  '- "why": one short sentence per paragraph explaining which words show its main idea.\n' +
-  '- "prons": one item for each {{ }} mark, in the order they appear: {"w": the exact marked words, "p": paragraph index from 0, "opts": 4 options, "a": index of the right option, "why": one short explanation}. ' +
-  'The right answer and the 3 distractors must all be phrases taken from the passage.\n' +
+  '- Do NOT copy or rewrite the passage. Only name words and phrases that are in it.\n' +
+  '- Every "p" is a paragraph number: 0 = [P0], 1 = [P1]… Every "w" and "ph" must be copied from THAT paragraph character for character ' +
+  '(same spelling, same word form: "obligations" is not "obligation"; never join words from two sentences).\n' +
+  '- "sums": EXACTLY one short summary sentence for EACH paragraph, in paragraph order (as many items as there are paragraphs), ' +
+  'each using DIFFERENT words from the passage (a paraphrase). "sum_extra": ONE extra plausible but wrong summary.\n' +
+  '- "why": EXACTLY one short sentence for EACH paragraph, in order, saying which words show its main idea.\n' +
+  '- "prons": 4 to 6 pronouns or reference phrases (it, they, their, this policy, this trend, such…) that the reader must understand to follow the argument, ' +
+  'in the order they appear in the passage: {"w": the exact words as written, "p": paragraph number, "opts": 4 options, "a": index (from 0) of the right option, "why": one short explanation}. ' +
+  'Choose each w only once per paragraph. The right answer and the 3 distractors must all be phrases taken from the passage.\n' +
   '- "words" (Guess the meaning): 3 to 6 important words a student MUST understand to follow the main ideas: academic or common words at level B1-C1, preferably in topic sentences or sentences with a main idea. ' +
   'NEVER choose technical terms, proper names, numbers, very easy words (A1-A2) or words that appear only in a minor example. ' +
-  'Each: {"w": the word exactly as written in the passage, "p": the index (from 0) of the paragraph where this exact word appears, "pos": "n" | "v" | "adj" | "adv", "opts": 4 short meanings in easy English (distractors that fit the sentence), "a": index of the right meaning, ' +
+  'Each: {"w": the word exactly as written, "p": its paragraph number, "pos": "n" | "v" | "adj" | "adv", "opts": 4 short meanings in easy English (distractors that fit the sentence), "a": index of the right meaning, ' +
   '"en": English definition, "vi": Vietnamese meaning, "fam": word family, e.g. "congest (v), congested (adj), congestion (n)", "col": 2 common collocations, "ex": a new example sentence}.\n' +
-  '- "pairs": 4 to 6 key phrases (2 to 6 words) copied word for word from the passage, each {"ph": the phrase, "p": the index (from 0) of the paragraph where this exact phrase appears, "par": a simpler paraphrase}. "pdist": one extra paraphrase that sounds plausible but matches none of them.\n' +
+  '- "pairs": 4 to 6 key phrases of 2 to 6 words copied exactly from one sentence of the passage, each {"ph": the phrase, "p": its paragraph number, "par": a simpler paraphrase}. ' +
+  '"pdist": one extra paraphrase that sounds plausible but matches none of them.\n' +
   '- "cloze": {"text": a summary of the whole passage in 3 to 5 sentences with blanks written {{1}}, {{2}}, … in order (5 to 8 blanks on key words; reuse the "words" when you can), ' +
-  '"answers": exactly ONE word for EACH blank, in blank order (answers has as many items as there are blanks), ' +
-  '"extra": ONE extra wrong word of the same word class that is not one of the answers}. Before you answer, count the {{n}} blanks and the answers: they must be equal.\n' +
+  '"answers": exactly ONE word for EACH blank, in blank order, "extra": ONE extra wrong word of the same word class that is not an answer}. Count the blanks and the answers: they must be equal.\n' +
   '- "wprompt": ONE open question about the topic that a student can answer in 1 or 2 sentences, e.g. "Should your city spend more on cycling lanes?"\n' +
   '- "title": a short title (keep the given title if there is one).\n\n' +
-  'Shape: {"title":"…","paras":["…"],"sums":["…"],"why":["…"],"prons":[{"w":"…","p":0,"opts":["…","…","…","…"],"a":0,"why":"…"}],' +
+  'Shape: {"title":"…","sums":["…"],"sum_extra":"…","why":["…"],"prons":[{"w":"…","p":0,"opts":["…","…","…","…"],"a":0,"why":"…"}],' +
   '"words":[{"w":"…","p":0,"pos":"n","opts":["…","…","…","…"],"a":0,"en":"…","vi":"…","fam":"…","col":"…","ex":"…"}],' +
   '"pairs":[{"ph":"…","p":0,"par":"…"}],"pdist":"…","cloze":{"text":"… {{1}} … {{2}} …","answers":["…","…"],"extra":"…"},"wprompt":"…"}\n';
 const R_STR = { type: 'STRING' }, R_INT = { type: 'INTEGER' }, R_LIST = { type: 'ARRAY', items: { type: 'STRING' } };
 const RSCHEMA = {
   type: 'OBJECT',
   properties: {
-    title: R_STR, paras: R_LIST, sums: R_LIST, why: R_LIST,
+    title: R_STR, sums: R_LIST, sum_extra: R_STR, why: R_LIST,
     prons: { type: 'ARRAY', items: { type: 'OBJECT', properties: { w: R_STR, p: R_INT, opts: R_LIST, a: R_INT, why: R_STR }, required: ['w', 'p', 'opts', 'a', 'why'] } },
     words: { type: 'ARRAY', items: { type: 'OBJECT', properties: { w: R_STR, p: R_INT, pos: R_STR, opts: R_LIST, a: R_INT, en: R_STR, vi: R_STR, fam: R_STR, col: R_STR, ex: R_STR }, required: ['w', 'p', 'pos', 'opts', 'a', 'en', 'vi', 'fam', 'col', 'ex'] } },
     pairs: { type: 'ARRAY', items: { type: 'OBJECT', properties: { ph: R_STR, p: R_INT, par: R_STR }, required: ['ph', 'p', 'par'] } },
@@ -1309,22 +1315,24 @@ const RSCHEMA = {
     cloze: { type: 'OBJECT', properties: { text: R_STR, answers: R_LIST, extra: R_STR }, required: ['text', 'answers', 'extra'] },
     wprompt: R_STR,
   },
-  required: ['title', 'paras', 'sums', 'why', 'prons', 'words', 'pairs', 'pdist', 'cloze', 'wprompt'],
+  required: ['title', 'sums', 'sum_extra', 'why', 'prons', 'words', 'pairs', 'pdist', 'cloze', 'wprompt'],
 };
-const READING_KEYS = ['paras', 'sums', 'why', 'prons', 'words', 'pairs', 'cloze'];
+const READING_KEYS = ['sums', 'prons', 'words', 'pairs', 'cloze'];
 async function aiReading(env, request, body) {
   const em = await staffEmail(env, request);
   if (!em) return staffLocked();
   if (body.op === 'prompt') return json({ prompt: RPROMPT });
   if (!aiReady(env)) return json({ error: AI_WHY.nokey, code: 'nokey' }, 502);
   const passage = String(body.passage || '').replace(/\r\n?/g, '\n').trim(), title = String(body.title || '').replace(/\s+/g, ' ').trim().slice(0, 120);
-  const words = passage.split(/\s+/).filter(Boolean).length;
+  const words = passage.split(/\s+/).filter(Boolean).length, P = readingParas(passage);
   if (words < 80) return fail('Paste the whole passage first (at least 80 words).');
   if (passage.length > 12000) return fail('The passage is too long (12,000 characters at most).');
+  if (P.length < 2) return fail('Leave a blank line between the paragraphs of the passage (at least 2 paragraphs).');
   const qKey = 'ail:' + em + ':' + dayOf(body.tzo).day;
   if ((await count(env, qKey)) >= 30) return fail('You have used today\'s 30 AI lesson runs. Try again tomorrow.', 429);
   await bump(env, qKey, 172800);
-  const full = RPROMPT + '\n' + (title ? 'TITLE: ' + title + '\n\n' : '') + 'PASSAGE:\n' + passage;
+  const full = RPROMPT + '\n' + (title ? 'TITLE: ' + title + '\n\n' : '') + 'The passage has ' + P.length + ' paragraphs ([P0] to [P' + (P.length - 1) + ']), ' +
+    'so "sums" and "why" must each have exactly ' + P.length + ' items.\n\nPASSAGE:\n' + P.map((t, i) => '[P' + i + '] ' + t).join('\n\n');
   let g;
   try {
     g = await askGemini(env, full, RSCHEMA, '', 60000);
@@ -1337,9 +1345,10 @@ async function aiReading(env, request, body) {
   const miss = READING_KEYS.filter((k) => !o[k] || typeof o[k] !== 'object');
   if (!o.wprompt) miss.push('wprompt');
   if (miss.length) return json({ error: 'The AI answer was incomplete (missing ' + miss.join(', ') + '). Press Try again.', code: 'shape' }, 502);
+  delete o.paras; // the app always builds the text from the teacher's passage
   if (title) o.title = title;
   o.skill = 'reading';
-  return json({ lesson: o, model: g.model });
+  return json({ lesson: o, model: g.model, paras: P.length });
 }
 
 // 502 { error: 'busy', code } + a log line (Cloudflare Pages -> Functions -> Real-time logs)
