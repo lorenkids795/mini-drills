@@ -11,21 +11,24 @@
 :root{
   --bg:#f2f4f8; --surface:#ffffff; --ink:#14213d; --muted:#586379; --line:#d8dee8;
   --accent:#2347d6; --accent-ink:#ffffff; --hl:#ffe45c; --hl-soft:#fff3b0;
-  --good:#12703f; --good-bg:#def3e7; --bad:#be2a2a; --bad-bg:#fde6e6; --warn:#a56a0a;
+  --good:#12703f; --good-bg:#def3e7; --bad:#be2a2a; --bad-bg:#fde6e6; --bad-ink:#ffffff; --warn:#a56a0a;
+  --surface-2:#ffffff; --line-2:#d8dee8; --fill-bg:var(--hl-soft); --fill-line:var(--ink); --dis-op:.5;
   --done:#16803c; --done-ink:#ffffff; --more:#e8820c; --more-ink:#1b1200;
   --gold-a:#fbecb8; --gold-b:#f3d277; --gold-e:#c99a1c; --silv-a:#eff1f5; --silv-b:#d8dde5; --silv-e:#98a2b1; --brz-a:#f7e4d3; --brz-b:#e8c09b; --brz-e:#b06f3a;
   --font:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0e1424; --surface:#161f35; --ink:#e8edf7; --muted:#9aa6bf; --line:#2a3552;
-  --accent:#8aa6ff; --accent-ink:#0e1424; --hl:#f0d54a; --hl-soft:#3b3615;
-  --good:#5fd49e; --good-bg:#12332a; --bad:#ff8080; --bad-bg:#3a1b21; --warn:#f0b44c;
+  --bg:#0f1420; --surface:#171e2e; --surface-2:#1d2538; --ink:#e7ecf5; --muted:#a6b0c5; --line:#2b3550; --line-2:#6b7899;
+  --accent:#8fa8ff; --accent-ink:#0f1420; --hl:#f2d264; --hl-soft:#3a3218;
+  --good:#62d6a0; --good-bg:#16352b; --bad:#ff8a8a; --bad-bg:#3d1d24; --bad-ink:#0f1420; --warn:#f2b84f;
+  --fill-bg:var(--surface-2); --fill-line:var(--accent); --dis-op:.72;
   --done:#3fbf7f; --done-ink:#08210f; --more:#f5a04a; --more-ink:#1b1200; --gold-a:#33291a; --gold-b:#5c4713; --gold-e:#d4a72c; --silv-a:#232a38; --silv-b:#333b4c; --silv-e:#aab3c2; --brz-a:#30221b; --brz-b:#45301f; --brz-e:#c98a55; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0e1424; --surface:#161f35; --ink:#e8edf7; --muted:#9aa6bf; --line:#2a3552;
-  --accent:#8aa6ff; --accent-ink:#0e1424; --hl:#f0d54a; --hl-soft:#3b3615;
-  --good:#5fd49e; --good-bg:#12332a; --bad:#ff8080; --bad-bg:#3a1b21; --warn:#f0b44c;
+  --bg:#0f1420; --surface:#171e2e; --surface-2:#1d2538; --ink:#e7ecf5; --muted:#a6b0c5; --line:#2b3550; --line-2:#6b7899;
+  --accent:#8fa8ff; --accent-ink:#0f1420; --hl:#f2d264; --hl-soft:#3a3218;
+  --good:#62d6a0; --good-bg:#16352b; --bad:#ff8a8a; --bad-bg:#3d1d24; --bad-ink:#0f1420; --warn:#f2b84f;
+  --fill-bg:var(--surface-2); --fill-line:var(--accent); --dis-op:.72;
   --done:#3fbf7f; --done-ink:#08210f; --more:#f5a04a; --more-ink:#1b1200; --gold-a:#33291a; --gold-b:#5c4713; --gold-e:#d4a72c; --silv-a:#232a38; --silv-b:#333b4c; --silv-e:#aab3c2; --brz-a:#30221b; --brz-b:#45301f; --brz-e:#c98a55; color-scheme:dark}
 
 *{box-sizing:border-box}
@@ -69,6 +72,8 @@ body.nav-on:not(.sb-wide) .side{position:fixed;top:0;left:0;bottom:0;z-index:76;
 body.nav-on.sb-open:not(.sb-wide) .side{transform:none;visibility:visible}
 body.nav-on:not(.sb-wide) .sbhead{display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px)) 2px 8px 6px;font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.06em}
 body.nav-on:not(.sb-wide) .side .tabs{border:0;background:none;padding:0}
+.sbout{display:flex;align-items:center;gap:8px;width:100%;margin-top:8px;text-align:left;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:10px;padding:.62rem .9rem;min-height:44px;font:inherit;font-weight:500;white-space:nowrap}
+.sbout:hover{color:var(--ink);border-color:var(--muted)}
 .sbx{border:0;background:transparent;color:var(--ink);font-size:1.6rem;line-height:1;width:40px;height:40px;border-radius:8px}
 .sbx:hover{background:var(--line)}
 .sbbg{position:fixed;inset:0;z-index:75;background:rgba(10,15,30,.45)}
@@ -98,9 +103,9 @@ html.sb-lock,body.sb-lock{overflow:hidden}
 .btn{border:1px solid var(--ink);background:var(--surface);color:var(--ink);border-radius:6px;padding:.6rem 1.1rem;font-weight:600}
 .btn.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .btn.sm{padding:.35rem .7rem;font-size:.85rem}
-.btn:disabled{opacity:.5;cursor:default}
+.btn:disabled{opacity:var(--dis-op);cursor:default}
 .field{display:flex;flex-direction:column;gap:4px;font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
-.field input,.field select{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:.5rem .7rem;text-transform:none;letter-spacing:0;font-weight:500;color:var(--ink);min-width:min(13rem,100%)}
+.field input,.field select{background:var(--surface);border:1px solid var(--line-2);border-radius:6px;padding:.5rem .7rem;text-transform:none;letter-spacing:0;font-weight:500;color:var(--ink);min-width:min(13rem,100%)}
 .chip{align-self:flex-start;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:var(--hl-soft);color:var(--ink);padding:.15rem .5rem;border-radius:3px}
 .linkish{border:0;background:none;padding:0;font-weight:600;color:var(--accent);text-align:left}
 
@@ -215,7 +220,7 @@ html.sb-lock,body.sb-lock{overflow:hidden}
 .abtn.play{background:var(--ink);color:var(--bg);border-color:var(--ink);min-width:48px;font-size:.95rem}
 .arow input[type=range]{flex:1;min-width:0;accent-color:var(--accent)}
 .atime{font-family:var(--mono);font-size:.78rem;color:var(--muted);white-space:nowrap}
-.amsg{margin:6px 0 0;font-size:.78rem;color:var(--muted)}
+.amsg{margin:6px 0 0;font-size:.82rem;color:var(--muted)}.amsg:empty{display:none}
 .tdet{margin-bottom:16px;font-size:.88rem;color:var(--muted)}
 .tdet summary{cursor:pointer;color:var(--accent);font-weight:600}
 .tr{margin-top:8px;display:flex;flex-direction:column;gap:4px;color:var(--ink)}
@@ -227,7 +232,7 @@ html.sb-lock,body.sb-lock{overflow:hidden}
 .line{display:grid;grid-template-columns:4.6rem minmax(0,1fr);gap:10px;line-height:2.3}
 .line .w{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
 @media (max-width:520px){.line{grid-template-columns:minmax(0,1fr);gap:0}}
-.gap{font-family:var(--mono);font-size:.9em;border:0;border-bottom:2px solid var(--ink);background:var(--hl-soft);color:var(--ink);padding:.05em .3em;border-radius:2px 2px 0 0;text-align:center;width:var(--w,9ch);max-width:100%}
+.gap{font-family:var(--mono);font-size:.9em;border:0;border-bottom:2px solid var(--fill-line);background:var(--fill-bg);color:var(--ink);padding:.05em .3em;border-radius:2px 2px 0 0;text-align:center;width:var(--w,9ch);max-width:100%}
 .gap:focus{background:var(--surface);outline:2px solid var(--accent);outline-offset:1px}
 .gap.ok,.msel.ok{border-color:var(--good);background:var(--good-bg);color:var(--good)}
 .gap.bad,.msel.bad{border-color:var(--bad);background:var(--bad-bg);color:var(--bad)}
@@ -235,7 +240,7 @@ html.sb-lock,body.sb-lock{overflow:hidden}
 .fix{color:var(--good);font-family:var(--mono);font-size:.85em;font-weight:500;margin-inline:.35em;white-space:nowrap}
 .qrow{display:grid;grid-template-columns:1.8rem minmax(0,1fr);gap:8px;margin-bottom:14px;line-height:2.2}
 .qn{font-family:var(--mono);color:var(--muted);font-size:.85rem;padding-top:.1rem}
-.msel{background:var(--hl-soft);border:0;border-bottom:2px solid var(--ink);border-radius:2px 2px 0 0;padding:.15rem .4rem;font-family:var(--mono);color:var(--ink)}
+.msel{background:var(--fill-bg);border:0;border-bottom:2px solid var(--fill-line);border-radius:2px 2px 0 0;padding:.15rem .4rem;font-family:var(--mono);color:var(--ink)}
 .mq{border:0;margin:0 0 18px;padding:0;min-width:0}
 .mq legend{font-weight:600;padding:0;margin-bottom:8px;display:flex;gap:8px;line-height:1.5}
 .opts{display:flex;flex-direction:column;gap:6px}
@@ -256,7 +261,7 @@ html.sb-lock,body.sb-lock{overflow:hidden}
 .banner{background:var(--hl-soft);border-radius:6px;padding:.5rem .8rem;font-size:.85rem;margin-bottom:14px}
 .wtable{border-collapse:collapse;margin:0 0 14px;min-width:0;width:auto;font-size:.9rem}
 .wtable th,.wtable td{border:1px solid var(--line);padding:.35rem .8rem;text-align:left}
-.wbox{width:100%;min-height:260px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:.8rem;line-height:1.65;resize:vertical}
+.wbox{width:100%;min-height:260px;background:var(--surface);border:1px solid var(--line-2);border-radius:8px;padding:.8rem;line-height:1.65;resize:vertical}
 .wmeta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.84rem;color:var(--muted);margin-top:6px}
 .wmeta .low{color:var(--warn);font-weight:600}
 .cue{border:1px solid var(--ink);border-radius:8px;padding:14px 16px;margin:8px 0 12px}
@@ -265,7 +270,7 @@ html.sb-lock,body.sb-lock{overflow:hidden}
 .sp-q{margin:0 0 14px;padding-left:1.2rem}
 .sp-q li{margin-bottom:4px}
 .lbl{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;font-weight:600;color:var(--muted);margin:14px 0 6px}
-.linkin{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:.55rem .7rem}
+.linkin{width:100%;background:var(--surface);border:1px solid var(--line-2);border-radius:6px;padding:.55rem .7rem}
 .err{color:var(--bad);font-size:.86rem;font-weight:500;margin:6px 0 0}
 
 .filters{display:flex;flex-wrap:wrap;gap:12px;align-items:end;padding-block:18px 8px}
@@ -334,14 +339,18 @@ td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:now
 .create .step{margin-bottom:22px}
 .create p{margin:0 0 10px;color:var(--muted);font-size:.88rem}
 pre.prompt{margin:0 0 10px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;font-family:var(--mono);font-size:.76rem;line-height:1.55;white-space:pre-wrap;max-height:260px;overflow:auto}
-.create textarea{width:100%;min-height:220px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:.8rem;font-family:var(--mono);font-size:.8rem;line-height:1.55;resize:vertical}
+.create textarea{width:100%;min-height:220px;background:var(--surface);border:1px solid var(--line-2);border-radius:8px;padding:.8rem;font-family:var(--mono);font-size:.8rem;line-height:1.55;resize:vertical}
 .create .row{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-top:10px}
 .errs{margin:10px 0 0;padding-left:1.1rem;color:var(--bad);font-size:.86rem}
 .cpt{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
 .cpt button{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:99px;padding:.32rem .9rem;font:inherit;font-size:.85rem;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 .cpt button:hover{color:var(--ink)}
 .cpt button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.cpt.sub button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.cpskills{margin:0 0 14px}.cpskills button{padding:.45rem 1.1rem;font-size:.92rem;min-height:40px}
+#rdTx{font-family:var(--font);font-size:.95rem;line-height:1.6;min-height:220px}
+#rdJson{min-height:140px;margin-top:8px}
+.rdpr{display:block;width:100%;min-height:120px;margin-top:6px;font-family:var(--mono);font-size:.76rem;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px}
+.cpt.sub button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .create textarea.bad{border-color:var(--bad)}
 .cperr{margin:10px 0 0;border:1px solid var(--bad);background:var(--bad-bg);border-radius:10px;padding:10px 14px;color:var(--bad);font-size:.88rem}.cperr .errs{margin:6px 0 0}
 .pvframe{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg);margin-top:10px}
@@ -544,7 +553,7 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .fcard .back{margin-top:14px;text-align:left;display:flex;flex-direction:column;gap:6px}
 .fbtns{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
 .fbtns .btn{min-width:130px}
-.btn.bad{background:var(--bad);border-color:var(--bad);color:#fff}
+.btn.bad{background:var(--bad);border-color:var(--bad);color:var(--bad-ink)}
 .btn.good{background:var(--done);border-color:var(--done);color:var(--done-ink)}
 .cstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:8px 0 16px}
 .cstats div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column}
@@ -755,10 +764,43 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .lsc .opts{gap:2px}.lsc .opt{border-color:transparent;padding:.4rem .8rem}.lsc .opt:hover{border-color:transparent;background:var(--hl-soft)}
 .lsc .opt:has(input:checked){border-color:transparent}.lsc .opt.good,.lsc .opt.bad{border-color:transparent}
 .lsseg .gap{margin:.2em .15em;padding:.15em .35em;vertical-align:middle}.lsseg.lscl{line-height:2.6}
-.lsflash{margin-top:10px;font-size:.9rem;color:#0000ff}.lsflash .lsfh{font-size:1.5rem;font-weight:800;line-height:1.25;margin:0 0 2px}.lsflash .lsfd{margin:0 0 8px}.lsflash .lsfl{font-size:.8rem;font-weight:700;margin:6px 0 2px}.lsflash .lsfu{list-style:none;margin:0;padding:0 0 0 22px}.lsflash .lsfu li{margin:2px 0}.lsflash .lsfe{margin-top:10px;font-style:italic}.lsflash b,.lsflash small,.lsflash i{color:#0000ff}.lsexp{font-style:italic;color:#0000ff;margin:6px 0 0}
+.lsflash{margin-top:10px;font-size:.9rem;color:var(--accent)}.lsflash .lsfh{font-size:1.5rem;font-weight:800;line-height:1.25;margin:0 0 2px}.lsflash .lsfd{margin:0 0 8px}.lsflash .lsfl{font-size:.8rem;font-weight:700;margin:6px 0 2px}.lsflash .lsfu{list-style:none;margin:0;padding:0 0 0 22px}.lsflash .lsfu li{margin:2px 0}.lsflash .lsfe{margin-top:10px;font-style:italic}.lsflash b,.lsflash small,.lsflash i{color:var(--accent)}.lsexp{font-style:italic;color:var(--accent);margin:6px 0 0}
 .lsc .opt.good,.lsc .opt.good:has(input:checked){background:var(--good-bg);border-color:var(--good);color:var(--good);font-weight:600}.lsc .opt.bad,.lsc .opt.bad:has(input:checked){background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
-.lsw b{font-size:1.2rem}.lsscore{cursor:default;display:inline-block}.lshw.tg.on{background:var(--good);color:#fff}
-.lsdemo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;font-size:.8rem;color:var(--muted)}
+.lsw b{font-size:1.2rem}.lsscore{cursor:default;display:inline-block}.lshw.tg.on{background:var(--good);color:var(--bg)}
+.lsdemo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;font-size:.82rem;color:var(--muted)}
+/* ---- Lesson layout shared by Listening (.ls) and Reading (.rm): one type scale (passage 1.06rem / 1.8–1.9, questions 1rem,
+   small text >= .82rem), touch targets >= 44px with 8px gaps, sticky stage bar, full-width sticky actions on phones ---- */
+.ls .lsbar,.rm .lsbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);margin:6px 0 14px;padding:8px 0;box-shadow:0 1px 0 var(--line)}
+.ls .lsstep,.rm .lsstep{font-size:.84rem;padding:.35rem .8rem}
+.ls .lsstep.cur,.rm .lsstep.cur{font-weight:700}
+.ls .abar{top:calc(env(safe-area-inset-top,0px) + 52px)}
+.ls .lsseg{font-size:1.06rem;line-height:1.9;overflow-wrap:anywhere}.ls .lsseg.lscl{line-height:2.8}
+.ls .lsc .ex,.rm .lsc .ex{font-size:1.06rem;line-height:1.8}
+.ls .lsq,.rm .lsq{font-size:1rem}
+.ls .lsh,.rm .lsh{font-size:1.1rem}
+.ls .lsc,.rm .lsc{padding:14px 16px;margin:12px 0}
+.ls .lsc .opts,.rm .lsc .opts{gap:8px}
+.ls .lsc .opt,.rm .lsc .opt{min-height:48px;padding:.6rem .85rem;border:1px solid var(--line);border-radius:8px}
+.ls .lsc .opt:hover,.rm .lsc .opt:hover{border-color:var(--accent);background:var(--surface)}
+.ls .lsc .opt:has(input:checked),.rm .lsc .opt:has(input:checked){border-color:var(--accent);background:var(--hl-soft)}
+.ls .lsc .opt.good,.ls .lsc .opt.good:has(input:checked),.rm .lsc .opt.good,.rm .lsc .opt.good:has(input:checked){border-color:var(--good);background:var(--good-bg);color:var(--good)}
+.ls .lsc .opt.bad,.ls .lsc .opt.bad:has(input:checked),.rm .lsc .opt.bad,.rm .lsc .opt.bad:has(input:checked){border-color:var(--bad);background:var(--bad-bg);color:var(--bad)}
+.ls .lsc .opt.good span::before{content:'✓ ';font-weight:700}.ls .lsc .opt.bad span::before{content:'✗ ';font-weight:700} /* Reading writes ✓ / ✗ in the text */
+.ls .lshw{padding:.3em .2em;border-radius:5px}
+.ls .gap,.rm .gap{min-height:44px;font-size:1rem}
+.rm .rmp{line-height:1.9}.rm .rmpn{padding:.3em .45em}
+.ls .lsflash,.rm .lsflash{font-size:.95rem}.lsflash .lsfl{font-size:.82rem}
+.ls>.actions,.rm>.actions{gap:10px}.ls>.actions .btn,.rm>.actions .btn{min-height:46px}
+@media (max-width:640px){
+  .pane.single.ls,.pane.single.rm{padding:14px 14px 0;border-radius:12px}
+  .ls>#result,.rm>#result{padding-bottom:14px}
+  .ls .lsbar,.rm .lsbar{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:4px;overflow:visible;margin:4px 0 12px;padding:6px 0}
+  .ls .lsstep,.rm .lsstep{padding:.45rem .2rem;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.82rem;border-radius:8px}
+  .ls .abar{top:calc(env(safe-area-inset-top,0px) + 48px)}
+  .ls .lsc,.rm .lsc{padding:12px}
+  .ls>.actions,.rm>.actions{position:sticky;bottom:0;z-index:4;background:var(--surface);margin:16px -14px 0;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);box-shadow:0 -6px 12px -10px rgba(0,0,0,.35)}
+  .ls>.actions .btn,.rm>.actions .btn{flex:1 1 100%;width:100%;text-align:center}
+}
 .abar.noseek [data-act="aback"],.abar.noseek [data-act="afwd"],.abar.noseek #aRange{display:none}
 .lsimg{display:block;max-width:100%;max-height:170px;border-radius:10px;margin:8px 0;object-fit:cover}
 .lsimged{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}.lsimged input{flex:1 1 200px;min-width:0;border:1px solid var(--line);border-radius:6px;padding:.35rem .5rem;background:var(--surface);color:var(--ink)}.lsimged .lsimg{flex-basis:100%}.lsimged.nw{flex-wrap:nowrap}.lsimged.nw .btn{flex:none}.lsic{margin:10px 0 0}.lsic .lsimg{margin-top:6px}
@@ -795,7 +837,7 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .rmchip:disabled{cursor:default;opacity:.6}
 .rmcz{line-height:2.6}
 .rmbw{display:inline-flex;align-items:center;gap:2px;vertical-align:middle}
-.rmblank{display:inline-flex;align-items:center;justify-content:center;min-width:5.5em;min-height:44px;border:0;border-bottom:2px dashed var(--accent);background:var(--hl-soft);border-radius:6px 6px 0 0;padding:0 8px;font:inherit;font-weight:700;color:var(--accent);touch-action:none;user-select:none;-webkit-user-select:none}
+.rmblank{display:inline-flex;align-items:center;justify-content:center;min-width:5.5em;min-height:44px;border:0;border-bottom:2px dashed var(--accent);background:var(--fill-bg);border-radius:6px 6px 0 0;padding:0 8px;font:inherit;font-weight:700;color:var(--accent);touch-action:none;user-select:none;-webkit-user-select:none}
 .rmblank.has{background:var(--surface);color:var(--ink);border-bottom-style:solid;cursor:grab}
 .rmblank.hot{outline:3px solid var(--accent);outline-offset:2px;background:color-mix(in srgb,var(--accent) 14%,var(--surface))}
 .rmblank.ok{background:var(--good-bg);color:var(--good);border-bottom:2px solid var(--good)}.rmblank.no{background:var(--bad-bg);color:var(--bad);border-bottom:2px solid var(--bad)}
@@ -901,6 +943,10 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
 .msheet .cl{justify-content:center;color:var(--muted);font-weight:500}
 .fbbox{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(640px,calc(100% - 24px));max-height:86vh;overflow:auto;z-index:71;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}
 .fbo{display:inline-block;font-size:.8rem;margin-left:6px}
+/* ---- Dark mode: blocks inside a card are one step lighter (--surface-2), so the layers are easy to tell apart.
+   Fill-in boxes (.gap, .msel, .rmblank: --fill-bg / --fill-line) use --surface-2 + an --accent line, never the yellow. ---- */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .rec,:root:not([data-theme="light"]) .abar,:root:not([data-theme="light"]) .cue,:root:not([data-theme="light"]) .lsseg,:root:not([data-theme="light"]) .lsc,:root:not([data-theme="light"]) .essay,:root:not([data-theme="light"]) .ltc,:root:not([data-theme="light"]) .enin{background:var(--surface-2)}}
+:root[data-theme="dark"] .rec,:root[data-theme="dark"] .abar,:root[data-theme="dark"] .cue,:root[data-theme="dark"] .lsseg,:root[data-theme="dark"] .lsc,:root[data-theme="dark"] .essay,:root[data-theme="dark"] .ltc,:root[data-theme="dark"] .enin{background:var(--surface-2)}
 /* ---- teacher dashboard (cards, ring, line, rank list, heat grid) ---- */
 .dcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px;min-width:0}
 .dcard h3{font-size:.98rem;margin:0}.dsub{font-size:.8rem;color:var(--muted);margin:2px 0 0;display:block}.dbd{margin-top:12px}
@@ -955,7 +1001,7 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
 .xpset{max-width:760px}
 .xprow{display:grid;grid-template-columns:minmax(0,1fr) 96px 120px;gap:6px 16px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
 .xprow label{font-size:.92rem;min-width:0}
-.xprow input{width:100%;height:38px;border:1px solid var(--line);border-radius:8px;padding:0 .6rem;background:var(--surface);color:var(--ink);font-family:var(--mono);text-align:right}
+.xprow input{width:100%;height:38px;border:1px solid var(--line-2);border-radius:8px;padding:0 .6rem;background:var(--surface);color:var(--ink);font-family:var(--mono);text-align:right}
 .xprow small{color:var(--muted);font-size:.8rem;white-space:nowrap}
 @media (max-width:520px){.xprow{grid-template-columns:minmax(0,1fr) 84px}.xprow small{grid-column:1;grid-row:2}}
 .adm .subtabs{overflow-x:auto;scrollbar-width:none}
@@ -996,6 +1042,7 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
   <aside class="side" id="sideNav" aria-label="Menu">
     <div class="sbhead"><span>Menu</span><button class="sbx" type="button" data-act="sb-close" aria-label="Close menu">×</button></div>
     <nav class="tabs" id="tabs" role="tablist" aria-label="Sections" hidden></nav>
+    <button class="sbout" type="button" data-act="logout"><span aria-hidden="true">⎋</span> Sign out</button>
   </aside>
   <div class="sbbg" id="sbBg" data-act="sb-close" hidden></div>
   <main class="mainc">
@@ -1050,8 +1097,11 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
   <section id="v-create" hidden>
     <div class="create">
       <div>
+        <div class="cpt cpskills" id="cpSkills" role="tablist" aria-label="Skill"></div>
         <div class="step alstep" id="audBox" hidden></div>
         <div class="step alstep" id="alBox" hidden></div>
+        <div class="step alstep" id="rdBox" hidden></div>
+        <div class="step alstep" id="wsBox" hidden></div>
         <div class="step">
           <h3>Book and test</h3>
           <p>The new exercise is added to this book and test.</p>
@@ -1541,7 +1591,7 @@ function makeWav(){
   return URL.createObjectURL(new Blob([buf],{type:'audio/wav'}));
 }
 function audioBar(){
-  return '<div class="abar"><audio id="aud" preload="auto"></audio><div class="arow"><button class="abtn" data-act="aback" type="button" aria-label="Back 5 seconds">−5s</button><button class="abtn play" id="aPlay" data-act="aplay" type="button" aria-label="Play or pause">▶</button><button class="abtn" data-act="afwd" type="button" aria-label="Forward 5 seconds">+5s</button><input type="range" id="aRange" min="0" max="90" step="0.1" value="0" aria-label="Seek"><span class="atime" id="aTime">0:00 / 0:00</span></div><p class="amsg" id="aMsg">Demo tone only. Teachers upload the real mp3; the controls stay the same.</p></div>';
+  return '<div class="abar"><audio id="aud" preload="auto"></audio><div class="arow"><button class="abtn" data-act="aback" type="button" aria-label="Back 5 seconds">−5s</button><button class="abtn play" id="aPlay" data-act="aplay" type="button" aria-label="Play or pause">▶</button><button class="abtn" data-act="afwd" type="button" aria-label="Forward 5 seconds">+5s</button><input type="range" id="aRange" min="0" max="90" step="0.1" value="0" aria-label="Seek"><span class="atime" id="aTime">0:00 / 0:00</span></div><p class="amsg" id="aMsg" aria-live="polite"></p></div>';
 }
 function updAudio(){
   var a=$('#aud');if(!a)return;var d=isFinite(a.duration)?a.duration:0,r=$('#aRange');
@@ -1810,7 +1860,7 @@ function renderPlayer(){
     $('#libBody').innerHTML='<div class="pane single"><div class="phead"><span class="chip">'+SNAME[ex.skill]+'</span><h2>'+esc(ex.title)+'</h2></div><div class="banner" style="background:var(--bad-bg);color:var(--bad)"><b>Locked.</b> This exercise belongs to <b>'+esc(asgName(lk))+'</b>, which was due '+fmtDue(effDue(lk,U.email))+'. After the deadline it can only be opened with a late pass.</div><div class="actions"><button class="btn" data-act="nav" data-book="'+NAV.book+'" data-test="'+NAV.test+'" data-skill="'+NAV.skill+'" type="button">Back to the list</button></div></div>';
     return;
   }
-  var teacher=U.role==='teacher',ban=teacher?'<div class="banner">Preview mode: your answers are not saved.</div>':'';
+  var teacher=U.role==='teacher',ban=''; // teachers preview: nothing is saved (saveAttempt is skipped for teachers), no banner
   var head='<div class="phead"><span class="chip">'+SNAME[ex.skill]+'</span><h2>'+esc(ex.title)+'</h2><p>'+esc(ex.hint)+'</p></div>';
   var tail='<div class="actions"><button class="btn pri" data-act="submit" id="submit" type="button">Submit</button><span class="saved" id="saveMsg"></span></div><div id="result"></div>';
   if(ex.kind==='writing')return renderWriting(ex,head,ban);
@@ -2777,9 +2827,21 @@ function cpPresets(){
 }
 function tplGet(){try{return JSON.parse(lsGet('md-ptpl')||'{}')||{}}catch(e){return {}}}
 function cpCur(){var l=cpPresets()[CP.skill]||[],i;for(i=0;i<l.length;i++)if(l[i].id===CP.preset)return l[i];return l[0]}
-// Create = Listening 5-stage lesson only for now (Audio + Auto-create). The manual prompt / paste-JSON steps were removed;
-// Reading, Writing and Speaking formats will be added later (their prompts stay in cpPresets).
-function renderCpPrompt(){CP.skill='listening';CP.preset='l5';renderAudBox();renderAutoL()}
+// Create, one tab per skill: Listening = Audio + Auto-create 5-stage lesson; Reading = Auto-create reading lesson (rdBox);
+// Writing / Speaking = coming later (their prompts stay in cpPresets). Each skill keeps its own generated JSON (CP.rawBy).
+var CP_SK=[['listening','Listening'],['reading','Reading'],['writing','Writing'],['speaking','Speaking']];
+CP.skill=(function(){var v=lsGet('md-cpskill');return /^(listening|reading|writing|speaking)$/.test(v||'')?v:'listening'})();CP.rawBy={};
+function renderCpPrompt(){
+  CP.preset=CP.skill==='listening'?'l5':(cpPresets()[CP.skill]||[{id:''}])[0].id;
+  var sk=$('#cpSkills');if(sk)sk.innerHTML=CP_SK.map(function(x){return '<button type="button" role="tab" data-act="cp-skill" data-v="'+x[0]+'" aria-selected="'+(CP.skill===x[0])+'">'+x[1]+'</button>'}).join('');
+  renderAudBox();renderAutoL();renderRdBox();
+  var ws=$('#wsBox');if(ws){ws.hidden=CP.skill!=='writing'&&CP.skill!=='speaking';if(!ws.hidden)ws.innerHTML='<h3>'+esc(SNAME[CP.skill])+'</h3><p>Creating '+esc(SNAME[CP.skill])+' exercises here is coming soon.</p>'}
+}
+function cpSkill(v){
+  if(v===CP.skill)return;CP.rawBy[CP.skill]=CP.raw||'';CP.skill=v;lsSet('md-cpskill',v);
+  CP.raw=CP.rawBy[v]||'';if(CP.raw)checkJSON();else{CP.last=null;parsed=null;renderPrev()}
+  renderCpPrompt();
+}
 // CP.aud = {id, url, ...}: audio uploaded in Create, added as audio_url to the Listening exercise (kept in localStorage md-craud)
 CP.aud=(function(){try{var o=JSON.parse(lsGet('md-craud')||'null');return o&&o.url?o:null}catch(e){return null}})();
 function renderAudBox(){
@@ -2811,7 +2873,7 @@ var AL=(function(){var o={};try{o=JSON.parse(lsGet('md-al')||'{}')||{}}catch(e){
 function alShow(){return CP.skill==='listening'&&cpCur().id==='l5'}
 function renderAutoL(){
   var b=$('#alBox');if(!b)return;b.hidden=!alShow();if(b.hidden)return;
-  if(!$('#alTr'))b.innerHTML='<h3>Auto-create a 5-stage lesson (AI)</h3><p>Paste the transcript and press Generate. The AI follows the 5-stage prompt in step 1; the lesson then appears in the preview, ready to add. You can still do it by hand with steps 1 and 2.</p>'+
+  if(!$('#alTr'))b.innerHTML='<h3>Auto-create a 5-stage lesson (AI)</h3><p>Paste the transcript and press Generate. The lesson then appears in the preview, ready to add.</p>'+
     '<label class="field" for="alTitle">Title (optional)<input id="alTitle" maxlength="120" autocomplete="off" value="'+esc(AL.title||'')+'"></label>'+
     '<div class="row" style="justify-content:space-between;align-items:end;margin:6px 0 0"><label class="lbl" for="alTr" style="margin:0">Transcript</label><button class="btn sm" type="button" data-act="al-trn" id="alTrn">Transcribe from audio (AI)</button></div><textarea id="alTr" spellcheck="false" placeholder="AMBER: Hello William, this is Amber…">'+esc(AL.tr||'')+'</textarea>'+
     '<details class="alq"'+(AL.q?' open':'')+'><summary>Original questions and answer key (optional, recommended)</summary><textarea id="alQ" spellcheck="false" placeholder="1. Name of the agency: ______  Answer: Bankside">'+esc(AL.q||'')+'</textarea>'+
@@ -2852,6 +2914,72 @@ function alGen(){
   if(DEMO){setTimeout(function(){try{var o=JSON.parse(EXAMPLE_L);if(AL.title)o.title=AL.title;fin(o,'demo: sample lesson, the live site uses Gemini')}catch(e){no(e)}},1200);return}
   staffApi('ai/lesson',{title:AL.title||'',transcript:tr,questions:AL.q||'',prompt:alPrompt(),tzo:new Date().getTimezoneOffset()}).then(function(d){fin(d.lesson,d.model)},no);
 }
+/* Auto-create a 4-stage Reading lesson: passage -> /api/ai/reading (Gemini, RPROMPT on the server) -> parseReading -> preview -> Add.
+   The passage must stay word for word (rdSame). Advanced: copy the same RPROMPT (from the server) and paste a JSON answer by hand.
+   Draft (title, passage, pasted JSON) is kept in localStorage md-rd. */
+var RD=(function(){var o={};try{o=JSON.parse(lsGet('md-rd')||'{}')||{}}catch(e){o={}}o.busy=false;o.msg='';o.bad=false;return o})();
+function rdSave(){try{lsSet('md-rd',JSON.stringify({title:RD.title||'',tx:RD.tx||'',json:RD.json||''}))}catch(e){}}
+function rdCounts(t){return {w:wordCount(t),p:String(t||'').split(/\n\s*\n/).filter(function(x){return x.trim()}).length}}
+function rdCountHTML(){
+  var c=rdCounts(RD.tx),w=[];if(c.p&&c.p<3)w.push('fewer than 3 paragraphs');if(c.p>7)w.push('more than 7 paragraphs');if(c.w>900)w.push('more than 900 words');
+  return '<span><span class="mono">'+c.w+'</span> words · <span class="mono">'+c.p+'</span> paragraph'+(c.p===1?'':'s')+'</span>'+(w.length?'<span class="low">'+esc(w.join(', '))+': best with 3–7 paragraphs and up to 900 words</span>':'');
+}
+function renderRdBox(){
+  var b=$('#rdBox');if(!b)return;b.hidden=CP.skill!=='reading';if(b.hidden)return;
+  if(!$('#rdTx'))b.innerHTML='<h3>Auto-create a reading lesson (AI)</h3><p>4 stages: Structure, Pronouns, Vocabulary, Output. Paste the passage, press Generate, check the preview, then Add.</p>'+
+    '<label class="lbl" for="rdTx">1. Passage</label><textarea id="rdTx" spellcheck="false" placeholder="Paste the reading passage. Leave a blank line between paragraphs.">'+esc(RD.tx||'')+'</textarea>'+
+    '<div class="wmeta" id="rdCnt"></div><p class="saved" style="margin:2px 0 10px">Keep the wording exactly as in the book: the AI only marks words in it, it never rewrites it.</p>'+
+    '<label class="lbl" for="rdTitle">2. Title (optional, the AI can name it)</label><input class="linkin" id="rdTitle" maxlength="120" autocomplete="off" value="'+esc(RD.title||'')+'"><p class="saved" style="margin:4px 0 10px">Choose Book and Test in the box below.</p>'+
+    '<p class="lbl">3. Generate</p><div class="row" style="margin-top:0"><button class="btn pri" type="button" data-act="rd-gen" id="rdGo">Generate reading lesson</button><span class="saved" id="rdMsg" aria-live="polite"></span></div>'+
+    '<details class="alq"><summary>Advanced: copy the prompt / paste JSON</summary><p class="saved">To make the lesson in another AI chat: copy the prompt, add the passage after it, then paste the JSON answer here.</p>'+
+    '<div class="row" style="margin-top:4px"><button class="btn sm" type="button" data-act="rd-copy">Copy prompt</button><span class="saved" id="rdCopyMsg" aria-live="polite"></span></div>'+
+    '<textarea id="rdJson" spellcheck="false" aria-label="Lesson JSON" placeholder="{&quot;title&quot;: &quot;…&quot;, &quot;paras&quot;: […], …}">'+esc(RD.json||'')+'</textarea>'+
+    '<div class="row"><button class="btn sm" type="button" data-act="rd-check">Check JSON</button></div></details>';
+  rdStatus();
+}
+function rdStatus(){
+  var m=$('#rdMsg'),g=$('#rdGo'),c=$('#rdCnt');
+  if(c)c.innerHTML=rdCountHTML();
+  if(m){m.textContent=RD.msg||'';m.className='saved'+(RD.bad?' alerr':'')}
+  if(g){g.disabled=!!RD.busy;g.textContent=RD.busy?'Generating… (about 20–40 s)':(RD.bad&&RD.tried?'Try again':'Generate reading lesson')}
+}
+// the lesson must keep the passage word for word (only {{…}} marks are added)
+function rdSame(o,tx){if(!o||!isArr(o.paras))return true;var n=function(s){return String(s).toLowerCase().replace(/\{\{|\}\}/g,'').replace(/[^a-z0-9]+/g,' ').trim()};return n(o.paras.join(' '))===n(tx)}
+function rdApply(txt,passage){
+  checkJSON(txt);
+  if(passage&&CP.last&&CP.last.data){var o=null;try{o=JSON.parse(txt)}catch(e){}
+    if(o&&!rdSame(o,passage)){CP.last={errs:['The AI changed the wording of the passage. The lesson must keep the passage word for word. Press Try again.']};parsed=null;renderPrev()}}
+}
+function rdGen(){
+  if(RD.busy)return;var tx=String(RD.tx||'').trim();
+  if(wordCount(tx)<80){RD.bad=true;RD.msg='Paste the whole passage first (at least 80 words).';rdStatus();return}
+  RD.busy=true;RD.bad=false;RD.tried=true;RD.msg='Writing the lesson… Stay on this page.';rdStatus();
+  var fin=function(o,model,demo){
+    RD.busy=false;if(RD.title)o.title=RD.title;rdApply(JSON.stringify(o,null,2),demo?'':tx);
+    var r=CP.last;
+    if(r&&r.errs&&r.errs.length){RD.bad=true;RD.msg='The AI lesson has a few problems (listed in the preview). Press Try again.'}
+    else{RD.bad=false;RD.msg='Done'+(model?' ('+model+')':'')+'. Check the preview, choose Book and Test, then press Add.'}
+    rdStatus();var pv=$('#createPrev');if(pv&&pv.scrollIntoView)pv.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+  };
+  var no=function(e){RD.busy=false;RD.bad=true;RD.msg=(e&&e.message)||'Something went wrong. Try again.';rdStatus()};
+  if(DEMO){setTimeout(function(){try{fin(JSON.parse(EXAMPLE_R),'demo: the sample lesson, the live site uses Gemini on your passage',true)}catch(e){no(e)}},1200);return}
+  staffApi('ai/reading',{title:RD.title||'',passage:tx,tzo:new Date().getTimezoneOffset()}).then(function(d){fin(d.lesson||{},d.model)},no);
+}
+function rdCopy(){
+  var m=$('#rdCopyMsg'),say=function(t){if(m)m.textContent=t};
+  var put=function(p){RD.prompt=p;try{navigator.clipboard.writeText(p).then(function(){say('Copied. Paste it into the AI chat, then add the passage.')},function(){rdShowPrompt(p)})}catch(x){rdShowPrompt(p)}};
+  if(RD.prompt)return put(RD.prompt);
+  if(DEMO){say('The prompt comes from the live server (demo mode).');return}
+  say('Loading the prompt…');
+  staffApi('ai/reading',{op:'prompt'}).then(function(d){put(String(d.prompt||''))},function(e){say(e.message)});
+}
+function rdShowPrompt(p){var m=$('#rdCopyMsg');if(m)m.innerHTML='Copy failed. Select the text below and copy it by hand.<textarea readonly class="rdpr" aria-label="Prompt">'+esc(p)+'</textarea>'}
+document.addEventListener('input',function(e){
+  var id=e.target&&e.target.id;
+  if(id==='rdTx'){RD.tx=e.target.value;rdSave();var c=$('#rdCnt');if(c)c.innerHTML=rdCountHTML()}
+  if(id==='rdTitle'){RD.title=e.target.value;rdSave()}
+  if(id==='rdJson'){RD.json=e.target.value;rdSave()}
+});
 document.addEventListener('input',function(e){
   var id=e.target&&e.target.id;
   if(id==='alTitle'||id==='alTr'||id==='alQ'){AL[id==='alTitle'?'title':id==='alTr'?'tr':'q']=e.target.value;alSave()}
@@ -2992,7 +3120,7 @@ function showTab(t){
   if(!U){var lv=$('#v-login');lv.hidden=false;if(!DEMO&&lsGet('md-email')&&!window.MD_USER){lv.setAttribute('data-wait','');setTimeout(function(){lv.removeAttribute('data-wait')},10000)}else lv.removeAttribute('data-wait');$('#tabs').hidden=true;$('#who').hidden=true;$('#sbBtn').hidden=true;document.body.classList.remove('nav-on');sbInit();return}
   $('#v-login').removeAttribute('data-wait');
   if(t!=='library'&&!tabsFor().some(function(x){return x[0]===t})){t=tabsFor()[0][0];TAB=t} // a tab this role does not have
-  $('#tabs').hidden=tabsFor().length<2;document.body.classList.toggle('nav-on',!$('#tabs').hidden);$('#sbBtn').hidden=$('#tabs').hidden;sbSet(SB.open); // keeps the open / closed state$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b>'+(U.adm?'':'<span class="rl"> · '+U.role+'</span>');
+  $('#tabs').hidden=tabsFor().length<2;document.body.classList.toggle('nav-on',!$('#tabs').hidden);$('#sbBtn').hidden=$('#tabs').hidden;sbSet(SB.open);/* keeps the open / closed state */$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b>'+(U.adm?'':'<span class="rl"> · '+U.role+'</span>');
   $('#tabs').innerHTML=tabsFor().map(function(x){return '<button role="tab" data-act="tab" data-tab="'+x[0]+'" aria-selected="'+(x[0]===t)+'">'+x[1]+'</button>'}).join('');
   var id={library:'lib',cards:'cards',errors:'errors',ranks:'ranks',wheel:'wheel',bag:'bag',set:'set',prize:'prize',xps:'xps',dash:'dash',asg:'asg',mark:'mark',roster:'roster',create:'create',admin:'admin'}[t];$('#v-'+id).hidden=false;updMarq();
   if(t==='admin')renderAdmin();
@@ -3033,7 +3161,7 @@ document.addEventListener('click',function(e){
   if(t.tagName==='BUTTON'&&t.closest('summary'))e.preventDefault(); // a button in a <details> header must not open/close it
   if(a==='sb-toggle'){sbSet(!SB.open,true,true);return}
   if(a==='sb-close'){sbSet(false,true);return}
-  if((a==='tab'||a==='nav'||a==='next'||a==='logout'||a==='lx'||a==='daily')&&recUnsaved()&&!confirm(REC_LEAVE))return;
+  if((a==='tab'||a==='nav'||a==='next'||a==='lx'||a==='daily')&&recUnsaved()&&!confirm(REC_LEAVE))return;
   if(extAct(a,t))return;
   if(a==='tab'){if(SB.open&&!sbWide())sbSet(false,!!t.closest('#sideNav'));NAV.daily=null;DY=null;if(CV&&CV.where==='daily')CV=null;return showTab(t.dataset.tab)}
   if(a==='nav'){XED=null;var nb=t.dataset.book||null,nt=t.dataset.test||null,ns=t.dataset.skill||null,ne=t.dataset.ex||null;LIBX={book:nb,test:nt,skill:ns};NAV={book:ne?nb:null,test:ne?nt:null,skill:ne?ns:null,ex:ne};PANE='q';return showTab('library')}
@@ -3087,6 +3215,10 @@ document.addEventListener('click',function(e){
   if(a==='save-grade')return saveGrade();
   if(a==='save-asg')return saveAsg();
   if(a==='import-csv')return importCSV();
+  if(a==='cp-skill')return cpSkill(t.dataset.v);
+  if(a==='rd-gen')return rdGen();
+  if(a==='rd-copy')return rdCopy();
+  if(a==='rd-check'){var rj=$('#rdJson');RD.json=rj?rj.value:'';rdSave();if(!String(RD.json).trim()){RD.msg='Paste the JSON first.';RD.bad=true;rdStatus();return}rdApply(RD.json,String(RD.tx||'').trim()&&wordCount(RD.tx)>=80?String(RD.tx).trim():'');var pv2=$('#createPrev');if(pv2&&pv2.scrollIntoView)pv2.scrollIntoView({block:'start'});return}
   if(a==='al-gen')return alGen();
   if(a==='al-trn')return alTranscribe();
   if(a==='cp-view'){CP.view=t.dataset.v;if(!CP.last&&String(CP.raw||'').trim())return checkJSON();return renderPrev()}
@@ -3095,6 +3227,13 @@ document.addEventListener('click',function(e){
   if(a==='pv-submit')return pvSubmit();
   if(a==='add-ex')return addExercise();
 });
+// Sign out (header ⎋ and the sidebar): ask first only when work is in progress (a recording not saved yet, or a
+// Writing answer not submitted). Capture phase, added before md-backend.js adds its own sign-out listener, so Cancel stops it.
+document.addEventListener('click',function(e){
+  var t=e.target.closest&&e.target.closest('[data-act="logout"]');if(!t)return;
+  var wt=$('#wText'),busy=recUnsaved()||(WL.on&&!done&&!!(wt&&String(wt.value).trim()));
+  if(busy&&!confirm('You have work that is not saved or submitted yet. Sign out anyway?')){e.preventDefault();e.stopImmediatePropagation()}
+},true);
 document.addEventListener('change',function(e){
   var d=e.target.dataset||{};
   if(e.target.id==='wVer'){WVER={ex:NAV.ex,id:e.target.value};renderPlayer();var wv=$('#wVer');if(wv)wv.focus();return}
@@ -3783,7 +3922,7 @@ function renderDailyTask(){
   if(!DY||DY.type!==ty){DY=buildDaily(ty);clearInterval(dyTimer);dyTimer=null}
   var it=DY.items[DY.i];
   if(!it){NAV.daily=null;DY=null;return renderLib()} // an old task type that no longer exists
-  h+='<div class="pane single">'+dyBack()+'<div class="phead" style="margin-top:8px"><span class="chip">Daily</span><h2>'+esc(meta.t)+'</h2></div>';
+  h+='<div class="pane single">'+dyBack()+'<div class="phead" style="margin-top:8px"><h2>'+esc(meta.t)+'</h2></div>';
   if(DY.stage==='end'){
     var ok=DY.res.filter(Boolean).length,tot=DY.items.length,xpm=DY.already?'You already finished this one today, so no extra XP.':'XP added. Your streak is counted for today.';
     var big=ty==='dict'?DY.pct+'%':ty==='dcl'?DY.ok+'/'+DY.gt:it.k==='speak'?'✓':ok+'/'+tot,lab=ty==='dict'?'words correct':it.k==='speak'?'practised':'correct';
@@ -3793,8 +3932,8 @@ function renderDailyTask(){
   if(it.k==='speak'){
     var can=recSupported();
     if(ty==='ra')h+='<p class="muted" style="margin:0 0 8px">Read the passage aloud once, clearly and at a natural pace. Then listen to yourself.</p><div class="essay" style="margin-bottom:6px">'+esc(it.text)+'</div>';
-    else h+='<p class="muted" style="margin:0 0 6px">Answer the question out loud'+(ty==='sp1'?' (about 30 seconds)':' (about 1 minute)')+'.</p><div class="cue"><b>'+esc(it.q)+'</b></div>'+(it.tip?'<p class="saved" style="margin:0 0 8px">'+esc(it.tip)+'</p>':'');
-    h+=(can?recorderHTML(dyRid(),{max:it.max,kind:'speaking',local:true,label:'Your answer (max '+fmtT(it.max)+')',onChange:dySpSync}):'<p class="banner">Recording is not available in this browser. Say your answer out loud, then press Finish.</p>')+
+    else h+='<div class="cue"><b>'+esc(it.q)+'</b></div>'+(it.tip?'<p class="saved" style="margin:0 0 8px">'+esc(it.tip)+'</p>':'');
+    h+=(can?recorderHTML(dyRid(),{max:it.max,kind:'speaking',local:true,onChange:dySpSync}):'<p class="banner">Recording is not available in this browser. Say your answer out loud, then press Finish.</p>')+
       '<p class="saved" style="margin:0 0 8px">The recording stays on this device. It is not sent to anyone.</p><div class="actions"><button class="btn pri" id="dyFin" data-act="dy-sfin" type="button"'+(can?' disabled':'')+'>Finish</button></div>';
     $('#libBody').innerHTML=h+'</div>';dySpSync();return;
   }
@@ -4462,7 +4601,7 @@ function lsBody(){
     });
   }
   if(st===2){
-    h+='<p class="muted">Listen and fill in the blanks. (Demo plays a test tone; the live site plays the real recording.)</p>'+audioBar()+'<div class="lsseg lscl" style="margin-top:10px">'+
+    h+='<p class="muted">Listen and fill in the blanks.</p>'+audioBar()+'<div class="lsseg lscl" style="margin-top:10px">'+
     lsText(L.stage_3_dictation.cloze_material,function(j){return lsGap('d'+j,L.stage_3_dictation.answers[j])})+'</div>';
   }
   if(st===3){
@@ -4478,13 +4617,13 @@ function lsBody(){
   return h;
 }
 function lsDraw(){
-  var st=LS.st,bar='<div class="lsbar">'+STG.map(function(n,i){return '<span class="lsstep'+(i===st?' cur':(LS.chk[i]?' dn':''))+'">'+(LS.chk[i]&&i!==st?'✓ ':(i+1)+'. ')+n+'</span>'}).join('')+'</div>';
+  var st=LS.st,bar='<div class="lsbar">'+STG.map(function(n,i){return '<span class="lsstep'+(i===st?' cur':(LS.chk[i]?' dn':''))+'"'+(i===st?' aria-current="step"':'')+' title="'+n+'">'+(LS.chk[i]&&i!==st?'✓ ':(i+1)+'. ')+n+'</span>'}).join('')+'</div>';
   var ids=lsIds(st),sc=ids.filter(function(x){return LS.res[x]}).length,chk=LS.chk[st],act;
-  var chip='<span class="btn pri lsscore">Stage '+(st+1)+': '+sc+'/'+ids.length+'</span> ',demo=(!chk)?'<div class="lsdemo">Demo helper: <button class="btn sm" data-act="ls-demo" data-m="ok" type="button">Fill all correct</button><button class="btn sm" data-act="ls-demo" data-m="half" type="button">Half wrong</button><button class="btn sm" data-act="ls-demo" data-m="bad" type="button">All wrong</button></div>':'';
+  var chip='<span class="btn pri lsscore">Stage '+(st+1)+': '+sc+'/'+ids.length+'</span> ',demo=(DEMO&&!chk)?'<div class="lsdemo">Demo helper: <button class="btn sm" data-act="ls-demo" data-m="ok" type="button">Fill all correct</button><button class="btn sm" data-act="ls-demo" data-m="half" type="button">Half wrong</button><button class="btn sm" data-act="ls-demo" data-m="bad" type="button">All wrong</button></div>':'';
   if(LS.fail===st)act='<div class="actions">'+chip+'<button class="btn" data-act="ls-retry" type="button">Try again</button></div><p class="muted" style="margin:6px 0 0">You need at least 70% to move on. The correct answers stay hidden until you reach it, so listen again and retry.</p>';
   else if(!chk)act='<div class="actions"><button class="btn pri" data-act="ls-check" type="button">Check answers</button></div>';
   else act='<div class="actions">'+chip+(st<4?'<button class="btn pri" data-act="ls-next" type="button">Next: '+STG[st+1]+' →</button>':'')+'</div>';
-  $('#libBody').innerHTML='<div class="pane single">'+LS.head+LS.ban+bar+'<div id="lsBody">'+(chk?'':demo)+lsBody()+'</div>'+act+'<div id="result">'+(LS.final||'')+'</div></div>';
+  $('#libBody').innerHTML='<div class="pane single ls">'+LS.head+LS.ban+bar+'<div id="lsBody">'+(chk?'':demo)+lsBody()+'</div>'+act+'<div id="result">'+(LS.final||'')+'</div></div>';
   if(st>=2)initAudio();
 }
 function renderLesson(ex,head,ban){

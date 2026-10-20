@@ -797,7 +797,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-10-20b';
+const API_VERSION = '2026-10-21a';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -1038,17 +1038,18 @@ async function geminiOnce(env, model, prompt, schema, thinking, ms) {
   if (!out || typeof out !== 'object') throw new AiError(fr === 'MAX_TOKENS' ? 'too_long' : 'parse', raw.slice(0, 160));
   return out;
 }
-async function askGemini(env, prompt, schema, shape) {
+// maxMs: total time for all models together (default AI_TIMEOUT)
+async function askGemini(env, prompt, schema, shape, maxMs) {
   if (!aiReady(env)) throw new AiError('nokey', 'GEMINI_KEY / GEMINI_PROXY_URL is not set');
-  const models = aiModels(env), t0 = Date.now(), via = env.GEMINI_PROXY_URL ? 'relay' : 'direct', tried = [];
+  const models = aiModels(env), t0 = Date.now(), via = env.GEMINI_PROXY_URL ? 'relay' : 'direct', tried = [], LIM = maxMs || AI_TIMEOUT;
   let last = null;
   for (let i = 0; i < models.length; i++) {
     const model = models[i];
-    if (i && Date.now() - t0 > 90000) break; // never start another model after a long wait
+    if (i && Date.now() - t0 > Math.min(90000, LIM - 20000)) break; // never start another model after a long wait
     let thinking = true, useSchema = true;
     for (let k = 0; k < 2; k++) {
       try {
-        const left = Math.max(20000, AI_TIMEOUT - (Date.now() - t0)); // all models together stay within AI_TIMEOUT
+        const left = Math.max(20000, LIM - (Date.now() - t0)); // all models together stay within the limit
         const p2 = useSchema || !shape ? prompt : Array.isArray(prompt) ? prompt.concat([{ text: shape }]) : prompt + shape;
         const out = await geminiOnce(env, model, p2, useSchema ? schema : null, thinking, left);
         return { out, model, via, retried: tried.join(', ') };
@@ -1269,6 +1270,76 @@ async function aiTranscribe(env, request, body) {
   return json({ transcript: t.slice(0, 20000), model: g.model });
 }
 
+// POST /api/ai/reading { title, passage, tzo } (X-Staff-Key): Gemini writes a 4-stage Reading lesson (kind 'reading-ms').
+// { op: 'prompt' } returns RPROMPT, so the "copy prompt" button in Create uses this same text. Shares ail:<email>:<day> (30 a day).
+// Only a rough check here (keys present); the app checks everything with parseReading and that the passage was not rewritten.
+const RPROMPT =
+  'You are an expert IELTS Reading teacher and a strict JSON formatter. I will give you an IELTS-style reading passage. ' +
+  'Build a 4-stage reading lesson (Structure, Pronouns, Vocabulary, Output). Output ONLY one JSON object, no markdown fences, no text outside the JSON.\n\n' +
+  'Rules:\n' +
+  '- NEVER rewrite the passage. "paras" = the passage paragraphs word for word, in order (paragraphs are separated by a blank line). ' +
+  'The only change: put {{ }} around 4 to 6 pronouns or reference phrases (this policy, it, their, they, this trend…) that the reader must understand to follow the argument. Do not mark the same words twice in one paragraph.\n' +
+  '- "sums": one short summary sentence per paragraph, in paragraph order, using DIFFERENT words from the passage (a paraphrase), then ONE extra plausible but wrong summary at the end. So sums has (number of paragraphs + 1) items.\n' +
+  '- "why": one short sentence per paragraph explaining which words show its main idea.\n' +
+  '- "prons": one item for each {{ }} mark, in the order they appear: {"w": the exact marked words, "p": paragraph index from 0, "opts": 4 options, "a": index of the right option, "why": one short explanation}. ' +
+  'The right answer and the 3 distractors must all be phrases taken from the passage.\n' +
+  '- "words" (Guess the meaning): 3 to 6 important words a student MUST understand to follow the main ideas: academic or common words at level B1-C1, preferably in topic sentences or sentences with a main idea. ' +
+  'NEVER choose technical terms, proper names, numbers, very easy words (A1-A2) or words that appear only in a minor example. ' +
+  'Each: {"w": the word exactly as written in the passage, "p": its paragraph index, "pos": "n" | "v" | "adj" | "adv", "opts": 4 short meanings in easy English (distractors that fit the sentence), "a": index of the right meaning, ' +
+  '"en": English definition, "vi": Vietnamese meaning, "fam": word family, e.g. "congest (v), congested (adj), congestion (n)", "col": 2 common collocations, "ex": a new example sentence}.\n' +
+  '- "pairs": 4 to 6 key phrases (2 to 6 words) copied word for word from the passage, each {"ph": the phrase, "p": paragraph index, "par": a simpler paraphrase}. "pdist": one extra paraphrase that sounds plausible but matches none of them.\n' +
+  '- "cloze": {"text": a summary of the whole passage in 3 to 5 sentences with blanks written {{1}}, {{2}}, … in order (5 to 8 blanks on key words; reuse the "words" when you can), ' +
+  '"bank": the right word for each blank in blank order, then ONE extra word of the same word class}. So bank has (number of blanks + 1) items.\n' +
+  '- "wprompt": ONE open question about the topic that a student can answer in 1 or 2 sentences, e.g. "Should your city spend more on cycling lanes?"\n' +
+  '- "title": a short title (keep the given title if there is one).\n\n' +
+  'Shape: {"title":"…","paras":["…"],"sums":["…"],"why":["…"],"prons":[{"w":"…","p":0,"opts":["…","…","…","…"],"a":0,"why":"…"}],' +
+  '"words":[{"w":"…","p":0,"pos":"n","opts":["…","…","…","…"],"a":0,"en":"…","vi":"…","fam":"…","col":"…","ex":"…"}],' +
+  '"pairs":[{"ph":"…","p":0,"par":"…"}],"pdist":"…","cloze":{"text":"… {{1}} …","bank":["…"]},"wprompt":"…"}\n';
+const R_STR = { type: 'STRING' }, R_INT = { type: 'INTEGER' }, R_LIST = { type: 'ARRAY', items: { type: 'STRING' } };
+const RSCHEMA = {
+  type: 'OBJECT',
+  properties: {
+    title: R_STR, paras: R_LIST, sums: R_LIST, why: R_LIST,
+    prons: { type: 'ARRAY', items: { type: 'OBJECT', properties: { w: R_STR, p: R_INT, opts: R_LIST, a: R_INT, why: R_STR }, required: ['w', 'p', 'opts', 'a', 'why'] } },
+    words: { type: 'ARRAY', items: { type: 'OBJECT', properties: { w: R_STR, p: R_INT, pos: R_STR, opts: R_LIST, a: R_INT, en: R_STR, vi: R_STR, fam: R_STR, col: R_STR, ex: R_STR }, required: ['w', 'p', 'pos', 'opts', 'a', 'en', 'vi', 'fam', 'col', 'ex'] } },
+    pairs: { type: 'ARRAY', items: { type: 'OBJECT', properties: { ph: R_STR, p: R_INT, par: R_STR }, required: ['ph', 'p', 'par'] } },
+    pdist: R_STR,
+    cloze: { type: 'OBJECT', properties: { text: R_STR, bank: R_LIST }, required: ['text', 'bank'] },
+    wprompt: R_STR,
+  },
+  required: ['title', 'paras', 'sums', 'why', 'prons', 'words', 'pairs', 'pdist', 'cloze', 'wprompt'],
+};
+const READING_KEYS = ['paras', 'sums', 'why', 'prons', 'words', 'pairs', 'cloze'];
+async function aiReading(env, request, body) {
+  const em = await staffEmail(env, request);
+  if (!em) return staffLocked();
+  if (body.op === 'prompt') return json({ prompt: RPROMPT });
+  if (!aiReady(env)) return json({ error: AI_WHY.nokey, code: 'nokey' }, 502);
+  const passage = String(body.passage || '').replace(/\r\n?/g, '\n').trim(), title = String(body.title || '').replace(/\s+/g, ' ').trim().slice(0, 120);
+  const words = passage.split(/\s+/).filter(Boolean).length;
+  if (words < 80) return fail('Paste the whole passage first (at least 80 words).');
+  if (passage.length > 12000) return fail('The passage is too long (12,000 characters at most).');
+  const qKey = 'ail:' + em + ':' + dayOf(body.tzo).day;
+  if ((await count(env, qKey)) >= 30) return fail('You have used today\'s 30 AI lesson runs. Try again tomorrow.', 429);
+  await bump(env, qKey, 172800);
+  const full = RPROMPT + '\n' + (title ? 'TITLE: ' + title + '\n\n' : '') + 'PASSAGE:\n' + passage;
+  let g;
+  try {
+    g = await askGemini(env, full, RSCHEMA, '', 60000);
+  } catch (e) {
+    const c = e.code || 'server';
+    console.log('[ai] reading failed', c, String(e.detail || e.message || '').slice(0, 300));
+    return json({ error: 'The AI could not write the lesson (code: ' + c + '). ' + (AI_WHY[c] || AI_WHY[c.replace(/\d+$/, (n) => n[0] + 'xx')] || 'Try again.'), code: c }, 502);
+  }
+  const o = g.out && typeof g.out === 'object' ? g.out : {};
+  const miss = READING_KEYS.filter((k) => !o[k] || typeof o[k] !== 'object');
+  if (!o.wprompt) miss.push('wprompt');
+  if (miss.length) return json({ error: 'The AI answer was incomplete (missing ' + miss.join(', ') + '). Press Try again.', code: 'shape' }, 502);
+  if (title) o.title = title;
+  o.skill = 'reading';
+  return json({ lesson: o, model: g.model });
+}
+
 // 502 { error: 'busy', code } + a log line (Cloudflare Pages -> Functions -> Real-time logs)
 function aiFail(code, where, detail) {
   console.log('[ai] failed', code, where || '', String(detail || '').slice(0, 300));
@@ -1427,6 +1498,7 @@ export async function onRequest(ctx) {
     if (route === 'ai/practice') return await aiPractice(env, body);
     if (route === 'ai/lesson') return await aiLesson(env, request, body);
     if (route === 'ai/transcribe') return await aiTranscribe(env, request, body);
+    if (route === 'ai/reading') return await aiReading(env, request, body);
     if (route.indexOf('admin/') === 0) {
       if (!(await adminKeyOk(env, request))) {
         return json({ error: 'Your admin session ended. Enter your admin password to continue.', needUnlock: true }, 401);

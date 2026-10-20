@@ -82,6 +82,7 @@ Cloudflare có thể chạy `/api` ở máy chủ thuộc khu vực Gemini chặ
 - Tab **Students** → dán danh sách CSV với cột `name, course, class` → Import. Học sinh tự chọn tên trên trang đăng nhập.
 - Nếu đã biết email học sinh, thêm cột `email`: học sinh bấm "My teacher already added my email" để đặt mật khẩu.
 - Audio nghe: ở tab **Create** → Listening → khung **Audio** → Upload a file (mp3/m4a/wav, tối đa 8 MB) hoặc Record. Audio tự gắn vào bài. Cách cũ (bỏ mp3 vào thư mục `audio/` và ghi `"audio_url": "audio/ten-file.mp3"`) vẫn dùng được.
+- Bài Reading 4 giai đoạn: Create → tab **Reading** → dán bài đọc → **Generate reading lesson** → kiểm tra preview → chọn Book, Test → Add.
 - Bài Listening 5 giai đoạn: Create → Listening → 5-stage lesson → (có audio thì bấm **Transcribe from audio**) → dán/sửa transcript → **Generate 5-stage lesson** → kiểm tra preview → Add.
 
 ## Giới hạn

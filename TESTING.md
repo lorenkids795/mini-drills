@@ -202,5 +202,24 @@ Chuẩn bị: deploy bản mới (có `functions/`). Không cần sửa Firebase
 3. [ ] Stage 4.1: kéo thả chạy bằng **chuột, trên iPhone và trên Android**; chạm chip rồi chạm chỗ trống cũng được; Tab + Enter cũng được; thả vào chỗ đã có từ thì đổi chỗ; kéo từ ra ngoài hoặc bấm × thì trả về bank; trang không cuộn khi đang kéo.
 4. [ ] Stage 4.2: tiêu đề là câu hỏi ("Should your city spend more on cycling lanes?"); hiện đủ các từ Stage 3; chưa đủ 6 từ hoặc chưa dùng 2 từ thì nút Finish lesson mờ và có lý do. Giáo viên → Dashboard › Students → bấm học sinh → thấy câu trả lời dưới bài "Cycling in the City".
 
+## GĐ 8 — Create theo kỹ năng + AI tạo bài Reading (Phần B)
+Chuẩn bị: deploy bản mới (có `functions/`); Admin → Users ghi "server 2026-10-21a".
+5. [ ] Create có 4 tab Listening / Reading / Writing / Speaking. Listening vẫn có Audio + Auto-create như trước; Writing và Speaking ghi "coming soon". Chuyển qua lại giữa các tab không mất bài đã Generate của tab kia; tải lại trang thì vẫn mở đúng tab.
+6. [ ] Tab Reading → dán một bài đọc (đoạn cách nhau bằng dòng trống) → thấy số từ, số đoạn (dán 2 đoạn hoặc >900 từ thì có cảnh báo) → Generate → "Generating… (about 20–40 s)" → preview 4 stage → chọn Book/Test → Add → học sinh làm được. Từ ở Guess the meaning không phải thuật ngữ hay tên riêng.
+7. [ ] Nếu AI sửa câu chữ bài đọc hoặc JSON sai → preview báo lỗi, nút đổi thành "Try again".
+8. [ ] Advanced → Copy prompt → dán vào ChatGPT/Claude kèm bài đọc → dán JSON trả về → Check JSON → preview → Add vẫn chạy.
+9. [ ] Phiên giáo viên quá 12 giờ → Generate hỏi lại mật khẩu, nhập đúng thì chạy tiếp.
+
+## GĐ 8 — Giao diện Listening + Reading (Phần C)
+10. [ ] Listening và Reading ở 390px và ≥1280px: không tràn ngang; chữ bài đọc/transcript to và thoáng như nhau; ô chọn đáp án là các ô có viền, cao, dễ bấm, cách nhau rõ.
+11. [ ] Cuộn xuống trong một stage → thanh stage dính ở đầu màn hình, stage hiện tại đậm; bài Listening có thanh audio dính ngay dưới, không bị che. Điện thoại: thanh stage chia đều một hàng (tên dài bị rút gọn "…").
+12. [ ] Điện thoại: nút Check answers / Next / Finish rộng hết màn hình, dính ở đáy, không bị thanh Home của iPhone che. Chọn một đáp án thì trang không nhảy; bấm Next thì về đầu stage mới.
+13. [ ] Dark mode: thẻ từ sau Vocabulary và dòng giải thích (chữ màu xanh) đọc rõ; đúng/sai có ✓ / ✗ chứ không chỉ khác màu. Site thật không còn "Demo helper" ở bài Listening.
+
+## Sign out, chữ thừa, màu dark mode
+1. [ ] Đăng nhập student, teacher và admin: góc phải header có "Sign out" (điện thoại: icon ⎋); cuối sidebar/drawer cũng có "⎋ Sign out". Trang đăng nhập không có nút này. Bấm → về trang đăng nhập ngay. Đang ghi âm hoặc đang viết bài Writing chưa nộp → hỏi xác nhận; Cancel thì ở lại.
+2. [ ] Home → Daily Speaking Part 1/3: không còn chip "DAILY", dòng "Answer the question out loud…" và nhãn "YOUR ANSWER (MAX 1:00)"; nút Record vẫn ghi "Max 1:00". Giáo viên mở bài Listening 5 giai đoạn: không còn banner "Preview mode…", dòng "(Demo plays a test tone…)" và "Demo tone only…"; không có khoảng trống thừa ở các chỗ đó; giáo viên làm thử vẫn không lưu bài.
+3. [ ] Dark mode: Home, Daily task, Listening 5 giai đoạn, Reading, kết quả AI Writing, Error Notebook, Leaderboard, Admin, trang đăng nhập đều dễ đọc; chip/banner vàng trông ấm và trong (không ô liu đục); ô điền chỗ trống (Dictation, Summary, Reading 4.1, Error Notebook) nền xám xanh + gạch dưới màu xanh, không còn nền vàng; khối lồng trong khối (câu hỏi, trình phát, ô ghi âm) phân biệt rõ với nền thẻ; nút mờ (Finish chưa bật) vẫn đọc được; nút đỏ "Delete"/"Clear All" chữ rõ.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.
