@@ -269,6 +269,14 @@ Các thay đổi đã có trong code. **Không đảo ngược** nếu không đ
    - Home: bỏ dòng "N XP · M to …" dưới thanh cấp độ; chip tên HW to hơn (`.hw .sechead .chip`); trạng thái "To do" → **"Waiting"**.
    - Flashcard: `setCard` ghi bản JSON (bỏ `undefined`) trong `try/catch`, id thẻ đổi `/` → `-`; `rvRate` luôn sang thẻ sau kể cả khi lưu lỗi; Backspace chấm được cả trước khi lật thẻ.
 
+29. **GĐ 8 phần A (10/2026) — Bài Reading nhiều giai đoạn `kind:'reading-ms'`** (khối JS "Reading lesson (4 stages…)" ngay trước khối Admin):
+   - Dữ liệu ở `exercises.rlesson` (bài tự tạo: `rebuildCustom` → `o.rl`, `o.qs=rmQs(...)`): `{title, paras[] (đại từ/cụm chỉ định trong {{…}}), sums[] (= paras+1, cái cuối là câu thừa), why[] (1/đoạn), prons[{w,p,opts,a,why}] (đúng thứ tự các {{…}}), words[3–6 {w,p,pos,opts[4],a,en,vi,fam,col,ex}], pairs[{ph,p,par}] + pdist, cloze{text có {{1}}…{{n}}, bank: n đáp án theo thứ tự + 1 từ thừa}, wprompt}`. `parseReading(o)` kiểm tra chặt (được `parseAI` gọi khi JSON có `paras`+`sums`), trả `{errs, data:{kind:'reading-ms', rlesson, qs, material}}`. `EXAMPLE_R` = "Cycling in the City"; demo có sẵn bài `rm1` ở Cam 14 · Test 1 · Reading.
+   - Engine riêng `RM` (không đụng Listening) nhưng cùng giao diện Listening: `.lsbar/.lsstep`, thẻ `.lsc`, radio `.opts/.opt` (`rmRadios`), thẻ từ `.lsflash` (`rmCard`), "Save these words to Flashcards". Các hàm: `renderRLesson`, `rmDraw`, `rmStage1..4`, `rmIds`, `rmGrade`, `rmCheck` (70%/stage, `RM.fail` → Try again), `rmFinish`, `rmAct` (`data-act="rm-*"`, gọi từ `extAct`). 1.1 và Stage 2 chọn bằng bottom sheet `.msheet.rmsheet` (`rmSheet`, đóng bằng nền/Close/Esc). 3.2 ghép paraphrase = radio như thẻ chọn của Listening (Listening không có phần ghép riêng).
+   - **4.1 kéo thả bằng Pointer Events** (`pointerdown/move/up/cancel` + `setPointerCapture`, bóng `.rmghost`, chỗ trống sáng `.rmblank.hot`, `touch-action:none`, chặn `touchmove` khi đang kéo; biến `RMD`). Thả vào chỗ đã có từ: đổi chỗ (`rmPlace`); kéo ra ngoài hoặc × (`rm-x`) = trả về bank. Thay thế: chạm chip (`RM.sel`) rồi chạm chỗ trống; bàn phím Tab + Enter. Chỉ vẽ lại `#rmCloze` (`rmDrawCloze`).
+   - **4.2 bắt buộc**: tiêu đề = `wprompt`, chip đủ `words` (✓ khi dùng, `rmUsed` bỏ qua đuôi đơn giản), Finish khi ≥6 từ và ≥2 từ Stage 3 (`rmOutOk`).
+   - Attempt: `skill:'reading'`, `score/total` cả bài, `items`, `stages[{name,score,total}]`, `tags{Structure,Order,Pronoun,Vocabulary,Paraphrase,Summary}`, `output{prompt,text,used}`. XP `lesson`/`lessonLow` (`graded()` và `onAttemptSaved` nhận `reading-ms`). Giáo viên xem câu 4.2 ở Dashboard › Students (thẻ chi tiết, `.drout`).
+   - Tách câu không dùng regex lookbehind: `splitSents(t)` (dùng cho `dictGaps` của Listening và `rmSents`); frontend không còn `(?<=`.
+
 ## 8. Giới hạn đã biết / chưa làm
 
 - AI chữa lỗi Writing chạy qua `/api/ai/correct` (cần `GEMINI_KEY`). `aiLookup` (tra từ bằng AI) vẫn gọi `window.claude` nên chưa chạy trên site thật.

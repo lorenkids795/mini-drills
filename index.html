@@ -763,6 +763,56 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .lsimg{display:block;max-width:100%;max-height:170px;border-radius:10px;margin:8px 0;object-fit:cover}
 .lsimged{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}.lsimged input{flex:1 1 200px;min-width:0;border:1px solid var(--line);border-radius:6px;padding:.35rem .5rem;background:var(--surface);color:var(--ink)}.lsimged .lsimg{flex-basis:100%}.lsimged.nw{flex-wrap:nowrap}.lsimged.nw .btn{flex:none}.lsic{margin:10px 0 0}.lsic .lsimg{margin-top:6px}
 .lsprev{padding-left:1.2rem;line-height:1.7}
+/* ---- Reading lesson (4 stages, kind reading-ms): same cards as the Listening lesson (.lsc) ---- */
+.rm .lsh{margin:20px 0 4px}.rm .lsh+.muted{margin:0 0 8px}
+.rmlbl{font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+.rmp{font-size:1.06rem;line-height:1.8;margin:0;overflow-wrap:anywhere}
+.rmtmr{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}.rmtmr p{flex-basis:100%;margin:0}
+.rmslot{width:100%;margin-top:12px;text-align:left;border:1.5px dashed var(--accent);background:var(--surface);border-radius:8px;padding:.7rem .85rem;min-height:48px;font:inherit;font-size:.95rem;color:var(--accent);font-weight:600;display:flex;gap:8px;align-items:center}
+.rmslot.has{border-style:solid;color:var(--ink);font-weight:500}
+.rmslot .arr{margin-left:auto;color:var(--muted);flex:none}
+.rmslot.ok{border-color:var(--good);background:var(--good-bg);color:var(--good)}.rmslot.no{border-color:var(--bad);background:var(--bad-bg);color:var(--bad)}
+.rmslot:disabled{cursor:default;opacity:1}
+.rmfix{display:block;margin-top:6px}
+.rmord{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.rmoi{display:flex;gap:10px;align-items:flex-start;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:.7rem .8rem;min-height:48px;font:inherit;font-size:.95rem;color:var(--ink)}
+.rmoi .nb{flex:none;width:26px;height:26px;border-radius:50%;border:1.5px dashed var(--muted);display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:.82rem;color:var(--muted)}
+.rmoi.on{border-color:var(--accent)}.rmoi.on .nb{border:0;background:var(--accent);color:var(--accent-ink)}
+.rmoi.ok{border-color:var(--good);background:var(--good-bg)}.rmoi.ok .nb{background:var(--good);color:var(--surface)}
+.rmoi.no{border-color:var(--bad);background:var(--bad-bg)}.rmoi.no .nb{background:var(--bad);color:var(--surface)}
+.rmoi:disabled{cursor:default}
+.rmcorr{margin:8px 0 0;font-size:.9rem;color:var(--good)}
+.rmpn{display:inline;font:inherit;font-weight:800;border:0;background:var(--hl-soft);border-radius:5px;padding:4px 6px;color:var(--ink);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.rmpn sup{font-size:.62em;color:var(--accent);margin-left:2px}
+.rmpn.done{background:var(--surface);outline:2px solid var(--accent)}
+.rmpn.ok{background:var(--good-bg);outline:2px solid var(--good)}.rmpn.no{background:var(--bad-bg);outline:2px solid var(--bad)}
+.rmal{font-size:.95rem}.rmal.ok{border-left-color:var(--good)}.rmal.no{border-left-color:var(--bad)}
+.rmbank{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.rmchip{min-height:44px;min-width:44px;border:1.5px solid var(--accent);border-radius:99px;padding:.4rem 1rem;background:var(--surface);color:var(--ink);font:inherit;font-weight:600;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
+.rmchip.used{opacity:.4;border-style:dashed}
+.rmchip.sel{background:var(--accent);color:var(--accent-ink)}
+.rmchip.drag,.rmblank.drag{opacity:.35}
+.rmchip:disabled{cursor:default;opacity:.6}
+.rmcz{line-height:2.6}
+.rmbw{display:inline-flex;align-items:center;gap:2px;vertical-align:middle}
+.rmblank{display:inline-flex;align-items:center;justify-content:center;min-width:5.5em;min-height:44px;border:0;border-bottom:2px dashed var(--accent);background:var(--hl-soft);border-radius:6px 6px 0 0;padding:0 8px;font:inherit;font-weight:700;color:var(--accent);touch-action:none;user-select:none;-webkit-user-select:none}
+.rmblank.has{background:var(--surface);color:var(--ink);border-bottom-style:solid;cursor:grab}
+.rmblank.hot{outline:3px solid var(--accent);outline-offset:2px;background:color-mix(in srgb,var(--accent) 14%,var(--surface))}
+.rmblank.ok{background:var(--good-bg);color:var(--good);border-bottom:2px solid var(--good)}.rmblank.no{background:var(--bad-bg);color:var(--bad);border-bottom:2px solid var(--bad)}
+.rmblank:disabled{cursor:default}
+.rmblank sup{font-size:.6em;color:var(--muted);margin-left:3px}
+.rmx{min-width:32px;min-height:44px;border:0;background:none;color:var(--muted);font-size:1.1rem;border-radius:6px}.rmx:hover{color:var(--bad);background:var(--bad-bg)}
+.rmghost{position:fixed;z-index:95;pointer-events:none;transform:translate(-50%,-130%);background:var(--accent);color:var(--accent-ink);font-weight:700;border-radius:99px;padding:.45rem 1rem;box-shadow:0 8px 20px rgba(10,15,30,.3);white-space:nowrap}
+body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
+.rmtw{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.rmtw span{border:1px dashed var(--muted);border-radius:99px;padding:.25rem .8rem;font-size:.9rem;color:var(--muted)}
+.rmtw span.on{border:1px solid var(--good);background:var(--good-bg);color:var(--good);font-weight:700}
+.rmwt{min-height:110px}
+.rmsheet{max-height:82vh;overflow:auto}.rmgrab{display:block;width:40px;height:4px;border-radius:9px;background:var(--line);margin:0 auto 4px}
+.msheet button.sel{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.msheet button small{display:block;color:var(--muted);font-weight:400;font-size:.82rem}
+.rmsheet button{display:block}
+.drout{margin:0 0 6px;padding:8px 10px;background:var(--bg);border-radius:8px;font-size:.88rem;overflow-wrap:anywhere}
 .notif .pv{background:var(--bg);border-radius:8px;padding:.5rem .7rem;margin-top:8px;font-size:.86rem}
 .dstat .flame{font-size:3.2rem;line-height:1}
 .dstat b{font-size:3.2rem;line-height:1}
@@ -1128,8 +1178,8 @@ var customEx=[],customMap={},localCustom=[],customDocs=[],EDIT=null,DELC=null,LI
 var exOf=function(id){return EXS[id]||customMap[id]||null};
 var qOf=function(exId,qid){var e=exOf(exId);if(!e)return null;for(var i=0;i<e.qs.length;i++)if(e.qs[i].id===qid)return e.qs[i];return null};
 var tagOf=function(exId,qid){var q=qOf(exId,qid);return q?q.tag:null};
-var graded=function(e){return e&&(e.kind==='list'||e.kind==='cloze'||e.kind==='lesson')};
-var exSub=function(e){return e.kind==='lesson'?'5-stage lesson · '+e.qs.length+' items':e.kind==='writing'?'Writing task · min '+e.minWords+' words':(e.kind==='speaking'?'Parts 1 and 2':e.qs.length+' questions')};
+var graded=function(e){return e&&(e.kind==='list'||e.kind==='cloze'||e.kind==='lesson'||e.kind==='reading-ms')};
+var exSub=function(e){return e.kind==='lesson'?'5-stage lesson · '+e.qs.length+' items':e.kind==='reading-ms'?'Reading lesson · 4 stages · '+e.qs.length+' items':e.kind==='writing'?'Writing task · min '+e.minWords+' words':(e.kind==='speaking'?'Parts 1 and 2':e.qs.length+' questions')};
 function exIds(b,t,s){
   var base=(LIBMAP[b]&&LIBMAP[b][t]&&LIBMAP[b][t][s])||[];
   return base.concat(customEx.filter(function(c){return c.bookId===b&&c.testId===t&&c.skill===s}).map(function(c){return c.id}));
@@ -1145,6 +1195,7 @@ function exJSON(d){
   if(d.kind==='writing'){var j={title:d.title,skill:'writing',prompt:d.prompt,hint:d.hint||'',minWords:d.minWords},tb=tblOf(d);if(tb)j.table=tb;return j}
   if(d.kind==='speaking')return {title:d.title,skill:'speaking',hint:d.hint||'',part1:d.part1,cue:d.cue};
   if(d.lesson)return Object.assign({title:d.title,skill:'listening',material:d.material,audio_url:d.audio||''},d.lesson);
+  if(d.rlesson)return JSON.parse(JSON.stringify(d.rlesson));
   return {title:d.title,skill:d.skill,material:d.material,audio_url:d.audio||'',questions:(d.qs||[]).map(function(q){
     var o={type:q.type,q:q.q};
     if(q.type==='gap')o.ans=q.ans;else if(q.type==='tfng')o.ans=['True','False','Not Given'][q.ans];else{o.opts=q.opts;o.ans=q.ans}
@@ -1162,6 +1213,7 @@ function rebuildCustom(){
     var o={id:'c_'+d.id,bookId:d.bookId,testId:d.testId,skill:skill,title:d.title,kind:'list',hint:'',qs:d.qs||[],material:{type:skill==='listening'?'audio':'passage',labelled:true,paras:String(d.material||'').split(/\n\s*\n/).filter(Boolean),lines:String(d.material||'').split(/\n+/).filter(Boolean).map(function(t){var m=t.match(/^([A-Za-z ]{1,14}):\s*(.*)$/);return m?[m[1],m[2]]:['',t]})}};
     o.audio=d.audio||'';
     if(d.lesson){o.kind='lesson';o.lesson=d.lesson}
+    if(d.rlesson){o.kind='reading-ms';o.rl=d.rlesson;o.qs=rmQs(d.rlesson);o.hint=RM_HINT}
     customEx.push(o);customMap[o.id]=o;
   });
 }
@@ -1764,6 +1816,7 @@ function renderPlayer(){
   if(ex.kind==='writing')return renderWriting(ex,head,ban);
   if(ex.kind==='speaking'||ex.kind==='readaloud')return renderSpeaking(ex,head,ban);
   if(ex.kind==='lesson')return renderLesson(ex,head,ban);
+  if(ex.kind==='reading-ms')return renderRLesson(ex,head,ban);
   if(ex.skill==='listening'){
     var tr=(ex.material.lines||[]).map(function(l){return '<div>'+(l[0]?'<b>'+esc(l[0])+'</b>':'')+esc(l[1])+'</div>'}).join('');
     $('#libBody').innerHTML='<div class="pane single">'+head+ban+audioBar()+'<details class="tdet"><summary>Show transcript to try the demo</summary><div class="tr">'+tr+'</div></details>'+qHTML(ex)+tail+'</div>';
@@ -2283,7 +2336,7 @@ function renderDash(){
         var dt=Object.keys(d.tags).map(function(t){return {t:t,n:d.tags[t].n,w:d.tags[t].w}}).filter(function(x){return x.w>0}).sort(function(a,b){return b.w/b.n-a.w/a.n}).slice(0,4);
         h+='<div class="dcard"><div class="dnm">'+dAv(d.name)+'<div><h3>'+esc(d.name)+' · '+esc(classTitle(d.cls))+'</h3><p class="dsub">Avg '+d.pct+'% · '+Object.keys(d.exs).length+'/'+total+' exercises</p></div></div><div class="dbd">'+
           (dt.length?dt.map(function(x){var r=Math.round(x.w/x.n*100);return dBar(x.t,r,'var(--bad)',r+'% · '+x.w+'/'+x.n)}).join(''):'<p class="saved">No repeated mistakes.</p>')+
-          '<div style="margin-top:10px">'+d.att.slice().sort(function(a,b){return b.ts-a.ts}).slice(0,5).map(function(a){var e=exOf(a.ex);return '<div class="drr"><span>'+esc(e?e.title:a.ex)+(a.sample?' <small style="display:inline;color:var(--muted)">(sample)</small>':'')+'</span><span class="mono">'+a.score+'/'+a.total+' · '+fmtD(a.ts)+'</span></div>'}).join('')+'</div></div></div>';
+          '<div style="margin-top:10px">'+d.att.slice().sort(function(a,b){return b.ts-a.ts}).slice(0,5).map(function(a){var e=exOf(a.ex);return '<div class="drr"><span>'+esc(e?e.title:a.ex)+(a.sample?' <small style="display:inline;color:var(--muted)">(sample)</small>':'')+'</span><span class="mono">'+a.score+'/'+a.total+' · '+fmtD(a.ts)+'</span></div>'+(a.output&&a.output.text?'<p class="drout"><b>'+esc(a.output.prompt||'Answer')+'</b><br>'+esc(a.output.text)+'</p>':'')}).join('')+'</div></div></div>';
       }
     }
   }else{
@@ -2640,6 +2693,7 @@ function parseAI(txt){
   var errs=[];txt=String(txt||'').trim().replace(/^```(?:json)?/i,'').replace(/```$/,'').trim();
   var o;try{o=JSON.parse(txt)}catch(e){return {errs:['This is not valid JSON ('+e.message+'). Ask the AI to output only the JSON.']}}
   if(!o||typeof o!=='object')return {errs:['Expected a JSON object.']};
+  if(o.paras&&o.sums)return parseReading(o);
   if(o.stage_1_vocabulary||o.stage_2_autopsy){var rl=parseLesson(o);if(rl.data)rl.data.audio=nz(o.audio_url)?o.audio_url.trim():'';return rl}
   if(o.skill==='writing'||o.skill==='speaking')return parseWS(o);
   if(!o.title||typeof o.title!=='string')errs.push('Missing "title".');
@@ -2692,6 +2746,7 @@ function exExtra(rec,d){
 function previewHTML(d){
   if(d.kind==='writing'||d.kind==='speaking')return wsPreview(d);
   if(d.lesson)return lessonPreview(d);
+  if(d.rlesson)return rlessonPreview(d);
   var ex={id:'prev',skill:d.skill,title:d.title,kind:'list',qs:d.qs};
   var ans=d.qs.map(function(q,i){return (i+1)+'. '+(q.type==='gap'?q.ans.join(' / '):q.opts[q.ans])}).join('  ·  ');
   return '<p class="okmsg">Format OK: '+d.qs.length+' questions, skill: '+d.skill+'.</p><div class="pane" style="margin-top:10px"><div class="phead"><h2>'+esc(d.title)+'</h2></div>'+qHTML(ex).replace(/ data-id=/g,' disabled data-id=')+'<p class="saved" style="margin-top:8px"><b>Answer key:</b> '+esc(ans)+'</p></div>'+
@@ -2843,6 +2898,8 @@ function pvHTML(d){
   }else if(kind==='speaking'){
     h='<h3 style="font-size:1rem">Part 1</h3><ol class="sp-q">'+d.part1.map(function(q){return '<li>'+esc(q)+'</li>'}).join('')+'</ol><h3 style="font-size:1rem">Part 2</h3><div class="cue"><b>'+esc(d.cue.title)+'</b><div style="margin-top:6px">You should say:</div><ul>'+d.cue.points.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>'+
     '<div class="arow"><button class="btn sm" type="button" disabled>Start 1:00 preparation</button><span class="timer">1:00</span></div><label class="lbl" for="pvN">Notes (for your preparation only)</label><textarea class="wbox" id="pvN" style="min-height:90px"></textarea><label class="lbl" for="pvL">Vocaroo link</label><input class="linkin" id="pvL" placeholder="https://vocaroo.com/..." autocomplete="off"><p class="err" id="pvErr"></p><div class="actions"><button class="btn pri" data-act="pv-submit" type="button">Submit</button></div>';
+  }else if(kind==='reading-ms'){
+    h='<p class="muted">The student view of a reading lesson opens from the Library after you add it (Summary View lists all 4 stages).</p>';
   }else if(kind==='lesson'){
     var bar='<div class="lsbar" role="tablist" aria-label="Lesson stages">'+STG.map(function(n,i){return '<button type="button" role="tab" class="lsstep'+(i===st?' cur':'')+'" aria-selected="'+(i===st)+'" data-act="pv-stage" data-i="'+i+'">'+(i+1)+'. '+n+'</button>'}).join('')+'</div>';
     h=bar+'<div id="lsBody">'+pvStage(d,st)+'</div><div class="actions"><button class="btn pri" data-act="pv-check" type="button">Check answers</button>'+(st<4?'<button class="btn" data-act="pv-stage" data-i="'+(st+1)+'" type="button">Next: '+STG[st+1]+' →</button>':'')+'</div>';
@@ -2891,6 +2948,7 @@ function addExercise(){
   if(!parsed)return;
   var rec={bookId:$('#cBook').value,testId:$('#cTest').value,skill:parsed.skill,title:parsed.title,material:parsed.material,qs:parsed.qs,ts:Date.now()};
   if(parsed.lesson)rec.lesson=parsed.lesson;
+  if(parsed.rlesson)rec.rlesson=parsed.rlesson;
   exExtra(rec,parsed);
   rec.audio=parsed.audio||'';
   if(EDIT){
@@ -3631,7 +3689,7 @@ function onAttemptSaved(ex,score,total,firstTry){
   var p=myProf(),kind=ex.kind;
   if(!p.exdone[ex.id]){
     p.exdone[ex.id]=1;putProf(p);
-    if(ex.kind==='lesson')addXP(score/total>=.7?xpv('lesson'):xpv('lessonLow'),'lesson');else if(graded(ex))addXP(score/total>=.7?xpv('exFirst'):xpv('exLow'),'exercise');else addXP(xpv(kind==='speaking'?'spk':'wri'),'submitted');
+    if(ex.kind==='lesson'||ex.kind==='reading-ms')addXP(score/total>=.7?xpv('lesson'):xpv('lessonLow'),'lesson');else if(graded(ex))addXP(score/total>=.7?xpv('exFirst'):xpv('exLow'),'exercise');else addXP(xpv(kind==='speaking'?'spk':'wri'),'submitted');
   }
   if(graded(ex)&&firstTry&&score===total&&total>0){
     var q=myProf();if(!q.awarded['p_'+ex.id]){q.awarded['p_'+ex.id]=1;putProf(q);grantSpin('p',3,'full marks on the first try')}
@@ -4126,7 +4184,7 @@ document.addEventListener('input',function(e){var t=e.target;if(!XED||!t||!t.dat
 function xSave(){
   var r=parseAI(JSON.stringify(XED.data));
   if(r.errs.length){$('#xerr').innerHTML='<ul class="errs">'+r.errs.map(function(e){return '<li>'+esc(e)+'</li>'}).join('')+'</ul>';window.scrollTo&&window.scrollTo(0,0);return}
-  var E=XED,d=r.data,upd={bookId:E.bookId,testId:E.testId,skill:d.skill,title:d.title,material:d.material,qs:d.qs,ts:E.ts};if(d.lesson)upd.lesson=d.lesson;exExtra(upd,d);upd.audio=d.audio||'';
+  var E=XED,d=r.data,upd={bookId:E.bookId,testId:E.testId,skill:d.skill,title:d.title,material:d.material,qs:d.qs,ts:E.ts};if(d.lesson)upd.lesson=d.lesson;if(d.rlesson)upd.rlesson=d.rlesson;exExtra(upd,d);upd.audio=d.audio||'';
   var done=function(){
     var rl=function(l){for(var i=0;i<l.length;i++)if(l[i].id===E.id){l[i]=Object.assign({id:E.id,docId:E.docId},upd);return true}return false};
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
@@ -4156,6 +4214,7 @@ function extAct(a,t){
   if(a==='xp-save'){xpSave(false);return true}
   if(a==='xp-reset'){xpSave(true);return true}
   if(a.indexOf('ls-')===0)return lsAct(a,t);
+  if(a.indexOf('rm-')===0)return rmAct(a,t);
   if(a==='vp-close'){VP=null;showPop();return true}
   if(a==='vp-say'){if(VP&&VP.entry)speak(VP.entry.w);return true}
   if(a==='vp-save'){if(VP&&VP.entry)saveCard(VP.entry);showPop();return true}
@@ -4267,8 +4326,10 @@ function parseLesson(o){
   var L={stage_1_vocabulary:v,stage_2_autopsy:{paraphrase_highlight:a.paraphrase_highlight,trap_alert:a.trap_alert},stage_3_dictation:{cloze_material:d.cloze_material,answers:d.answers.map(String)},stage_4_summary:{guided_summary_text:s.guided_summary_text,summary_answers:s.summary_answers.map(String)},stage_5_retest:{title:r.title||o.title,instructions:r.instructions||'Write ONE WORD AND/OR A NUMBER for each answer.',questions:r.questions.map(String),answers:r.answers.map(String)}};
   return {errs:[],data:{title:o.title,skill:'listening',material:o.material,kind:'lesson',lesson:L,qs:lsQs(L)}};
 }
+// split after . ? ! + space (same result as the old lookbehind split, which old Safari cannot parse)
+function splitSents(t){var p=String(t).split(/([.?!])\s+/),out=[];for(var i=0;i<p.length;i+=2)out.push(p[i]+(p[i+1]||''));return out.filter(Boolean)}
 function dictGaps(txt){
-  var ss=String(txt).replace(/\n+/g,' ').split(/(?<=[.?!])\s+/).filter(Boolean),run=0,start=0,bad=[];
+  var ss=splitSents(String(txt).replace(/\n+/g,' ')),run=0,start=0,bad=[];
   ss.forEach(function(x,i){if(/_{3,}/.test(x)){if(run>=4)bad.push((start+1)+'–'+i);run=0}else{if(!run)start=i;run++}});
   if(run>=4)bad.push((start+1)+'–'+ss.length);
   return bad;
@@ -4487,6 +4548,362 @@ function lsAct(a,t){
   if(a==='ls-demo'){lsDemo(t.dataset.m);return true}
   if(a==='ls-saveall'){var n=0;LS.L.stage_1_vocabulary.forEach(function(v){var f=v.flashcard;if(saveCard({w:v.target_word,ipa:'',pos:f.word_family||'',en:f.meaning_en,vi:f.meaning_vi||'',ex:f.new_example||v.context_sentence,syn:[],ant:[]}))n++});if(n)toast(n+' word'+(n>1?'s':'')+' saved to Flashcards.');return true}
   return true;
+}
+
+/* ---------- Reading lesson (4 stages: Structure, Pronouns, Vocabulary, Output), kind 'reading-ms' ----------
+   Data (exercises.rlesson): {title, paras[] (pronouns in {{…}}), sums[] (paras+1, last = extra), why[], prons[{w,p,opts,a,why}],
+   words[{w,p,pos,opts[4],a,en,vi,fam,col,ex}], pairs[{ph,p,par}], pdist, cloze{text with {{1}}…{{n}}, bank: n right words in order + 1 extra}, wprompt}.
+   Same look as the Listening lesson (.lsbar, .lsc, .opts/.opt radios, .lsflash word card); its own engine RM (Listening code is not touched).
+   70% per stage to move on. 4.1 = drag and drop with Pointer Events (or tap a chip, then a blank). 4.2 = one required answer to wprompt. */
+var RST=['Structure','Pronouns','Vocabulary','Output'],RM_HINT='Work through 4 stages: structure, pronouns, vocabulary, then your own summary and answer.';
+var RTAGS={o:'Structure',j:'Order',n:'Pronoun',g:'Vocabulary',c:'Paraphrase',w:'Summary'};
+var RM=null,RMD=null;
+var rmClean=function(t){return String(t||'').replace(/\{\{|\}\}/g,'')};
+// sentences without a regex lookbehind (old Safari cannot parse it)
+function rmSents(t){return splitSents(rmClean(t).trim()).map(function(s){return s.trim()}).filter(Boolean)}
+function rmHas(text,w){return rmClean(text).toLowerCase().indexOf(String(w||'').toLowerCase())>=0}
+function rmSentOf(p,w,D){return rmSents(D.paras[p]).filter(function(s){return rmHas(s,w)})[0]||rmClean(D.paras[p])}
+function rmIds(D,st){
+  var r=[],i;
+  if(st===0){for(i=0;i<D.paras.length;i++)r.push('o'+i);for(i=0;i<D.paras.length;i++)r.push('j'+i)}
+  if(st===1)for(i=0;i<D.prons.length;i++)r.push('n'+i);
+  if(st===2){for(i=0;i<D.words.length;i++)r.push('g'+i);for(i=0;i<D.pairs.length;i++)r.push('c'+i)}
+  if(st===3)for(i=0;i<D.cloze.bank.length-1;i++)r.push('w'+i);
+  return r;
+}
+// scored items with tags (dashboard "Mistakes" uses q.tag)
+function rmQs(D){var q=[];[0,1,2,3].forEach(function(st){rmIds(D,st).forEach(function(id){q.push({id:id,type:'lesson',tag:RTAGS[id.charAt(0)],label:RTAGS[id.charAt(0)]+' '+(+id.slice(1)+1),q:''})})});return q}
+// strict check of an AI / hand-made reading lesson -> {errs, data}
+function parseReading(o){
+  var e=[],bad=function(m){e.push(m)},str=function(x){return typeof x==='string'&&x.trim()!==''};
+  if(!str(o.title))bad('Missing "title".');
+  var P=o.paras;
+  if(!isArr(P)||P.length<2||!P.every(str))return {errs:e.concat(['"paras" must be a list of at least 2 paragraphs (text).'])};
+  // every {{…}} in the paragraphs, in order, must match "prons" (same words, same paragraph p)
+  var marks=[];P.forEach(function(t,pi){var re=/\{\{([^{}]+)\}\}/g,m;while((m=re.exec(t)))marks.push({w:m[1],p:pi})});
+  var R=o.prons;
+  if(!isArr(R)||!R.length)bad('"prons" must be a non-empty list.');
+  else{
+    if(marks.length!==R.length)bad('The paragraphs have '+marks.length+' words in {{…}} but "prons" has '+R.length+' items.');
+    R.forEach(function(x,i){var n='Pronoun '+(i+1)+': ';
+      if(!x||!str(x.w))return bad(n+'missing "w".');
+      var mk=marks[i];if(mk&&(mk.w!==x.w||mk.p!==+x.p))bad(n+'"'+x.w+'" (paragraph '+((+x.p||0)+1)+') does not match {{'+mk.w+'}} in paragraph '+(mk.p+1)+'. Keep the same order.');
+      if(!isArr(x.opts)||x.opts.length<2||!x.opts.every(str))bad(n+'"opts" needs at least 2 options.');
+      else if(!(x.a>=0&&x.a<x.opts.length&&x.a%1===0))bad(n+'"a" is not a valid option number.');
+    });
+  }
+  if(!isArr(o.sums)||!o.sums.every(str)||o.sums.length!==P.length+1)bad('"sums" must have '+(P.length+1)+' summaries: one per paragraph, in order, plus 1 extra.');
+  if(!isArr(o.why)||o.why.length!==P.length||!o.why.every(str))bad('"why" must have one explanation per paragraph ('+P.length+').');
+  var W=o.words;
+  if(!isArr(W)||W.length<3||W.length>6)bad('"words" must have 3 to 6 words.');
+  else W.forEach(function(x,i){var n='Word '+(i+1)+': ';
+    if(!x||!str(x.w))return bad(n+'missing "w".');
+    if(!(x.p>=0&&x.p<P.length&&x.p%1===0))return bad(n+'"p" must be a paragraph number from 0 to '+(P.length-1)+'.');
+    if(!rmHas(P[x.p],x.w))bad(n+'"'+x.w+'" is not in paragraph '+(x.p+1)+' word for word.');
+    if(!isArr(x.opts)||x.opts.length<2||!x.opts.every(str))bad(n+'"opts" needs 4 meanings.');
+    else if(!(x.a>=0&&x.a<x.opts.length&&x.a%1===0))bad(n+'"a" is not a valid option number.');
+    if(!str(x.en))bad(n+'missing "en" (English meaning).');
+  });
+  var Q=o.pairs;
+  if(!isArr(Q)||Q.length<2||Q.length>6)bad('"pairs" must have 2 to 6 phrases.');
+  else Q.forEach(function(x,i){var n='Phrase '+(i+1)+': ';
+    if(!x||!str(x.ph)||!str(x.par))return bad(n+'needs "ph" and "par".');
+    if(!(x.p>=0&&x.p<P.length&&x.p%1===0))return bad(n+'"p" must be a paragraph number from 0 to '+(P.length-1)+'.');
+    if(!rmHas(P[x.p],x.ph))bad(n+'"'+x.ph+'" is not in paragraph '+(x.p+1)+' word for word.');
+  });
+  if(!str(o.pdist))bad('Missing "pdist" (the extra paraphrase).');
+  var C=o.cloze||{},nb=[],cm,cre=/\{\{(\d+)\}\}/g;
+  if(!str(C.text))bad('"cloze.text" is missing.');
+  else{while((cm=cre.exec(C.text)))nb.push(+cm[1]);
+    if(!nb.length)bad('"cloze.text" needs blanks written {{1}}, {{2}}…');
+    else if(nb.some(function(x,i){return x!==i+1}))bad('The cloze blanks must be numbered {{1}}, {{2}}, {{3}}… in order.');
+    if(!isArr(C.bank)||!C.bank.every(str)||C.bank.length!==nb.length+1)bad('"cloze.bank" must have '+(nb.length+1)+' words: the '+nb.length+' answers in order, then 1 extra word.');
+  }
+  if(!str(o.wprompt))bad('Missing "wprompt" (the question for 4.2).');
+  if(e.length)return {errs:e};
+  var D={title:o.title,paras:P.slice(),sums:o.sums.slice(),why:o.why.slice(),prons:R.map(function(x){return {w:x.w,p:+x.p,opts:x.opts.map(String),a:+x.a,why:String(x.why||'')}}),
+    words:W.map(function(x){return {w:String(x.w),p:+x.p,pos:String(x.pos||''),opts:x.opts.map(String),a:+x.a,en:String(x.en),vi:String(x.vi||''),fam:String(x.fam||''),col:String(x.col||''),ex:String(x.ex||'')}}),
+    pairs:Q.map(function(x){return {ph:String(x.ph),p:+x.p,par:String(x.par)}}),pdist:String(o.pdist),cloze:{text:String(C.text),bank:C.bank.map(String)},wprompt:String(o.wprompt)};
+  return {errs:[],data:{title:D.title,skill:'reading',kind:'reading-ms',material:P.map(rmClean).join('\n\n'),rlesson:D,qs:rmQs(D),audio:''}};
+}
+var EXAMPLE_R=JSON.stringify({title:'Cycling in the City',
+ paras:['Over the past two decades, many cities have tried to reduce traffic congestion by encouraging residents to cycle. {{This policy}} has proved popular, although it requires a significant investment in infrastructure.',
+  'Copenhagen is often cited as a model. Its network of protected lanes allows cyclists to travel safely across the city, and as a result around half of all commuters now choose {{it}} over driving.',
+  'Critics, however, argue that the approach cannot be copied everywhere. Cities with steep hills or extreme weather face obstacles that {{their}} flatter, milder counterparts do not, and this limits the benefits.',
+  'Nevertheless, experts suggest that electric bikes may overcome these barriers. {{They}} reduce the effort needed to climb hills, which makes cycling realistic for older people. If {{this trend}} continues, cycling could become a mainstream form of transport.'],
+ sums:['Cities invest in cycling to ease traffic, at a cost','One city shows that safe lanes can win over commuters','Geography and climate can limit how far the idea spreads','New technology may widen who can cycle','Drivers should pay higher taxes to fund new roads'],
+ why:['The opening states the aim (less congestion) and the catch (investment).','Copenhagen is the example; its protected lanes explain the result.','"However" introduces the critics; hills and weather are the obstacles.','"Nevertheless" turns back to a solution: electric bikes.'],
+ prons:[{w:'This policy',p:0,opts:['Encouraging residents to cycle','Reducing traffic congestion','Investing in infrastructure','Building new roads'],a:0,why:'It names the idea of the previous sentence: encouraging residents to cycle.'},
+  {w:'it',p:1,opts:['Copenhagen','Cycling','The network of lanes','Driving'],a:1,why:'Commuters choose cycling over driving.'},
+  {w:'their',p:2,opts:['Critics','Obstacles','Cities with steep hills or extreme weather','Flatter, milder cities'],a:2,why:'Flatter, milder cities are the counterparts of those with steep hills or extreme weather.'},
+  {w:'They',p:3,opts:['Experts','Electric bikes','Barriers','Older people'],a:1,why:'The previous sentence is about electric bikes.'},
+  {w:'this trend',p:3,opts:['Older people cycling more','Experts making suggestions','Electric bikes making cycling realistic','Hills becoming flatter'],a:2,why:'The trend is the growing use of electric bikes that make cycling realistic.'}],
+ words:[{w:'congestion',p:0,pos:'n',opts:['a situation where roads are too crowded','a feeling of being very tired','a plan for building new roads','the money cities collect from drivers'],a:0,en:'the state of being overcrowded, especially with traffic',vi:'sự tắc nghẽn',fam:'congest (v), congested (adj), congestion (n)',col:'traffic congestion, ease congestion',ex:'The new tram line should reduce congestion in the city centre.'},
+  {w:'counterparts',p:2,pos:'n',opts:['people who disagree with others','people or things with a similar role elsewhere','things that are cheaper to build','groups that are much older'],a:1,en:'a person or thing that has the same role in a different place or group',vi:'đối tác tương ứng, người/vật tương đương',fam:'counterpart (n)',col:'a foreign counterpart, a female counterpart',ex:'The minister met her French counterpart in Paris.'},
+  {w:'mainstream',p:3,pos:'adj',opts:['limited to a small group','expensive and rare','accepted by most people','invented very recently'],a:2,en:'accepted by most people; normal and common',vi:'chủ đạo, phổ biến',fam:'mainstream (adj, n)',col:'mainstream media, go mainstream',ex:'Vegan food has gone mainstream in recent years.'}],
+ pairs:[{ph:'significant investment',p:0,par:'a large amount of spending'},{ph:'often cited as a model',p:1,par:'frequently used as an example to follow'},{ph:'cannot be copied everywhere',p:2,par:'will not work in every place'},{ph:'overcome these barriers',p:3,par:'get past these difficulties'}],
+ pdist:'has been ignored by most experts',
+ cloze:{text:'Many cities encourage cycling to reduce traffic {{1}}, but this needs heavy {{2}}. Copenhagen shows the idea can work, because its {{3}} lanes make cycling safe. Critics say places with {{4}} hills or harsh weather cannot copy it, yet {{5}} bikes may remove that obstacle and help cycling become {{6}} transport.',
+  bank:['congestion','investment','protected','steep','electric','mainstream','regional']},
+ wprompt:'Should your city spend more on cycling lanes?'},null,2);
+/* ---- state, grading ---- */
+function renderRLesson(ex,head,ban){
+  var D=ex.rl,ord=function(n){return lsShuf(n)};
+  RM={ex:ex,D:D,st:0,chk:[0,0,0,0],fail:-1,o:{},seq:[],pr:{},g:{},c:{},w:{},res:{},wtext:'',fin:false,sel:null,head:head,ban:ban,
+    sumOrd:ord(D.sums.length),firstOrd:ord(D.paras.length),bankOrd:ord(D.cloze.bank.length),
+    gOrd:D.words.map(function(x){return ord(x.opts.length)}),cOrd:D.pairs.map(function(){return ord(D.pairs.length+1)}),pOrd:D.prons.map(function(x){return ord(x.opts.length)}),
+    t:0,run:false,tdone:0,student:!!(U&&U.role==='student'),justDragged:0};
+  rmDraw();
+}
+function rmGrade(id){
+  var k=id.charAt(0),i=+id.slice(1),D=RM.D;
+  if(k==='o')return RM.o[i]===i;
+  if(k==='j')return RM.seq[i]===i;
+  if(k==='n')return RM.pr[i]===D.prons[i].a;
+  if(k==='g')return RM.g[i]===D.words[i].a;
+  if(k==='c')return RM.c[i]===i;
+  if(k==='w')return RM.w[i]===i;
+  return false;
+}
+function rmAnswered(st){return rmIds(RM.D,st).every(function(id){var k=id.charAt(0),i=+id.slice(1);
+  return k==='o'?RM.o[i]!=null:k==='j'?RM.seq.length===RM.D.paras.length:k==='n'?RM.pr[i]!=null:k==='g'?RM.g[i]!=null:k==='c'?RM.c[i]!=null:RM.w[i]!=null})}
+function rmScore(st){var a=rmIds(RM.D,st);return a.filter(function(x){return RM.res[x]}).length+'/'+a.length}
+var rmStem=function(w){w=String(w).toLowerCase();return w.length>=7?w.slice(0,w.length-2):w};
+// Stage 3 words used in the 4.2 answer (simple endings ignored: counterpart / counterparts)
+function rmUsed(t){var toks=String(t).toLowerCase().match(/[a-z']+/g)||[];return RM.D.words.map(function(x){return x.w}).filter(function(w){var lw=w.toLowerCase(),st=rmStem(lw);
+  return lw.indexOf(' ')>=0?String(t).toLowerCase().indexOf(lw)>=0:toks.some(function(x){return x===lw||(x.length>=st.length&&x.indexOf(st)===0)})})}
+function rmOutOk(){var t=RM.wtext.trim(),n=wordCount(t),u=rmUsed(t).length;return {n:n,u:u,ok:n>=6&&u>=2,why:n<6?'Write at least 6 words.':u<2?'Use at least 2 of the words from Stage 3.':''}}
+/* ---- rendering ---- */
+function rmRadios(name,opts,order,cur,correct,chk,lock){
+  return '<div class="opts">'+order.map(function(k){
+    var cl='opt'+(chk?(k===correct?' good':(cur===k?' bad':'')):'');
+    return '<label class="'+cl+'"><input type="radio" name="'+name+'" value="'+k+'"'+(cur===k?' checked':'')+(lock?' disabled':'')+'><span>'+(chk&&k===correct?'✓ ':(chk&&cur===k?'✗ ':''))+esc(opts[k])+'</span></label>'}).join('')+'</div>';
+}
+function rmPara(i,chips){
+  var D=RM.D,seen={};
+  return D.paras[i].split(/(\{\{[^{}]+\}\})/).map(function(p){
+    var m=/^\{\{([^{}]+)\}\}$/.exec(p);if(!m)return esc(p);
+    if(!chips)return esc(m[1]);
+    var gi=-1;D.prons.forEach(function(x,j){if(gi<0&&!seen[j]&&x.p===i&&x.w===m[1])gi=j});if(gi<0)return esc(m[1]);seen[gi]=1;
+    var cl='rmpn'+(RM.chk[1]?(RM.res['n'+gi]?' ok':' no'):(RM.pr[gi]!=null?' done':''));
+    return '<button type="button" class="'+cl+'" data-act="rm-pn" data-i="'+gi+'" aria-label="Pronoun '+(gi+1)+': '+esc(m[1])+'">'+esc(m[1])+'<sup>'+(gi+1)+'</sup></button>';
+  }).join('');
+}
+function rmSlot(act,i,label,lock,chk,ok,empty){
+  return '<button type="button" class="rmslot'+(label!=null?' has':'')+(chk?(ok?' ok':' no'):'')+'" data-act="'+act+'" data-i="'+i+'"'+(lock?' disabled':'')+'>'+(chk?(ok?'✓ ':'✗ '):'')+(label!=null?esc(label):esc(empty))+'<span class="arr" aria-hidden="true">'+(lock?'':'▾')+'</span></button>';
+}
+function rmStage1(){
+  var D=RM.D,chk=RM.chk[0],lock=chk||RM.fail===0,wc=wordCount(D.paras.map(rmClean).join(' ')),h='';
+  h+='<div class="lsc rmtmr"><button class="btn sm" type="button" data-act="rm-tmr">'+(RM.run?'Stop reading timer':(RM.tdone?'Read again':'Start reading timer'))+'</button><b class="mono" id="rmTv">'+(RM.run?fmtT(RM.t):(RM.tdone?fmtT(RM.tdone)+' · about '+Math.round(wc/(RM.tdone/60))+' words/min':''))+'</b><p class="muted">Read the passage once without stopping. Then match each paragraph to its summary.</p></div>';
+  h+='<h3 class="lsh">1.1 Match each paragraph to a summary</h3><p class="muted">Tap the box under a paragraph. One summary is extra.</p>';
+  D.paras.forEach(function(p,i){
+    var v=RM.o[i],ok=chk&&RM.res['o'+i];
+    h+='<div class="lsc"><p class="rmlbl">Paragraph '+(i+1)+'</p><p class="rmp">'+rmPara(i,false)+'</p>'+rmSlot('rm-slot',i,v!=null?D.sums[v]:null,lock,chk,ok,'Choose a summary')+
+      (chk&&!ok?'<span class="fix rmfix">→ '+esc(D.sums[i])+'</span>':'')+(chk?'<p class="lsexp">'+esc(D.why[i])+'</p>':'')+'</div>';
+  });
+  h+='<h3 class="lsh">1.2 Put the paragraphs in order</h3><p class="muted">Each line opens one paragraph. Tap them in the order they appear in the passage. Tap again to undo.</p><div class="rmord">'+
+    RM.firstOrd.map(function(pi){
+      var pos=RM.seq.indexOf(pi),on=pos>=0,ok=chk&&on&&RM.res['j'+pos],cl='rmoi'+(on?' on':'')+(chk&&on?(ok?' ok':' no'):'');
+      return '<button type="button" class="'+cl+'" data-act="rm-ord" data-p="'+pi+'"'+(lock?' disabled':'')+' aria-pressed="'+on+'"><span class="nb">'+(on?pos+1:'')+'</span><span>'+(chk&&on?(ok?'✓ ':'✗ '):'')+esc(rmSents(D.paras[pi])[0]||'')+'</span></button>'}).join('')+'</div>'+
+    (chk?'<p class="rmcorr">Correct order: '+D.paras.map(function(x,i){return 'Paragraph '+(i+1)}).join(' → ')+'</p>':'');
+  return h;
+}
+function rmStage2(){
+  var D=RM.D,chk=RM.chk[1],h='';
+  h+='<h3 class="lsh">Who or what does it point back to?</h3><p class="muted">Tap each bold word, then pick the phrase it stands for.</p>';
+  h+='<div class="lsc">'+D.paras.map(function(p,i){return '<p class="rmlbl">Paragraph '+(i+1)+'</p><p class="rmp" style="margin-bottom:.9em">'+rmPara(i,true)+'</p>'}).join('')+'</div>';
+  if(!chk&&RM.fail!==1)h+='<p class="muted" id="rmPnCnt">Answered '+Object.keys(RM.pr).length+' of '+D.prons.length+'</p>';
+  if(chk)h+='<h3 class="lsh">Answers</h3>'+D.prons.map(function(x,i){var ok=RM.res['n'+i];
+    return '<div class="lsc rmal '+(ok?'ok':'no')+'"><b>'+(ok?'✓ ':'✗ ')+(i+1)+'. '+esc(x.w)+'</b> → '+esc(x.opts[x.a])+(ok?'':'<br><span class="muted">You chose: '+esc(x.opts[RM.pr[i]])+'</span>')+(x.why?'<p class="lsexp">'+esc(x.why)+'</p>':'')+'</div>'}).join('');
+  return h;
+}
+function rmCard(x){
+  var wf=String(x.fam||'').split(/\s*,\s*/).filter(Boolean),cl=String(x.col||'').split(/\s*[,;]\s*/).filter(Boolean),stars=function(a){return '<ul class="lsfu">'+a.map(function(s){return '<li>★ '+esc(s)+'</li>'}).join('')+'</ul>'};
+  return '<div class="lsflash"><div class="lsfh">'+esc(x.w)+(x.pos?' ('+esc(x.pos)+')':'')+'</div><div class="lsfd">'+esc(x.en)+(x.vi?' → '+esc(x.vi):'')+'</div>'+(wf.length?'<div class="lsfl">word family:</div>'+stars(wf):'')+(cl.length?'<div class="lsfl">collocation:</div>'+stars(cl):'')+(x.ex?'<div class="lsfe">e.g. '+lsHl(x.ex,x.w)+'</div>':'')+'</div>';
+}
+function rmStage3(){
+  var D=RM.D,chk=RM.chk[2],lock=chk||RM.fail===2,h='';
+  h+='<h3 class="lsh">3.1 Guess the meaning from context</h3><p class="muted">Read the sentence and choose what the word means here.</p>';
+  D.words.forEach(function(x,i){
+    h+='<div class="lsc"><div class="lsw"><b>'+(i+1)+'. '+esc(x.w)+'</b> <span class="muted">· Paragraph '+(x.p+1)+'</span></div><p class="ex">'+lsHl(rmSentOf(x.p,x.w,D),x.w)+'</p><p class="lsq">What does it mean?</p>'+
+      rmRadios('rmg'+i,x.opts,RM.gOrd[i],RM.g[i],x.a,chk,lock)+(chk?rmCard(x):'')+'</div>';
+  });
+  if(chk&&RM.student)h+='<div class="actions"><button class="btn" data-act="rm-saveall" type="button">Save these words to Flashcards</button></div>';
+  h+='<h3 class="lsh">3.2 Match each phrase with its paraphrase</h3><p class="muted">Choose the phrase that means the same. One option is extra.</p>';
+  var par=function(id){return id<D.pairs.length?D.pairs[id].par:D.pdist};
+  D.pairs.forEach(function(x,i){
+    h+='<div class="lsc"><p class="rmlbl">Paragraph '+(x.p+1)+'</p><p class="lsq">“'+esc(x.ph)+'”</p>'+rmRadios('rmc'+i,RM.cOrd[i].map(par),RM.cOrd[i].map(function(v,k){return k}),RM.c[i]!=null?RM.cOrd[i].indexOf(RM.c[i]):null,RM.cOrd[i].indexOf(i),chk,lock)+'</div>';
+  });
+  return h;
+}
+// 4.1 summary: blanks + word bank (drag and drop, or tap a chip then a blank)
+function rmClozeHTML(){
+  var D=RM.D,chk=RM.chk[3],lock=chk||RM.fail===3||RM.fin,used={},n=D.cloze.bank.length-1;
+  Object.keys(RM.w).forEach(function(k){used[RM.w[k]]=+k});
+  var h='<div class="rmbank" role="group" aria-label="Word bank">'+RM.bankOrd.map(function(bi){
+    var u=used[bi]!=null,s=RM.sel===bi;
+    return '<button type="button" class="rmchip'+(u?' used':'')+(s?' sel':'')+'" data-act="rm-chip" data-b="'+bi+'"'+(lock?' disabled':' data-drag="1"')+' aria-pressed="'+s+'">'+esc(D.cloze.bank[bi])+'</button>'}).join('')+'</div>';
+  h+='<p class="rmp rmcz">'+D.cloze.text.split(/\{\{(\d+)\}\}/).map(function(p,i){
+    if(i%2===0)return esc(p);
+    var b=+p-1,v=RM.w[b],ok=chk&&RM.res['w'+b],cl='rmblank'+(v!=null?' has':'')+(chk?(ok?' ok':' no'):'');
+    var lab='Blank '+(b+1)+': '+(v!=null?D.cloze.bank[v]:'empty');
+    return '<span class="rmbw"><button type="button" class="'+cl+'" data-act="rm-blank" data-n="'+b+'"'+(v!=null&&!lock?' data-drag="1" data-b="'+v+'"':'')+(lock?' disabled':'')+' aria-label="'+esc(lab)+'">'+(chk?(ok?'✓ ':'✗ '):'')+(v!=null?esc(D.cloze.bank[v]):'&nbsp;')+'<sup>'+(b+1)+'</sup></button>'+
+      (v!=null&&!lock?'<button type="button" class="rmx" data-act="rm-x" data-n="'+b+'" aria-label="Remove the word from blank '+(b+1)+'">×</button>':'')+'</span>';
+  }).join('')+'</p>';
+  if(chk)h+='<p class="rmcorr">Correct words: '+D.cloze.bank.slice(0,n).map(function(w,i){return (i+1)+' '+esc(w)}).join(' · ')+'</p>';
+  return h;
+}
+function rmTwHTML(){var u=rmUsed(RM.wtext);return RM.D.words.map(function(x){var on=u.indexOf(x.w)>=0;return '<span class="'+(on?'on':'')+'">'+(on?'✓ ':'')+esc(x.w)+'</span>'}).join('')}
+function rmWcText(){var s=rmOutOk();return s.n+' word'+(s.n===1?'':'s')+' · '+Math.min(s.u,2)+' of 2 required words used'}
+function rmStage4(){
+  var h='<h3 class="lsh">4.1 Complete the summary</h3><p class="muted">The passage is hidden. Drag a word into each blank, or tap a word and then a blank. One word is extra.</p><div class="lsc" id="rmCloze">'+rmClozeHTML()+'</div>';
+  h+='<div class="lsc rmout"><h3 class="lsh" style="margin-top:0">'+esc(RM.D.wprompt)+'</h3><p class="muted">Write one or two sentences. Use at least 2 of the words from Stage 3.</p>'+
+    '<div class="rmtw" id="rmTw">'+rmTwHTML()+'</div><label class="lbl" for="rmWt">Your answer</label><textarea class="wbox rmwt" id="rmWt"'+(RM.fin?' readonly':'')+'>'+esc(RM.wtext)+'</textarea>'+
+    '<p class="muted" id="rmWc" aria-live="polite" style="margin:6px 0 0">'+rmWcText()+'</p></div>';
+  return h;
+}
+function rmFinal(){
+  var D=RM.D,tot=0,sc=0,per=[],wrong={};
+  for(var st=0;st<4;st++){var a=rmIds(D,st),c=a.filter(function(x){return RM.res[x]}).length;tot+=a.length;sc+=c;per.push(RST[st]+' '+c+'/'+a.length);a.forEach(function(x){if(!RM.res[x])wrong[RTAGS[x.charAt(0)]]=(wrong[RTAGS[x.charAt(0)]]||0)+1})}
+  var wk=Object.keys(wrong);
+  return '<div class="result"><div class="score"><b>'+sc+'/'+tot+'</b><span class="muted">'+Math.round(sc/tot*100)+'%</span></div><p class="muted" style="margin:6px 0">'+esc(per.join(' · '))+'</p>'+
+    (wk.length?'<div class="tags"><span>Review:</span>'+wk.map(function(k){return '<span class="tag">'+esc(k)+(wrong[k]>1?' ×'+wrong[k]:'')+'</span>'}).join('')+'</div>':'<p style="margin:0">No mistakes. Nice work.</p>')+
+    '<span class="saved" id="saveMsg"></span>'+nextBtns()+'</div>';
+}
+function rmDraw(){
+  var st=RM.st,chk=RM.chk[st],D=RM.D;
+  var bar='<div class="lsbar">'+RST.map(function(n,i){return '<span class="lsstep'+(i===st&&!RM.fin?' cur':(RM.chk[i]?' dn':''))+'"'+(i===st&&!RM.fin?' aria-current="step"':'')+'>'+(RM.chk[i]&&(i!==st||RM.fin)?'✓ ':(i+1)+'. ')+n+'</span>'}).join('')+'</div>';
+  var demo=DEMO&&!chk&&RM.fail!==st&&!RM.fin?'<div class="lsdemo">Demo helper: <button class="btn sm" data-act="rm-demo" data-m="ok" type="button">Fill all correct</button><button class="btn sm" data-act="rm-demo" data-m="half" type="button">Half wrong</button><button class="btn sm" data-act="rm-demo" data-m="bad" type="button">All wrong</button></div>':'';
+  var chip='<span class="btn pri lsscore">Stage '+(st+1)+': '+rmScore(st)+'</span> ',act;
+  if(RM.fin)act='';
+  else if(RM.fail===st)act='<div class="actions">'+chip+'<button class="btn" data-act="rm-retry" type="button">Try again</button></div><p class="muted" style="margin:6px 0 0">You need at least 70% to move on. The correct answers stay hidden until you reach it, so read again and retry.</p>';
+  else if(!chk)act='<div class="actions"><button class="btn pri" data-act="rm-check" type="button">Check answers</button></div><p class="err" id="rmMsg" aria-live="polite"></p>';
+  else if(st<3)act='<div class="actions">'+chip+'<button class="btn pri" data-act="rm-next" type="button">Next: '+RST[st+1]+' →</button></div>';
+  else{var s=rmOutOk();act='<div class="actions">'+chip+'<button class="btn pri" id="rmFin" data-act="rm-finish" type="button"'+(s.ok?'':' disabled')+'>Finish lesson</button></div><p class="muted" id="rmWhy" aria-live="polite">'+esc(s.why)+'</p>'}
+  $('#libBody').innerHTML='<div class="pane single rm">'+RM.head+RM.ban+bar+demo+'<div id="rmBody">'+[rmStage1,rmStage2,rmStage3,rmStage4][st]()+'</div>'+act+'<div id="result">'+(RM.fin?rmFinal():'')+'</div></div>';
+}
+function rmKeep(fn){var y=window.pageYOffset||0;fn();window.scrollTo(0,y)}
+// radio answers of Stage 3 are read when needed (choosing does not redraw the page)
+function rmCollect(){
+  if(RM.st!==2)return;
+  RM.D.words.forEach(function(x,i){var c=$('input[name="rmg'+i+'"]:checked');if(c)RM.g[i]=+c.value});
+  RM.D.pairs.forEach(function(x,i){var c=$('input[name="rmc'+i+'"]:checked');if(c)RM.c[i]=RM.cOrd[i][+c.value]});
+}
+function rmCheck(){
+  var st=RM.st;rmCollect();
+  if(!rmAnswered(st)){var m=$('#rmMsg');if(m)m.textContent='Answer every item first.';return}
+  rmIds(RM.D,st).forEach(function(id){RM.res[id]=!!rmGrade(id)});
+  var a=rmIds(RM.D,st),sc=a.filter(function(x){return RM.res[x]}).length;
+  if(sc/a.length<.7){RM.fail=st;rmKeep(rmDraw);return}
+  RM.fail=-1;RM.chk[st]=1;rmKeep(rmDraw);
+}
+function rmFinish(){
+  var s=rmOutOk();if(!s.ok){var w=$('#rmWhy');if(w)w.textContent=s.why;var tx=$('#rmWt');if(tx)tx.focus();return}
+  RM.fin=true;rmDraw();var r=$('#result');if(r&&r.scrollIntoView)r.scrollIntoView({block:'start',behavior:reducedMotion()?'auto':'smooth'});
+  var ex=RM.ex,D=RM.D,all=[],stages=[],tags={};
+  for(var st=0;st<4;st++){var a=rmIds(D,st);all=all.concat(a);stages.push({name:RST[st],score:a.filter(function(x){return RM.res[x]}).length,total:a.length})}
+  all.forEach(function(x){if(!RM.res[x]){var k=RTAGS[x.charAt(0)];tags[k]=(tags[k]||0)+1}});
+  var score=all.filter(function(x){return RM.res[x]}).length,total=all.length;
+  if(!U||U.role==='teacher')return;
+  var ft=!attemptsOf(U.email).some(function(a){return a.ex===ex.id});
+  saveAttempt({email:U.email,student:U.name,course:U.course,cls:U.cls,ex:ex.id,skill:'reading',score:score,total:total,items:all.map(function(x){return {i:x,ok:RM.res[x]?1:0}}),
+    stages:stages,tags:tags,output:{prompt:D.wprompt,text:RM.wtext.trim(),used:rmUsed(RM.wtext)},ts:Date.now()}).then(function(how){var m=$('#saveMsg');if(m)m.textContent=how==='db'?'Saved to your class history.':'Kept for this session only (no data store).'});
+  onAttemptSaved(ex,score,total,ft);
+}
+/* ---- bottom sheet (the .msheet of Marking): summaries, pronouns ---- */
+function rmSheetClose(){var a=$('#rmSbg'),b=$('#rmSheet');if(a)a.remove();if(b)b.remove();if(RM&&RM.sheetFrom){var f=RM.sheetFrom;RM.sheetFrom=null;try{f.focus({preventScroll:true})}catch(x){}}}
+function rmSheet(title,opts,pick,from){
+  rmSheetClose();RM.sheetCb=pick;RM.sheetFrom=null;
+  document.body.insertAdjacentHTML('beforeend','<div class="msbg" id="rmSbg" data-act="rm-sclose"></div><div class="msheet rmsheet" id="rmSheet" role="dialog" aria-modal="true" aria-label="'+esc(title)+'"><span class="rmgrab" aria-hidden="true"></span><h3>'+esc(title)+'</h3>'+
+    opts.map(function(o,i){return '<button type="button" class="'+(o.sel?'sel':'')+'" data-act="rm-spick" data-o="'+i+'">'+(o.sel?'✓ ':'')+esc(o.t)+(o.sub?'<small>'+esc(o.sub)+'</small>':'')+'</button>'}).join('')+
+    '<button type="button" class="cl" data-act="rm-sclose">Close</button></div>');
+  RM.sheetFrom=from||null;var f=$('#rmSheet button');if(f){try{f.focus({preventScroll:true})}catch(x){f.focus()}}
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&$('#rmSheet')){e.stopImmediatePropagation();rmSheetClose()}},true);
+/* ---- 4.1 drag and drop (Pointer Events; HTML5 drag-and-drop does not work on phones) ---- */
+function rmPlace(n,bi){
+  var prev=RM.w[n],from=null;Object.keys(RM.w).forEach(function(k){if(RM.w[k]===bi)from=+k});
+  RM.sel=null;if(from===n)return;
+  RM.w[n]=bi;if(from!=null){if(prev!=null)RM.w[from]=prev;else delete RM.w[from]} // blank -> blank swaps; a bank chip pushes the old word back
+}
+function rmDrawCloze(focusSel){var b=$('#rmCloze');if(b)b.innerHTML=rmClozeHTML();if(focusSel){var f=$(focusSel);if(f){try{f.focus({preventScroll:true})}catch(x){}}}}
+function rmBlankAt(x,y){var el=document.elementFromPoint(x,y);return el&&el.closest?el.closest('.rmblank'):null}
+function rmDragStop(){if(!RMD)return;if(RMD.ghost)RMD.ghost.remove();if(RMD.src)RMD.src.classList.remove('drag');$$('.rmblank.hot').forEach(function(b){b.classList.remove('hot')});document.body.classList.remove('rmdragging')}
+document.addEventListener('pointerdown',function(e){
+  if(!RM||RM.st!==3||RM.chk[3]||RM.fail===3||RM.fin||(e.button&&e.button!==0))return;
+  var t=e.target.closest&&e.target.closest('[data-drag]');if(!t)return;
+  RMD={bi:+t.getAttribute('data-b'),from:t.hasAttribute('data-n')?+t.getAttribute('data-n'):null,x0:e.clientX,y0:e.clientY,on:false,src:t,id:e.pointerId};
+});
+document.addEventListener('pointermove',function(e){
+  if(!RMD||e.pointerId!==RMD.id)return;
+  if(!RMD.on){
+    if(Math.abs(e.clientX-RMD.x0)+Math.abs(e.clientY-RMD.y0)<6)return;
+    RMD.on=true;try{RMD.src.setPointerCapture(e.pointerId)}catch(x){}
+    var g=document.createElement('div');g.className='rmghost';g.setAttribute('aria-hidden','true');g.textContent=RM.D.cloze.bank[RMD.bi];document.body.appendChild(g);RMD.ghost=g;
+    RMD.src.classList.add('drag');document.body.classList.add('rmdragging');
+  }
+  e.preventDefault();
+  RMD.ghost.style.left=e.clientX+'px';RMD.ghost.style.top=e.clientY+'px';
+  var over=rmBlankAt(e.clientX,e.clientY);$$('.rmblank.hot').forEach(function(b){if(b!==over)b.classList.remove('hot')});if(over)over.classList.add('hot');
+},{passive:false});
+document.addEventListener('pointerup',function(e){
+  if(!RMD||e.pointerId!==RMD.id)return;var d=RMD;rmDragStop();RMD=null;if(!d.on)return;
+  var over=rmBlankAt(e.clientX,e.clientY);
+  if(over)rmPlace(+over.getAttribute('data-n'),d.bi);
+  else if(d.from!=null){delete RM.w[d.from];RM.sel=null} // dragged out of a blank: back to the bank
+  RM.justDragged=Date.now();rmDrawCloze();
+});
+document.addEventListener('pointercancel',function(e){if(RMD&&e.pointerId===RMD.id){rmDragStop();RMD=null}});
+document.addEventListener('touchmove',function(e){if(RMD&&RMD.on)e.preventDefault()},{passive:false}); // no page scroll while dragging
+document.addEventListener('input',function(e){
+  if(!RM||!e.target||e.target.id!=='rmWt')return;RM.wtext=e.target.value;
+  var tw=$('#rmTw');if(tw)tw.innerHTML=rmTwHTML();var wc=$('#rmWc');if(wc)wc.textContent=rmWcText();
+  var s=rmOutOk(),fb=$('#rmFin'),wy=$('#rmWhy');if(fb)fb.disabled=!s.ok;if(wy)wy.textContent=s.why;
+});
+function rmDemo(m){
+  var st=RM.st,D=RM.D,ev=function(i){return m==='ok'||(m==='half'&&i%2===0)};
+  if(st===0){D.paras.forEach(function(x,i){RM.o[i]=ev(i)?i:(i+1)%D.sums.length});RM.seq=D.paras.map(function(x,i){return i});if(m!=='ok')RM.seq.reverse()}
+  else if(st===1)D.prons.forEach(function(x,i){RM.pr[i]=ev(i)?x.a:(x.a+1)%x.opts.length});
+  else if(st===2){D.words.forEach(function(x,i){RM.g[i]=ev(i)?x.a:(x.a+1)%x.opts.length});D.pairs.forEach(function(x,i){RM.c[i]=ev(i)?i:(i+1)%(D.pairs.length+1)})}
+  else{for(var i=0;i<D.cloze.bank.length-1;i++)RM.w[i]=ev(i)?i:(i+1)%D.cloze.bank.length;if(m!=='bad'&&!RM.wtext)RM.wtext='Cities should build more cycling lanes to cut congestion, because cycling may become mainstream.'}
+  RM.fail=-1;rmKeep(rmDraw);
+}
+function rmAct(a,t){
+  if(a.indexOf('rm-')!==0||!RM)return false;
+  var D=RM.D,i=+t.dataset.i;
+  if(a==='rm-slot'){rmSheet('Paragraph '+(i+1)+': pick a summary',RM.sumOrd.map(function(si){var u=Object.keys(RM.o).filter(function(p){return +p!==i&&RM.o[p]===si})[0];
+    return {t:D.sums[si],sel:RM.o[i]===si,sub:u!=null?'Also used in paragraph '+(+u+1):''}}),function(n){RM.o[i]=RM.sumOrd[n];rmKeep(rmDraw)},t);return true}
+  if(a==='rm-pn'){if(RM.chk[1]||RM.fail===1)return true;var pr=D.prons[i],po=RM.pOrd[i];
+    rmSheet('What does “'+pr.w+'” refer to?',po.map(function(oi){return {t:pr.opts[oi],sel:RM.pr[i]===oi}}),function(n){RM.pr[i]=po[n];rmKeep(rmDraw)},t);return true}
+  if(a==='rm-spick'){var cb=RM.sheetCb;RM.sheetFrom=null;rmSheetClose();if(cb)cb(+t.dataset.o);return true}
+  if(a==='rm-sclose'){rmSheetClose();return true}
+  if(a==='rm-ord'){var p=+t.dataset.p,pos=RM.seq.indexOf(p);if(pos>=0)RM.seq.splice(pos,1);else RM.seq.push(p);rmKeep(rmDraw);var b=$('#rmBody [data-p="'+p+'"]');if(b){try{b.focus({preventScroll:true})}catch(x){}}return true}
+  if(a==='rm-chip'){if(Date.now()-RM.justDragged<400)return true;var bi=+t.dataset.b;RM.sel=RM.sel===bi?null:bi;rmDrawCloze('#rmCloze .rmchip[data-b="'+bi+'"]');return true}
+  if(a==='rm-blank'){if(Date.now()-RM.justDragged<400)return true;var nb=+t.getAttribute('data-n');
+    if(RM.sel!=null){rmPlace(nb,RM.sel);rmDrawCloze('#rmCloze .rmblank[data-n="'+nb+'"]')}
+    else{var m=$('#rmMsg');if(m)m.textContent=RM.w[nb]!=null?'Drag the word out, or press × to send it back.':'Tap a word in the word bank first.'}
+    return true}
+  if(a==='rm-x'){var nx=+t.dataset.n;delete RM.w[nx];RM.sel=null;rmDrawCloze('#rmCloze .rmblank[data-n="'+nx+'"]');return true}
+  if(a==='rm-check'){rmCheck();return true}
+  if(a==='rm-retry'){rmIds(D,RM.st).forEach(function(id){delete RM.res[id]});
+    if(RM.st===0){RM.o={};RM.seq=[]}else if(RM.st===1)RM.pr={};else if(RM.st===2){RM.g={};RM.c={}}else{RM.w={};RM.sel=null}
+    RM.fail=-1;rmDraw();window.scrollTo&&window.scrollTo(0,0);return true}
+  if(a==='rm-next'){RM.st++;rmDraw();window.scrollTo&&window.scrollTo(0,0);return true}
+  if(a==='rm-finish'){rmFinish();return true}
+  if(a==='rm-demo'){rmDemo(t.dataset.m);return true}
+  if(a==='rm-saveall'){var n2=0;D.words.forEach(function(x){if(saveCard({w:x.w,ipa:'',pos:x.pos||x.fam||'',en:x.en,vi:x.vi||'',ex:x.ex||rmSentOf(x.p,x.w,D),syn:[],ant:[]}))n2++});if(n2)toast(n2+' word'+(n2>1?'s':'')+' saved to Flashcards.');return true}
+  if(a==='rm-tmr'){
+    if(RM.run){clearTimer();RM.run=false;RM.tdone=Math.max(1,RM.t);rmKeep(rmDraw)}
+    else{clearTimer();RM.t=0;RM.run=true;RM.tdone=0;timerId=setInterval(function(){if(!RM||!RM.run){clearTimer();return}RM.t++;var v=$('#rmTv');if(v)v.textContent=fmtT(RM.t);else clearTimer()},1000);rmKeep(rmDraw)}
+    return true}
+  return true;
+}
+// reading lesson preview in Create (summary view)
+function rlessonPreview(d){
+  var D=d.rlesson,c=function(n,t){return '<li><b>'+n+'</b> '+t+'</li>'};
+  return '<p class="okmsg">Format OK: Reading lesson with 4 stages, '+d.qs.length+' scored items.</p><div class="pane" style="margin-top:10px"><div class="phead"><span class="chip">Reading</span><h2>'+esc(d.title)+'</h2></div><ol class="lsprev">'+
+    c('Structure',D.paras.length+' paragraphs to match (1 extra summary) + paragraph order')+c('Pronouns',D.prons.map(function(x){return esc(x.w)}).join(', '))+
+    c('Vocabulary',D.words.map(function(x){return esc(x.w)}).join(', ')+' + '+D.pairs.length+' paraphrases')+c('Output',(D.cloze.bank.length-1)+' summary blanks + "'+esc(D.wprompt)+'"')+'</ol></div>'+addBarHTML();
 }
 
 /* ---------- Admin: Guide, Users, Teachers, My account ---------- */
@@ -4879,6 +5296,8 @@ function adAct(a,t){
 
 /* ---------- Boot ---------- */
 if(DEMO){sampleData=makeSample().concat(makeSubs());samplePass=makeSamplePass();sampleCards=makeSampleCards();sampleErr=makeSampleErr();sampleProf=makeSampleProf();makeSampleExtras()}
+// demo: the sample reading lesson "Cycling in the City" (EXAMPLE_R) in Cam 14 · Test 1 · Reading
+if(DEMO){(function(){var rx=parseReading(JSON.parse(EXAMPLE_R));if(!rx.data)return;EXS.rm1={id:'rm1',skill:'reading',title:rx.data.title,kind:'reading-ms',hint:RM_HINT,rl:rx.data.rlesson,qs:rx.data.qs,material:{type:'passage',labelled:true,paras:rx.data.rlesson.paras.map(rmClean)}};LIBMAP.cam14.t1.reading.push('rm1')})()}
 renderCpPrompt();
 document.addEventListener('input',function(e){var t=e.target;if(t&&t.id==='pvW'){var c=$('#pvWc'),d=CP.last&&CP.last.data;if(c&&d)c.innerHTML='<span class="mono">'+wordCount(t.value)+'</span> words'+(wordCount(t.value)<d.minWords?' <span class="low">· minimum '+d.minWords+'</span>':'')}});
 var th=lsGet('md-theme');if(th==='dark'||th==='light')applyTheme(th);else setThemeLbl(curDark());

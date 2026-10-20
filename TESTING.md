@@ -196,5 +196,11 @@ Chuẩn bị: deploy bản mới (có `functions/`). Không cần sửa Firebase
 12. [ ] Điện thoại/tablet (<1024px): mở trang thì sidebar đóng; ☰ → menu trượt ra đè lên nội dung, có nền mờ, trang phía sau không cuộn được; đóng được bằng bấm nền mờ, nút ×, phím Esc, hoặc chọn một mục.
 13. [ ] 390px và ≥1280px, sáng/tối: không tràn ngang khi mở/đóng sidebar; thanh audio dính ở bài Listening vẫn đúng chỗ.
 
+## GĐ 8 — Reading nhiều giai đoạn (Phần A)
+1. [ ] Demo (`demo: true`) → học sinh → Library → Cam 14 → Test 1 → Reading → "Cycling in the City" → làm đủ 4 stage; dưới 70% thì phải bấm Try again; xong có thẻ tổng kết; Home → Recent results ô Reading có bài này. **Nhớ đổi lại `demo: false`.**
+2. [ ] Stage 3.1 (Guess the meaning) và 3.2 (paraphrase) trông như thẻ Vocabulary/thẻ chọn của bài Listening: chọn bằng radio, sau Check có thẻ từ (word family, collocation, e.g.) và nút "Save these words to Flashcards".
+3. [ ] Stage 4.1: kéo thả chạy bằng **chuột, trên iPhone và trên Android**; chạm chip rồi chạm chỗ trống cũng được; Tab + Enter cũng được; thả vào chỗ đã có từ thì đổi chỗ; kéo từ ra ngoài hoặc bấm × thì trả về bank; trang không cuộn khi đang kéo.
+4. [ ] Stage 4.2: tiêu đề là câu hỏi ("Should your city spend more on cycling lanes?"); hiện đủ các từ Stage 3; chưa đủ 6 từ hoặc chưa dùng 2 từ thì nút Finish lesson mờ và có lý do. Giáo viên → Dashboard › Students → bấm học sinh → thấy câu trả lời dưới bài "Cycling in the City".
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.
