@@ -191,7 +191,10 @@ Chuẩn bị: deploy bản mới (có `functions/`). Không cần sửa Firebase
 7. [ ] Home học sinh: Daily practice có đúng 2 bài + "Daily Review" (khi có thẻ đến hạn) + "Error review" (khi có lỗi đến hạn). Hôm sau 2 bài đổi. Thử Read aloud / Speaking Part 1 / Part 3: Record → Stop → nghe lại → Finish (+XP); không có "Use this recording". Dictation và Gap-fill dictation: Play → gõ → Check → Finish.
 8. [ ] Home: không còn dòng "… XP · … to Explorer"; chip "HW SUN 25.10" to hơn; bài chưa làm ghi "Waiting".
 9. [ ] Flashcards (cả tab Flashcards và Home → Daily Review): bấm Got it / Forgot, Backspace 1 lần (Got it), 2 lần nhanh (Forgot) → chuyển thẻ ngay, kể cả khi mạng chập chờn.
-10. [ ] Điện thoại 390px: menu thành thanh cuộn ngang, Dashboard 1 cột, bìa sách 3 cột, ô XP không tràn. Dark mode đọc rõ.
+10. [ ] Điện thoại 390px: Dashboard 1 cột, bìa sách 3 cột, ô XP không tràn. Dark mode đọc rõ.
+11. [ ] Laptop (≥1024px): bấm ☰ → sidebar thu vào, nội dung giãn ra hết chiều ngang; bấm lại → mở ra. Tải lại trang (F5) và chuyển tab → vẫn giữ trạng thái đã chọn.
+12. [ ] Điện thoại/tablet (<1024px): mở trang thì sidebar đóng; ☰ → menu trượt ra đè lên nội dung, có nền mờ, trang phía sau không cuộn được; đóng được bằng bấm nền mờ, nút ×, phím Esc, hoặc chọn một mục.
+13. [ ] 390px và ≥1280px, sáng/tối: không tràn ngang khi mở/đóng sidebar; thanh audio dính ở bài Listening vẫn đúng chỗ.
 
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

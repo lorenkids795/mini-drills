@@ -48,12 +48,37 @@ button{cursor:pointer}
 .tabs button{border:0;background:transparent;padding:.45rem .85rem;border-radius:6px;font-weight:500;color:var(--muted)}
 .tabs button:hover{color:var(--ink);background:var(--bg)}
 .tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);font-weight:600}
-/* Left sidebar menu (body.nav-on = signed in); under 860px it becomes a scrolling bar on top */
+/* Sidebar (body.nav-on = signed in). Toggle ☰ #sbBtn: body.sb-open = open.
+   >= 1024px (body.sb-wide): a column that collapses to 0 width, the content takes the space (choice kept in md-sb).
+   < 1024px: a drawer over the page with a dimmed backdrop #sbBg, closed by default; body.sb-lock stops the page scrolling. */
 .mainc{min-width:0}
-body.nav-on .shell{display:grid;grid-template-columns:208px minmax(0,1fr);gap:28px;align-items:start;margin-top:18px}
-body.nav-on .tabs{flex-direction:column;flex-wrap:nowrap;position:sticky;top:12px;padding:6px;gap:2px;border-radius:12px}
-body.nav-on .tabs button{text-align:left;padding:.62rem .9rem;border-radius:8px}
-@media (max-width:860px){body.nav-on .shell{grid-template-columns:minmax(0,1fr);gap:0;margin-top:10px}body.nav-on .tabs{flex-direction:row;position:static;overflow-x:auto;scrollbar-width:none}body.nav-on .tabs::-webkit-scrollbar{display:none}body.nav-on .tabs button{flex:none;white-space:nowrap;padding:.45rem .75rem}}
+.sbbtn{order:0;border:0;background:transparent;color:var(--ink);font-size:1.35rem;line-height:1;width:42px;height:42px;border-radius:8px;display:inline-grid;place-items:center;flex:none}
+.sbbtn:hover{background:var(--line)}
+.side{display:none}
+.sbhead{display:none}
+body.nav-on .shell{display:flex;align-items:flex-start;margin-top:18px}
+body.nav-on .side{display:block;flex:none}
+body.nav-on .side .tabs{flex-direction:column;flex-wrap:nowrap;overflow:visible;padding:6px;gap:2px;border-radius:12px}
+body.nav-on .side .tabs button{flex:none;white-space:normal;text-align:left;padding:.62rem .9rem;border-radius:8px}
+body.nav-on .mainc{flex:1 1 0}
+body.nav-on.sb-wide .side{position:sticky;top:12px;width:208px;margin-right:28px;overflow:hidden;visibility:visible}
+body.nav-on.sb-wide .side .tabs{width:208px}
+body.nav-on.sb-wide:not(.sb-open) .side{width:0;margin-right:0;visibility:hidden}
+body.nav-on:not(.sb-wide) .shell{display:block;margin-top:10px}
+body.nav-on:not(.sb-wide) .side{position:fixed;top:0;left:0;bottom:0;z-index:76;width:min(280px,84vw);overflow-y:auto;background:var(--surface);border-right:1px solid var(--line);padding:12px 12px calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-102%);visibility:hidden;box-shadow:0 0 28px rgba(10,15,30,.25)}
+body.nav-on.sb-open:not(.sb-wide) .side{transform:none;visibility:visible}
+body.nav-on:not(.sb-wide) .sbhead{display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px)) 2px 8px 6px;font-weight:600;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.06em}
+body.nav-on:not(.sb-wide) .side .tabs{border:0;background:none;padding:0}
+.sbx{border:0;background:transparent;color:var(--ink);font-size:1.6rem;line-height:1;width:40px;height:40px;border-radius:8px}
+.sbx:hover{background:var(--line)}
+.sbbg{position:fixed;inset:0;z-index:75;background:rgba(10,15,30,.45)}
+html.sb-lock,body.sb-lock{overflow:hidden}
+@media (prefers-reduced-motion:no-preference){
+  body.nav-on.sb-wide .side{transition:width .2s ease,margin .2s ease,visibility 0s linear .2s}
+  body.nav-on.sb-wide.sb-open .side{transition:width .2s ease,margin .2s ease,visibility 0s}
+  body.nav-on:not(.sb-wide) .side{transition:transform .2s ease,visibility 0s linear .2s}
+  body.nav-on.sb-open:not(.sb-wide) .side{transition:transform .2s ease,visibility 0s}
+}
 .right{margin-left:auto;display:flex;flex-wrap:wrap;align-items:center;gap:12px;font-size:.82rem;color:var(--muted)}
 .status{display:flex;align-items:center;padding:4px;cursor:help}
 .status i{width:11px;height:11px;border-radius:50%;background:var(--muted);display:inline-block}
@@ -462,7 +487,6 @@ body.locked #who,body.locked .crumbs{visibility:hidden}
 @media (max-width:640px){
   .top{align-items:flex-start;gap:6px 12px}
   .brand{flex:1 1 auto}
-  .tabs{order:3;flex-basis:100%}
   .right{margin-left:auto;justify-content:flex-end;gap:6px 8px;max-width:58%}
   .status span{display:none}
   .lt,.rl{display:none}
@@ -800,9 +824,6 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
   .right{flex-wrap:nowrap;max-width:none;margin-left:auto;gap:6px}
   #whoName b{max-width:8ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block}
   .who{gap:4px}
-  .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-  .tabs::-webkit-scrollbar{display:none}
-  .tabs button{white-space:nowrap;flex:none;padding:.45rem .7rem}
   .dstat .flame,.dstat b{font-size:2.6rem}
   .daily{padding:14px}
   .dgrid{grid-template-columns:1fr 1fr}
@@ -911,6 +932,7 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 <div class="app">
   <div class="marq" id="marq" hidden><span id="marqT"></span></div>
   <header class="top">
+    <button class="sbbtn" id="sbBtn" type="button" data-act="sb-toggle" aria-label="Toggle sidebar" aria-expanded="true" aria-controls="sideNav" hidden>☰</button>
     <div class="brand"><b>Mini <mark>Drills</mark></b></div>
     <div class="right">
       <div class="who" id="who" hidden><span id="whoName"></span></div>
@@ -921,7 +943,11 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
   </header>
 
   <div class="shell">
-  <nav class="tabs" id="tabs" role="tablist" aria-label="Sections" hidden></nav>
+  <aside class="side" id="sideNav" aria-label="Menu">
+    <div class="sbhead"><span>Menu</span><button class="sbx" type="button" data-act="sb-close" aria-label="Close menu">×</button></div>
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Sections" hidden></nav>
+  </aside>
+  <div class="sbbg" id="sbBg" data-act="sb-close" hidden></div>
   <main class="mainc">
   <section id="v-login">
     <div class="login">
@@ -2882,16 +2908,33 @@ function addExercise(){
 /* ---------- Shell ---------- */
 function setThemeLbl(d){$('#themeBtn').innerHTML='<span class="lt">'+(d?'Light mode':'Dark mode')+'</span><span class="ic">'+(d?'☀':'☾')+'</span>'}
 function applyTheme(t){document.documentElement.setAttribute('data-theme',t);lsSet('md-theme',t);setThemeLbl(t==='dark')}
+/* Sidebar: ☰ #sbBtn opens / closes #sideNav. >= 1024px: column that collapses (choice kept in localStorage md-sb, default open).
+   < 1024px: drawer over the page, closed by default; closes on the backdrop, ×, Esc or picking a tab. Changing tab never opens it. */
+var SB={open:true};
+function sbWide(){return !!(window.matchMedia&&matchMedia('(min-width:1024px)').matches)}
+function sbPref(){try{return localStorage.getItem('md-sb')!=='0'}catch(e){return true}}
+function sbSet(open,focus,save){
+  var b=document.body,w=sbWide(),btn=$('#sbBtn'),on=b.classList.contains('nav-on');
+  SB.open=!!open;b.classList.toggle('sb-wide',w);b.classList.toggle('sb-open',SB.open);
+  var lock=SB.open&&!w&&on;b.classList.toggle('sb-lock',lock);document.documentElement.classList.toggle('sb-lock',lock);
+  var bg=$('#sbBg');if(bg)bg.hidden=!lock;
+  if(btn)btn.setAttribute('aria-expanded',String(SB.open));
+  if(save&&w){try{localStorage.setItem('md-sb',SB.open?'1':'0')}catch(e){}}
+  if(focus){var f=SB.open?(!w&&$('#tabs button')):btn;if(f){try{f.focus({preventScroll:true})}catch(x){f.focus()}}}
+}
+function sbInit(){sbSet(sbWide()?sbPref():false)}
+(function(){var mq=window.matchMedia&&matchMedia('(min-width:1024px)');if(!mq)return;if(mq.addEventListener)mq.addEventListener('change',sbInit);else if(mq.addListener)mq.addListener(sbInit)})();
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&SB.open&&!sbWide()&&document.body.classList.contains('nav-on')){e.preventDefault();e.stopImmediatePropagation();sbSet(false,true)}},true);
 function curDark(){var t=document.documentElement.getAttribute('data-theme');if(t)return t==='dark';return !!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)}
 // Admin: everything (Students and XP live inside Admin). Teacher: only their classes (see myCls). Student: unchanged.
 function tabsFor(){return U.adm?[['dash','Dashboard'],['asg','Classes'],['mark','Marking'],['library','Library'],['create','Create'],['prize','Prizes'],['admin','Admin']]:U.role==='teacher'?[['asg','Classes'],['mark','Marking'],['dash','Dashboard'],['library','Library']]:[['library','Home'],['cards','Flashcards'],['errors','Error Notebook'],['ranks','Leaderboard'],['wheel','Lucky Wheel'],['bag','Inventory'],['set','Settings']]}
 function showTab(t){
   TAB=t;stopAudio();clearTimer();MK.open=false;recClearAll();
   ['login','lib','cards','errors','ranks','wheel','bag','set','prize','xps','dash','asg','mark','roster','create','admin'].forEach(function(n){$('#v-'+n).hidden=true});
-  if(!U){var lv=$('#v-login');lv.hidden=false;if(!DEMO&&lsGet('md-email')&&!window.MD_USER){lv.setAttribute('data-wait','');setTimeout(function(){lv.removeAttribute('data-wait')},10000)}else lv.removeAttribute('data-wait');$('#tabs').hidden=true;$('#who').hidden=true;document.body.classList.remove('nav-on');return}
+  if(!U){var lv=$('#v-login');lv.hidden=false;if(!DEMO&&lsGet('md-email')&&!window.MD_USER){lv.setAttribute('data-wait','');setTimeout(function(){lv.removeAttribute('data-wait')},10000)}else lv.removeAttribute('data-wait');$('#tabs').hidden=true;$('#who').hidden=true;$('#sbBtn').hidden=true;document.body.classList.remove('nav-on');sbInit();return}
   $('#v-login').removeAttribute('data-wait');
   if(t!=='library'&&!tabsFor().some(function(x){return x[0]===t})){t=tabsFor()[0][0];TAB=t} // a tab this role does not have
-  $('#tabs').hidden=tabsFor().length<2;document.body.classList.toggle('nav-on',!$('#tabs').hidden);$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b>'+(U.adm?'':'<span class="rl"> · '+U.role+'</span>');
+  $('#tabs').hidden=tabsFor().length<2;document.body.classList.toggle('nav-on',!$('#tabs').hidden);$('#sbBtn').hidden=$('#tabs').hidden;sbSet(SB.open); // keeps the open / closed state$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b>'+(U.adm?'':'<span class="rl"> · '+U.role+'</span>');
   $('#tabs').innerHTML=tabsFor().map(function(x){return '<button role="tab" data-act="tab" data-tab="'+x[0]+'" aria-selected="'+(x[0]===t)+'">'+x[1]+'</button>'}).join('');
   var id={library:'lib',cards:'cards',errors:'errors',ranks:'ranks',wheel:'wheel',bag:'bag',set:'set',prize:'prize',xps:'xps',dash:'dash',asg:'asg',mark:'mark',roster:'roster',create:'create',admin:'admin'}[t];$('#v-'+id).hidden=false;updMarq();
   if(t==='admin')renderAdmin();
@@ -2930,9 +2973,11 @@ document.addEventListener('click',function(e){
   if(FXP&&!e.target.closest('#fxPop')&&!e.target.closest('[data-why]'))fxPopClose();
   var t=e.target.closest('[data-act]');if(!t)return;var a=t.dataset.act,au=$('#aud');
   if(t.tagName==='BUTTON'&&t.closest('summary'))e.preventDefault(); // a button in a <details> header must not open/close it
+  if(a==='sb-toggle'){sbSet(!SB.open,true,true);return}
+  if(a==='sb-close'){sbSet(false,true);return}
   if((a==='tab'||a==='nav'||a==='next'||a==='logout'||a==='lx'||a==='daily')&&recUnsaved()&&!confirm(REC_LEAVE))return;
   if(extAct(a,t))return;
-  if(a==='tab'){NAV.daily=null;DY=null;if(CV&&CV.where==='daily')CV=null;return showTab(t.dataset.tab)}
+  if(a==='tab'){if(SB.open&&!sbWide())sbSet(false,!!t.closest('#sideNav'));NAV.daily=null;DY=null;if(CV&&CV.where==='daily')CV=null;return showTab(t.dataset.tab)}
   if(a==='nav'){XED=null;var nb=t.dataset.book||null,nt=t.dataset.test||null,ns=t.dataset.skill||null,ne=t.dataset.ex||null;LIBX={book:nb,test:nt,skill:ns};NAV={book:ne?nb:null,test:ne?nt:null,skill:ne?ns:null,ex:ne};PANE='q';return showTab('library')}
   if(a==='next'){NAV.ex=t.dataset.ex;PANE='q';renderLib();window.scrollTo&&window.scrollTo(0,0);return}
   if(a==='pane'){PANE=t.dataset.pane;var p=$('#player');if(p)p.setAttribute('data-pane',PANE);$$('.ptabs button').forEach(function(b){b.setAttribute('aria-selected',b.dataset.pane===PANE)});return}
@@ -4838,6 +4883,7 @@ renderCpPrompt();
 document.addEventListener('input',function(e){var t=e.target;if(t&&t.id==='pvW'){var c=$('#pvWc'),d=CP.last&&CP.last.data;if(c&&d)c.innerHTML='<span class="mono">'+wordCount(t.value)+'</span> words'+(wordCount(t.value)<d.minWords?' <span class="low">· minimum '+d.minWords+'</span>':'')}});
 var th=lsGet('md-theme');if(th==='dark'||th==='light')applyTheme(th);else setThemeLbl(curDark());
 rebuildCustom();
+sbInit(); // before the first showTab: closed on phones / tablets, the saved choice on laptops
 if(!DEMO){var dd=document.querySelector('.demo-ids'),lf=$('#loginForm'),nf=document.querySelector('.note-foot');if(dd)dd.hidden=true;if(lf)lf.hidden=true;if(nf)nf.hidden=true}
 var prev=lsGet('md-email');
 // real site: wait for the login token (md-backend.js) so the role is right; the roster snapshot below signs in
