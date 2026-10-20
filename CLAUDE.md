@@ -86,9 +86,11 @@ Các khối JS được ngăn bằng comment `/* ---------- Tên ---------- */`.
 
 ### Tab theo vai trò (`tabsFor()`)
 
+Menu là **sidebar dọc bên trái** (`.shell` > `nav#tabs` + `main.mainc`, bật bằng `body.nav-on`; dưới 860px thành thanh cuộn ngang ở đầu trang).
 - Student: `library` (Home) · `cards` · `errors` (Error Notebook) · `ranks` · `wheel` · `bag` · `set`
-- Teacher: `library` · `dash` · `asg` · `mark` · `roster` · `create` · `prize` · `xps`
-- Admin (teacher có `U.adm`): như Teacher, thêm `admin` ở cuối (`#v-admin`, `renderAdmin()`, tab con `AD.sub`: `guide` · `users` · `teachers` · `sheet` · `aitest` · `me`)
+- Teacher: `asg` (nhãn **Classes**) · `mark` · `dash` · `library`. Chỉ thấy lớp của mình: `myCls()` = các lớp có học sinh mà `roster.teacher` (cột "Giáo viên" của Sheet) trùng tên giáo viên (`tNorm`: bỏ dấu, hoa thường, danh xưng Cô/Thầy/Ms/Mr). Không lớp nào khớp thì hiện tất cả + `myClsNote()`. Chỉ là lọc giao diện, rules không đổi.
+- Admin (`U.adm`): `dash` · `asg` (Classes) · `mark` · `library` · `create` · `prize` · `admin`. Tab con `AD.sub`: `guide` · `users` · `teachers` · `students` (hiện section `#v-roster` ngay dưới) · `sheet` · `xp` (`xpsHTML()`, trước là tab Settings) · `aitest` · `me`
+- `showTab(t)` tự chuyển về tab đầu của vai trò nếu vai trò không có tab `t`; `signIn` mở `tabsFor()[0]`.
 
 Mỗi tab ứng với một `<section id="v-...">`: `library` dùng `#v-lib`, các tab khác dùng `#v-<tên tab>`. `showTab(t)` ẩn hết các section, bật section của tab `t` rồi gọi `renderXxx()` tương ứng.
 
@@ -256,6 +258,16 @@ Các thay đổi đã có trong code. **Không đảo ngược** nếu không đ
    - `geminiOnce` nhận `prompt` là chuỗi **hoặc** mảng parts (audio). `API_VERSION` = `2026-10-20b`.
  Recent results: lưới 2 cột **hết chiều ngang** (bỏ `max-width`), ô `.rs` `aspect-ratio:4/3` (điện thoại 1/1, dưới 360px 1 cột, chiều cao tự nhiên), biểu đồ `.rs-bars` `flex:1` giãn theo ô; bỏ dòng thống kê dưới tên kỹ năng (tên căn giữa theo chiều dọc với icon 30px). CSS điện thoại của `.rs` nằm **sau** CSS gốc (trước đó bị ghi đè).
 17. **Gemini fallback, chỉ model miễn phí (10/2026)**: `AI_MODELS` = `gemini-3.8-flash` → `gemini-3.6-flash` → `gemini-3.5-flash-lite` (đều có Free Tier). `aiModels(env)`: `GEMINI_MODELS` (danh sách) thay danh sách mặc định; `GEMINI_MODEL` cũ được thử trước; model trả phí (`PAID_ONLY`: pro, argon, gemini-4+) luôn bị bỏ. `genConfig`: Gemini 3.x không đặt `temperature` (theo khuyến nghị của Google), `thinkingLevel` `low` (3.8) / `minimal` (3.6, 3.5-lite); 2.5 vẫn `thinkingBudget:0`. `askGemini` thử từng model: lỗi 400 về thinking/schema thì thử lại cùng model (bỏ thinking hoặc bỏ schema); 404/429/5xx/network/empty/parse/too_long hoặc 400 khác thì sang model sau (chờ 0,8 s nếu 429/5xx); 403, 400 'location'/'API key', timeout, blocked, relay thì dừng ngay. Không bắt đầu model mới sau 90 s; mọi model chung giới hạn `AI_TIMEOUT`. Trả `{out, model (model thật đã dùng), via, retried}`. Client: mã `http429`/`http5xx` → "The AI is very busy right now…".
+
+28. **Sidebar + phân quyền + Dashboard/Library mới + Daily mới (10/2026)**:
+   - Menu sidebar và tab theo vai trò: xem mục 3 "Tab theo vai trò". Giáo viên không còn Students/Create/Prizes/Settings (form "Reset a student password" của `md-backend.js` nằm trong `#v-roster`, nên giờ chỉ admin thấy, và admin dùng Admin › Users).
+   - **Dashboard** (`renderDash`, CSS `.dcard .dhero .dring .dch .dtbl .drk .dht .dg2/3/4`): Overview = vòng tròn điểm trung bình + biểu đồ đường 8 tuần (`dLine`), bảng Classes, Hardest exercises dạng xếp hạng (`dRank`), Homework (`.dhw .dseg`). Students = bảng (avatar chữ `dAv`, chấm tiến độ `dDots`, `dScore`) + thẻ chi tiết. Mistakes = 3 thẻ hardest skill/test/exercise + lưới nhiệt question type + thanh hardest exercises. Homework giữ như cũ. Lọc theo `clsOk`.
+   - **Library GV/admin**: lưới bìa sách `.covers > button.bk` (màu `hsl(số sách × 47)`, xám `.bk.e` = chưa có bài, `.bk.sel` đang mở), bấm vẫn mở `.lpanel` thẻ Test như cũ. Học sinh giữ lưới `.tile` cũ. "+ Add exercise" chỉ admin.
+   - **Create**: bỏ bước 1 (prompt) và 2 (dán JSON), nút Check format và các nút Example. Còn Audio, Auto-create 5 giai đoạn, Book/Test, Preview. JSON nằm trong `CP.raw` (`checkJSON(txt)`). Reading/Writing/Speaking sẽ có format sau (prompt vẫn ở `cpPresets`).
+   - **Admin › XP**: hàng `.xprow` (nhãn | ô số 96px | default), căn đều.
+   - **Daily practice**: mỗi ngày 2 bài xoay vòng từ 7 dạng `DKS` = `wotd` · `syn` · `ra` (Read aloud) · `dict` (Dictation) · `dcl` (Gap-fill dictation, 3 chỗ trống `dclGaps`) · `sp1` · `sp3` (Speaking Part 1/3, 1 câu từ `SP1_Q`/`SP3_Q`). Daily Review chỉ hiện khi có thẻ đến hạn (hoặc đã làm hôm nay); Error review hiện khi có lỗi đến hạn. Đã bỏ Sentence Paraphrasing và 5-Min Reading. Ghi âm Daily dùng recorder `opts.local` (chỉ nghe lại trên máy, không upload, không tính vào `recUnsaved`). XP mới `d_dcl, d_ra, d_sp1, d_sp3`.
+   - Home: bỏ dòng "N XP · M to …" dưới thanh cấp độ; chip tên HW to hơn (`.hw .sechead .chip`); trạng thái "To do" → **"Waiting"**.
+   - Flashcard: `setCard` ghi bản JSON (bỏ `undefined`) trong `try/catch`, id thẻ đổi `/` → `-`; `rvRate` luôn sang thẻ sau kể cả khi lưu lỗi; Backspace chấm được cả trước khi lật thẻ.
 
 ## 8. Giới hạn đã biết / chưa làm
 

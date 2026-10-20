@@ -181,5 +181,17 @@ Chuẩn bị: deploy bản mới (có `functions/`). Không cần sửa Firebase
 6. [ ] File ghi âm từ trình duyệt (webm/m4a) mà Transcribe báo lỗi http400 → thử lại với file mp3/wav.
 7. [ ] Gọi `/api/ai/transcribe` hoặc `/api/ai/lesson` không có đăng nhập giáo viên → bị từ chối (401).
 
+## Sidebar, phân quyền, Dashboard/Library mới, Daily mới
+1. [ ] Đăng nhập **admin** → menu dọc bên trái: Dashboard, Classes, Marking, Library, Create, Prizes, Admin; mở sẵn Dashboard. Admin → có tab con **Students** (khung CSV / danh sách lớp hiện bên dưới) và **XP** (các ô điểm thẳng hàng, Save chạy).
+2. [ ] Đăng nhập **giáo viên** có tên trùng cột "Giáo viên" trong Sheet (vd. Sheet ghi "Cô Nhi", admin đặt tên giáo viên "Nhi" hoặc "Cô Nhi") → menu: Classes, Marking, Dashboard, Library; chỉ thấy lớp, bài nộp và số liệu của lớp mình. Giáo viên có tên không khớp → thấy mọi lớp kèm dòng nhắc màu vàng.
+3. [ ] Học sinh → menu dọc giống các tab cũ, Library vẫn dạng ô cũ có %.
+4. [ ] Dashboard → Overview: vòng tròn %, biểu đồ đường theo tuần, bảng Classes, Hardest exercises đánh số, Homework. Students: bảng có avatar chữ, bấm một dòng → thẻ chi tiết. Mistakes: 3 thẻ Hardest skill/test/exercise, lưới ô màu theo dạng câu hỏi.
+5. [ ] Library (GV/admin): các bìa sách màu, sách chưa có bài màu xám; bấm bìa → hiện các Test như trước.
+6. [ ] Create: chỉ còn Audio, Auto-create, Book/Test và Preview; Generate → preview → Add vẫn chạy (cả gắn audio).
+7. [ ] Home học sinh: Daily practice có đúng 2 bài + "Daily Review" (khi có thẻ đến hạn) + "Error review" (khi có lỗi đến hạn). Hôm sau 2 bài đổi. Thử Read aloud / Speaking Part 1 / Part 3: Record → Stop → nghe lại → Finish (+XP); không có "Use this recording". Dictation và Gap-fill dictation: Play → gõ → Check → Finish.
+8. [ ] Home: không còn dòng "… XP · … to Explorer"; chip "HW SUN 25.10" to hơn; bài chưa làm ghi "Waiting".
+9. [ ] Flashcards (cả tab Flashcards và Home → Daily Review): bấm Got it / Forgot, Backspace 1 lần (Got it), 2 lần nhanh (Forgot) → chuyển thẻ ngay, kể cả khi mạng chập chờn.
+10. [ ] Điện thoại 390px: menu thành thanh cuộn ngang, Dashboard 1 cột, bìa sách 3 cột, ô XP không tràn. Dark mode đọc rõ.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

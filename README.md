@@ -3,7 +3,7 @@
 Đăng nhập KHÔNG dùng Google, KHÔNG gửi mã:
 - Học sinh: lần đầu chọn lớp → chọn tên → nhập email + tự đặt mật khẩu. Các lần sau chỉ email + mật khẩu. Thiết bị được nhớ, không phải đăng nhập lại (trừ khi bấm Sign out hoặc xóa dữ liệu trình duyệt).
 - Giáo viên: lần đầu tạo mật khẩu bằng "setup key" (chỉ bạn biết), sau đó đăng nhập bằng email + mật khẩu.
-- Học sinh quên mật khẩu: nhắn giáo viên → giáo viên vào tab **Students** → "Reset a student password" → đặt mật khẩu mới rồi báo lại cho học sinh. Admin làm việc này ở tab **Admin → Users**.
+- Học sinh quên mật khẩu: nhắn giáo viên/admin → admin vào **Admin → Users** → Change password → báo mật khẩu mới cho học sinh. (Giáo viên không còn tab Students.)
 - Phần xác thực nằm trong thư mục `functions/` (Cloudflare Pages Functions), tự chạy khi deploy.
 
 ## 1. GitHub
