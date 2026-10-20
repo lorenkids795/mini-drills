@@ -4700,7 +4700,15 @@ var RM=null,RMD=null;
 var rmClean=function(t){return String(t||'').replace(/\{\{|\}\}/g,'')};
 // sentences without a regex lookbehind (old Safari cannot parse it)
 function rmSents(t){return splitSents(rmClean(t).trim()).map(function(s){return s.trim()}).filter(Boolean)}
-function rmHas(text,w){return rmClean(text).toLowerCase().indexOf(String(w||'').toLowerCase())>=0}
+// compare text without case, curly quotes, dash kinds or extra spaces (the AI often changes ’ to ' or – to -)
+function rmNorm(s){return rmClean(s).toLowerCase().replace(/[‘’ʼ]/g,"'").replace(/[“”]/g,'"').replace(/[‐-―]/g,'-').replace(/\s+/g,' ').trim()}
+function rmHas(text,w){var n=rmNorm(w);return !!n&&rmNorm(text).indexOf(n)>=0}
+// paragraph that holds w: the given one, else the nearest one that has it (-1 = nowhere in the passage)
+function rmFindP(P,w,p){
+  if(!(p>=0&&p<P.length&&p%1===0))p=0;
+  for(var d=0;d<P.length;d++){if(p-d>=0&&rmHas(P[p-d],w))return p-d;if(d&&p+d<P.length&&rmHas(P[p+d],w))return p+d}
+  return -1;
+}
 function rmSentOf(p,w,D){return rmSents(D.paras[p]).filter(function(s){return rmHas(s,w)})[0]||rmClean(D.paras[p])}
 function rmIds(D,st){
   var r=[],i;
@@ -4724,32 +4732,43 @@ function parseReading(o){
   if(!isArr(R)||!R.length)bad('"prons" must be a non-empty list.');
   else{
     if(marks.length!==R.length)bad('The paragraphs have '+marks.length+' words in {{…}} but "prons" has '+R.length+' items.');
+    R=R.map(function(x){return x&&typeof x==='object'?Object.assign({},x):x});
     R.forEach(function(x,i){var n='Pronoun '+(i+1)+': ';
       if(!x||!str(x.w))return bad(n+'missing "w".');
-      var mk=marks[i];if(mk&&(mk.w!==x.w||mk.p!==+x.p))bad(n+'"'+x.w+'" (paragraph '+((+x.p||0)+1)+') does not match {{'+mk.w+'}} in paragraph '+(mk.p+1)+'. Keep the same order.');
+      var mk=marks[i];
+      if(mk&&rmNorm(mk.w)===rmNorm(x.w)){x.p=mk.p;x.w=mk.w} // the {{…}} mark is the truth: paragraph number / case corrected
+      else if(mk)bad(n+'"'+x.w+'" does not match {{'+mk.w+'}} in paragraph '+(mk.p+1)+'. Keep the same order.');
       if(!isArr(x.opts)||x.opts.length<2||!x.opts.every(str))bad(n+'"opts" needs at least 2 options.');
       else if(!(x.a>=0&&x.a<x.opts.length&&x.a%1===0))bad(n+'"a" is not a valid option number.');
     });
   }
   if(!isArr(o.sums)||!o.sums.every(str)||o.sums.length!==P.length+1)bad('"sums" must have '+(P.length+1)+' summaries: one per paragraph, in order, plus 1 extra.');
   if(!isArr(o.why)||o.why.length!==P.length||!o.why.every(str))bad('"why" must have one explanation per paragraph ('+P.length+').');
-  var W=o.words;
-  if(!isArr(W)||W.length<3||W.length>6)bad('"words" must have 3 to 6 words.');
-  else W.forEach(function(x,i){var n='Word '+(i+1)+': ';
-    if(!x||!str(x.w))return bad(n+'missing "w".');
-    if(!(x.p>=0&&x.p<P.length&&x.p%1===0))return bad(n+'"p" must be a paragraph number from 0 to '+(P.length-1)+'.');
-    if(!rmHas(P[x.p],x.w))bad(n+'"'+x.w+'" is not in paragraph '+(x.p+1)+' word for word.');
-    if(!isArr(x.opts)||x.opts.length<2||!x.opts.every(str))bad(n+'"opts" needs 4 meanings.');
-    else if(!(x.a>=0&&x.a<x.opts.length&&x.a%1===0))bad(n+'"a" is not a valid option number.');
-    if(!str(x.en))bad(n+'missing "en" (English meaning).');
-  });
-  var Q=o.pairs;
-  if(!isArr(Q)||Q.length<2||Q.length>6)bad('"pairs" must have 2 to 6 phrases.');
-  else Q.forEach(function(x,i){var n='Phrase '+(i+1)+': ';
-    if(!x||!str(x.ph)||!str(x.par))return bad(n+'needs "ph" and "par".');
-    if(!(x.p>=0&&x.p<P.length&&x.p%1===0))return bad(n+'"p" must be a paragraph number from 0 to '+(P.length-1)+'.');
-    if(!rmHas(P[x.p],x.ph))bad(n+'"'+x.ph+'" is not in paragraph '+(x.p+1)+' word for word.');
-  });
+  // Words and phrases: the AI often gives the wrong paragraph number (counts from 1, or the word is in the next paragraph).
+  // The right paragraph is looked up (rmFindP, nearest first); an item that is nowhere in the passage is dropped,
+  // and the lesson is refused only when too few items are left.
+  var W=o.words,dropW=[];
+  if(!isArr(W)||W.length<3)bad('"words" must have 3 to 6 words.');
+  else{
+    W=W.map(function(x){return x&&typeof x==='object'?Object.assign({},x):x}).filter(function(x,i){var n='Word '+(i+1)+': ';
+      if(!x||!str(x.w)){bad(n+'missing "w".');return false}
+      var p=rmFindP(P,x.w,+x.p);if(p<0){dropW.push(x.w);return false}x.p=p;
+      if(!isArr(x.opts)||x.opts.length<2||!x.opts.every(str))bad(n+'"opts" needs 4 meanings.');
+      else if(!(x.a>=0&&x.a<x.opts.length&&x.a%1===0))bad(n+'"a" is not a valid option number.');
+      if(!str(x.en))bad(n+'missing "en" (English meaning).');
+      return true;
+    }).slice(0,6);
+    if(W.length<3)bad('Guess the meaning needs at least 3 words from the passage'+(dropW.length?' ("'+dropW.join('", "')+'" '+(dropW.length>1?'are':'is')+' not in the passage)':'')+'. Press Try again.');
+  }
+  var Q=o.pairs,dropQ=[];
+  if(!isArr(Q)||Q.length<2)bad('"pairs" must have 2 to 6 phrases.');
+  else{
+    Q=Q.map(function(x){return x&&typeof x==='object'?Object.assign({},x):x}).filter(function(x,i){var n='Phrase '+(i+1)+': ';
+      if(!x||!str(x.ph)||!str(x.par)){bad(n+'needs "ph" and "par".');return false}
+      var p=rmFindP(P,x.ph,+x.p);if(p<0){dropQ.push(x.ph);return false}x.p=p;return true;
+    }).slice(0,6);
+    if(Q.length<2)bad('The paraphrase stage needs at least 2 phrases copied from the passage'+(dropQ.length?' ("'+dropQ.join('", "')+'" '+(dropQ.length>1?'are':'is')+' not in the passage word for word)':'')+'. Press Try again.');
+  }
   if(!str(o.pdist))bad('Missing "pdist" (the extra paraphrase).');
   // Summary cloze. New AI format {text, answers[], extra}; old / hand-made format {text, bank[] = answers + 1 extra}.
   // Small AI counting slips are repaired instead of rejecting the lesson: blanks renumbered {{1}}…{{n}} in order,

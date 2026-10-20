@@ -797,7 +797,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-10-21b';
+const API_VERSION = '2026-10-21c';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -1279,15 +1279,16 @@ const RPROMPT =
   'Rules:\n' +
   '- NEVER rewrite the passage. "paras" = the passage paragraphs word for word, in order (paragraphs are separated by a blank line). ' +
   'The only change: put {{ }} around 4 to 6 pronouns or reference phrases (this policy, it, their, they, this trend…) that the reader must understand to follow the argument. Do not mark the same words twice in one paragraph.\n' +
+  '- Every "p" counts paragraphs from 0 (the first paragraph is 0, the second is 1). Every "w" and "ph" must be copied from THAT paragraph word for word, in the same word form (obligations is not obligation).\n' +
   '- "sums": one short summary sentence per paragraph, in paragraph order, using DIFFERENT words from the passage (a paraphrase), then ONE extra plausible but wrong summary at the end. So sums has (number of paragraphs + 1) items.\n' +
   '- "why": one short sentence per paragraph explaining which words show its main idea.\n' +
   '- "prons": one item for each {{ }} mark, in the order they appear: {"w": the exact marked words, "p": paragraph index from 0, "opts": 4 options, "a": index of the right option, "why": one short explanation}. ' +
   'The right answer and the 3 distractors must all be phrases taken from the passage.\n' +
   '- "words" (Guess the meaning): 3 to 6 important words a student MUST understand to follow the main ideas: academic or common words at level B1-C1, preferably in topic sentences or sentences with a main idea. ' +
   'NEVER choose technical terms, proper names, numbers, very easy words (A1-A2) or words that appear only in a minor example. ' +
-  'Each: {"w": the word exactly as written in the passage, "p": its paragraph index, "pos": "n" | "v" | "adj" | "adv", "opts": 4 short meanings in easy English (distractors that fit the sentence), "a": index of the right meaning, ' +
+  'Each: {"w": the word exactly as written in the passage, "p": the index (from 0) of the paragraph where this exact word appears, "pos": "n" | "v" | "adj" | "adv", "opts": 4 short meanings in easy English (distractors that fit the sentence), "a": index of the right meaning, ' +
   '"en": English definition, "vi": Vietnamese meaning, "fam": word family, e.g. "congest (v), congested (adj), congestion (n)", "col": 2 common collocations, "ex": a new example sentence}.\n' +
-  '- "pairs": 4 to 6 key phrases (2 to 6 words) copied word for word from the passage, each {"ph": the phrase, "p": paragraph index, "par": a simpler paraphrase}. "pdist": one extra paraphrase that sounds plausible but matches none of them.\n' +
+  '- "pairs": 4 to 6 key phrases (2 to 6 words) copied word for word from the passage, each {"ph": the phrase, "p": the index (from 0) of the paragraph where this exact phrase appears, "par": a simpler paraphrase}. "pdist": one extra paraphrase that sounds plausible but matches none of them.\n' +
   '- "cloze": {"text": a summary of the whole passage in 3 to 5 sentences with blanks written {{1}}, {{2}}, … in order (5 to 8 blanks on key words; reuse the "words" when you can), ' +
   '"answers": exactly ONE word for EACH blank, in blank order (answers has as many items as there are blanks), ' +
   '"extra": ONE extra wrong word of the same word class that is not one of the answers}. Before you answer, count the {{n}} blanks and the answers: they must be equal.\n' +
