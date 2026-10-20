@@ -357,6 +357,7 @@ pre.prompt{margin:0 0 10px;background:var(--surface);border:1px solid var(--line
 .pvbar{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--surface);font-size:.78rem;color:var(--muted)}
 .pvdot{width:8px;height:8px;border-radius:50%;background:var(--good)}
 .pvpane{padding:14px 16px}
+.pvrm>.pane.rm{border:0;padding:0;max-width:none;background:none;border-radius:0}
 .pvaud .pvtrack{flex:1;height:6px;border-radius:9px;background:var(--line);min-width:60px}
 .pvaud .abtn[disabled]{opacity:.55;cursor:not-allowed}
 button.lsstep{background:none;font:inherit;font-size:.8rem;cursor:pointer}button.lsstep.cur{background:var(--ink)}
@@ -2814,6 +2815,7 @@ function renderPrev(){
   if(!r)box.innerHTML='<p>The lesson appears here after you press Generate.</p>';
   else if(r.errs.length)box.innerHTML='<div class="cperr" role="alert"><b>Invalid format: fix '+r.errs.length+' issue'+(r.errs.length>1?'s':'')+' before adding.</b><ul class="errs">'+r.errs.map(function(e){return '<li>'+esc(e)+'</li>'}).join('')+'</ul></div>';
   else box.innerHTML=CP.view==='stu'?'<p class="okmsg">Format OK. This is how students will see it.</p>'+pvHTML(r.data)+addBarHTML():previewHTML(r.data);
+  if(r&&!r.errs.length&&CP.view==='stu'&&r.data.kind==='reading-ms')rmPreview(r.data);
   var fr=$('#createPrev .pvframe');if(fr)fr.classList.add('cpanim');
   if(EDIT&&r&&!r.errs.length){var b=$('#createPrev [data-act="add-ex"]');if(b){b.textContent='Save changes';b.insertAdjacentHTML('afterend',' <button class="btn" data-act="ex-cancel" type="button">Cancel edit</button>')}else $('#createPrev').insertAdjacentHTML('beforeend','<div class="actions"><button class="btn" data-act="ex-cancel" type="button">Cancel edit</button></div>')}
 }
@@ -3078,6 +3080,8 @@ function pvStage(d,st){
   return h;
 }
 function pvHTML(d){
+  // reading lesson: the real student screen (renderRLesson) is drawn into #pvRm by rmPreview after this HTML is in place
+  if(d.kind==='reading-ms')return '<div class="pvframe"><div class="pvbar"><span class="pvdot" aria-hidden="true"></span>Student view · preview only, nothing is saved</div><div class="pvpane pvrm" id="pvRm"></div></div>';
   var kind=d.kind||'list',h='',st=CP.pvSt;
   var head='<div class="phead"><span class="chip">'+esc(SNAME[d.skill]||d.skill)+'</span><h2>'+esc(d.title)+'</h2>'+(d.hint?'<p>'+esc(d.hint)+'</p>':'')+'</div>';
   if(kind==='writing'){
@@ -3085,8 +3089,6 @@ function pvHTML(d){
   }else if(kind==='speaking'){
     h='<h3 style="font-size:1rem">Part 1</h3><ol class="sp-q">'+d.part1.map(function(q){return '<li>'+esc(q)+'</li>'}).join('')+'</ol><h3 style="font-size:1rem">Part 2</h3><div class="cue"><b>'+esc(d.cue.title)+'</b><div style="margin-top:6px">You should say:</div><ul>'+d.cue.points.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>'+
     '<div class="arow"><button class="btn sm" type="button" disabled>Start 1:00 preparation</button><span class="timer">1:00</span></div><label class="lbl" for="pvN">Notes (for your preparation only)</label><textarea class="wbox" id="pvN" style="min-height:90px"></textarea><label class="lbl" for="pvL">Vocaroo link</label><input class="linkin" id="pvL" placeholder="https://vocaroo.com/..." autocomplete="off"><p class="err" id="pvErr"></p><div class="actions"><button class="btn pri" data-act="pv-submit" type="button">Submit</button></div>';
-  }else if(kind==='reading-ms'){
-    h='<p class="muted">The student view of a reading lesson opens from the Library after you add it (Summary View lists all 4 stages).</p>';
   }else if(kind==='lesson'){
     var bar='<div class="lsbar" role="tablist" aria-label="Lesson stages">'+STG.map(function(n,i){return '<button type="button" role="tab" class="lsstep'+(i===st?' cur':'')+'" aria-selected="'+(i===st)+'" data-act="pv-stage" data-i="'+i+'">'+(i+1)+'. '+n+'</button>'}).join('')+'</div>';
     h=bar+'<div id="lsBody">'+pvStage(d,st)+'</div><div class="actions"><button class="btn pri" data-act="pv-check" type="button">Check answers</button>'+(st<4?'<button class="btn" data-act="pv-stage" data-i="'+(st+1)+'" type="button">Next: '+STG[st+1]+' →</button>':'')+'</div>';
@@ -4875,9 +4877,12 @@ var EXAMPLE_R=JSON.stringify({title:'Cycling in the City',
   bank:['congestion','investment','protected','steep','electric','mainstream','regional']},
  wprompt:'Should your city spend more on cycling lanes?'},null,2);
 /* ---- state, grading ---- */
-function renderRLesson(ex,head,ban){
+// root = id of the element to draw in (Create › Student View Preview); default #libBody
+function renderRLesson(ex,head,ban,root){
   var D=ex.rl,ord=function(n){return lsShuf(n)};
-  RM={ex:ex,D:D,st:0,chk:[0,0,0,0],fail:-1,o:{},seq:[],pr:{},g:{},c:{},w:{},res:{},wtext:'',fin:false,sel:null,head:head,ban:ban,
+  // only one reading screen at a time (the Library one and the preview use the same element ids)
+  var other=root?$('#libBody .pane.rm'):$('#pvRm .pane.rm');if(other&&other.parentNode)other.parentNode.innerHTML='';
+  RM={ex:ex,D:D,root:root||null,st:0,chk:[0,0,0,0],fail:-1,o:{},seq:[],pr:{},g:{},c:{},w:{},res:{},wtext:'',fin:false,sel:null,head:head,ban:ban,
     sumOrd:ord(D.sums.length),firstOrd:ord(D.paras.length),bankOrd:ord(D.cloze.bank.length),
     gOrd:D.words.map(function(x){return ord(x.opts.length)}),cOrd:D.pairs.map(function(){return ord(D.pairs.length+1)}),pOrd:D.prons.map(function(x){return ord(x.opts.length)}),
     t:0,run:false,tdone:0,student:!!(U&&U.role==='student'),justDragged:0};
@@ -4996,7 +5001,7 @@ function rmFinal(){
   var wk=Object.keys(wrong);
   return '<div class="result"><div class="score"><b>'+sc+'/'+tot+'</b><span class="muted">'+Math.round(sc/tot*100)+'%</span></div><p class="muted" style="margin:6px 0">'+esc(per.join(' · '))+'</p>'+
     (wk.length?'<div class="tags"><span>Review:</span>'+wk.map(function(k){return '<span class="tag">'+esc(k)+(wrong[k]>1?' ×'+wrong[k]:'')+'</span>'}).join('')+'</div>':'<p style="margin:0">No mistakes. Nice work.</p>')+
-    '<span class="saved" id="saveMsg"></span>'+nextBtns()+'</div>';
+    '<span class="saved" id="saveMsg"></span>'+(RM.root?'<div class="actions"><button class="btn" data-act="rm-restart" type="button">Start the preview again</button></div>':nextBtns())+'</div>';
 }
 function rmDraw(){
   var st=RM.st,chk=RM.chk[st],D=RM.D;
@@ -5008,8 +5013,16 @@ function rmDraw(){
   else if(!chk)act='<div class="actions"><button class="btn pri" data-act="rm-check" type="button">Check answers</button></div><p class="err" id="rmMsg" aria-live="polite"></p>';
   else if(st<3)act='<div class="actions">'+chip+'<button class="btn pri" data-act="rm-next" type="button">Next: '+RST[st+1]+' →</button></div>';
   else{var s=rmOutOk();act='<div class="actions">'+chip+'<button class="btn pri" id="rmFin" data-act="rm-finish" type="button"'+(s.ok?'':' disabled')+'>Finish lesson</button></div><p class="muted" id="rmWhy" aria-live="polite">'+esc(s.why)+'</p>'}
-  $('#libBody').innerHTML='<div class="pane single rm">'+RM.head+RM.ban+bar+demo+'<div id="rmBody">'+[rmStage1,rmStage2,rmStage3,rmStage4][st]()+'</div>'+act+'<div id="result">'+(RM.fin?rmFinal():'')+'</div></div>';
+  var host=RM.root?document.getElementById(RM.root):$('#libBody');if(!host)return;
+  host.innerHTML='<div class="pane single rm">'+RM.head+RM.ban+bar+demo+'<div id="rmBody">'+[rmStage1,rmStage2,rmStage3,rmStage4][st]()+'</div>'+act+'<div id="result">'+(RM.fin?rmFinal():'')+'</div></div>';
 }
+// Create › Student View Preview: the same student screen, drawn in #pvRm, nothing is saved (rmFinish saves for students only)
+function rmPreview(d){
+  renderRLesson({id:'prev',skill:'reading',title:d.title,kind:'reading-ms',rl:d.rlesson,qs:d.qs},'<div class="phead"><span class="chip">Reading</span><h2>'+esc(d.title)+'</h2><p>'+esc(RM_HINT)+'</p></div>','','pvRm');
+  RM.pv=d;
+}
+// back to the top of the stage (page top, or the top of the preview box)
+function rmTop(){var el=RM&&RM.root&&document.getElementById(RM.root);if(el){if(el.scrollIntoView)el.scrollIntoView({block:'start'})}else if(window.scrollTo)window.scrollTo(0,0)}
 function rmKeep(fn){var y=window.pageYOffset||0;fn();window.scrollTo(0,y)}
 // radio answers of Stage 3 are read when needed (choosing does not redraw the page)
 function rmCollect(){
@@ -5115,8 +5128,9 @@ function rmAct(a,t){
   if(a==='rm-check'){rmCheck();return true}
   if(a==='rm-retry'){rmIds(D,RM.st).forEach(function(id){delete RM.res[id]});
     if(RM.st===0){RM.o={};RM.seq=[]}else if(RM.st===1)RM.pr={};else if(RM.st===2){RM.g={};RM.c={}}else{RM.w={};RM.sel=null}
-    RM.fail=-1;rmDraw();window.scrollTo&&window.scrollTo(0,0);return true}
-  if(a==='rm-next'){RM.st++;rmDraw();window.scrollTo&&window.scrollTo(0,0);return true}
+    RM.fail=-1;rmDraw();rmTop();return true}
+  if(a==='rm-next'){RM.st++;rmDraw();rmTop();return true}
+  if(a==='rm-restart'){if(RM.pv)rmPreview(RM.pv);rmTop();return true}
   if(a==='rm-finish'){rmFinish();return true}
   if(a==='rm-demo'){rmDemo(t.dataset.m);return true}
   if(a==='rm-saveall'){var n2=0;D.words.forEach(function(x){if(saveCard({w:x.w,ipa:'',pos:x.pos||x.fam||'',en:x.en,vi:x.vi||'',ex:x.ex||rmSentOf(x.p,x.w,D),syn:[],ant:[]}))n2++});if(n2)toast(n2+' word'+(n2>1?'s':'')+' saved to Flashcards.');return true}
