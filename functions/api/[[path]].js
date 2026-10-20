@@ -797,7 +797,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-10-21a';
+const API_VERSION = '2026-10-21b';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -1289,12 +1289,13 @@ const RPROMPT =
   '"en": English definition, "vi": Vietnamese meaning, "fam": word family, e.g. "congest (v), congested (adj), congestion (n)", "col": 2 common collocations, "ex": a new example sentence}.\n' +
   '- "pairs": 4 to 6 key phrases (2 to 6 words) copied word for word from the passage, each {"ph": the phrase, "p": paragraph index, "par": a simpler paraphrase}. "pdist": one extra paraphrase that sounds plausible but matches none of them.\n' +
   '- "cloze": {"text": a summary of the whole passage in 3 to 5 sentences with blanks written {{1}}, {{2}}, … in order (5 to 8 blanks on key words; reuse the "words" when you can), ' +
-  '"bank": the right word for each blank in blank order, then ONE extra word of the same word class}. So bank has (number of blanks + 1) items.\n' +
+  '"answers": exactly ONE word for EACH blank, in blank order (answers has as many items as there are blanks), ' +
+  '"extra": ONE extra wrong word of the same word class that is not one of the answers}. Before you answer, count the {{n}} blanks and the answers: they must be equal.\n' +
   '- "wprompt": ONE open question about the topic that a student can answer in 1 or 2 sentences, e.g. "Should your city spend more on cycling lanes?"\n' +
   '- "title": a short title (keep the given title if there is one).\n\n' +
   'Shape: {"title":"…","paras":["…"],"sums":["…"],"why":["…"],"prons":[{"w":"…","p":0,"opts":["…","…","…","…"],"a":0,"why":"…"}],' +
   '"words":[{"w":"…","p":0,"pos":"n","opts":["…","…","…","…"],"a":0,"en":"…","vi":"…","fam":"…","col":"…","ex":"…"}],' +
-  '"pairs":[{"ph":"…","p":0,"par":"…"}],"pdist":"…","cloze":{"text":"… {{1}} …","bank":["…"]},"wprompt":"…"}\n';
+  '"pairs":[{"ph":"…","p":0,"par":"…"}],"pdist":"…","cloze":{"text":"… {{1}} … {{2}} …","answers":["…","…"],"extra":"…"},"wprompt":"…"}\n';
 const R_STR = { type: 'STRING' }, R_INT = { type: 'INTEGER' }, R_LIST = { type: 'ARRAY', items: { type: 'STRING' } };
 const RSCHEMA = {
   type: 'OBJECT',
@@ -1304,7 +1305,7 @@ const RSCHEMA = {
     words: { type: 'ARRAY', items: { type: 'OBJECT', properties: { w: R_STR, p: R_INT, pos: R_STR, opts: R_LIST, a: R_INT, en: R_STR, vi: R_STR, fam: R_STR, col: R_STR, ex: R_STR }, required: ['w', 'p', 'pos', 'opts', 'a', 'en', 'vi', 'fam', 'col', 'ex'] } },
     pairs: { type: 'ARRAY', items: { type: 'OBJECT', properties: { ph: R_STR, p: R_INT, par: R_STR }, required: ['ph', 'p', 'par'] } },
     pdist: R_STR,
-    cloze: { type: 'OBJECT', properties: { text: R_STR, bank: R_LIST }, required: ['text', 'bank'] },
+    cloze: { type: 'OBJECT', properties: { text: R_STR, answers: R_LIST, extra: R_STR }, required: ['text', 'answers', 'extra'] },
     wprompt: R_STR,
   },
   required: ['title', 'paras', 'sums', 'why', 'prons', 'words', 'pairs', 'pdist', 'cloze', 'wprompt'],

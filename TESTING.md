@@ -205,7 +205,7 @@ Chuẩn bị: deploy bản mới (có `functions/`). Không cần sửa Firebase
 ## GĐ 8 — Create theo kỹ năng + AI tạo bài Reading (Phần B)
 Chuẩn bị: deploy bản mới (có `functions/`); Admin → Users ghi "server 2026-10-21a".
 5. [ ] Create có 4 tab Listening / Reading / Writing / Speaking. Listening vẫn có Audio + Auto-create như trước; Writing và Speaking ghi "coming soon". Chuyển qua lại giữa các tab không mất bài đã Generate của tab kia; tải lại trang thì vẫn mở đúng tab.
-6. [ ] Tab Reading → dán một bài đọc (đoạn cách nhau bằng dòng trống) → thấy số từ, số đoạn (dán 2 đoạn hoặc >900 từ thì có cảnh báo) → Generate → "Generating… (about 20–40 s)" → preview 4 stage → chọn Book/Test → Add → học sinh làm được. Từ ở Guess the meaning không phải thuật ngữ hay tên riêng.
+6. [ ] Tab Reading → dán một bài đọc (đoạn cách nhau bằng dòng trống) → thấy số từ, số đoạn (dán 2 đoạn, >12 đoạn hoặc >1200 từ thì có cảnh báo) → Generate → "Generating… (about 20–40 s)" → preview 4 stage → chọn Book/Test → Add → học sinh làm được. Từ ở Guess the meaning không phải thuật ngữ hay tên riêng.
 7. [ ] Nếu AI sửa câu chữ bài đọc hoặc JSON sai → preview báo lỗi, nút đổi thành "Try again".
 8. [ ] Advanced → Copy prompt → dán vào ChatGPT/Claude kèm bài đọc → dán JSON trả về → Check JSON → preview → Add vẫn chạy.
 9. [ ] Phiên giáo viên quá 12 giờ → Generate hỏi lại mật khẩu, nhập đúng thì chạy tiếp.

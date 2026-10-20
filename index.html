@@ -2921,8 +2921,8 @@ var RD=(function(){var o={};try{o=JSON.parse(lsGet('md-rd')||'{}')||{}}catch(e){
 function rdSave(){try{lsSet('md-rd',JSON.stringify({title:RD.title||'',tx:RD.tx||'',json:RD.json||''}))}catch(e){}}
 function rdCounts(t){return {w:wordCount(t),p:String(t||'').split(/\n\s*\n/).filter(function(x){return x.trim()}).length}}
 function rdCountHTML(){
-  var c=rdCounts(RD.tx),w=[];if(c.p&&c.p<3)w.push('fewer than 3 paragraphs');if(c.p>7)w.push('more than 7 paragraphs');if(c.w>900)w.push('more than 900 words');
-  return '<span><span class="mono">'+c.w+'</span> words · <span class="mono">'+c.p+'</span> paragraph'+(c.p===1?'':'s')+'</span>'+(w.length?'<span class="low">'+esc(w.join(', '))+': best with 3–7 paragraphs and up to 900 words</span>':'');
+  var c=rdCounts(RD.tx),w=[];if(c.p&&c.p<3)w.push('fewer than 3 paragraphs');if(c.p>12)w.push('more than 12 paragraphs');if(c.w>1200)w.push('more than 1200 words');
+  return '<span><span class="mono">'+c.w+'</span> words · <span class="mono">'+c.p+'</span> paragraph'+(c.p===1?'':'s')+'</span>'+(w.length?'<span class="low">'+esc(w.join(', '))+': best with 3–12 paragraphs and up to 1200 words</span>':'');
 }
 function renderRdBox(){
   var b=$('#rdBox');if(!b)return;b.hidden=CP.skill!=='reading';if(b.hidden)return;
@@ -4751,12 +4751,23 @@ function parseReading(o){
     if(!rmHas(P[x.p],x.ph))bad(n+'"'+x.ph+'" is not in paragraph '+(x.p+1)+' word for word.');
   });
   if(!str(o.pdist))bad('Missing "pdist" (the extra paraphrase).');
-  var C=o.cloze||{},nb=[],cm,cre=/\{\{(\d+)\}\}/g;
+  // Summary cloze. New AI format {text, answers[], extra}; old / hand-made format {text, bank[] = answers + 1 extra}.
+  // Small AI counting slips are repaired instead of rejecting the lesson: blanks renumbered {{1}}…{{n}} in order,
+  // one answer too many = the extra word, extra missing = a Stage 3 word that is not an answer.
+  var C=Object.assign({},o.cloze||{}),nb=0,ans=null,extra='';
   if(!str(C.text))bad('"cloze.text" is missing.');
-  else{while((cm=cre.exec(C.text)))nb.push(+cm[1]);
-    if(!nb.length)bad('"cloze.text" needs blanks written {{1}}, {{2}}…');
-    else if(nb.some(function(x,i){return x!==i+1}))bad('The cloze blanks must be numbered {{1}}, {{2}}, {{3}}… in order.');
-    if(!isArr(C.bank)||!C.bank.every(str)||C.bank.length!==nb.length+1)bad('"cloze.bank" must have '+(nb.length+1)+' words: the '+nb.length+' answers in order, then 1 extra word.');
+  else{
+    C.text=String(C.text).replace(/\{\{\s*\d+\s*\}\}/g,function(){nb++;return '{{'+nb+'}}'});
+    if(!nb)bad('"cloze.text" needs blanks written {{1}}, {{2}}…');
+    ans=(isArr(C.answers)?C.answers:isArr(C.bank)?C.bank:[]).filter(str).map(function(x){return String(x).trim()});
+    extra=str(C.extra)?String(C.extra).trim():'';
+    if(!extra&&ans.length>nb)extra=ans[nb];
+    ans=ans.slice(0,nb);
+    var inAns=function(w){return ans.some(function(a){return a.toLowerCase()===String(w).toLowerCase()})};
+    if(!extra||inAns(extra)){extra='';(isArr(W)?W:[]).forEach(function(x){if(!extra&&x&&str(x.w)&&!inAns(x.w))extra=x.w})}
+    if(nb&&ans.length<nb)bad('The summary has '+nb+' blanks but only '+ans.length+' answer'+(ans.length===1?'':'s')+'. Press Try again.');
+    else if(nb&&!extra)bad('The summary word bank needs 1 extra word that is not an answer.');
+    else C.bank=ans.concat([extra]);
   }
   if(!str(o.wprompt))bad('Missing "wprompt" (the question for 4.2).');
   if(e.length)return {errs:e};
