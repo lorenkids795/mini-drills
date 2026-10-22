@@ -41,9 +41,52 @@ const PBKDF2_ITER = 100000; // Workers maximum
 const json = (data, status) =>
   new Response(JSON.stringify(data), {
     status: status || 200,
-    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' },
   });
 const fail = (msg, status) => json({ error: msg }, status || 400);
+
+/* ---------- Firebase ID token (header Authorization: Bearer <token>) ----------
+   The app is signed in with Firebase (custom token from /api/login), so every signed-in browser can send its ID token.
+   Checked here with Google's public keys (RS256, WebCrypto): audience / issuer = this Firebase project, not expired.
+   Returns { em, role, uid } from the claims, or null (no token, bad token, expired). */
+let FB_KEYS = null, FB_KEYS_AT = 0;
+async function firebaseKeys() {
+  if (FB_KEYS && Date.now() - FB_KEYS_AT < 3600000) return FB_KEYS;
+  const r = await fetch('https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com');
+  if (!r.ok) throw new Error('firebase keys ' + r.status);
+  const d = await r.json();
+  FB_KEYS = Array.isArray(d.keys) ? d.keys : [];
+  FB_KEYS_AT = Date.now();
+  return FB_KEYS;
+}
+async function idUser(env, request) {
+  const m = /^Bearer\s+([A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+)$/.exec(request.headers.get('Authorization') || '');
+  if (!m) return null;
+  const parts = m[1].split('.');
+  let head, pay;
+  try {
+    head = JSON.parse(new TextDecoder().decode(fromB64(parts[0])));
+    pay = JSON.parse(new TextDecoder().decode(fromB64(parts[1])));
+  } catch (e) { return null; }
+  const pid = env.FIREBASE_PROJECT_ID, now = Math.floor(Date.now() / 1000);
+  if (!head || head.alg !== 'RS256' || !head.kid || !pay || !pid) return null;
+  if (pay.aud !== pid || pay.iss !== 'https://securetoken.google.com/' + pid || !pay.sub) return null;
+  if (!(Number(pay.exp) > now - 30) || !(Number(pay.iat) < now + 300)) return null;
+  let keys;
+  try { keys = await firebaseKeys(); } catch (e) { console.log('[auth] keys', String(e && e.message)); return null; }
+  let jwk = keys.find((k) => k.kid === head.kid);
+  if (!jwk && FB_KEYS_AT < Date.now() - 60000) { FB_KEYS = null; try { jwk = (await firebaseKeys()).find((k) => k.kid === head.kid); } catch (e) { jwk = null; } } // keys rotate
+  if (!jwk) return null;
+  try {
+    const key = await crypto.subtle.importKey('jwk', { kty: jwk.kty, n: jwk.n, e: jwk.e, alg: 'RS256', ext: true }, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['verify']);
+    const ok = await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, fromB64(parts[2]), enc.encode(parts[0] + '.' + parts[1]));
+    if (!ok) return null;
+  } catch (e) { return null; }
+  const em = normEmail(pay.em);
+  if (!emailOk(em)) return null;
+  return { em, role: String(pay.role || ''), uid: String(pay.sub) };
+}
+const needSignIn = () => json({ error: 'Your sign-in has expired. Reload the page and sign in again.', code: 'auth' }, 401);
 
 function b64url(buf) {
   const bytes = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
@@ -489,7 +532,11 @@ async function audioUpload(env, request, url, ip) {
   if (Number(request.headers.get('Content-Length') || 0) > AUDIO_MAX) return fail('The file is too big (8 MB at most).', 413);
   let by = 'student', ttl = 365 * 86400;
   if (kind === 'speaking') {
+    const who = await idUser(env, request);
+    if (!who) return needSignIn();
+    by = who.em;
     if ((await bump(env, 'aup:' + ip, 3600)) > 20) return fail('Too many uploads from this network. Try again in an hour.', 429);
+    if ((await bump(env, 'aue:' + who.em, 3600)) > 20) return fail('Too many uploads in one hour. Try again later.', 429);
   } else {
     by = await staffEmail(env, request);
     if (!by) return staffLocked();
@@ -644,7 +691,9 @@ async function resetPassword(env, body) {
   const st = await checkPassword(env, admin, apw);
   if (st === 'locked') return fail('Too many tries. Wait 15 minutes and try again.', 429);
   if (st !== 'ok') return fail('Your teacher password is wrong.', 401);
-  if (!(await roleOf(env, target))) return fail('That email is not on the class list.', 404);
+  const tr = await roleOf(env, target);
+  if (!tr) return fail('That email is not on the class list.', 404);
+  if (tr.role !== 'student') return fail('Only student passwords can be reset here. Teacher passwords are changed by the admin (Admin › Users).', 403);
   await savePassword(env, target, npw);
   await env.MD_KV.delete('rl:' + target);
   return json({ ok: true });
@@ -797,7 +846,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-10-21e';
+const API_VERSION = '2026-10-22a';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -836,6 +885,99 @@ async function adminKick(env, body) {
 }
 
 // Move a registered student to another class (the Sheet only matters before sign-up).
+/* ---------- Seasons (Admin › Season) ----------
+   Same rank table as RANK_START / seasonXp / seasonPatch in index.html: change both together.
+   A new season puts each profile at tier I of the rank below; lifetime XP (xpLife) and the peak of the old season (seasons[]) are kept.
+   Idempotent: profiles that already have season === id are skipped, so running "start" again only finishes the rest. */
+const RANK_START = [[0, 100, 220], [370, 550, 760], [1010, 1290, 1610], [1970, 2370, 2820], [3320, 3870, 4490], [5190, 5990, 6890]];
+const RANK_NAMES = ['Beginner', 'Learner', 'Explorer', 'Achiever', 'Expert', 'Master'];
+const RANK_SUB = ['III', 'II', 'I'];
+const OLD_RANKS = [0, 200, 500, 1000, 2000, 4000]; // the 6-rank table before 10/2026, only for the preview count
+const SEASON_ID = /^[A-Za-z0-9][A-Za-z0-9_-]{0,23}$/;
+function tierOf(xp) {
+  let idx = 0;
+  for (let i = 0; i < 18; i++) if (xp >= RANK_START[Math.floor(i / 3)][i % 3]) idx = i;
+  const r = Math.floor(idx / 3);
+  return { idx, r, name: RANK_NAMES[r] + ' ' + RANK_SUB[idx % 3] };
+}
+function seasonXp(xp) {
+  const r = tierOf(xp).r;
+  return r ? RANK_START[r - 1][2] : 0;
+}
+function seasonPatch(p, cur, id) {
+  const xp = Math.max(0, Number(p.xp) || 0);
+  const peakXp = Math.max(Number(p.peakXp) || 0, xp);
+  const pk = tierOf(peakXp);
+  const same = cur && cur.id === id;
+  const prev = p.season || (same ? cur.prev : cur && cur.id) || 'S1';
+  const prevName = (same ? cur.prevName : cur && cur.name) || prev;
+  const seasons = (Array.isArray(p.seasons) ? p.seasons : []).filter((x) => x && x.id !== prev)
+    .concat([{ id: prev, name: prevName, peak: pk.name, peakIdx: pk.idx, peakXp, endXp: xp }]);
+  const nx = seasonXp(xp);
+  return { xp: nx, xpLife: p.xpLife != null && p.xpLife !== '' ? Number(p.xpLife) : xp, season: id, seasons, peakXp: nx, peakIdx: tierOf(nx).idx };
+}
+// like fsList, but keeps updateTime (used as a precondition, so a student's save in between is never overwritten)
+async function fsListTimed(env, col) {
+  const out = [];
+  let tok = '';
+  for (let i = 0; i < 20; i++) {
+    const r = await fs(env, 'GET', '/' + col + '?pageSize=300' + (tok ? '&pageToken=' + encodeURIComponent(tok) : ''));
+    if (!r.ok) throw new Error('firestore list ' + r.status);
+    const d = await r.json();
+    (d.documents || []).forEach((doc) => out.push({ name: doc.name, updateTime: doc.updateTime, data: fromFields(doc.fields) }));
+    tok = d.nextPageToken || '';
+    if (!tok) break;
+  }
+  return out;
+}
+async function adminSeason(env, body) {
+  const op = body.op === 'start' ? 'start' : 'preview';
+  const got = await fsGet(env, 'config', 'season');
+  const cur = got ? got.data : null;
+  const id = String(body.id || '').trim();
+  const name = String(body.name || '').trim().slice(0, 40) || id;
+  if (op === 'start' && !SEASON_ID.test(id)) return fail('Season id: letters, numbers, - or _, up to 24 characters (for example 2027-S1).');
+  const docs = (await fsListTimed(env, 'profiles')).filter((d) => d.data && d.data.email);
+  let legacy = 0;
+  const todo = [];
+  docs.forEach((d) => {
+    const xp = Math.max(0, Number(d.data.xp) || 0);
+    let oi = 0;
+    while (oi < 5 && xp >= OLD_RANKS[oi + 1]) oi++;
+    if (oi !== tierOf(xp).r) legacy++;
+    if (id && d.data.season === id) return;
+    todo.push(d);
+  });
+  if (op === 'preview') {
+    const rows = todo.map((d) => {
+      const xp = Math.max(0, Number(d.data.xp) || 0);
+      return { email: String(d.data.email), xp, from: tierOf(xp).name, to: tierOf(seasonXp(xp)).name, toXp: seasonXp(xp) };
+    });
+    return json({ cur, total: docs.length, todo: todo.length, done: docs.length - todo.length, legacy, rows });
+  }
+  let reset = 0, failed = 0;
+  for (let i = 0; i < todo.length; i += 100) {
+    const part = todo.slice(i, i + 100);
+    const writes = part.map((d) => {
+      const patch = seasonPatch(d.data, cur, id);
+      return { update: { name: d.name, fields: toFields(patch) }, updateMask: { fieldPaths: Object.keys(patch) }, currentDocument: { updateTime: d.updateTime } };
+    });
+    const r = await fs(env, 'POST', ':batchWrite', { writes });
+    if (!r.ok) { failed += part.length; console.log('[season] batchWrite', r.status); continue; }
+    const out = await r.json();
+    (out.status || []).forEach((st) => { if (st && st.code) failed++; else reset++; });
+  }
+  const same = cur && cur.id === id;
+  const now = Date.now();
+  const start = same && cur.start ? Number(cur.start) : now;
+  await fsPut(env, 'config', 'season', {
+    id, name: same ? cur.name || name : name, start, end: start + 91 * 86400000,
+    prev: same ? cur.prev || '' : (cur && cur.id) || 'S1', prevName: same ? cur.prevName || '' : (cur && (cur.name || cur.id)) || 'S1',
+  });
+  // audit/{id}: written by the server only (no client rule needed, clients cannot read it)
+  await fsPut(env, 'audit', 'season_' + id + '_' + now, { kind: 'season', id, name, by: adminEmail(env) || '', ts: now, reset, failed, skipped: docs.length - todo.length });
+  return json({ ok: true, reset, failed, skipped: docs.length - todo.length });
+}
 async function adminClass(env, body) {
   const email = normEmail(body.email), cls = classLabel(String(body.cls || '').slice(0, 60)), course = String(body.course || '').trim().slice(0, 60);
   if (!cls) return fail('Choose a class.');
@@ -1273,25 +1415,45 @@ async function aiTranscribe(env, request, body) {
 // POST /api/ai/reading { title, passage, tzo } (X-Staff-Key): Gemini writes a 4-stage Reading lesson (kind 'reading-ms').
 // { op: 'prompt' } returns RPROMPT, so the "copy prompt" button in Create uses this same text. Shares ail:<email>:<day> (30 a day).
 // The AI never copies the passage back (long texts always came back slightly changed). It gets the paragraphs numbered
-// [P0], [P1]… and only names words / phrases in them; the app builds the lesson text from the teacher's own passage
+// [P1], [P2]… and only names words / phrases in them; the app builds the lesson text from the teacher's own passage
 // (rdBuild in index.html) and checks everything with parseReading. Paragraphs = blocks separated by a blank line (same split as the app).
 const readingParas = (t) => String(t || '').replace(/\r\n?/g, '\n').split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean);
 const RPROMPT =
   'You are an expert IELTS Reading teacher and a strict JSON formatter. I will give you an IELTS-style reading passage. ' +
-  'Its paragraphs are numbered [P0], [P1], [P2]… (when you get a passage without numbers: paragraphs are separated by a blank line, number them from 0 yourself). ' +
-  'Build a 4-stage reading lesson (Structure, Pronouns, Vocabulary, Output). Output ONLY one JSON object, no markdown fences, no text outside the JSON.\n\n' +
-  'Rules:\n' +
-  '- Do NOT copy or rewrite the passage. Only name words and phrases that are in it.\n' +
-  '- Every "p" is a paragraph number: 0 = [P0], 1 = [P1]… Every "w" and "ph" must be copied from THAT paragraph character for character ' +
-  '(same spelling, same word form: "obligations" is not "obligation"; never join words from two sentences).\n' +
-  '- "sums": EXACTLY one short summary sentence for EACH paragraph, in paragraph order (as many items as there are paragraphs), ' +
-  'each using DIFFERENT words from the passage (a paraphrase). "sum_extra": ONE extra plausible but wrong summary.\n' +
-  '- "why": EXACTLY one short sentence for EACH paragraph, in order, saying which words show its main idea.\n' +
+  'Its paragraphs are numbered [P1], [P2], [P3]… (when you get a passage without numbers: paragraphs are separated by a blank line, number them from P1 yourself). ' +
+  'Build a 4-stage reading lesson: 1. Deep reading, 2. Pronouns, 3. Vocabulary, 4. Output. Language level: IELTS Band 6-7.5. ' +
+  'Output ONLY one JSON object, no markdown fences, no text outside the JSON.\n\n' +
+  'General rules:\n' +
+  '- Do NOT copy or rewrite the passage: the app already has it. Only name words and phrases that are in it.\n' +
+  '- Every answer must be traceable to the passage. Never invent facts.\n' +
+  '- Do not use the same sentence of the passage in more than one exercise type.\n' +
+  '- There is NO "put the paragraphs in order" exercise. Do not add any ordering field.\n' +
+  '- "paragraph_id" (in "deep") is a string: "P1", "P2"… "p" (in prons, words, pairs) is the paragraph NUMBER: 1 = [P1], 2 = [P2]… ' +
+  'Every "w", "ph" and completion "answer" must be copied from THAT paragraph character for character ' +
+  '(same spelling, same word form: "obligations" is not "obligation"; never join words from two sentences).\n\n' +
+  'Stage 1, "deep":\n' +
+  '- "passage_id": a slug of the title. "paragraphs": for each paragraph {"id": "P1", "main_idea", "key_sentences": [{"text": copied from the passage, "fact_type": "date" | "person" | "event" | "definition" | "opinion", "related_entities": [names]}]}. ' +
+  '"entities": the people, groups, places and things of the passage, each {"name": exactly as written in the passage, "attributes": [short facts]}. "timeline": [{"year", "event", "paragraph_id"}] (empty list when there are no dates). ' +
+  '"vocab_targets": [{"word", "paragraph_id", "meaning"}]. Use these notes to build the exercises.\n' +
+  '- "exercises.completion": {"type": "summary" | "form" | "table", "instructions": "Complete the summary below. Choose NO MORE THAN TWO WORDS from the passage for each answer.", ' +
+  '"items": 3 to 5 items {"id": "C1", "prompt_with_blank": a sentence with ONE blank written ______, "answer": 1 or 2 words (never more than 3) copied EXACTLY from that paragraph, "paragraph_id"}}.\n' +
+  '- "exercises.true_false_not_given": {"instructions": "Do the following statements agree with the information given in the passage? Write TRUE, FALSE, or NOT GIVEN.", ' +
+  '"items": 3 to 6 items {"id": "TFNG1", "statement", "answer": "TRUE" | "FALSE" | "NOT GIVEN", "paragraph_id": "P2", or null when the answer is NOT GIVEN}}. ' +
+  'Use about the same number of TRUE, FALSE and NOT GIVEN.\n' +
+  '- "exercises.matching_headings": {"instructions": "Choose the correct heading for each paragraph from the list below.", ' +
+  '"heading_options": the 3 right headings plus 2 or 3 distractor headings that match no paragraph (5 or 6 in total, in random order), ' +
+  '"items": EXACTLY 3 items {"id": "MH1", "paragraph_id", "answer_heading": copied exactly from heading_options, "difficulty": "easy" | "medium" | "hard"}, ' +
+  'one of each difficulty, listed easy, then medium, then hard, for 3 different paragraphs}. ' +
+  'A heading is a short IELTS-style noun phrase that states the main idea of the paragraph; never copy a sentence from the passage.\n' +
+  '- "exercises.matching_information": {"instructions": "Match each entity or piece of information to the correct paragraph or related entity.", ' +
+  '"items": 3 to 5 items {"id": "MI1", "prompt", "answer": a paragraph id such as "P4", OR the exact "name" of one of the entities}}. ' +
+  'Prefer matching an entity with an event, or an entity with a paragraph, so it does not repeat Matching headings.\n\n' +
+  'Stages 2 to 4:\n' +
   '- "prons": 4 to 6 pronouns or reference phrases (it, they, their, this policy, this trend, such…) that the reader must understand to follow the argument, ' +
   'in the order they appear in the passage: {"w": the exact words as written, "p": paragraph number, "opts": 4 options, "a": index (from 0) of the right option, "why": one short explanation}. ' +
   'Choose each w only once per paragraph. The right answer and the 3 distractors must all be phrases taken from the passage.\n' +
-  '- "words" (Guess the meaning): 3 to 6 important words a student MUST understand to follow the main ideas: academic or common words at level B1-C1, preferably in topic sentences or sentences with a main idea. ' +
-  'NEVER choose technical terms, proper names, numbers, very easy words (A1-A2) or words that appear only in a minor example. ' +
+  '- "words" (Guess the meaning): 3 to 6 important words a student MUST understand to follow the main ideas: academic or common words at level B1-C1, preferably in topic sentences or sentences with a main idea ' +
+  '(you may take them from "vocab_targets"). NEVER choose technical terms, proper names, numbers, very easy words (A1-A2) or words that appear only in a minor example. ' +
   'Each: {"w": the word exactly as written, "p": its paragraph number, "pos": "n" | "v" | "adj" | "adv", "opts": 4 short meanings in easy English (distractors that fit the sentence), "a": index of the right meaning, ' +
   '"en": English definition, "vi": Vietnamese meaning, "fam": word family, e.g. "congest (v), congested (adj), congestion (n)", "col": 2 common collocations, "ex": a new example sentence}.\n' +
   '- "pairs": 4 to 6 key phrases of 2 to 6 words copied exactly from one sentence of the passage, each {"ph": the phrase, "p": its paragraph number, "par": a simpler paraphrase}. ' +
@@ -1300,14 +1462,47 @@ const RPROMPT =
   '"answers": exactly ONE word for EACH blank, in blank order, "extra": ONE extra wrong word of the same word class that is not an answer}. Count the blanks and the answers: they must be equal.\n' +
   '- "wprompt": ONE open question about the topic that a student can answer in 1 or 2 sentences, e.g. "Should your city spend more on cycling lanes?"\n' +
   '- "title": a short title (keep the given title if there is one).\n\n' +
-  'Shape: {"title":"…","sums":["…"],"sum_extra":"…","why":["…"],"prons":[{"w":"…","p":0,"opts":["…","…","…","…"],"a":0,"why":"…"}],' +
-  '"words":[{"w":"…","p":0,"pos":"n","opts":["…","…","…","…"],"a":0,"en":"…","vi":"…","fam":"…","col":"…","ex":"…"}],' +
-  '"pairs":[{"ph":"…","p":0,"par":"…"}],"pdist":"…","cloze":{"text":"… {{1}} … {{2}} …","answers":["…","…"],"extra":"…"},"wprompt":"…"}\n';
+  'Shape: {"title":"…","deep":{"passage_id":"…","paragraphs":[{"id":"P1","main_idea":"…","key_sentences":[{"text":"…","fact_type":"event","related_entities":["…"]}]}],' +
+  '"entities":[{"name":"…","attributes":["…"]}],"timeline":[],"vocab_targets":[{"word":"…","paragraph_id":"P1","meaning":"…"}],' +
+  '"exercises":{"completion":{"type":"summary","instructions":"…","items":[{"id":"C1","prompt_with_blank":"… ______ …","answer":"…","paragraph_id":"P3"}]},' +
+  '"true_false_not_given":{"instructions":"…","items":[{"id":"TFNG1","statement":"…","answer":"TRUE","paragraph_id":"P2"}]},' +
+  '"matching_headings":{"instructions":"…","heading_options":["…"],"items":[{"id":"MH1","paragraph_id":"P2","answer_heading":"…","difficulty":"easy"}]},' +
+  '"matching_information":{"instructions":"…","items":[{"id":"MI1","prompt":"…","answer":"P4"}]}}},' +
+  '"prons":[{"w":"…","p":1,"opts":["…","…","…","…"],"a":0,"why":"…"}],' +
+  '"words":[{"w":"…","p":1,"pos":"n","opts":["…","…","…","…"],"a":0,"en":"…","vi":"…","fam":"…","col":"…","ex":"…"}],' +
+  '"pairs":[{"ph":"…","p":1,"par":"…"}],"pdist":"…","cloze":{"text":"… {{1}} … {{2}} …","answers":["…","…"],"extra":"…"},"wprompt":"…"}\n';
 const R_STR = { type: 'STRING' }, R_INT = { type: 'INTEGER' }, R_LIST = { type: 'ARRAY', items: { type: 'STRING' } };
+const R_NSTR = { type: 'STRING', nullable: true };
+const R_ITEMS = (props, req) => ({ type: 'OBJECT', properties: { instructions: R_STR, items: { type: 'ARRAY', items: { type: 'OBJECT', properties: props, required: req } } }, required: ['instructions', 'items'] });
 const RSCHEMA = {
   type: 'OBJECT',
   properties: {
-    title: R_STR, sums: R_LIST, sum_extra: R_STR, why: R_LIST,
+    title: R_STR,
+    deep: {
+      type: 'OBJECT',
+      properties: {
+        passage_id: R_STR,
+        paragraphs: { type: 'ARRAY', items: { type: 'OBJECT', properties: { id: R_STR, main_idea: R_STR, key_sentences: { type: 'ARRAY', items: { type: 'OBJECT', properties: { text: R_STR, fact_type: R_STR, related_entities: R_LIST } } } } } },
+        entities: { type: 'ARRAY', items: { type: 'OBJECT', properties: { name: R_STR, attributes: R_LIST }, required: ['name'] } },
+        timeline: { type: 'ARRAY', items: { type: 'OBJECT', properties: { year: R_STR, event: R_STR, paragraph_id: R_STR } } },
+        vocab_targets: { type: 'ARRAY', items: { type: 'OBJECT', properties: { word: R_STR, paragraph_id: R_STR, meaning: R_STR } } },
+        exercises: {
+          type: 'OBJECT',
+          properties: {
+            completion: Object.assign(R_ITEMS({ id: R_STR, prompt_with_blank: R_STR, answer: R_STR, paragraph_id: R_STR }, ['prompt_with_blank', 'answer', 'paragraph_id']), { properties: { type: R_STR, instructions: R_STR, items: { type: 'ARRAY', items: { type: 'OBJECT', properties: { id: R_STR, prompt_with_blank: R_STR, answer: R_STR, paragraph_id: R_STR }, required: ['prompt_with_blank', 'answer', 'paragraph_id'] } } } }),
+            true_false_not_given: R_ITEMS({ id: R_STR, statement: R_STR, answer: R_STR, paragraph_id: R_NSTR }, ['statement', 'answer']),
+            matching_headings: {
+              type: 'OBJECT',
+              properties: { instructions: R_STR, heading_options: R_LIST, items: { type: 'ARRAY', items: { type: 'OBJECT', properties: { id: R_STR, paragraph_id: R_STR, answer_heading: R_STR, difficulty: R_STR }, required: ['paragraph_id', 'answer_heading', 'difficulty'] } } },
+              required: ['instructions', 'heading_options', 'items'],
+            },
+            matching_information: R_ITEMS({ id: R_STR, prompt: R_STR, answer: R_STR }, ['prompt', 'answer']),
+          },
+          required: ['completion', 'true_false_not_given', 'matching_headings', 'matching_information'],
+        },
+      },
+      required: ['passage_id', 'entities', 'exercises'],
+    },
     prons: { type: 'ARRAY', items: { type: 'OBJECT', properties: { w: R_STR, p: R_INT, opts: R_LIST, a: R_INT, why: R_STR }, required: ['w', 'p', 'opts', 'a', 'why'] } },
     words: { type: 'ARRAY', items: { type: 'OBJECT', properties: { w: R_STR, p: R_INT, pos: R_STR, opts: R_LIST, a: R_INT, en: R_STR, vi: R_STR, fam: R_STR, col: R_STR, ex: R_STR }, required: ['w', 'p', 'pos', 'opts', 'a', 'en', 'vi', 'fam', 'col', 'ex'] } },
     pairs: { type: 'ARRAY', items: { type: 'OBJECT', properties: { ph: R_STR, p: R_INT, par: R_STR }, required: ['ph', 'p', 'par'] } },
@@ -1315,9 +1510,39 @@ const RSCHEMA = {
     cloze: { type: 'OBJECT', properties: { text: R_STR, answers: R_LIST, extra: R_STR }, required: ['text', 'answers', 'extra'] },
     wprompt: R_STR,
   },
-  required: ['title', 'sums', 'sum_extra', 'why', 'prons', 'words', 'pairs', 'pdist', 'cloze', 'wprompt'],
+  required: ['title', 'deep', 'prons', 'words', 'pairs', 'pdist', 'cloze', 'wprompt'],
 };
-const READING_KEYS = ['sums', 'prons', 'words', 'pairs', 'cloze'];
+// Problems the app cannot repair (it repairs or leaves out the other items: parseReading / rmParseDeep in index.html).
+// Matching headings: exactly 3 paragraphs (easy, medium, hard) that exist, answers in the list, 2-3 extra headings.
+function deepProblems(o, N) {
+  const ex = o.deep && typeof o.deep === 'object' ? o.deep.exercises : null;
+  if (!ex || typeof ex !== 'object') return ['Deep reading ("deep.exercises") is missing.'];
+  const out = [];
+  const norm = (t) => String(t || '').toLowerCase().replace(/[‘’]/g, "'").replace(/\s+/g, ' ').replace(/[.;:!?]+$/, '').trim();
+  const pid = (x) => { const m = /^\s*P\s*(\d+)\s*$/i.exec(String(x == null ? '' : x)); return m && +m[1] >= 1 && +m[1] <= N ? +m[1] : 0; };
+  const mh = ex.matching_headings;
+  if (!mh || !Array.isArray(mh.items) || !Array.isArray(mh.heading_options)) out.push('Matching headings is missing.');
+  else {
+    const opts = mh.heading_options.map(norm).filter(Boolean);
+    const by = {};
+    mh.items.forEach((x) => { const d = String((x && x.difficulty) || '').toLowerCase().trim(); if (!by[d]) by[d] = x; });
+    const three = ['easy', 'medium', 'hard'].map((d) => by[d]).filter(Boolean);
+    if (three.length < 3) out.push('Matching headings needs exactly 3 paragraphs: one easy, one medium and one hard.');
+    else {
+      if (three.some((x) => !pid(x.paragraph_id))) out.push('A Matching headings paragraph is not in the passage (the passage has P1 to P' + N + ').');
+      if (new Set(three.map((x) => pid(x.paragraph_id))).size < 3) out.push('Matching headings uses the same paragraph twice.');
+      if (three.some((x) => opts.indexOf(norm(x.answer_heading)) < 0)) out.push('A Matching headings answer is not in the List of Headings.');
+      else if (new Set(three.map((x) => norm(x.answer_heading))).size < 3) out.push('Matching headings uses the same heading for 2 paragraphs.');
+      if (new Set(opts).size < 5) out.push('The List of Headings needs the 3 right headings plus 2 or 3 extra ones.');
+    }
+  }
+  const tf = ex.true_false_not_given;
+  if (tf && Array.isArray(tf.items) && tf.items.length && tf.items.every((x) => ['TRUE', 'FALSE', 'NOT GIVEN'].indexOf(String((x && x.answer) || '').toUpperCase().trim()) < 0)) {
+    out.push('True / False / Not Given answers must be TRUE, FALSE or NOT GIVEN.');
+  }
+  return out;
+}
+const READING_KEYS = ['deep', 'prons', 'words', 'pairs', 'cloze'];
 async function aiReading(env, request, body) {
   const em = await staffEmail(env, request);
   if (!em) return staffLocked();
@@ -1331,8 +1556,8 @@ async function aiReading(env, request, body) {
   const qKey = 'ail:' + em + ':' + dayOf(body.tzo).day;
   if ((await count(env, qKey)) >= 30) return fail('You have used today\'s 30 AI lesson runs. Try again tomorrow.', 429);
   await bump(env, qKey, 172800);
-  const full = RPROMPT + '\n' + (title ? 'TITLE: ' + title + '\n\n' : '') + 'The passage has ' + P.length + ' paragraphs ([P0] to [P' + (P.length - 1) + ']), ' +
-    'so "sums" and "why" must each have exactly ' + P.length + ' items.\n\nPASSAGE:\n' + P.map((t, i) => '[P' + i + '] ' + t).join('\n\n');
+  const full = RPROMPT + '\n' + (title ? 'TITLE: ' + title + '\n\n' : '') + 'The passage has ' + P.length + ' paragraphs ([P1] to [P' + P.length + ']). ' +
+    'Use only these paragraph ids and numbers.\n\nPASSAGE:\n' + P.map((t, i) => '[P' + (i + 1) + '] ' + t).join('\n\n');
   let g;
   try {
     g = await askGemini(env, full, RSCHEMA, '', AI_TIMEOUT); // 5 minutes, like the Writing check and the Listening lesson
@@ -1345,6 +1570,12 @@ async function aiReading(env, request, body) {
   const miss = READING_KEYS.filter((k) => !o[k] || typeof o[k] !== 'object');
   if (!o.wprompt) miss.push('wprompt');
   if (miss.length) return json({ error: 'The AI answer was incomplete (missing ' + miss.join(', ') + '). Press Try again.', code: 'shape' }, 502);
+  const dp = deepProblems(o, P.length);
+  if (dp.length) {
+    console.log('[ai] reading deep', dp.join(' | '));
+    return json({ error: 'The AI lesson broke a rule: ' + dp.join(' ') + ' Press Try again.', code: 'shape' }, 502);
+  }
+  ['sums', 'sum_extra', 'why', 'ordering', 'order', 'paragraph_order'].forEach((k) => { delete o[k]; }); // no ordering exercise any more
   delete o.paras; // the app always builds the text from the teacher's passage
   if (title) o.title = title;
   o.skill = 'reading';
@@ -1357,7 +1588,9 @@ function aiFail(code, where, detail) {
   return json({ error: 'busy', code }, 502);
 }
 
-async function aiCorrect(env, body) {
+async function aiCorrect(env, request, body) {
+  const who = await idUser(env, request);
+  if (!who) return needSignIn();
   const id = String(body.attemptId || '');
   if (!/^[A-Za-z0-9]{10,40}$/.test(id)) return fail('This submission was not found.', 404);
   if (!aiReady(env)) return aiFail('nokey', id);
@@ -1372,6 +1605,7 @@ async function aiCorrect(env, body) {
   if (!(Number(att.ts) > Date.now() - AI_MAX_AGE)) return fail('AI checks are only available within 2 hours of submitting.', 400);
   const em = normEmail(att.email);
   if (!emailOk(em)) return fail('This submission was not found.', 404);
+  if (who.em !== em && who.role !== 'teacher') return fail('This submission was not found.', 404); // someone else's essay
   // 'pending:<ts>' = a check is running. Older than 6 minutes (longer than the 5-minute Gemini limit) = that request died: run again.
   const lock = String((await env.MD_KV.get('ai:' + id)) || '');
   if (/^pending/.test(lock) && Date.now() - Number(lock.split(':')[1] || 0) < 360000) return fail('Your writing is already being checked. Wait a few seconds.', 409);
@@ -1407,12 +1641,15 @@ async function aiCorrect(env, body) {
 const PRACTICE_PROMPT =
   'You write fill-in-the-blank practice for one IELTS student mistake. Return JSON that matches the schema.\n' + AI_PRACTICE_RULES;
 const PRACTICE_SCHEMA = { type: 'OBJECT', properties: { practice: AI_PRACTICE_ITEMS }, required: ['practice'] };
-async function aiPractice(env, body) {
+async function aiPractice(env, request, body) {
+  const who = await idUser(env, request);
+  if (!who) return needSignIn();
   const id = String(body.errorId || '');
   if (!/^[A-Za-z0-9_-]{5,200}$/.test(id)) return fail('This mistake was not found.', 404);
   const doc = await fsGet(env, 'errors', id);
   if (!doc) return fail('This mistake was not found.', 404);
   const e = doc.data;
+  if (normEmail(e.email) !== who.em && who.role !== 'teacher') return fail('This mistake was not found.', 404);
   if (Array.isArray(e.practice) && e.practice.length) return json({ practice: e.practice, again: true });
   if (e.type === 'Off-topic') return json({ practice: [] });
   if (!aiReady(env)) return aiFail('nokey', id);
@@ -1505,8 +1742,8 @@ export async function onRequest(ctx) {
     if (route === 'reset') return await resetPassword(env, body);
     if (route === 'admin/unlock') return await adminUnlock(env, body);
     if (route === 'staff/unlock') return await staffUnlock(env, body);
-    if (route === 'ai/correct') return await aiCorrect(env, body);
-    if (route === 'ai/practice') return await aiPractice(env, body);
+    if (route === 'ai/correct') return await aiCorrect(env, request, body);
+    if (route === 'ai/practice') return await aiPractice(env, request, body);
     if (route === 'ai/lesson') return await aiLesson(env, request, body);
     if (route === 'ai/transcribe') return await aiTranscribe(env, request, body);
     if (route === 'ai/reading') return await aiReading(env, request, body);
@@ -1522,6 +1759,7 @@ export async function onRequest(ctx) {
       if (route === 'admin/class') return await adminClass(env, body);
       if (route === 'admin/kick') return await adminKick(env, body);
       if (route === 'admin/aitest') return await adminAiTest(env, body);
+      if (route === 'admin/season') return await adminSeason(env, body);
     }
     return fail('Not found.', 404);
   } catch (e) {

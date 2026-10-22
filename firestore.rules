@@ -19,12 +19,24 @@ service cloud.firestore {
     function ownsNew() {
       return signedIn() && request.resource.data.email == me();
     }
+    // a number field of the new data that is missing or a whole/decimal number between lo and hi
+    function numIn(k, lo, hi) {
+      return !(k in request.resource.data)
+        || (request.resource.data[k] is number && request.resource.data[k] >= lo && request.resource.data[k] <= hi);
+    }
+    // how much a number field went up in this write (missing = 0)
+    function upBy(k) {
+      return request.resource.data.get(k, 0) - resource.data.get(k, 0);
+    }
 
     // ---- Bài làm: học sinh chỉ thấy bài của mình, giáo viên thấy tất cả ----
     match /attempts/{id} {
       allow read: if teacher() || ownsOld();
-      // học sinh không được tự gắn điểm chấm (grade)
-      allow create: if ownsNew() && !('grade' in request.resource.data);
+      // học sinh không được tự gắn điểm chấm (grade) hay kết quả AI (ai: chỉ server ghi); điểm tự chấm phải hợp lý
+      allow create: if ownsNew()
+        && !('grade' in request.resource.data) && !('ai' in request.resource.data)
+        && numIn('score', 0, 1000) && numIn('total', 0, 1000)
+        && request.resource.data.get('score', 0) <= request.resource.data.get('total', 0);
       // học sinh chỉ được thêm gợi ý sửa lỗi (fixes); giáo viên được ghi grade
       allow update: if teacher()
         || (ownsOld() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fixes']));
@@ -57,17 +69,29 @@ service cloud.firestore {
     }
 
     // ---- Profile: ai cũng đọc được (cần cho Leaderboard), chỉ chủ ghi ----
+    // Chặn sửa tay bằng Console: mỗi lần ghi XP tăng tối đa 1000 (bằng mức XP lớn nhất chỉnh được ở Admin › XP),
+    // spin / Streak Freeze / Answer Peek tăng tối đa 2. Mùa (season, seasons) chỉ server đổi (Admin › Season).
     match /profiles/{id} {
       allow read: if signedIn();
-      allow create: if ownsNew();
-      allow update: if ownsOld() && ownsNew();
+      allow create: if ownsNew()
+        && numIn('xp', 0, 1000) && numIn('xpLife', 0, 1000) && numIn('spins', 0, 2) && numIn('freezes', 0, 2) && numIn('peek', 0, 2)
+        && !('seasons' in request.resource.data);
+      allow update: if ownsOld() && ownsNew()
+        && numIn('xp', 0, 10000000) && numIn('spins', 0, 100000)
+        && upBy('xp') <= 1000 && upBy('xpLife') <= 1000
+        && upBy('spins') <= 2 && upBy('freezes') <= 2 && upBy('peek') <= 2
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['season', 'seasons']);
       allow delete: if teacher();
     }
 
     // ---- Marquee "vừa quay trúng" ----
     match /wins/{id} {
       allow read: if signedIn();
-      allow create: if signedIn();
+      // chỉ đúng các trường của dòng "vừa quay trúng", chữ ngắn
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['name', 'cls', 'prize', 'tier', 'ts'])
+        && request.resource.data.name is string && request.resource.data.name.size() <= 80
+        && request.resource.data.prize is string && request.resource.data.prize.size() <= 120;
       allow update: if false;
       allow delete: if teacher();
     }

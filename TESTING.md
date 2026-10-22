@@ -207,7 +207,7 @@ Chuẩn bị: deploy bản mới (có `functions/`); Admin → Users ghi "server
 5. [ ] Create có 4 tab Listening / Reading / Writing / Speaking. Listening vẫn có Audio + Auto-create như trước; Writing và Speaking ghi "coming soon". Chuyển qua lại giữa các tab không mất bài đã Generate của tab kia; tải lại trang thì vẫn mở đúng tab.
 6. [ ] Tab Reading → dán một bài đọc (đoạn cách nhau bằng dòng trống) → thấy số từ, số đoạn (dán 2 đoạn, >12 đoạn hoặc >1200 từ thì có cảnh báo) → Generate → "Generating…" (bài dài: sau 40 giây hiện "Still writing…", giới hạn 5 phút) → preview 4 stage → chọn Book/Test → Add → học sinh làm được. Từ ở Guess the meaning không phải thuật ngữ hay tên riêng.
 7. [ ] Bài đọc trong bài học luôn giống hệt bài đã dán (không còn lỗi "The AI changed the wording of the passage"); thử bài 8–12 đoạn, có dấu nháy cong ’ và gạch –. Đại từ được tô đúng chỗ (không tô chữ "it" nằm trong "with"). Nếu AI thiếu nội dung (vd. ít câu tóm tắt hơn số đoạn) → preview ghi rõ lý do + "Press Try again".
-7b. [ ] Sau khi Generate → bấm **Student View Preview** → bấm thẳng vào từng stage trên thanh stage (Structure / Pronouns / Vocabulary / Output) để xem toàn bộ bài; Check answers khi chưa làm hết vẫn hiện đáp án; không bị chặn 70%; "Try this stage again" làm lại được. Làm thử được đủ 4 stage giống học sinh (chọn tóm tắt, đại từ, kéo thả Stage 4.1, câu trả lời 4.2), cuối có thẻ tổng kết + "Start the preview again"; không có bài nào bị lưu (Dashboard không có lượt làm mới). Bấm Summary View rồi Student View lại thì bắt đầu lại từ Stage 1.
+7b. [ ] Sau khi Generate → bấm **Student View Preview** → bấm thẳng vào từng stage trên thanh stage (Deep reading / Pronouns / Vocabulary / Output) để xem toàn bộ bài; Check answers khi chưa làm hết vẫn hiện đáp án; không bị chặn 70%; "Try this stage again" làm lại được. Làm thử được đủ 4 stage giống học sinh (chọn tóm tắt, đại từ, kéo thả Stage 4.1, câu trả lời 4.2), cuối có thẻ tổng kết + "Start the preview again"; không có bài nào bị lưu (Dashboard không có lượt làm mới). Bấm Summary View rồi Student View lại thì bắt đầu lại từ Stage 1.
 8. [ ] Advanced → Copy prompt → dán vào ChatGPT/Claude kèm bài đọc → dán JSON trả về → Check JSON → preview → Add vẫn chạy.
 9. [ ] Phiên giáo viên quá 12 giờ → Generate hỏi lại mật khẩu, nhập đúng thì chạy tiếp.
 
@@ -221,6 +221,61 @@ Chuẩn bị: deploy bản mới (có `functions/`); Admin → Users ghi "server
 1. [ ] Đăng nhập student, teacher và admin: góc phải header có "Sign out" (điện thoại: icon ⎋); cuối sidebar/drawer cũng có "⎋ Sign out". Trang đăng nhập không có nút này. Bấm → về trang đăng nhập ngay. Đang ghi âm hoặc đang viết bài Writing chưa nộp → hỏi xác nhận; Cancel thì ở lại.
 2. [ ] Home → Daily Speaking Part 1/3: không còn chip "DAILY", dòng "Answer the question out loud…" và nhãn "YOUR ANSWER (MAX 1:00)"; nút Record vẫn ghi "Max 1:00". Giáo viên mở bài Listening 5 giai đoạn: không còn banner "Preview mode…", dòng "(Demo plays a test tone…)" và "Demo tone only…"; không có khoảng trống thừa ở các chỗ đó; giáo viên làm thử vẫn không lưu bài.
 3. [ ] Dark mode: Home, Daily task, Listening 5 giai đoạn, Reading, kết quả AI Writing, Error Notebook, Leaderboard, Admin, trang đăng nhập đều dễ đọc; chip/banner vàng trông ấm và trong (không ô liu đục); ô điền chỗ trống (Dictation, Summary, Reading 4.1, Error Notebook) nền xám xanh + gạch dưới màu xanh, không còn nền vàng; khối lồng trong khối (câu hỏi, trình phát, ô ghi âm) phân biệt rõ với nền thẻ; nút mờ (Finish chưa bật) vẫn đọc được; nút đỏ "Delete"/"Clear All" chữ rõ.
+
+## GĐ 9 — Phần A: sửa UI nhỏ
+1. [ ] Dark mode → nộp bài Writing có lỗi → bấm một chỗ sửa: popover nổi hẳn lên khỏi nền (nền sáng hơn, viền rõ, bóng đậm), category màu xanh, chữ giải thích trắng dễ đọc. Popup từ vựng (nhấp đúp một từ) và bảng chọn đáp án của bài Reading cũng nổi rõ như vậy.
+2. [ ] Home → Recent results: không còn cột viền đứt nét cho bài Writing/Speaking chưa chấm; ô chỉ có bài chưa chấm vẫn có đường kẻ đáy.
+3. [ ] Trong cùng một hàng (2 ô cạnh nhau): đường kẻ đáy biểu đồ, chữ LATEST và dòng tên bài/điểm nằm trên cùng một đường ngang, kể cả khi một ô có feedback dài; kiểm tra máy tính, 390px, sáng và tối.
+4. [ ] Học sinh → Settings: Display name, Phone, Target band, Exam date cùng kiểu nhãn, cùng chiều cao 44px, thẳng mép trên và mép dưới (2 cột trên laptop, 1 cột trên điện thoại); ô ngày trên iPhone cao bằng các ô khác; mũi tên của Target band và biểu tượng lịch nhìn rõ ở dark mode.
+5. [ ] Admin → Prizes → Rank frames: dưới 6 ô upload có "Live Avatar Preview" (avatar to + nhỏ). Bấm từng rank → khung của rank đó hiện lên avatar; rank chưa có PNG ghi "No frame uploaded…" kèm vòng màu. Upload PNG mới → preview đổi ngay. Kiểm tra 390px và dark mode.
+
+## GĐ 9 — Phần B: Demo helper (giáo viên / admin)
+1. [ ] Đăng nhập học sinh (cả bản thật lẫn demo `minhanh@demo.vn`): mở một bài thường, một bài Listening 5 giai đoạn, một bài Reading nhiều giai đoạn → **không** có dòng "Demo helper" ở đâu cả.
+2. [ ] Đăng nhập giáo viên hoặc admin → Library → mở một bài Reading/Listening thường (gap, chọn đáp án, True/False/Not Given, ghép): có dòng chữ nhỏ "Demo helper" + 2 nút **All correct**, **Half wrong** (không còn "All wrong"). All correct → Submit = 100%. Half wrong → khoảng một nửa đúng (làm tròn lên), câu sai là đáp án sai thật (chọn phương án khác, ô chữ điền một từ khác). Sau Submit thanh Demo helper biến mất.
+3. [ ] Bài Listening 5 giai đoạn: ở mỗi stage bấm All correct → Check answers đạt hết; Half wrong → khoảng một nửa sai, Stage 2.1 tô sai chỗ, các ô điền là từ khác chứ không phải "zzz".
+4. [ ] Bài Reading nhiều giai đoạn (Library và Student View Preview ở Create): mỗi stage hai nút điền đúng phần đang hiện; Stage 4.1 Half wrong → các từ đặt sai chỗ, không từ nào xuất hiện 2 lần; 4.2 được điền sẵn câu mẫu để Finish.
+5. [ ] Create → preview bài thường và preview Listening 5 giai đoạn: có Demo helper, bấm xong Submit/Check answers ra kết quả tương ứng.
+6. [ ] Giáo viên làm thử xong: không có bài mới trong Dashboard/Marking, XP không đổi.
+
+## GĐ 9 — Phần C: Reading Deep reading + đồng hồ + AI mới
+1. [ ] Học sinh mở bài Reading nhiều giai đoạn (demo: Cam 14 · Test 1 · Reading · "Cycling in the City"): đồng hồ `00:00` ở **góc phải thẻ tiêu đề** tự chạy ngay. Bấm ⏸ → dừng, bấm ▶ → chạy tiếp. Không còn nút "Start reading timer".
+2. [ ] Rời bài (mở tab khác trong app) rồi mở lại cùng bài: đồng hồ chạy tiếp từ số cũ. Điện thoại 390px: đồng hồ vẫn ở góc phải, tên bài dài tự xuống dòng, không đè lên đồng hồ.
+3. [ ] Thanh stage: **1. Deep reading · 2. Pronouns · 3. Vocabulary · 4. Output**. Không còn phần "Put the paragraphs in order".
+4. [ ] Stage 1 trên laptop: bài đọc có nhãn Paragraph A, B, C… ở cột trái, **dính khi cuộn**; câu hỏi ở cột phải. Điện thoại: nút "Show passage" mở/đóng bài đọc.
+5. [ ] 1.1 Completion: ghi "NO MORE THAN TWO WORDS…", ô nhập nằm trong câu; gõ 3 từ → dưới ô báo "No more than two words…" ngay. Đáp án viết hoa / có dấu chấm / thừa khoảng trắng vẫn được chấm đúng.
+6. [ ] 1.2 True / False / Not Given: 3 nút TRUE / FALSE / NOT GIVEN mỗi câu.
+7. [ ] 1.3 Matching headings: khung "List of Headings" đánh số i, ii, iii…; đúng 3 đoạn (vd. Paragraph B, A, C) theo dễ → khó; chọn heading bằng bottom sheet; heading đã chọn cho đoạn khác ghi "Used in Paragraph …".
+8. [ ] 1.4 Matching information: mỗi câu chọn một đoạn (Paragraph A…) hoặc một tên (Copenhagen / Critics / experts).
+9. [ ] Đúng dưới 70% cả stage 1 → Try again như cũ; đạt → sang Pronouns. Stage 2–4 như trước.
+10. [ ] Finish → thẻ tổng kết có "Reading time m:ss · ~N words/min"; đồng hồ dừng.
+11. [ ] Bài Reading cũ (demo: "Cycling in the City (old format)") vẫn mở được: Stage 1 tên "Deep reading", phần "Matching headings" với các câu tóm tắt cũ, không có phần sắp thứ tự, không lỗi.
+12. [ ] Create → Reading → dán bài → Generate (site thật): preview liệt kê đủ 4 phần Deep reading; Student View Preview mở được cả 4 stage và 4 phần con. Nếu có mục bị bỏ, khung viền cam "Fixed or left out automatically" ghi lý do.
+13. [ ] Create → Advanced → dán JSON có Matching headings chỉ 2 đoạn (hoặc đáp án không nằm trong List of Headings) → Check JSON → báo lỗi dễ hiểu, không cho Add.
+14. [ ] Giáo viên / admin: Demo helper All correct / Half wrong điền được cả 4 phần của Deep reading.
+
+## GĐ 9 — Phần D: XP / Rank / Season
+1. [ ] Học sinh: trong cùng một tuần làm 3 bài Reading đạt ≥70% → toast +25, rồi +18, rồi +13 XP; bài thứ 4, 5 → +8. Sau đó làm một bài Listening đạt → +25 (tính riêng). Listening 5 giai đoạn đạt → +40.
+2. [ ] Một bài dưới 70% → +5 XP; bấm Try again rồi lại dưới 70% ở cùng bài → không cộng thêm (mỗi bài 1 lần/tuần). Bài dưới 70% không làm giảm mức của bài đạt tiếp theo.
+3. [ ] Nộp Writing → +30; nộp bản mới (Write a new version) → +21. Speaking tương tự, đếm riêng.
+4. [ ] Sang tuần mới (thứ Hai; hoặc đổi ngày máy) → bài Reading đạt đầu tiên lại +25.
+5. [ ] Hoàn thành 100% bài tuần → "I'm done" → +50 XP một lần; bấm lại / bài giao khác cùng tuần → không cộng thêm.
+6. [ ] Error Notebook: sửa đúng một lỗi → +5; Practice lại chính lỗi đó trong ngày (đúng lần nữa) → không cộng; hôm sau → +5 lại. Sai rồi đúng trong cùng ngày vẫn được +5.
+7. [ ] Rank hiện dạng "Explorer II" ở Home, Leaderboard (podium + danh sách), Inventory, Settings. Kiểm mốc: 369 XP = Beginner I, 370 = Learner III, 760 = Learner I, 1010 = Explorer III, 7890 trở lên = Master I, thanh đầy. Khung avatar vẫn đổi theo rank (6 khung), không theo bậc.
+8. [ ] Admin → XP: nhóm Exercises có ô "25, 18, 13, 8" và ô "under 70%". Gõ "30, 20, 10" → Save → bài Reading đạt lần 1/2/3/4 = 30/20/10/10. Gõ chữ sai (vd. "abc") → báo lỗi, không lưu.
+9. [ ] Admin → Season (dùng demo hoặc tài khoản test): thấy mùa hiện tại (hoặc "No season has been started yet"). Preview reset → bảng tên → rank hiện tại → rank mùa mới (Explorer → Learner I 760, Learner → Beginner I 220, Beginner → 0) và số học sinh đổi rank so với bảng cũ.
+10. [ ] Start new season → nhập id (vd. 2027-S1), gõ RESET → Start. Học sinh Explorer về Learner I 760 XP; Leaderboard XP dùng XP mới; bảng Streak không đổi. Settings học sinh có chip "S1 · Explorer II" (rank cao nhất mùa cũ) và Lifetime XP không giảm.
+11. [ ] Start lại với cùng id → "0 students reset, N already done", XP không đổi thêm. Gõ sai chữ RESET → báo lỗi, không làm gì.
+12. [ ] (Site thật) Một học sinh đang mở app lúc reset: sau reset làm một bài → XP hiện là XP mùa mới (cộng thêm), không quay về XP cũ của mùa trước; tải lại trang vẫn đúng.
+
+## Bảo mật (10/2026)
+Làm trên bản Preview sau khi đã deploy (cả `functions/` và file `_headers`) và đã dán `firestore.rules` mới vào Firebase Console.
+1. [ ] Mở site, bấm F12 → Console: **không có** dòng đỏ "Refused to load / Refused to connect … Content Security Policy". Đăng nhập, mở Library, Leaderboard, Wheel, Settings, Create, Admin đều chạy như trước; font Be Vietnam Pro vẫn hiện.
+2. [ ] Học sinh nộp bài Writing → AI chấm như cũ (không báo "code: auth"). Error Notebook → Practice một lỗi chưa có bài luyện → bài luyện hiện ra.
+3. [ ] Học sinh ghi âm Speaking → "Use this recording" → upload xong, nộp được. Giáo viên ghi voice feedback / audio bài Listening vẫn chạy.
+4. [ ] Học sinh làm bài, quay Wheel, dùng Streak Freeze / Answer Peek, sửa Settings, đánh dấu flashcard: không có lỗi; tải lại trang, XP / spin / vật phẩm vẫn đúng (rules mới không chặn việc bình thường).
+5. [ ] Bảng Leaderboard và avatar vẫn hiện ảnh; ảnh bìa lớp, sticker chấm bài, icon quà, khung rank vẫn hiện.
+6. [ ] Form cũ "Reset a student password" (Admin › Students): đổi mật khẩu một học sinh được; nhập email giáo viên → báo "Only student passwords can be reset here…".
+7. [ ] (Tùy chọn, kiểm tra chặn) Mở site trong một trang web khác bằng `<iframe>` → trình duyệt từ chối hiển thị.
 
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

@@ -91,3 +91,9 @@ Cloudflare có thể chạy `/api` ở máy chủ thuộc khu vực Gemini chặ
 - Sau khi giáo viên đổi mật khẩu, thiết bị đang đăng nhập sẵn của học sinh vẫn dùng tiếp được. (Muốn đẩy thiết bị ra: admin bấm Pause, tối đa 10 phút.)
 - AI chữa lỗi Writing chạy trên site thật (cần `GEMINI_KEY`). Tra từ bằng AI (`aiLookup`) vẫn chưa chạy. Chưa có email nhắc 20:00.
 - Rules: học sinh chỉ đọc/ghi bài của mình, giáo viên đọc tất cả. Bảng `roster` (tên và email cả lớp) vẫn đọc được bởi mọi người đã đăng nhập.
+
+## Bảo mật (10/2026)
+
+- **Dán lại `firestore.rules`** vào Firebase Console → Firestore Database → Rules → Publish mỗi khi file này đổi (bản 10/2026 giới hạn XP/spin mỗi lần ghi, chặn học sinh tự ghi kết quả AI và đổi mùa).
+- File **`_headers`** ở thư mục gốc được Cloudflare Pages tự áp dụng (CSP, chống nhúng khung…). Nếu sau này thêm một dịch vụ bên ngoài (script, API, iframe) mà trang bị chặn, mở F12 → Console để xem địa chỉ bị chặn rồi thêm vào dòng `Content-Security-Policy`; tạm thời có thể xóa file này để tắt.
+- AI chấm Writing, bài luyện Error Notebook và upload ghi âm của học sinh giờ cần học sinh đang đăng nhập (server kiểm tra Firebase ID token bằng `FIREBASE_PROJECT_ID`, không cần thêm biến môi trường).
