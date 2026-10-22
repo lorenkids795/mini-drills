@@ -277,5 +277,12 @@ Làm trên bản Preview sau khi đã deploy (cả `functions/` và file `_heade
 6. [ ] Form cũ "Reset a student password" (Admin › Students): đổi mật khẩu một học sinh được; nhập email giáo viên → báo "Only student passwords can be reset here…".
 7. [ ] (Tùy chọn, kiểm tra chặn) Mở site trong một trang web khác bằng `<iframe>` → trình duyệt từ chối hiển thị.
 
+## Icon site + Daily practice dạng thẻ dọc
+1. [ ] Tab trình duyệt hiện logo xanh (favicon) thay cho icon mặc định, cả ở chế độ sáng và tối của trình duyệt.
+2. [ ] iPhone (Safari): Chia sẻ → "Thêm vào MH chính": icon là logo xanh trên nền trắng, tên "Mini Drills". Mở từ màn hình chính: app chạy toàn màn hình, đăng nhập vẫn được.
+3. [ ] Android (Chrome): menu ⋮ → "Thêm vào màn hình chính" / "Cài đặt ứng dụng": icon logo, tên "Mini Drills", mở toàn màn hình.
+4. [ ] Học sinh → Home → Daily practice: mỗi bài là một thẻ rộng hết khung, xếp dọc: icon tròn bên trái, tên in đậm + dòng phụ (vd. "Word of the Day" / "Daily vocabulary", "Error review" / "N due"), bên phải "Start ›".
+5. [ ] Làm xong một bài Daily → quay về Home: thẻ đó chuyển nền xanh lá nhạt, icon thành dấu tích, chữ xanh lá, bên phải "Done". Kiểm tra sáng, tối và 390px.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

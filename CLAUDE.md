@@ -39,6 +39,8 @@ Giao diện người dùng viết bằng **tiếng Anh**. Chú thích trong code
 ├── md-config.js          # window.MD_CONFIG = { demo, teachers[], api:'/api', firebase:{...} }
 ├── md-backend.js         # Adapter Firebase + UI đăng nhập thật + form "Reset a student password"
 ├── firestore.rules       # Security rules (dán tay vào Firebase Console, không tự deploy)
+├── site.webmanifest      # Manifest cho "Thêm vào màn hình chính" (Android/iOS): tên, icon 192/512, standalone, màu #12141f
+├── assets/               # favicon-16x16.png, favicon-32x32.png, favicon.ico, apple-touch-icon.png (180), android-chrome-192x192.png, android-chrome-512x512.png (tạo từ logo, xem mục 7.38)
 ├── _headers              # Header bảo mật của Cloudflare Pages (CSP, chống nhúng khung, nosniff…), xem mục 7.37
 ├── README.md             # Hướng dẫn deploy (tiếng Việt)
 ├── CLAUDE.md             # File này
@@ -212,7 +214,7 @@ python3 -m http.server 8765        # hoặc: npx serve .
 Các thay đổi đã có trong code. **Không đảo ngược** nếu không được yêu cầu:
 
 1. **Header `#status`**: chỉ còn một chấm tròn, không có chữ. `data-s="saved"` màu xanh lá, `"local"` màu cam, `"wait"` màu xám nhấp nháy. Mô tả trạng thái nằm ở `title`/`aria-label` (sửa trong `setStatus()`).
-2. **Daily practice**: thẻ `.dtask` không còn icon `.di`, chỉ còn tiêu đề (`dailyHTML()`).
+2. **Daily practice**: (đã thay ở mục 38) thẻ `.dtask` từng chỉ có tiêu đề; giờ là thẻ dọc rộng có icon `.dico`.
 3. **Recent Results By Skill**: `recentHTML()` chia 4 ô L/R/W/S qua `rsCell(sk, list)` và `rsInfo(a)`; CSS nằm trong `.rs-*`.
    - Ngưỡng đạt: `RS_PASS_PCT=70` (L/R), `RS_PASS_BAND=6` (W/S, quy về thang 9). `RS_BARS=12` là số cột hiển thị.
    - Cột biểu đồ là `<button>` có `data-act="fb-open"` (nếu bài có feedback) hoặc `data-act="nav"`.
@@ -330,6 +332,10 @@ Các thay đổi đã có trong code. **Không đảo ngược** nếu không đ
    - **`_headers`** (Cloudflare Pages tự đọc): CSP (script chỉ từ site + `www.gstatic.com`; kết nối chỉ tới site, `*.googleapis.com`, `*.firebaseio.com`; ảnh/âm thanh `data:` `blob:` `https:`; khung chỉ Vocaroo/Firebase; `object-src 'none'`; `frame-ancestors 'none'`), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy`, `Permissions-Policy` (chỉ micro cho chính site), HSTS. `'unsafe-inline'` vẫn cần vì app là một file có script/style inline. **Thêm dịch vụ ngoài mới (script, API, iframe) thì phải thêm domain vào CSP**, nếu không trình duyệt chặn.
    - **`firestore.rules`** (phải dán lại vào Firebase Console): `attempts` học sinh tạo không được có `ai`, `score`/`total` 0–1000 và `score ≤ total`; `profiles` mỗi lần ghi `xp`/`xpLife` tăng ≤ 1000, `spins`/`freezes`/`peek` tăng ≤ 2, tạo mới `xp ≤ 1000`, học sinh không đổi được `season`/`seasons` (chỉ server); `wins` chỉ đúng 5 trường `name cls prize tier ts`, chữ ngắn. Hàm `numIn(k, lo, hi)`, `upBy(k)`.
    - **Còn lại (chưa giải quyết được nếu không đưa điểm/XP lên server)**: điểm bài tự chấm, XP, spin, vật phẩm, late pass vẫn do trình duyệt học sinh tính rồi ghi; rules chỉ chặn sửa tay lớn, một người viết script vẫn cộng dần được. Voucher (`codes`) ai đăng nhập cũng nhận được mã còn trống. `roster` ai đăng nhập cũng đọc được. `/api/status?em=` cho biết email có bị khóa không.
+
+38. **Icon site + Daily practice dạng thẻ dọc (10/2026)**:
+   - **Favicon / icon màn hình chính**: các thẻ `<link rel="icon">` (16, 32, `favicon.ico`), `apple-touch-icon` (180), `manifest`, `mobile-web-app-capable`, `apple-mobile-web-app-title="Mini Drills"` nằm trong `<head>` thật ở **dòng 1** của `index.html` (đầu file có `</head><body>` ở dòng 2, `<title>` nằm sau đó). `site.webmanifest`: `name`, `short_name`, `start_url:"/"`, `scope:"/"`, icon 192/512, `theme_color`/`background_color` `#12141f`, `display:standalone`. Ảnh trong `assets/` tạo từ logo (blob xanh `#043099`): favicon nền trong suốt, logo gần kín ô; icon màn hình chính nền trắng, chừa lề 18% (iOS/Android tự bo góc). Đổi logo thì tạo lại cả 6 file.
+   - **Daily practice** (`dailyHTML`): danh sách `.dlist` gồm các thẻ rộng 100% `dcardHTML(act, k, title, sub, icon, done)` = icon tròn `.dico` (`dicoHTML`, SVG nét trong `DICO`: book, swap, mic, ear, cards, redo, check) · tiêu đề + dòng phụ `.dtx` (`DTYPES[k].s`, Daily Review = "N cards due", Error review = "N due") · `.dgo` ("Start ›" / "Done"). Trạng thái: `.dtask` = chưa làm (nền `--bg`, viền `--line-strong`, hover viền `--accent`); `.dtask.dn` = đã làm hôm nay (nền `--good-bg`, viền/chữ `--good`, icon thành dấu tích trên nền `--good`; tương phản 5.3:1 sáng, 7.4:1 tối). Đã bỏ `.dgrid` và các CSS `.dtask` cũ. Khối streak / thanh cấp độ phía trên không đổi. Thanh chọn bố cục "A · Hero / B · Compact / C · Two columns / D · Ladder" chỉ có trong file thiết kế, không có trong code.
 
 ## 8. Giới hạn đã biết / chưa làm
 
