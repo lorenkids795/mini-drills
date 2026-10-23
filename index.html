@@ -4096,6 +4096,7 @@ function curDark(){var t=document.documentElement.getAttribute('data-theme');if(
 function tabsFor(){return U.adm?[['dash','Dashboard'],['asg','Classes'],['mark','Marking'],['library','Library'],['create','Create'],['prize','Prizes'],['admin','Admin']]:U.role==='teacher'?[['asg','Classes'],['mark','Marking'],['dash','Dashboard'],['library','Library']]:[['library','Home'],['cards','Flashcards'],['errors','Error Notebook'],['ranks','Leaderboard'],['wheel','Lucky Wheel'],['bag','Inventory'],['set','Settings']]}
 function showTab(t){
   TAB=t;stopAudio();clearTimer();MK.open=false;recClearAll();
+  if(t!=='admin'){AD.modal=null;var amr=document.getElementById('adModalRoot');if(amr)amr.innerHTML=''} // leaving Admin closes its confirm box
   ['login','lib','cards','errors','ranks','wheel','bag','set','prize','xps','dash','asg','mark','roster','create','admin'].forEach(function(n){$('#v-'+n).hidden=true});
   if(!U){var lv=$('#v-login');lv.hidden=false;if(!DEMO&&lsGet('md-email')&&!window.MD_USER){lv.setAttribute('data-wait','');setTimeout(function(){lv.removeAttribute('data-wait')},10000)}else lv.removeAttribute('data-wait');$('#tabs').hidden=true;$('#who').hidden=true;$('#sbBtn').hidden=true;document.body.classList.remove('nav-on');sbInit();return}
   $('#v-login').removeAttribute('data-wait');
@@ -5494,7 +5495,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-10-24a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-10-24b'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(audAct(a,t))return true;
@@ -6723,7 +6724,8 @@ function renderAdmin(){
   el.innerHTML='<div class="pad adm"><div class="sechead"><h2>Admin</h2></div>'+
     (DEMO?'<p class="adm-demo" role="note">Demo: changes are not saved.</p>':'')+
     '<div class="subtabs" role="tablist">'+subs.map(function(s){return '<button type="button" role="tab" data-act="ad-sub" data-v="'+s[0]+'" aria-selected="'+(AD.sub===s[0])+'">'+s[1]+'</button>'}).join('')+'</div>'+
-    body+'<p class="msg" id="adMsg" aria-live="polite">'+esc(AD.err)+'</p>'+adModalHTML()+'</div>';
+    body+'<p class="msg" id="adMsg" aria-live="polite">'+esc(AD.err)+'</p></div>';
+  adModalRoot().innerHTML=adModalHTML();
   // a confirm box that just opened gets the keyboard focus (Cancel for dangerous actions); Esc closes it (keydown listener)
   if(AD.modal&&!AD.modal.focused){AD.modal.focused=true;var mf=$(AD.modal.danger?'#adModal [data-act="ad-close"]':'#adModal [data-act="ad-ok"]');if(mf&&mf.focus){try{mf.focus({preventScroll:true})}catch(x){mf.focus()}}}
   var rs=$('#v-roster'),ron=TAB==='admin'&&AD.sub==='students';
@@ -6882,7 +6884,20 @@ function adModalHTML(){
   return '<div class="modal" id="adModal" role="dialog" aria-modal="true" aria-labelledby="adMT"><div class="mbox" style="width:min(520px,100%)"><h3 id="adMT" style="font-size:1.15rem;margin-bottom:10px">'+esc(m.title)+'</h3><p>'+esc(m.text)+'</p>'+(m.body||'')+
     '<p class="msg" id="adMMsg" aria-live="polite"></p><div class="actions"><button class="btn'+(m.danger?' bad':' pri')+'" type="button" data-act="ad-ok">'+esc(m.ok)+'</button><button class="btn" type="button" data-act="ad-close">Cancel</button></div></div></div>';
 }
+// the admin confirm box is drawn in #adModalRoot, a direct child of <body>: no layout of the Admin page can hide or clip it
+function adModalRoot(){var r=document.getElementById('adModalRoot');if(!r||!r.parentNode){r=document.createElement('div');r.id='adModalRoot';r.className='adm';document.body.appendChild(r)}return r} // class adm: keeps .adm .msg (red error line)
 function closeAdModal(){AD.modal=null;renderAdmin()}
+// After opening a confirm box: is it really on the screen (has a size, and is the top element where it is drawn)? If not
+// (something on this device hides it), ask with the browser's own dialog instead and run the same action, so it never "does nothing".
+function adModalCheck(){var m0=AD.modal;setTimeout(function(){if(!m0||AD.modal!==m0||m0.pending)return;
+  var md=document.getElementById('adModal'),bx=md&&md.querySelector&&md.querySelector('.mbox'),ok=false;
+  try{if(bx){var r=bx.getBoundingClientRect();if(r.width>0&&r.height>0){var hit=document.elementFromPoint(r.left+r.width/2,Math.max(0,r.top)+Math.min(r.height/2,24));ok=!!(hit&&md.contains(hit))}}}catch(e){ok=false}
+  if(ok)return;
+  try{console.warn('[admin] the confirm box is not visible on this screen; using the browser dialog')}catch(x){}
+  AD.modal=null;renderAdmin();
+  if(!confirm(m0.title+'\n\n'+m0.text))return;
+  m0.pending=true;toast(m0.busy||'Saving…');m0.run().then(function(){},function(e){m0.pending=false;var msg=(e&&e.message)||'Something went wrong.';adSay(msg);alert(msg)});
+},150)}
 function adAct(a,t){
   if(a.indexOf('ad-')!==0)return false;
   var who=t.dataset.email||'',u=adUser(who),nm=u.name||who;
@@ -6945,7 +6960,7 @@ function adAct(a,t){
       run:function(){return adminApi('admin/kick',{email:who}).then(function(d){
         return adDone(nm+' was kicked.',d&&d.envTeacher?adSet(who,{status:'kicked',hasPassword:false}):function(L){return L.filter(function(x){return x.email!==who})});
       })}};
-    renderAdmin();return true}
+    renderAdmin();adModalCheck();return true}
   if(a==='ad-on'){adBusy(t,true);adminApi('admin/active',{email:who,active:true}).then(function(){return adDone(nm+' can sign in again.',adSet(who,{status:'active'}))},function(e){adBusy(t,false);adSay(e.message)});return true}
   if(a==='ad-trm'){
     AD.modal={title:'Remove teacher?',text:nm+' ('+who+') can no longer sign in, and devices that are signed in are signed out within 10 minutes. Their marking and assignments stay in the app.'+(u.src==='env'?' This email is listed in TEACHERS on Cloudflare: it is paused here; also delete it from TEACHERS to remove it for good.':''),ok:'Remove teacher',danger:true,

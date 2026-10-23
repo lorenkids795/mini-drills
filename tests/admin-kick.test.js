@@ -21,7 +21,8 @@ const USERS = () => [
   { email: '3667@gmail.com', name: 'TESTER', role: 'student', cls: 'Test', status: 'active', hasPassword: true },
   { email: 'nghiatucayfai@gmail.com', name: 'QUANG KHANG', role: 'student', cls: '17h', status: 'active', hasPassword: true },
 ];
-function boot() {
+function boot(opt) {
+  opt = opt || {};
   const els = {}, handlers = {}, store = {};
   const el = (id) => els[id] || (els[id] = { id, innerHTML: '', textContent: '', hidden: false, value: '', style: { setProperty() {} }, dataset: {}, focused: false,
     classList: { add() {}, remove() {}, toggle() {}, contains() { return false; } }, setAttribute() {}, getAttribute() { return null; }, removeAttribute() {}, appendChild() {}, remove() {},
@@ -29,15 +30,21 @@ function boot() {
     getBoundingClientRect: () => ({ left: 0, top: 0, width: 0, height: 0 }), insertAdjacentHTML() {} });
   // an #id "exists" when it is in the static page or in HTML the app has rendered (like a real DOM)
   const exists = (id) => STATIC_IDS.has(id) || Object.keys(els).some((k) => String(els[k].innerHTML).indexOf('id="' + id + '"') >= 0);
-  const doc = { readyState: 'complete', documentElement: el('html'), body: el('body'), head: el('head'), getElementById: el,
+  const body = el('body'); body.appendChild = (n) => { n.parentNode = body; if (n.id) els[n.id] = n; return n; };
+  const doc = { readyState: 'complete', documentElement: el('html'), body, head: el('head'), getElementById: el,
     querySelector: (s) => (/^#[\w-]+$/.test(s) ? (exists(s.slice(1)) ? el(s.slice(1)) : null) : /^#adModal \[data-act="(ad-close|ad-ok)"\]$/.test(s) ? el('btn:' + RegExp.$1) : null), querySelectorAll: () => [],
     createElement: () => el('tmp' + Math.random()), addEventListener: (ty, f, c) => { (handlers[ty] = handlers[ty] || []).push({ f, c: !!c }); }, removeEventListener() {}, hidden: false, visibilityState: 'visible' };
-  const W = { document: doc, console: { log() {}, error() {}, warn() {} }, setTimeout: (f, ms) => (ms === 250 ? setTimeout(f, 0) : 0), clearTimeout() {}, setInterval: () => 0, clearInterval() {}, requestAnimationFrame: () => 0,
+  const W = { document: doc, console: { log() {}, error() {}, warn() {} }, setTimeout: (f, ms) => (ms === 250 || (ms === 150 && opt.check) ? setTimeout(f, 0) : 0), clearTimeout() {}, setInterval: () => 0, clearInterval() {}, requestAnimationFrame: () => 0,
     localStorage: { getItem: (k) => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = String(v); }, removeItem: (k) => { delete store[k]; }, key: () => null, length: 0 },
     sessionStorage: { getItem: () => 'admin-key-123', setItem() {}, removeItem() {} }, matchMedia: () => ({ matches: false, addEventListener() {}, addListener() {} }), addEventListener() {},
     location: { reload() {}, hash: '', search: '' }, navigator: { userAgent: 'node' }, confirm: () => true, alert() {}, scrollTo() {}, scrollY: 0, innerWidth: 1280, innerHeight: 800, getComputedStyle: () => ({}),
     MD_CONFIG: { demo: false, teachers: [], api: '/api' }, MD_USER: { name: 'Admin', email: 'lorenkids795@gmail.com', role: 'teacher', adm: true }, claude: { use: () => new Promise(() => {}) } };
   W.window = W;
+  W.confirm = () => (W.asked = (W.asked || 0) + 1, opt.answer !== false); W.alert = (m) => { W.alerted = m; };
+  // opt.visible: the box has a size and is on top where it is drawn (like a normal screen)
+  doc.elementFromPoint = () => (opt.visible ? { inModal: true } : null);
+  const md = el('adModal'); md.querySelector = (s) => (s === '.mbox' ? { getBoundingClientRect: () => (opt.visible ? { left: 100, top: 100, width: 400, height: 200 } : { left: 0, top: 0, width: 0, height: 0 }) } : null);
+  md.contains = (n) => !!(n && n.inModal);
   W.calls = []; W.reply = () => ({ status: 200, body: { ok: true } });
   W.fetch = (url, opt) => { W.calls.push({ url, opt }); const r = W.reply(url); if (r === 'offline') return Promise.reject(new TypeError('Failed to fetch'));
     return Promise.resolve({ ok: r.status < 400, status: r.status, json: () => (r.body === 'html' ? Promise.reject(new Error('not json')) : Promise.resolve(JSON.parse(JSON.stringify(r.body)))) }); };
@@ -57,8 +64,8 @@ function boot() {
     return btn;
   };
   const key = (k) => { const ev = { key: k, target: el('body'), preventDefault() {}, stopPropagation() {}, stopImmediatePropagation() { ev._stop = true; } }; (handlers.keydown || []).forEach((h) => { if (!ev._stop) h.f(ev); }); };
-  const flush = async () => { for (let i = 0; i < 12; i++) await new Promise((r) => setImmediate(r)); };
-  return { W, T, AD, el, press, key, flush, view: () => el('v-admin').innerHTML, toast: () => el('toast').textContent };
+  const flush = async () => { for (let k = 0; k < 3; k++) { await new Promise((r) => setTimeout(r, 5)); for (let i = 0; i < 12; i++) await new Promise((r) => setImmediate(r)); } };
+  return { W, T, AD, el, press, key, flush, view: () => el('v-admin').innerHTML, modal: () => el('adModalRoot').innerHTML, toast: () => el('toast').textContent };
 }
 const kicks = (B) => B.W.calls.filter((c) => /\/api\/admin\/kick$/.test(c.url));
 
@@ -70,12 +77,12 @@ const kicks = (B) => B.W.calls.filter((c) => /\/api\/admin\/kick$/.test(c.url));
   });
   await t('Kick opens the confirm box with the right name and email', () => {
     const B = boot(); B.press({ act: 'ad-kick', email: '3667@gmail.com' });
-    assert.ok(B.AD.modal && /Kick this student/.test(B.AD.modal.title)); const v = B.view();
+    assert.ok(B.AD.modal && /Kick this student/.test(B.AD.modal.title)); const v = B.modal();
     assert.ok(v.includes('id="adModal"') && v.includes('TESTER (3667@gmail.com)') && v.includes('data-act="ad-ok"'));
   });
   await t('the confirm box takes the keyboard focus (Cancel, because Kick is dangerous)', () => { const B = boot(); B.press({ act: 'ad-kick', email: '3667@gmail.com' }); assert.ok(B.el('btn:ad-close').focused); });
   await t('Cancel closes it and sends nothing', async () => { const B = boot(); B.W.calls.length = 0; B.press({ act: 'ad-kick', email: '3667@gmail.com' }); B.press({ act: 'ad-close' }); await B.flush();
-    assert.strictEqual(B.AD.modal, null); assert.strictEqual(B.W.calls.length, 0); assert.ok(!B.view().includes('id="adModal"')); });
+    assert.strictEqual(B.AD.modal, null); assert.strictEqual(B.W.calls.length, 0); assert.ok(!B.modal().includes('id="adModal"')); });
   await t('Escape closes it and sends nothing', async () => { const B = boot(); B.W.calls.length = 0; B.press({ act: 'ad-kick', email: '3667@gmail.com' }); B.key('Escape'); await B.flush(); assert.strictEqual(B.AD.modal, null); assert.strictEqual(kicks(B).length, 0); });
   await t('confirm sends exactly one POST /api/admin/kick with X-Admin-Key, even when pressed twice', async () => {
     const B = boot(); B.W.reply = (u) => (/users$/.test(u) ? { status: 200, body: { users: USERS().filter((x) => x.email !== '3667@gmail.com'), ver: '2026-10-23d' } } : { status: 200, body: { ok: true, role: 'student' } });
@@ -108,6 +115,20 @@ const kicks = (B) => B.W.calls.filter((c) => /\/api\/admin\/kick$/.test(c.url));
     const B = boot(); B.AD.users = [{ get email() { throw new Error('broken row'); } }];
     B.press({ act: 'ad-kick', email: 'x@y.z' }); assert.ok(/Something went wrong \(ad-kick: broken row\)/.test(B.toast()), B.toast());
   });
+  await t('the confirm box is drawn under <body> (#adModalRoot), not inside the Admin page', () => { const B = boot(); B.press({ act: 'ad-kick', email: '3667@gmail.com' }); assert.ok(B.modal().includes('id="adModal"')); assert.ok(!B.view().includes('id="adModal"')); });
+  await t('box visible on screen: no browser dialog, normal flow', async () => { const B = boot({ check: true, visible: true }); B.press({ act: 'ad-kick', email: '3667@gmail.com' }); await B.flush(); assert.ok(!B.W.asked); assert.ok(B.AD.modal); });
+  await t('box NOT visible (hidden by something on this device): browser dialog asks, then the account is kicked', async () => {
+    const B = boot({ check: true, visible: false }); B.W.reply = (u) => (/users$/.test(u) ? { status: 200, body: { users: USERS().filter((x) => x.email !== '3667@gmail.com'), ver: '2026-10-23d' } } : { status: 200, body: { ok: true, role: 'student' } });
+    B.press({ act: 'ad-kick', email: '3667@gmail.com' }); await B.flush();
+    assert.strictEqual(B.W.asked, 1); const k = kicks(B); assert.strictEqual(k.length, 1); assert.deepStrictEqual(JSON.parse(k[0].opt.body), { email: '3667@gmail.com' });
+    assert.ok(!B.AD.users.some((x) => x.email === '3667@gmail.com')); assert.ok(/was kicked/.test(B.toast()));
+  });
+  await t('browser dialog answered Cancel: nothing is sent', async () => { const B = boot({ check: true, visible: false, answer: false }); B.press({ act: 'ad-kick', email: '3667@gmail.com' }); await B.flush(); assert.strictEqual(B.W.asked, 1); assert.strictEqual(kicks(B).length, 0); });
+  await t('browser dialog + server error: the error is shown (alert + message), row kept', async () => {
+    const B = boot({ check: true, visible: false }); B.W.reply = () => ({ status: 500, body: { error: 'Firestore write failed.' } });
+    B.press({ act: 'ad-kick', email: 'nghiatucayfai@gmail.com' }); await B.flush(); assert.ok(/Firestore write failed/.test(B.W.alerted)); assert.ok(B.AD.users.some((x) => x.email === 'nghiatucayfai@gmail.com'));
+  });
+  await t('leaving Admin closes its confirm box', () => { const B = boot(); B.press({ act: 'ad-kick', email: '3667@gmail.com' }); B.T.showTab('dash'); assert.strictEqual(B.AD.modal, null); assert.ok(!B.modal().includes('adModal')); });
   // regression: the other Users / Admin buttons still open their boxes or send their request
   await t('Change password opens its box', () => { const B = boot(); B.press({ act: 'ad-pw', email: 'nghiatucayfai@gmail.com' }); assert.ok(B.AD.modal && /Change password/.test(B.AD.modal.title)); });
   await t('Edit class opens its box', () => { const B = boot(); B.press({ act: 'ad-cls', email: 'nghiatucayfai@gmail.com' }); assert.ok(B.AD.modal && /Edit class/.test(B.AD.modal.title)); });
