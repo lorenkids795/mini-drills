@@ -734,43 +734,62 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .dw-bad{background:var(--bad-bg);color:var(--bad);text-decoration:line-through}
 .fcard .btn.good.kpress{box-shadow:0 0 0 3px var(--good-bg)}
 .ttl{font-size:.7rem;font-weight:600;background:var(--ink);color:var(--bg);border-radius:99px;padding:.05rem .5rem;margin-left:6px;white-space:nowrap}
-/* Leaderboard: tabs + XP/Streak switch, podium 2|1|3 (text lines aligned at the bottom), list from rank 4 */
+/* Leaderboard (Spotlight): tabs + XP/Streak switch, hero #1, cards #2 #3, rows from #4 */
 .rkbar{display:flex;align-items:flex-end;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin:10px 0 22px}
 .rkbar .subtabs{border-bottom:0;margin:0}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:6px;background:var(--surface)}
 .seg button{border:0;background:none;color:var(--muted);padding:.35rem .95rem;font-weight:600;font-size:.85rem;cursor:pointer}
 .seg button+button{border-left:1px solid var(--line)}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
-.podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:end;margin:30px 0 16px}
-.pod{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px;min-width:0;min-height:232px;padding:24px 12px 18px;background:var(--surface);border:1px solid var(--line);border-radius:14px;text-align:center}
-.pod1{grid-column:2;grid-row:1;min-height:256px;border:2px solid var(--accent);box-shadow:0 8px 24px rgba(10,15,30,.12)}
-.pod2{grid-column:1;grid-row:1}.pod3{grid-column:3;grid-row:1}
-.pod.me{background:var(--hl-soft)}
-.podn{position:absolute;top:10px;left:10px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-size:.78rem;font-weight:700;color:var(--ink)}
-.pod1 .podn{background:var(--gold-a)}.pod2 .podn{background:var(--silv-a)}.pod3 .podn{background:var(--brz-a)}
-.podt{margin-top:auto;display:flex;flex-direction:column;gap:2px;width:100%;min-width:0;font-size:1rem;line-height:1.4}
-.podnm{font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.podlv{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.podv{color:var(--ink);white-space:nowrap}.podv b{font-weight:700}
-.rklist{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:visible} /* visible: rank frames (wings, crowns) may stick out of the avatar */
-.rklist .rk:first-child{border-radius:12px 12px 0 0}.rklist .rk:last-child{border-radius:0 0 12px 12px}
-.rk{display:grid;grid-template-columns:2rem auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:.65rem .9rem;border-bottom:1px solid var(--line);font-size:.95rem}
-.rklist .rk:last-child{border-bottom:0}
-.rk .n{font-family:var(--mono);color:var(--muted);text-align:center}
-.rkn{min-width:0}
-.rkn b{display:block;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.rk small{display:block;color:var(--muted);font-size:.78rem}
-.rkv{white-space:nowrap;text-align:right}.rkv b{font-weight:700}.rkv .u,.podv .u{color:var(--muted);font-weight:400}
-.rk.me{background:var(--hl-soft);background:color-mix(in srgb,var(--accent) 10%,var(--surface));box-shadow:inset 0 0 0 1.5px var(--accent)}
-.rk.me .n{color:var(--accent);font-weight:700}
+.lbseg button[aria-pressed="true"]{background:var(--nav);color:var(--nav-ink)}
+.lbempty{display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center;padding:40px 16px;border:1px dashed var(--line-strong);border-radius:14px;color:var(--muted)}.lbempty b{color:var(--ink);font-size:1.05rem}
+.lbhero{position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:center;gap:28px;padding:30px 34px;border-radius:18px;color:#fff;margin:6px 0 16px;
+  background:radial-gradient(circle at 30% 20%,#7d6bf0,transparent 55%),linear-gradient(135deg,#2b2a8f,#5a35b5)}
+.lbhero::before{content:"";position:absolute;z-index:-1;top:-20%;left:8%;width:46%;height:150%;background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,0) 75%);clip-path:polygon(38% 0,62% 0,100% 100%,0 100%);filter:blur(8px);pointer-events:none}
+.lbhero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.45;animation:lbtw 3s ease-in-out infinite alternate;background-repeat:no-repeat;background-image:
+  radial-gradient(1.5px 1.5px at 6% 14%,#fff 99%,transparent),radial-gradient(1px 1px at 14% 72%,#fff 99%,transparent),radial-gradient(2px 2px at 21% 34%,#fff 99%,transparent),radial-gradient(1px 1px at 28% 88%,#fff 99%,transparent),
+  radial-gradient(1.5px 1.5px at 35% 10%,#fff 99%,transparent),radial-gradient(1px 1px at 41% 58%,#fff 99%,transparent),radial-gradient(2px 2px at 48% 26%,#fff 99%,transparent),radial-gradient(1px 1px at 53% 80%,#fff 99%,transparent),
+  radial-gradient(1.5px 1.5px at 59% 44%,#fff 99%,transparent),radial-gradient(1px 1px at 64% 8%,#fff 99%,transparent),radial-gradient(2px 2px at 69% 66%,#fff 99%,transparent),radial-gradient(1px 1px at 74% 30%,#fff 99%,transparent),
+  radial-gradient(1.5px 1.5px at 79% 90%,#fff 99%,transparent),radial-gradient(1px 1px at 83% 18%,#fff 99%,transparent),radial-gradient(2px 2px at 87% 52%,#fff 99%,transparent),radial-gradient(1px 1px at 91% 76%,#fff 99%,transparent),
+  radial-gradient(1.5px 1.5px at 95% 36%,#fff 99%,transparent),radial-gradient(1px 1px at 97% 6%,#fff 99%,transparent),radial-gradient(1.5px 1.5px at 10% 48%,#fff 99%,transparent),radial-gradient(1px 1px at 57% 94%,#fff 99%,transparent)}
+@keyframes lbtw{from{opacity:.45}to{opacity:.95}}
+.lbglow{position:absolute;z-index:-1;left:40px;top:50%;width:300px;height:300px;margin-top:-150px;margin-left:-50px;border-radius:50%;background:radial-gradient(circle,rgba(255,226,138,.35),rgba(255,226,138,0) 68%);pointer-events:none}
+.lbshoot{position:absolute;z-index:-1;top:0;left:0;width:90px;height:2px;border-radius:2px;background:linear-gradient(90deg,rgba(255,255,255,0),#fff);opacity:0;pointer-events:none;transform:rotate(20deg)}
+.lbshoot.s1{top:12%;left:30%;animation:shoot 9s linear 1s infinite}.lbshoot.s2{top:4%;left:62%;animation:shoot 13s linear 5s infinite}
+@keyframes shoot{0%{opacity:0;transform:translate(0,0) rotate(20deg)}2%{opacity:1}9%{opacity:0;transform:translate(260px,95px) rotate(20deg)}100%{opacity:0;transform:translate(260px,95px) rotate(20deg)}}
+.lbhav{flex:none}
+.lbht{display:flex;flex-direction:column;gap:6px;min-width:0}
+.lbchip{align-self:flex-start;font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:999px;background:rgba(255,226,138,.18);color:#ffe28a;border:1px solid rgba(255,226,138,.45)}
+.lbhn{font-size:22px;font-weight:800;line-height:1.25;overflow-wrap:anywhere}
+.lbhv{font-size:42px;font-weight:600;line-height:1.1;color:#ffe28a}.lbhv b{font-weight:800}
+.lbhl{color:rgba(255,255,255,.82);font-size:.95rem}
+.lbcards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:16px}
+.lbcards.one{grid-template-columns:minmax(0,1fr);max-width:calc(50% - 7px);margin-left:auto;margin-right:auto}
+.lbcard{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;min-width:0;padding:28px 12px 18px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.lbcard .avw{margin-bottom:6px}
+.lbrib{position:absolute;top:0;left:18px;width:16px;height:34px;clip-path:polygon(0 0,100% 0,100% 100%,50% 76%,0 100%)}
+.lb2 .lbrib{background:#aab3c5}.lb3 .lbrib{background:#c98a55}
+.lbcn{font-weight:800;font-size:1.05rem;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lbcl{color:var(--muted);font-size:.85rem}.lbcv{font-size:1.15rem}.lbcv b{font-weight:800}
+.lbcard.me,.lbrow.me{background:var(--you-bg);border:1px solid var(--accent)}
+.lbhero.me .lbhn{text-decoration:underline;text-decoration-color:#ffe28a;text-underline-offset:4px}
+.lblist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.lbrow{display:grid;grid-template-columns:26px 36px 150px minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 12px;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.lbrow.gap{display:block;text-align:center;color:var(--muted);background:none;border:0;padding:0}
+.lbn{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--track);color:var(--ink);font-family:var(--mono);font-size:.78rem;font-weight:700}
+.lbrn{min-width:0;display:flex;flex-direction:column}
+.lbrn b{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lbrn small{color:var(--muted);font-size:.78rem}
+.lbbar{height:8px;border-radius:8px;background:var(--track);overflow:hidden}.lbbar i{display:block;height:100%;border-radius:8px;background:var(--accent)}
+.lbrv{white-space:nowrap;text-align:right}.lbrv b{font-weight:800}
+@media (prefers-reduced-motion:reduce){.lbhero::after{animation:none}.lbshoot{display:none}}
 @media (max-width:640px){
-  .podium{gap:8px;margin-top:22px}
-  .pod{min-height:178px;padding:18px 6px 12px;gap:10px;border-radius:12px}
-  .pod1{min-height:198px}
-  .pod .avw{--s:56px!important}.pod1 .avw{--s:72px!important}
-  .podn{top:6px;left:6px;width:20px;height:20px;font-size:.7rem}
-  .podt{font-size:.85rem}
-  .rk{grid-template-columns:1.6rem auto minmax(0,1fr) auto;gap:10px;padding:.6rem .7rem}
+  .lbhero{flex-direction:column;text-align:center;gap:16px;padding:24px 16px}
+  .lbht{align-items:center}.lbchip{align-self:center}
+  .lbhv{font-size:34px}
+  .lbglow{left:50%;top:30%;margin-left:-150px}
+  .lbcards{gap:10px}.lbcard{padding:26px 8px 14px}
+  .lbcards.one{max-width:calc(50% - 5px)}
+  .lbrow{grid-template-columns:26px 36px 100px minmax(0,1fr) auto;gap:8px;padding:8px}
 }
 /* ---- wheel, inventory, marquee ---- */
 .wheelbox{display:flex;flex-direction:column;align-items:center;gap:12px;padding:10px 0}
@@ -1015,7 +1034,7 @@ mark.wch.act,mark.wch:focus-visible{outline:2px solid var(--accent);outline-offs
   .spm>section{margin-bottom:12px}
   .spmx .nr{grid-template-columns:minmax(0,1fr)}.spmx .skc{width:100%}}
 .pzt .pzh td{background:var(--bg);font-size:.84rem}.pzt .pzw{width:80px;height:34px;box-sizing:border-box;border:1px solid var(--line-2);border-radius:8px;padding:0 6px;background:var(--surface);color:var(--ink);font-family:var(--mono)}
-small.pity{display:block;color:var(--muted);font-size:.72rem}
+.pill.tst{background:#f3e3c2;color:#6b4710;border-color:#d9b46f}
 .rmgrp{border:1px solid var(--line);border-radius:14px;padding:4px 14px 14px;margin:0 0 14px;background:var(--surface)}
 .rmgrp>.lsh:first-child{margin-top:12px}
 .rmpsg .rmp{margin-bottom:.9em}
@@ -1026,7 +1045,13 @@ small.pity{display:block;color:var(--muted);font-size:.72rem}
 .rmk{min-width:9em}.rmkw{display:block;color:var(--bad);font-size:.82rem;margin-top:4px}.rmkw:empty{display:none}
 .opts.rmtf .opt{flex:1 1 0;min-width:96px;justify-content:center;text-align:center}
 .lswarn{border:1px solid var(--warn);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:.9rem}.lswarn ul{margin:4px 0 0;padding-left:18px}
-@media (min-width:900px){.rmdeep{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+.rmsplit{display:none}
+@media (min-width:900px){.rmdeep{display:grid;grid-template-columns:minmax(0,var(--rmp,50%)) 14px minmax(0,1fr);gap:0 10px;align-items:start}
+  .rmsplit{display:flex;justify-content:center;align-self:stretch;cursor:col-resize;touch-action:none;border-radius:8px;min-height:200px}
+  .rmsplit span{width:4px;border-radius:4px;background:var(--line-strong);transition:background .15s}
+  .rmsplit:hover span,.rmsplit:focus-visible span,.rmsplit.drag span{background:var(--accent)}
+  .rmsplit:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  body.rmsizing{cursor:col-resize;user-select:none;-webkit-user-select:none}
   .rmpsg{position:sticky;top:120px;max-height:calc(100vh - 140px);overflow:auto}}
 @media (max-width:899px){ /* split screen: passage top half, questions bottom half, two scroll areas */
   .rmdeep{display:grid;grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:10px;height:calc(100vh - 190px);height:calc(100dvh - 190px);min-height:420px}
@@ -1125,8 +1150,8 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
 .avf{position:absolute;inset:-4px;border-radius:50%;border:3px solid;pointer-events:none}
 .avfi{position:absolute;left:50%;top:50%;width:140%;height:140%;transform:translate(-50%,-50%);object-fit:contain;pointer-events:none;max-width:none}
 #whoName{display:inline-flex;align-items:center;gap:8px}
-.rkl{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px;margin-top:10px}
-.rkc{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 8px 10px}
+.rkl{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:14px;margin-top:10px}
+.rkc{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:30px 10px 12px;overflow:visible} /* room for wide frames (wings, crowns) */
 .rkc.me{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
 .rkc small{color:var(--muted);font-size:.74rem}
 .lad .past{background:var(--line);color:var(--muted);border-color:var(--line)}
@@ -1146,6 +1171,11 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
 .kh{margin-top:12px;font-size:.78rem;color:var(--muted)}
 @media (pointer:coarse){.kh{display:none}}
 :root{--m1:#fbcfcf;--m1l:#b42323;--m2:#fdd9b0;--m2l:#b8560a;--m3:#fff09a;--m3l:#8a7400}
+:root{--you-bg:#faf1b8;--track:#e1e4ee;--nav:#161a2e;--nav-ink:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--you-bg:#3a3520;--track:#2f3350;--nav:#eceef8;--nav-ink:#161a2e}
+  :root:not([data-theme="light"]) .lbhero{background:radial-gradient(circle at 30% 20%,#5b4bd0,transparent 55%),linear-gradient(135deg,#17165e,#3c2290);border:1px solid rgba(255,255,255,.14);box-shadow:0 0 40px rgba(110,90,240,.28)}}
+:root[data-theme="dark"]{--you-bg:#3a3520;--track:#2f3350;--nav:#eceef8;--nav-ink:#161a2e}
+:root[data-theme="dark"] .lbhero{background:radial-gradient(circle at 30% 20%,#5b4bd0,transparent 55%),linear-gradient(135deg,#17165e,#3c2290);border:1px solid rgba(255,255,255,.14);box-shadow:0 0 40px rgba(110,90,240,.28)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--m1:#5c2227;--m1l:#ff8a8a;--m2:#5a3814;--m2l:#ffb066;--m3:#51480f;--m3l:#f0d54a}}
 :root[data-theme="dark"]{--m1:#5c2227;--m1l:#ff8a8a;--m2:#5a3814;--m2l:#ffb066;--m3:#51480f;--m3l:#f0d54a}
 .mkpass{border-left:3px solid var(--accent);padding-left:12px;font-size:1.05rem;line-height:2;margin:6px 0}
@@ -2224,7 +2254,7 @@ function saveAttempt(rec){
 /* ---------- Demo helper (teachers and admins only, never students, also in demo mode) ----------
    demoBarHTML(k) draws the bar; demoFill(mode,k) asks the filler DFILL[k] to fill the stage or part on screen.
    A filler gets g() = "should the next item be right?" (alternates, so Half wrong = about 50% right, rounded up) and dfWrong(). */
-function demoOk(){return !!(U&&U.role==='teacher')}
+function demoOk(){return !!(U&&(U.role==='teacher'||testerEm()[String(U.email||'').toLowerCase()]))} // teachers, admins and shadow testers
 function demoBarHTML(k){return demoOk()?'<div class="lsdemo" id="dmBar" role="group" aria-label="Demo helper">Demo helper <button class="btn sm" data-act="demo-fill" data-m="ok" data-k="'+k+'" type="button">All correct</button><button class="btn sm" data-act="demo-fill" data-m="half" data-k="'+k+'" type="button">Half wrong</button></div>':''}
 function dfNorm(x){return String(x==null?'':x).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()}
 function dfWrong(right,pool){ // a real word that is not one of the accepted answers
@@ -4000,7 +4030,7 @@ function showTab(t){
   if(!U){var lv=$('#v-login');lv.hidden=false;if(!DEMO&&lsGet('md-email')&&!window.MD_USER){lv.setAttribute('data-wait','');setTimeout(function(){lv.removeAttribute('data-wait')},10000)}else lv.removeAttribute('data-wait');$('#tabs').hidden=true;$('#who').hidden=true;$('#sbBtn').hidden=true;document.body.classList.remove('nav-on');sbInit();return}
   $('#v-login').removeAttribute('data-wait');
   if(t!=='library'&&!tabsFor().some(function(x){return x[0]===t})){t=tabsFor()[0][0];TAB=t} // a tab this role does not have
-  $('#tabs').hidden=tabsFor().length<2;document.body.classList.toggle('nav-on',!$('#tabs').hidden);$('#sbBtn').hidden=$('#tabs').hidden;sbSet(SB.open);/* keeps the open / closed state */$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b>'+(U.adm?'':'<span class="rl"> · '+U.role+'</span>');
+  $('#tabs').hidden=tabsFor().length<2;document.body.classList.toggle('nav-on',!$('#tabs').hidden);$('#sbBtn').hidden=$('#tabs').hidden;sbSet(SB.open);/* keeps the open / closed state */$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28,true)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b>'+(U.adm||U.role==='student'?'':'<span class="rl"> · '+U.role+'</span>');
   $('#tabs').innerHTML=tabsFor().map(function(x){return '<button role="tab" data-act="tab" data-tab="'+x[0]+'" aria-selected="'+(x[0]===t)+'">'+x[1]+'</button>'}).join('');
   var id={library:'lib',cards:'cards',errors:'errors',ranks:'ranks',wheel:'wheel',bag:'bag',set:'set',prize:'prize',xps:'xps',dash:'dash',asg:'asg',mark:'mark',roster:'roster',create:'create',admin:'admin'}[t];$('#v-'+id).hidden=false;updMarq();
   if(t==='admin')renderAdmin();
@@ -4693,13 +4723,13 @@ function seasonPatch(p,cur,id){
   var xp=Math.max(0,+p.xp||0),peakXp=Math.max(+p.peakXp||0,xp),pk=lvOf(peakXp),same=cur&&cur.id===id;
   var prev=p.season||(same?cur.prev:(cur&&cur.id))||'S1',prevNm=(same?cur.prevName:(cur&&cur.name))||prev;
   var ss=(p.seasons||[]).filter(function(x){return x&&x.id!==prev}).concat([{id:prev,name:prevNm,peak:pk.name,peakIdx:pk.idx,peakXp:peakXp,endXp:xp}]),nx=seasonXp(xp);
-  return {xp:nx,xpLife:p.xpLife!=null?+p.xpLife:xp,season:id,seasons:ss,peakXp:nx,peakIdx:lvOf(nx).idx};
+  return {xp:nx,xpAt:Date.now(),xpLife:p.xpLife!=null?+p.xpLife:xp,season:id,seasons:ss,peakXp:nx,peakIdx:lvOf(nx).idx};
 }
 var DEMO_SEASON=null;
 function curSeason(){return DEMO_SEASON||cfgGet('season')}
 function curSeasonId(){var c=curSeason();return c&&c.id?String(c.id):''}
 // XP goes to the season (p.xp, leaderboard) and to lifetime XP (p.xpLife); the season peak follows. true = a new tier.
-function gainXP(p,n){var b=lvOf(p.xp).idx;p.xp=(+p.xp||0)+n;p.xpLife=(p.xpLife!=null?+p.xpLife:p.xp-n)+n;if(p.xp>(+p.peakXp||0)){p.peakXp=p.xp;p.peakIdx=lvOf(p.xp).idx}return lvOf(p.xp).idx>b}
+function gainXP(p,n){var b=lvOf(p.xp).idx;p.xp=(+p.xp||0)+n;if(n)p.xpAt=Date.now();p.xpLife=(p.xpLife!=null?+p.xpLife:p.xp-n)+n;if(p.xp>(+p.peakXp||0)){p.peakXp=p.xp;p.peakIdx=lvOf(p.xp).idx}return lvOf(p.xp).idx>b}
 var todayKey=function(){return iso(new Date())};
 var dayDiff=function(a,b){return Math.round((fromISO(b)-fromISO(a))/DAYMS)};
 var profDocs=[],localProf={},sampleProf={};
@@ -4728,7 +4758,7 @@ function putProf(p){
     dbh.runTransaction(function(tx){return tx.get(ref).then(function(d){var o=d.exists?d.data():null,r='ok';if(o&&(o.season||'')!==(c.season||''))return 'season';
       if(o){if(o.pity)c.pity=o.pity; // pity counters belong to the server (Lucky Wheel)
         if((+o.spinTs||0)>(+c.spinTs||0)){ // this tab has not seen a spin the server made: keep its spins, prizes and counters
-          c.spins=+o.spins||0;c.freezes=+o.freezes||0;c.spinTs=o.spinTs;c.spinUsed=o.spinUsed||'';if(o.spinUsed==='xp')c.xp=Math.min(+c.xp||0,+o.xp||0);
+          c.spins=+o.spins||0;c.freezes=+o.freezes||0;c.spinTs=o.spinTs;c.spinUsed=o.spinUsed||'';if(o.spinUsed==='xp'){c.xp=Math.min(+c.xp||0,+o.xp||0);if(o.xpAt)c.xpAt=o.xpAt}
           var ids={};(c.inv||[]).forEach(function(x){if(x&&x.id)ids[x.id]=1});(o.inv||[]).forEach(function(x){if(x&&x.id&&!ids[x.id])(c.inv=c.inv||[]).push(x)});r='merged'}}
       tx.set(ref,c);return r})})
       .then(function(r){if(r==='season'||r==='merged'){delete localProf[e];refreshLive()}},function(){}); // failed: stays _dirty here, the next save sends the whole profile again
@@ -4738,7 +4768,7 @@ function rollStreak(p){
   var t=todayKey();if(!p.last||p.last===t||!p.streak)return p;
   var miss=dayDiff(p.last,t)-1;if(miss<=0)return p;
   var used=0;while(miss>0&&p.freezes>0){p.freezes--;miss--;used++}
-  if(miss>0){p.streak=0}else{p.last=iso(addDays(new Date(),-1))}
+  if(miss>0){p.streak=0;p.streakAt=Date.now()}else{p.last=iso(addDays(new Date(),-1))}
   putProf(p);if(used)toast('🧊 Streak Freeze used. Your streak is safe.');
   return p;
 }
@@ -4757,7 +4787,7 @@ function markDaily(type,xp){
   var first=!d.length;d.push(type);
   Object.keys(p.days).forEach(function(k){if(dayDiff(k,t)>14)delete p.days[k]});
   var up=gainXP(p,xp);
-  if(first){p.streak=(p.streak||0)+1;p.last=t;p.best=Math.max(p.best||0,p.streak)}
+  if(first){p.streak=(p.streak||0)+1;p.streakAt=Date.now();p.last=t;p.best=Math.max(p.best||0,p.streak)}
   putProf(p);
   toast(up?'🎉 Rank up! You are now '+lvOf(p.xp).name:'+'+xp+' XP'+(first?' · 🔥 streak '+p.streak:''));
   if(first&&p.streak%4===0)grantSpin('s',4,p.streak+'-day streak');
@@ -4962,37 +4992,47 @@ function dyAct(a,t){
 }
 
 /* ---------- Leaderboard ---------- */
-var RK='class',RKM=(function(){try{return lsGet('md-rkm')==='streak'?'streak':'xp'}catch(e){return 'xp'}})(); // RKM: 'xp' | 'streak'
-// value shown for one student: podium (big) "1250 XP" / "🔥 12 days", list "310 XP" / "🔥 4"
-function rkVal(x,big){
-  if(RKM==='streak')return big?'🔥 <b>'+x.st+'</b> day'+(x.st===1?'':'s'):'🔥 <b>'+x.st+'</b>';
-  return '<b>'+x.xp+'</b> <span class="u">XP</span>';
+// Spotlight: #1 = hero, #2 #3 = two cards (ribbon, no number), from #4 = rows with a bar (value / value of #1).
+// Order: value, then who reached it first (xpAt / streakAt, set by gainXP / markDaily / rollStreak / spins / season reset), then name A–Z.
+var RK='all',RKM=(function(){try{return lsGet('md-rkm')==='streak'?'streak':'xp'}catch(e){return 'xp'}})(); // RKM: 'xp' | 'streak'
+var LB_PAL=['#f7d84a','#a9c8f5','#f2a6c4','#a8e0c1','#c9b3f0','#f5b98a'],LB_RING=['#b9a6f5','#5fbf6a','#4f7cf0','#9b5cf0','#e0a030','#d9474b'];
+function lbHash(t){var h=0;t=String(t||'');for(var k=0;k<t.length;k++)h=(h*31+t.charCodeAt(k))%100003;return h}
+// photo or initials on a colour picked from the name; ring in the rank colour (about 3% of the size, at least 3px); an uploaded rank frame replaces the ring
+function lbAvHTML(email,size){
+  var p=profFor(email),nm=nameOf(email),lv=lvOf(+p.xp||0).i,url=safeImg(p.avatar),fr=safeImg(imgMap()['frame'+lv]),fc=frCfg(lv),w=Math.max(3,Math.round(size*.03));
+  return '<span class="avw lbav" style="--s:'+size+'px"><span class="av2" style="background:'+LB_PAL[lbHash(nm)%6]+';color:#2a2330;font-weight:800">'+(url?'<img src="'+esc(url)+'" alt="">':esc(initials(nm||'?')))+'</span>'+
+    (fr?'<img class="avfi" src="'+esc(fr)+'" alt="" style="width:'+fc.s+'%;height:'+fc.s+'%;left:calc(50% + '+fc.x+'%);top:calc(50% + '+fc.y+'%)">':'<span class="avf" style="border-color:'+LB_RING[lv]+';border-width:'+w+'px;inset:-'+w+'px"></span>')+'</span>';
 }
-function rkName(x,me){return esc(nameOf(x.s.email))+(me?' (you)':'')}
+function lbNum(x){return RKM==='streak'?x.st:x.xp}
+function lbVal(x){return '<b>'+lbNum(x)+'</b> '+(RKM==='streak'?(x.st===1?'day':'days'):'XP')}
+function lbName(x,me){return esc(nameOf(x.s.email))+(me?' (you)':'')}
+function lbList(){
+  var nm=function(x){return String(nameOf(x.s.email)||'').toLowerCase()},at=function(v){v=+v;return v>0?v:Infinity};
+  return students().filter(function(s){return RK==='all'||s.cls===U.cls}).map(function(s){var p=profFor(s.email);return {s:s,xp:+p.xp||0,st:+p.streak||0,xa:at(p.xpAt),sa:at(p.streakAt)}})
+    .sort(function(a,b){var d=RKM==='streak'?b.st-a.st||(a.sa===b.sa?0:a.sa<b.sa?-1:1):b.xp-a.xp||(a.xa===b.xa?0:a.xa<b.xa?-1:1);if(d)return d;var x=nm(a),y=nm(b);return x<y?-1:x>y?1:0});
+}
 function renderRanks(){
   var el=$('#v-ranks');if(!U||U.role!=='student'){el.innerHTML='<p class="saved pad">The leaderboard is for students.</p>';return}
-  var byName=function(a,b){return a.s.name<b.s.name?-1:a.s.name>b.s.name?1:0};
-  var A=students().filter(function(s){return RK==='all'||s.cls===U.cls}).map(function(s){var p=profFor(s.email);return {s:s,xp:+p.xp||0,st:+p.streak||0,best:+p.best||0}})
-    .sort(RKM==='streak'?function(a,b){return b.st-a.st||b.best-a.best||b.xp-a.xp||byName(a,b)}:function(a,b){return b.xp-a.xp||byName(a,b)});
-  var me=-1;A.forEach(function(x,i){if(x.s.email===U.email)me=i});
-  var pod=function(i){
-    var x=A[i];if(!x)return '';var m=i===me;
-    return '<div class="pod pod'+(i+1)+(m?' me':'')+'"><span class="podn" aria-label="Rank '+(i+1)+'">'+(i+1)+'</span>'+avatarHTML(x.s.email,i?80:112)+
-      '<div class="podt"><b class="podnm" title="'+esc(nameOf(x.s.email))+'">'+rkName(x,m)+'</b><span class="podlv">'+esc(lvOf(x.xp).name)+'</span><span class="podv">'+rkVal(x,true)+'</span></div></div>';
-  };
-  var row=function(x,i){
-    var m=i===me;
-    return '<div class="rk'+(m?' me':'')+'"><span class="n">'+(i+1)+'</span>'+avatarHTML(x.s.email,36)+'<span class="rkn"><b>'+rkName(x,m)+'</b><small>'+esc(lvOf(x.xp).name)+'</small></span><span class="rkv">'+rkVal(x,false)+'</span></div>';
-  };
+  var A=lbList(),me=-1;A.forEach(function(x,i){if(x.s.email===U.email)me=i});
   var tab=function(v,l){return '<button role="tab" data-act="rk-set" data-v="'+v+'" aria-selected="'+(RK===v)+'">'+l+'</button>'};
   var seg=function(v,l){return '<button type="button" data-act="rk-mode" data-v="'+v+'" aria-pressed="'+(RKM===v)+'">'+l+'</button>'};
-  var h='<div class="pad"><div class="sechead"><h2>Leaderboard</h2><span class="meta">Ranked by '+(RKM==='streak'?'streak':'XP')+'</span></div>'+
-    '<div class="rkbar"><div class="subtabs" role="tablist">'+tab('class','My class')+tab('all','Everyone')+'</div><div class="seg" role="group" aria-label="Rank by">'+seg('xp','XP')+seg('streak','Streak')+'</div></div>';
-  if(!A.length){el.innerHTML=h+'<p class="saved">No students here yet.</p></div>';return}
-  h+='<div class="podium">'+pod(1)+pod(0)+pod(2)+'</div>';
+  var h='<div class="pad lb"><div class="sechead"><h2>Leaderboard</h2><span class="meta">Ranked by '+(RKM==='streak'?'streak':'XP')+'</span></div>'+
+    '<div class="rkbar"><div class="subtabs" role="tablist">'+tab('class','My class')+tab('all','Everyone')+'</div><div class="seg lbseg" role="group" aria-label="Rank by">'+seg('xp','XP')+seg('streak','Streak')+'</div></div>';
+  if(!A.length){el.innerHTML=h+'<div class="lbempty"><b>No one on the leaderboard yet.</b><span>Finish an exercise or a daily task to be the first.</span></div></div>';return}
+  var top=lbNum(A[0]),x0=A[0],m0=me===0;
+  h+='<section class="lbhero'+(m0?' me':'')+'" aria-label="1st place"><span class="lbshoot s1" aria-hidden="true"></span><span class="lbshoot s2" aria-hidden="true"></span><span class="lbglow" aria-hidden="true"></span>'+
+    '<div class="lbhav">'+lbAvHTML(x0.s.email,200)+'</div><div class="lbht"><span class="lbchip">Champion</span><b class="lbhn">'+lbName(x0,m0)+'</b><span class="lbhv">'+lbVal(x0)+'</span>'+
+    '<span class="lbhl">'+esc(lvOf(x0.xp).name)+' · Top of the leaderboard</span></div></section>';
+  var card=function(i){var x=A[i];if(!x)return '';var m=i===me;
+    return '<div class="lbcard lb'+(i+1)+(m?' me':'')+'"><span class="lbrib" aria-hidden="true"></span><span class="sr">'+(i===1?'2nd':'3rd')+' place</span>'+lbAvHTML(x.s.email,110)+
+      '<b class="lbcn">'+lbName(x,m)+'</b><span class="lbcl">'+esc(lvOf(x.xp).name)+'</span><span class="lbcv">'+lbVal(x)+'</span></div>'};
+  if(A.length>1)h+='<div class="lbcards'+(A.length===2?' one':'')+'">'+card(1)+card(2)+'</div>';
+  var row=function(x,i){var m=i===me,pc=top>0?Math.round(lbNum(x)/top*100):0;
+    return '<li class="lbrow'+(m?' me':'')+'"><span class="lbn">'+(i+1)+'</span>'+lbAvHTML(x.s.email,36)+'<span class="lbrn"><b>'+lbName(x,m)+'</b><small>'+esc(lvOf(x.xp).name)+'</small></span>'+
+      '<span class="lbbar" aria-hidden="true"><i style="width:'+pc+'%"></i></span><span class="lbrv">'+lbVal(x)+'</span></li>'};
   var L=A.slice(3,13).map(function(x,j){return row(x,j+3)}).join('');
-  if(me>=13)L+='<div class="rk gap">⋯</div>'+row(A[me],me);
-  el.innerHTML=h+(L?'<div class="rklist">'+L+'</div>':'')+'</div>';
+  if(me>=13)L+='<li class="lbrow gap" aria-hidden="true">⋯</li>'+row(A[me],me);
+  el.innerHTML=h+(L?'<ol class="lblist" start="4">'+L+'</ol>':'')+'</div>';
 }
 /* ---------- Prizes: tiers, wheel, inventory, marquee, reminders, teacher setup ---------- */
 var PZ={freeze:{i:'🧊',n:'Streak Freeze',d:'Protects your streak once. Used automatically.'},hint:{i:'💡',n:'Free Hint Pass',d:'Opens a Writing hint without the mini-quiz. Applies automatically once hints are switched on.'},ext:{i:'⏳',n:'1-day Extension',d:'Adds 24 hours to one weekly homework.'},title:{i:'🏷️',n:'Leaderboard title',d:'Shown next to your name.'},ctitle:{i:'✏️',n:'Custom title',d:'Write your own title for the leaderboard.'},peek:{i:'👀',n:'Answer Peek',d:'Shows the correct answers right after one failed submit.'},mat:{i:'📚',n:'Study material',d:'Exclusive file from your teacher.'},pen:{i:'🖍️',n:'Highlighter pen',d:'A small gift from your teacher.'},vip:{i:'⭐',n:'VIP Essay Correction',d:'Detailed correction, down to the comma, for one Writing task.'},tea:{i:'🧋',n:'Bubble tea or coffee voucher',d:'Worth up to 40k VND.'},mock20:{i:'🎤',n:'Mock Speaking 1-on-1 · 20% off',d:'15-minute session discount code.'},mock25:{i:'🎤',n:'Mock Speaking 1-on-1 · 25% off',d:'15-minute session discount code.'},xp:{i:'✨',n:'Bonus XP',d:'+100 XP'},custom:{i:'🎁',n:'Prize',d:'A prize from your teacher.'}};
@@ -5124,11 +5164,11 @@ function demoSpin(useXP){
   if(useXP?p.xp<SPIN_XP:p.spins<1)return {error:useXP?'You need '+SPIN_XP+' XP to spin.':'You have no spins left.'};
   var tier=pickTier(spinRates(p.pity||{},has)),pr=pickByWeight(L.filter(function(x){return x.tier===tier})),tpl=buildPrize(pr,p);
   if(pr.rnd){var ml=matList();if(ml.length){var m=pickOf(ml);tpl.text=m.title;tpl.url=m.url||''}}
-  if(useXP)p.xp-=SPIN_XP;else p.spins--;p.pity=nextPity(p.pity||{},tier);grantItem(tpl,p);putProf(p);
+  if(useXP){p.xp-=SPIN_XP;p.xpAt=Date.now()}else p.spins--;p.pity=nextPity(p.pity||{},tier);grantItem(tpl,p);putProf(p);
   return {ok:true,prize_id:pr.id,tier:tier,item:tpl.kind==='freeze'?{kind:'freeze',tier:tier}:p.inv[p.inv.length-1]};
 }
 // the server's answer -> the profile kept in this tab (the server already saved it; no write from here)
-function spinApply(d){var p=myProf();['spins','xp','freezes','inv','pity','spinTs','spinUsed'].forEach(function(k){if(d[k]!=null)p[k]=JSON.parse(JSON.stringify(d[k]))})}
+function spinApply(d){var p=myProf();['spins','xp','xpAt','freezes','inv','pity','spinTs','spinUsed'].forEach(function(k){if(d[k]!=null)p[k]=JSON.parse(JSON.stringify(d[k]))})}
 function doSpin(useXP){
   if(WH.busy)return;var p=myProf();
   if(useXP?p.xp<SPIN_XP:p.spins<1)return;
@@ -5246,11 +5286,12 @@ var RCOL=['#9ca3af','#22c55e','#3b82f6','#a855f7','#f59e0b','#ef4444'];
 var FRD={},localFrames=null,FR_LIM={s:[60,260,140],x:[-50,50,0],y:[-50,50,0]};
 function frCfg(lv){var d=cfgGet('frames'),m=localFrames||(d&&d.map)||{},v=FRD[lv]||m[lv]||m[String(lv)]||{},o={};
   Object.keys(FR_LIM).forEach(function(k){var L=FR_LIM[k],n=+v[k];o[k]=isFinite(n)&&v[k]!==''&&v[k]!=null?Math.max(L[0],Math.min(L[1],Math.round(n))):L[2]});return o}
-function avatarRaw(lv,url,name,size){
-  var fr=imgMap()['frame'+lv],fc=frCfg(lv);
+// plain = just the round photo / initials (no rank frame, no ring): header badge, Settings photo
+function avatarRaw(lv,url,name,size,plain){
+  var fr=plain?'':imgMap()['frame'+lv],fc=frCfg(lv);
   // url / frame come from profiles / config (a student writes their own profile): escaped like any other DB value
   url=safeImg(url);fr=safeImg(fr);
-  return '<span class="avw" style="--s:'+(+size||36)+'px"><span class="av2">'+(url?'<img src="'+esc(url)+'" alt="">':esc(initials(name||'?')))+'</span>'+(fr?'<img class="avfi" src="'+esc(fr)+'" alt="" style="width:'+fc.s+'%;height:'+fc.s+'%;left:calc(50% + '+fc.x+'%);top:calc(50% + '+fc.y+'%)">':'<span class="avf" style="border-color:'+RCOL[lv]+'"></span>')+'</span>';
+  return '<span class="avw" style="--s:'+(+size||36)+'px"><span class="av2">'+(url?'<img src="'+esc(url)+'" alt="">':esc(initials(name||'?')))+'</span>'+(fr?'<img class="avfi" src="'+esc(fr)+'" alt="" style="width:'+fc.s+'%;height:'+fc.s+'%;left:calc(50% + '+fc.x+'%);top:calc(50% + '+fc.y+'%)">':plain?'':'<span class="avf" style="border-color:'+RCOL[lv]+'"></span>')+'</span>';
 }
 // Prizes › Rank frames › Live Avatar Preview: the admin's avatar drawn by avatarRaw (the same function as everywhere in the app)
 // with the frame of the chosen rank, big (podium, 112px) and small (list, 38px). RFV = the rank shown.
@@ -5280,9 +5321,9 @@ function rfPreviewHTML(){
   var me=U?profFor(U.email):{},nm=U?(U.name||U.email):'?',fr=imgMap()['frame'+RFV],rn=LV[RFV]?LV[RFV][0]:'';
   return '<div class="rfprev" id="rfPrev"><h4>Live Avatar Preview</h4><div class="rfav">'+imgPickHTML('frame'+RFV,avatarRaw(RFV,me.avatar,nm,112),'Upload the '+rn+' frame','big')+'<span aria-hidden="true">'+avatarRaw(RFV,me.avatar,nm,38)+'</span></div>'+
     '<div class="rfctl">'+rfAdjHTML()+'<div class="seg" role="group" aria-label="Rank to preview">'+LV.map(function(r,i){return '<button type="button" data-act="rf-lv" data-i="'+i+'" aria-pressed="'+(i===RFV)+'">'+esc(r[0])+'</button>'}).join('')+'</div>'+
-    '<p class="saved" aria-live="polite" style="margin:8px 0 0">'+(fr?esc(rn)+' frame, as students see it on the podium (big) and in the list (small).':'No frame uploaded for '+esc(rn)+': the avatar shows the default coloured ring.')+'</p></div></div>';
+    '<p class="saved" aria-live="polite" style="margin:8px 0 0">'+(fr?esc(rn)+' frame, as students see it on the leaderboard (big) and in the list (small).':'No frame uploaded for '+esc(rn)+': the avatar shows the default coloured ring.')+'</p></div></div>';
 }
-function avatarHTML(email,size){var p=profFor(email);return avatarRaw(lvOf(p.xp).i,p.avatar,nameOf(email),size)}
+function avatarHTML(email,size,plain){var p=profFor(email);return avatarRaw(lvOf(p.xp).i,p.avatar,nameOf(email),size,plain)}
 function avFrom(file){
   if(!file||!/^image\//.test(file.type)||!U)return;
   var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){
@@ -5295,7 +5336,7 @@ function avFrom(file){
 function renderSettings(){
   var el=$('#v-set');if(!U||U.role!=='student'){el.innerHTML='<p class="saved pad">Settings are for students.</p>';return}
   var p=myProf(),lv=lvOf(p.xp),bands=['','5.0','5.5','6.0','6.5','7.0','7.5','8.0','8.5','9.0'];
-  var h='<div class="pad"><div class="sechead"><h2>Settings</h2></div><div class="stkrow" style="gap:18px;margin-bottom:8px">'+avatarHTML(U.email,84)+'<div class="stkbtn"><button class="btn sm" data-act="st-avfile" type="button">Choose photo</button>'+(p.avatar?'<button class="btn sm" data-act="st-avclr" type="button">Remove</button>':'')+'<input type="file" id="avFile" accept="image/*" hidden></div></div>'+
+  var h='<div class="pad"><div class="sechead"><h2>Settings</h2></div><div class="stkrow" style="gap:18px;margin-bottom:8px">'+avatarHTML(U.email,84,true)+'<div class="stkbtn"><button class="btn sm" data-act="st-avfile" type="button">Choose photo</button>'+(p.avatar?'<button class="btn sm" data-act="st-avclr" type="button">Remove</button>':'')+'<input type="file" id="avFile" accept="image/*" hidden></div></div>'+
   '<div class="stform"><label class="field" for="stName">Display name<input type="text" id="stName" maxlength="30" value="'+esc(p.dname||U.name)+'"></label><label class="field" for="stPhone">Phone<input type="tel" id="stPhone" maxlength="20" value="'+esc(p.phone||'')+'"></label><label class="field" for="stTarget">Target band<select id="stTarget">'+bands.map(function(b){return '<option value="'+b+'"'+((p.target||'')===b?' selected':'')+'>'+(b||'Not set')+'</option>'}).join('')+'</select></label><label class="field" for="stExam">Exam date<input type="date" id="stExam" value="'+esc(p.exam||'')+'"></label></div>'+
   '<div class="srow"><span>Email<small>'+esc(U.email)+'</small></span></div><div class="srow"><span>Class<small>'+esc(classTitle(U.cls))+(U.course?' · '+esc(U.course):'')+'</small></span></div>'+
   '<div class="actions"><button class="btn pri" data-act="st-save" type="button">Save</button><span class="saved" id="stMsg" aria-live="polite"></span></div>'+
@@ -6047,6 +6088,17 @@ function rmSlot(act,i,label,lock,chk,ok,empty){
   return '<button type="button" class="rmslot'+(label!=null?' has':'')+(chk?(ok?' ok':' no'):'')+'" data-act="'+act+'" data-i="'+i+'"'+(lock?' disabled':'')+'>'+(chk?(ok?'✓ ':'✗ '):'')+(label!=null?esc(label):esc(empty))+'<span class="arr" aria-hidden="true">'+(lock?'':'▾')+'</span></button>';
 }
 function rmLimMsg(v){var Q=RM.D.deep,l=Q&&Q.comp?Q.comp.lim:2;return wordCount(v)>l?'No more than '+['one','two','three'][l-1]+' word'+(l>1?'s':'')+' from the passage.':''}
+/* ---- passage | questions width (desktop): drag the bar (Pointer Events) or use ← → on it; kept in localStorage md-rmsplit (25–75 %) ---- */
+var RMSP=null;
+function rmSplitPct(){var n=parseFloat(lsGet('md-rmsplit')||'50');return n>=25&&n<=75?Math.round(n):50}
+function rmSplitSet(v,save){v=Math.max(25,Math.min(75,Math.round(v)));var d=$('.rmdeep'),b=$('.rmsplit');if(d)d.style.setProperty('--rmp',v+'%');if(b)b.setAttribute('aria-valuenow',v);if(save)lsSet('md-rmsplit',String(v))}
+document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('.rmsplit');if(!b||(e.button&&e.button!==0))return;var d=b.closest('.rmdeep');if(!d)return;
+  e.preventDefault();RMSP={id:e.pointerId,d:d};try{b.setPointerCapture(e.pointerId)}catch(x){}b.classList.add('drag');document.body.classList.add('rmsizing')});
+document.addEventListener('pointermove',function(e){if(!RMSP||e.pointerId!==RMSP.id)return;var r=RMSP.d.getBoundingClientRect();if(r.width)rmSplitSet((e.clientX-r.left)/r.width*100,false)});
+var rmSpEnd=function(e){if(!RMSP||e.pointerId!==RMSP.id)return;var b=$('.rmsplit');if(b){b.classList.remove('drag');rmSplitSet(+b.getAttribute('aria-valuenow'),true)}document.body.classList.remove('rmsizing');RMSP=null};
+document.addEventListener('pointerup',rmSpEnd);document.addEventListener('pointercancel',rmSpEnd);
+document.addEventListener('keydown',function(e){var b=e.target&&e.target.classList&&e.target.classList.contains('rmsplit');if(!b)return;var v=+e.target.getAttribute('aria-valuenow')||50;
+  if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();rmSplitSet(v+(e.key==='ArrowLeft'?-2:2),true)}else if(e.key==='Home'||e.key==='End'){e.preventDefault();rmSplitSet(e.key==='Home'?25:75,true)}});
 function rmPsgHTML(){return RM.D.paras.map(function(t,i){return '<p class="rmlbl">'+rmPL(i)+'</p><p class="rmp" data-pi="'+i+'">'+rmHlText(i)+'</p>'}).join('')}
 /* ---- reading tools: text size (5 steps, passage and questions together) + highlighter on the passage ----
    RFS = steps (localStorage md-rmfs). RMH[exId][paragraph] = [{s,e,c}] character ranges of the plain paragraph text,
@@ -6132,7 +6184,9 @@ function rmStage1(){
   }
   if(n)h+='</section>';
   // laptop: passage left (sticky) | questions right. Phone: passage top half | questions bottom half, each scrolls on its own
-  return '<div class="rmdeep"><section class="rmpsg" aria-label="Passage" tabindex="0"><div class="lsc">'+rmPsgHTML()+'</div></section><div class="rmqs" tabindex="-1">'+h+'</div></div>';
+  var sp=rmSplitPct();
+  return '<div class="rmdeep" style="--rmp:'+sp+'%"><section class="rmpsg" aria-label="Passage" tabindex="0"><div class="lsc">'+rmPsgHTML()+'</div></section>'+
+    '<div class="rmsplit" role="separator" aria-orientation="vertical" aria-label="Resize the passage and the questions" aria-valuemin="25" aria-valuemax="75" aria-valuenow="'+sp+'" tabindex="0"><span aria-hidden="true"></span></div><div class="rmqs" tabindex="-1">'+h+'</div></div>';
 }
 function rmStage2(){
   var D=RM.D,chk=RM.chk[1],h='';
@@ -6467,6 +6521,7 @@ function demoAdminRun(path,b){
     return {ok:true,reset:rows.length,skipped:ems.length-rows.length,failed:0}}
   if(path==='admin/unlock')return {adminKey:'demo'};
   if(!EMAIL_RE.test(em))err('Enter a valid email.');
+  if(path==='admin/tester'&&b.op==='seed'){var tn=(allRoster().filter(function(r){return r.email===em})[0]||{});tSeed().forEach(function(x){localAttempts.unshift(Object.assign({id:'local-ts'+Math.random().toString(36).slice(2,8),email:em,student:tn.name||'Tester',cls:tn.cls||'Test',course:''},x))});return {ok:true,added:tSeed().length}}
   if(path==='admin/tester'){
     if(b.op==='create'){if(String(b.password||'').length<6)err('The password needs at least 6 characters.');if(find(em))err('This email already has an account. Use the Tester switch in the list instead.');
       DEMO_ROSTER.push({email:em,name:String(b.name||'Tester').trim()||'Tester',role:'student',cls:String(b.cls||'Test').trim()||'Test',course:'',tester:true,demo:true});return {ok:true}}
@@ -6646,8 +6701,10 @@ function adUsersHTML(){
     adTesterAddHTML()+'<div id="adList">'+adListHTML()+'</div>';
 }
 // Admin › Users: create a shadow tester account (a student login that is not in the Google Sheet and is hidden from class lists)
+// made-up history for a tester (same list as seedTester on the server)
+function tSeed(){var n=Date.now(),D=864e5;return [{ex:'l1',score:8,total:10,items:[],ts:n-9*D},{ex:'r1',score:6,total:10,items:[],ts:n-7*D},{ex:'l2',score:9,total:10,items:[],ts:n-5*D},{ex:'r3',score:5,total:10,items:[],ts:n-3*D},{ex:'l3',score:7,total:10,items:[],ts:n-D}]}
 function adTesterAddHTML(){
-  return '<details class="adm-tadd"><summary>Add a tester account</summary><p class="sub">A student account for testing: it can do homework, earn XP and see the student screens, but it is hidden from Classes, Students, Dashboard and the Leaderboard, and it is not in the Google Sheet. Type the password here, never in the code.</p>'+
+  return '<details class="adm-tadd"><summary>Add a tester account</summary><p class="sub">A student account for testing: it can do homework, earn XP and see the student screens (with the Demo helper on every exercise), but it is hidden from Classes, Students, Dashboard and the Leaderboard, and it is not in the Google Sheet. A few sample results are added at once. Type the password here, never in the code.</p>'+
     '<div class="adm-add"><label class="field" for="adTName">Name<input id="adTName" value="Tester" maxlength="80" autocomplete="off"></label><label class="field" for="adTEm">Email<input id="adTEm" type="email" autocomplete="off" spellcheck="false" placeholder="tester@gmail.com"></label>'+
     '<label class="field" for="adTCls">Class<input id="adTCls" value="Test" maxlength="40" autocomplete="off"></label><label class="field" for="adTPw">Password<input id="adTPw" type="text" autocomplete="off" spellcheck="false" placeholder="At least 6 characters"></label>'+
     '<button class="btn sm" type="button" data-act="ad-gen" data-for="adTPw">Generate</button><button class="btn pri" type="button" data-act="ad-tadd">Create tester</button></div></details>';
@@ -6661,8 +6718,7 @@ function adFiltered(){
     return !q||(u.name+' '+u.email).toLowerCase().indexOf(q)>=0});
 }
 function adStatusHTML(u){return u.status==='kicked'?'<span class="pill bad">Removed</span>':u.status==='paused'?'<span class="pill bad">Paused</span>':u.status==='moved'?'<span class="pill pend">Email changed</span>':!u.hasPassword?'<span class="pill">No password yet</span>':'<span class="pill ok">Active</span>'}
-function adRoleHTML(u){if(u.role==='admin')return '<span class="pill acc">Admin</span>';if(u.role==='teacher')return 'Teacher';var py=(profFor(u.email)||{}).pity||{};
-  return 'Student'+(u.tester?' <span class="pill pend">Tester</span>':'')+'<small class="mono pity" title="pity_realLife_counter · pity_teacherPerkPlus_counter">RL '+(+py.rl||0)+' · TP+ '+(+py.tp||0)+'</small>'}
+function adRoleHTML(u){if(u.role==='admin')return '<span class="pill acc">Admin</span>';if(u.role==='teacher')return 'Teacher';return u.tester?'<span class="pill tst">Tester</span>':'Student'}
 function adListHTML(){
   if(!AD.users)return '';
   var L=adFiltered();if(!L.length)return '<p class="saved">No one matches.</p>';
@@ -6672,7 +6728,7 @@ function adListHTML(){
     var e=esc(u.email),acts='';
     if(u.role==='admin')acts='<button class="btn sm" type="button" data-act="ad-sub" data-v="me">My account</button>';
     else if(u.status!=='moved')acts='<button class="btn sm" type="button" data-act="ad-pw" data-email="'+e+'">Change password</button>'+
-      (u.role==='student'?'<button class="btn sm" type="button" data-act="ad-cls" data-email="'+e+'">Edit class</button><button class="btn sm" type="button" data-act="ad-tester" data-email="'+e+'" data-on="'+(u.tester?'0':'1')+'" aria-pressed="'+!!u.tester+'">'+(u.tester?'Tester: on':'Tester: off')+'</button>':'')+
+      (u.role==='student'?'<button class="btn sm" type="button" data-act="ad-cls" data-email="'+e+'">Edit class</button>'+(u.tester?'<button class="btn sm" type="button" data-act="ad-tseed" data-email="'+e+'" title="Adds a few made-up results and XP so the student screens have something to show">Add sample data</button>':'')+'':'')+
       ((u.status==='paused'||u.status==='kicked')?'<button class="btn sm" type="button" data-act="ad-on" data-email="'+e+'">Resume</button>':'')+
       (u.status!=='kicked'?'<button class="btn sm bad" type="button" data-act="ad-kick" data-email="'+e+'">Kick</button>':'');
     return '<tr><td data-l="Name"><b>'+esc(u.name||'—')+'</b>'+(u.src==='env'&&u.role==='teacher'?'<small>Listed in Cloudflare (TEACHERS)</small>':'')+'</td>'+
@@ -6751,6 +6807,7 @@ function adAct(a,t){
   if(a==='ad-sea-start'){adSeasonStart();return true}
   if(a==='ad-atclear'){AT.res=null;AT.err='';renderAdmin();return true}
   if(a==='ad-open-sheet'){AD.sub='sheet';AD.err='';showTab('admin');return true}
+  if(a==='ad-tseed'){adBusy(t,true,'Adding…');adminApi('admin/tester',{op:'seed',email:who}).then(function(d){adBusy(t,false);toast('Sample data added for '+nm+': '+(d.added||0)+' results.')},function(e){adBusy(t,false);adSay(e.message)});return true}
   if(a==='ad-tester'){var on=t.dataset.on==='1';adBusy(t,true,on?'Turning on…':'Turning off…');
     adminApi('admin/tester',{op:'set',email:who,on:on}).then(function(){return adDone(nm+(on?' is now a tester: hidden from class lists, Dashboard and Leaderboard.':' is a normal student again.'),adSet(who,{tester:on}))},function(e){adBusy(t,false);adSay(e.message)});return true}
   if(a==='ad-tadd'){var tn=($('#adTName').value||'').trim()||'Tester',te=($('#adTEm').value||'').trim().toLowerCase(),tc=($('#adTCls').value||'').trim()||'Test',tp=($('#adTPw').value||'').trim();

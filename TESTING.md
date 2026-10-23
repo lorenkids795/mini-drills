@@ -354,5 +354,17 @@ Trước khi test: deploy `functions/` mới và dán lại `firestore.rules` (t
 5. [ ] Bài Writing có bảng (Task 1: internet access) và bài Task 2 vẫn hiện và nộp như cũ.
 6. [ ] 390px và dark mode: biểu đồ co theo màn hình, chữ trục đọc được, chú giải không đè nhau.
 
+## Tinh chỉnh Admin + Leaderboard Spotlight (10/2026)
+1. [ ] Admin › Users: không còn dòng "RL 0 · TP+ 0" và nút "Tester: on/off". Tài khoản tester chỉ có nhãn **Tester** màu nâu vàng; bấm **Add sample data** → toast "… 5 results", đăng nhập tester thấy Recent results có cột.
+2. [ ] Đăng nhập tester: mọi bài có thanh **Demo helper** (All correct / Half wrong).
+3. [ ] Header học sinh: chỉ có ảnh + tên (không "· student", không khung rank). Settings: ảnh cạnh "Choose photo" không có khung.
+4. [ ] Prizes › Rank frames: các ô xem trước to hơn, cánh/vương miện không bị cắt.
+5. [ ] Reading Stage 1 trên máy tính: kéo thanh giữa bài đọc và câu hỏi (con trỏ ↔); tải lại trang vẫn giữ độ rộng; trên điện thoại không có thanh.
+6. [ ] Leaderboard mặc định **Everyone**. #1 là khối tím có sao lấp lánh/sao băng, chữ "Champion"; #2/#3 là 2 thẻ có ruy băng bạc/đồng, không số; từ #4 có thanh tiến độ. Nút XP | Streak đổi được, nút đang chọn nền đậm.
+7. [ ] Hai bạn bằng XP: bạn đạt mức đó trước đứng trên. Hàng của mình có "(you)" nền vàng nhạt viền xanh.
+8. [ ] Lớp chỉ có 1 bạn → chỉ khối #1; 2 bạn → khối #1 + 1 thẻ ở giữa; chưa có ai → "No one on the leaderboard yet."
+9. [ ] Dark mode và 390px: khối #1 đọc rõ, giá trị 34px, 2 thẻ #2/#3 vẫn nằm cạnh nhau. Bật "Reduce motion" của máy → không còn sao băng.
+10. [ ] Xóa thủ công 2 tài khoản 3667@gmail.com và nghiatucayfai@gmail.com bằng Admin › Users → Kick.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

@@ -854,7 +854,13 @@ async function adminTester(env, body) {
     await fsPut(env, 'roster', email, { email, name, cls, course: '', role: 'student', tester: true, ts: Date.now() });
     await savePassword(env, email, pw);
     await env.MD_KV.delete('off:' + email);
-    return json({ ok: true, email, name, cls });
+    const added = await seedTester(env, email, name, cls);
+    return json({ ok: true, email, name, cls, added });
+  }
+  if (body.op === 'seed') {
+    const row = await rosterRow(env, email);
+    if (!row || row.data.tester !== true) return fail('Sample data is only for tester accounts.', 404);
+    return json({ ok: true, added: await seedTester(env, email, row.data.name || 'Tester', row.data.cls || 'Test') });
   }
   if (body.op === 'set') {
     const row = await rosterRow(env, email);
@@ -866,6 +872,18 @@ async function adminTester(env, body) {
   return fail('Unknown action.');
 }
 
+// a few made-up results (built-in Cam 14 Test 1 exercises) + some XP, so a tester's Home / Recent results / Leaderboard have data.
+// Same list as tSeed() in the app. Marked seeded:true. XP is only raised (never lowered).
+async function seedTester(env, email, name, cls) {
+  const now = Date.now(), D = 86400000;
+  const L = [['l1', 8, 9], ['r1', 6, 7], ['l2', 9, 5], ['r3', 5, 3], ['l3', 7, 1]];
+  for (const [ex, score, ago] of L) {
+    await fsPut(env, 'attempts', 'seed_' + slug(email) + '_' + ex, { email, student: name, cls, course: '', ex, score, total: 10, items: [], ts: now - ago * D, seeded: true });
+  }
+  const pid = slug(email), cur = await fsGet(env, 'profiles', pid), xp = Math.max(Number(cur && cur.data.xp) || 0, 160);
+  await fsUpdate(env, 'profiles', pid, { email, xp, xpLife: Math.max(Number(cur && cur.data.xpLife) || 0, xp), xpAt: now });
+  return L.length;
+}
 async function rosterRow(env, email) {
   const row = await fsGet(env, 'roster', email);
   if (row) return { id: email, data: row.data };
@@ -874,7 +892,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-10-23c';
+const API_VERSION = '2026-10-23d';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -942,7 +960,7 @@ function seasonPatch(p, cur, id) {
   const seasons = (Array.isArray(p.seasons) ? p.seasons : []).filter((x) => x && x.id !== prev)
     .concat([{ id: prev, name: prevName, peak: pk.name, peakIdx: pk.idx, peakXp, endXp: xp }]);
   const nx = seasonXp(xp);
-  return { xp: nx, xpLife: p.xpLife != null && p.xpLife !== '' ? Number(p.xpLife) : xp, season: id, seasons, peakXp: nx, peakIdx: tierOf(nx).idx };
+  return { xp: nx, xpAt: Date.now(), xpLife: p.xpLife != null && p.xpLife !== '' ? Number(p.xpLife) : xp, season: id, seasons, peakXp: nx, peakIdx: tierOf(nx).idx };
 }
 // like fsList, but keeps updateTime (used as a precondition, so a student's save in between is never overwritten)
 async function fsListTimed(env, col) {
@@ -1097,12 +1115,12 @@ async function spinWheel(env, request, body) {
       item.code = code ? code.code : '';
     }
     const upd = { pity: nextPity(pity, tier), spinTs: now, spinUsed: useXP ? 'xp' : 'spin' };
-    if (useXP) upd.xp = xp - SPIN_XP; else upd.spins = spins - 1;
+    if (useXP) { upd.xp = xp - SPIN_XP; upd.xpAt = now; } else upd.spins = spins - 1;
     if (item.kind === 'freeze') upd.freezes = (Number(p.freezes) || 0) + 1;
-    else if (item.kind === 'xp') { upd.xp = (upd.xp != null ? upd.xp : xp) + 100; upd.xpLife = (Number(p.xpLife != null ? p.xpLife : p.xp) || 0) + 100; }
+    else if (item.kind === 'xp') { upd.xp = (upd.xp != null ? upd.xp : xp) + 100; upd.xpAt = now; upd.xpLife = (Number(p.xpLife != null ? p.xpLife : p.xp) || 0) + 100; }
     else upd.inv = (Array.isArray(p.inv) ? p.inv : []).concat([item]);
     if (await fsUpdate(env, 'profiles', pid, upd, doc.updateTime)) {
-      const out = JSON.stringify({ ok: true, prize_id: prize.id, tier, item, spins: upd.spins != null ? upd.spins : spins, xp: upd.xp != null ? upd.xp : xp,
+      const out = JSON.stringify({ ok: true, prize_id: prize.id, tier, item, spins: upd.spins != null ? upd.spins : spins, xp: upd.xp != null ? upd.xp : xp, xpAt: upd.xpAt || p.xpAt || 0,
         freezes: upd.freezes != null ? upd.freezes : Number(p.freezes) || 0, inv: upd.inv || p.inv || [], pity: upd.pity, spinTs: now, spinUsed: upd.spinUsed });
       await env.MD_KV.put(memo, out, { expirationTtl: 600 });
       if (tier >= 3) {
