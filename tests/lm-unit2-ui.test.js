@@ -21,14 +21,14 @@ function mkStore(broken) {
 function boot(opt) {
   opt = opt || {};
   const win = { console }; win.window = win;
-  win.localStorage = mkStore(opt.broken); win.document = { addEventListener: () => {} };
+  win.localStorage = mkStore(opt.broken); win.document = { addEventListener: () => {}, getElementById: () => null }; win.scrollTo = () => {}; win.scrollY = 0;
   win.esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   win.isArr = Array.isArray; win.U = { email: 'a@x', role: 'teacher', adm: true }; win.lsGet = () => null; win.lsSet = () => {};
   win.toast = (m) => { win._toast = m; }; win.confirm = () => true; win.$ = () => null; win.renderLib = () => {};
   const ctx = vm.createContext(win);
   ['md-chart.js', 'lm-content.js', 'lm-engine.js', 'lm-unit2.js'].forEach((f) => vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), ctx, { filename: f }));
   if (opt.mutate) opt.mutate(win.MD_LM_U2);
-  vm.runInContext(RENDER + LM + ';this.T={luStageHTML,luHTML,luAct,luKey,luGet,luPut,lmLesson,lmHTML,setLMV:function(v){LMV=v},LU:function(){return LU}};', ctx);
+  vm.runInContext(RENDER + LM + ';this.T={luStageHTML,luHTML,luAct,luKey,luGet,luPut,lmLesson,lmHTML,luPair,setLMV:function(v){LMV=v},LU:function(){return LU}};', ctx);
   return win;
 }
 const W = boot(), T = W.T, U2 = W.MD_LM_U2, L = T.lmLesson('lm-writing-ac-t1-u2');
@@ -38,10 +38,73 @@ const resolved = (x, s) => W.LMX.lmResolve(s, x, W.LMX.lmFacts(U2)).text;
 ['learn', 'controlled', 'guided'].forEach((st) => t('stage ' + st + ': nothing from Chart B on screen', () => {
   const h = T.luStageHTML(U2, st); bWords.forEach((w) => assert.ok(h.indexOf(w) < 0, 'found "' + w + '"'));
 }));
-t('Learn shows Chart A, all its sample sentences and key features', () => {
-  const h = T.luStageHTML(U2, 'learn'); assert.ok(h.includes('<svg class="chsvg"') && h.includes('Museum A'));
-  U2.claims.filter((x) => x.chart === 'A').forEach((x) => assert.ok(h.includes(W.esc(resolved(x, x.en))), x.id));
-  U2.keyFeatures.filter((x) => x.chart === 'A').forEach((x) => assert.ok(h.includes(W.esc(x.reason.en)), x.id));
+// open every Learn step of a fresh lesson (Continue × 6), optionally reveal / check
+const learnAll = (w, o) => { o = o || {}; w.T.setLMV('lm-writing-ac-t1-u2'); for (let i = 0; i < 6; i++) w.T.luAct('lu-lnext', {}); if (o.reveal) w.T.luAct('lu-lrev', {}); if (o.check) w.T.luAct('lu-lchk', {}); if (o.lens) w.T.luAct('lu-lens', { dataset: { v: o.lens } }); return w.T.luStageHTML(w.MD_LM_U2, 'learn'); };
+const copyOf = (id) => U2.copy.find((x) => x.id === id);
+t('Learn starts with step 1 only, Chart A beside it, Vietnamese explanations by default', () => {
+  const w = boot(), h = w.T.luStageHTML(w.MD_LM_U2, 'learn');
+  assert.ok(h.includes('<svg class="chsvg"') && h.includes('Museum A')); assert.ok(h.includes('id="luS1"') && !h.includes('id="luS2"'));
+  assert.ok(h.includes(W.esc(copyOf('copy.learn.objective').vi)) && !h.includes(W.esc(copyOf('copy.learn.objective').en)));
+});
+t('Continue opens the 7 steps one by one; the last one leads to Controlled', () => {
+  const h = learnAll(boot()); for (let n = 1; n <= 7; n++) assert.ok(h.includes('id="luS' + n + '"'), 'step ' + n);
+  assert.ok(h.includes('data-act="lu-go" data-s="controlled"') && !/id="luS7"[\s\S]*lu-lnext/.test(h));
+});
+t('sample sentences stay hidden until "show the samples"; then all Chart A models appear in English with a why', () => {
+  const w = boot(), before = learnAll(w), M = U2.claims.filter((x) => x.chart === 'A' && x.kind === 'model');
+  M.forEach((x) => assert.ok(!before.includes('<li><p class="lusent" lang="en">' + W.esc(resolved(x, x.en))), x.id + ' shown too early'));
+  w.T.luAct('lu-lrev', {}); const h = w.T.luStageHTML(w.MD_LM_U2, 'learn');
+  M.forEach((x) => { assert.ok(h.includes('<p class="lusent" lang="en">' + W.esc(resolved(x, x.en)) + '</p>'), x.id); assert.ok(h.includes(W.esc(x.why.vi)), x.id + ' why (vi)'); });
+});
+t('observe before reveal: importance only after "check my choice"', () => {
+  const w = boot(); let h = learnAll(w); const s4 = (x) => x.slice(x.indexOf('id="luS4"'), x.indexOf('id="luS5"'));
+  assert.ok(!/class="pill( acc)?">(Chính|Phụ)</.test(s4(h)));
+  w.T.luAct('lu-lpick', { dataset: { id: 'kf.a.rise' }, checked: true }); w.T.luAct('lu-lchk', {}); h = w.T.luStageHTML(w.MD_LM_U2, 'learn');
+  assert.ok(/class="pill acc">Chính</.test(s4(h)) && s4(h).includes('Bạn đã chọn') && s4(h).includes(W.esc(copyOf('copy.learn.choose.fb').vi)));
+});
+t('lenses highlight exactly the lines of their verified facts', () => {
+  const idx = (h) => ((/class="luchart lulc" data-hl="([^"]*)"/.exec(h) || [])[1] || '');
+  assert.strictEqual(idx(learnAll(boot(), { lens: 'trends' })), 's0 s1'); // endpoint:museum-a, endpoint:museum-b
+  assert.strictEqual(idx(learnAll(boot(), { lens: 'highest' })), 's0'); // highest-throughout -> museum-a
+  assert.strictEqual(idx(learnAll(boot(), { lens: 'highlights' })), 's2'); // shape:museum-c
+  assert.strictEqual(idx(learnAll(boot())), '');
+});
+t('evidence chips come from the facts (numbers match Chart A)', () => {
+  const h = learnAll(boot(), { lens: 'trends' }); assert.ok(h.includes('Museum A: 60 → 90 (2000–2020)') && h.includes('Museum B: 50 → 30 (2000–2020)'));
+  assert.ok(learnAll(boot(), { lens: 'highest' }).includes('Museum A: đứng đầu ở mọi năm được cho'));
+});
+t('Learn never shows Chart B (all steps, all lenses, revealed, checked)', () => ['trends', 'highest', 'highlights'].forEach((ln) => {
+  const h = learnAll(boot(), { reveal: true, check: true, lens: ln }); bWords.forEach((w) => assert.ok(h.indexOf(w) < 0, ln + ': found ' + w));
+}));
+t('language switch: English shows the English copy, IELTS sentences unchanged', () => {
+  const w = boot(); learnAll(w, { reveal: true }); const vi = w.T.luStageHTML(w.MD_LM_U2, 'learn');
+  w.T.luAct('lu-lang', { dataset: { v: 'en' } }); const en = w.T.luStageHTML(w.MD_LM_U2, 'learn');
+  assert.ok(en.includes(W.esc(copyOf('copy.learn.ovd').en)) && !en.includes(W.esc(copyOf('copy.learn.ovd').vi)));
+  const sents = (h) => (h.match(/<p class="lusent" lang="en">[^<]*<\/p>/g) || []).join('|'); assert.ok(sents(en).length > 0); assert.strictEqual(sents(en), sents(vi));
+  assert.strictEqual(w.localStorage.getItem('md-lm-lang'), 'en');
+});
+t('language switch keeps stage, answers, Learn steps and drafts', () => {
+  const w = boot(); learnAll(w, { reveal: true }); w.T.luAct('lu-pick', { dataset: { id: 'c.a.1', v: 'supported' } }); w.T.luPut(w.MD_LM_U2, 'guided', { t: 'My guided draft' });
+  w.T.luAct('lu-go', { dataset: { s: 'controlled' } }); w.T.luAct('lu-lang', { dataset: { v: 'en' } });
+  const L = w.T.LU(); assert.strictEqual(L.stage, 'controlled'); assert.strictEqual(L.pick['c.a.1'], 'supported'); assert.strictEqual(L.lstep, 7); assert.strictEqual(L.lrev, true);
+  assert.ok(w.T.luStageHTML(w.MD_LM_U2, 'guided').includes('My guided draft'));
+});
+t('language preference is remembered; default is Vietnamese; broken storage falls back to Vietnamese', () => {
+  assert.strictEqual(boot().T.LU().lang, 'vi'); assert.strictEqual(boot({ broken: true }).T.LU().lang, 'vi');
+});
+t('missing translation: the other language is shown with a visible note (never hidden)', () => {
+  const w = boot(); assert.ok(/Hello <span class="lumiss">\(chỉ có tiếng Anh\)/.test(w.T.luPair('Hello', '')));
+  w.T.setLMV('lm-writing-ac-t1-u2'); w.T.luAct('lu-lang', { dataset: { v: 'en' } }); assert.ok(/Xin chào <span class="lumiss">\(Vietnamese only\)/.test(w.T.luPair('', 'Xin chào')));
+});
+t('every new Learn item is validated, bilingual and still pending', () => {
+  const ids = U2.copy.filter((x) => /^(ui\.|copy\.learn\.)/.test(x.id)); assert.ok(ids.length >= 30);
+  ids.forEach((x) => { assert.strictEqual(x.review, 'pending', x.id); assert.ok(x.en && x.vi, x.id); });
+  U2.claims.filter((x) => x.why).forEach((x) => assert.ok(x.why.en && x.why.vi, x.id));
+  const r = W.LMX.lmCheck(U2); assert.strictEqual(r.errors.length, 0, r.errors.join(' | ')); assert.strictEqual(r.approved, 0);
+});
+t('every UI text id used by the lesson code exists in the content', () => {
+  const used = (LM.match(/luU\(u,'([\w.]+)'\)|luCopy\(u,'([\w.]+)'\)|luC\(u,'([\w.]+)'\)|'(ui\.lens\.\w+|copy\.lens\.\w+)'/g) || []).map((m) => /'([\w.]+)'/.exec(m)[1]);
+  const known = new Set(U2.copy.map((x) => x.id)); used.forEach((id) => assert.ok(known.has(id), 'missing ' + id));
 });
 t('Independent shows Chart B but no B sample sentence or key feature', () => {
   const h = T.luStageHTML(U2, 'independent'); assert.ok(h.includes('App X') && h.includes('id="luI"'));
@@ -93,7 +156,10 @@ t('drafts: Clear draft asks first and removes it', () => {
   w.confirm = () => true; w.T.luAct('lu-clear', { dataset: { a: 'indep' } }); assert.strictEqual(w.T.luGet(w.MD_LM_U2, 'indep'), null);
 });
 t('drafts: blocked storage shows a warning and nothing breaks', () => { const w = boot({ broken: true }); const h = w.T.luStageHTML(w.MD_LM_U2, 'independent'); assert.ok(h.includes('does not allow saving')); });
-t('shared-device notice and local-only wording are shown with every draft', () => ['guided', 'independent', 'review'].forEach((st) => assert.ok(T.luStageHTML(U2, st).includes('only in this browser'), st)));
+t('shared-device notice and local-only wording are shown with every draft (both languages)', () => ['guided', 'independent', 'review'].forEach((st) => {
+  const w = boot(); assert.ok(w.T.luStageHTML(w.MD_LM_U2, st).includes('chỉ được lưu trong trình duyệt này'), st + ' vi');
+  w.T.setLMV('lm-writing-ac-t1-u2'); w.T.luAct('lu-lang', { dataset: { v: 'en' } }); assert.ok(w.T.luStageHTML(w.MD_LM_U2, st).includes('only in this browser'), st + ' en');
+}));
 t('changed chart data: lesson refuses to show, no wrong claims', () => {
   const w = boot({ mutate: (u) => { u.charts.A.chart.series[1].points[4].y = 70; } });
   const h = w.T.luHTML(L, w.MD_LM_U2); assert.ok(h.includes('cannot be shown') && !h.includes('lusteps'));

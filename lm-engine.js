@@ -5,7 +5,7 @@
 (function(root){
 'use strict';
 var CH=(typeof module!=='undefined'&&module.exports)?require('./md-chart.js'):root;
-var STAGES=['learn','controlled','guided','independent','review'],PRE=['learn','controlled','guided'],LABELS=['supported','contradicted','not_determinable'];
+var STAGES=['learn','controlled','guided','independent','review'],PRE=['learn','controlled','guided'],LABELS=['supported','contradicted','not_determinable'],LENSES=['trends','highest','highlights'];
 var own=function(o,k){return Object.prototype.hasOwnProperty.call(o,k)};
 function isArr(a){return Object.prototype.toString.call(a)==='[object Array]'}
 function slabel(chart,id){var s=CH.chSeries(chart,id);return s?s.label:null}
@@ -47,7 +47,7 @@ function lmMatch(f,e){if(!f)return false;if(e.status!=null&&f.status!==e.status)
 function lmItems(u){
   var L=[];
   (u.copy||[]).forEach(function(x){L.push({kind:'copy',x:x,pairs:[[x.en,x.vi]]})});
-  (u.claims||[]).forEach(function(x){L.push({kind:'claim',x:x,pairs:[[x.en,x.vi]]})});
+  (u.claims||[]).forEach(function(x){L.push({kind:'claim',x:x,pairs:x.why?[[x.en,x.vi],[x.why.en,x.why.vi]]:[[x.en,x.vi]]})});
   (u.controlled||[]).forEach(function(x){L.push({kind:'controlled',x:x,pairs:[[x.why&&x.why.en,x.why&&x.why.vi]]})});
   (u.keyFeatures||[]).forEach(function(x){L.push({kind:'keyFeature',x:x,pairs:[[x.reason&&x.reason.en,x.reason&&x.reason.vi]]})});
   return L;
@@ -87,6 +87,12 @@ function lmCheck(u,release){
     var texts=[];if(it.kind==='claim')texts=[x.en,x.vi];else if(it.kind==='controlled')texts=[x.statement&&x.statement.en,x.why&&x.why.en,x.why&&x.why.vi];else if(it.kind==='keyFeature')texts=[x.reason&&x.reason.en,x.reason&&x.reason.vi];else texts=[x.en,x.vi];
     texts.forEach(function(t){if(t==null)return;if(!chartBound&&lmPlaceholders(t).length)E.push(n+': general teaching copy cannot use chart placeholders.');
       else if(chartBound){var r=lmResolve(t,x,ctx);if(r.missing.length)E.push(n+': cannot fill '+r.missing.join(' ')+'.')}});
+    // Learn redesign: "why" notes are bilingual teaching copy (no chart placeholders needed, but allowed); kf links must exist on the same chart
+    if(it.kind==='claim'&&x.why!=null&&(typeof x.why!=='object'))E.push(n+': "why" must be {en, vi}.');
+    if(it.kind==='claim'&&x.kf!=null){if(!isArr(x.kf))E.push(n+': "kf" must be a list of key feature ids.');
+      else x.kf.forEach(function(id){var k=(u.keyFeatures||[]).filter(function(y){return y.id===id})[0];if(!k)E.push(n+': key feature "'+id+'" does not exist.');else if(k.chart!==x.chart)E.push(n+': key feature "'+id+'" is on chart '+k.chart+'.')})}
+    if(it.kind==='keyFeature'&&x.lens!=null&&LENSES.indexOf(x.lens)<0)E.push(n+': lens must be one of '+LENSES.join(', ')+'.');
+    if(it.kind==='claim'&&x.why){[x.why.en,x.why.vi].forEach(function(t){if(t==null)return;var r=lmResolve(t,x,ctx);if(r.missing.length)E.push(n+': cannot fill '+r.missing.join(' ')+' in "why".')})}
     // "throughout" only with a verified *-throughout fact
     if(it.kind==='claim'&&/throughout/i.test(x.en||'')&&!Object.keys(B).some(function(k){var f=ctx.byId[B[k]];return f&&/-throughout$/.test(f.type)&&f.status==='supported'}))
       E.push(n+': "throughout" needs a supported highest/lowest-throughout fact.');
@@ -118,6 +124,6 @@ function lmClassify(x,ctx,u){
   var v=c.path==='first'?(isArr(f.result)?f.result[0]:undefined):f.result;
   return JSON.stringify(v)===JSON.stringify(c.value)?{label:'supported',why:f.id+' = '+JSON.stringify(v)}:{label:'contradicted',why:f.id+' = '+JSON.stringify(v)+', not '+JSON.stringify(c.value)};
 }
-var API={lmFacts:lmFacts,lmFields:lmFields,lmPlaceholders:lmPlaceholders,lmResolve:lmResolve,lmMatch:lmMatch,lmCheck:lmCheck,lmClassify:lmClassify,lmItems:lmItems,LM_STAGES:STAGES,LM_PRE:PRE};
+var API={lmFacts:lmFacts,lmFields:lmFields,lmPlaceholders:lmPlaceholders,lmResolve:lmResolve,lmMatch:lmMatch,lmCheck:lmCheck,lmClassify:lmClassify,lmItems:lmItems,LM_STAGES:STAGES,LM_PRE:PRE,LM_LENSES:LENSES};
 if(typeof module!=='undefined'&&module.exports)module.exports=API;else root.LMX=API;
 })(this);

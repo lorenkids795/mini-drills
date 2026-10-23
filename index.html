@@ -212,6 +212,36 @@ html.sb-lock,body.sb-lock{overflow:hidden}
 .luwarn{margin:0;padding:8px 10px;border-radius:8px;background:var(--bad-bg);color:var(--ink)}
 .lunote{margin:0;color:var(--muted);font-size:.92rem}.lucnt{margin:0;color:var(--muted);font-size:.85rem}.lusc{margin:0}
 @media (max-width:640px){.lustep{padding:6px 10px;font-size:.85rem}.luopt{flex:1 1 100%}}
+/* language switch + Learn step cards; chart beside the cards on wide screens, on top on phones */
+.lulang{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 0}.lulang .seg{margin:0;border-radius:10px}
+.lulang .seg button[aria-pressed="true"]{background:var(--nav);color:var(--nav-ink)}
+.lumiss{font-size:.78rem;color:var(--warn);font-weight:600}
+.lulearn{display:flex;flex-direction:column;gap:14px}
+.lulc{max-width:none}
+.lulc[data-hl] .chs{opacity:.15;transition:opacity .2s}
+.lulc[data-hl~="s0"] .chs0,.lulc[data-hl~="s1"] .chs1,.lulc[data-hl~="s2"] .chs2,.lulc[data-hl~="s3"] .chs3{opacity:1}
+@media (prefers-reduced-motion:reduce){.lulc[data-hl] .chs{transition:none}}
+.lulsteps{display:flex;flex-direction:column;gap:12px;min-width:0}
+.lucard{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.lucard.cur{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.lucard .luh{margin:0;display:flex;align-items:center;gap:10px;font-size:1.05rem}
+.lun{width:26px;height:26px;border-radius:50%;background:var(--track);display:grid;place-items:center;font-size:.8rem;font-weight:800;flex:none}
+.lucard.cur .lun{background:var(--accent);color:var(--accent-ink)}
+.lucard .actions{margin:0}
+.lupanel{border-left:4px solid var(--accent);background:var(--bg);border-radius:0 10px 10px 0;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.lurow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px}
+.luchip{display:inline-block;font-size:.8rem;padding:2px 8px;border-radius:99px;background:var(--good-bg);color:var(--ink);border:1px solid var(--line)}
+.luchip.me{background:var(--hl-soft)}
+.lulbl{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.lusent{margin:0;font-weight:600;line-height:1.6}
+.luwhy p{font-size:.92rem;color:var(--muted)}
+.luframe{margin:0;padding:8px 12px;border:1px dashed var(--line-strong);border-radius:10px;font-family:var(--mono);font-size:.9rem;overflow-wrap:anywhere}
+.luovd{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.luovb{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.luovb.ov{border-color:var(--good)}.luovb.dt{border-style:dashed}
+@media (min-width:900px){.lulearn{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);align-items:start;gap:18px}
+  .lulside{position:sticky;top:12px}}
+@media (max-width:640px){.luovd{grid-template-columns:1fr}.lucard{padding:12px}}
 .covers{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:14px}
 .bk{position:relative;aspect-ratio:3/4;border:0;border-radius:6px 14px 14px 6px;padding:14px 12px 12px 20px;color:#fff;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:10px;overflow:hidden;text-align:left;font:inherit;cursor:pointer;background:linear-gradient(145deg,hsl(var(--h) 65% 52%),hsl(var(--h) 65% 36%));box-shadow:0 4px 12px rgba(0,0,0,.14)}
 .bk::before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:rgba(0,0,0,.22)}
@@ -782,37 +812,38 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .lbseg{border-radius:10px}.lbseg button{font-size:13px;padding:7px 14px}
 .lbseg button[aria-pressed="true"]{background:var(--nav);color:var(--nav-ink)}
 .lbempty{display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center;padding:40px 16px;border:1px dashed var(--line-strong);border-radius:18px;color:var(--muted)}.lbempty b{color:var(--ink);font-size:1.05rem}
-.lbbadge{position:relative;margin:0 auto;display:flex;justify-content:center;align-items:flex-start}
+.lbbadge{position:relative;margin:0 auto;display:flex;justify-content:center;align-items:flex-start;isolation:isolate} /* isolation: the glow (z -1) stays above the card background */
 .lbav .av2{font-weight:800;color:#2a2330}
 /* hero #1: night-sky spotlight (decorations are pointer-events:none; content sits above them) */
 .lbhero{position:relative;overflow:hidden;border-radius:22px;padding:26px 16px;margin-bottom:12px;text-align:center;color:#fff;
   background:radial-gradient(circle at 30% 20%,#7d6bf0,transparent 55%),linear-gradient(135deg,#2b2a8f,#5a35b5)}
 .lbhero>*{position:relative;z-index:1}
 .lbhero::before{content:"";position:absolute;left:50%;top:0;width:78%;height:100%;transform:translateX(-50%);background:linear-gradient(180deg,rgba(255,255,255,.3),rgba(255,255,255,0) 88%);clip-path:polygon(40% 0,60% 0,100% 100%,0 100%);filter:blur(8px);pointer-events:none}
-.lbhero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.8;animation:lbtw 3s ease-in-out infinite alternate;background:
-  radial-gradient(2px 2px at 12% 30%,#fff,transparent),radial-gradient(2px 2px at 85% 20%,#fff,transparent),radial-gradient(3px 3px at 70% 70%,#ffe28a,transparent),radial-gradient(2px 2px at 25% 80%,#ffe28a,transparent),
-  radial-gradient(2px 2px at 92% 60%,#fff,transparent),radial-gradient(1.5px 1.5px at 6% 14%,#fff,transparent),radial-gradient(2px 2px at 18% 58%,#ffe28a,transparent),radial-gradient(1.5px 1.5px at 30% 12%,#fff,transparent),
-  radial-gradient(2px 2px at 38% 88%,#fff,transparent),radial-gradient(3px 3px at 47% 10%,#ffe28a,transparent),radial-gradient(1.5px 1.5px at 58% 90%,#fff,transparent),radial-gradient(2px 2px at 64% 16%,#fff,transparent),
-  radial-gradient(1.5px 1.5px at 76% 42%,#ffe28a,transparent),radial-gradient(2px 2px at 82% 86%,#fff,transparent),radial-gradient(3px 3px at 90% 12%,#ffe28a,transparent),radial-gradient(1.5px 1.5px at 96% 38%,#fff,transparent),
-  radial-gradient(1.5px 1.5px at 8% 78%,#fff,transparent),radial-gradient(2px 2px at 52% 74%,#fff,transparent),radial-gradient(1.5px 1.5px at 24% 40%,#ffe28a,transparent),radial-gradient(2px 2px at 72% 28%,#fff,transparent)}
-@keyframes lbtw{from{opacity:.45}to{opacity:.95}}
-.lbhero .lbbadge::before{content:"";position:absolute;left:50%;top:50%;width:300px;height:300px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(255,226,138,.5),transparent 62%);z-index:-1;pointer-events:none}
+.lbhero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.95;animation:lbtw 3s ease-in-out infinite alternate;background:radial-gradient(circle at 12% 30%,#fff 0 2px,transparent 3.2px),radial-gradient(circle at 85% 20%,#fff 0 2px,transparent 3.2px),radial-gradient(circle at 70% 70%,#ffe28a 0 3px,transparent 4.2px),radial-gradient(circle at 25% 80%,#ffe28a 0 2px,transparent 3.2px),radial-gradient(circle at 92% 60%,#fff 0 2px,transparent 3.2px),radial-gradient(circle at 6% 14%,#fff 0 1.5px,transparent 2.7px),radial-gradient(circle at 18% 58%,#ffe28a 0 2px,transparent 3.2px),radial-gradient(circle at 30% 12%,#fff 0 1.5px,transparent 2.7px),radial-gradient(circle at 38% 88%,#fff 0 2px,transparent 3.2px),radial-gradient(circle at 47% 10%,#ffe28a 0 3px,transparent 4.2px),radial-gradient(circle at 58% 90%,#fff 0 1.5px,transparent 2.7px),radial-gradient(circle at 64% 16%,#fff 0 2px,transparent 3.2px),radial-gradient(circle at 76% 42%,#ffe28a 0 1.5px,transparent 2.7px),radial-gradient(circle at 82% 86%,#fff 0 2px,transparent 3.2px),radial-gradient(circle at 90% 12%,#ffe28a 0 3px,transparent 4.2px),radial-gradient(circle at 96% 38%,#fff 0 1.5px,transparent 2.7px),radial-gradient(circle at 8% 78%,#fff 0 1.5px,transparent 2.7px),radial-gradient(circle at 52% 74%,#fff 0 2px,transparent 3.2px),radial-gradient(circle at 24% 40%,#ffe28a 0 1.5px,transparent 2.7px),radial-gradient(circle at 72% 28%,#fff 0 2px,transparent 3.2px)}
+@keyframes lbtw{from{opacity:.55}to{opacity:1}}
+.lbglow{position:absolute;left:50%;top:50%;border-radius:50%;transform:translate(-50%,-50%);z-index:-1;pointer-events:none;width:calc(var(--s)*2.8);height:calc(var(--s)*2.8)}
+.lbhero .lbglow{background:radial-gradient(circle,rgba(255,226,138,.7) 0,rgba(255,226,138,.35) 30%,rgba(255,226,138,0) 62%)}
+.lb2 .lbglow{width:calc(var(--s)*2.2);height:calc(var(--s)*2.2);background:radial-gradient(circle,rgba(170,179,197,.55),rgba(170,179,197,0) 62%)}
+.lb3 .lbglow{width:calc(var(--s)*2.2);height:calc(var(--s)*2.2);background:radial-gradient(circle,rgba(201,138,85,.5),rgba(201,138,85,0) 62%)}
 .lbhero>.lbshoot{position:absolute;top:10%;right:6%;width:110px;height:2px;border-radius:2px;background:linear-gradient(270deg,rgba(255,255,255,0),#fff);box-shadow:0 0 8px 1px rgba(255,255,255,.7);opacity:0;z-index:0;pointer-events:none;transform:rotate(-25deg);animation:shoot 9s linear 1s infinite}
 .lbhero>.lbshoot.s2{top:32%;right:38%;width:80px;animation-duration:13s;animation-delay:5s}
 @keyframes shoot{0%{opacity:0;transform:rotate(-25deg) translateX(0)}2%{opacity:1}12%{opacity:0;transform:rotate(-25deg) translateX(-300px)}100%{opacity:0;transform:rotate(-25deg) translateX(-300px)}}
-.lbhn{margin:6px 0 2px;font-size:22px;font-weight:700;overflow-wrap:anywhere}
+.lbhn{margin:8px 0 2px;font-size:26px;font-weight:800;overflow-wrap:anywhere}
 .lbhv{font-size:42px;font-weight:800;line-height:1.1;color:#ffe28a;white-space:nowrap}
 .lbhl{font-size:12px;color:#d9d4ff}
 .lbchip{display:inline-block;background:rgba(255,255,255,.18);border-radius:99px;padding:3px 12px;font-size:12px;margin-top:8px}
 /* #2 #3 */
-.lbcards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.lbcards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
 .lbcards.one{grid-template-columns:minmax(0,1fr);max-width:calc(50% - 6px);margin-left:auto;margin-right:auto}
-.lbcard{position:relative;min-width:0;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px}
-.lbrib{position:absolute;top:-1px;left:18px;width:16px;height:34px;clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%)}
+.lbcard{position:relative;min-width:0;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 14px 16px;box-shadow:0 6px 18px rgba(20,25,60,.07);overflow:hidden}
+.lbcard::before{content:"";position:absolute;inset:0 0 auto;height:62%;pointer-events:none;background:linear-gradient(180deg,var(--lbt,transparent),transparent)}
+.lbcard>*{position:relative}.lbcard>.sr{position:absolute}
+.lb2{--lbt:rgba(170,179,197,.22);border-top:3px solid #aab3c5}.lb3{--lbt:rgba(201,138,85,.2);border-top:3px solid #c98a55}
+.lbrib{position:absolute!important;top:-3px;left:18px;width:16px;height:34px;clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%);z-index:2}
 .lb2 .lbrib{background:linear-gradient(180deg,#aab3c5,rgba(255,255,255,.35))}.lb3 .lbrib{background:linear-gradient(180deg,#c98a55,rgba(255,255,255,.35))}
-.lbcn{display:block;font-size:14px;font-weight:700;overflow-wrap:anywhere}
+.lbcn{display:block;margin-top:2px;font-size:15px;font-weight:800;overflow-wrap:anywhere}
 .lbcl{display:block;font-size:12px;color:var(--muted)}
-.lbcv{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap}.lbcv b{color:var(--ink)}
+.lbcv{margin-top:8px;white-space:nowrap}.lbcv span{display:inline-block;padding:4px 12px;border-radius:99px;background:var(--track);font-size:13px;color:var(--muted)}.lbcv b{color:var(--ink);font-weight:800}
 .lbcard.me,.lbrow.me{background:var(--you-bg);border-color:var(--accent)}
 /* rows from #4 */
 .lblist{list-style:none;margin:0;padding:0}
@@ -824,7 +855,7 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .lbbar{flex:1;min-width:0;height:8px;border-radius:9px;background:var(--track);overflow:hidden}.lbbar i{display:block;height:100%;background:var(--accent);border-radius:9px}
 .lbrv{min-width:70px;text-align:right;font-size:13px;color:var(--muted);white-space:nowrap}.lbrv b{color:var(--ink)}
 @media (prefers-reduced-motion:reduce){.lbhero>.lbshoot{display:none}.lbhero::after{animation:none}}
-@media (max-width:640px){.lbhv{font-size:34px}.lbrn{width:100px}.lbrow{gap:8px;padding:10px}}
+@media (max-width:640px){.lbhv{font-size:34px}.lbhn{font-size:22px}.lbcard{padding:14px 8px}.lbrn{width:100px}.lbrow{gap:8px;padding:10px}}
 /* ---- wheel, inventory, marquee ---- */
 .wheelbox{display:flex;flex-direction:column;align-items:center;gap:12px;padding:10px 0}
 .wwrap{position:relative;width:min(440px,92vw);aspect-ratio:1}
@@ -1946,13 +1977,23 @@ function lmLessonHTML(l){
    word or number is filled in from a verified fact (LMX.lmResolve); nothing here writes to the database or gives XP.
    Chart B (Independent) is never drawn and none of its items are used before the Independent stage (luItems filters by stage).
    Drafts: localStorage only, key md-lm:<lesson>:v<version>:<activity> = {t, rv, ts}; another version's draft is never shown as current. */
-var LU={stage:'learn',pick:{},chk:false,gsel:{},self:{}},LU_ST=[['learn','Learn'],['controlled','Controlled'],['guided','Guided'],['independent','Independent'],['review','Review & Revise']],LUC=null;
+// lang = explanation language ('vi' default, localStorage md-lm-lang); lstep/lens/lpick/lchk/lrev = the Learn stage's own steps (not saved)
+var LU={stage:'learn',pick:{},chk:false,gsel:{},self:{},lang:(function(){try{return localStorage.getItem('md-lm-lang')==='en'?'en':'vi'}catch(e){return 'vi'}})(),lstep:1,lens:null,lpick:{},lchk:false,lrev:false},LU_ST=[['learn','Learn'],['controlled','Controlled'],['guided','Guided'],['independent','Independent'],['review','Review & Revise']],LUC=null;
 function luUnit(id){var u=window.MD_LM_U2;return u&&window.LMX&&u.lesson===id?u:null}
 function luCtx(u){if(!LUC||LUC.u!==u){var r=window.LMX.lmCheck(u,false);LUC={u:u,ctx:r.ctx,errs:r.errors,pending:r.pending}}return LUC}
 function luItems(u,kind,stage,chart){return (u[kind]||[]).filter(function(x){return x.stage===stage&&(!chart||x.chart===chart)})}
 function luTxt(x,t){var o=window.LMX.lmResolve(t,x,LUC.ctx);return o.text==null?null:o.text}
-function luPair(en,vi,cls){return '<div class="lupair'+(cls?' '+cls:'')+'"><p lang="en">'+esc(en)+'</p>'+(vi?'<p lang="vi" class="luvi">'+esc(vi)+'</p>':'')+'</div>'}
-function luCopy(u,id){var c=(u.copy||[]).filter(function(x){return x.id===id})[0];return c?luPair(c.en,c.vi):''}
+// explanations: ONE language (LU.lang); a missing translation shows the other one with a visible note (lm-check reports it too)
+function luL(){return LU.lang==='en'?'en':'vi'}
+function luPair(en,vi,cls){var l=luL(),t=l==='vi'?vi:en,miss=!t;if(miss)t=l==='vi'?en:vi;if(!t)return '';
+  return '<div class="lupair'+(cls?' '+cls:'')+'"><p lang="'+(miss?(l==='vi'?'en':'vi'):l)+'">'+esc(t)+(miss?' <span class="lumiss">'+(l==='vi'?'(chỉ có tiếng Anh)':'(Vietnamese only)')+'</span>':'')+'</p></div>'}
+function luC(u,id){return (u.copy||[]).filter(function(x){return x.id===id})[0]||null}
+function luCopy(u,id){var c=luC(u,id);return c?luPair(c.en,c.vi):''}
+// a short UI text (heading, label, button) in the chosen language, plain text (escape when used)
+function luU(u,id){var c=luC(u,id);if(!c)return id;return (luL()==='vi'?c.vi:c.en)||c.en||c.vi||id}
+// an IELTS sentence: always English; its "why" (or, for older items, the Vietnamese note) in the chosen language
+function luModel(x,extra){var w=x.why?luPair(luTxt(x,x.why.en),luTxt(x,x.why.vi),'luwhy'):(luL()==='vi'&&x.vi?luPair(null,luTxt(x,x.vi),'luwhy'):'');
+  return '<p class="lusent" lang="en">'+esc(luTxt(x,x.en))+'</p>'+(extra||'')+w}
 function luChart(u,k){var fx=u.charts[k];return fx?'<div class="luchart">'+chartHTML(fx.chart)+'</div>':''}
 // ---- local drafts ----
 function luKey(u,act){return 'md-lm:'+u.lesson+':v'+u.version+':'+act}
@@ -1970,14 +2011,54 @@ function luDraftHTML(u,act){
 }
 function luSentences(t){t=String(t||'').trim();return t?t.split(/[.!?]+(\s|$)/).filter(function(s){return s&&s.trim()}).length:0}
 // ---- stages ----
+var LU_LENS=[['trends','ui.lens.trends','copy.lens.trends'],['highest','ui.lens.highest','copy.lens.highest'],['highlights','ui.lens.highlights','copy.lens.highlights']];
+// chart line indexes a key feature is about: the winner of a "throughout" fact, otherwise the fact's own lines
+function luKfIdx(u,k){var f=LUC.ctx.byId[k.fact],c=u.charts[k.chart].chart,ids=!f?[]:(typeof f.result==='string'&&chSeries(c,f.result))?[f.result]:f.series,o=[];
+  c.series.forEach(function(sr,i){if(ids.indexOf(sr.id)>=0)o.push(i)});return o}
+// small evidence chip from the verified fact itself (numbers only come from the fact; words are reviewed UI copy)
+function luChip(u,k){var f=LUC.ctx.byId[k.fact],c=u.charts[k.chart].chart;if(!f||f.status!=='supported')return '';
+  var lab=function(id){var sr=chSeries(c,id);return sr?sr.label:id},e=f.evidence||{},t='';
+  if(f.type==='endpoint'||f.type==='change')t=lab(f.series[0])+': '+e.y0+' → '+e.y1+' ('+e.x0+'–'+e.x1+')';
+  else if(f.type==='highest-throughout')t=lab(f.result)+': '+luU(u,'ui.fact.top');
+  else if(f.type==='shape'&&f.result==='fluctuating')t=lab(f.series[0])+': '+luU(u,'ui.fact.fluctuating');
+  return t?'<span class="luchip" title="'+esc(luU(u,'ui.lbl.basis'))+'">✓ '+esc(t)+'</span>':''}
+function luImp(u,k){return '<span class="pill'+(k.importance==='main'?' acc':'')+'">'+esc(luU(u,k.importance==='main'?'ui.lbl.main':'ui.lbl.secondary'))+'</span>'}
 function luLearn(u){
-  var h=luCopy(u,'copy.synthetic')+luChart(u,'A')+'<h4 class="luh">What is an overview?</h4>'+luCopy(u,'copy.overview.what')+luCopy(u,'copy.overview.detail')+
-    '<h4 class="luh">Three ways to look at a chart</h4>'+luCopy(u,'copy.lens.trends')+luCopy(u,'copy.lens.highest')+luCopy(u,'copy.lens.highlights')+luCopy(u,'copy.lens.flexible')+luCopy(u,'copy.observed');
-  var M=luItems(u,'claims','learn','A');
-  h+='<h4 class="luh">Sample overview sentences</h4><ul class="lumod">'+M.filter(function(x){return x.kind==='model'}).map(function(x){return '<li>'+luPair(luTxt(x,x.en),luTxt(x,x.vi))+'</li>'}).join('')+'</ul>';
-  h+='<h4 class="luh">Not for the overview: a body detail</h4><ul class="lumod det">'+M.filter(function(x){return x.kind==='detail'}).map(function(x){return '<li>'+luPair(luTxt(x,x.en),luTxt(x,x.vi))+'</li>'}).join('')+'</ul>';
-  h+='<h4 class="luh">The key features of this chart</h4><ul class="lukf">'+luItems(u,'keyFeatures','learn','A').map(function(x){return '<li><span class="pill'+(x.importance==='main'?' acc':'')+'">'+(x.importance==='main'?'Main':'Secondary')+'</span>'+luPair(x.reason.en,x.reason.vi)+'</li>'}).join('')+'</ul>';
-  return h+'<div class="actions"><button type="button" class="btn pri" data-act="lu-go" data-s="controlled">Next: Controlled practice</button></div>';
+  var K=luItems(u,'keyFeatures','learn','A'),M=luItems(u,'claims','learn','A'),st=LU.lstep,hl=[];
+  if(LU.lens)K.forEach(function(k){if(k.lens===LU.lens)luKfIdx(u,k).forEach(function(i){if(hl.indexOf(i)<0)hl.push(i)})});
+  var kfBy=function(id){return K.filter(function(k){return k.id===id})[0]};
+  var card=function(n,head,body){if(n>st)return '';
+    return '<section class="lucard'+(n===st?' cur':'')+'" aria-labelledby="luS'+n+'"><h4 class="luh" id="luS'+n+'"><span class="lun" aria-hidden="true">'+n+'</span>'+esc(luU(u,head))+'</h4>'+body+
+      (n===st&&n<7?'<div class="actions"><button type="button" class="btn pri" data-act="lu-lnext">'+esc(luU(u,'ui.btn.continue'))+'</button></div>':'')+'</section>'};
+  // 1-2: objective, look first
+  var h=card(1,'ui.learn.s1',luCopy(u,'copy.learn.objective')+luCopy(u,'copy.synthetic'));
+  h+=card(2,'ui.learn.s2',luCopy(u,'copy.learn.explore')+luCopy(u,'copy.observed'));
+  // 3: lenses highlight lines on the chart and fill the panel with the reviewed key features of that lens
+  var lens=LU_LENS.filter(function(L){return L[0]===LU.lens})[0];
+  h+=card(3,'ui.learn.s3',luCopy(u,'copy.learn.lens.pick')+'<div class="luopts lulens" role="group" aria-label="'+esc(luU(u,'ui.learn.s3'))+'">'+LU_LENS.map(function(L){return '<button type="button" class="luopt" data-act="lu-lens" data-v="'+L[0]+'" aria-pressed="'+(LU.lens===L[0])+'">'+esc(luU(u,L[1]))+'</button>'}).join('')+'</div>'+
+    (lens?'<div class="lupanel" aria-live="polite">'+luCopy(u,lens[2])+'<ul class="lukf">'+K.filter(function(k){return k.lens===lens[0]}).map(function(k){return '<li>'+luImp(u,k)+'<div>'+luPair(k.reason.en,k.reason.vi)+luChip(u,k)+'</div></li>'}).join('')+'</ul></div>':'')+
+    luCopy(u,'copy.lens.flexible'));
+  // 4: observe before reveal: pick, then see what matters and why
+  h+=card(4,'ui.learn.s4',luCopy(u,'copy.learn.choose')+'<ul class="lukf pick">'+K.map(function(k){var me=!!LU.lpick[k.id];
+      return '<li><label><input type="checkbox" data-act="lu-lpick" data-id="'+esc(k.id)+'"'+(me?' checked':'')+(LU.lchk?' disabled':'')+'><div>'+luPair(k.reason.en,k.reason.vi)+
+        (LU.lchk?'<div class="lurow">'+luImp(u,k)+(me?'<span class="luchip me">'+esc(luU(u,'ui.lbl.picked'))+'</span>':'')+luChip(u,k)+'</div>':'')+'</div></label></li>'}).join('')+'</ul>'+
+    (LU.lchk?'<div class="lufb" role="status">'+luCopy(u,'copy.learn.choose.fb')+'</div>':'<div class="actions"><button type="button" class="btn" data-act="lu-lchk">'+esc(luU(u,'ui.btn.check'))+'</button></div>'));
+  // 5: from features to a sentence frame (the frame itself stays English)
+  var fr=luC(u,'copy.learn.frame');
+  h+=card(5,'ui.learn.s5',luCopy(u,'copy.learn.build')+(fr?'<p class="luframe" lang="en">'+esc(fr.en)+'</p>'+(luL()==='vi'?luPair(null,fr.vi,'luwhy'):''):''));
+  // 6: reveal the reviewed samples with why + linked key features + checked facts
+  var models=M.filter(function(x){return x.kind==='model'});
+  h+=card(6,'ui.learn.s6',luCopy(u,'copy.learn.reveal')+(LU.lrev?'<ol class="lumod">'+models.map(function(x){
+      var ks=(x.kf||[]).map(kfBy).filter(Boolean);
+      return '<li>'+luModel(x,ks.length?'<div class="lurow"><span class="lulbl">'+esc(luU(u,'ui.lbl.features'))+':</span>'+ks.map(function(k){return luChip(u,k)}).join('')+'</div>':'')+'</li>'}).join('')+'</ol>'
+    :'<div class="actions"><button type="button" class="btn" data-act="lu-lrev">'+esc(luU(u,'ui.btn.reveal'))+'</button></div>'));
+  // 7: overview vs body detail, side by side
+  var ov=models[0],dt=M.filter(function(x){return x.kind==='detail'})[0];
+  h+=card(7,'ui.learn.s7',luCopy(u,'copy.learn.ovd')+'<div class="luovd">'+(ov?'<div class="luovb ov"><span class="lulbl">'+esc(luU(u,'ui.lbl.overview'))+'</span>'+luModel(ov)+'</div>':'')+
+    (dt?'<div class="luovb dt"><span class="lulbl">'+esc(luU(u,'ui.lbl.detail'))+'</span>'+luModel(dt)+'</div>':'')+'</div>'+
+    '<div class="actions"><button type="button" class="btn pri" data-act="lu-go" data-s="controlled">'+esc(luU(u,'ui.btn.controlled'))+'</button></div>');
+  var chart='<div class="luchart lulc"'+(hl.length?' data-hl="'+hl.map(function(i){return 's'+i}).join(' ')+'"':'')+'>'+chartHTML(u.charts.A.chart)+'</div>';
+  return '<div class="lulearn"><div class="lulside">'+chart+'</div><div class="lulsteps">'+h+'</div></div>';
 }
 var LU_LB={supported:'Supported',contradicted:'Contradicted',not_determinable:'Not determinable',overview:'Overview',detail:'Body detail'};
 function luControlled(u){
@@ -2013,7 +2094,7 @@ function luReview(u){
   return luChart(u,'B')+'<h4 class="luh">Your overview: edit it as much as you like</h4><label class="lbl sr" for="luI">Your overview (English)</label><textarea class="wbox" id="luI" rows="6" lang="en" spellcheck="true">'+esc(d.t||'')+'</textarea>'+
     '<p class="lucnt" id="luCnt" aria-live="polite">'+luSentences(d.t)+' sentence(s) · about 2–3 is a good length</p>'+
     '<h4 class="luh">Self-check</h4>'+luCopy(u,'copy.review.self')+'<ul class="lukf pick">'+luItems(u,'keyFeatures','review','B').map(function(x){return '<li><label><input type="checkbox" data-act="lu-self" data-id="'+esc(x.id)+'"'+(LU.self[x.id]?' checked':'')+'> <span class="pill'+(x.importance==='main'?' acc':'')+'">'+(x.importance==='main'?'Main':'Secondary')+'</span>'+luPair(x.reason.en,x.reason.vi)+'</label></li>'}).join('')+'</ul>'+
-    '<h4 class="luh">Sample overview sentences for this chart</h4><ul class="lumod">'+luItems(u,'claims','review','B').map(function(x){return '<li>'+luPair(luTxt(x,x.en),luTxt(x,x.vi))+'</li>'}).join('')+'</ul>'+
+    '<h4 class="luh">Sample overview sentences for this chart</h4><ul class="lumod">'+luItems(u,'claims','review','B').map(function(x){return '<li>'+luModel(x)+'</li>'}).join('')+'</ul>'+
     '<p class="lunote">Nothing here checks your writing automatically: compare it with the features and samples yourself.</p>'+luDraftHTML(u,'indep');
 }
 var LU_FN={learn:luLearn,controlled:luControlled,guided:luGuided,independent:luIndependent,review:luReview};
@@ -2025,11 +2106,20 @@ function luHTML(l,u){
   if(LU.stage==='review'&&!rv)LU.stage='independent';
   var bar='<nav class="lusteps" aria-label="Lesson stages">'+LU_ST.map(function(s,i){var lock=s[0]==='review'&&!rv;return '<button type="button" class="lustep'+(LU.stage===s[0]?' on':'')+'" data-act="lu-go" data-s="'+s[0]+'"'+(LU.stage===s[0]?' aria-current="step"':'')+(lock?' disabled title="Write your overview first"':'')+'><span class="mono">'+(i+1)+'</span> '+s[1]+'</button>'}).join('')+'</nav>';
   var pend=c.pending?'<p class="pill pend">Unpublished preview · '+c.pending+' content item'+(c.pending>1?'s':'')+' still waiting for review</p>':(l.status!=='published'?'<p class="pill pend">Unpublished preview · students cannot see this lesson</p>':'');
-  return '<div class="lmshell lu"><p class="lmpath">IELTS Academic Task 1 · Unit '+esc(l.unit)+'</p><h3>'+esc(l.title)+'</h3>'+pend+bar+'<div class="lubody" id="luBody">'+LU_FN[LU.stage](u)+'</div></div>';
+  var lg='<div class="lulang"><div class="seg" role="group" aria-label="Explanation language / Ngôn ngữ giải thích"><button type="button" data-act="lu-lang" data-v="en" aria-pressed="'+(luL()==='en')+'" lang="en">English</button><button type="button" data-act="lu-lang" data-v="vi" aria-pressed="'+(luL()==='vi')+'" lang="vi">Tiếng Việt</button></div><span class="lunote">'+esc(luU(u,'ui.lang.note'))+'</span></div>';
+  return '<div class="lmshell lu"><p class="lmpath">IELTS Academic Task 1 · Unit '+esc(l.unit)+'</p><h3>'+esc(l.title)+'</h3>'+pend+lg+bar+'<div class="lubody" id="luBody">'+LU_FN[LU.stage](u)+'</div></div>';
 }
 function luAct(a,t){
   var l=LMV&&lmLesson(LMV),u=l&&luUnit(l.id);if(!u)return false;
   var redraw=function(top){renderLib();if(top){var b=$('.lusteps');if(b&&b.scrollIntoView)b.scrollIntoView({block:'start'})}};
+  var keep=function(){var y=window.scrollY||0;renderLib();if(window.scrollTo)window.scrollTo(0,y)}; // redraw without moving the page
+  // language: only the words change; stage, answers, Learn steps and drafts (localStorage) stay as they are
+  if(a==='lu-lang'){LU.lang=t.dataset.v==='en'?'en':'vi';try{localStorage.setItem('md-lm-lang',LU.lang)}catch(e){}keep();return true}
+  if(a==='lu-lnext'){LU.lstep=Math.min(7,LU.lstep+1);keep();var nc=document.getElementById('luS'+LU.lstep);if(nc&&nc.scrollIntoView)nc.scrollIntoView({block:'nearest'});return true}
+  if(a==='lu-lens'){LU.lens=LU.lens===t.dataset.v?null:t.dataset.v;keep();return true}
+  if(a==='lu-lpick'){if(!LU.lchk)LU.lpick[t.dataset.id]=t.checked;return true}
+  if(a==='lu-lchk'){LU.lchk=true;keep();return true}
+  if(a==='lu-lrev'){LU.lrev=true;keep();return true}
   if(a==='lu-go'){var s=t.dataset.s;if(!LU_FN[s])return true;if(s==='review'&&!(luGet(u,'indep')||{}).rv)return true;LU.stage=s;redraw(true);return true}
   if(a==='lu-pick'){if(!LU.chk){LU.pick[t.dataset.id]=t.dataset.v;redraw()}return true}
   if(a==='lu-chk'){LU.chk=true;redraw();return true}
@@ -5076,7 +5166,7 @@ function lbIni(n){return String(n||'?').split(/\s+/).filter(Boolean).slice(0,2).
 function lbAvHTML(email,badge){
   var p=profFor(email),nm=nameOf(email),lv=lvOf(+p.xp||0).i,url=safeImg(p.avatar),fr=safeImg(imgMap()['frame'+lv]),fc=frCfg(lv);
   var d=badge?Math.round(badge*.5):36,w=badge?Math.max(3,Math.round(badge*.03)):3;
-  var av='<span class="avw lbav" style="--s:'+d+'px"><span class="av2" style="background:'+LB_PAL[lbHash(nm)%6]+'">'+(url?'<img src="'+esc(url)+'" alt="">':esc(lbIni(nm)))+'</span>'+
+  var av='<span class="avw lbav" style="--s:'+d+'px">'+(badge?'<span class="lbglow" aria-hidden="true"></span>':'')+'<span class="av2" style="background:'+LB_PAL[lbHash(nm)%6]+'">'+(url?'<img src="'+esc(url)+'" alt="">':esc(lbIni(nm)))+'</span>'+
     (fr?'<img class="avfi" src="'+esc(fr)+'" alt="" style="width:'+fc.s+'%;height:'+fc.s+'%;left:calc(50% + '+fc.x+'%);top:calc(50% + '+fc.y+'%)">':'<span class="avf" style="border-color:'+LB_RING[lv]+';border-width:'+w+'px;inset:-'+w+'px"></span>')+'</span>';
   return badge?'<div class="lbbadge" style="width:'+badge+'px;height:'+Math.round(d+badge*.14)+'px;padding-top:'+Math.round(badge*.1)+'px">'+av+'</div>':av;
 }
@@ -5087,7 +5177,8 @@ function lbList(){
   var nm=function(x){return String(nameOf(x.s.email)||'').toLowerCase()};
   // when the current value was reached; 0 = since the account was created; unknown = after everyone with a time
   var at=function(t,v,s){t=+t;if(t>0)return t;if(!v&&+s.ts>0)return +s.ts;return Infinity};
-  return students().filter(function(s){return RK==='all'||s.cls===U.cls}).map(function(s){var p=profFor(s.email),xp=+p.xp||0,st=+p.streak||0;return {s:s,xp:xp,st:st,xa:at(p.xpAt,xp,s),sa:at(p.streakAt,st,s)}})
+  var seen={};
+  return students().filter(function(s){var k=String(s.email||'').trim().toLowerCase();if(!k||seen[k])return false;seen[k]=1;return RK==='all'||s.cls===U.cls}).map(function(s){var p=profFor(s.email),xp=+p.xp||0,st=+p.streak||0;return {s:s,xp:xp,st:st,xa:at(p.xpAt,xp,s),sa:at(p.streakAt,st,s)}})
     .sort(function(a,b){var d=RKM==='streak'?b.st-a.st||(a.sa===b.sa?0:a.sa<b.sa?-1:1):b.xp-a.xp||(a.xa===b.xa?0:a.xa<b.xa?-1:1);if(d)return d;var x=nm(a),y=nm(b);return x<y?-1:x>y?1:0});
 }
 function renderRanks(){
@@ -5099,12 +5190,12 @@ function renderRanks(){
     '<div class="rkbar"><div class="subtabs" role="tablist">'+tab('class','My class')+tab('all','Everyone')+'</div><div class="seg lbseg" role="group" aria-label="Rank by">'+seg('xp','XP')+seg('streak','Streak')+'</div></div>';
   if(!A.length){el.innerHTML=h+'<div class="lbempty"><b>No one on the leaderboard yet.</b><span>Finish an exercise or a daily task to be the first.</span></div></div></div>';return}
   var top=lbNum(A[0]),x0=A[0];
-  h+='<section class="lbhero" aria-label="1st place"><span class="lbshoot" aria-hidden="true"></span><span class="lbshoot s2" aria-hidden="true"></span>'+lbAvHTML(x0.s.email,200)+
+  h+='<section class="lbhero" aria-label="1st place"><span class="lbshoot" aria-hidden="true"></span><span class="lbshoot s2" aria-hidden="true"></span>'+lbAvHTML(x0.s.email,260)+
     '<h3 class="lbhn">'+lbName(x0,me===0)+'</h3><div class="lbhv">'+lbNum(x0)+' '+(RKM==='streak'?(x0.st===1?'day':'days'):'XP')+'</div>'+
     '<small class="lbhl">'+esc(lvOf(x0.xp).name)+' · Top of the leaderboard</small><br><span class="lbchip">Champion</span></section>';
   var card=function(i){var x=A[i];if(!x)return '';var m=i===me;
-    return '<div class="lbcard lb'+(i+1)+(m?' me':'')+'"><span class="lbrib" aria-hidden="true"></span><span class="sr">'+(i===1?'2nd':'3rd')+' place</span>'+lbAvHTML(x.s.email,110)+
-      '<b class="lbcn">'+lbName(x,m)+'</b><small class="lbcl">'+esc(lvOf(x.xp).name)+'</small><div class="lbcv">'+lbVal(x)+'</div></div>'};
+    return '<div class="lbcard lb'+(i+1)+(m?' me':'')+'"><span class="lbrib" aria-hidden="true"></span><span class="sr">'+(i===1?'2nd':'3rd')+' place</span>'+lbAvHTML(x.s.email,124)+
+      '<b class="lbcn">'+lbName(x,m)+'</b><small class="lbcl">'+esc(lvOf(x.xp).name)+'</small><div class="lbcv"><span>'+lbVal(x)+'</span></div></div>'};
   if(A.length>1)h+='<div class="lbcards'+(A.length===2?' one':'')+'">'+card(1)+card(2)+'</div>';
   var row=function(x,i){var m=i===me,pc=top>0?Math.round(lbNum(x)/top*100):0;
     return '<li class="lbrow'+(m?' me':'')+'"><span class="lbn">'+(i+1)+'</span>'+lbAvHTML(x.s.email,0)+'<span class="lbrn"><b>'+lbName(x,m)+'</b><small>'+esc(lvOf(x.xp).name)+'</small></span>'+

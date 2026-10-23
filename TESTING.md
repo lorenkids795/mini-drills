@@ -415,5 +415,16 @@ Trên site thật (bắt buộc, theo thứ tự):
 6. [ ] Lỗi: hộp vẫn mở và ghi lý do (hết hạn admin key → ô nhập mật khẩu admin; "Deploy the latest version…" = thiếu thư mục functions/).
 7. [ ] **Change password**: bấm ở một học sinh → hộp có ô mật khẩu (Generate / Copy / Save password), hoặc nếu hộp không hiện được thì trình duyệt hỏi bằng ô nhập có sẵn mật khẩu gợi ý → OK → thông báo hiện mật khẩu mới để chép; đăng nhập học sinh đó bằng mật khẩu mới được. Edit class, Add a tester account, Resume, Teachers, My account vẫn chạy. 390px và máy tính, sáng/tối.
 
+## Learning Materials — Learn mới (10/2026)
+Tự động (đã chạy): `node tests/lm-unit2-ui.test.js` → 34/34 · `chart-facts` 56/56 · `lm-meta` 18/18 · `admin-kick` 36/36 · `lm-check` 0 lỗi, 70 pending (`--release` báo lỗi đúng).
+Cần xem trên trình duyệt (tài khoản admin):
+1. [ ] Mở Unit 2: nút **English | Tiếng Việt**, mặc định Tiếng Việt; giải thích chỉ hiện 1 ngôn ngữ; câu IELTS mẫu luôn tiếng Anh.
+2. [ ] Learn: chỉ thẻ 1 hiện, bấm Tiếp tục mở dần tới thẻ 7. Máy tính: biểu đồ bên trái đứng yên khi cuộn; điện thoại 390px: biểu đồ ở trên, thẻ bên dưới, chữ và nút không bị tràn.
+3. [ ] Thẻ 3: bấm Trends → Museum A và B sáng, C mờ; Highest / Lowest → chỉ A; Highlights → chỉ C; bấm lại → bỏ chọn. Chip ✓ "Museum A: 60 → 90 (2000–2020)".
+4. [ ] Thẻ 4: tick rồi "Xem nhận xét" → mới hiện Chính/Phụ, "Bạn đã chọn". Thẻ 6: câu mẫu chỉ hiện sau "Xem câu mẫu".
+5. [ ] Đang ở Controlled đã chọn đáp án, hoặc Guided đã viết nháp → đổi ngôn ngữ → vẫn ở chỗ cũ, đáp án và nháp còn nguyên. Tải lại trang → ngôn ngữ được nhớ.
+6. [ ] Chế độ tối: biểu đồ mờ/sáng vẫn rõ, thẻ đang làm có viền xanh.
+7. [ ] Học sinh vẫn chỉ thấy "coming soon". Mở `tests/lm-review.html` để duyệt 70 mục.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

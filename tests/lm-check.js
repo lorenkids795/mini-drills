@@ -49,9 +49,9 @@ function html(r) {
     h += '<details><summary>Verified facts (' + CH[k].res.facts.length + ')</summary>' + table(['Fact id', 'Status', 'Result', 'Evidence'], CH[k].res.facts.map((f) =>
       '<tr><td><code>' + esc(f.id) + '</code></td><td>' + esc(f.status) + (f.reason ? '<br><small>' + esc(f.reason) + '</small>' : '') + '</td><td>' + esc(JSON.stringify(f.result)) + '</td><td><small>' + esc(JSON.stringify(f.evidence)) + '</small></td></tr>')) + '</details>';
     const cl = (U2.claims || []).filter((x) => x.chart === k);
-    if (cl.length) h += '<h3>Sentences</h3>' + table(['Id', 'Stage', 'English (as students will see it)', 'Vietnamese note', 'Facts + evidence', 'Check', 'Review'], cl.map((x) => {
+    if (cl.length) h += '<h3>Sentences</h3>' + table(['Id', 'Stage', 'English (as students will see it)', 'Vietnamese note', 'Why (EN / VI)', 'Facts + evidence', 'Check', 'Review'], cl.map((x) => {
       ids.push(x.id);
-      return '<tr><td><code>' + esc(x.id) + '</code><br><small>' + esc(x.kind) + '</small></td><td>' + esc(x.stage) + '</td><td>' + esc(res(x.en, x)) + '</td><td>' + esc(res(x.vi, x)) + '</td><td>' + factsCell(x) + '</td><td>' + errsFor(x.id) + '</td><td>' + st(x) + '</td></tr>';
+      return '<tr><td><code>' + esc(x.id) + '</code><br><small>' + esc(x.kind) + '</small></td><td>' + esc(x.stage) + '</td><td>' + esc(res(x.en, x)) + '</td><td>' + esc(res(x.vi, x)) + '</td><td>' + (x.why ? esc(res(x.why.en, x)) + '<br><small>' + esc(res(x.why.vi, x)) + '</small>' : '—') + (x.kf ? '<br><small>key features: ' + esc(x.kf.join(', ')) + '</small>' : '') + '</td><td>' + factsCell(x) + '</td><td>' + errsFor(x.id) + '</td><td>' + st(x) + '</td></tr>';
     }));
     const co = (U2.controlled || []).filter((x) => x.chart === k);
     if (co.length) h += '<h3>Controlled practice</h3>' + table(['Id', 'Statement', 'Expected answer', 'Why (EN)', 'Why (VI)', 'Facts + evidence', 'Check', 'Review'], co.map((x) => {
@@ -61,9 +61,9 @@ function html(r) {
         (g ? '<br><small>chart gives: ' + esc(g.label) + ' (' + esc(g.why) + ')</small>' : '<br><small>teacher answer key</small>') + '</td><td>' + esc(res(x.why.en, x)) + '</td><td>' + esc(res(x.why.vi, x)) + '</td><td>' + factsCell(x) + '</td><td>' + errsFor(x.id) + '</td><td>' + st(x) + '</td></tr>';
     }));
     const kf = (U2.keyFeatures || []).filter((x) => x.chart === k);
-    if (kf.length) h += '<h3>Key features</h3>' + table(['Id', 'Importance', 'Reason (EN)', 'Reason (VI)', 'Fact + evidence', 'Check', 'Review'], kf.map((x) => {
+    if (kf.length) h += '<h3>Key features</h3>' + table(['Id', 'Importance / lens', 'Reason (EN)', 'Reason (VI)', 'Fact + evidence', 'Check', 'Review'], kf.map((x) => {
       ids.push(x.id);
-      return '<tr><td><code>' + esc(x.id) + '</code></td><td>' + esc(x.importance) + '</td><td>' + esc(x.reason.en) + '</td><td>' + esc(x.reason.vi) + '</td><td>' + factsCell(x) + '</td><td>' + errsFor(x.id) + '</td><td>' + st(x) + '</td></tr>';
+      return '<tr><td><code>' + esc(x.id) + '</code></td><td>' + esc(x.importance) + (x.lens ? '<br><small>' + esc(x.lens) + '</small>' : '') + '</td><td>' + esc(x.reason.en) + '</td><td>' + esc(x.reason.vi) + '</td><td>' + factsCell(x) + '</td><td>' + errsFor(x.id) + '</td><td>' + st(x) + '</td></tr>';
     }));
   });
   h += '<h2>General teaching copy</h2>' + table(['Id', 'Stage', 'English', 'Vietnamese', 'Check', 'Review'], (U2.copy || []).map((x) => {
