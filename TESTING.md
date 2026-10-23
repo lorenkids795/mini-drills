@@ -284,5 +284,75 @@ Làm trên bản Preview sau khi đã deploy (cả `functions/` và file `_heade
 4. [ ] Học sinh → Home → Daily practice: mỗi bài là một thẻ rộng hết khung, xếp dọc: icon tròn bên trái, tên in đậm + dòng phụ (vd. "Word of the Day" / "Daily vocabulary", "Error review" / "N due"), bên phải "Start ›".
 5. [ ] Làm xong một bài Daily → quay về Home: thẻ đó chuyển nền xanh lá nhạt, icon thành dấu tích, chữ xanh lá, bên phải "Done". Kiểm tra sáng, tối và 390px.
 
+## Master spec — đợt 01
+1. [ ] Admin → XP: mọi dòng (cả dòng "25, 18, 13, 8" lẫn dòng số "5") có ô nhập thẳng một cột, chữ "XP · default …" bắt đầu cùng một vị trí. 390px: ô nhập bên phải, "XP · default" xuống dòng dưới.
+2. [ ] Classes → New assignment: chọn Send date là thứ Tư → Deadline tự thành Chủ nhật cùng tuần; chọn đúng Chủ nhật → Deadline là chính ngày đó. Sửa tay Deadline sau đó vẫn được và vẫn lưu đúng.
+3. [ ] Create: khu "Book and test" chỉ còn tiêu đề + 2 ô chọn to (Cam 14, Test 1) trên một hàng, không còn câu "The new exercise…" và nhãn BOOK/TEST. Add vẫn thêm đúng sách/test đã chọn.
+4. [ ] Prizes → Item pictures và Rank frames: không còn nút "Choose image"; rê chuột vào ảnh thấy mờ + biểu tượng bút, bấm ảnh mở chọn file, chọn xong ảnh đổi ngay. Không còn dòng mô tả dưới "Rank frames". Bấm avatar lớn ở Live Avatar Preview → upload khung của rank đang chọn.
+5. [ ] Bài Reading (học sinh và Student View Preview): thanh stage + đồng hồ ở góc phải + Demo helper (giáo viên) luôn nằm trên cùng khi cuộn. Stage 1: mỗi phần 1.1, 1.2… là một card riêng.
+6. [ ] Laptop: bài đọc bên trái đứng yên khi cuộn câu hỏi bên phải. Điện thoại (390px): bài đọc nửa trên, câu hỏi nửa dưới, kéo từng nửa riêng; nút Check answers vẫn ở đáy màn hình.
+
+## Master spec — đợt 02
+1. [ ] Admin → Google Sheet: 2 cột. Trái "Connection" (Connected, ô link mờ không sửa được cho tới khi bấm vào, Save & check, Refresh now, "Last read … · every 5 min", Unlink đỏ). Phải "Registration" (X of Y students registered) + thẻ từng lớp có pill "N pending"/"All registered", thanh tiến độ, "a of b registered". Bấm thẻ → hiện tên chưa đăng ký và đã đăng ký; bấm lần nữa → thu gọn. 390px: tất cả 1 cột.
+2. [ ] Save & check (đổi link), Refresh now, Unlink vẫn chạy như trước.
+3. [ ] Prizes → Rank frames → Live Avatar Preview: kéo Scale / Offset X / Offset Y → khung trên avatar to/nhỏ, dịch trái/phải, lên/xuống ngay. Reset → về mặc định. Save frame settings → tải lại trang vẫn giữ; đổi sang rank khác chỉnh riêng được.
+4. [ ] Học sinh → Leaderboard: khung PNG đúng rank của từng người, ở podium và danh sách dưới, đúng Scale/Offset vừa lưu; cánh/vương miện thò ra ngoài không bị cắt.
+5. [ ] Admin → Users → "Add a tester account": tên, email (vd. tester@gmail.com), lớp, mật khẩu → Create tester → dòng mới có pill "Tester". Đăng nhập bằng tài khoản đó: làm bài, nhận XP, thấy giao diện học sinh bình thường.
+6. [ ] Tài khoản tester không có trong: Classes (thẻ lớp và danh sách), Admin → Students, Dashboard (số liệu không đổi), Leaderboard của học sinh khác. Tester tự xem Leaderboard vẫn thấy dòng của mình.
+7. [ ] Nút "Tester: on/off" ở một học sinh thường → học sinh đó ẩn/hiện lại đúng như trên.
+
+## Master spec — đợt 03
+1. [ ] Create: trên cùng là "Pick a free slot": tab kỹ năng → ô chọn sách + 4 nút Test 1–4 cùng hàng → một hàng Part 1–4 (Reading: Passage 1–3, Writing: Task 1–2, Speaking: Part 1–3). Slot trống ghi "+ Add here", slot có bài ghi tên bài (dài thì "…"), slot đang chọn viền xanh. Không còn khu "Book and test" ở cuối.
+2. [ ] Chọn slot đã có bài → khung vàng "Part N is taken by …". Gõ Title trùng tên bài khác cùng sách → "A lesson with this title already exists in …".
+3. [ ] Generate (chưa chọn slot vẫn được) → nút dưới preview mờ "Add" + "→ Select a slot"; chọn slot trống → "Add to Part N"; slot có bài → "Replace Part N". Add → "Added “…” to Cam 14 · Test 1 · Listening · Part N.", slot đó thành tên bài ngay. Replace bài đã có học sinh làm → hỏi xác nhận.
+4. [ ] Học sinh mở Library: bài mới nằm đúng Test, đúng thứ tự Part. Sửa bài đó bằng nút ✎ rồi lưu → vẫn ở đúng Part.
+5. [ ] Bài Reading: nút Aa cạnh đồng hồ → 5 cỡ chữ; đổi cỡ thì bài đọc và câu hỏi to/nhỏ cùng lúc, tải lại vẫn giữ.
+6. [ ] Bôi đen một đoạn trong bài đọc (laptop) hoặc nhấn giữ (điện thoại) → thanh vàng/xanh/hồng/✕ → tô màu; ✕ xóa; chuyển stage rồi quay lại vẫn còn; đóng bài mở lại (cùng phiên) vẫn còn.
+7. [ ] Số câu chạy liên tục 1, 2, 3… qua Completion, TFNG, Matching headings, Matching information, rồi tiếp ở Pronouns, Vocabulary, Summary. Matching headings: số + "PARAGRAPH B" + ô chọn cùng hàng. Matching information: danh sách chỉ ghi Paragraph A, B…
+8. [ ] Stage 3 sau Check: thẻ từ ghi định nghĩa kèm (từ đồng nghĩa); mỗi câu paraphrase hiện "“cụm câu hỏi” → “cụm trong bài”" + giải thích (bài mới tạo bằng AI; bài cũ không có thì chỉ không hiện). 4.2 có 2–3 câu gợi ý dưới câu hỏi.
+9. [ ] Daily Speaking Part 1/Part 3: dưới câu hỏi có 2–3 câu gợi ý.
+10. [ ] Home (390px): Recent results không còn "Open feedback", không có ngày, nhận xét 1 dòng có "…"; bấm cột biểu đồ vẫn mở feedback. Thẻ Homework: hạn "2 days left" nằm cùng hàng tên bài, bên phải; laptop thấy cả ngày giờ.
+
+## Master spec — đợt 04 (chấm Speaking)
+1. [ ] Marking → mở một bài Speaking: modal 2 cột (trái: bản ghi Part 1/Part 2, Transcript, "What the student sees", Overall; phải: Marking, Voice feedback, Written note + Sticker). Chân chỉ có nút Update grade bên phải. Writing và Read aloud vẫn modal cũ.
+2. [ ] Trình phát: 3 nút icon ↺ ▶ ↻ (không có chữ "5"), rê chuột thấy "Back 5 seconds"/"Forward 5 seconds"; lùi/tiến 5 giây chạy thật; có thời gian và thanh tua.
+3. [ ] Rubric: 4 tab tiêu chí (badge – khi chưa có). Tick descriptor ở nhiều band → mỗi band hiện n/tổng, band tự tính = band có tỉ lệ tick cao nhất (hòa → band cao hơn), hàng band đó tô xanh. Override chọn Band 5 → badge 5; chọn Auto → tính lại từ tick.
+4. [ ] Overall: 7,7,7,7 → 7; 7,7,7,6 → 6.5; 7,7,6,6 → 6.5; 6,6,6,7 → 6. Thiếu 1 tiêu chí → "–".
+5. [ ] Stars: thêm mục tiêu (gõ + Enter), bấm chip đổi ✗ → ◐ → ✓; sao tự tính (vd. 2 mục tiêu ✓ + ◐ → 8 sao). Bấm 6 sao → 6 (chỉnh tay, hiện nút Auto); đổi chip không đổi điểm; bấm lại sao 6 hoặc Auto → tự tính lại. Overall = trung bình 1 số lẻ, thiếu tiêu chí → "–".
+6. [ ] Mở bài của học sinh khác cùng bài: danh sách mục tiêu giống hệt (dùng chung cả lớp), chip thì riêng. Xóa một mục tiêu bằng × → biến mất ở mọi học sinh.
+7. [ ] Đổi Rubric ↔ Stars rồi đổi lại: dữ liệu cả hai giữ nguyên. Update grade ở Stars → danh sách Marking ghi "7.8 /10"; ở Rubric → "Band 6.5"; chỉ ghi note → "Marked".
+8. [ ] Học sinh: Recent results hiện "Band 6.5" hoặc "7.8 /10" (Stars không làm thay đổi số band trung bình); Open feedback hiện điểm, các descriptor đã tick có tag B6/B7 (hoặc sao + mục tiêu ✓/◐ "(used, still some mistakes)"/✗), note, sticker, voice.
+9. [ ] Bài đã chấm bằng modal cũ (4 điểm) vẫn hiện điểm cũ cho học sinh; mở lại bằng modal mới thấy các band đó ở Override.
+10. [ ] Có thay đổi chưa lưu → bấm Close / Esc → hỏi xác nhận. 390px: một cột theo đúng thứ tự Recording → Transcript → Marking → Voice → Note + Sticker → Student view → Overall. Kiểm tra dark mode.
+
+## Master spec — đợt 05 (chấm Writing)
+1. [ ] Marking → mở bài Writing: 2 cột (trái: Task + bảng số liệu, Student answer; phải: Comments, Overall comment). Không còn công cụ tô đỏ/cam/vàng; lỗi AI nằm trong mục gập "AI already checked grammar and word choice (n)", chỉ đọc.
+2. [ ] Bôi đen một cụm/câu trong bài → thanh "TA · Task Achievement" (bài Task 2: "TR · Task Response") và "CC · Coherence & Cohesion" hiện ngay trên vùng chọn → chọn TA → đoạn đó tô xanh dương có số, thẻ nhận xét mới ở cột phải và con trỏ nằm sẵn trong ô nhập. CC → tô xanh lá.
+3. [ ] Chọn < 3 ký tự hoặc chọn ngoài khung bài → không hiện thanh. Chọn đè lên đoạn đã có nhận xét → không hiện thanh, báo "That part already has a comment…".
+4. [ ] Thêm nhận xét ở đoạn trước nhận xét số 1 → đánh số lại theo vị trí trong bài, số trên bài và trên thẻ khớp. Xóa thẻ (×) → bỏ tô màu, đánh số lại.
+5. [ ] Bấm vùng tô → thẻ tương ứng sáng viền và con trỏ vào ô nhập; bấm thẻ → bài cuộn tới vùng tô đó.
+6. [ ] Update grade → đóng/mở lại bài: nhận xét, vị trí, số thứ tự và Overall comment còn nguyên. Bài chưa có điểm: chỉ lưu nhận xét thì danh sách vẫn ghi "Done" (không tự thành Band 6).
+7. [ ] Mở mục "Band and feedback for the student" → kéo điểm, ghi note → Update grade → học sinh thấy band và note như trước. Học sinh **không** thấy các nhận xét TA/TR/CC.
+8. [ ] Bài làm của học sinh (chữ, số từ) không thay đổi. 390px: 1 cột theo thứ tự Task → Student answer → Comments → Overall comment. Dark mode: màu tô và tag đọc rõ.
+
+## Master spec — đợt 06 (Lucky Wheel)
+Trước khi test: deploy `functions/` mới và dán lại `firestore.rules` (thêm chặn `pity`).
+1. [ ] Học sinh → Lucky Wheel: đúng 12 ô, màu theo tier (xanh dương Common, xanh lá Materials, tím Teacher perk, vàng Real-life), chữ sát mép ngoài.
+2. [ ] Quay bằng spin: nút khóa trong lúc quay, bánh xe quay 5–7 vòng rồi dừng đúng ô của quà hiện ở dưới; số spin giảm 1; quà vào Inventory (Streak Freeze thì tăng số Freeze). Quay bằng 300 XP: XP giảm 300.
+3. [ ] Bấm Spin 2 lần thật nhanh / mạng chập chờn → chỉ mất 1 lượt. Hết spin → nút mờ; gọi thẳng API khi hết spin → server từ chối.
+4. [ ] Tải lại trang sau khi quay: spin, XP, quà vẫn đúng (không quay về số cũ).
+5. [ ] Trúng Teacher perk / Real-life → dòng "vừa quay trúng" hiện cho học sinh khác. Trúng voucher khi Prizes có mã còn trống → hiện mã và mã đó chuyển "Won by …".
+6. [ ] Admin → Users: dưới "Student" có "RL n · TP+ n". Sau mỗi lượt Common/Materials cả hai +1; trúng Teacher perk → TP+ về 0; trúng Real-life → cả hai về 0.
+7. [ ] Admin → Prizes: bảng chia theo tier, có cột Weight và Chance (mặc định: Streak Freeze 14.37%, Hint Pass 12.64%, Answer Peek 12.64%, 1-day Extension 10.34%, Random study pack 12%, Vocabulary pack 10.5%, Audio pack 7.5%, Highlighter pen 8.25%, VIP Essay Correction 6.75%, Bubble tea 3%, Mock −20% 1.5%, Mock −25% 0.5%). Sửa một weight → Chance cả tier tính lại; thêm/xóa quà → tính lại.
+8. [ ] (Tùy chọn) Tài khoản tester quay nhiều lần: tới lượt thứ 26 không trúng Real-life thì lượt đó chắc chắn Real-life.
+
+## Writing Task 1 — biểu đồ đường (tự test trên trình duyệt)
+1. [ ] Create → Writing → "Fill in a line-chart example" → "Check and preview": preview có biểu đồ 3 đường (màu + nét khác nhau + điểm khác hình), chú giải bên dưới, "Data table" mở được, khung "Facts checked from the chart" + 2 câu mẫu.
+2. [ ] Chọn slot Task 1 → Add → tải lại trang → Library: bài mới có đúng biểu đồ; nút ✎ (sửa) thấy "chart" và "writingModule" trong dữ liệu.
+3. [ ] Sửa JSON cho sai (2 điểm cùng x, id trùng, y là chữ, 5 đường) → Check and preview: danh sách lỗi cụ thể, không có nút Add.
+4. [ ] Học sinh mở bài biểu đồ: ô "Your overview" + khung gợi ý bên phải (điện thoại: xếp dưới); nộp bài → xem lại / AI chữa lỗi / Marking như bài Writing thường.
+5. [ ] Bài Writing có bảng (Task 1: internet access) và bài Task 2 vẫn hiện và nộp như cũ.
+6. [ ] 390px và dark mode: biểu đồ co theo màn hình, chữ trục đọc được, chú giải không đè nhau.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

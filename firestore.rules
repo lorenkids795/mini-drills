@@ -70,17 +70,17 @@ service cloud.firestore {
 
     // ---- Profile: ai cũng đọc được (cần cho Leaderboard), chỉ chủ ghi ----
     // Chặn sửa tay bằng Console: mỗi lần ghi XP tăng tối đa 1000 (bằng mức XP lớn nhất chỉnh được ở Admin › XP),
-    // spin / Streak Freeze / Answer Peek tăng tối đa 2. Mùa (season, seasons) chỉ server đổi (Admin › Season).
+    // spin / Streak Freeze / Answer Peek tăng tối đa 2. Mùa (season, seasons) và bộ đếm pity của Lucky Wheel (pity, spinTs, spinUsed) chỉ server đổi.
     match /profiles/{id} {
       allow read: if signedIn();
       allow create: if ownsNew()
         && numIn('xp', 0, 1000) && numIn('xpLife', 0, 1000) && numIn('spins', 0, 2) && numIn('freezes', 0, 2) && numIn('peek', 0, 2)
-        && !('seasons' in request.resource.data);
+        && !('seasons' in request.resource.data) && !('pity' in request.resource.data);
       allow update: if ownsOld() && ownsNew()
         && numIn('xp', 0, 10000000) && numIn('spins', 0, 100000)
         && upBy('xp') <= 1000 && upBy('xpLife') <= 1000
         && upBy('spins') <= 2 && upBy('freezes') <= 2 && upBy('peek') <= 2
-        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['season', 'seasons']);
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['season', 'seasons', 'pity', 'spinTs', 'spinUsed']);
       allow delete: if teacher();
     }
 

@@ -711,7 +711,7 @@ async function adminUsers(env) {
   teachers(env).forEach((e) => add({ email: e, name: 'Teacher', role: 'teacher', cls: '', course: '', src: 'env' }));
   (await fsList(env, 'roster')).forEach((r) => {
     if (r.role === 'teacher') return;
-    add({ email: normEmail(r.email || r.id), name: r.name || '', role: 'student', cls: r.cls || '', course: r.course || '', src: 'roster' });
+    add({ email: normEmail(r.email || r.id), name: r.name || '', role: 'student', cls: r.cls || '', course: r.course || '', src: 'roster', tester: r.tester === true });
   });
   await Promise.all(out.map(async (r) => {
     const off = await env.MD_KV.get('off:' + r.email);
@@ -796,9 +796,9 @@ async function adminUnlock(env, body) {
 async function sheetSummary(env, c) {
   const t = await takenSet(env), by = {};
   c.rows.forEach((r) => {
-    const k = by[r.cls] || (by[r.cls] = { cls: r.cls, total: 0, open: [] });
+    const k = by[r.cls] || (by[r.cls] = { cls: r.cls, total: 0, open: [], done: [] });
     k.total++;
-    if (!t.taken(r)) k.open.push(r.name);
+    if (!t.taken(r)) k.open.push(r.name); else k.done.push(r.name);
   });
   const classes = Object.keys(by).map((k) => by[k]).sort((a, b) => byClassThenName({ cls: a.cls, name: '' }, { cls: b.cls, name: '' }));
   return { ts: c.ts, cols: c.cols, total: c.rows.length, classes, preview: c.rows.slice(0, 5), stale: !!c.stale, error: c.error || '' };
@@ -838,6 +838,34 @@ async function adminSheet(env, body) {
 // Learning data (attempts, XP, flashcards…) is kept: registering again with the same email brings it back.
 // roster/{email} for a student. Users lists rows by their email field (or id), so an older row whose id is not the
 // normalized email (capital letters, spaces) is found by that field too. -> { id, data } | null
+// Shadow tester accounts (roster.tester = true): a normal student login (XP, homework, AI…), hidden by the app from class lists,
+// Students, Dashboard and Leaderboard. Not in the Google Sheet (the app only reads the Sheet, it never writes to it).
+// op 'create' {email, name, cls, password}: new student account without a Sheet row. op 'set' {email, on}: turn the flag on/off.
+async function adminTester(env, body) {
+  const email = normEmail(body.email);
+  if (!emailOk(email)) return fail('Enter a valid email.');
+  if (email === adminEmail(env)) return fail('This is the admin account.');
+  if (body.op === 'create') {
+    const pw = String(body.password || '');
+    if (pw.length < 6) return fail('The password needs at least 6 characters.');
+    if ((await roleOf(env, email)) || (await rosterRow(env, email))) return fail('This email already has an account. Use the Tester switch in the list instead.');
+    const name = String(body.name || 'Tester').replace(/\s+/g, ' ').trim().slice(0, 80) || 'Tester';
+    const cls = String(body.cls || 'Test').replace(/\s+/g, ' ').trim().slice(0, 40) || 'Test';
+    await fsPut(env, 'roster', email, { email, name, cls, course: '', role: 'student', tester: true, ts: Date.now() });
+    await savePassword(env, email, pw);
+    await env.MD_KV.delete('off:' + email);
+    return json({ ok: true, email, name, cls });
+  }
+  if (body.op === 'set') {
+    const row = await rosterRow(env, email);
+    if (!row || row.data.role === 'teacher') return fail('Only student accounts can be testers.', 404);
+    const ok = await fsUpdate(env, 'roster', row.id, { tester: body.on === true });
+    if (!ok) return fail('Could not save. Try again.', 500);
+    return json({ ok: true, tester: body.on === true });
+  }
+  return fail('Unknown action.');
+}
+
 async function rosterRow(env, email) {
   const row = await fsGet(env, 'roster', email);
   if (row) return { id: email, data: row.data };
@@ -846,7 +874,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-10-22a';
+const API_VERSION = '2026-10-23c';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -977,6 +1005,116 @@ async function adminSeason(env, body) {
   // audit/{id}: written by the server only (no client rule needed, clients cannot read it)
   await fsPut(env, 'audit', 'season_' + id + '_' + now, { kind: 'season', id, name, by: adminEmail(env) || '', ts: now, reset, failed, skipped: docs.length - todo.length });
   return json({ ok: true, reset, failed, skipped: docs.length - todo.length });
+}
+/* ---------- Lucky Wheel (server decides) ----------
+   POST /api/spin {useXP, rid} + Authorization: Bearer <ID token> (students). The server reads the profile, takes 1 spin (or 300 XP),
+   picks the tier with the pity rules, the prize inside the tier by weight, gives the prize and saves the counters — all in one write
+   with a precondition (updateTime), so two spins at once can never use the same spin or the same counters. rid = idempotency key:
+   the same rid within 10 minutes returns the same result (double click, retry after a network error). Same rules as spinRates() in the app.
+   Pity (profile.pity = {rl, tp}, never reset by month): rl = spins since the last Real-life, tp = since the last Teacher perk or better.
+     Real-life: rl 0-10 5%, 11-15 8%, 16-20 12%, 21-25 20%, 26+ = certain.  Teacher perk+: tp 0-5 20%, 6-8 28%, 9-10 40%, 11+ = certain.
+     Teacher perk = max(0, Teacher perk+ − Real-life); the rest is Common : Materials = 50 : 30. Hard pity first: rl >= 26 -> Real-life,
+     else tp >= 11 -> Teacher perk 75 : Real-life 25. A tier without prizes is left out and the others are scaled up to 100%.
+     Win Real-life: both counters to 0. Win Teacher perk: tp = 0, rl + 1. Common / Materials: both + 1. */
+const SPIN_XP = 300;
+const PRIZE_DEF = [
+  { id: 'p1', kind: 'freeze', tier: 1, label: 'Streak Freeze', weight: 25 }, { id: 'p2', kind: 'hint', tier: 1, label: 'Hint Pass', weight: 22 },
+  { id: 'p3', kind: 'peek', tier: 1, label: 'Answer Peek', weight: 22 }, { id: 'p4', kind: 'ext', tier: 1, label: '1-day Extension', weight: 18 },
+  { id: 'p5', kind: 'mat', tier: 2, label: 'Random study pack', weight: 40, rnd: true }, { id: 'p6', kind: 'mat', tier: 2, label: 'Vocabulary pack', weight: 35 },
+  { id: 'p7', kind: 'mat', tier: 2, label: 'Audio pack', weight: 25 }, { id: 'p8', kind: 'pen', tier: 3, label: 'Highlighter pen', weight: 55 },
+  { id: 'p9', kind: 'vip', tier: 3, label: 'VIP Essay Correction', weight: 45 }, { id: 'p10', kind: 'tea', tier: 4, label: 'Bubble tea/coffee voucher', weight: 60 },
+  { id: 'p11', kind: 'mock20', tier: 4, label: 'Mock Speaking -20%', weight: 30 }, { id: 'p12', kind: 'mock25', tier: 4, label: 'Mock Speaking -25%', weight: 10 },
+];
+const DEF_W = { freeze: 25, hint: 22, peek: 22, ext: 18, mat: 33, pen: 55, vip: 45, tea: 60, mock20: 30, mock25: 10, title: 20, ctitle: 20, xp: 20, custom: 30 };
+const WIN_VN = { pen: 'bút highlight', vip: 'thẻ VIP Essay Correction', tea: 'voucher trà sữa / cà phê', mock20: 'mã giảm 20% Mock Speaking 1-on-1', mock25: 'mã giảm 25% Mock Speaking 1-on-1' };
+const TITLES = ['Grammar Nazi', 'Vocab Hunter', 'Night Owl'];
+const pW = (x) => { const w = Number(x && x.weight); return w > 0 ? w : DEF_W[x && x.kind] || 1; };
+function spinRates(pity, has) {
+  const rl = Number(pity && pity.rl) || 0, tp = Number(pity && pity.tp) || 0;
+  let w;
+  if (rl >= 26) w = { 4: 100 };
+  else if (tp >= 11) w = { 3: 75, 4: 25 };
+  else {
+    const real = rl <= 10 ? 5 : rl <= 15 ? 8 : rl <= 20 ? 12 : 20, plus = tp <= 5 ? 20 : tp <= 8 ? 28 : 40;
+    const teach = Math.max(0, plus - real), rest = Math.max(0, 100 - real - teach);
+    w = { 1: rest * 50 / 80, 2: rest * 30 / 80, 3: teach, 4: real };
+  }
+  const o = {}; let tot = 0;
+  [1, 2, 3, 4].forEach((t) => { if (has[t] && w[t] > 0) { o[t] = w[t]; tot += w[t]; } });
+  if (!tot) [1, 2, 3, 4].forEach((t) => { if (has[t]) { o[t] = { 1: 50, 2: 30, 3: 15, 4: 5 }[t]; tot += o[t]; } }); // the certain tier is empty
+  Object.keys(o).forEach((t) => { o[t] = o[t] / tot * 100; });
+  return o;
+}
+function pickTier(rates) { let r = Math.random() * 100, last = 0; for (const t of [1, 2, 3, 4]) { if (rates[t] == null) continue; last = t; if (r < rates[t]) return t; r -= rates[t]; } return last; }
+function pickPrize(list) { let tot = 0; list.forEach((x) => { tot += pW(x); }); let r = Math.random() * tot; for (const x of list) { r -= pW(x); if (r < 0) return x; } return list[list.length - 1]; }
+function nextPity(pity, tier) {
+  const rl = Number(pity && pity.rl) || 0, tp = Number(pity && pity.tp) || 0;
+  if (tier === 4) return { rl: 0, tp: 0 };
+  if (tier === 3) return { rl: rl + 1, tp: 0 };
+  return { rl: rl + 1, tp: tp + 1 };
+}
+async function takeCodeFor(env, kind, email) {
+  const docs = await fsListTimed(env, 'codes');
+  for (const d of docs.filter((x) => x.data.kind === kind && !x.data.to).slice(0, 3)) {
+    const id = decodeURIComponent(d.name.split('/').pop());
+    if (await fsUpdate(env, 'codes', id, { to: email }, d.updateTime)) return { id, code: String(d.data.code || '') };
+  }
+  return null;
+}
+async function spinWheel(env, request, body) {
+  const who = await idUser(env, request);
+  if (!who) return needSignIn();
+  if (who.role === 'teacher') return fail('The wheel is for students.', 403);
+  const rid = String(body.rid || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 40);
+  if (rid.length < 8) return fail('Bad request.');
+  const memo = 'spin:' + who.em + ':' + rid, seen = await env.MD_KV.get(memo);
+  if (seen) return new Response(seen, { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
+  const cfg = await fsGet(env, 'config', 'prizes');
+  let list = cfg && Array.isArray(cfg.data.list) && cfg.data.list.length ? cfg.data.list : PRIZE_DEF;
+  list = list.filter((x) => x && x.id && [1, 2, 3, 4].indexOf(Number(x.tier)) >= 0).map((x) => Object.assign({}, x, { tier: Number(x.tier) }));
+  if (list.length < 3) return fail('The wheel has no prizes yet. Ask your teacher.');
+  const mats = await fsGet(env, 'config', 'materials'), matList = mats && Array.isArray(mats.data.list) ? mats.data.list.filter((m) => m && m.title) : [];
+  const pid = slug(who.em);
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const doc = await fsGet(env, 'profiles', pid);
+    if (!doc) return fail('Your profile is not ready yet. Reload the page and try again.', 409);
+    const p = doc.data, useXP = body.useXP === true;
+    const spins = Number(p.spins) || 0, xp = Number(p.xp) || 0;
+    if (useXP ? xp < SPIN_XP : spins < 1) return fail(useXP ? 'You need ' + SPIN_XP + ' XP to spin.' : 'You have no spins left.', 409);
+    const has = {}; list.forEach((x) => { has[x.tier] = true; });
+    const pity = p.pity && typeof p.pity === 'object' ? p.pity : { rl: 0, tp: 0 };
+    const tier = pickTier(spinRates(pity, has)), prize = pickPrize(list.filter((x) => x.tier === tier));
+    const now = Date.now(), item = { id: 'i' + now + Math.floor(Math.random() * 1000), used: false, ts: now, kind: prize.kind, tier };
+    let code = null;
+    if (prize.kind === 'mat' || prize.kind === 'custom') {
+      const m = prize.rnd && matList.length ? matList[Math.floor(Math.random() * matList.length)] : null;
+      item.text = m ? String(m.title) : String(prize.label || 'Study pack'); item.url = m ? String(m.url || '') : String(prize.url || '');
+    } else if (prize.kind === 'title') {
+      const own = (Array.isArray(p.inv) ? p.inv : []).filter((x) => x && x.kind === 'title').map((x) => x.text), fresh = TITLES.filter((t) => own.indexOf(t) < 0);
+      if (prize.text) item.text = String(prize.text); else if (!fresh.length || Math.random() < 0.25) item.kind = 'ctitle'; else item.text = fresh[Math.floor(Math.random() * fresh.length)];
+    } else if (prize.kind === 'tea' || prize.kind === 'mock20' || prize.kind === 'mock25') {
+      code = await takeCodeFor(env, prize.kind, who.em);
+      item.code = code ? code.code : '';
+    }
+    const upd = { pity: nextPity(pity, tier), spinTs: now, spinUsed: useXP ? 'xp' : 'spin' };
+    if (useXP) upd.xp = xp - SPIN_XP; else upd.spins = spins - 1;
+    if (item.kind === 'freeze') upd.freezes = (Number(p.freezes) || 0) + 1;
+    else if (item.kind === 'xp') { upd.xp = (upd.xp != null ? upd.xp : xp) + 100; upd.xpLife = (Number(p.xpLife != null ? p.xpLife : p.xp) || 0) + 100; }
+    else upd.inv = (Array.isArray(p.inv) ? p.inv : []).concat([item]);
+    if (await fsUpdate(env, 'profiles', pid, upd, doc.updateTime)) {
+      const out = JSON.stringify({ ok: true, prize_id: prize.id, tier, item, spins: upd.spins != null ? upd.spins : spins, xp: upd.xp != null ? upd.xp : xp,
+        freezes: upd.freezes != null ? upd.freezes : Number(p.freezes) || 0, inv: upd.inv || p.inv || [], pity: upd.pity, spinTs: now, spinUsed: upd.spinUsed });
+      await env.MD_KV.put(memo, out, { expirationTtl: 600 });
+      if (tier >= 3) {
+        const r = await fsGet(env, 'roster', who.em);
+        const name = String(p.dname || (r && r.data.name) || 'A student').slice(0, 80);
+        await fsPut(env, 'wins', 'w' + now + Math.floor(Math.random() * 1000), { name, cls: String((r && r.data.cls) || ''), prize: String(WIN_VN[item.kind] || item.text || prize.label || '').slice(0, 120), tier, ts: now }).catch(() => {});
+      }
+      return new Response(out, { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
+    }
+    if (code) await fsUpdate(env, 'codes', code.id, { to: '' }); // the profile changed meanwhile: give the code back and try again
+  }
+  return fail('The wheel is busy. Try again.', 503);
 }
 async function adminClass(env, body) {
   const email = normEmail(body.email), cls = classLabel(String(body.cls || '').slice(0, 60)), course = String(body.course || '').trim().slice(0, 60);
@@ -1455,12 +1593,14 @@ const RPROMPT =
   '- "words" (Guess the meaning): 3 to 6 important words a student MUST understand to follow the main ideas: academic or common words at level B1-C1, preferably in topic sentences or sentences with a main idea ' +
   '(you may take them from "vocab_targets"). NEVER choose technical terms, proper names, numbers, very easy words (A1-A2) or words that appear only in a minor example. ' +
   'Each: {"w": the word exactly as written, "p": its paragraph number, "pos": "n" | "v" | "adj" | "adv", "opts": 4 short meanings in easy English (distractors that fit the sentence), "a": index of the right meaning, ' +
-  '"en": English definition, "vi": Vietnamese meaning, "fam": word family, e.g. "congest (v), congested (adj), congestion (n)", "col": 2 common collocations, "ex": a new example sentence}.\n' +
-  '- "pairs": 4 to 6 key phrases of 2 to 6 words copied exactly from one sentence of the passage, each {"ph": the phrase, "p": its paragraph number, "par": a simpler paraphrase}. ' +
+  '"en": English definition, "syn": 1 or 2 simple synonyms, comma-separated (e.g. "rich, wealthy"), "vi": Vietnamese meaning, "fam": word family, e.g. "congest (v), congested (adj), congestion (n)", "col": 2 common collocations, "ex": a new example sentence}.\n' +
+  '- "pairs": 4 to 6 key phrases of 2 to 6 words copied exactly from one sentence of the passage, each {"ph": the phrase, "p": its paragraph number, "par": a simpler paraphrase (as an exam question would say it), "why": one short sentence on how the two match}. ' +
   '"pdist": one extra paraphrase that sounds plausible but matches none of them.\n' +
   '- "cloze": {"text": a summary of the whole passage in 3 to 5 sentences with blanks written {{1}}, {{2}}, … in order (5 to 8 blanks on key words; reuse the "words" when you can), ' +
   '"answers": exactly ONE word for EACH blank, in blank order, "extra": ONE extra wrong word of the same word class that is not an answer}. Count the blanks and the answers: they must be equal.\n' +
-  '- "wprompt": ONE open question about the topic that a student can answer in 1 or 2 sentences, e.g. "Should your city spend more on cycling lanes?"\n' +
+  '- "wprompt": ONE open question about the topic that a student can answer in 1 or 2 sentences, e.g. "Should your city spend more on cycling lanes?" ' +
+  'If it has a difficult word, put a simple synonym right after it with a slash, e.g. "Should affluent / rich countries pay more?"\n' +
+  '- "wguide": 2 or 3 short guiding questions that help the student plan the answer (e.g. "Who would benefit?", "What could go wrong?").\n' +
   '- "title": a short title (keep the given title if there is one).\n\n' +
   'Shape: {"title":"…","deep":{"passage_id":"…","paragraphs":[{"id":"P1","main_idea":"…","key_sentences":[{"text":"…","fact_type":"event","related_entities":["…"]}]}],' +
   '"entities":[{"name":"…","attributes":["…"]}],"timeline":[],"vocab_targets":[{"word":"…","paragraph_id":"P1","meaning":"…"}],' +
@@ -1469,8 +1609,8 @@ const RPROMPT =
   '"matching_headings":{"instructions":"…","heading_options":["…"],"items":[{"id":"MH1","paragraph_id":"P2","answer_heading":"…","difficulty":"easy"}]},' +
   '"matching_information":{"instructions":"…","items":[{"id":"MI1","prompt":"…","answer":"P4"}]}}},' +
   '"prons":[{"w":"…","p":1,"opts":["…","…","…","…"],"a":0,"why":"…"}],' +
-  '"words":[{"w":"…","p":1,"pos":"n","opts":["…","…","…","…"],"a":0,"en":"…","vi":"…","fam":"…","col":"…","ex":"…"}],' +
-  '"pairs":[{"ph":"…","p":1,"par":"…"}],"pdist":"…","cloze":{"text":"… {{1}} … {{2}} …","answers":["…","…"],"extra":"…"},"wprompt":"…"}\n';
+  '"words":[{"w":"…","p":1,"pos":"n","opts":["…","…","…","…"],"a":0,"en":"…","syn":"…","vi":"…","fam":"…","col":"…","ex":"…"}],' +
+  '"pairs":[{"ph":"…","p":1,"par":"…","why":"…"}],"pdist":"…","cloze":{"text":"… {{1}} … {{2}} …","answers":["…","…"],"extra":"…"},"wprompt":"…","wguide":["…","…"]}\n';
 const R_STR = { type: 'STRING' }, R_INT = { type: 'INTEGER' }, R_LIST = { type: 'ARRAY', items: { type: 'STRING' } };
 const R_NSTR = { type: 'STRING', nullable: true };
 const R_ITEMS = (props, req) => ({ type: 'OBJECT', properties: { instructions: R_STR, items: { type: 'ARRAY', items: { type: 'OBJECT', properties: props, required: req } } }, required: ['instructions', 'items'] });
@@ -1504,11 +1644,12 @@ const RSCHEMA = {
       required: ['passage_id', 'entities', 'exercises'],
     },
     prons: { type: 'ARRAY', items: { type: 'OBJECT', properties: { w: R_STR, p: R_INT, opts: R_LIST, a: R_INT, why: R_STR }, required: ['w', 'p', 'opts', 'a', 'why'] } },
-    words: { type: 'ARRAY', items: { type: 'OBJECT', properties: { w: R_STR, p: R_INT, pos: R_STR, opts: R_LIST, a: R_INT, en: R_STR, vi: R_STR, fam: R_STR, col: R_STR, ex: R_STR }, required: ['w', 'p', 'pos', 'opts', 'a', 'en', 'vi', 'fam', 'col', 'ex'] } },
-    pairs: { type: 'ARRAY', items: { type: 'OBJECT', properties: { ph: R_STR, p: R_INT, par: R_STR }, required: ['ph', 'p', 'par'] } },
+    words: { type: 'ARRAY', items: { type: 'OBJECT', properties: { w: R_STR, p: R_INT, pos: R_STR, opts: R_LIST, a: R_INT, en: R_STR, syn: R_STR, vi: R_STR, fam: R_STR, col: R_STR, ex: R_STR }, required: ['w', 'p', 'pos', 'opts', 'a', 'en', 'vi', 'fam', 'col', 'ex'] } },
+    pairs: { type: 'ARRAY', items: { type: 'OBJECT', properties: { ph: R_STR, p: R_INT, par: R_STR, why: R_STR }, required: ['ph', 'p', 'par'] } },
     pdist: R_STR,
     cloze: { type: 'OBJECT', properties: { text: R_STR, answers: R_LIST, extra: R_STR }, required: ['text', 'answers', 'extra'] },
     wprompt: R_STR,
+    wguide: R_LIST,
   },
   required: ['title', 'deep', 'prons', 'words', 'pairs', 'pdist', 'cloze', 'wprompt'],
 };
@@ -1743,6 +1884,7 @@ export async function onRequest(ctx) {
     if (route === 'admin/unlock') return await adminUnlock(env, body);
     if (route === 'staff/unlock') return await staffUnlock(env, body);
     if (route === 'ai/correct') return await aiCorrect(env, request, body);
+    if (route === 'spin') return await spinWheel(env, request, body);
     if (route === 'ai/practice') return await aiPractice(env, request, body);
     if (route === 'ai/lesson') return await aiLesson(env, request, body);
     if (route === 'ai/transcribe') return await aiTranscribe(env, request, body);
@@ -1760,6 +1902,7 @@ export async function onRequest(ctx) {
       if (route === 'admin/kick') return await adminKick(env, body);
       if (route === 'admin/aitest') return await adminAiTest(env, body);
       if (route === 'admin/season') return await adminSeason(env, body);
+      if (route === 'admin/tester') return await adminTester(env, body);
     }
     return fail('Not found.', 404);
   } catch (e) {
