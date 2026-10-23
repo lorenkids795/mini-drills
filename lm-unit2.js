@@ -1,0 +1,130 @@
+// Mini Drills · Learning Materials · Writing › IELTS Academic Task 1 › Unit 2: Overview (time-series line charts).
+// CONTENT DRAFT (PR 2). Every item is review:'pending' until the owner approves its id; nothing here is shown to students yet.
+// Chart numbers are owner-approved (10/2026). All data is ILLUSTRATIVE / SYNTHETIC, not real statistics.
+// Text uses placeholders {key.field} filled from verified facts (lm-engine.js); "binds" name the facts, "expect" the result each must give.
+// Model sentences and statements to judge are English; explanations are English + Vietnamese with the same placeholders.
+// Plain ES5. Browser: window.MD_LM_U2. Node: module.exports. Check: node tests/lm-check.js
+(function(root){
+var XA=[2000,2005,2010,2015,2020],XB=[2016,2018,2020,2022,2024];
+function S(id,label,ys,xs){return {id:id,label:label,points:xs.map(function(x,i){return {x:x,y:ys[i]}})}}
+var A='lm-u2-a@1:',B='lm-u2-b@1:';
+var U2={
+  lesson:'lm-writing-ac-t1-u2',version:1,
+  charts:{
+    A:{id:'lm-u2-a',version:1,synthetic:true,stages:['learn','controlled','guided'],
+      chart:{type:'line',hasTime:true,unit:'thousands of visitors',title:'Visitors to three museums, 2000–2020 (illustrative data)',
+        series:[S('museum-a','Museum A',[60,68,75,82,90],XA),S('museum-b','Museum B',[50,44,40,35,30],XA),S('museum-c','Museum C',[20,26,23,29,27],XA)]}},
+    B:{id:'lm-u2-b',version:1,synthetic:true,stages:['independent','review'],
+      chart:{type:'line',hasTime:true,unit:'millions of daily users',title:'Daily users of three apps, 2016–2024 (illustrative data)',
+        series:[S('app-x','App X',[40,38,35,30,26],XB),S('app-y','App Y',[15,22,30,38,45],XB),S('app-z','App Z',[10,16,14,22,26],XB)]}}
+  },
+  // general teaching copy (no chart claims, so no facts)
+  copy:[
+    {id:'copy.synthetic',stage:'learn',review:'pending',en:'The data in these charts is made up for practice. It is not real-world statistics.',vi:'Số liệu trong các biểu đồ này là số liệu minh họa để luyện tập, không phải thống kê thực tế.'},
+    {id:'copy.overview.what',stage:'learn',review:'pending',en:'An overview sums up the main features of the chart in one or two sentences. It does not give exact numbers.',vi:'Overview tóm tắt các đặc điểm chính của biểu đồ trong một hoặc hai câu. Overview không nêu số liệu cụ thể.'},
+    {id:'copy.overview.detail',stage:'learn',review:'pending',en:'Exact numbers and years belong in the body paragraphs, not in the overview.',vi:'Số liệu và năm cụ thể thuộc về các đoạn thân bài, không đưa vào overview.'},
+    {id:'copy.lens.trends',stage:'learn',review:'pending',en:'Trends: compare the first and last points of each line, then look at the shape in between. A line can rise overall and still fluctuate.',vi:'Trends (xu hướng): so sánh điểm đầu và điểm cuối của mỗi đường, rồi xem hình dạng ở giữa. Một đường có thể tăng nhìn chung nhưng vẫn lên xuống (fluctuate).'},
+    {id:'copy.lens.highest',stage:'learn',review:'pending',en:'Highest / Lowest: check which line is on top at every point shown. Write "in every year shown" only if it is true at each point, with no ties.',vi:'Highest / Lowest (cao nhất / thấp nhất): kiểm tra đường nào ở trên cùng tại mọi mốc được cho. Chỉ viết "in every year shown" khi điều đó đúng ở từng mốc và không có mốc nào bằng nhau.'},
+    {id:'copy.lens.highlights',stage:'learn',review:'pending',en:'Highlights: choose only the most noticeable features. You do not need to mention every line or every change.',vi:'Highlights (điểm nổi bật): chỉ chọn những đặc điểm dễ thấy nhất. Không cần nhắc mọi đường hay mọi thay đổi.'},
+    {id:'copy.lens.flexible',stage:'learn',review:'pending',en:'These three lenses help you look at a chart. They are not a fixed three-sentence formula.',vi:'Ba góc nhìn này giúp bạn quan sát biểu đồ, không phải công thức bắt buộc viết đủ ba câu.'},
+    {id:'copy.observed',stage:'learn',review:'pending',en:'A chart only shows the years that are marked. We cannot know what happened between two marked years.',vi:'Biểu đồ chỉ cho biết các năm được đánh dấu. Ta không thể biết điều gì xảy ra giữa hai năm đó.'},
+    {id:'copy.controlled.labels',stage:'controlled',review:'pending',en:'For each statement, choose: Supported (the chart shows it), Contradicted (the chart shows it is wrong) or Not determinable (the chart cannot tell us).',vi:'Với mỗi câu, chọn: Supported (biểu đồ cho thấy đúng), Contradicted (biểu đồ cho thấy sai) hoặc Not determinable (biểu đồ không đủ thông tin để biết).'},
+    {id:'copy.guided.pick',stage:'guided',review:'pending',en:'Pick two or three features you think are the most important.',vi:'Chọn hai hoặc ba đặc điểm bạn cho là quan trọng nhất.'},
+    {id:'copy.guided.start',stage:'guided',review:'pending',en:'Start your overview with "Overall," and name the main trend.',vi:'Mở đầu overview bằng "Overall," và nêu xu hướng chính.'},
+    {id:'copy.indep.task',stage:'independent',review:'pending',en:'Write a short overview of the chart below (about 2–3 sentences).',vi:'Viết một overview ngắn cho biểu đồ dưới đây (khoảng 2–3 câu).'},
+    {id:'copy.draft.local',stage:'independent',review:'pending',en:'Your draft is saved only in this browser on this device. It is not sent to your teacher. Anyone using this browser can see it.',vi:'Bài nháp chỉ được lưu trong trình duyệt này trên máy này, không gửi cho giáo viên. Người khác dùng chung trình duyệt có thể thấy bài nháp.'},
+    {id:'copy.review.self',stage:'review',review:'pending',en:'Tick the features you mentioned. This is a self-check, not a score.',vi:'Đánh dấu những đặc điểm bạn đã nhắc tới. Đây là tự kiểm tra, không phải chấm điểm.'}
+  ],
+  // reviewed English sentences (model overview sentences and one body-detail example)
+  claims:[
+    {id:'a.model.trend',chart:'A',stage:'learn',kind:'model',review:'pending',
+      binds:{a:A+'endpoint:museum-a',b:A+'endpoint:museum-b',c:A+'endpoint:museum-c'},
+      expect:{a:{status:'supported',result:'increase'},b:{status:'supported',result:'decrease'},c:{status:'supported',result:'increase'}},
+      en:'Overall, the number of visitors to {a.label} and {c.label} increased between {a.x0} and {a.x1}, while visitors to {b.label} decreased.',
+      vi:'Câu này gom các đường theo hướng đầu–cuối từ {a.x0} đến {a.x1}: {a.label} và {c.label} tăng, còn {b.label} giảm.'},
+    {id:'a.model.highest',chart:'A',stage:'learn',kind:'model',review:'pending',
+      binds:{h:A+'highest-throughout:museum-a+museum-b+museum-c'},expect:{h:{status:'supported',result:'museum-a'}},
+      en:'{h.resultLabel} had the most visitors in every year shown.',
+      vi:'{h.resultLabel} đứng đầu ở mọi năm được cho trên biểu đồ, không có năm nào bằng hoặc thua đường khác.'},
+    {id:'a.model.shape',chart:'A',stage:'learn',kind:'model',review:'pending',
+      binds:{c:A+'shape:museum-c',e:A+'endpoint:museum-c'},expect:{c:{status:'supported',result:'fluctuating'},e:{status:'supported',result:'increase'}},
+      en:'{c.label} fluctuated but ended higher than it started.',
+      vi:'{c.label} lên xuống (fluctuate) nhưng điểm cuối vẫn cao hơn điểm đầu.'},
+    {id:'a.detail.example',chart:'A',stage:'learn',kind:'detail',review:'pending',
+      binds:{a:A+'change:museum-a'},expect:{a:{status:'supported',result:30}},
+      en:'Visitors to {a.label} rose from {a.y0} thousand in {a.x0} to {a.y1} thousand in {a.x1}.',
+      vi:'Đây là câu chi tiết cho thân bài vì có số liệu cụ thể của {a.label} ({a.y0} → {a.y1} nghìn, {a.x0}–{a.x1}); không đưa vào overview.'},
+    // Chart B: shown only in Review & Revise, after the student's first attempt
+    {id:'b.model.trend',chart:'B',stage:'review',kind:'model',review:'pending',
+      binds:{x:B+'endpoint:app-x',y:B+'endpoint:app-y',z:B+'endpoint:app-z'},
+      expect:{x:{status:'supported',result:'decrease'},y:{status:'supported',result:'increase'},z:{status:'supported',result:'increase'}},
+      en:'Overall, {y.label} and {z.label} grew between {y.x0} and {y.x1}, while {x.label} declined.',
+      vi:'Câu này gom các đường theo hướng đầu–cuối từ {y.x0} đến {y.x1}: {y.label} và {z.label} tăng, còn {x.label} giảm.'},
+    {id:'b.model.leader',chart:'B',stage:'review',kind:'model',review:'pending',
+      binds:{r:B+'rank-change:app-x+app-y',f:B+'rank:app-x+app-y+app-z@2016',l:B+'rank:app-x+app-y+app-z@2024'},
+      expect:{r:{status:'supported',result:'detected'},f:{status:'supported',result:['app-x','app-y','app-z']},l:{status:'supported',result:['app-y','app-x','app-z']}},
+      en:'{f.r1Label} had the most users in {f.x}, but {l.r1Label} had the most in {l.x}.',
+      vi:'Vị trí dẫn đầu thay đổi: {f.r1Label} đứng đầu năm {f.x}, {l.r1Label} đứng đầu năm {l.x}; biểu đồ không cho biết chính xác năm nào {l.r1Label} vượt lên.'},
+    {id:'b.model.tie',chart:'B',stage:'review',kind:'model',review:'pending',
+      binds:{t:B+'tie:app-x+app-z@2024'},expect:{t:{status:'supported',result:true}},
+      en:'By {t.x}, {t.label} and {t.label2} had the same number of users.',
+      vi:'Năm {t.x}, {t.label} và {t.label2} có số người dùng bằng nhau.'}
+  ],
+  // Controlled practice (Chart A only). label is recomputed from the chart by lm-check.
+  controlled:[
+    {id:'c.a.1',chart:'A',stage:'controlled',review:'pending',label:'supported',
+      binds:{m:A+'endpoint:museum-b'},expect:{m:{status:'supported',result:'decrease'}},claim:{bind:'m',value:'decrease'},
+      statement:{en:'Visitors to {m.label} decreased between {m.x0} and {m.x1}.'},
+      why:{en:'The first value ({m.y0}) is higher than the last value ({m.y1}).',vi:'Giá trị đầu ({m.y0}) cao hơn giá trị cuối ({m.y1}).'}},
+    {id:'c.a.2',chart:'A',stage:'controlled',review:'pending',label:'contradicted',
+      binds:{s:A+'shape:museum-c'},expect:{s:{status:'supported',result:'fluctuating'}},claim:{bind:'s',value:'monotonic_increase'},
+      statement:{en:'{s.label} rose steadily over the period.'},
+      why:{en:'{s.label} went down at least once between two years shown, so "steadily" is wrong.',vi:'{s.label} có ít nhất một lần giảm giữa hai năm được cho, nên "steadily" (đều đặn) là sai.'}},
+    {id:'c.a.3',chart:'A',stage:'controlled',review:'pending',label:'contradicted',
+      binds:{l:A+'lowest-throughout:museum-a+museum-b+museum-c',b:A+'endpoint:museum-b'},expect:{l:{status:'supported',result:'museum-c'},b:{status:'supported',result:'decrease'}},claim:{bind:'l',value:'museum-b'},
+      statement:{en:'{b.label} had the fewest visitors in every year shown.'},
+      why:{en:'{l.resultLabel} was lower than {b.label} in every year shown.',vi:'{l.resultLabel} thấp hơn {b.label} ở mọi năm được cho.'}},
+    {id:'c.a.4',chart:'A',stage:'controlled',review:'pending',label:'supported',
+      binds:{c:A+'endpoint:museum-c'},expect:{c:{status:'supported',result:'increase'}},claim:{bind:'c',value:'increase'},
+      statement:{en:'{c.label} had more visitors in {c.x1} than in {c.x0}.'},
+      why:{en:'Compare only the two ends: {c.y1} in {c.x1} is more than {c.y0} in {c.x0}, even though the line goes up and down in between.',vi:'Chỉ so hai đầu: {c.y1} năm {c.x1} nhiều hơn {c.y0} năm {c.x0}, dù ở giữa đường này lên xuống.'}},
+    {id:'c.a.5',chart:'A',stage:'controlled',review:'pending',label:'not_determinable',
+      binds:{b:A+'endpoint:museum-b'},expect:{b:{status:'supported',result:'decrease'}},claim:{basis:'x_not_observed',series:'museum-b',x:2001},
+      statement:{en:'Visitors to {b.label} fell every single year from {b.x0} to {b.x1}.'},
+      why:{en:'The chart does not show the years between the marked points, so we cannot tell what happened in each single year.',vi:'Biểu đồ không cho các năm nằm giữa những mốc được đánh dấu, nên không thể biết từng năm đã thay đổi thế nào.'}},
+    {id:'c.a.6',chart:'A',stage:'controlled',review:'pending',label:'not_determinable',
+      binds:{c:A+'max:museum-c'},expect:{c:{status:'supported',result:29}},claim:{basis:'x_not_observed',series:'museum-c',x:2012},
+      statement:{en:'{c.label} had its highest number of visitors in {nd.x}.'},
+      why:{en:'{nd.x} is not a year shown on the chart, so we cannot know the value then.',vi:'Năm {nd.x} không có trên biểu đồ, nên không thể biết số liệu năm đó.'}},
+    // overview or detail? (human answer key; the sentences still use verified facts)
+    {id:'c.a.ovd1',chart:'A',stage:'controlled',type:'ovd',answer:'detail',review:'pending',
+      binds:{a:A+'change:museum-a'},expect:{a:{status:'supported',result:30}},
+      statement:{en:'Visitors to {a.label} rose from {a.y0} thousand to {a.y1} thousand.'},
+      why:{en:'It gives exact numbers, so it belongs in a body paragraph.',vi:'Câu có số liệu cụ thể nên thuộc về đoạn thân bài.'}},
+    {id:'c.a.ovd2',chart:'A',stage:'controlled',type:'ovd',answer:'overview',review:'pending',
+      binds:{a:A+'endpoint:museum-a',b:A+'endpoint:museum-b'},expect:{a:{status:'supported',result:'increase'},b:{status:'supported',result:'decrease'}},
+      statement:{en:'Overall, {a.label} became more popular, while {b.label} attracted fewer visitors.'},
+      why:{en:'It sums up the main trends without exact numbers.',vi:'Câu tóm tắt các xu hướng chính mà không có số liệu cụ thể.'}}
+  ],
+  // which verified facts matter most (human choice; the engine only checks they are true)
+  keyFeatures:[
+    {id:'kf.a.highest',chart:'A',stage:'learn',review:'pending',fact:A+'highest-throughout:museum-a+museum-b+museum-c',importance:'main',
+      reason:{en:'One museum is on top in every year shown: a key comparison for the overview.',vi:'Một bảo tàng đứng đầu ở mọi năm được cho: đây là so sánh chính cho overview.'}},
+    {id:'kf.a.rise',chart:'A',stage:'learn',review:'pending',fact:A+'endpoint:museum-a',importance:'main',
+      reason:{en:'The top line rises clearly from start to end.',vi:'Đường cao nhất tăng rõ rệt từ đầu đến cuối.'}},
+    {id:'kf.a.fall',chart:'A',stage:'learn',review:'pending',fact:A+'endpoint:museum-b',importance:'main',
+      reason:{en:'One line moves in the opposite direction: it goes down.',vi:'Một đường đi theo hướng ngược lại: giảm.'}},
+    {id:'kf.a.fluct',chart:'A',stage:'learn',review:'pending',fact:A+'shape:museum-c',importance:'secondary',
+      reason:{en:'The smallest line goes up and down; worth noting, but less important.',vi:'Đường thấp nhất lên xuống; có thể nhắc tới nhưng ít quan trọng hơn.'}},
+    {id:'kf.b.leader',chart:'B',stage:'review',review:'pending',fact:B+'rank-change:app-x+app-y',importance:'main',
+      reason:{en:'The leader changes: the line that starts on top is not on top at the end.',vi:'Vị trí dẫn đầu thay đổi: đường đứng đầu lúc đầu không còn đứng đầu ở cuối.'}},
+    {id:'kf.b.rise',chart:'B',stage:'review',review:'pending',fact:B+'endpoint:app-y',importance:'main',
+      reason:{en:'One line rises strongly over the period.',vi:'Một đường tăng mạnh trong cả giai đoạn.'}},
+    {id:'kf.b.fall',chart:'B',stage:'review',review:'pending',fact:B+'endpoint:app-x',importance:'main',
+      reason:{en:'The first leader goes down.',vi:'Đường dẫn đầu lúc đầu giảm dần.'}},
+    {id:'kf.b.tie',chart:'B',stage:'review',review:'pending',fact:B+'tie:app-x+app-z@2024',importance:'secondary',
+      reason:{en:'Two lines finish level in the last year shown.',vi:'Hai đường bằng nhau ở năm cuối cùng được cho.'}}
+  ]
+};
+if(typeof module!=='undefined'&&module.exports)module.exports=U2;else root.MD_LM_U2=U2;
+})(this);

@@ -177,6 +177,41 @@ html.sb-lock,body.sb-lock{overflow:hidden}
 .lsn .act{display:flex;gap:2px;padding-right:8px}.lsn .act .ib{padding:8px}.lsn .act .ib:disabled{opacity:.35;cursor:default}
 .lnone{text-align:center;color:var(--muted);font-size:.85rem;padding:22px 8px;border:1px dashed var(--line);border-radius:12px}
 @media (max-width:520px){.lpanel{padding:14px}.ltbar{width:60px}.lth{padding:12px;gap:10px}.lth .t{font-size:1.02rem}.ltb{padding:0 10px 12px}.lsnb{gap:10px;padding:10px}.lico{width:32px;height:32px}.ltabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;overflow:visible}.ltab{padding:8px 2px;font-size:.8rem;overflow:hidden;text-overflow:ellipsis}.lsnb .n{font-size:.86rem}.lsnb .d{font-size:.72rem}.tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.lpv{min-width:36px;font-size:.8rem}.lsn .act .ib{padding:6px}}.lpanel h3{font-size:1.05rem;margin-bottom:6px}
+.libtabs{margin:6px 0 18px}
+.lmwrap{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.lmwrap>*{max-width:100%}.lmsk,.lmshell,.lmempty{width:100%}
+.lmsk h3{margin:0 0 8px;font-size:1.1rem}.lmmod h4{margin:0 0 8px;font-size:.95rem;color:var(--muted);font-weight:700}
+.lmlist{display:flex;flex-direction:column;gap:8px}
+.lmu{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;width:100%;min-height:48px;padding:12px 14px;text-align:left;background:var(--surface);border:1px solid var(--line-strong);border-radius:12px;color:var(--ink);cursor:pointer}
+.lmu:hover,.lmu:focus-visible{border-color:var(--accent)}
+.lmempty{display:flex;flex-direction:column;gap:4px;padding:28px 16px;text-align:center;border:1px dashed var(--line-strong);border-radius:12px;color:var(--muted)}.lmempty b{color:var(--ink)}
+.lmshell{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}.lmshell h3{margin:2px 0 10px}.lmpath{margin:0;color:var(--muted);font-size:.85rem}
+/* Learning Materials lesson (.lu) */
+.lu .lubody{display:flex;flex-direction:column;gap:10px}
+.lusteps{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 16px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.lustep{border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;min-height:38px;font-weight:600;cursor:pointer}
+.lustep.on{background:var(--nav);color:var(--nav-ink);border-color:var(--nav)}
+.lustep:disabled{opacity:var(--dis-op);cursor:not-allowed}
+.luh{margin:14px 0 2px;font-size:1.02rem}
+.lupair{display:flex;flex-direction:column;gap:2px}.lupair p{margin:0;line-height:1.6}.lupair .luvi{color:var(--muted);font-size:.92rem}
+.luchart{max-width:640px;width:100%}
+.lumod,.lukf,.luctl{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:10px}
+.lukf{list-style:none;padding:0}.lukf li{display:flex;gap:8px;align-items:flex-start}.lukf .pill{flex:none;margin-top:2px}
+.lukf.pick label{display:flex;gap:8px;align-items:flex-start;cursor:pointer;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.lukf.pick input{margin-top:4px;flex:none;width:18px;height:18px}
+.lumod.det li{color:var(--muted)}
+.luq{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.luq.ok{border-color:var(--good)}.luq.no{border-color:var(--bad)}
+.lust{margin:0 0 8px;font-weight:600}.luk{color:var(--muted);font-weight:400}
+.luopts{display:flex;gap:8px;flex-wrap:wrap}
+.luopt{min-height:44px;padding:8px 12px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer;font-weight:600}
+.luopt[aria-pressed="true"]{border-color:var(--accent);background:var(--hl-soft)}
+.luopt.cor{border-color:var(--good);box-shadow:inset 0 0 0 1px var(--good)}
+.luopt:disabled{cursor:default}
+.lufb{margin-top:8px;padding:8px 10px;border-radius:8px;background:var(--bg)}
+.luwarn{margin:0;padding:8px 10px;border-radius:8px;background:var(--bad-bg);color:var(--ink)}
+.lunote{margin:0;color:var(--muted);font-size:.92rem}.lucnt{margin:0;color:var(--muted);font-size:.85rem}.lusc{margin:0}
+@media (max-width:640px){.lustep{padding:6px 10px;font-size:.85rem}.luopt{flex:1 1 100%}}
 .covers{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:14px}
 .bk{position:relative;aspect-ratio:3/4;border:0;border-radius:6px 14px 14px 6px;padding:14px 12px 12px 20px;color:#fff;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:10px;overflow:hidden;text-align:left;font:inherit;cursor:pointer;background:linear-gradient(145deg,hsl(var(--h) 65% 52%),hsl(var(--h) 65% 36%));box-shadow:0 4px 12px rgba(0,0,0,.14)}
 .bk::before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:rgba(0,0,0,.22)}
@@ -741,56 +776,55 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .seg button{border:0;background:none;color:var(--muted);padding:.35rem .95rem;font-weight:600;font-size:.85rem;cursor:pointer}
 .seg button+button{border-left:1px solid var(--line)}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.lb{max-width:900px;margin:0 auto}
+.lbtop{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.lbtop h2{margin:0}.lbby{font-size:12px;color:var(--muted)}
+.lb .rkbar{margin:8px 0 22px}.lb .subtabs button{border-bottom-width:2px}
+.lbseg{border-radius:10px}.lbseg button{font-size:13px;padding:7px 14px}
 .lbseg button[aria-pressed="true"]{background:var(--nav);color:var(--nav-ink)}
-.lbempty{display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center;padding:40px 16px;border:1px dashed var(--line-strong);border-radius:14px;color:var(--muted)}.lbempty b{color:var(--ink);font-size:1.05rem}
-.lbhero{position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:center;gap:28px;padding:30px 34px;border-radius:18px;color:#fff;margin:6px 0 16px;
+.lbempty{display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center;padding:40px 16px;border:1px dashed var(--line-strong);border-radius:18px;color:var(--muted)}.lbempty b{color:var(--ink);font-size:1.05rem}
+.lbbadge{position:relative;margin:0 auto;display:flex;justify-content:center;align-items:flex-start}
+.lbav .av2{font-weight:800;color:#2a2330}
+/* hero #1: night-sky spotlight (decorations are pointer-events:none; content sits above them) */
+.lbhero{position:relative;overflow:hidden;border-radius:22px;padding:26px 16px;margin-bottom:12px;text-align:center;color:#fff;
   background:radial-gradient(circle at 30% 20%,#7d6bf0,transparent 55%),linear-gradient(135deg,#2b2a8f,#5a35b5)}
-.lbhero::before{content:"";position:absolute;z-index:-1;top:-20%;left:8%;width:46%;height:150%;background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,0) 75%);clip-path:polygon(38% 0,62% 0,100% 100%,0 100%);filter:blur(8px);pointer-events:none}
-.lbhero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.45;animation:lbtw 3s ease-in-out infinite alternate;background-repeat:no-repeat;background-image:
-  radial-gradient(1.5px 1.5px at 6% 14%,#fff 99%,transparent),radial-gradient(1px 1px at 14% 72%,#fff 99%,transparent),radial-gradient(2px 2px at 21% 34%,#fff 99%,transparent),radial-gradient(1px 1px at 28% 88%,#fff 99%,transparent),
-  radial-gradient(1.5px 1.5px at 35% 10%,#fff 99%,transparent),radial-gradient(1px 1px at 41% 58%,#fff 99%,transparent),radial-gradient(2px 2px at 48% 26%,#fff 99%,transparent),radial-gradient(1px 1px at 53% 80%,#fff 99%,transparent),
-  radial-gradient(1.5px 1.5px at 59% 44%,#fff 99%,transparent),radial-gradient(1px 1px at 64% 8%,#fff 99%,transparent),radial-gradient(2px 2px at 69% 66%,#fff 99%,transparent),radial-gradient(1px 1px at 74% 30%,#fff 99%,transparent),
-  radial-gradient(1.5px 1.5px at 79% 90%,#fff 99%,transparent),radial-gradient(1px 1px at 83% 18%,#fff 99%,transparent),radial-gradient(2px 2px at 87% 52%,#fff 99%,transparent),radial-gradient(1px 1px at 91% 76%,#fff 99%,transparent),
-  radial-gradient(1.5px 1.5px at 95% 36%,#fff 99%,transparent),radial-gradient(1px 1px at 97% 6%,#fff 99%,transparent),radial-gradient(1.5px 1.5px at 10% 48%,#fff 99%,transparent),radial-gradient(1px 1px at 57% 94%,#fff 99%,transparent)}
+.lbhero>*{position:relative;z-index:1}
+.lbhero::before{content:"";position:absolute;left:50%;top:0;width:78%;height:100%;transform:translateX(-50%);background:linear-gradient(180deg,rgba(255,255,255,.3),rgba(255,255,255,0) 88%);clip-path:polygon(40% 0,60% 0,100% 100%,0 100%);filter:blur(8px);pointer-events:none}
+.lbhero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.8;animation:lbtw 3s ease-in-out infinite alternate;background:
+  radial-gradient(2px 2px at 12% 30%,#fff,transparent),radial-gradient(2px 2px at 85% 20%,#fff,transparent),radial-gradient(3px 3px at 70% 70%,#ffe28a,transparent),radial-gradient(2px 2px at 25% 80%,#ffe28a,transparent),
+  radial-gradient(2px 2px at 92% 60%,#fff,transparent),radial-gradient(1.5px 1.5px at 6% 14%,#fff,transparent),radial-gradient(2px 2px at 18% 58%,#ffe28a,transparent),radial-gradient(1.5px 1.5px at 30% 12%,#fff,transparent),
+  radial-gradient(2px 2px at 38% 88%,#fff,transparent),radial-gradient(3px 3px at 47% 10%,#ffe28a,transparent),radial-gradient(1.5px 1.5px at 58% 90%,#fff,transparent),radial-gradient(2px 2px at 64% 16%,#fff,transparent),
+  radial-gradient(1.5px 1.5px at 76% 42%,#ffe28a,transparent),radial-gradient(2px 2px at 82% 86%,#fff,transparent),radial-gradient(3px 3px at 90% 12%,#ffe28a,transparent),radial-gradient(1.5px 1.5px at 96% 38%,#fff,transparent),
+  radial-gradient(1.5px 1.5px at 8% 78%,#fff,transparent),radial-gradient(2px 2px at 52% 74%,#fff,transparent),radial-gradient(1.5px 1.5px at 24% 40%,#ffe28a,transparent),radial-gradient(2px 2px at 72% 28%,#fff,transparent)}
 @keyframes lbtw{from{opacity:.45}to{opacity:.95}}
-.lbglow{position:absolute;z-index:-1;left:40px;top:50%;width:300px;height:300px;margin-top:-150px;margin-left:-50px;border-radius:50%;background:radial-gradient(circle,rgba(255,226,138,.35),rgba(255,226,138,0) 68%);pointer-events:none}
-.lbshoot{position:absolute;z-index:-1;top:0;left:0;width:90px;height:2px;border-radius:2px;background:linear-gradient(90deg,rgba(255,255,255,0),#fff);opacity:0;pointer-events:none;transform:rotate(20deg)}
-.lbshoot.s1{top:12%;left:30%;animation:shoot 9s linear 1s infinite}.lbshoot.s2{top:4%;left:62%;animation:shoot 13s linear 5s infinite}
-@keyframes shoot{0%{opacity:0;transform:translate(0,0) rotate(20deg)}2%{opacity:1}9%{opacity:0;transform:translate(260px,95px) rotate(20deg)}100%{opacity:0;transform:translate(260px,95px) rotate(20deg)}}
-.lbhav{flex:none}
-.lbht{display:flex;flex-direction:column;gap:6px;min-width:0}
-.lbchip{align-self:flex-start;font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:999px;background:rgba(255,226,138,.18);color:#ffe28a;border:1px solid rgba(255,226,138,.45)}
-.lbhn{font-size:22px;font-weight:800;line-height:1.25;overflow-wrap:anywhere}
-.lbhv{font-size:42px;font-weight:600;line-height:1.1;color:#ffe28a}.lbhv b{font-weight:800}
-.lbhl{color:rgba(255,255,255,.82);font-size:.95rem}
-.lbcards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:16px}
-.lbcards.one{grid-template-columns:minmax(0,1fr);max-width:calc(50% - 7px);margin-left:auto;margin-right:auto}
-.lbcard{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;min-width:0;padding:28px 12px 18px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
-.lbcard .avw{margin-bottom:6px}
-.lbrib{position:absolute;top:0;left:18px;width:16px;height:34px;clip-path:polygon(0 0,100% 0,100% 100%,50% 76%,0 100%)}
-.lb2 .lbrib{background:#aab3c5}.lb3 .lbrib{background:#c98a55}
-.lbcn{font-weight:800;font-size:1.05rem;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lbcl{color:var(--muted);font-size:.85rem}.lbcv{font-size:1.15rem}.lbcv b{font-weight:800}
-.lbcard.me,.lbrow.me{background:var(--you-bg);border:1px solid var(--accent)}
-.lbhero.me .lbhn{text-decoration:underline;text-decoration-color:#ffe28a;text-underline-offset:4px}
-.lblist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
-.lbrow{display:grid;grid-template-columns:26px 36px 150px minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 12px;background:var(--surface);border:1px solid var(--line);border-radius:12px}
-.lbrow.gap{display:block;text-align:center;color:var(--muted);background:none;border:0;padding:0}
-.lbn{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--track);color:var(--ink);font-family:var(--mono);font-size:.78rem;font-weight:700}
-.lbrn{min-width:0;display:flex;flex-direction:column}
-.lbrn b{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lbrn small{color:var(--muted);font-size:.78rem}
-.lbbar{height:8px;border-radius:8px;background:var(--track);overflow:hidden}.lbbar i{display:block;height:100%;border-radius:8px;background:var(--accent)}
-.lbrv{white-space:nowrap;text-align:right}.lbrv b{font-weight:800}
-@media (prefers-reduced-motion:reduce){.lbhero::after{animation:none}.lbshoot{display:none}}
-@media (max-width:640px){
-  .lbhero{flex-direction:column;text-align:center;gap:16px;padding:24px 16px}
-  .lbht{align-items:center}.lbchip{align-self:center}
-  .lbhv{font-size:34px}
-  .lbglow{left:50%;top:30%;margin-left:-150px}
-  .lbcards{gap:10px}.lbcard{padding:26px 8px 14px}
-  .lbcards.one{max-width:calc(50% - 5px)}
-  .lbrow{grid-template-columns:26px 36px 100px minmax(0,1fr) auto;gap:8px;padding:8px}
-}
+.lbhero .lbbadge::before{content:"";position:absolute;left:50%;top:50%;width:300px;height:300px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(255,226,138,.5),transparent 62%);z-index:-1;pointer-events:none}
+.lbhero>.lbshoot{position:absolute;top:10%;right:6%;width:110px;height:2px;border-radius:2px;background:linear-gradient(270deg,rgba(255,255,255,0),#fff);box-shadow:0 0 8px 1px rgba(255,255,255,.7);opacity:0;z-index:0;pointer-events:none;transform:rotate(-25deg);animation:shoot 9s linear 1s infinite}
+.lbhero>.lbshoot.s2{top:32%;right:38%;width:80px;animation-duration:13s;animation-delay:5s}
+@keyframes shoot{0%{opacity:0;transform:rotate(-25deg) translateX(0)}2%{opacity:1}12%{opacity:0;transform:rotate(-25deg) translateX(-300px)}100%{opacity:0;transform:rotate(-25deg) translateX(-300px)}}
+.lbhn{margin:6px 0 2px;font-size:22px;font-weight:700;overflow-wrap:anywhere}
+.lbhv{font-size:42px;font-weight:800;line-height:1.1;color:#ffe28a;white-space:nowrap}
+.lbhl{font-size:12px;color:#d9d4ff}
+.lbchip{display:inline-block;background:rgba(255,255,255,.18);border-radius:99px;padding:3px 12px;font-size:12px;margin-top:8px}
+/* #2 #3 */
+.lbcards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.lbcards.one{grid-template-columns:minmax(0,1fr);max-width:calc(50% - 6px);margin-left:auto;margin-right:auto}
+.lbcard{position:relative;min-width:0;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px}
+.lbrib{position:absolute;top:-1px;left:18px;width:16px;height:34px;clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%)}
+.lb2 .lbrib{background:linear-gradient(180deg,#aab3c5,rgba(255,255,255,.35))}.lb3 .lbrib{background:linear-gradient(180deg,#c98a55,rgba(255,255,255,.35))}
+.lbcn{display:block;font-size:14px;font-weight:700;overflow-wrap:anywhere}
+.lbcl{display:block;font-size:12px;color:var(--muted)}
+.lbcv{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap}.lbcv b{color:var(--ink)}
+.lbcard.me,.lbrow.me{background:var(--you-bg);border-color:var(--accent)}
+/* rows from #4 */
+.lblist{list-style:none;margin:0;padding:0}
+.lbrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:8px}
+.lbn{width:26px;height:26px;border-radius:50%;background:var(--track);display:grid;place-items:center;font-size:12px;font-weight:700;flex:none;color:var(--ink)}
+.lbrow .lbav{flex:none}
+.lbrn{width:150px;flex:none;min-width:0;display:flex;flex-direction:column}
+.lbrn b{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lbrn small{font-size:12px;color:var(--muted)}
+.lbbar{flex:1;min-width:0;height:8px;border-radius:9px;background:var(--track);overflow:hidden}.lbbar i{display:block;height:100%;background:var(--accent);border-radius:9px}
+.lbrv{min-width:70px;text-align:right;font-size:13px;color:var(--muted);white-space:nowrap}.lbrv b{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){.lbhero>.lbshoot{display:none}.lbhero::after{animation:none}}
+@media (max-width:640px){.lbhv{font-size:34px}.lbrn{width:100px}.lbrow{gap:8px;padding:10px}}
 /* ---- wheel, inventory, marquee ---- */
 .wheelbox{display:flex;flex-direction:column;align-items:center;gap:12px;padding:10px 0}
 .wwrap{position:relative;width:min(440px,92vw);aspect-ratio:1}
@@ -1424,6 +1458,10 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
 
 <script src="md-config.js"></script>
 <script src="md-backend.js"></script>
+<script src="md-chart.js"></script>
+<script src="lm-content.js"></script>
+<script src="lm-engine.js"></script>
+<script src="lm-unit2.js"></script>
 <script>
 (function(){
 'use strict';
@@ -1869,6 +1907,145 @@ function libTestHTML(bk,t,dm,stu){
   }).join('');
   return h+'</div></div>';
 }
+/* ---------- Library › Learning Materials (built-in lessons from lm-content.js, not tied to Cambridge books) ---------- */
+// LIBT = which Library tab is open ('cam' | 'lm', localStorage md-libt). LMV = id of the lesson opened in the Learning Materials tab.
+// A lesson with status 'unpublished' is only shown to the admin (preview); lmVisible is the only gate, checked when listing AND when opening.
+var LIBT=(function(){try{return lsGet('md-libt')==='lm'?'lm':'cam'}catch(e){return 'cam'}})(),LMV=null;
+function lmData(){var d=window.MD_LM;return d&&d.lessons?d:{skills:[],modules:[],lessons:[]}}
+function lmVisible(l){return !!(l&&(l.status==='published'||(U&&U.adm)))}
+function lmLesson(id){return lmData().lessons.filter(function(l){return l.id===id})[0]||null}
+function libTabsHTML(){var tab=function(v,l){return '<button type="button" role="tab" data-act="lib-tab" data-v="'+v+'" aria-selected="'+(LIBT===v)+'">'+l+'</button>'};
+  return '<div class="subtabs libtabs" role="tablist" aria-label="Library">'+tab('cam','Cambridge IELTS')+tab('lm','Learning Materials')+'</div>'}
+function lmHTML(){
+  var D=lmData(),cur=LMV&&lmLesson(LMV);
+  if(cur&&lmVisible(cur))return lmLessonHTML(cur);
+  LMV=null;
+  var h='',any=false;
+  D.skills.forEach(function(sk){
+    var mods=D.modules.filter(function(m){return m.skill===sk.id}).map(function(m){
+      var L=D.lessons.filter(function(l){return l.module===m.id&&lmVisible(l)}).sort(function(a,b){return a.unit-b.unit});
+      if(!L.length)return '';any=true;
+      return '<div class="lmmod"><h4>'+esc(m.title)+'</h4><div class="lmlist">'+L.map(function(l){
+        return '<button type="button" class="lmu" data-act="lm-open" data-id="'+esc(l.id)+'"><b>'+esc(l.title)+'</b>'+(l.status!=='published'?'<span class="pill pend">Unpublished preview</span>':'')+'</button>'}).join('')+'</div></div>';
+    }).join('');
+    if(mods)h+='<section class="lmsk" aria-label="'+esc(sk.title)+'"><h3>'+esc(sk.title)+'</h3>'+mods+'</section>';
+  });
+  return '<div class="lmwrap">'+(any?h:'<div class="lmempty"><b>Learning Materials are coming soon.</b><span>Short lessons that teach one skill at a time will appear here.</span></div>')+'</div>';
+}
+// a lesson with content (lm-unit2.js) -> the 5 stages (luHTML); otherwise an honest empty shell
+function lmLessonHTML(l){
+  var lu=luUnit(l.id);if(lu)return '<div class="lmwrap"><button type="button" class="btn sm" data-act="lm-back">‹ Learning Materials</button>'+luHTML(l,lu)+'</div>';
+  var m=lmData().modules.filter(function(x){return x.id===l.module})[0];
+  return '<div class="lmwrap"><button type="button" class="btn sm" data-act="lm-back">‹ Learning Materials</button>'+
+    '<div class="lmshell"><p class="lmpath">'+esc((m?m.title:'')+' · Unit '+l.unit)+'</p><h3>'+esc(l.title)+'</h3>'+
+    (l.status!=='published'?'<p class="pill pend">Unpublished preview · students cannot see this lesson</p>':'')+
+    '<p class="saved">This lesson has no content yet.</p></div></div>';
+}
+/* ---------- Learning Materials · Unit 2 lesson (Learn → Controlled → Guided → Independent → Review & Revise) ----------
+   Content: lm-unit2.js (window.MD_LM_U2), checked by lm-engine.js (window.LMX) against facts from md-chart.js. Every chart-specific
+   word or number is filled in from a verified fact (LMX.lmResolve); nothing here writes to the database or gives XP.
+   Chart B (Independent) is never drawn and none of its items are used before the Independent stage (luItems filters by stage).
+   Drafts: localStorage only, key md-lm:<lesson>:v<version>:<activity> = {t, rv, ts}; another version's draft is never shown as current. */
+var LU={stage:'learn',pick:{},chk:false,gsel:{},self:{}},LU_ST=[['learn','Learn'],['controlled','Controlled'],['guided','Guided'],['independent','Independent'],['review','Review & Revise']],LUC=null;
+function luUnit(id){var u=window.MD_LM_U2;return u&&window.LMX&&u.lesson===id?u:null}
+function luCtx(u){if(!LUC||LUC.u!==u){var r=window.LMX.lmCheck(u,false);LUC={u:u,ctx:r.ctx,errs:r.errors,pending:r.pending}}return LUC}
+function luItems(u,kind,stage,chart){return (u[kind]||[]).filter(function(x){return x.stage===stage&&(!chart||x.chart===chart)})}
+function luTxt(x,t){var o=window.LMX.lmResolve(t,x,LUC.ctx);return o.text==null?null:o.text}
+function luPair(en,vi,cls){return '<div class="lupair'+(cls?' '+cls:'')+'"><p lang="en">'+esc(en)+'</p>'+(vi?'<p lang="vi" class="luvi">'+esc(vi)+'</p>':'')+'</div>'}
+function luCopy(u,id){var c=(u.copy||[]).filter(function(x){return x.id===id})[0];return c?luPair(c.en,c.vi):''}
+function luChart(u,k){var fx=u.charts[k];return fx?'<div class="luchart">'+chartHTML(fx.chart)+'</div>':''}
+// ---- local drafts ----
+function luKey(u,act){return 'md-lm:'+u.lesson+':v'+u.version+':'+act}
+function luStoreOk(){try{var k='md-lm-probe';localStorage.setItem(k,'1');localStorage.removeItem(k);return true}catch(e){return false}}
+function luGet(u,act){try{var v=localStorage.getItem(luKey(u,act));return v?JSON.parse(v):null}catch(e){return null}}
+function luPut(u,act,o){try{o.ts=Date.now();localStorage.setItem(luKey(u,act),JSON.stringify(o));return true}catch(e){return false}}
+function luDrop(u,act){try{localStorage.removeItem(luKey(u,act))}catch(e){}}
+// drafts of this activity saved for ANOTHER content version (cannot be restored; the student may discard them)
+function luOld(u,act){var o=[];try{var pre='md-lm:'+u.lesson+':v',suf=':'+act,cur=luKey(u,act);for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf(pre)===0&&k.slice(-suf.length)===suf&&k!==cur)o.push(k)}}catch(e){}return o}
+function luDraftHTML(u,act){
+  var h='',old=luOld(u,act);
+  if(!luStoreOk())h+='<p class="luwarn" role="status">This browser does not allow saving, so your draft will be lost if you leave this page.</p>';
+  if(old.length)h+='<p class="luwarn" role="status">A draft from an older version of this lesson was found. It cannot be restored. <button type="button" class="btn sm" data-act="lu-old" data-a="'+esc(act)+'">Discard old draft</button></p>';
+  return h+luCopy(u,'copy.draft.local')+'<div class="actions"><button type="button" class="btn sm bad" data-act="lu-clear" data-a="'+esc(act)+'">Clear draft</button><span class="saved" id="luSv_'+esc(act)+'" aria-live="polite"></span></div>';
+}
+function luSentences(t){t=String(t||'').trim();return t?t.split(/[.!?]+(\s|$)/).filter(function(s){return s&&s.trim()}).length:0}
+// ---- stages ----
+function luLearn(u){
+  var h=luCopy(u,'copy.synthetic')+luChart(u,'A')+'<h4 class="luh">What is an overview?</h4>'+luCopy(u,'copy.overview.what')+luCopy(u,'copy.overview.detail')+
+    '<h4 class="luh">Three ways to look at a chart</h4>'+luCopy(u,'copy.lens.trends')+luCopy(u,'copy.lens.highest')+luCopy(u,'copy.lens.highlights')+luCopy(u,'copy.lens.flexible')+luCopy(u,'copy.observed');
+  var M=luItems(u,'claims','learn','A');
+  h+='<h4 class="luh">Sample overview sentences</h4><ul class="lumod">'+M.filter(function(x){return x.kind==='model'}).map(function(x){return '<li>'+luPair(luTxt(x,x.en),luTxt(x,x.vi))+'</li>'}).join('')+'</ul>';
+  h+='<h4 class="luh">Not for the overview: a body detail</h4><ul class="lumod det">'+M.filter(function(x){return x.kind==='detail'}).map(function(x){return '<li>'+luPair(luTxt(x,x.en),luTxt(x,x.vi))+'</li>'}).join('')+'</ul>';
+  h+='<h4 class="luh">The key features of this chart</h4><ul class="lukf">'+luItems(u,'keyFeatures','learn','A').map(function(x){return '<li><span class="pill'+(x.importance==='main'?' acc':'')+'">'+(x.importance==='main'?'Main':'Secondary')+'</span>'+luPair(x.reason.en,x.reason.vi)+'</li>'}).join('')+'</ul>';
+  return h+'<div class="actions"><button type="button" class="btn pri" data-act="lu-go" data-s="controlled">Next: Controlled practice</button></div>';
+}
+var LU_LB={supported:'Supported',contradicted:'Contradicted',not_determinable:'Not determinable',overview:'Overview',detail:'Body detail'};
+function luControlled(u){
+  var L=luItems(u,'controlled','controlled','A'),ok=0,h=luChart(u,'A')+luCopy(u,'copy.controlled.labels')+'<ol class="luctl">';
+  L.forEach(function(x){
+    var opts=x.type==='ovd'?['overview','detail']:['supported','contradicted','not_determinable'],ans=x.type==='ovd'?x.answer:x.label,me=LU.pick[x.id],right=me===ans;if(LU.chk&&right)ok++;
+    h+='<li class="luq'+(LU.chk?(right?' ok':' no'):'')+'"><p class="lust" lang="en">'+(x.type==='ovd'?'<span class="luk">Overview or body detail?</span> ':'')+esc(luTxt(x,x.statement.en))+'</p>'+
+      '<div class="luopts" role="group" aria-label="Your answer">'+opts.map(function(v){return '<button type="button" class="luopt'+(LU.chk&&v===ans?' cor':'')+'" data-act="lu-pick" data-id="'+esc(x.id)+'" data-v="'+v+'" aria-pressed="'+(me===v)+'"'+(LU.chk?' disabled':'')+'>'+LU_LB[v]+'</button>'}).join('')+'</div>'+
+      (LU.chk?'<div class="lufb" role="status"><b>'+(right?'Correct.':(me?'Not quite.':'No answer.'))+' Answer: '+LU_LB[ans]+'</b>'+luPair(luTxt(x,x.why.en),luTxt(x,x.why.vi))+'</div>':'')+'</li>';
+  });
+  h+='</ol>';
+  if(LU.chk)h+='<p class="lusc" role="status"><b>'+ok+' / '+L.length+'</b> correct. This practice is not scored or saved.</p><div class="actions"><button type="button" class="btn" data-act="lu-redo">Try again</button><button type="button" class="btn pri" data-act="lu-go" data-s="guided">Next: Guided writing</button></div>';
+  else h+='<div class="actions"><button type="button" class="btn pri" data-act="lu-chk">Check answers</button></div>';
+  return h;
+}
+function luGuided(u){
+  var d=luGet(u,'guided')||{},K=luItems(u,'keyFeatures','learn','A');
+  return luChart(u,'A')+'<p class="lunote">You saw this chart in Learn. Here you practise choosing features and putting them into your own sentences.</p>'+
+    '<h4 class="luh">1. Choose the features</h4>'+luCopy(u,'copy.guided.pick')+'<ul class="lukf pick">'+K.map(function(x){return '<li><label><input type="checkbox" data-act="lu-gsel" data-id="'+esc(x.id)+'"'+(LU.gsel[x.id]?' checked':'')+'> '+luPair(x.reason.en,x.reason.vi)+'</label></li>'}).join('')+'</ul>'+
+    '<h4 class="luh">2. Write your overview</h4>'+luCopy(u,'copy.guided.start')+
+    '<label class="lbl" for="luG">Your overview (English)</label><textarea class="wbox" id="luG" rows="5" lang="en" spellcheck="true" placeholder="Overall, …">'+esc(d.t||'')+'</textarea>'+
+    luDraftHTML(u,'guided')+'<div class="actions"><button type="button" class="btn pri" data-act="lu-go" data-s="independent">Next: Independent writing</button></div>';
+}
+function luIndependent(u){
+  var d=luGet(u,'indep')||{};
+  return luCopy(u,'copy.synthetic')+luChart(u,'B')+luCopy(u,'copy.indep.task')+
+    '<label class="lbl" for="luI">Your overview (English)</label><textarea class="wbox" id="luI" rows="6" lang="en" spellcheck="true">'+esc(d.t||'')+'</textarea>'+
+    '<p class="lucnt" id="luCnt" aria-live="polite">'+luSentences(d.t)+' sentence(s) · about 2–3 is a good length</p>'+luDraftHTML(u,'indep')+
+    '<div class="actions"><button type="button" class="btn pri" data-act="lu-rv">I\'m done: show the review</button></div>';
+}
+function luReview(u){
+  var d=luGet(u,'indep')||{};
+  return luChart(u,'B')+'<h4 class="luh">Your overview: edit it as much as you like</h4><label class="lbl sr" for="luI">Your overview (English)</label><textarea class="wbox" id="luI" rows="6" lang="en" spellcheck="true">'+esc(d.t||'')+'</textarea>'+
+    '<p class="lucnt" id="luCnt" aria-live="polite">'+luSentences(d.t)+' sentence(s) · about 2–3 is a good length</p>'+
+    '<h4 class="luh">Self-check</h4>'+luCopy(u,'copy.review.self')+'<ul class="lukf pick">'+luItems(u,'keyFeatures','review','B').map(function(x){return '<li><label><input type="checkbox" data-act="lu-self" data-id="'+esc(x.id)+'"'+(LU.self[x.id]?' checked':'')+'> <span class="pill'+(x.importance==='main'?' acc':'')+'">'+(x.importance==='main'?'Main':'Secondary')+'</span>'+luPair(x.reason.en,x.reason.vi)+'</label></li>'}).join('')+'</ul>'+
+    '<h4 class="luh">Sample overview sentences for this chart</h4><ul class="lumod">'+luItems(u,'claims','review','B').map(function(x){return '<li>'+luPair(luTxt(x,x.en),luTxt(x,x.vi))+'</li>'}).join('')+'</ul>'+
+    '<p class="lunote">Nothing here checks your writing automatically: compare it with the features and samples yourself.</p>'+luDraftHTML(u,'indep');
+}
+var LU_FN={learn:luLearn,controlled:luControlled,guided:luGuided,independent:luIndependent,review:luReview};
+// one stage's HTML (also used by the Node tests to prove Chart B never appears before Independent)
+function luStageHTML(u,st){luCtx(u);return LU_FN[st](u)}
+function luHTML(l,u){
+  var c=luCtx(u),bad=c.errs.filter(function(e){return !/pending/.test(e)}),rv=!!(luGet(u,'indep')||{}).rv;
+  if(bad.length)return '<div class="lmshell"><h3>'+esc(l.title)+'</h3><p class="luwarn" role="alert">This lesson cannot be shown: its content check failed ('+bad.length+' problem'+(bad.length>1?'s':'')+').</p>'+(U&&U.adm?'<ul class="saved">'+bad.slice(0,8).map(function(e){return '<li>'+esc(e)+'</li>'}).join('')+'</ul>':'')+'</div>';
+  if(LU.stage==='review'&&!rv)LU.stage='independent';
+  var bar='<nav class="lusteps" aria-label="Lesson stages">'+LU_ST.map(function(s,i){var lock=s[0]==='review'&&!rv;return '<button type="button" class="lustep'+(LU.stage===s[0]?' on':'')+'" data-act="lu-go" data-s="'+s[0]+'"'+(LU.stage===s[0]?' aria-current="step"':'')+(lock?' disabled title="Write your overview first"':'')+'><span class="mono">'+(i+1)+'</span> '+s[1]+'</button>'}).join('')+'</nav>';
+  var pend=c.pending?'<p class="pill pend">Unpublished preview · '+c.pending+' content item'+(c.pending>1?'s':'')+' still waiting for review</p>':(l.status!=='published'?'<p class="pill pend">Unpublished preview · students cannot see this lesson</p>':'');
+  return '<div class="lmshell lu"><p class="lmpath">IELTS Academic Task 1 · Unit '+esc(l.unit)+'</p><h3>'+esc(l.title)+'</h3>'+pend+bar+'<div class="lubody" id="luBody">'+LU_FN[LU.stage](u)+'</div></div>';
+}
+function luAct(a,t){
+  var l=LMV&&lmLesson(LMV),u=l&&luUnit(l.id);if(!u)return false;
+  var redraw=function(top){renderLib();if(top){var b=$('.lusteps');if(b&&b.scrollIntoView)b.scrollIntoView({block:'start'})}};
+  if(a==='lu-go'){var s=t.dataset.s;if(!LU_FN[s])return true;if(s==='review'&&!(luGet(u,'indep')||{}).rv)return true;LU.stage=s;redraw(true);return true}
+  if(a==='lu-pick'){if(!LU.chk){LU.pick[t.dataset.id]=t.dataset.v;redraw()}return true}
+  if(a==='lu-chk'){LU.chk=true;redraw();return true}
+  if(a==='lu-redo'){LU.chk=false;LU.pick={};redraw(true);return true}
+  if(a==='lu-gsel'){LU.gsel[t.dataset.id]=t.checked;return true}
+  if(a==='lu-self'){LU.self[t.dataset.id]=t.checked;return true}
+  if(a==='lu-rv'){var ta=$('#luI'),tx=ta?ta.value.trim():'';if(!tx){toast('Write your overview first.');if(ta)ta.focus();return true}
+    luPut(u,'indep',{t:ta.value,rv:true});LU.stage='review';redraw(true);return true}
+  if(a==='lu-clear'){var act=t.dataset.a==='guided'?'guided':'indep';if(!confirm('Clear this draft? It cannot be undone.'))return true;luDrop(u,act);if(act==='indep'){LU.self={};LU.stage='independent'}redraw();toast('Draft cleared.');return true}
+  if(a==='lu-old'){var ak=t.dataset.a==='guided'?'guided':'indep';if(!confirm('Discard the old draft? It cannot be restored.'))return true;luOld(u,ak).forEach(function(k){try{localStorage.removeItem(k)}catch(e){}});redraw();return true}
+  return false;
+}
+// typing in the two writing boxes: save the draft (local only), update the soft sentence count
+document.addEventListener('input',function(e){var t=e.target;if(!t||(t.id!=='luG'&&t.id!=='luI'))return;var l=LMV&&lmLesson(LMV),u=l&&luUnit(l.id);if(!u)return;
+  var act=t.id==='luG'?'guided':'indep',old=luGet(u,act)||{},ok=luPut(u,act,{t:t.value,rv:!!old.rv}),m=$('#luSv_'+act);if(m)m.textContent=ok?'Draft saved on this device.':'Could not save the draft.';
+  var c=$('#luCnt');if(c&&act==='indep')c.textContent=luSentences(t.value)+' sentence(s) · about 2–3 is a good length'});
 function renderLib(){
   stopAudio();clearTimer();WL.on=false;setLock(false);crumbs();
   if(!NAV.ex&&!NAV.daily){recClearAll();REC_EX=null} // left the exercise: drop its recorders (microphone off)
@@ -1877,12 +2054,15 @@ function renderLib(){
   if(XED)return renderEditor();
   var dm=doneMap(U.email),h='',stu=U.role==='student';
   if(stu)h+=dailyHTML()+homeworkHTML();
-  if(stu)h+='<div class="sechead" style="margin-top:26px"><h2>Library</h2></div><div class="tiles">'+BOOKS.filter(function(b){return allIdsBook(b.id).length}).map(function(b){
+  if(stu)h+='<div class="sechead" style="margin-top:26px"><h2>Library</h2></div>'+libTabsHTML();
+  else h+='<div class="sechead"><div><h2>Library</h2><span class="meta">'+(LIBT==='lm'?'Learning Materials':'Cambridge IELTS books')+'</span></div></div>'+libTabsHTML();
+  if(LIBT==='lm'){h+=lmHTML();if(stu)h+=recentHTML();$('#libBody').innerHTML=h;return}
+  if(stu)h+='<div class="tiles">'+BOOKS.filter(function(b){return allIdsBook(b.id).length}).map(function(b){
     var ids=allIdsBook(b.id),pr=prog(ids,dm);
     return '<button class="tile'+(LIBX.book===b.id?' sel':'')+'" data-act="lx" data-l="book" data-v="'+b.id+'" aria-expanded="'+(LIBX.book===b.id)+'"><div><b>'+b.short+'</b><small>'+ids.length+' exercises</small></div><div class="prog'+(pr.p===100?' done':'')+'"><i style="width:'+pr.p+'%"></i></div><small>'+pr.p+'% completed</small></button>';
   }).join('')+'</div>';
   // teachers and admin: book covers (each book its own colour; grey = no exercises yet)
-  else h+='<div class="sechead"><div><h2>Library</h2><span class="meta">Cambridge IELTS books</span></div></div><div class="covers">'+BOOKS.map(function(b){
+  else h+='<div class="covers">'+BOOKS.map(function(b){
     var n=allIdsBook(b.id).length,num=b.id.replace(/\D/g,''),on=LIBX.book===b.id;
     return '<button class="bk'+(n?'':' e')+(on?' sel':'')+'" type="button" data-act="lx" data-l="book" data-v="'+b.id+'" aria-expanded="'+on+'" aria-label="'+esc(b.title)+', '+n+' exercises" style="--h:'+(num*47%360)+'"><small>CAMBRIDGE IELTS</small><b>'+num+'</b><span class="bkn">'+(n?n+' exercise'+(n>1?'s':''):'Empty')+'</span></button>';
   }).join('')+'</div>';
@@ -2288,121 +2468,9 @@ function demoFill(mode,k){
 
 /* ---------- Writing and speaking (submission only; marking comes in the next phase) ---------- */
 var wordCount=function(t){return String(t||'').trim().split(/\s+/).filter(Boolean).length};
-/* ---------- Writing Task 1: line charts (deterministic analysis, no DOM) ----------
-   chart = {type:'line', hasTime:bool, unit?, title?, series:[{id, label, points:[{x, y|null}]}]} (max 4 series). Only type 'line' for now;
-   another chart type would get its own validator / renderer / analysis next to these (chart.type picks them). y:null = a deliberate gap.
-   None of these functions touch the Writing submission, marking or AI code. */
-var CH_MAX_SERIES=4;
-var chIsObj=function(o){return o!==null&&typeof o==='object'&&!isArr(o)};
-var chFin=function(n){return typeof n==='number'&&isFinite(n)};
-function chSeries(c,id){if(!chIsObj(c)||!isArr(c.series))return null;for(var i=0;i<c.series.length;i++){var s=c.series[i];if(chIsObj(s)&&s.id===id)return s}return null}
-// y of a series at x: a number, null (gap) or undefined (no such point / bad data)
-function chY(s,x){if(!chIsObj(s)||!isArr(s.points))return undefined;for(var i=0;i<s.points.length;i++){var p=s.points[i];if(chIsObj(p)&&p.x===x)return chFin(p.y)?p.y:(p.y===null?null:undefined)}return undefined}
-// the x values of a series, sorted (numbers only)
-function chXs(s){var o=[];if(chIsObj(s)&&isArr(s.points))s.points.forEach(function(p){if(chIsObj(p)&&chFin(p.x))o.push(p.x)});return o.sort(function(a,b){return a-b})}
-function chSameXs(a,b){if(a.length!==b.length)return false;for(var i=0;i<a.length;i++)if(a[i]!==b[i])return false;return true}
-// do all series have exactly the same x values? (compared as numbers, not as joined strings)
-function chSameX(c){if(!chIsObj(c)||!isArr(c.series)||!c.series.length)return false;var x0=chXs(c.series[0]);for(var i=1;i<c.series.length;i++)if(!chSameXs(x0,chXs(c.series[i])))return false;return true}
-// -> {fatal:[], warnings:[], ok}. Never throws on malformed input. Fatal = cannot be saved or drawn.
-function chValidate(c){
-  var F=[],W=[],ids=[];
-  var out=function(){return {fatal:F,warnings:W,ok:!F.length}};
-  if(!chIsObj(c)){F.push('"chart" must be an object.');return out()}
-  if(c.type!=='line')F.push('"chart.type" must be "line" (other chart types are not supported yet).');
-  if(typeof c.hasTime!=='boolean')F.push('"chart.hasTime" must be true or false.');
-  if(c.unit!=null&&typeof c.unit!=='string')F.push('"chart.unit" must be text.');
-  if(c.title!=null&&typeof c.title!=='string')F.push('"chart.title" must be text.');
-  if(!isArr(c.series)||!c.series.length){F.push('"chart.series" must be a list with at least one line.');return out()}
-  if(c.series.length>CH_MAX_SERIES)F.push('A line chart can have at most '+CH_MAX_SERIES+' lines (this one has '+c.series.length+').');
-  c.series.forEach(function(s,i){
-    var n='Line '+(i+1);
-    if(!chIsObj(s)){F.push(n+' must be an object {id, label, points}.');return}
-    if(typeof s.id!=='string'||!s.id.trim())F.push(n+': "id" must be non-empty text.');
-    else if(ids.indexOf(s.id)>=0)F.push(n+': the id "'+s.id+'" is used by another line.'); // array, not a plain object: "__proto__" etc. are safe
-    else ids.push(s.id);
-    if(typeof s.label!=='string'||!s.label.trim())F.push(n+': "label" must be non-empty text.');
-    if(!isArr(s.points)||!s.points.length){F.push(n+': "points" must be a non-empty list.');return}
-    var xs=[],last=null;
-    s.points.forEach(function(p,k){
-      var m=n+', point '+(k+1);
-      if(!chIsObj(p)){F.push(m+' must be an object {x, y}.');return}
-      if(!chFin(p.x))F.push(m+': "x" must be a number.');
-      else{
-        if(xs.indexOf(p.x)>=0)F.push(m+': x = '+p.x+' appears twice in this line.');
-        else if(c.hasTime===true&&last!==null&&p.x<=last)F.push(m+': x values must increase from point to point (time order).');
-        xs.push(p.x);last=p.x;
-      }
-      if(!(p.y===null||chFin(p.y)))F.push(m+': "y" must be a number, or null for a gap.');
-    });
-  });
-  if(!F.length&&c.series.length>1&&!chSameX(c))W.push('The lines do not all have the same x values, so comparisons between lines (highest line, ranking) are not shown.');
-  return out();
-}
-// 'up' | 'down' | 'flat' | 'mixed' | 'insufficient'. One point = 'flat' (no change can be seen). A gap (y null) = 'insufficient': no trend across a missing value.
-function chTrend(points){
-  if(!isArr(points)||!points.length)return 'insufficient';
-  var ys=[];
-  for(var i=0;i<points.length;i++){var p=points[i];if(!chIsObj(p)||!chFin(p.x)||!chFin(p.y))return 'insufficient';ys.push(p.y)}
-  var up=0,dn=0;for(var k=1;k<ys.length;k++){if(ys[k]>ys[k-1])up++;else if(ys[k]<ys[k-1])dn++}
-  if(up&&dn)return 'mixed';if(up)return 'up';if(dn)return 'down';return 'flat';
-}
-// ranking at x -> {order:[ids, highest first], tiedGroups:[[ids with the same y]…] (only real ties, highest first)}; null if any line has no value at x
-function chRankAt(c,x){
-  if(!chIsObj(c)||!isArr(c.series)||!c.series.length||!chFin(x))return null;
-  var L=[];for(var i=0;i<c.series.length;i++){var s=c.series[i],y=chY(s,x);if(!chIsObj(s)||typeof s.id!=='string'||!chFin(y))return null;L.push({id:s.id,y:y,i:i})}
-  L.sort(function(a,b){return b.y-a.y||a.i-b.i});
-  var G=[];L.forEach(function(r){var g=G[G.length-1];if(g&&g.y===r.y)g.ids.push(r.id);else G.push({y:r.y,ids:[r.id]})});
-  return {order:L.map(function(r){return r.id}),tiedGroups:G.filter(function(g){return g.ids.length>1}).map(function(g){return g.ids})};
-}
-// {result: seriesId|null, reason}: one line strictly highest at EVERY observed x, or why not
-function chHighestThroughout(c){
-  if(!chIsObj(c)||!isArr(c.series)||!c.series.length)return {result:null,reason:'insufficient_data'};
-  if(!chSameX(c))return {result:null,reason:'mismatched_x_sets'};
-  var xs=chXs(c.series[0]),R=[];if(!xs.length)return {result:null,reason:'insufficient_data'};
-  for(var i=0;i<xs.length;i++){var r=chRankAt(c,xs[i]);if(!r)return {result:null,reason:'insufficient_data'};R.push(r)}
-  for(i=0;i<R.length;i++){var g=R[i].tiedGroups[0];if(g&&g.indexOf(R[i].order[0])>=0)return {result:null,reason:'tied_leader'}}
-  var lead=R[0].order[0];for(i=1;i<R.length;i++)if(R[i].order[0]!==lead)return {result:null,reason:'no_consistent_leader'};
-  return {result:lead,reason:'observed_at_all_points'};
-}
-// true / false when both lines have a value at x; null when a line is unknown or a value is missing
-function chEqualAt(c,a,b,x){var A=chSeries(c,a),B=chSeries(c,b);if(!A||!B||!chFin(x))return null;var ya=chY(A,x),yb=chY(B,x);if(!chFin(ya)||!chFin(yb))return null;return ya===yb}
-// endpoint rank change of A vs B between xFrom and xTo. Says only whether the order at the two ends differs; never which year the lines crossed.
-function chRankChange(c,a,b,xFrom,xTo){
-  if(typeof a!=='string'||typeof b!=='string')return {status:'invalid_input',why:'Both line ids must be text.'};
-  if(a===b)return {status:'invalid_input',why:'Choose two different lines.'};
-  var A=chSeries(c,a),B=chSeries(c,b);
-  if(!A||!B)return {status:'invalid_input',why:'Unknown line id: '+(!A?a:b)+'.'};
-  if(!chFin(xFrom)||!chFin(xTo))return {status:'invalid_input',why:'Both x values must be numbers.'};
-  if(c.hasTime===true&&xFrom>=xTo)return {status:'invalid_input',why:'The start must come before the end.'};
-  if(!chSameXs(chXs(A),chXs(B)))return {status:'insufficient'};
-  var a0=chY(A,xFrom),b0=chY(B,xFrom),a1=chY(A,xTo),b1=chY(B,xTo);
-  if(!chFin(a0)||!chFin(b0)||!chFin(a1)||!chFin(b1))return {status:'insufficient'};
-  if(a0===b0)return {status:'equal_at_endpoint',at:xFrom};
-  if(a1===b1)return {status:'equal_at_endpoint',at:xTo};
-  return {status:(a0>b0)!==(a1>b1)?'detected':'not_detected'};
-}
-// verified facts + safe sample Overview sentences (plain text; escape when shown). Never a guessed claim.
-function t1OverviewSamples(c){
-  var v=chValidate(c),facts=[],samples=[];
-  if(!v.ok)return {facts:facts,samples:samples,note:'There is not enough verified data to suggest a sample. Look at the chart and decide for yourself.'};
-  var S=c.series,TV={up:'rose',down:'fell',flat:'stayed the same',mixed:'went up and down'},tr=S.map(function(s){return chTrend(s.points)}),allOk=tr.every(function(t){return t!=='insufficient'});
-  S.forEach(function(s,i){var ys=s.points.map(function(p){return p.y});
-    facts.push(s.label+': '+(tr[i]==='insufficient'?'no overall trend (a value is missing)':TV[tr[i]]+(ys.length>1?' ('+ys[0]+' → '+ys[ys.length-1]+')':'')))});
-  var hi=S.length>1?chHighestThroughout(c):{result:null,reason:'single_series'};
-  if(hi.reason==='observed_at_all_points')facts.push(chSeries(c,hi.result).label+' was the highest at every point shown.');
-  else if(hi.reason==='tied_leader')facts.push('At least once, two lines share the highest value, so no single line is highest throughout.');
-  else if(hi.reason==='no_consistent_leader')facts.push('The highest line changes during the period.');
-  else if(hi.reason==='mismatched_x_sets')facts.push('The lines do not share the same points, so they are not compared.');
-  if(c.hasTime===true&&allOk){
-    var join=function(L){return L.length<2?L[0]:L.slice(0,-1).join(', ')+' and '+L[L.length-1]},by={};
-    S.forEach(function(s,i){(by[tr[i]]=by[tr[i]]||[]).push(s.label)});
-    var parts=['up','down','flat','mixed'].filter(function(k){return by[k]}).map(function(k){return join(by[k])+' '+TV[k]});
-    var xs=chSameX(c)?chXs(S[0]):null,span=xs&&xs.length>1?' between '+xs[0]+' and '+xs[xs.length-1]:' over the period';
-    samples.push('Overall, '+(parts.length===1?parts[0]:parts.slice(0,-1).join(', ')+', while '+parts[parts.length-1])+span+'.');
-  }
-  if(hi.reason==='observed_at_all_points')samples.push(chSeries(c,hi.result).label+' had the highest figures throughout the period.');
-  return {facts:facts,samples:samples,note:samples.length?'':'There is not enough verified data to suggest a sample. Look at the chart and decide for yourself.'};
-}
+/* ---------- Writing Task 1: line charts ----------
+   The analysis (chValidate, chTrend, chRankAt, chHighestThroughout, chGetVerifiedFacts …) lives in md-chart.js (shared with
+   Learning Materials and the Node tests). Below: the SVG renderer and the Writing helpers only. */
 // ---- line chart renderer (SVG + legend + data table). Only numbers computed here go into SVG attributes;
 // every text (title, unit, labels, x values) goes through esc() into text nodes or quoted attributes. Styles are CSS classes (--ch0…3).
 var CH_DASH=['','7 4','2 4','11 4 2 4'],CH_UID=0;
@@ -2455,7 +2523,9 @@ function t1PanelHTML(ex){
     '<h4>Sample overview</h4>'+(o.samples.length?o.samples.map(function(s){return '<p class="t1s">'+esc(s)+'</p>'}).join(''):'<p class="t1none">'+esc(o.note)+'</p>')+
     '<p class="t1tip">An overview gives the main trends and the biggest differences, without details or numbers.</p></aside>';
 }
-var t1On=function(ex){return !!(ex&&ex.writingModule==='t1-overview'&&ex.chart&&chValidate(ex.chart).ok)};
+// The old Unit 2 teaching panel inside Cambridge exam Writing is switched off (Learning Materials spec A5.1): the chart itself,
+// writingModule in saved data and every submission keep working; only the 'Facts checked / Sample overview' panel is gone.
+var t1On=function(){return false};
 function chOf(d){if(d&&d.chart&&typeof d.chart==='object')return d.chart;if(!d||!d.chartJson)return null;try{return JSON.parse(d.chartJson)}catch(e){return null}}
 // example for Create › Writing ("Fill in a line-chart example") and the demo exercise w2
 var CH_EXAMPLE={title:'Task 1: international visitors',skill:'writing',minWords:150,writingModule:'t1-overview',
@@ -4073,7 +4143,8 @@ document.addEventListener('click',function(e){
   if(a==='sb-toggle'){sbSet(!SB.open,true,true);return}
   if(a==='sb-close'){sbSet(false,true);return}
   if((a==='tab'||a==='nav'||a==='next'||a==='lx'||a==='daily')&&recUnsaved()&&!confirm(REC_LEAVE))return;
-  if(extAct(a,t))return;
+  // an error inside a handler must never look like "the button does nothing": show it, keep it in the Console
+  try{if(extAct(a,t))return}catch(err){actFail(a,err);return}
   if(a==='tab'){if(SB.open&&!sbWide())sbSet(false,!!t.closest('#sideNav'));NAV.daily=null;DY=null;if(CV&&CV.where==='daily')CV=null;return showTab(t.dataset.tab)}
   if(a==='nav'){XED=null;var nb=t.dataset.book||null,nt=t.dataset.test||null,ns=t.dataset.skill||null,ne=t.dataset.ex||null;LIBX={book:nb,test:nt,skill:ns};NAV={book:ne?nb:null,test:ne?nt:null,skill:ne?ns:null,ex:ne};PANE='q';return showTab('library')}
   if(a==='next'){NAV.ex=t.dataset.ex;PANE='q';renderLib();window.scrollTo&&window.scrollTo(0,0);return}
@@ -4992,23 +5063,30 @@ function dyAct(a,t){
 }
 
 /* ---------- Leaderboard ---------- */
-// Spotlight: #1 = hero, #2 #3 = two cards (ribbon, no number), from #4 = rows with a bar (value / value of #1).
-// Order: value, then who reached it first (xpAt / streakAt, set by gainXP / markDaily / rollStreak / spins / season reset), then name A–Z.
+// Spotlight (leaderboard-spec v2 + prototype): #1 = hero, #2 #3 = two cards (ribbon, no number), every other student = a row with a bar.
+// Order: value, then who reached it first (xpAt / streakAt; a value of 0 counts from account creation, roster.ts), then name A–Z.
 var RK='all',RKM=(function(){try{return lsGet('md-rkm')==='streak'?'streak':'xp'}catch(e){return 'xp'}})(); // RKM: 'xp' | 'streak'
 var LB_PAL=['#f7d84a','#a9c8f5','#f2a6c4','#a8e0c1','#c9b3f0','#f5b98a'],LB_RING=['#b9a6f5','#5fbf6a','#4f7cf0','#9b5cf0','#e0a030','#d9474b'];
-function lbHash(t){var h=0;t=String(t||'');for(var k=0;k<t.length;k++)h=(h*31+t.charCodeAt(k))%100003;return h}
-// photo or initials on a colour picked from the name; ring in the rank colour (about 3% of the size, at least 3px); an uploaded rank frame replaces the ring
-function lbAvHTML(email,size){
-  var p=profFor(email),nm=nameOf(email),lv=lvOf(+p.xp||0).i,url=safeImg(p.avatar),fr=safeImg(imgMap()['frame'+lv]),fc=frCfg(lv),w=Math.max(3,Math.round(size*.03));
-  return '<span class="avw lbav" style="--s:'+size+'px"><span class="av2" style="background:'+LB_PAL[lbHash(nm)%6]+';color:#2a2330;font-weight:800">'+(url?'<img src="'+esc(url)+'" alt="">':esc(initials(nm||'?')))+'</span>'+
+function lbHash(t){var h=0;t=String(t||'');for(var k=0;k<t.length;k++)h+=t.charCodeAt(k);return h}
+// first letter of the first two words, upper case (leaderboard only)
+function lbIni(n){return String(n||'?').split(/\s+/).filter(Boolean).slice(0,2).map(function(w){return w.charAt(0)}).join('').toUpperCase()||'?'}
+// photo or initials on a colour picked from the name; ring in the rank colour; an uploaded rank frame replaces the ring.
+// badge = the box the avatar sits in: hero 200, cards 110 (avatar = 50 % of it, ring max(3px, 3 % of the badge)); badge 0 = a plain 36px row avatar, 3px ring
+function lbAvHTML(email,badge){
+  var p=profFor(email),nm=nameOf(email),lv=lvOf(+p.xp||0).i,url=safeImg(p.avatar),fr=safeImg(imgMap()['frame'+lv]),fc=frCfg(lv);
+  var d=badge?Math.round(badge*.5):36,w=badge?Math.max(3,Math.round(badge*.03)):3;
+  var av='<span class="avw lbav" style="--s:'+d+'px"><span class="av2" style="background:'+LB_PAL[lbHash(nm)%6]+'">'+(url?'<img src="'+esc(url)+'" alt="">':esc(lbIni(nm)))+'</span>'+
     (fr?'<img class="avfi" src="'+esc(fr)+'" alt="" style="width:'+fc.s+'%;height:'+fc.s+'%;left:calc(50% + '+fc.x+'%);top:calc(50% + '+fc.y+'%)">':'<span class="avf" style="border-color:'+LB_RING[lv]+';border-width:'+w+'px;inset:-'+w+'px"></span>')+'</span>';
+  return badge?'<div class="lbbadge" style="width:'+badge+'px;height:'+Math.round(d+badge*.14)+'px;padding-top:'+Math.round(badge*.1)+'px">'+av+'</div>':av;
 }
 function lbNum(x){return RKM==='streak'?x.st:x.xp}
 function lbVal(x){return '<b>'+lbNum(x)+'</b> '+(RKM==='streak'?(x.st===1?'day':'days'):'XP')}
 function lbName(x,me){return esc(nameOf(x.s.email))+(me?' (you)':'')}
 function lbList(){
-  var nm=function(x){return String(nameOf(x.s.email)||'').toLowerCase()},at=function(v){v=+v;return v>0?v:Infinity};
-  return students().filter(function(s){return RK==='all'||s.cls===U.cls}).map(function(s){var p=profFor(s.email);return {s:s,xp:+p.xp||0,st:+p.streak||0,xa:at(p.xpAt),sa:at(p.streakAt)}})
+  var nm=function(x){return String(nameOf(x.s.email)||'').toLowerCase()};
+  // when the current value was reached; 0 = since the account was created; unknown = after everyone with a time
+  var at=function(t,v,s){t=+t;if(t>0)return t;if(!v&&+s.ts>0)return +s.ts;return Infinity};
+  return students().filter(function(s){return RK==='all'||s.cls===U.cls}).map(function(s){var p=profFor(s.email),xp=+p.xp||0,st=+p.streak||0;return {s:s,xp:xp,st:st,xa:at(p.xpAt,xp,s),sa:at(p.streakAt,st,s)}})
     .sort(function(a,b){var d=RKM==='streak'?b.st-a.st||(a.sa===b.sa?0:a.sa<b.sa?-1:1):b.xp-a.xp||(a.xa===b.xa?0:a.xa<b.xa?-1:1);if(d)return d;var x=nm(a),y=nm(b);return x<y?-1:x>y?1:0});
 }
 function renderRanks(){
@@ -5016,23 +5094,22 @@ function renderRanks(){
   var A=lbList(),me=-1;A.forEach(function(x,i){if(x.s.email===U.email)me=i});
   var tab=function(v,l){return '<button role="tab" data-act="rk-set" data-v="'+v+'" aria-selected="'+(RK===v)+'">'+l+'</button>'};
   var seg=function(v,l){return '<button type="button" data-act="rk-mode" data-v="'+v+'" aria-pressed="'+(RKM===v)+'">'+l+'</button>'};
-  var h='<div class="pad lb"><div class="sechead"><h2>Leaderboard</h2><span class="meta">Ranked by '+(RKM==='streak'?'streak':'XP')+'</span></div>'+
+  var h='<div class="pad"><div class="lb"><div class="lbtop"><h2>Leaderboard</h2><span class="lbby">Ranked by '+(RKM==='streak'?'streak':'XP')+'</span></div>'+
     '<div class="rkbar"><div class="subtabs" role="tablist">'+tab('class','My class')+tab('all','Everyone')+'</div><div class="seg lbseg" role="group" aria-label="Rank by">'+seg('xp','XP')+seg('streak','Streak')+'</div></div>';
-  if(!A.length){el.innerHTML=h+'<div class="lbempty"><b>No one on the leaderboard yet.</b><span>Finish an exercise or a daily task to be the first.</span></div></div>';return}
-  var top=lbNum(A[0]),x0=A[0],m0=me===0;
-  h+='<section class="lbhero'+(m0?' me':'')+'" aria-label="1st place"><span class="lbshoot s1" aria-hidden="true"></span><span class="lbshoot s2" aria-hidden="true"></span><span class="lbglow" aria-hidden="true"></span>'+
-    '<div class="lbhav">'+lbAvHTML(x0.s.email,200)+'</div><div class="lbht"><span class="lbchip">Champion</span><b class="lbhn">'+lbName(x0,m0)+'</b><span class="lbhv">'+lbVal(x0)+'</span>'+
-    '<span class="lbhl">'+esc(lvOf(x0.xp).name)+' · Top of the leaderboard</span></div></section>';
+  if(!A.length){el.innerHTML=h+'<div class="lbempty"><b>No one on the leaderboard yet.</b><span>Finish an exercise or a daily task to be the first.</span></div></div></div>';return}
+  var top=lbNum(A[0]),x0=A[0];
+  h+='<section class="lbhero" aria-label="1st place"><span class="lbshoot" aria-hidden="true"></span><span class="lbshoot s2" aria-hidden="true"></span>'+lbAvHTML(x0.s.email,200)+
+    '<h3 class="lbhn">'+lbName(x0,me===0)+'</h3><div class="lbhv">'+lbNum(x0)+' '+(RKM==='streak'?(x0.st===1?'day':'days'):'XP')+'</div>'+
+    '<small class="lbhl">'+esc(lvOf(x0.xp).name)+' · Top of the leaderboard</small><br><span class="lbchip">Champion</span></section>';
   var card=function(i){var x=A[i];if(!x)return '';var m=i===me;
     return '<div class="lbcard lb'+(i+1)+(m?' me':'')+'"><span class="lbrib" aria-hidden="true"></span><span class="sr">'+(i===1?'2nd':'3rd')+' place</span>'+lbAvHTML(x.s.email,110)+
-      '<b class="lbcn">'+lbName(x,m)+'</b><span class="lbcl">'+esc(lvOf(x.xp).name)+'</span><span class="lbcv">'+lbVal(x)+'</span></div>'};
+      '<b class="lbcn">'+lbName(x,m)+'</b><small class="lbcl">'+esc(lvOf(x.xp).name)+'</small><div class="lbcv">'+lbVal(x)+'</div></div>'};
   if(A.length>1)h+='<div class="lbcards'+(A.length===2?' one':'')+'">'+card(1)+card(2)+'</div>';
   var row=function(x,i){var m=i===me,pc=top>0?Math.round(lbNum(x)/top*100):0;
-    return '<li class="lbrow'+(m?' me':'')+'"><span class="lbn">'+(i+1)+'</span>'+lbAvHTML(x.s.email,36)+'<span class="lbrn"><b>'+lbName(x,m)+'</b><small>'+esc(lvOf(x.xp).name)+'</small></span>'+
+    return '<li class="lbrow'+(m?' me':'')+'"><span class="lbn">'+(i+1)+'</span>'+lbAvHTML(x.s.email,0)+'<span class="lbrn"><b>'+lbName(x,m)+'</b><small>'+esc(lvOf(x.xp).name)+'</small></span>'+
       '<span class="lbbar" aria-hidden="true"><i style="width:'+pc+'%"></i></span><span class="lbrv">'+lbVal(x)+'</span></li>'};
-  var L=A.slice(3,13).map(function(x,j){return row(x,j+3)}).join('');
-  if(me>=13)L+='<li class="lbrow gap" aria-hidden="true">⋯</li>'+row(A[me],me);
-  el.innerHTML=h+(L?'<ol class="lblist" start="4">'+L+'</ol>':'')+'</div>';
+  var L=A.slice(3).map(function(x,j){return row(x,j+3)}).join('');
+  el.innerHTML=h+(L?'<ol class="lblist" start="4">'+L+'</ol>':'')+'</div></div>';
 }
 /* ---------- Prizes: tiers, wheel, inventory, marquee, reminders, teacher setup ---------- */
 var PZ={freeze:{i:'🧊',n:'Streak Freeze',d:'Protects your streak once. Used automatically.'},hint:{i:'💡',n:'Free Hint Pass',d:'Opens a Writing hint without the mini-quiz. Applies automatically once hints are switched on.'},ext:{i:'⏳',n:'1-day Extension',d:'Adds 24 hours to one weekly homework.'},title:{i:'🏷️',n:'Leaderboard title',d:'Shown next to your name.'},ctitle:{i:'✏️',n:'Custom title',d:'Write your own title for the leaderboard.'},peek:{i:'👀',n:'Answer Peek',d:'Shows the correct answers right after one failed submit.'},mat:{i:'📚',n:'Study material',d:'Exclusive file from your teacher.'},pen:{i:'🖍️',n:'Highlighter pen',d:'A small gift from your teacher.'},vip:{i:'⭐',n:'VIP Essay Correction',d:'Detailed correction, down to the comma, for one Writing task.'},tea:{i:'🧋',n:'Bubble tea or coffee voucher',d:'Worth up to 40k VND.'},mock20:{i:'🎤',n:'Mock Speaking 1-on-1 · 20% off',d:'15-minute session discount code.'},mock25:{i:'🎤',n:'Mock Speaking 1-on-1 · 25% off',d:'15-minute session discount code.'},xp:{i:'✨',n:'Bonus XP',d:'+100 XP'},custom:{i:'🎁',n:'Prize',d:'A prize from your teacher.'}};
@@ -5417,11 +5494,17 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
+var APP_VERSION='2026-10-24a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(audAct(a,t))return true;
   if(adAct(a,t))return true;
   if(enAct(a,t))return true;
   if(mkAct(a,t))return true;
+  if(a==='lib-tab'){LIBT=t.dataset.v==='lm'?'lm':'cam';LMV=null;try{lsSet('md-libt',LIBT)}catch(e){}renderLib();return true}
+  if(a==='lm-open'){var lo=lmLesson(t.dataset.id);LMV=lmVisible(lo)?lo.id:null;renderLib();return true}
+  if(a==='lm-back'){LMV=null;renderLib();return true}
+  if(a.indexOf('lu-')===0&&luAct(a,t))return true;
   if(a==='lx'){var lv=t.dataset.l,v=t.dataset.v;
     if(lv==='book')LIBX=LIBX.book===v?{}:{book:v};
     else if(lv==='test')LIBX={book:LIBX.book,test:LIBX.test===v?null:v};
@@ -6641,6 +6724,8 @@ function renderAdmin(){
     (DEMO?'<p class="adm-demo" role="note">Demo: changes are not saved.</p>':'')+
     '<div class="subtabs" role="tablist">'+subs.map(function(s){return '<button type="button" role="tab" data-act="ad-sub" data-v="'+s[0]+'" aria-selected="'+(AD.sub===s[0])+'">'+s[1]+'</button>'}).join('')+'</div>'+
     body+'<p class="msg" id="adMsg" aria-live="polite">'+esc(AD.err)+'</p>'+adModalHTML()+'</div>';
+  // a confirm box that just opened gets the keyboard focus (Cancel for dangerous actions); Esc closes it (keydown listener)
+  if(AD.modal&&!AD.modal.focused){AD.modal.focused=true;var mf=$(AD.modal.danger?'#adModal [data-act="ad-close"]':'#adModal [data-act="ad-ok"]');if(mf&&mf.focus){try{mf.focus({preventScroll:true})}catch(x){mf.focus()}}}
   var rs=$('#v-roster'),ron=TAB==='admin'&&AD.sub==='students';
   if(rs){rs.hidden=!ron;if(ron)renderRoster()}
 }
@@ -6723,7 +6808,7 @@ function adListHTML(){
   if(!AD.users)return '';
   var L=adFiltered();if(!L.length)return '<p class="saved">No one matches.</p>';
   // server version: tells the admin whether the latest functions/ folder is deployed
-  var vr=DEMO?'':AD.ver?' · server '+esc(AD.ver):'',old=!DEMO&&!AD.ver?'<p class="banner" role="note">This site still runs an older server. Push the <b>functions/</b> folder to GitHub and wait for Cloudflare to finish deploying, otherwise Kick and Change password may not work.</p>':'';
+  var vr=' · app '+APP_VERSION+(DEMO?'':AD.ver?' · server '+esc(AD.ver):''),old=!DEMO&&!AD.ver?'<p class="banner" role="note">This site still runs an older server. Push the <b>functions/</b> folder to GitHub and wait for Cloudflare to finish deploying, otherwise Kick and Change password may not work.</p>':'';
   return old+'<p class="saved" style="margin:0 0 8px">'+L.length+' of '+AD.users.length+' accounts'+vr+'</p><div class="scroll adt"><table><thead><tr><th>Name</th><th>Email</th><th>Class</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody>'+L.map(function(u){
     var e=esc(u.email),acts='';
     if(u.role==='admin')acts='<button class="btn sm" type="button" data-act="ad-sub" data-v="me">My account</button>';
@@ -6881,8 +6966,8 @@ function adAct(a,t){
     adBusy(t,true);adSay('');
     adminApi('admin/password',{email:U.email,oldPassword:o,newPassword:n}).then(function(){adBusy(t,false);$('#pwOld').value='';$('#pwNew').value='';$('#pwNew2').value='';toast('Your password was changed.')},function(e){adBusy(t,false);adSay(e.message)});
     return true}
-  if(a==='ad-ok'){var m=AD.modal;if(!m||!m.run)return true;adBusy(t,true,m.busy);var mm=$('#adMMsg');if(mm)mm.textContent='';
-    m.run().then(function(){},function(e){adBusy(t,false);var m2=$('#adMMsg');if(m2)m2.textContent=e.message||'Something went wrong.'});return true}
+  if(a==='ad-ok'){var m=AD.modal;if(!m||!m.run||m.pending)return true;m.pending=true;adBusy(t,true,m.busy);var mm=$('#adMMsg');if(mm)mm.textContent=''; // pending: one request per confirm
+    m.run().then(function(){},function(e){m.pending=false;adBusy(t,false);var m2=$('#adMMsg');if(m2)m2.textContent=e.message||'Something went wrong.'});return true}
   return false;
 }
 

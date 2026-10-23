@@ -366,5 +366,54 @@ Trước khi test: deploy `functions/` mới và dán lại `firestore.rules` (t
 9. [ ] Dark mode và 390px: khối #1 đọc rõ, giá trị 34px, 2 thẻ #2/#3 vẫn nằm cạnh nhau. Bật "Reduce motion" của máy → không còn sao băng.
 10. [ ] Xóa thủ công 2 tài khoản 3667@gmail.com và nghiatucayfai@gmail.com bằng Admin › Users → Kick.
 
+## Learning Materials — PR 1 (10/2026)
+Tự động: `node tests/lm-meta.test.js` → 18/18. Phần dưới đây cần thầy/cô tự xem:
+1. [ ] Học sinh › Home › Library: có 2 tab **Cambridge IELTS** | **Learning Materials**; tab Cambridge (lưới sách, mở Test, làm bài) y như cũ.
+2. [ ] Học sinh/giáo viên chọn Learning Materials → chỉ thấy "Learning Materials are coming soon.", không có Unit 2, không nút nào bấm được.
+3. [ ] Admin chọn Learning Materials → Writing › IELTS Academic Task 1 › "Unit 2: Overview…" có nhãn "Unpublished preview"; mở ra là khung trống, có nút "‹ Learning Materials" quay lại.
+4. [ ] Tải lại trang: tab đang chọn được nhớ. Daily, Homework, Recent results vẫn hiện bình thường.
+5. [ ] 390px và dark mode: 2 tab nằm gọn một hàng, chữ rõ.
+6. [ ] Khi đưa lên site: nhớ tải lên cả file mới `lm-content.js` (thiếu file này tab Learning Materials vẫn chạy, chỉ hiện "coming soon").
+
+## Learning Materials — PR 2 (10/2026)
+Tự động (đã chạy): `node tests/chart-facts.test.js` → 56/56 · `node tests/lm-meta.test.js` → 18/18 · `node tests/lm-check.js` → 37 mục, 0 lỗi, 37 pending · `node tests/lm-check.js --release` → báo lỗi (đúng, vì còn pending).
+Cần thầy/cô tự xem (chưa kiểm trên trình duyệt):
+1. [ ] Mở `tests/lm-review.html` bằng trình duyệt: đọc từng câu tiếng Anh/tiếng Việt, đáp án Controlled, key features; gửi lại danh sách id đồng ý ở cuối trang.
+2. [ ] Create › Writing › "Fill in a line-chart example" → Check and preview: biểu đồ vẫn hiện, **không còn** khung "Facts checked / Sample overview".
+3. [ ] Bài demo Cam 14 · Test 1 · Writing có biểu đồ: biểu đồ hiện, ô viết bài và nộp bài như cũ; modal chấm vẫn thấy biểu đồ.
+4. [ ] Bài Writing có bảng và Task 2 vẫn như cũ. Console không có lỗi `chValidate is not defined`.
+5. [ ] Khi đưa lên site: **bắt buộc** tải lên `md-chart.js` (thiếu là biểu đồ Writing hỏng). Không tải `tests/`.
+
+## Learning Materials — PR 3 (10/2026)
+Tự động (đã chạy): `node tests/lm-unit2-ui.test.js` → 22/22 · `chart-facts` 56/56 · `lm-meta` 18/18 · `lm-check` 0 lỗi, 37 pending.
+Cần thầy/cô tự xem bằng tài khoản **admin** (học sinh chưa thấy bài):
+1. [ ] Library › Learning Materials › Unit 2: có nhãn "37 content items still waiting for review" và 5 bước; bước Review mờ.
+2. [ ] Learn: biểu đồ Museum A/B/C, các đoạn tiếng Anh + tiếng Việt, câu mẫu, key features. Không có chữ "App X/Y/Z".
+3. [ ] Controlled: chọn đáp án → Check answers → mỗi câu báo đúng/sai, đáp án và lý do 2 thứ tiếng; Try again làm lại được.
+4. [ ] Guided: tick đặc điểm, viết vài câu; tải lại trang → chữ vẫn còn ("Draft saved on this device.").
+5. [ ] Independent: biểu đồ App X/Y/Z lần đầu xuất hiện; chưa có câu mẫu; bấm "I'm done" khi ô trống → nhắc viết trước; có chữ → sang Review.
+6. [ ] Review: sửa bài tiếp được, tick key features, thấy câu mẫu của biểu đồ B. Clear draft hỏi xác nhận rồi xóa và quay về Independent.
+7. [ ] 390px + dark mode: nút đáp án xếp dọc dễ bấm, biểu đồ vừa màn hình, chữ tiếng Việt đọc rõ.
+8. [ ] Tài khoản học sinh: Learning Materials vẫn chỉ "coming soon".
+9. [ ] Cambridge Library, Create, nộp bài Writing, AI chấm, modal chấm: như cũ.
+10. [ ] Khi đưa lên site: tải lên `md-chart.js`, `lm-content.js`, `lm-engine.js`, `lm-unit2.js` cùng `index.html`.
+
+## Leaderboard theo prototype v2 (10/2026)
+1. [ ] #1: khối tím căn giữa, avatar tròn ở giữa có quầng vàng phía sau, tên → số XP lớn màu vàng → "Level · Top of the leaderboard" → chip "Champion"; có sao nhấp nháy, vệt sáng từ trên chiếu xuống, 2 sao băng (lần đầu sau 1 giây và 5 giây).
+2. [ ] #2/#3: 2 thẻ cạnh nhau, ruy băng bạc/đồng treo ở mép trên bên trái, không có số hạng.
+3. [ ] Từ #4: mọi bạn đều hiện (không còn "⋯"), thanh tiến độ so với #1, số đậm + "XP"/"days" trên 1 dòng.
+4. [ ] So với file `leaderboard (2).html` mở cạnh nhau: kích thước, bo góc, khoảng cách giống nhau (chế độ sáng và tối, 390px).
+
+## Admin › Users › Kick (10/2026)
+Tự động (đã chạy): `node tests/admin-kick.test.js` → 19/19 (script thật của app, DOM giả, server giả) · `node --check` cho script inline, `functions/api/[[path]].js` và các file .js: đạt.
+Trên site thật (bắt buộc, theo thứ tự):
+1. [ ] Sau khi đưa bản mới lên, mở Admin › Users: dòng đầu phải ghi **"· app 2026-10-24a · server 2026-10-23d"**. Không thấy "app 2026-10-24a" = site vẫn chạy `index.html` cũ → đưa lại file, rồi tải lại trang bằng Ctrl+F5 (điện thoại: xóa dữ liệu trang / mở tab ẩn danh).
+2. [ ] Bấm **Kick** ở dòng 3667@gmail.com → hiện hộp "Kick this student?" có tên + email đúng. Cancel → hộp đóng, không đổi gì. Esc cũng đóng.
+3. [ ] Nếu bấm Kick mà vẫn không có hộp: phải có thông báo "Something went wrong (ad-kick: …)". Chụp lại câu đó gửi cho Claude. Không có cả thông báo → mở Console (F12) và chụp dòng đỏ.
+4. [ ] Bấm lại Kick → **Kick** trong hộp: nút đổi "Kicking…", hộp đóng, dòng biến mất, toast "… was kicked." F5 → không quay lại.
+5. [ ] Làm như vậy với nghiatucayfai@gmail.com (QUANG KHANG). **Không** Kick nghiatucayfai75@gmail.com (Teacher), tester@gmail.com, lorenkids795@gmail.com (Admin).
+6. [ ] Lỗi: hộp vẫn mở và ghi lý do (hết hạn admin key → ô nhập mật khẩu admin; "Deploy the latest version…" = thiếu thư mục functions/).
+7. [ ] Change password, Edit class, Add a tester account, Resume, Teachers, My account vẫn chạy. 390px và máy tính, sáng/tối.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.
