@@ -40,7 +40,7 @@ function boot(opt) {
     location: { reload() {}, hash: '', search: '' }, navigator: { userAgent: 'node' }, confirm: () => true, alert() {}, scrollTo() {}, scrollY: 0, innerWidth: 1280, innerHeight: 800, getComputedStyle: () => ({}),
     MD_CONFIG: { demo: false, teachers: [], api: '/api' }, MD_USER: { name: 'Admin', email: 'lorenkids795@gmail.com', role: 'teacher', adm: true }, claude: { use: () => new Promise(() => {}) } };
   W.window = W;
-  W.confirm = () => (W.asked = (W.asked || 0) + 1, opt.answer !== false); W.alert = (m) => { W.alerted = m; };
+  W.confirm = () => (W.asked = (W.asked || 0) + 1, opt.answer !== false); W.alert = (m) => { W.alerted = m; }; W.prompt = (msg, def) => { W.prompted = (W.prompted || 0) + 1; return 'answer' in opt ? (typeof opt.answer === 'string' ? opt.answer : opt.answer === false ? null : def) : def; };
   // opt.visible: the box has a size and is on top where it is drawn (like a normal screen)
   doc.elementFromPoint = () => (opt.visible ? { inModal: true } : null);
   const md = el('adModal'); md.querySelector = (s) => (s === '.mbox' ? { getBoundingClientRect: () => (opt.visible ? { left: 100, top: 100, width: 400, height: 200 } : { left: 0, top: 0, width: 0, height: 0 }) } : null);
@@ -129,6 +129,27 @@ const kicks = (B) => B.W.calls.filter((c) => /\/api\/admin\/kick$/.test(c.url));
     B.press({ act: 'ad-kick', email: 'nghiatucayfai@gmail.com' }); await B.flush(); assert.ok(/Firestore write failed/.test(B.W.alerted)); assert.ok(B.AD.users.some((x) => x.email === 'nghiatucayfai@gmail.com'));
   });
   await t('leaving Admin closes its confirm box', () => { const B = boot(); B.press({ act: 'ad-kick', email: '3667@gmail.com' }); B.T.showTab('dash'); assert.strictEqual(B.AD.modal, null); assert.ok(!B.modal().includes('adModal')); });
+  // ---- Change password (same robustness as Kick) ----
+  const pws = (B) => B.W.calls.filter((c) => /\/api\/admin\/password$/.test(c.url));
+  await t('Change password: box opens with name/email and a password field', () => { const B = boot(); B.press({ act: 'ad-pw', email: 'nghiatucayfai@gmail.com' }); const v = B.modal(); assert.ok(v.includes('QUANG KHANG (nghiatucayfai@gmail.com)') && v.includes('id="adNewPw"')); });
+  await t('Change password: Save sends one POST /api/admin/password with the typed password', async () => {
+    const B = boot(); B.press({ act: 'ad-pw', email: 'nghiatucayfai@gmail.com' }); B.el('adNewPw').value = '  hello123 '; B.press({ act: 'ad-ok' }); B.press({ act: 'ad-ok' }); await B.flush();
+    const k = pws(B); assert.strictEqual(k.length, 1); assert.deepStrictEqual(JSON.parse(k[0].opt.body), { email: 'nghiatucayfai@gmail.com', newPassword: 'hello123' }); assert.strictEqual(k[0].opt.headers['X-Admin-Key'], 'admin-key-123');
+    assert.strictEqual(B.AD.modal, null); assert.ok(/Password changed for QUANG KHANG/.test(B.toast()));
+  });
+  await t('Change password: under 6 characters = message, nothing sent', async () => { const B = boot(); B.press({ act: 'ad-pw', email: 'nghiatucayfai@gmail.com' }); B.el('adNewPw').value = 'abc'; B.press({ act: 'ad-ok' }); await B.flush(); assert.strictEqual(pws(B).length, 0); assert.ok(/at least 6/.test(B.el('adMMsg').textContent)); assert.ok(B.AD.modal); });
+  await t('Change password: Generate fills the field', () => { const B = boot(); B.press({ act: 'ad-pw', email: 'nghiatucayfai@gmail.com' }); B.press({ act: 'ad-gen', for: 'adNewPw' }); assert.ok(B.el('adNewPw').value.length >= 6); });
+  await t('Change password: server error stays in the box', async () => { const B = boot(); B.W.reply = () => ({ status: 500, body: { error: 'KV write failed.' } }); B.press({ act: 'ad-pw', email: 'nghiatucayfai@gmail.com' }); B.el('adNewPw').value = 'hello123'; B.press({ act: 'ad-ok' }); await B.flush(); assert.ok(B.AD.modal && /KV write failed/.test(B.el('adMMsg').textContent)); });
+  await t('Change password: box visible = no browser prompt', async () => { const B = boot({ check: true, visible: true }); B.press({ act: 'ad-pw', email: 'nghiatucayfai@gmail.com' }); await B.flush(); assert.ok(!B.W.prompted); assert.ok(B.AD.modal); });
+  await t('Change password: box NOT visible = browser prompt (prefilled), password changed, new password shown', async () => {
+    const B = boot({ check: true, visible: false }); B.press({ act: 'ad-pw', email: 'nghiatucayfai@gmail.com' }); await B.flush();
+    assert.strictEqual(B.W.prompted, 1); const k = pws(B); assert.strictEqual(k.length, 1); const sent = JSON.parse(k[0].opt.body);
+    assert.strictEqual(sent.email, 'nghiatucayfai@gmail.com'); assert.ok(sent.newPassword.length >= 6); assert.ok(B.W.alerted.includes(sent.newPassword), 'new password shown to the admin');
+  });
+  await t('Change password: prompt with a typed password', async () => { const B = boot({ check: true, visible: false, answer: ' mypass99 ' }); B.press({ act: 'ad-pw', email: 'nghiatucayfai@gmail.com' }); await B.flush(); assert.strictEqual(JSON.parse(pws(B)[0].opt.body).newPassword, 'mypass99'); });
+  await t('Change password: prompt Cancel = nothing sent', async () => { const B = boot({ check: true, visible: false, answer: false }); B.press({ act: 'ad-pw', email: 'nghiatucayfai@gmail.com' }); await B.flush(); assert.strictEqual(B.W.prompted, 1); assert.strictEqual(pws(B).length, 0); });
+  await t('Change password: prompt with a short password = refused, nothing sent', async () => { const B = boot({ check: true, visible: false, answer: 'abc' }); B.press({ act: 'ad-pw', email: 'nghiatucayfai@gmail.com' }); await B.flush(); assert.strictEqual(pws(B).length, 0); assert.ok(/at least 6/.test(B.W.alerted)); });
+  await t('Change password: prompt + server error = error shown', async () => { const B = boot({ check: true, visible: false }); B.W.reply = () => ({ status: 500, body: { error: 'KV write failed.' } }); B.press({ act: 'ad-pw', email: 'nghiatucayfai@gmail.com' }); await B.flush(); assert.ok(/KV write failed/.test(B.W.alerted)); });
   // regression: the other Users / Admin buttons still open their boxes or send their request
   await t('Change password opens its box', () => { const B = boot(); B.press({ act: 'ad-pw', email: 'nghiatucayfai@gmail.com' }); assert.ok(B.AD.modal && /Change password/.test(B.AD.modal.title)); });
   await t('Edit class opens its box', () => { const B = boot(); B.press({ act: 'ad-cls', email: 'nghiatucayfai@gmail.com' }); assert.ok(B.AD.modal && /Edit class/.test(B.AD.modal.title)); });

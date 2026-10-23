@@ -5495,7 +5495,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-10-24b'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-10-24c'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(audAct(a,t))return true;
@@ -6895,8 +6895,8 @@ function adModalCheck(){var m0=AD.modal;setTimeout(function(){if(!m0||AD.modal!=
   if(ok)return;
   try{console.warn('[admin] the confirm box is not visible on this screen; using the browser dialog')}catch(x){}
   AD.modal=null;renderAdmin();
-  if(!confirm(m0.title+'\n\n'+m0.text))return;
-  m0.pending=true;toast(m0.busy||'Saving…');m0.run().then(function(){},function(e){m0.pending=false;var msg=(e&&e.message)||'Something went wrong.';adSay(msg);alert(msg)});
+  var val;if(m0.ask){val=m0.ask();if(val===null)return}else if(!confirm(m0.title+'\n\n'+m0.text))return; // ask() = boxes with an input (password)
+  m0.pending=true;toast(m0.busy||'Saving…');m0.run(val).then(function(){if(m0.done)m0.done(val)},function(e){m0.pending=false;var msg=(e&&e.message)||'Something went wrong.';adSay(msg);alert(msg)});
 },150)}
 function adAct(a,t){
   if(a.indexOf('ad-')!==0)return false;
@@ -6948,9 +6948,13 @@ function adAct(a,t){
   if(a==='ad-pw'){
     AD.modal={title:'Change password',text:'New password for '+nm+' ('+who+'). Their old password stops working at once. Copy it before you save, then give it to them.',ok:'Save password',
       body:'<div class="form-row" style="padding-block:6px"><label class="field" for="adNewPw">New password<input id="adNewPw" type="text" autocomplete="off" spellcheck="false" placeholder="At least 6 characters"></label><button class="btn sm" type="button" data-act="ad-gen" data-for="adNewPw">Generate</button><button class="btn sm" type="button" data-act="ad-copy" data-for="adNewPw">Copy</button></div>',
-      run:function(){var v=($('#adNewPw').value||'').trim();if(v.length<6)return Promise.reject(new Error('The new password needs at least 6 characters.'));
-        return adminApi('admin/password',{email:who,newPassword:v}).then(function(){return adDone('Password changed for '+nm+'.',adSet(who,{hasPassword:true}))})}};
-    renderAdmin();var pi=$('#adNewPw');if(pi)pi.focus();return true}
+      run:function(val){var v=String(val!=null?val:(($('#adNewPw')||{}).value||'')).trim();if(v.length<6)return Promise.reject(new Error('The new password needs at least 6 characters.'));
+        return adminApi('admin/password',{email:who,newPassword:v}).then(function(){return adDone('Password changed for '+nm+'.',adSet(who,{hasPassword:true}))})},
+      // used only when the box cannot be seen on this screen (adModalCheck): the browser's own prompt, prefilled with a generated password
+      ask:function(){var v=prompt('Change password for '+nm+' ('+who+')\n\nNew password (at least 6 characters). Their old password stops working at once.',genPw());
+        if(v===null)return null;v=v.trim();if(v.length<6){alert('The new password needs at least 6 characters. Nothing was changed.');return null}return v},
+      done:function(v){alert('Password changed for '+nm+' ('+who+').\n\nNew password: '+v+'\n\nCopy it now and give it to them.')}};
+    renderAdmin();var pi=$('#adNewPw');if(pi)pi.focus();adModalCheck();return true}
   if(a==='ad-kick'){
     var tch=u.role==='teacher';
     AD.modal={title:tch?'Kick this teacher?':'Kick this student?',

@@ -405,15 +405,15 @@ Cần thầy/cô tự xem bằng tài khoản **admin** (học sinh chưa thấy
 4. [ ] So với file `leaderboard (2).html` mở cạnh nhau: kích thước, bo góc, khoảng cách giống nhau (chế độ sáng và tối, 390px).
 
 ## Admin › Users › Kick (10/2026)
-Tự động (đã chạy): `node tests/admin-kick.test.js` → 25/25 (script thật của app, DOM giả, server giả) · `node --check` cho script inline, `functions/api/[[path]].js` và các file .js: đạt.
+Tự động (đã chạy): `node tests/admin-kick.test.js` → 36/36 (script thật của app, DOM giả, server giả) · `node --check` cho script inline, `functions/api/[[path]].js` và các file .js: đạt.
 Trên site thật (bắt buộc, theo thứ tự):
-1. [ ] Sau khi đưa bản mới lên, mở Admin › Users: dòng đầu phải ghi **"· app 2026-10-24b · server 2026-10-23d"**. Không thấy "app 2026-10-24b" = site vẫn chạy `index.html` cũ → đưa lại file, rồi tải lại trang bằng Ctrl+F5 (điện thoại: xóa dữ liệu trang / mở tab ẩn danh).
+1. [ ] Sau khi đưa bản mới lên, mở Admin › Users: dòng đầu phải ghi **"· app 2026-10-24c · server 2026-10-23d"**. Không thấy "app 2026-10-24c" = site vẫn chạy `index.html` cũ → đưa lại file, rồi tải lại trang bằng Ctrl+F5 (điện thoại: xóa dữ liệu trang / mở tab ẩn danh).
 2. [ ] Bấm **Kick** ở dòng 3667@gmail.com → hiện hộp "Kick this student?" có tên + email đúng. Cancel → hộp đóng, không đổi gì. Esc cũng đóng.
 3. [ ] Nếu hộp của app không hiện được trên máy này, sau ~0,2 giây trình duyệt tự hỏi bằng hộp của chính nó ("Kick this student?" + OK / Cancel): OK = Kick thật. Nếu không có cả hai: phải có thông báo "Something went wrong (ad-kick: …)". Chụp lại câu đó gửi cho Claude. Không có cả thông báo → mở Console (F12) và chụp dòng đỏ.
 4. [ ] Bấm lại Kick → **Kick** trong hộp: nút đổi "Kicking…", hộp đóng, dòng biến mất, toast "… was kicked." F5 → không quay lại.
 5. [ ] Làm như vậy với nghiatucayfai@gmail.com (QUANG KHANG). **Không** Kick nghiatucayfai75@gmail.com (Teacher), tester@gmail.com, lorenkids795@gmail.com (Admin).
 6. [ ] Lỗi: hộp vẫn mở và ghi lý do (hết hạn admin key → ô nhập mật khẩu admin; "Deploy the latest version…" = thiếu thư mục functions/).
-7. [ ] Change password, Edit class, Add a tester account, Resume, Teachers, My account vẫn chạy. 390px và máy tính, sáng/tối.
+7. [ ] **Change password**: bấm ở một học sinh → hộp có ô mật khẩu (Generate / Copy / Save password), hoặc nếu hộp không hiện được thì trình duyệt hỏi bằng ô nhập có sẵn mật khẩu gợi ý → OK → thông báo hiện mật khẩu mới để chép; đăng nhập học sinh đó bằng mật khẩu mới được. Edit class, Add a tester account, Resume, Teachers, My account vẫn chạy. 390px và máy tính, sáng/tối.
 
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.
