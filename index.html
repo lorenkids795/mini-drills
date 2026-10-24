@@ -124,6 +124,55 @@ html.sb-lock,body.sb-lock{overflow:hidden}
 .linkish{border:0;background:none;padding:0;font-weight:600;color:var(--accent);text-align:left}
 
 .login{max-width:440px;margin:7vh auto 0;display:flex;flex-direction:column;gap:16px}
+/* Sign-in page v2: brand panel (left) + form (right), full viewport; app colours and font, fixed brand colours */
+body.lg{padding:0}
+body.lg .app{max-width:none;padding:0}
+body.lg .top,body.lg .marq,body.lg .note-foot{display:none}
+body.lg .shell{margin-top:0}
+#v-login{position:relative;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.cst{font-size:.72rem;padding:1px 8px;border-radius:99px;border:1px solid var(--line-strong);vertical-align:1px}.cst.pending{background:var(--hl-soft);color:var(--ink)}.cst.archived{background:var(--line);color:var(--muted)}.cst.active{background:var(--good-bg);color:var(--good)}
+.cgh{margin:22px 0 10px;font-size:.98rem}.cgarc{margin-top:22px}.cgarc>summary{cursor:pointer;font-weight:700;margin-bottom:10px}
+.csdanger{border-color:var(--bad)!important}
+.lgtheme{position:absolute;top:calc(16px + env(safe-area-inset-top,0px));right:16px;z-index:2;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+.lgtheme:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.lgsplit{display:grid;grid-template-columns:1.05fr 1fr;min-height:100vh;min-height:100dvh}
+.lgart{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;gap:24px;padding:clamp(28px,5vw,64px);color:#fff;
+  background:radial-gradient(circle at 30% 20%,#7d6bf0,transparent 55%),linear-gradient(135deg,#2b2a8f,#5a35b5)}
+.lgart>*{position:relative;z-index:1}
+.lgart::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.8;animation:lbtw 3s ease-in-out infinite alternate;background:
+  radial-gradient(2px 2px at 12% 30%,#fff,transparent),radial-gradient(2px 2px at 85% 20%,#fff,transparent),radial-gradient(3px 3px at 70% 70%,#ffe28a,transparent),radial-gradient(2px 2px at 25% 80%,#ffe28a,transparent),
+  radial-gradient(2px 2px at 92% 60%,#fff,transparent),radial-gradient(1.5px 1.5px at 6% 14%,#fff,transparent),radial-gradient(2px 2px at 18% 58%,#ffe28a,transparent),radial-gradient(1.5px 1.5px at 40% 12%,#fff,transparent),
+  radial-gradient(2px 2px at 38% 90%,#fff,transparent),radial-gradient(3px 3px at 57% 8%,#ffe28a,transparent),radial-gradient(1.5px 1.5px at 62% 92%,#fff,transparent),radial-gradient(2px 2px at 76% 44%,#ffe28a,transparent),
+  radial-gradient(1.5px 1.5px at 96% 38%,#fff,transparent),radial-gradient(1.5px 1.5px at 8% 76%,#fff,transparent),radial-gradient(2px 2px at 50% 52%,#fff,transparent)}
+.lgart>.lgshoot{position:absolute;top:10%;right:6%;width:110px;height:2px;border-radius:2px;background:linear-gradient(270deg,rgba(255,255,255,0),#fff);box-shadow:0 0 8px 1px rgba(255,255,255,.7);opacity:0;z-index:0;pointer-events:none;transform:rotate(-25deg);animation:shoot 9s linear 1s infinite}
+.lgart>.lgshoot.s2{top:34%;right:40%;width:80px;animation-duration:13s;animation-delay:5s}
+.lglogo{font-weight:800;font-size:36px;letter-spacing:-.02em;line-height:1.2}
+.lglogo b{background:#ffe928;color:#161a2e;padding:0 8px;margin-left:4px;border-radius:4px}
+.lgart h2{margin:0;font-size:clamp(32px,4vw,52px);line-height:1.22;letter-spacing:-.02em;font-weight:800;max-width:12em;color:#fff}
+.lgart h2 mark{background:#ffe928;color:#161a2e;padding:.04em .32em .04em .14em;border-radius:6px;font-style:italic;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+@media (prefers-reduced-motion:reduce){.lgart>.lgshoot{display:none}.lgart::after{animation:none}}
+.lgform{display:flex;align-items:center;justify-content:center;padding:32px 20px}
+.lgform .login{width:100%;max-width:400px;margin:0;gap:0}
+.lgform .login h1{margin:0 0 20px;font-size:34px;font-weight:800;letter-spacing:-.02em}
+.lgform .login form{gap:0}
+.lgform .field{display:block;margin:16px 0 0;font-size:13px;font-weight:700;color:var(--muted);text-transform:none;letter-spacing:0}
+.lgform .field input,.lgform .field select{display:block;width:100%;margin-top:6px;font:inherit;font-size:16px;font-weight:400;padding:14px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);min-height:0}
+.lgform .field select:disabled{opacity:.55}
+.lgform input:focus-visible,.lgform select:focus-visible,.lgform button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.lgbtn{width:100%;margin-top:22px;font:inherit;font-weight:700;font-size:17px;padding:15px;border-radius:10px;border:0;background:var(--accent);color:var(--accent-ink);cursor:pointer}
+.lgbtn:disabled{opacity:var(--dis-op);cursor:default}
+.lgalt{width:100%;margin-top:10px;font:inherit;font-weight:600;font-size:15px;padding:13px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+.lglink{display:block;margin:18px auto 0;font:inherit;font-size:13px;font-weight:500;color:var(--muted);background:none;border:0;text-decoration:underline;cursor:pointer}
+.lglink+.lglink{margin-top:8px}
+.lgform .login .msg{margin-top:14px}
+.lgform .demo-ids{margin-top:22px}
+@media (max-width:820px){
+  .lgsplit{grid-template-columns:1fr;min-height:0}
+  .lgart{gap:18px;padding:calc(24px + env(safe-area-inset-top,0px)) 20px 28px}
+  .lgart h2{font-size:19px;line-height:1.35;font-weight:600;letter-spacing:0;max-width:20em}
+  .lgform .login h1{font-size:28px}
+  .lgtheme{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.14);color:#fff}
+}
 .login h1{font-size:1.7rem;letter-spacing:-.01em}
 .login form{display:flex;flex-direction:column;gap:12px}
 .login .msg{min-height:1.4em;font-size:.88rem;color:var(--bad);font-weight:500;margin:0}
@@ -1414,6 +1463,13 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
   <div class="sbbg" id="sbBg" data-act="sb-close" hidden></div>
   <main class="mainc">
   <section id="v-login">
+    <button class="lgtheme" type="button" data-act="theme" aria-label="Toggle dark mode"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+    <div class="lgsplit">
+    <div class="lgart"><span class="lgshoot" aria-hidden="true"></span><span class="lgshoot s2" aria-hidden="true"></span>
+      <div class="lglogo">Mini<b>Drills</b></div>
+      <h2>A little practice a day keeps <mark>mistakes away</mark></h2>
+    </div>
+    <div class="lgform">
     <div class="login">
       <h1>Sign in</h1>
       <form id="loginForm">
@@ -1426,6 +1482,8 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
         <button class="btn sm" type="button" data-act="demo" data-email="minhanh@demo.vn">Student · Minh Anh</button>
         <button class="btn sm" type="button" data-act="demo" data-email="admin@demo.vn">Admin</button>
       </div>
+    </div>
+    </div>
     </div>
   </section>
 
@@ -1666,8 +1724,15 @@ function hashOf(t){var h=7;for(var i=0;i<t.length;i++)h=(h*31+t.charCodeAt(i))>>
 function classRaw(c){var id=String(c).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');return localClasses[id]||classDocs.filter(function(d){return d.docId===id})[0]||null}
 function classCfg(c){
   var r=classRaw(c)||{},h=hashOf(c),code=''; for(var i=0;i<6;i++){code+='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[(h>>>(i*3))%32]}
-  return {title:r.title||c,color:r.color||PAL[h%PAL.length],cover:r.cover||'',code:r.code||code,removed:r.removed||[]};
+  return {title:r.title||c,color:r.color||PAL[h%PAL.length],cover:r.cover||'',code:r.code||code,removed:r.removed||[],status:r.status||''};
 }
+// Class status: 'archived' = set by the admin; otherwise 'active' as soon as the class has a (non-tester) student,
+// or when the admin set it to active; 'pending' = only in the Google Sheet, nobody registered yet.
+function clsCount(c){return allRoster().filter(function(r){return r.role==='student'&&r.cls===c&&r.tester!==true}).length}
+function clsStatus(c){var st=classCfg(c).status;if(st==='archived')return 'archived';if(clsCount(c)>0||st==='active')return 'active';return 'pending'}
+// classes only in the Google Sheet (admin: AD.sheet from Admin › Google Sheet), not yet in the roster
+function sheetOnlyClasses(){if(!U||!U.adm||!AD.sheet||!AD.sheet.classes)return [];var have=classList();return AD.sheet.classes.map(function(x){return x.cls}).filter(function(c){return c&&have.indexOf(c)<0})}
+function classListAll(){return classList().concat(sheetOnlyClasses())}
 var classTitle=function(c){return classCfg(c).title};
 function removedAll(){var m={};classDocs.concat(Object.keys(localClasses).map(function(k){return localClasses[k]})).forEach(function(d){(d.removed||[]).forEach(function(e){m[e]=1})});return m}
 // roster.tester = shadow tester account (Admin › Users): a normal student for itself, hidden from class lists, Students, Dashboard and Leaderboard of everyone else
@@ -3200,12 +3265,13 @@ function classCard(c,bare){
   var cf=classCfg(c),n=students().filter(function(s){return s.cls===c}).length,cur=currentAsg(c);
   var cc=safeColor(cf.color),cv=safeImg(cf.cover);
   var head='<span class="chead" style="background-color:'+cc+(cv?';background-image:url(&quot;'+esc(cv)+'&quot;)':'')+'"'+(bare?' id="csPrev"':'')+'><span class="covl" style="background:'+cc+';opacity:'+(cv?.62:1)+'"></span><span class="cn">'+esc(cf.title)+'</span></span>';
-  var foot='<span class="cfoot">'+n+' student'+(n===1?'':'s')+'<br>'+(cur?'Active: '+esc(asgName(cur)):'No active assignment')+'</span>';
+  var cst=clsStatus(c),pill=cst==='active'?'':'<span class="pill cst '+cst+'">'+(cst==='pending'?'Pending':'Archived')+'</span> ';
+  var foot='<span class="cfoot">'+pill+n+' student'+(n===1?'':'s')+'<br>'+(cur?'Active: '+esc(asgName(cur)):'No active assignment')+'</span>';
   if(bare)return '<div class="ccard">'+head+foot+'</div>';
   return '<div class="ccard"><button class="cmain" data-act="cls-open" data-cls="'+esc(c)+'" type="button">'+head+foot+'</button><button class="cgear" data-act="cls-set" data-cls="'+esc(c)+'" type="button" aria-label="Class settings">⚙</button></div>';
 }
 function saveClass(c,patch){
-  var cf=classCfg(c),id=slug(c),rec=Object.assign({cls:c,title:cf.title,color:cf.color,cover:cf.cover,code:cf.code,removed:cf.removed},patch);
+  var cf=classCfg(c),id=slug(c),rec=Object.assign({cls:c,title:cf.title,color:cf.color,cover:cf.cover,code:cf.code,removed:cf.removed,status:cf.status},patch);
   localClasses[id]=rec;
   if(dbh)dbh.doc('classes/'+id).set(rec).then(function(){},function(){});
   renderAsg();
@@ -3228,16 +3294,46 @@ function settingsHTML(c){
   '<div class="sec"><h3>Name and color</h3><div class="form-row" style="padding-block:8px"><label class="field" for="csName">Class name<input type="text" id="csName" value="'+esc(cf.title)+'"></label><label class="field" for="csColor">Color<input type="color" id="csColor" value="'+esc(safeColor(cf.color))+'" style="height:40px;padding:2px"></label><button class="btn pri" data-act="cs-save" type="button">Save</button><span class="saved" id="csMsg" aria-live="polite"></span></div></div>'+
   '<div class="sec"><h3>Cover image</h3><div class="actions" style="margin-top:8px"><button class="btn sm" data-act="cs-cover" type="button">Choose image</button>'+(cf.cover?'<button class="btn sm" data-act="cs-covclr" type="button">Remove image</button>':'')+'<input type="file" id="csFile" accept="image/*" hidden></div></div>'+
   '<div class="sec"><h3>Join code and link</h3><p style="margin:8px 0"><span class="code">'+cf.code+'</span></p><div class="actions" style="margin-top:4px"><input class="linkin" readonly value="'+esc(link)+'" aria-label="Join link" style="flex:1;min-width:200px"><button class="btn sm" data-act="cs-copy" data-v="'+esc(link)+'" type="button">Copy link</button></div><p class="saved" style="margin-top:6px">Students who open this link or enter the code join this class. (Demo link; the live site will use your own address.)</p></div>'+
+  (U&&U.adm?'<div class="sec"><h3>Status</h3><div class="form-row" style="padding-block:8px"><label class="field" for="csStatus">Class status<select id="csStatus">'+
+    [['pending','Pending'],['active','Active'],['archived','Archived']].map(function(o){return '<option value="'+o[0]+'"'+((cf.status||'pending')===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></label>'+
+    '<button class="btn sm" data-act="cs-status" type="button">Save status</button><span class="pill cst '+clsStatus(c)+'">Now: '+({active:'Active',pending:'Pending',archived:'Archived'})[clsStatus(c)]+'</span></div>'+
+    '<p class="saved" style="margin:0">Pending = in the Google Sheet but nobody has signed up yet; it turns Active by itself when the first student joins. Archived classes are folded away at the bottom of the class list.</p></div>':'')+
   '<div class="sec"><h3>Students ('+live.length+')</h3><p class="saved" style="margin:4px 0 8px">New students are added automatically when your Google Sheet syncs. Removing a student here hides them from this class.</p>'+
   (live.length?live.map(function(r){return '<div class="srow"><span>'+esc(r.name)+'<small>'+esc(r.email)+'</small></span><button class="btn sm" data-act="cs-rm" data-email="'+esc(r.email)+'" type="button">Remove</button></div>'}).join(''):'<p class="saved">No students in this class.</p>')+
-  (gone.length?'<h4 style="margin:18px 0 4px;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Removed</h4>'+gone.map(function(r){return '<div class="srow"><span>'+esc(r.name)+'<small>'+esc(r.email)+'</small></span><button class="btn sm" data-act="cs-restore" data-email="'+esc(r.email)+'" type="button">Restore</button></div>'}).join(''):'')+'</div></div>';
+  (gone.length?'<h4 style="margin:18px 0 4px;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Removed</h4>'+gone.map(function(r){return '<div class="srow"><span>'+esc(r.name)+'<small>'+esc(r.email)+'</small></span><button class="btn sm" data-act="cs-restore" data-email="'+esc(r.email)+'" type="button">Restore</button></div>'}).join(''):'')+'</div>'+
+  (U&&U.adm?'<div class="sec csdanger"><h3>Delete class</h3><p class="saved" style="margin:4px 0 8px">Kicks every student of this class ('+clsCount(c)+') and deletes ALL their learning data, the class assignments and these settings. Tester accounts are not touched. This cannot be undone. A class still in the Google Sheet comes back as Pending until you remove it from the Sheet.</p>'+
+    '<div class="actions"><button class="btn sm bad" data-act="cs-del" type="button">Delete this class…</button><span class="saved" id="csDelMsg" aria-live="polite"></span></div></div>':'')+'</div>';
+}
+// Delete class: kick the students one by one (one request each, see adminClassDel), then delete the class's assignments + settings
+function clsDelete(c,btn){
+  var title=classTitle(c),L=allRoster().filter(function(r){return r.role==='student'&&r.cls===c&&r.tester!==true}).map(function(r){return r.email});
+  var typed=prompt('Delete the class "'+title+'"?\n\n'+L.length+' student account(s) and ALL their learning data (results, Error Notebook, flashcards, homework, XP, prizes) are deleted for good, with the class assignments.\n\nType DELETE to confirm.','');
+  if(typed===null)return;if(String(typed).trim()!=='DELETE'){toast('Not deleted: type DELETE to confirm.');return}
+  var msg=$('#csDelMsg'),say=function(t){if(msg)msg.textContent=t},i=0,done=0;
+  if(btn)btn.disabled=true;
+  var next=function(){
+    if(i>=L.length){say('Deleting the assignments and settings…');return adminApi('admin/classdel',{cls:c}).then(function(d){
+      if(AD.users)AD.users=AD.users.filter(function(u){return L.indexOf(u.email)<0});
+      delete localClasses[slug(c)];AG.cur=null;AG.sub='list';renderAsg();
+      toast('Class "'+title+'" deleted: '+done+' student(s) kicked, '+(d.assignments||0)+' assignment(s) removed.'+(d.remaining?' '+d.remaining+' account(s) are still in this class (testers).':''));
+    })}
+    var em=L[i++];say('Kicking '+i+' of '+L.length+'…');
+    return adminApi('admin/kick',{email:em}).then(function(){done++;return next()});
+  };
+  next().then(function(){},function(e){if(btn)btn.disabled=false;say('Stopped: '+(e&&e.message||'Something went wrong.')+' '+done+' of '+L.length+' student(s) were kicked. Press again to continue.')});
 }
 function renderAsg(){
   if(AG.form&&AG.form.live&&$('#fSd')){AG.form.sd=$('#fSd').value;AG.form.dd=$('#fDd').value;AG.form.dt=$('#fDt').value;AG.form.nm=$('#fNm').value}
-  var cls=classList(),h='';
+  if(U&&U.adm&&!AD.sheet&&!AD.shErr&&!AD.locked&&!DEMO)adSheetLoad(); // pending classes come from the Sheet
+  var cls=classListAll(),h='';
   if(AG.cur&&cls.indexOf(AG.cur)<0){AG.cur=null;AG.sub='list'}
   if(!AG.cur){
-    h=myClsNote()+(cls.length?'<div class="sechead"><h3 style="font-size:1.15rem">Your classes</h3><span class="meta">Open a class to see its assignments</span></div><div class="cgrid">'+cls.map(function(c){return classCard(c)}).join('')+'</div>':'<p class="saved">No classes yet.'+(U.adm?' Link the Google Sheet in Admin › Google Sheet, or import a list in Admin › Students.':'')+'</p>');
+    var act=cls.filter(function(c){return clsStatus(c)==='active'}),pen=cls.filter(function(c){return clsStatus(c)==='pending'}),arc=cls.filter(function(c){return clsStatus(c)==='archived'});
+    h=myClsNote()+(cls.length?'<div class="sechead"><h3 style="font-size:1.15rem">Your classes</h3><span class="meta">Open a class to see its assignments</span></div>'+
+      (act.length?'<div class="cgrid">'+act.map(function(c){return classCard(c)}).join('')+'</div>':'<p class="saved">No active class.</p>')+
+      (pen.length?'<h4 class="cgh">Pending <span class="muted">· in the Google Sheet, nobody has signed up yet</span></h4><div class="cgrid">'+pen.map(function(c){return classCard(c)}).join('')+'</div>':'')+
+      (arc.length?'<details class="cgarc"><summary>Archived ('+arc.length+')</summary><div class="cgrid">'+arc.map(function(c){return classCard(c)}).join('')+'</div></details>':'')
+      :'<p class="saved">No classes yet.'+(U.adm?' Link the Google Sheet in Admin › Google Sheet, or import a list in Admin › Students.':'')+'</p>');
   }else if(AG.sub==='settings')h=settingsHTML(AG.cur);
   else{
     var c=AG.cur,list=allAsgs().filter(function(a){return a.cls===c}).sort(function(a,b){return b.due-a.due||b.start-a.start});
@@ -4206,8 +4302,8 @@ function showTab(t){
   TAB=t;stopAudio();clearTimer();MK.open=false;recClearAll();
   if(t!=='admin'){AD.modal=null;var amr=document.getElementById('adModalRoot');if(amr)amr.innerHTML=''} // leaving Admin closes its confirm box
   ['login','lib','cards','errors','ranks','wheel','bag','set','prize','xps','dash','asg','mark','roster','create','admin'].forEach(function(n){$('#v-'+n).hidden=true});
-  if(!U){var lv=$('#v-login');lv.hidden=false;if(!DEMO&&lsGet('md-email')&&!window.MD_USER){lv.setAttribute('data-wait','');setTimeout(function(){lv.removeAttribute('data-wait')},10000)}else lv.removeAttribute('data-wait');$('#tabs').hidden=true;$('#who').hidden=true;$('#sbBtn').hidden=true;document.body.classList.remove('nav-on');sbInit();return}
-  $('#v-login').removeAttribute('data-wait');
+  if(!U){var lv=$('#v-login');lv.hidden=false;if(!DEMO&&lsGet('md-email')&&!window.MD_USER){lv.setAttribute('data-wait','');setTimeout(function(){lv.removeAttribute('data-wait')},10000)}else lv.removeAttribute('data-wait');$('#tabs').hidden=true;$('#who').hidden=true;$('#sbBtn').hidden=true;document.body.classList.remove('nav-on');document.body.classList.add('lg');sbInit();return}
+  $('#v-login').removeAttribute('data-wait');document.body.classList.remove('lg');
   if(t!=='library'&&!tabsFor().some(function(x){return x[0]===t})){t=tabsFor()[0][0];TAB=t} // a tab this role does not have
   $('#tabs').hidden=tabsFor().length<2;document.body.classList.toggle('nav-on',!$('#tabs').hidden);$('#sbBtn').hidden=$('#tabs').hidden;sbSet(SB.open);/* keeps the open / closed state */$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28,true)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b>'+(U.adm||U.role==='student'?'':'<span class="rl"> · '+U.role+'</span>');
   $('#tabs').innerHTML=tabsFor().map(function(x){return '<button role="tab" data-act="tab" data-tab="'+x[0]+'" aria-selected="'+(x[0]===t)+'">'+x[1]+'</button>'}).join('');
@@ -4294,6 +4390,8 @@ document.addEventListener('click',function(e){
   if(a==='cs-save'){var nm=$('#csName').value.trim();return saveClass(AG.cur,{title:nm||AG.cur,color:$('#csColor').value})}
   if(a==='cs-cover'){var cf=$('#csFile');if(cf)cf.click();return}
   if(a==='cs-covclr')return saveClass(AG.cur,{cover:''});
+  if(a==='cs-status'){var sv=($('#csStatus')||{}).value;if(['pending','active','archived'].indexOf(sv)<0)return true;saveClass(AG.cur,{status:sv});toast('Status saved.');return true}
+  if(a==='cs-del'){if(U&&U.adm)clsDelete(AG.cur,t);return true}
   if(a==='cs-rm'){var c1=classCfg(AG.cur).removed.slice();c1.push(t.dataset.email);return saveClass(AG.cur,{removed:c1})}
   if(a==='cs-restore'){return saveClass(AG.cur,{removed:classCfg(AG.cur).removed.filter(function(e){return e!==t.dataset.email})})}
   if(a==='cs-copy'){var v=t.dataset.v,ok=function(){var m=$('#csMsg');if(m)m.textContent='Copied.'};try{navigator.clipboard.writeText(v).then(ok,function(){})}catch(x){}return}
@@ -5285,6 +5383,13 @@ var DEFT={freeze:1,hint:1,ext:1,title:1,peek:1,mat:2,pen:3,vip:3,tea:4,mock20:4,
 var localPrizes=null;
 function prizeList(){var d=cfgGet('prizes');if(d&&d.list&&d.list.length)return d.list;return localPrizes||PRIZE0}
 // weight typed in the prize table -> saved (odds recomputed)
+// Prizes: Chance and tier totals follow a weight while it is typed (saved on change); "Custom / Other…" shows its name field
+function pzLive(){var L=prizeList().map(function(x){var el=document.querySelector('[data-pw="'+x.id+'"]'),v=el?parseInt(el.value,10):NaN;return v>0?Object.assign({},x,{weight:Math.min(1000,v)}):x}),OD=prizeOdds(L);
+  var f=function(v){return (Math.round(v*100)/100).toFixed(2).replace(/\.?0+$/,'')+'%'};
+  L.forEach(function(x){var c=document.querySelector('[data-pzc="'+x.id+'"]');if(c)c.textContent=f(OD.odds[x.id]||0)});
+  [1,2,3,4].forEach(function(t){var c=document.querySelector('[data-pzt="'+t+'"]');if(c&&OD.tw[t]!=null)c.textContent='tier '+f(OD.tier[t]||0)+' · total weight '+OD.tw[t]})}
+document.addEventListener('input',function(e){if(e.target&&e.target.dataset&&e.target.dataset.pw)pzLive()});
+document.addEventListener('change',function(e){if(e.target&&e.target.id==='prType'){var cl=$('#prCustomL');if(cl)cl.hidden=e.target.value!=='custom';if(e.target.value==='custom'){var ci=$('#prCustom');if(ci)ci.focus()}}});
 document.addEventListener('change',function(e){var id=e.target&&e.target.dataset&&e.target.dataset.pw;if(!id)return;var v=parseInt(e.target.value,10);if(!(v>0)){toast('Weight must be a whole number from 1.');renderPrize();return}
   savePrizes(prizeList().map(function(x){return x.id===id?Object.assign({},x,{weight:Math.min(1000,v)}):x}))});
 function savePrizes(l){localPrizes=l;if(dbh)dbh.doc('config/prizes').set({list:l}).then(function(){},function(){});renderPrize()}
@@ -5300,7 +5405,7 @@ function wheelItems(){
 function buildPrize(it,p){
   var k=it.kind,t=it.tier;
   if(k==='mat')return {kind:'mat',tier:t,text:it.label,url:it.url||''};
-  if(k==='custom')return {kind:'custom',tier:t,text:it.label,url:it.url||''};
+  if(k==='custom')return {kind:'custom',tier:t,text:it.text||it.label,url:it.url||''};
   if(k==='title'){
     if(it.text)return {kind:'title',tier:t,text:it.text};
     var own=p.inv.filter(function(x){return x.kind==='title'}).map(function(x){return x.text}),fresh=TITLES.filter(function(x){return own.indexOf(x)<0});
@@ -5454,8 +5559,8 @@ function renderPrize(){
   var OD=prizeOdds(P),fmtP=function(v){return (Math.round(v*100)/100).toFixed(2).replace(/\.?0+$/,'')+'%'};
   h+='<div class="sec"><h3>Prize list</h3><p class="sub">The wheel always shows '+WSLOTS+' slices. The server picks the tier (Common 50%, Materials 30%, Teacher perk 15%, Real-life 5%, raised by the pity counters), then a prize inside the tier by its weight. Chances below are for a student with no pity yet.'+(P.length>WSLOTS?' Only the first '+WSLOTS+' prizes fit on the wheel; the others can still be won.':'')+'</p>'+
   '<div class="scroll"><table class="pzt"><thead><tr><th>Prize</th><th>Tier</th><th>Type</th><th>Weight</th><th>Chance</th><th></th></tr></thead><tbody>'+[1,2,3,4].map(function(t){var L=P.filter(function(x){return x.tier===t});if(!L.length)return '';
-    return '<tr class="pzh"><td colspan="6"><span class="tb t'+t+'" style="margin:0">'+TIERNAME[t]+'</span> <span class="muted">tier '+fmtP(OD.tier[t]||0)+' · total weight '+OD.tw[t]+'</span></td></tr>'+L.map(function(x){return '<tr><td>'+esc(x.label)+(x.url?'<small>'+esc(x.url)+'</small>':'')+(x.rnd?'<small>One random file from the study materials</small>':'')+'</td><td>'+TIERNAME[x.tier]+'</td><td>'+esc(PZ[x.kind]?PZ[x.kind].n:x.kind)+'</td><td><input type="number" class="pzw" min="1" max="1000" step="1" data-pw="'+esc(x.id)+'" value="'+pW(x)+'" aria-label="Weight of '+esc(x.label)+'"></td><td class="mono">'+fmtP(OD.odds[x.id]||0)+'</td><td><button class="linkish" data-act="pr-rm" data-id="'+esc(x.id)+'" type="button">Remove</button></td></tr>'}).join('')}).join('')+'</tbody></table></div>'+
-  '<h4 class="tk">Add a prize</h4><div class="form-row" style="padding-block:4px 6px"><label class="field" for="prType">Type<select id="prType">'+Object.keys(DEFT).map(function(k){return '<option value="'+k+'">'+esc(PZ[k].n)+'</option>'}).join('')+'</select></label><label class="field" for="prTier">Tier<select id="prTier">'+[1,2,3,4].map(function(t){return '<option value="'+t+'"'+(t===1?' selected':'')+'>'+TIERNAME[t]+'</option>'}).join('')+'</select></label><label class="field" for="prName">Name on the wheel<input type="text" id="prName" maxlength="40" placeholder="e.g. Cam 15 audio pack"></label><label class="field" for="prLink">Link (materials, optional)<input type="text" id="prLink" placeholder="https://..."></label><label class="field" for="prW">Weight<input type="number" id="prW" min="1" max="1000" step="1" placeholder="e.g. 20" style="max-width:100px"></label><button class="btn pri sm" data-act="pr-add" type="button">Add</button><button class="btn sm" data-act="pr-reset" type="button">Reset to default</button></div>'+
+    return '<tr class="pzh"><td colspan="6"><span class="tb t'+t+'" style="margin:0">'+TIERNAME[t]+'</span> <span class="muted" data-pzt="'+t+'">tier '+fmtP(OD.tier[t]||0)+' · total weight '+OD.tw[t]+'</span></td></tr>'+L.map(function(x){return '<tr><td>'+esc(x.label)+(x.url?'<small>'+esc(x.url)+'</small>':'')+(x.rnd?'<small>One random file from the study materials</small>':'')+'</td><td>'+TIERNAME[x.tier]+'</td><td>'+esc(x.kind==='custom'?'Custom'+(x.text?': '+x.text:''):(PZ[x.kind]?PZ[x.kind].n:x.kind))+'</td><td><input type="number" class="pzw" min="1" max="1000" step="1" data-pw="'+esc(x.id)+'" value="'+pW(x)+'" aria-label="Weight of '+esc(x.label)+'"></td><td class="mono" data-pzc="'+esc(x.id)+'">'+fmtP(OD.odds[x.id]||0)+'</td><td><button class="linkish" data-act="pr-rm" data-id="'+esc(x.id)+'" type="button">Remove</button></td></tr>'}).join('')}).join('')+'</tbody></table></div>'+
+  '<h4 class="tk">Add a prize</h4><div class="form-row" style="padding-block:4px 6px"><label class="field" for="prType">Type<select id="prType">'+Object.keys(DEFT).map(function(k){return '<option value="'+k+'">'+esc(k==='custom'?'Custom / Other…':PZ[k].n)+'</option>'}).join('')+'</select></label><label class="field" for="prCustom" id="prCustomL" hidden>Custom prize<input type="text" id="prCustom" maxlength="60" placeholder="e.g. Mini Drills T-shirt"></label><label class="field" for="prTier">Tier<select id="prTier">'+[1,2,3,4].map(function(t){return '<option value="'+t+'"'+(t===1?' selected':'')+'>'+TIERNAME[t]+'</option>'}).join('')+'</select></label><label class="field" for="prName">Name on the wheel<input type="text" id="prName" maxlength="40" placeholder="e.g. Cam 15 audio pack"></label><label class="field" for="prLink">Link (materials, optional)<input type="text" id="prLink" placeholder="https://..."></label><label class="field" for="prW">Weight<input type="number" id="prW" min="1" max="1000" step="1" placeholder="e.g. 20" style="max-width:100px"></label><button class="btn pri sm" data-act="pr-add" type="button">Add</button><button class="btn sm" data-act="pr-reset" type="button">Reset to default</button></div>'+
   '<h4 class="tk">Add many study materials from CSV</h4><textarea class="csv" id="prMat" spellcheck="false" aria-label="Materials CSV" placeholder="Title,https://link" style="min-height:70px"></textarea><div class="actions"><button class="btn sm" data-act="pr-mat" type="button">Add materials</button><span class="saved">On the live site this reads your published Google Sheet automatically.</span></div></div>';
   h+='<div class="sec"><h3>Codes and vouchers</h3><p class="sub">Each win hands out one unused code of its kind. Keep vouchers within 40k VND.</p><div class="form-row" style="padding-block:4px 10px"><label class="field" for="prKind">Kind<select id="prKind"><option value="tea">Bubble tea / coffee voucher</option><option value="mock20">Mock Speaking 20% off</option><option value="mock25">Mock Speaking 25% off</option></select></label><label class="field" for="prCode">Code<input type="text" id="prCode" placeholder="e.g. TEA-1234"></label><button class="btn pri sm" data-act="pr-code" type="button">Add code</button></div>'+
   '<div class="scroll"><table><thead><tr><th>Kind</th><th>Code</th><th>Status</th></tr></thead><tbody>'+C.map(function(c){return '<tr><td>'+esc(PZ[c.kind].n)+'</td><td class="mono">'+esc(c.code)+'</td><td>'+(c.to?'<span class="pill ok">Won by '+esc(nameOf(c.to))+'</span>':'<span class="pill">Available</span>')+'</td></tr>'}).join('')+'</tbody></table></div></div>';
@@ -5490,7 +5595,7 @@ function imgPickHTML(kind,inner,label,cls){
 function rfAdjHTML(){
   var c=frCfg(RFV),row=function(k,lab,unit){var L=FR_LIM[k];return '<div class="rfrow"><label for="rf_'+k+'">'+lab+'</label><input type="range" id="rf_'+k+'" data-fr="'+k+'" min="'+L[0]+'" max="'+L[1]+'" step="1" value="'+c[k]+'"><input type="number" data-fr="'+k+'" min="'+L[0]+'" max="'+L[1]+'" step="1" value="'+c[k]+'" aria-label="'+lab+' ('+unit+')"><small>'+unit+'</small></div>'};
   return '<div class="rfadj" role="group" aria-label="Frame fit">'+row('s','Scale','%')+row('x','Offset X','%')+row('y','Offset Y','%')+
-    '<div class="actions" style="margin:6px 0 0"><button class="btn pri sm" type="button" data-act="rf-save">Save frame settings</button><button class="btn sm" type="button" data-act="rf-reset">Reset</button><span class="saved" id="rfMsg" aria-live="polite">'+(FRD[RFV]?'Not saved yet.':'')+'</span></div></div>';
+    '<div class="actions" style="margin:6px 0 0"><button class="btn pri sm" type="button" data-act="rf-save">Save frame settings</button><button class="btn sm" type="button" data-act="rf-reset">Reset</button>'+(imgMap()['frame'+RFV]?'<button class="btn sm bad" type="button" data-act="rf-del">Remove frame</button>':'')+'<span class="saved" id="rfMsg" aria-live="polite">'+(FRD[RFV]?'Not saved yet.':'')+'</span></div></div>';
 }
 function rfSave(){
   var d=cfgGet('frames'),m=Object.assign({},localFrames||(d&&d.map)||{});
@@ -5604,7 +5709,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-10-24c'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-10-24d'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(audAct(a,t))return true;
@@ -5633,6 +5738,8 @@ function extAct(a,t){
     customDocs=customDocs.filter(function(x){return x!==r});localCustom=localCustom.filter(function(x){return x!==r});rebuildCustom();toast('Exercise deleted.');renderLib();return true}
   if(a==='demo-fill'){demoFill(t.dataset.m,t.dataset.k);return true}
   if(a==='rf-save'){rfSave();return true}
+  if(a==='rf-del'){var fk='frame'+RFV,fm=imgMap();if(!fm[fk])return true;if(!confirm('Remove the '+(LV[RFV]?LV[RFV][0]:'')+' frame? Avatars of this rank go back to the coloured ring.'))return true;
+    localImg[fk]='';fm[fk]='';if(dbh)dbh.doc('config/images').set({map:fm}).then(function(){},function(){});toast('Frame removed.');renderPrize();return true}
   if(a==='rf-reset'){var L0={};Object.keys(FR_LIM).forEach(function(k){L0[k]=FR_LIM[k][2]});FRD[RFV]=L0;var rp0=$('#rfPrev');if(rp0)rp0.outerHTML=rfPreviewHTML();return true}
   if(a==='img-pick'){var fi=document.getElementById(t.dataset.for);if(fi)fi.click();return true}
   if(a==='rf-lv'){RFV=+t.dataset.i||0;var rfb=$('#rfPrev');if(rfb)rfb.outerHTML=rfPreviewHTML();var rfk=$('#rfPrev [data-act="rf-lv"][data-i="'+RFV+'"]');if(rfk){try{rfk.focus({preventScroll:true})}catch(x){}}return true}
@@ -5673,11 +5780,13 @@ function extAct(a,t){
     if(add.length)savePrizes(prizeList().concat(add));return true;
   }
   if(a==='pr-add'){
-    var kind=$('#prType').value,tier=+$('#prTier').value,lb=($('#prName').value||'').trim(),url=($('#prLink').value||'').trim();
-    if((kind==='mat'||kind==='custom')&&!lb){toast('Give it a name.');return true}
+    var kind=$('#prType').value,tier=+$('#prTier').value,lb=($('#prName').value||'').trim(),url=($('#prLink').value||'').trim(),cu=(($('#prCustom')||{}).value||'').trim();
+    if(kind==='custom'&&!cu){toast('Write the name of the custom prize.');return true}
+    if(kind==='custom'&&!lb)lb=cu.slice(0,40);
+    if(kind==='mat'&&!lb){toast('Give it a name.');return true}
     if(url&&!/^https?:\/\//.test(url)){toast('The link must start with http.');return true}
     var wv=parseInt(($('#prW')||{}).value,10),it0={id:'p'+Date.now(),kind:kind,tier:tier,label:lb||SHORT[kind]||(PZ[kind]?PZ[kind].n:'Prize'),weight:wv>0?Math.min(1000,wv):(DEF_W[kind]||20)};
-    if(kind==='title'&&lb)it0.text=lb;if(url)it0.url=url;
+    if(kind==='title'&&lb)it0.text=lb;if(kind==='custom')it0.text=cu;if(url)it0.url=url;
     savePrizes(prizeList().concat([it0]));return true;
   }
   if(a==='pr-rm'){var L0=prizeList();if(L0.length<=3){toast('Keep at least 3 prizes on the wheel.');return true}savePrizes(L0.filter(function(x){return x.id!==t.dataset.id}));return true}
@@ -6677,6 +6786,9 @@ function genPw(){var r=new Uint32Array(3);try{crypto.getRandomValues(r)}catch(e)
 
 // Demo: same answers as the server, on local data that is lost on reload.
 var DEMO_ADM={off:{},staff:{},sheet:''};
+// demo Kick: drop the student's learning data from the local sample arrays (the server does the same in purgeStudent)
+function demoPurge(em){var drop=function(A){if(!A)return;for(var i=A.length-1;i>=0;i--)if(A[i]&&A[i].email===em)A.splice(i,1)};
+  [sampleData,localAttempts,localErr,sampleErr,localCards,sampleCards,localHwdone,localPass,samplePass,localRed].forEach(drop);delete localProf[em];delete sampleProf[em]}
 function demoSheetSum(url){
   var rows=[['Minh Anh','7h30'],['Quoc Bao','7h30'],['Nguyen Mai Trang','7h30'],['Hoang Nam','15h'],['Tran Gia Huy','15h'],['Le Khanh Nam','17h'],['Pham Bao Tran','17h']].map(function(r,i){return {id:'d'+i,name:r[0],cls:r[1],course:'Grade 11',teacher:'Cô Nhi'}});
   var by={},classes=[];
@@ -6726,10 +6838,12 @@ function demoAdminRun(path,b){
   if(path==='admin/kick'){
     if(em==='admin@demo.vn')err('The admin account cannot be kicked.');
     var ki=-1;DEMO_ROSTER.forEach(function(r,i){if(r.email===em&&r.role==='student')ki=i});
-    if(ki>=0){DEMO_ROSTER.splice(ki,1);return {ok:true,role:'student'}}
+    if(ki>=0){DEMO_ROSTER.splice(ki,1);demoPurge(em);return {ok:true,role:'student'}}
     if(DEMO_ADM.staff[em]){delete DEMO_ADM.staff[em];DEMO_ADM.off[em]='kicked';return {ok:true,role:'teacher'}}
     if(em==='teacher@demo.vn'){DEMO_ADM.off[em]='kicked';return {ok:true,role:'teacher',envTeacher:true}}
     err('This account was not found. Reload the list.')}
+  if(path==='admin/classdel'){var cc=String(b.cls||''),cid=slug(cc);var asg0=localAsg.length;for(var ai=localAsg.length-1;ai>=0;ai--)if(localAsg[ai].cls===cc)localAsg.splice(ai,1);delete localClasses[cid];
+    return {ok:true,cls:cc,assignments:asg0-localAsg.length,names:0,settings:1,remaining:DEMO_ROSTER.filter(function(r){return r.role==='student'&&r.cls===cc}).length}}
   if(path==='admin/active'){
     if(em==='admin@demo.vn')err('The admin account cannot be paused.');if(!find(em))err('This email is not a student or teacher in the app.');
     if(b.active===false)DEMO_ADM.off[em]=1;else delete DEMO_ADM.off[em];return {ok:true}}
@@ -6852,7 +6966,7 @@ function adWhen(ts){if(!ts)return '—';var d=new Date(ts);return pad(d.getHours
 var adShBusy=false;
 function adSheetLoad(){
   if(adShBusy)return;adShBusy=true;
-  adminApi('admin/sheet',{op:'get'}).then(function(d){AD.sheet=d;AD.shErr=''},function(e){if(!AD.locked)AD.shErr=e.message||'Something went wrong.'}).then(function(){adShBusy=false;if(TAB==='admin')renderAdmin()});
+  adminApi('admin/sheet',{op:'get'}).then(function(d){AD.sheet=d;AD.shErr=''},function(e){if(!AD.locked)AD.shErr=e.message||'Something went wrong.'}).then(function(){adShBusy=false;if(TAB==='admin')renderAdmin();else if(TAB==='asg'&&!AG.cur)renderAsg()});
 }
 function adSheetHTML(){
   var s=AD.sheet,op=AD.shOpen||{};
@@ -7068,10 +7182,10 @@ function adAct(a,t){
     var tch=u.role==='teacher';
     AD.modal={title:tch?'Kick this teacher?':'Kick this student?',
       text:tch?'The teacher account of '+nm+' ('+who+') is deleted: the password stops working, they leave the teacher list, and devices that are signed in are signed out within 10 minutes. Their marking and assignments stay in the app. To bring them back, add them again in Admin › Teachers.'+(u.src==='env'?' This email is also listed in TEACHERS on Cloudflare: delete it there too, or it stays in Users as "Removed".':'')
-        :'The account of '+nm+' ('+who+') is deleted: the password stops working, they leave the class list, and devices that are signed in are signed out within 10 minutes. To come back, they register again on the sign-in page by picking their name from the Google Sheet. Their past work and XP are kept and come back only if they register with the same email.',
+        :'The account of '+nm+' ('+who+') and ALL their learning data are deleted for good: results, Error Notebook, flashcards, homework, late passes, XP, streak and prizes. The password stops working and devices that are signed in are signed out within 10 minutes. This cannot be undone. To come back, they register again on the sign-in page and start from zero.',
       ok:'Kick',busy:'Kicking…',danger:true,
       run:function(){return adminApi('admin/kick',{email:who}).then(function(d){
-        return adDone(nm+' was kicked.',d&&d.envTeacher?adSet(who,{status:'kicked',hasPassword:false}):function(L){return L.filter(function(x){return x.email!==who})});
+        return adDone(nm+' was kicked'+(d&&d.role==='student'?' and their data deleted':'')+'.',d&&d.envTeacher?adSet(who,{status:'kicked',hasPassword:false}):function(L){return L.filter(function(x){return x.email!==who})});
       })}};
     renderAdmin();adModalCheck();return true}
   if(a==='ad-on'){adBusy(t,true);adminApi('admin/active',{email:who,active:true}).then(function(){return adDone(nm+' can sign in again.',adSet(who,{status:'active'}))},function(e){adBusy(t,false);adSay(e.message)});return true}

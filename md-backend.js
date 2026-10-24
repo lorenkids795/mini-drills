@@ -55,54 +55,53 @@
   }
   function field(label, input) { return h('label', { 'class': 'field' }, [document.createTextNode(label), input]); }
   function inp(id, type, ph, ac) {
-    return h('input', { id: id, type: type, placeholder: ph || '', autocomplete: ac || 'off', required: 'required' });
+    return h('input', { id: id, name: id, type: type, placeholder: ph || '', autocomplete: ac || 'off', required: 'required' });
   }
 
   function ui() {
     var card = document.querySelector('#v-login .login');
     if (!card || document.getElementById('mdAuth')) return;
-    var root = h('div', { id: 'mdAuth', style: 'display:flex;flex-direction:column;gap:14px' });
+    // Sign-in v2: no Student / Teacher tabs; the role is switched by the text links (see the sign-in spec)
+    var root = h('div', { id: 'mdAuth' });
     var msg = h('p', { 'class': 'msg', id: 'authMsg', 'aria-live': 'polite' });
     var say = function (t, ok) { msg.textContent = t || ''; msg.style.color = ok ? 'var(--ok, #12896f)' : ''; };
-
-    var tabS = h('button', { type: 'button', 'class': 'btn sm', text: 'Student' });
-    var tabT = h('button', { type: 'button', 'class': 'btn sm', text: 'Teacher' });
-    var tabs = h('div', { style: 'display:flex;gap:8px' }, [tabS, tabT]);
 
     /* student: sign in */
     var sEmail = inp('sEmail', 'email', 'you@example.com', 'email');
     var sPass = inp('sPass', 'password', '', 'current-password');
-    var sBtn = h('button', { type: 'submit', 'class': 'btn pri', text: 'Sign in' });
+    var sBtn = h('button', { type: 'submit', 'class': 'lgbtn', text: 'Sign in' });
     var formIn = h('form', {}, [field('Email', sEmail), field('Password', sPass), sBtn]);
-    var toReg = h('button', { type: 'button', 'class': 'btn sm', text: 'First time here? Create your password' });
+    var toReg = h('button', { type: 'button', 'class': 'lgalt', text: 'First time here? Create your password' });
+    var toTeach = h('button', { type: 'button', 'class': 'lglink', text: 'Sign in as teachers' });
 
     /* student: first time */
-    var rClass = h('select', { id: 'rClass', required: 'required' });
-    var rName = h('select', { id: 'rName', required: 'required' });
+    var rClass = h('select', { id: 'rClass', name: 'rClass', required: 'required' });
+    var rName = h('select', { id: 'rName', name: 'rName', required: 'required' });
     var rEmail = inp('rEmail', 'email', 'you@example.com', 'email');
     var rPass = inp('rPass', 'password', 'At least 6 characters', 'new-password');
-    var rBtn = h('button', { type: 'submit', 'class': 'btn pri', text: 'Create my password' });
+    var rBtn = h('button', { type: 'submit', 'class': 'lgbtn', text: 'Create my password' });
     var formReg = h('form', { hidden: 'hidden' }, [
       field('Class', rClass), field('Your name', rName), field('Your email', rEmail), field('Choose a password', rPass), rBtn]);
-    var toIn = h('button', { type: 'button', 'class': 'btn sm', hidden: 'hidden', text: 'I already have a password' });
+    var toIn = h('button', { type: 'button', 'class': 'lgalt', hidden: 'hidden', text: 'I already have a password' });
 
     /* teacher: sign in */
-    var tEmail = inp('tEmail', 'email', 'teacher@example.com', 'email');
+    var tEmail = inp('tEmail', 'email', 'you@example.com', 'email');
     var tPass = inp('tPass', 'password', '', 'current-password');
-    var tBtn = h('button', { type: 'submit', 'class': 'btn pri', text: 'Sign in' });
-    var formT = h('form', { hidden: 'hidden' }, [field('Teacher email', tEmail), field('Password', tPass), tBtn]);
-    var toTReg = h('button', { type: 'button', 'class': 'btn sm', hidden: 'hidden', text: 'First time? Create your teacher password' });
+    var tBtn = h('button', { type: 'submit', 'class': 'lgbtn', text: 'Sign in' });
+    var formT = h('form', { hidden: 'hidden' }, [field('Email', tEmail), field('Password', tPass), tBtn]);
+    var toStu = h('button', { type: 'button', 'class': 'lglink', hidden: 'hidden', text: 'Sign in as student' });
+    // kept from v1 (not in the mockup): a new teacher still needs a way to create the first password
+    var toTReg = h('button', { type: 'button', 'class': 'lglink', hidden: 'hidden', text: 'First time? Create your teacher password' });
 
     /* teacher: first time (needs the setup key from the Cloudflare settings) */
-    var trEmail = inp('trEmail', 'email', 'teacher@example.com', 'email');
+    var trEmail = inp('trEmail', 'email', 'you@example.com', 'email');
     var trPass = inp('trPass', 'password', 'At least 6 characters', 'new-password');
     var trKey = inp('trKey', 'password', 'Setup key', 'off');
-    var trBtn = h('button', { type: 'submit', 'class': 'btn pri', text: 'Create teacher password' });
-    var formTR = h('form', { hidden: 'hidden' }, [field('Teacher email', trEmail), field('Choose a password', trPass), field('Setup key', trKey), trBtn]);
-    var toTIn = h('button', { type: 'button', 'class': 'btn sm', hidden: 'hidden', text: 'I already have a password' });
+    var trBtn = h('button', { type: 'submit', 'class': 'lgbtn', text: 'Create teacher password' });
+    var formTR = h('form', { hidden: 'hidden' }, [field('Email', trEmail), field('Choose a password', trPass), field('Setup key', trKey), trBtn]);
+    var toTIn = h('button', { type: 'button', 'class': 'lgalt', hidden: 'hidden', text: 'I already have a password' });
 
-    root.appendChild(tabs);
-    [formIn, formReg, formT, formTR, toReg, toIn, toTReg, toTIn, msg].forEach(function (x) { root.appendChild(x); });
+    [formIn, formReg, formT, formTR, msg, toReg, toIn, toTIn, toTeach, toStu, toTReg].forEach(function (x) { root.appendChild(x); });
     var host = document.querySelector('#loginForm');
     card.insertBefore(root, host || null);
 
@@ -124,8 +123,8 @@
     function fillNames() {
       rName.innerHTML = '';
       var c = rClass.value;
-      if (c === '__email') { rName.appendChild(h('option', { value: '', text: '(not needed)' })); rName.removeAttribute('required'); return; }
-      rName.setAttribute('required', 'required');
+      if (c === '__email') { rName.appendChild(h('option', { value: '', text: '(not needed)' })); rName.removeAttribute('required'); rName.disabled = true; return; }
+      rName.setAttribute('required', 'required'); rName.disabled = !c; // "Choose a class first" until a class is chosen
       rName.appendChild(h('option', { value: '', text: c ? 'Choose your name' : 'Choose a class first' }));
       (namesAll || []).filter(function (n) { return n.cls === c; }).forEach(function (n) {
         rName.appendChild(h('option', { value: n.id, text: n.name }));
@@ -134,17 +133,16 @@
     rClass.addEventListener('change', fillNames);
 
     function show(which) {
-      formIn.hidden = which !== 'student'; toReg.hidden = which !== 'student';
+      formIn.hidden = which !== 'student'; toReg.hidden = which !== 'student'; toTeach.hidden = which !== 'student';
       formReg.hidden = which !== 'reg'; toIn.hidden = which !== 'reg';
       formT.hidden = which !== 'teacher'; toTReg.hidden = which !== 'teacher';
       formTR.hidden = which !== 'treg'; toTIn.hidden = which !== 'treg';
-      tabS.className = 'btn sm' + ((which === 'student' || which === 'reg') ? ' pri' : '');
-      tabT.className = 'btn sm' + ((which === 'teacher' || which === 'treg') ? ' pri' : '');
+      toStu.hidden = which !== 'teacher' && which !== 'treg';
       say('');
       if (which === 'reg') loadNames();
     }
-    tabS.onclick = function () { show('student'); };
-    tabT.onclick = function () { show('teacher'); };
+    toTeach.onclick = function () { show('teacher'); };
+    toStu.onclick = function () { show('student'); };
     toReg.onclick = function () { show('reg'); };
     toIn.onclick = function () { show('student'); };
     toTReg.onclick = function () { show('treg'); };

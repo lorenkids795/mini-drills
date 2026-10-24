@@ -435,5 +435,25 @@ Cần xem trên trình duyệt (admin):
 4. [ ] Tiếng Việt: thanh bước (Học · Luyện nhận biết · Viết có gợi ý · Tự viết · Xem lại & sửa), nút, phản hồi Controlled ("Chưa đúng. Đáp án: …"), Guided/Independent/Review và thông báo nháp đều tiếng Việt; câu IELTS vẫn tiếng Anh. Chuyển English → tất cả sang tiếng Anh, đáp án/nháp còn nguyên.
 5. [ ] Câu mẫu về Museum C có nhãn "Phụ · có thể bỏ qua".
 
+## Trang đăng nhập v2 (10/2026)
+Tự động (đã chạy): `node tests/sign-in.test.js` → 11/11 (4 trạng thái, link đổi vai trò, ô tên khóa tới khi chọn lớp, gọi `/api/login` / `/api/register` như cũ).
+Cần xem trên trình duyệt (đã đăng xuất):
+1. [ ] Máy tính: trái là khối tím có logo "Mini Drills" (Drills nền vàng), khẩu hiệu to có "mistakes away" nền vàng in nghiêng, sao nhấp nháy + sao băng; phải là form "Sign in". Không còn thanh đầu trang, không còn 2 nút Student/Teacher.
+2. [ ] Đăng nhập học sinh, "First time here?" (chọn lớp → mới chọn được tên; đổi lớp → tên chọn lại), "Sign in as teachers" → đăng nhập giáo viên → "Sign in as student". Giáo viên mới: "First time? Create your teacher password" vẫn có.
+3. [ ] Nhập sai mật khẩu → báo lỗi như cũ. Đăng nhập đúng → vào app, thanh đầu trang và menu hiện lại bình thường. Đăng xuất → về trang này.
+4. [ ] Nút tròn góc phải đổi sáng/tối. Dark mode: form chữ sáng, ô nhập rõ; khối tím đậm hơn.
+5. [ ] Điện thoại 390px: khối tím ở trên (khẩu hiệu nhỏ hơn logo), form bên dưới, không tràn ngang; iPhone không bị tai thỏ che.
+6. [ ] Trình duyệt tự điền email/mật khẩu được; tab Issues của Chrome không còn "form field has neither an id nor a name" cho form này.
+
+## Kick xóa dữ liệu · trạng thái lớp · xóa lớp · gỡ khung · quà tùy chỉnh (10/2026)
+Tự động (đã chạy): `server-purge` 8/8 · `admin-kick` 50/50 · các bộ khác như cũ.
+Trên site thật (cần deploy cả `functions/` — Users phải ghi "server 2026-10-24a", "app 2026-10-24d"):
+1. [ ] ⚠ Thử trước bằng **tài khoản tester phụ**, không bằng học sinh thật. Kick → hộp ghi "ALL their learning data are deleted for good". Sau đó: tài khoản không còn trong Users, Recent results/Leaderboard/Error Notebook của bạn đó trống; đăng ký lại cùng email = bắt đầu từ 0.
+2. [ ] Classes (admin): lớp có học sinh ở mục chính; lớp chỉ có trong Sheet ở mục "Pending"; một học sinh đăng ký vào lớp Pending → lớp tự thành Active.
+3. [ ] Class settings › Status: chọn Archived → Save → lớp xuống mục "Archived" (gập lại); chọn lại Active → về chỗ cũ. Giáo viên không thấy khối Status / Delete class.
+4. [ ] ⚠ Delete class (thử với một lớp thử nghiệm): gõ DELETE → "Kicking 1 of N…" → toast số học sinh và bài giao đã xóa; lớp biến mất (còn trong Sheet thì hiện lại ở Pending). Gõ sai → không xóa gì.
+5. [ ] Prizes › Rank frames: rank có khung → nút "Remove frame" cạnh Reset → xác nhận → avatar về vòng màu.
+6. [ ] Prizes › Add a prize: Type "Custom / Other…" → hiện ô "Custom prize"; thêm "Mini Drills T-shirt", tier Real-life, weight 100 → bảng có dòng "Custom: Mini Drills T-shirt", Chance tính lại. Gõ weight ở một dòng → cột Chance và "total weight" đổi ngay khi gõ.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.
