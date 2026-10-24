@@ -442,6 +442,14 @@ Các thay đổi đã có trong code. **Không đảo ngược** nếu không đ
    - **Nội dung mới** (`lm-unit2.js`, 33 mục `copy` id `ui.*`/`copy.learn.*`, `why{en,vi}` cho `a.model.*` và `a.detail.example`, `kf` liên kết, `lens` cho `kf.a.*`), tất cả `pending`: **70 mục pending**. `lmCheck` kiểm thêm cặp `why`, `kf` tồn tại cùng chart, `lens` ∈ `LM_LENSES`. Báo cáo `lm-review.html` có cột "Why (EN / VI)" và lens.
    - Test: `lm-unit2-ui.test.js` 34 (đổi ngôn ngữ, giữ tiến độ, câu IELTS không đổi, nổi đúng đường, chip đúng số, mở dần, không lộ Chart B, mọi id UI có trong nội dung, còn pending).
 
+53. **Learning Materials — sửa sau review (10/2026)** (người dùng duyệt toàn bộ kế hoạch, kể cả bước 5 tự ghép câu):
+   - **Không lộ câu mẫu**: bước 7 chỉ hiện câu overview mẫu khi `LU.lrev` (đã bấm "Xem câu mẫu"); chưa thì hiện `copy.learn.ovdLocked` + nút `lu-lrev`.
+   - **Ngôn ngữ đầy đủ**: mọi chữ giao diện của 5 bước lấy từ `copy` qua `luU`/`luUf` (`%n`/`%t` = số): thanh bước `ui.st.*` (+ `ui.st.nav`, `ui.st.locked` dùng cho tooltip và toast), Controlled `ui.ctl.*` (VI: "Supported (biểu đồ cho thấy đúng)"…, `LU_LB` = id), Guided `ui.gd.*`, Independent `ui.cnt`/`ui.btn.done`, Review `ui.rv.*`, nháp `ui.dr.*` (cảnh báo, nút, confirm, toast). Câu IELTS (`.lusent`, `.lust`) và khung câu luôn tiếng Anh. Còn tiếng Anh cố định: nhãn "Unpublished preview" và báo lỗi nội dung (chỉ admin thấy), nút English/Tiếng Việt.
+   - **Không khóa cứng**: bước 3–6 chưa làm (`LU.lensTried`, `lchk`, `frameChk`, `lrev`) thì có gợi ý `copy.learn.try*` + nút phụ "Bỏ qua, tiếp tục" (`data-skip`, `LU.lskip[n]`); đã làm thì "Tiếp tục". Câu mẫu chỉ nối với key feature `secondary` (`a.model.shape`) có nhãn `ui.lbl.optional`.
+   - **Bước 5 tự ghép câu**: `luFrameHTML` tách `copy.learn.frame.en` theo `[line]` thành 3 `<select class="luslot">` (tên đường của Chart A, listener `change` → `LU.frame`); `lu-frame-chk` → `luFrameCheck`: 2 ô đầu = 2 đường có fact `endpoint` = increase (khác nhau), ô 3 = đường decrease → `copy.learn.frame.ok` / `.no` + "Làm lại". Không chấm điểm, không lưu.
+   - **8 mục REVISE** của review đã sửa theo chữ gợi ý (`copy.overview.what`, `copy.overview.detail`, `copy.observed`, `copy.learn.build`, `copy.learn.frame` (VI = bản dịch thật; hướng dẫn tách ra `copy.learn.frame.note`), `copy.guided.start`, `b.model.tie` "In {t.x}", `c.a.ovd2` bỏ "popular"), vẫn `pending`. Số liệu Chart A/B, fact, đáp án và `version:1` không đổi.
+   - **121 mục pending** (51 mục mới). Test `lm-unit2-ui.test.js` 51.
+
 ## 8. Giới hạn đã biết / chưa làm
 
 - AI chữa lỗi Writing chạy qua `/api/ai/correct` (cần `GEMINI_KEY`). `aiLookup` (tra từ bằng AI) vẫn gọi `window.claude` nên chưa chạy trên site thật.

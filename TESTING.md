@@ -426,5 +426,14 @@ Cần xem trên trình duyệt (tài khoản admin):
 6. [ ] Chế độ tối: biểu đồ mờ/sáng vẫn rõ, thẻ đang làm có viền xanh.
 7. [ ] Học sinh vẫn chỉ thấy "coming soon". Mở `tests/lm-review.html` để duyệt 70 mục.
 
+## Learning Materials — sửa sau review (10/2026)
+Tự động (đã chạy): `lm-unit2-ui` 51/51 · `chart-facts` 56/56 · `lm-meta` 18/18 · `admin-kick` 36/36 · `lm-check` 0 lỗi, 121 pending (`--release` báo lỗi đúng).
+Cần xem trên trình duyệt (admin):
+1. [ ] Learn: bấm Tiếp tục tới bước 7 mà **không** bấm "Xem câu mẫu" → ô Overview chỉ có lời nhắc + nút, không có câu mẫu.
+2. [ ] Bước 3–6 chưa làm → nút "Bỏ qua, tiếp tục" (màu phụ) + dòng gợi ý; làm rồi → "Tiếp tục".
+3. [ ] Bước 5: chọn Museum A / Museum C ở 2 ô đầu, Museum B ở ô cuối → "Kiểm tra câu" → báo đúng; chọn sai → "Chưa đúng" + Làm lại. Trên điện thoại 3 ô chọn không tràn.
+4. [ ] Tiếng Việt: thanh bước (Học · Luyện nhận biết · Viết có gợi ý · Tự viết · Xem lại & sửa), nút, phản hồi Controlled ("Chưa đúng. Đáp án: …"), Guided/Independent/Review và thông báo nháp đều tiếng Việt; câu IELTS vẫn tiếng Anh. Chuyển English → tất cả sang tiếng Anh, đáp án/nháp còn nguyên.
+5. [ ] Câu mẫu về Museum C có nhãn "Phụ · có thể bỏ qua".
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

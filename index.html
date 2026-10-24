@@ -235,7 +235,9 @@ html.sb-lock,body.sb-lock{overflow:hidden}
 .lulbl{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
 .lusent{margin:0;font-weight:600;line-height:1.6}
 .luwhy p{font-size:.92rem;color:var(--muted)}
-.luframe{margin:0;padding:8px 12px;border:1px dashed var(--line-strong);border-radius:10px;font-family:var(--mono);font-size:.9rem;overflow-wrap:anywhere}
+.luframe{margin:0;padding:10px 12px;border:1px dashed var(--line-strong);border-radius:10px;font-size:.98rem;line-height:2.2;overflow-wrap:anywhere}
+.luslot{min-height:36px;margin:0 4px;padding:2px 6px;border:1px solid var(--fill-line);border-radius:8px;background:var(--fill-bg);color:var(--ink);font:inherit;font-weight:600}
+.luhint{color:var(--warn)}.luopt2{opacity:.92}.luopt2>.pill{margin-bottom:4px}
 .luovd{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .luovb{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
 .luovb.ov{border-color:var(--good)}.luovb.dt{border-style:dashed}
@@ -1978,7 +1980,7 @@ function lmLessonHTML(l){
    Chart B (Independent) is never drawn and none of its items are used before the Independent stage (luItems filters by stage).
    Drafts: localStorage only, key md-lm:<lesson>:v<version>:<activity> = {t, rv, ts}; another version's draft is never shown as current. */
 // lang = explanation language ('vi' default, localStorage md-lm-lang); lstep/lens/lpick/lchk/lrev = the Learn stage's own steps (not saved)
-var LU={stage:'learn',pick:{},chk:false,gsel:{},self:{},lang:(function(){try{return localStorage.getItem('md-lm-lang')==='en'?'en':'vi'}catch(e){return 'vi'}})(),lstep:1,lens:null,lpick:{},lchk:false,lrev:false},LU_ST=[['learn','Learn'],['controlled','Controlled'],['guided','Guided'],['independent','Independent'],['review','Review & Revise']],LUC=null;
+var LU={stage:'learn',pick:{},chk:false,gsel:{},self:{},lang:(function(){try{return localStorage.getItem('md-lm-lang')==='en'?'en':'vi'}catch(e){return 'vi'}})(),lstep:1,lens:null,lpick:{},lchk:false,lrev:false,lensTried:false,lskip:{},frame:[],frameChk:false},LU_ST=[['learn','Learn'],['controlled','Controlled'],['guided','Guided'],['independent','Independent'],['review','Review & Revise']],LUC=null;
 function luUnit(id){var u=window.MD_LM_U2;return u&&window.LMX&&u.lesson===id?u:null}
 function luCtx(u){if(!LUC||LUC.u!==u){var r=window.LMX.lmCheck(u,false);LUC={u:u,ctx:r.ctx,errs:r.errors,pending:r.pending}}return LUC}
 function luItems(u,kind,stage,chart){return (u[kind]||[]).filter(function(x){return x.stage===stage&&(!chart||x.chart===chart)})}
@@ -2003,14 +2005,16 @@ function luPut(u,act,o){try{o.ts=Date.now();localStorage.setItem(luKey(u,act),JS
 function luDrop(u,act){try{localStorage.removeItem(luKey(u,act))}catch(e){}}
 // drafts of this activity saved for ANOTHER content version (cannot be restored; the student may discard them)
 function luOld(u,act){var o=[];try{var pre='md-lm:'+u.lesson+':v',suf=':'+act,cur=luKey(u,act);for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf(pre)===0&&k.slice(-suf.length)===suf&&k!==cur)o.push(k)}}catch(e){}return o}
+// a UI text with %n / %t filled in (numbers only, no chart words)
+function luUf(u,id,n,tt){return luU(u,id).replace(/%n/g,String(n)).replace(/%t/g,String(tt))}
 function luDraftHTML(u,act){
   var h='',old=luOld(u,act);
-  if(!luStoreOk())h+='<p class="luwarn" role="status">This browser does not allow saving, so your draft will be lost if you leave this page.</p>';
-  if(old.length)h+='<p class="luwarn" role="status">A draft from an older version of this lesson was found. It cannot be restored. <button type="button" class="btn sm" data-act="lu-old" data-a="'+esc(act)+'">Discard old draft</button></p>';
-  return h+luCopy(u,'copy.draft.local')+'<div class="actions"><button type="button" class="btn sm bad" data-act="lu-clear" data-a="'+esc(act)+'">Clear draft</button><span class="saved" id="luSv_'+esc(act)+'" aria-live="polite"></span></div>';
+  if(!luStoreOk())h+='<p class="luwarn" role="status">'+esc(luU(u,'ui.dr.blocked'))+'</p>';
+  if(old.length)h+='<p class="luwarn" role="status">'+esc(luU(u,'ui.dr.old'))+' <button type="button" class="btn sm" data-act="lu-old" data-a="'+esc(act)+'">'+esc(luU(u,'ui.btn.discardOld'))+'</button></p>';
+  return h+luCopy(u,'copy.draft.local')+'<div class="actions"><button type="button" class="btn sm bad" data-act="lu-clear" data-a="'+esc(act)+'">'+esc(luU(u,'ui.btn.clear'))+'</button><span class="saved" id="luSv_'+esc(act)+'" aria-live="polite"></span></div>';
 }
 function luSentences(t){t=String(t||'').trim();return t?t.split(/[.!?]+(\s|$)/).filter(function(s){return s&&s.trim()}).length:0}
-// ---- stages ----
+function luCnt(u,t){return luUf(u,'ui.cnt',luSentences(t))}
 var LU_LENS=[['trends','ui.lens.trends','copy.lens.trends'],['highest','ui.lens.highest','copy.lens.highest'],['highlights','ui.lens.highlights','copy.lens.highlights']];
 // chart line indexes a key feature is about: the winner of a "throughout" fact, otherwise the fact's own lines
 function luKfIdx(u,k){var f=LUC.ctx.byId[k.fact],c=u.charts[k.chart].chart,ids=!f?[]:(typeof f.result==='string'&&chSeries(c,f.result))?[f.result]:f.series,o=[];
@@ -2023,79 +2027,89 @@ function luChip(u,k){var f=LUC.ctx.byId[k.fact],c=u.charts[k.chart].chart;if(!f|
   else if(f.type==='shape'&&f.result==='fluctuating')t=lab(f.series[0])+': '+luU(u,'ui.fact.fluctuating');
   return t?'<span class="luchip" title="'+esc(luU(u,'ui.lbl.basis'))+'">✓ '+esc(t)+'</span>':''}
 function luImp(u,k){return '<span class="pill'+(k.importance==='main'?' acc':'')+'">'+esc(luU(u,k.importance==='main'?'ui.lbl.main':'ui.lbl.secondary'))+'</span>'}
+// step 5: the English frame with one choice per [line]; checked against the endpoint facts of Chart A (increase / decrease)
+function luFrameCheck(u){var c=u.charts.A.chart,dir={};c.series.forEach(function(sr){var f=LUC.ctx.byId[u.charts.A.id+'@'+u.charts.A.version+':endpoint:'+sr.id];dir[sr.id]=f&&f.status==='supported'?f.result:null});
+  var p=LU.frame||[],up=c.series.filter(function(sr){return dir[sr.id]==='increase'}).map(function(sr){return sr.id}),dn=c.series.filter(function(sr){return dir[sr.id]==='decrease'}).map(function(sr){return sr.id});
+  if(up.length!==2||dn.length!==1)return null; // the frame only fits a chart with two rising lines and one falling line
+  return !!(p[0]&&p[1]&&p[2]&&p[0]!==p[1]&&up.indexOf(p[0])>=0&&up.indexOf(p[1])>=0&&p[2]===dn[0])}
+function luFrameHTML(u){
+  var fr=luC(u,'copy.learn.frame');if(!fr)return '';var parts=String(fr.en).split('[line]'),c=u.charts.A.chart,k=0,h='';
+  parts.forEach(function(seg,i){h+=esc(seg);if(i<parts.length-1){var j=k++;h+='<select class="luslot" data-i="'+j+'" aria-label="'+esc(luU(u,'ui.lbl.pickLine'))+' '+(j+1)+'"'+(LU.frameChk?' disabled':'')+'><option value="">…</option>'+
+    c.series.map(function(sr){return '<option value="'+esc(sr.id)+'"'+((LU.frame||[])[j]===sr.id?' selected':'')+'>'+esc(sr.label)+'</option>'}).join('')+'</select>'}});
+  var res=LU.frameChk?luFrameCheck(u):null;
+  return '<p class="luframe" lang="en">'+h+'</p>'+(luL()==='vi'?luPair(null,fr.vi,'luwhy'):'')+luCopy(u,'copy.learn.frame.note')+
+    (LU.frameChk?'<div class="lufb" role="status">'+luCopy(u,res?'copy.learn.frame.ok':'copy.learn.frame.no')+'</div>'+(res?'':'<div class="actions"><button type="button" class="btn sm" data-act="lu-frame-redo">'+esc(luU(u,'ui.btn.retry'))+'</button></div>')
+      :'<div class="actions"><button type="button" class="btn" data-act="lu-frame-chk">'+esc(luU(u,'ui.btn.checkFrame'))+'</button></div>');
+}
 function luLearn(u){
   var K=luItems(u,'keyFeatures','learn','A'),M=luItems(u,'claims','learn','A'),st=LU.lstep,hl=[];
   if(LU.lens)K.forEach(function(k){if(k.lens===LU.lens)luKfIdx(u,k).forEach(function(i){if(hl.indexOf(i)<0)hl.push(i)})});
   var kfBy=function(id){return K.filter(function(k){return k.id===id})[0]};
-  var card=function(n,head,body){if(n>st)return '';
+  // nothing is locked: a step that was not tried shows a hint and a clearly named "skip" button instead of "continue"
+  var tried={3:!!LU.lensTried,4:!!LU.lchk,5:!!LU.frameChk,6:!!LU.lrev},hint={3:'copy.learn.tryLens',4:'copy.learn.tryPick',5:'copy.learn.tryFrame',6:'copy.learn.tryReveal'};
+  var card=function(n,head,body){if(n>st)return '';var skip=n===st&&n<7&&hint[n]&&!tried[n];
     return '<section class="lucard'+(n===st?' cur':'')+'" aria-labelledby="luS'+n+'"><h4 class="luh" id="luS'+n+'"><span class="lun" aria-hidden="true">'+n+'</span>'+esc(luU(u,head))+'</h4>'+body+
-      (n===st&&n<7?'<div class="actions"><button type="button" class="btn pri" data-act="lu-lnext">'+esc(luU(u,'ui.btn.continue'))+'</button></div>':'')+'</section>'};
-  // 1-2: objective, look first
+      (n===st&&n<7?(skip?'<p class="lunote luhint">'+esc(luU(u,hint[n]))+'</p>':'')+'<div class="actions"><button type="button" class="btn'+(skip?'':' pri')+'" data-act="lu-lnext"'+(skip?' data-skip="1"':'')+'>'+esc(luU(u,skip?'ui.btn.skip':'ui.btn.continue'))+'</button></div>':'')+'</section>'};
   var h=card(1,'ui.learn.s1',luCopy(u,'copy.learn.objective')+luCopy(u,'copy.synthetic'));
   h+=card(2,'ui.learn.s2',luCopy(u,'copy.learn.explore')+luCopy(u,'copy.observed'));
-  // 3: lenses highlight lines on the chart and fill the panel with the reviewed key features of that lens
   var lens=LU_LENS.filter(function(L){return L[0]===LU.lens})[0];
   h+=card(3,'ui.learn.s3',luCopy(u,'copy.learn.lens.pick')+'<div class="luopts lulens" role="group" aria-label="'+esc(luU(u,'ui.learn.s3'))+'">'+LU_LENS.map(function(L){return '<button type="button" class="luopt" data-act="lu-lens" data-v="'+L[0]+'" aria-pressed="'+(LU.lens===L[0])+'">'+esc(luU(u,L[1]))+'</button>'}).join('')+'</div>'+
     (lens?'<div class="lupanel" aria-live="polite">'+luCopy(u,lens[2])+'<ul class="lukf">'+K.filter(function(k){return k.lens===lens[0]}).map(function(k){return '<li>'+luImp(u,k)+'<div>'+luPair(k.reason.en,k.reason.vi)+luChip(u,k)+'</div></li>'}).join('')+'</ul></div>':'')+
     luCopy(u,'copy.lens.flexible'));
-  // 4: observe before reveal: pick, then see what matters and why
   h+=card(4,'ui.learn.s4',luCopy(u,'copy.learn.choose')+'<ul class="lukf pick">'+K.map(function(k){var me=!!LU.lpick[k.id];
       return '<li><label><input type="checkbox" data-act="lu-lpick" data-id="'+esc(k.id)+'"'+(me?' checked':'')+(LU.lchk?' disabled':'')+'><div>'+luPair(k.reason.en,k.reason.vi)+
         (LU.lchk?'<div class="lurow">'+luImp(u,k)+(me?'<span class="luchip me">'+esc(luU(u,'ui.lbl.picked'))+'</span>':'')+luChip(u,k)+'</div>':'')+'</div></label></li>'}).join('')+'</ul>'+
     (LU.lchk?'<div class="lufb" role="status">'+luCopy(u,'copy.learn.choose.fb')+'</div>':'<div class="actions"><button type="button" class="btn" data-act="lu-lchk">'+esc(luU(u,'ui.btn.check'))+'</button></div>'));
-  // 5: from features to a sentence frame (the frame itself stays English)
-  var fr=luC(u,'copy.learn.frame');
-  h+=card(5,'ui.learn.s5',luCopy(u,'copy.learn.build')+(fr?'<p class="luframe" lang="en">'+esc(fr.en)+'</p>'+(luL()==='vi'?luPair(null,fr.vi,'luwhy'):''):''));
-  // 6: reveal the reviewed samples with why + linked key features + checked facts
+  h+=card(5,'ui.learn.s5',luCopy(u,'copy.learn.build')+luFrameHTML(u));
+  // samples: only after "show the samples" (step 6); a sample tied to a secondary feature is marked optional
   var models=M.filter(function(x){return x.kind==='model'});
-  h+=card(6,'ui.learn.s6',luCopy(u,'copy.learn.reveal')+(LU.lrev?'<ol class="lumod">'+models.map(function(x){
-      var ks=(x.kf||[]).map(kfBy).filter(Boolean);
-      return '<li>'+luModel(x,ks.length?'<div class="lurow"><span class="lulbl">'+esc(luU(u,'ui.lbl.features'))+':</span>'+ks.map(function(k){return luChip(u,k)}).join('')+'</div>':'')+'</li>'}).join('')+'</ol>'
-    :'<div class="actions"><button type="button" class="btn" data-act="lu-lrev">'+esc(luU(u,'ui.btn.reveal'))+'</button></div>'));
-  // 7: overview vs body detail, side by side
+  var modelLi=function(x){var ks=(x.kf||[]).map(kfBy).filter(Boolean),opt=ks.length&&ks.every(function(k){return k.importance==='secondary'});
+    return '<li'+(opt?' class="luopt2"':'')+'>'+(opt?'<span class="pill">'+esc(luU(u,'ui.lbl.optional'))+'</span>':'')+luModel(x,ks.length?'<div class="lurow"><span class="lulbl">'+esc(luU(u,'ui.lbl.features'))+':</span>'+ks.map(function(k){return luChip(u,k)}).join('')+'</div>':'')+'</li>'};
+  var revBtn='<div class="actions"><button type="button" class="btn" data-act="lu-lrev">'+esc(luU(u,'ui.btn.reveal'))+'</button></div>';
+  h+=card(6,'ui.learn.s6',luCopy(u,'copy.learn.reveal')+(LU.lrev?'<ol class="lumod">'+models.map(modelLi).join('')+'</ol>':revBtn));
   var ov=models[0],dt=M.filter(function(x){return x.kind==='detail'})[0];
-  h+=card(7,'ui.learn.s7',luCopy(u,'copy.learn.ovd')+'<div class="luovd">'+(ov?'<div class="luovb ov"><span class="lulbl">'+esc(luU(u,'ui.lbl.overview'))+'</span>'+luModel(ov)+'</div>':'')+
+  h+=card(7,'ui.learn.s7',luCopy(u,'copy.learn.ovd')+'<div class="luovd">'+(ov?'<div class="luovb ov"><span class="lulbl">'+esc(luU(u,'ui.lbl.overview'))+'</span>'+(LU.lrev?luModel(ov):luCopy(u,'copy.learn.ovdLocked')+revBtn)+'</div>':'')+
     (dt?'<div class="luovb dt"><span class="lulbl">'+esc(luU(u,'ui.lbl.detail'))+'</span>'+luModel(dt)+'</div>':'')+'</div>'+
     '<div class="actions"><button type="button" class="btn pri" data-act="lu-go" data-s="controlled">'+esc(luU(u,'ui.btn.controlled'))+'</button></div>');
   var chart='<div class="luchart lulc"'+(hl.length?' data-hl="'+hl.map(function(i){return 's'+i}).join(' ')+'"':'')+'>'+chartHTML(u.charts.A.chart)+'</div>';
   return '<div class="lulearn"><div class="lulside">'+chart+'</div><div class="lulsteps">'+h+'</div></div>';
 }
-var LU_LB={supported:'Supported',contradicted:'Contradicted',not_determinable:'Not determinable',overview:'Overview',detail:'Body detail'};
+var LU_LB={supported:'ui.ctl.supported',contradicted:'ui.ctl.contradicted',not_determinable:'ui.ctl.nd',overview:'ui.lbl.overview',detail:'ui.lbl.detail'};
 function luControlled(u){
   var L=luItems(u,'controlled','controlled','A'),ok=0,h=luChart(u,'A')+luCopy(u,'copy.controlled.labels')+'<ol class="luctl">';
   L.forEach(function(x){
     var opts=x.type==='ovd'?['overview','detail']:['supported','contradicted','not_determinable'],ans=x.type==='ovd'?x.answer:x.label,me=LU.pick[x.id],right=me===ans;if(LU.chk&&right)ok++;
-    h+='<li class="luq'+(LU.chk?(right?' ok':' no'):'')+'"><p class="lust" lang="en">'+(x.type==='ovd'?'<span class="luk">Overview or body detail?</span> ':'')+esc(luTxt(x,x.statement.en))+'</p>'+
-      '<div class="luopts" role="group" aria-label="Your answer">'+opts.map(function(v){return '<button type="button" class="luopt'+(LU.chk&&v===ans?' cor':'')+'" data-act="lu-pick" data-id="'+esc(x.id)+'" data-v="'+v+'" aria-pressed="'+(me===v)+'"'+(LU.chk?' disabled':'')+'>'+LU_LB[v]+'</button>'}).join('')+'</div>'+
-      (LU.chk?'<div class="lufb" role="status"><b>'+(right?'Correct.':(me?'Not quite.':'No answer.'))+' Answer: '+LU_LB[ans]+'</b>'+luPair(luTxt(x,x.why.en),luTxt(x,x.why.vi))+'</div>':'')+'</li>';
+    h+='<li class="luq'+(LU.chk?(right?' ok':' no'):'')+'">'+(x.type==='ovd'?'<p class="luk">'+esc(luU(u,'ui.learn.s7'))+'</p>':'')+'<p class="lust" lang="en">'+esc(luTxt(x,x.statement.en))+'</p>'+
+      '<div class="luopts" role="group" aria-label="'+esc(luU(u,'ui.ctl.group'))+'">'+opts.map(function(v){return '<button type="button" class="luopt'+(LU.chk&&v===ans?' cor':'')+'" data-act="lu-pick" data-id="'+esc(x.id)+'" data-v="'+v+'" aria-pressed="'+(me===v)+'"'+(LU.chk?' disabled':'')+'>'+esc(luU(u,LU_LB[v]))+'</button>'}).join('')+'</div>'+
+      (LU.chk?'<div class="lufb" role="status"><b>'+esc(luU(u,right?'ui.ctl.correct':(me?'ui.ctl.wrong':'ui.ctl.none')))+' '+esc(luU(u,'ui.ctl.answer'))+' '+esc(luU(u,LU_LB[ans]))+'</b>'+luPair(luTxt(x,x.why.en),luTxt(x,x.why.vi))+'</div>':'')+'</li>';
   });
   h+='</ol>';
-  if(LU.chk)h+='<p class="lusc" role="status"><b>'+ok+' / '+L.length+'</b> correct. This practice is not scored or saved.</p><div class="actions"><button type="button" class="btn" data-act="lu-redo">Try again</button><button type="button" class="btn pri" data-act="lu-go" data-s="guided">Next: Guided writing</button></div>';
-  else h+='<div class="actions"><button type="button" class="btn pri" data-act="lu-chk">Check answers</button></div>';
+  if(LU.chk)h+='<p class="lusc" role="status">'+esc(luUf(u,'ui.ctl.score',ok,L.length))+'</p><div class="actions"><button type="button" class="btn" data-act="lu-redo">'+esc(luU(u,'ui.btn.retry'))+'</button><button type="button" class="btn pri" data-act="lu-go" data-s="guided">'+esc(luU(u,'ui.btn.guided'))+'</button></div>';
+  else h+='<div class="actions"><button type="button" class="btn pri" data-act="lu-chk">'+esc(luU(u,'ui.btn.checkAnswers'))+'</button></div>';
   return h;
 }
 function luGuided(u){
   var d=luGet(u,'guided')||{},K=luItems(u,'keyFeatures','learn','A');
-  return luChart(u,'A')+'<p class="lunote">You saw this chart in Learn. Here you practise choosing features and putting them into your own sentences.</p>'+
-    '<h4 class="luh">1. Choose the features</h4>'+luCopy(u,'copy.guided.pick')+'<ul class="lukf pick">'+K.map(function(x){return '<li><label><input type="checkbox" data-act="lu-gsel" data-id="'+esc(x.id)+'"'+(LU.gsel[x.id]?' checked':'')+'> '+luPair(x.reason.en,x.reason.vi)+'</label></li>'}).join('')+'</ul>'+
-    '<h4 class="luh">2. Write your overview</h4>'+luCopy(u,'copy.guided.start')+
-    '<label class="lbl" for="luG">Your overview (English)</label><textarea class="wbox" id="luG" rows="5" lang="en" spellcheck="true" placeholder="Overall, …">'+esc(d.t||'')+'</textarea>'+
-    luDraftHTML(u,'guided')+'<div class="actions"><button type="button" class="btn pri" data-act="lu-go" data-s="independent">Next: Independent writing</button></div>';
+  return luChart(u,'A')+'<p class="lunote">'+esc(luU(u,'ui.gd.note'))+'</p>'+
+    '<h4 class="luh">'+esc(luU(u,'ui.gd.h1'))+'</h4>'+luCopy(u,'copy.guided.pick')+'<ul class="lukf pick">'+K.map(function(x){return '<li><label><input type="checkbox" data-act="lu-gsel" data-id="'+esc(x.id)+'"'+(LU.gsel[x.id]?' checked':'')+'> '+luPair(x.reason.en,x.reason.vi)+'</label></li>'}).join('')+'</ul>'+
+    '<h4 class="luh">'+esc(luU(u,'ui.gd.h2'))+'</h4>'+luCopy(u,'copy.guided.start')+
+    '<label class="lbl" for="luG">'+esc(luU(u,'ui.lbl.yourOverview'))+'</label><textarea class="wbox" id="luG" rows="5" lang="en" spellcheck="true" placeholder="Overall, …">'+esc(d.t||'')+'</textarea>'+
+    luDraftHTML(u,'guided')+'<div class="actions"><button type="button" class="btn pri" data-act="lu-go" data-s="independent">'+esc(luU(u,'ui.btn.independent'))+'</button></div>';
 }
 function luIndependent(u){
   var d=luGet(u,'indep')||{};
   return luCopy(u,'copy.synthetic')+luChart(u,'B')+luCopy(u,'copy.indep.task')+
-    '<label class="lbl" for="luI">Your overview (English)</label><textarea class="wbox" id="luI" rows="6" lang="en" spellcheck="true">'+esc(d.t||'')+'</textarea>'+
-    '<p class="lucnt" id="luCnt" aria-live="polite">'+luSentences(d.t)+' sentence(s) · about 2–3 is a good length</p>'+luDraftHTML(u,'indep')+
-    '<div class="actions"><button type="button" class="btn pri" data-act="lu-rv">I\'m done: show the review</button></div>';
+    '<label class="lbl" for="luI">'+esc(luU(u,'ui.lbl.yourOverview'))+'</label><textarea class="wbox" id="luI" rows="6" lang="en" spellcheck="true">'+esc(d.t||'')+'</textarea>'+
+    '<p class="lucnt" id="luCnt" aria-live="polite">'+esc(luCnt(u,d.t))+'</p>'+luDraftHTML(u,'indep')+
+    '<div class="actions"><button type="button" class="btn pri" data-act="lu-rv">'+esc(luU(u,'ui.btn.done'))+'</button></div>';
 }
 function luReview(u){
   var d=luGet(u,'indep')||{};
-  return luChart(u,'B')+'<h4 class="luh">Your overview: edit it as much as you like</h4><label class="lbl sr" for="luI">Your overview (English)</label><textarea class="wbox" id="luI" rows="6" lang="en" spellcheck="true">'+esc(d.t||'')+'</textarea>'+
-    '<p class="lucnt" id="luCnt" aria-live="polite">'+luSentences(d.t)+' sentence(s) · about 2–3 is a good length</p>'+
-    '<h4 class="luh">Self-check</h4>'+luCopy(u,'copy.review.self')+'<ul class="lukf pick">'+luItems(u,'keyFeatures','review','B').map(function(x){return '<li><label><input type="checkbox" data-act="lu-self" data-id="'+esc(x.id)+'"'+(LU.self[x.id]?' checked':'')+'> <span class="pill'+(x.importance==='main'?' acc':'')+'">'+(x.importance==='main'?'Main':'Secondary')+'</span>'+luPair(x.reason.en,x.reason.vi)+'</label></li>'}).join('')+'</ul>'+
-    '<h4 class="luh">Sample overview sentences for this chart</h4><ul class="lumod">'+luItems(u,'claims','review','B').map(function(x){return '<li>'+luModel(x)+'</li>'}).join('')+'</ul>'+
-    '<p class="lunote">Nothing here checks your writing automatically: compare it with the features and samples yourself.</p>'+luDraftHTML(u,'indep');
+  return luChart(u,'B')+'<h4 class="luh">'+esc(luU(u,'ui.rv.h1'))+'</h4><label class="lbl sr" for="luI">'+esc(luU(u,'ui.lbl.yourOverview'))+'</label><textarea class="wbox" id="luI" rows="6" lang="en" spellcheck="true">'+esc(d.t||'')+'</textarea>'+
+    '<p class="lucnt" id="luCnt" aria-live="polite">'+esc(luCnt(u,d.t))+'</p>'+
+    '<h4 class="luh">'+esc(luU(u,'ui.rv.h2'))+'</h4>'+luCopy(u,'copy.review.self')+'<ul class="lukf pick">'+luItems(u,'keyFeatures','review','B').map(function(x){return '<li><label><input type="checkbox" data-act="lu-self" data-id="'+esc(x.id)+'"'+(LU.self[x.id]?' checked':'')+'> '+luImp(u,x)+luPair(x.reason.en,x.reason.vi)+'</label></li>'}).join('')+'</ul>'+
+    '<h4 class="luh">'+esc(luU(u,'ui.rv.h3'))+'</h4><ul class="lumod">'+luItems(u,'claims','review','B').map(function(x){return '<li>'+luModel(x)+'</li>'}).join('')+'</ul>'+
+    '<p class="lunote">'+esc(luU(u,'ui.rv.note'))+'</p>'+luDraftHTML(u,'indep');
 }
 var LU_FN={learn:luLearn,controlled:luControlled,guided:luGuided,independent:luIndependent,review:luReview};
 // one stage's HTML (also used by the Node tests to prove Chart B never appears before Independent)
@@ -2104,7 +2118,7 @@ function luHTML(l,u){
   var c=luCtx(u),bad=c.errs.filter(function(e){return !/pending/.test(e)}),rv=!!(luGet(u,'indep')||{}).rv;
   if(bad.length)return '<div class="lmshell"><h3>'+esc(l.title)+'</h3><p class="luwarn" role="alert">This lesson cannot be shown: its content check failed ('+bad.length+' problem'+(bad.length>1?'s':'')+').</p>'+(U&&U.adm?'<ul class="saved">'+bad.slice(0,8).map(function(e){return '<li>'+esc(e)+'</li>'}).join('')+'</ul>':'')+'</div>';
   if(LU.stage==='review'&&!rv)LU.stage='independent';
-  var bar='<nav class="lusteps" aria-label="Lesson stages">'+LU_ST.map(function(s,i){var lock=s[0]==='review'&&!rv;return '<button type="button" class="lustep'+(LU.stage===s[0]?' on':'')+'" data-act="lu-go" data-s="'+s[0]+'"'+(LU.stage===s[0]?' aria-current="step"':'')+(lock?' disabled title="Write your overview first"':'')+'><span class="mono">'+(i+1)+'</span> '+s[1]+'</button>'}).join('')+'</nav>';
+  var bar='<nav class="lusteps" aria-label="'+esc(luU(u,'ui.st.nav'))+'">'+LU_ST.map(function(s,i){var lock=s[0]==='review'&&!rv;return '<button type="button" class="lustep'+(LU.stage===s[0]?' on':'')+'" data-act="lu-go" data-s="'+s[0]+'"'+(LU.stage===s[0]?' aria-current="step"':'')+(lock?' disabled title="'+esc(luU(u,'ui.st.locked'))+'"':'')+'><span class="mono">'+(i+1)+'</span> '+esc(luU(u,'ui.st.'+s[0]))+'</button>'}).join('')+'</nav>';
   var pend=c.pending?'<p class="pill pend">Unpublished preview · '+c.pending+' content item'+(c.pending>1?'s':'')+' still waiting for review</p>':(l.status!=='published'?'<p class="pill pend">Unpublished preview · students cannot see this lesson</p>':'');
   var lg='<div class="lulang"><div class="seg" role="group" aria-label="Explanation language / Ngôn ngữ giải thích"><button type="button" data-act="lu-lang" data-v="en" aria-pressed="'+(luL()==='en')+'" lang="en">English</button><button type="button" data-act="lu-lang" data-v="vi" aria-pressed="'+(luL()==='vi')+'" lang="vi">Tiếng Việt</button></div><span class="lunote">'+esc(luU(u,'ui.lang.note'))+'</span></div>';
   return '<div class="lmshell lu"><p class="lmpath">IELTS Academic Task 1 · Unit '+esc(l.unit)+'</p><h3>'+esc(l.title)+'</h3>'+pend+lg+bar+'<div class="lubody" id="luBody">'+LU_FN[LU.stage](u)+'</div></div>';
@@ -2115,27 +2129,31 @@ function luAct(a,t){
   var keep=function(){var y=window.scrollY||0;renderLib();if(window.scrollTo)window.scrollTo(0,y)}; // redraw without moving the page
   // language: only the words change; stage, answers, Learn steps and drafts (localStorage) stay as they are
   if(a==='lu-lang'){LU.lang=t.dataset.v==='en'?'en':'vi';try{localStorage.setItem('md-lm-lang',LU.lang)}catch(e){}keep();return true}
-  if(a==='lu-lnext'){LU.lstep=Math.min(7,LU.lstep+1);keep();var nc=document.getElementById('luS'+LU.lstep);if(nc&&nc.scrollIntoView)nc.scrollIntoView({block:'nearest'});return true}
-  if(a==='lu-lens'){LU.lens=LU.lens===t.dataset.v?null:t.dataset.v;keep();return true}
+  if(a==='lu-lnext'){if(t.dataset&&t.dataset.skip)LU.lskip[LU.lstep]=true;LU.lstep=Math.min(7,LU.lstep+1);keep();var nc=document.getElementById('luS'+LU.lstep);if(nc&&nc.scrollIntoView)nc.scrollIntoView({block:'nearest'});return true}
+  if(a==='lu-lens'){LU.lens=LU.lens===t.dataset.v?null:t.dataset.v;LU.lensTried=true;keep();return true}
   if(a==='lu-lpick'){if(!LU.lchk)LU.lpick[t.dataset.id]=t.checked;return true}
   if(a==='lu-lchk'){LU.lchk=true;keep();return true}
   if(a==='lu-lrev'){LU.lrev=true;keep();return true}
+  if(a==='lu-frame-chk'){LU.frameChk=true;keep();return true}
+  if(a==='lu-frame-redo'){LU.frameChk=false;keep();return true}
   if(a==='lu-go'){var s=t.dataset.s;if(!LU_FN[s])return true;if(s==='review'&&!(luGet(u,'indep')||{}).rv)return true;LU.stage=s;redraw(true);return true}
   if(a==='lu-pick'){if(!LU.chk){LU.pick[t.dataset.id]=t.dataset.v;redraw()}return true}
   if(a==='lu-chk'){LU.chk=true;redraw();return true}
   if(a==='lu-redo'){LU.chk=false;LU.pick={};redraw(true);return true}
   if(a==='lu-gsel'){LU.gsel[t.dataset.id]=t.checked;return true}
   if(a==='lu-self'){LU.self[t.dataset.id]=t.checked;return true}
-  if(a==='lu-rv'){var ta=$('#luI'),tx=ta?ta.value.trim():'';if(!tx){toast('Write your overview first.');if(ta)ta.focus();return true}
+  if(a==='lu-rv'){var ta=$('#luI'),tx=ta?ta.value.trim():'';if(!tx){toast(luU(u,'ui.st.locked'));if(ta)ta.focus();return true}
     luPut(u,'indep',{t:ta.value,rv:true});LU.stage='review';redraw(true);return true}
-  if(a==='lu-clear'){var act=t.dataset.a==='guided'?'guided':'indep';if(!confirm('Clear this draft? It cannot be undone.'))return true;luDrop(u,act);if(act==='indep'){LU.self={};LU.stage='independent'}redraw();toast('Draft cleared.');return true}
-  if(a==='lu-old'){var ak=t.dataset.a==='guided'?'guided':'indep';if(!confirm('Discard the old draft? It cannot be restored.'))return true;luOld(u,ak).forEach(function(k){try{localStorage.removeItem(k)}catch(e){}});redraw();return true}
+  if(a==='lu-clear'){var act=t.dataset.a==='guided'?'guided':'indep';if(!confirm(luU(u,'ui.dr.confirmClear')))return true;luDrop(u,act);if(act==='indep'){LU.self={};LU.stage='independent'}redraw();toast(luU(u,'ui.dr.cleared'));return true}
+  if(a==='lu-old'){var ak=t.dataset.a==='guided'?'guided':'indep';if(!confirm(luU(u,'ui.dr.confirmOld')))return true;luOld(u,ak).forEach(function(k){try{localStorage.removeItem(k)}catch(e){}});redraw();return true}
   return false;
 }
+// step 5 frame: a choice in a <select> (change event, not click)
+document.addEventListener('change',function(e){var t=e.target;if(!t||!t.classList||!t.classList.contains('luslot'))return;LU.frame=LU.frame||[];LU.frame[+t.getAttribute('data-i')]=t.value});
 // typing in the two writing boxes: save the draft (local only), update the soft sentence count
 document.addEventListener('input',function(e){var t=e.target;if(!t||(t.id!=='luG'&&t.id!=='luI'))return;var l=LMV&&lmLesson(LMV),u=l&&luUnit(l.id);if(!u)return;
-  var act=t.id==='luG'?'guided':'indep',old=luGet(u,act)||{},ok=luPut(u,act,{t:t.value,rv:!!old.rv}),m=$('#luSv_'+act);if(m)m.textContent=ok?'Draft saved on this device.':'Could not save the draft.';
-  var c=$('#luCnt');if(c&&act==='indep')c.textContent=luSentences(t.value)+' sentence(s) · about 2–3 is a good length'});
+  var act=t.id==='luG'?'guided':'indep',old=luGet(u,act)||{},ok=luPut(u,act,{t:t.value,rv:!!old.rv}),m=$('#luSv_'+act);if(m)m.textContent=luU(u,ok?'ui.dr.saved':'ui.dr.notSaved');
+  var c=$('#luCnt');if(c&&act==='indep')c.textContent=luCnt(u,t.value)});
 function renderLib(){
   stopAudio();clearTimer();WL.on=false;setLock(false);crumbs();
   if(!NAV.ex&&!NAV.daily){recClearAll();REC_EX=null} // left the exercise: drop its recorders (microphone off)

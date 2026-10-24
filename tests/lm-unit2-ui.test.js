@@ -125,21 +125,22 @@ t('Review cannot be opened before a first attempt', () => {
 });
 t('"I\'m done" with an empty answer does nothing; with text it opens Review', () => {
   const w = boot(); w.T.setLMV('lm-writing-ac-t1-u2'); w.$ = () => ({ value: '  ', focus: () => {} });
-  w.T.luAct('lu-rv', {}); assert.notStrictEqual(w.T.LU().stage, 'review'); assert.ok(/first/.test(w._toast));
+  w.T.luAct('lu-rv', {}); assert.notStrictEqual(w.T.LU().stage, 'review'); assert.ok(/overview trước/.test(w._toast), w._toast);
   w.$ = () => ({ value: 'Overall, App Y grew.', focus: () => {} }); w.T.luAct('lu-rv', {});
-  assert.strictEqual(w.T.LU().stage, 'review'); assert.ok(w.T.luHTML(L, w.MD_LM_U2).includes('Sample overview sentences for this chart'));
+  assert.strictEqual(w.T.LU().stage, 'review'); assert.ok(w.T.luHTML(L, w.MD_LM_U2).includes('Câu overview mẫu cho biểu đồ này'));
 });
 t('Controlled: answers are checked against the content labels', () => {
   const w = boot(); w.T.setLMV('lm-writing-ac-t1-u2'); const C = w.MD_LM_U2.controlled;
   C.forEach((x) => w.T.luAct('lu-pick', { dataset: { id: x.id, v: x.type === 'ovd' ? x.answer : x.label } }));
   w.T.luAct('lu-chk', {}); const h = w.T.luStageHTML(w.MD_LM_U2, 'controlled');
-  assert.ok(h.includes('<b>' + C.length + ' / ' + C.length + '</b>')); assert.ok(h.includes('Not determinable'));
-  w.T.luAct('lu-redo', {}); assert.ok(!w.T.luStageHTML(w.MD_LM_U2, 'controlled').includes(' / ' + C.length));
+  assert.ok(h.includes('Đúng ' + C.length + ' / ' + C.length + ' câu')); assert.ok(h.includes('Not determinable (biểu đồ không đủ để biết)'));
+  w.T.luAct('lu-redo', {}); assert.ok(!w.T.luStageHTML(w.MD_LM_U2, 'controlled').includes(' / ' + C.length + ' câu'));
 });
 t('Controlled: a wrong answer shows the right one and both explanations', () => {
   const w = boot(); w.T.setLMV('lm-writing-ac-t1-u2'); const x = w.MD_LM_U2.controlled[0];
   w.T.luAct('lu-pick', { dataset: { id: x.id, v: 'contradicted' } }); w.T.luAct('lu-chk', {});
-  const h = w.T.luStageHTML(w.MD_LM_U2, 'controlled'); assert.ok(h.includes('Not quite. Answer: Supported') && h.includes('lang="vi"'));
+  const h = w.T.luStageHTML(w.MD_LM_U2, 'controlled'); assert.ok(h.includes('Chưa đúng. Đáp án: Supported (biểu đồ cho thấy đúng)') && h.includes('lang="vi"'));
+  w.T.luAct('lu-lang', { dataset: { v: 'en' } }); assert.ok(w.T.luStageHTML(w.MD_LM_U2, 'controlled').includes('Not quite. Answer: Supported'));
 });
 t('drafts: version-scoped key, restored into the box', () => {
   const w = boot(); assert.strictEqual(w.T.luKey(w.MD_LM_U2, 'indep'), 'md-lm:lm-writing-ac-t1-u2:v1:indep');
@@ -147,7 +148,7 @@ t('drafts: version-scoped key, restored into the box', () => {
 });
 t('drafts: an older version is not shown, only offered for discard', () => {
   const w = boot(); w.localStorage.setItem('md-lm:lm-writing-ac-t1-u2:v0:indep', JSON.stringify({ t: 'OLD TEXT' }));
-  const h = w.T.luStageHTML(w.MD_LM_U2, 'independent'); assert.ok(!h.includes('OLD TEXT') && h.includes('older version') && h.includes('lu-old'));
+  const h = w.T.luStageHTML(w.MD_LM_U2, 'independent'); assert.ok(!h.includes('OLD TEXT') && h.includes('phiên bản cũ') && h.includes('lu-old'));
   w.T.setLMV('lm-writing-ac-t1-u2'); w.T.luAct('lu-old', { dataset: { a: 'indep' } }); assert.strictEqual(w.localStorage.getItem('md-lm:lm-writing-ac-t1-u2:v0:indep'), null);
 });
 t('drafts: Clear draft asks first and removes it', () => {
@@ -155,7 +156,7 @@ t('drafts: Clear draft asks first and removes it', () => {
   w.confirm = () => false; w.T.luAct('lu-clear', { dataset: { a: 'indep' } }); assert.ok(w.T.luGet(w.MD_LM_U2, 'indep'));
   w.confirm = () => true; w.T.luAct('lu-clear', { dataset: { a: 'indep' } }); assert.strictEqual(w.T.luGet(w.MD_LM_U2, 'indep'), null);
 });
-t('drafts: blocked storage shows a warning and nothing breaks', () => { const w = boot({ broken: true }); const h = w.T.luStageHTML(w.MD_LM_U2, 'independent'); assert.ok(h.includes('does not allow saving')); });
+t('drafts: blocked storage shows a warning and nothing breaks', () => { const w = boot({ broken: true }); const h = w.T.luStageHTML(w.MD_LM_U2, 'independent'); assert.ok(h.includes('không cho lưu')); });
 t('shared-device notice and local-only wording are shown with every draft (both languages)', () => ['guided', 'independent', 'review'].forEach((st) => {
   const w = boot(); assert.ok(w.T.luStageHTML(w.MD_LM_U2, st).includes('chỉ được lưu trong trình duyệt này'), st + ' vi');
   w.T.setLMV('lm-writing-ac-t1-u2'); w.T.luAct('lu-lang', { dataset: { v: 'en' } }); assert.ok(w.T.luStageHTML(w.MD_LM_U2, st).includes('only in this browser'), st + ' en');
@@ -173,6 +174,93 @@ t('lesson code: no database, XP or AI calls', () => { const blk = LM.slice(LM.in
 t('index.html loads the content after md-chart.js and before the app', () => {
   const i = (s) => html.indexOf('<script src="' + s + '"></script>'), app = html.indexOf("(function(){\n'use strict'");
   assert.ok(i('md-chart.js') > 0 && i('md-chart.js') < i('lm-engine.js') && i('lm-engine.js') < i('lm-unit2.js') && i('lm-unit2.js') < app);
+});
+
+// ---- 10/2026 follow-up: premature reveal, language consistency, skip, step-5 frame ----
+const A_MODELS = U2.claims.filter((x) => x.chart === 'A' && x.kind === 'model');
+const hasModel = (h) => A_MODELS.some((x) => h.includes(W.esc(resolved(x, x.en))));
+t('premature reveal: reaching step 7 without "show the samples" shows no sample sentence at all', () => {
+  const w = boot(), h = learnAll(w); assert.ok(h.includes('id="luS7"')); assert.ok(!hasModel(h), 'a sample leaked');
+  assert.ok(h.includes(W.esc(copyOf('copy.learn.ovdLocked').vi)) && /id="luS7"[\s\S]*data-act="lu-lrev"/.test(h));
+  w.T.luAct('lu-lrev', {}); assert.ok(hasModel(w.T.luStageHTML(w.MD_LM_U2, 'learn')));
+});
+t('premature reveal: also in English and with every lens / check done', () => {
+  const w = boot(); w.T.setLMV('lm-writing-ac-t1-u2'); w.T.luAct('lu-lang', { dataset: { v: 'en' } }); w.T.LU().lchk = true; w.T.LU().frameChk = true; w.T.LU().lensTried = true;
+  assert.ok(!hasModel(learnAll(w, { lens: 'trends' })));
+});
+// language consistency: every UI string of a stage is in the chosen language only (IELTS sentences excepted)
+const stageHTML = (w, st) => { const L = w.T.LU(); if (st === 'controlled') { L.chk = true; } if (st === 'review') w.T.luPut(w.MD_LM_U2, 'indep', { t: 'Overall, x.', rv: true }); return st === 'learn' ? learnAll(w, { reveal: true, check: true, lens: 'trends' }) : w.T.luStageHTML(w.MD_LM_U2, st); };
+const UIS = U2.copy.filter((x) => /^ui\./.test(x.id) && x.en !== x.vi);
+['learn', 'controlled', 'guided', 'independent', 'review'].forEach((st) => t('language consistency (' + st + '): no English UI text in Vietnamese mode and no Vietnamese UI text in English mode', () => {
+  const wv = boot(); wv.T.setLMV('lm-writing-ac-t1-u2'); const hv = stageHTML(wv, st);
+  const we = boot(); we.T.setLMV('lm-writing-ac-t1-u2'); we.T.luAct('lu-lang', { dataset: { v: 'en' } }); const he = stageHTML(we, st);
+  const strip = (h) => h.replace(/<p class="lusent" lang="en">[^<]*<\/p>|<p class="lust" lang="en">[^<]*<\/p>|<p class="luframe" lang="en">[\s\S]*?<\/p>/g, '');
+  const sv = strip(hv), se = strip(he); let used = 0;
+  UIS.forEach((x) => {
+    const en = W.esc(x.en.replace(/%n|%t/g, '')).trim(), vi = W.esc(x.vi.replace(/%n|%t/g, '')).trim();
+    if (se.includes(vi) && !x.en.includes(x.vi)) assert.fail(x.id + ': Vietnamese text in English mode');
+    if (sv.includes(en) && !x.vi.includes(x.en) && en.length > 4) assert.fail(x.id + ': English text in Vietnamese mode');
+    if (he.includes(en)) used++;
+  });
+  assert.ok(used > 0, 'stage uses UI copy');
+  assert.ok(!/>(Check answers|Correct\.|Not quite\.|Try again|Clear draft|Self-check|I&#39;m done)</.test(sv), 'hard-coded English left in Vietnamese mode');
+}));
+t('language consistency: IELTS statements and model sentences are identical in both languages', () => {
+  const grab = (h) => (h.match(/<p class="(lusent|lust)" lang="en">[^<]*<\/p>/g) || []).join('|');
+  ['learn', 'controlled', 'review'].forEach((st) => {
+    const wv = boot(); wv.T.setLMV('lm-writing-ac-t1-u2'); const we = boot(); we.T.setLMV('lm-writing-ac-t1-u2'); we.T.luAct('lu-lang', { dataset: { v: 'en' } });
+    const a = grab(stageHTML(wv, st)), b = grab(stageHTML(we, st)); assert.ok(a.length > 0, st); assert.strictEqual(a, b, st);
+  });
+});
+t('language switch during Controlled keeps the checked answers and the score', () => {
+  const w = boot(); w.T.setLMV('lm-writing-ac-t1-u2'); w.T.luAct('lu-go', { dataset: { s: 'controlled' } });
+  U2.controlled.forEach((x) => w.T.luAct('lu-pick', { dataset: { id: x.id, v: x.type === 'ovd' ? x.answer : x.label } })); w.T.luAct('lu-chk', {});
+  w.T.luAct('lu-lang', { dataset: { v: 'en' } }); const h = w.T.luStageHTML(w.MD_LM_U2, 'controlled');
+  assert.strictEqual(w.T.LU().stage, 'controlled'); assert.ok(h.includes(U2.controlled.length + ' / ' + U2.controlled.length + ' correct'));
+});
+t('stage bar and lock message follow the language', () => {
+  const w = boot(); let h = w.T.luHTML(L, w.MD_LM_U2); assert.ok(h.includes('Luyện nhận biết') && h.includes('title="Hãy viết overview trước."'));
+  w.T.setLMV('lm-writing-ac-t1-u2'); w.T.luAct('lu-lang', { dataset: { v: 'en' } }); h = w.T.luHTML(L, w.MD_LM_U2); assert.ok(h.includes('Controlled') && h.includes('title="Write your overview first."'));
+});
+// purposeful interactions without hard locks
+t('step 3 without trying a lens: hint + clearly named skip button; after a lens: normal Continue', () => {
+  const w = boot(); w.T.setLMV('lm-writing-ac-t1-u2'); w.T.luAct('lu-lnext', {}); w.T.luAct('lu-lnext', {});
+  let h = w.T.luStageHTML(w.MD_LM_U2, 'learn'); assert.ok(h.includes('data-skip="1"') && h.includes('Bỏ qua, tiếp tục') && h.includes(W.esc(copyOf('copy.learn.tryLens').vi)));
+  w.T.luAct('lu-lens', { dataset: { v: 'trends' } }); h = w.T.luStageHTML(w.MD_LM_U2, 'learn'); assert.ok(!h.includes('data-skip="1"') && h.includes('>Tiếp tục<'));
+});
+t('skipping is allowed and remembered (not a hard lock)', () => {
+  const w = boot(); w.T.setLMV('lm-writing-ac-t1-u2'); w.T.luAct('lu-lnext', {}); w.T.luAct('lu-lnext', {}); w.T.luAct('lu-lnext', { dataset: { skip: '1' } });
+  assert.strictEqual(w.T.LU().lstep, 4); assert.strictEqual(w.T.LU().lskip[3], true);
+});
+t('step 5 frame: the right lines (from the endpoint facts) = correct; wrong = try again', () => {
+  const w = boot(); w.T.setLMV('lm-writing-ac-t1-u2'); for (let i = 0; i < 4; i++) w.T.luAct('lu-lnext', {});
+  let h = w.T.luStageHTML(w.MD_LM_U2, 'learn'); assert.strictEqual((h.match(/<select class="luslot"/g) || []).length, 3); assert.ok(h.includes('<option value="museum-c">Museum C</option>'));
+  w.T.LU().frame = ['museum-c', 'museum-a', 'museum-b']; w.T.luAct('lu-frame-chk', {}); h = w.T.luStageHTML(w.MD_LM_U2, 'learn'); assert.ok(h.includes(W.esc(copyOf('copy.learn.frame.ok').vi)));
+  w.T.luAct('lu-frame-redo', {}); w.T.LU().frame = ['museum-a', 'museum-b', 'museum-c']; w.T.luAct('lu-frame-chk', {}); h = w.T.luStageHTML(w.MD_LM_U2, 'learn');
+  assert.ok(h.includes(W.esc(copyOf('copy.learn.frame.no').vi)) && h.includes('data-act="lu-frame-redo"'));
+  w.T.LU().frame = ['museum-a', 'museum-a', 'museum-b']; w.T.luAct('lu-frame-redo', {}); w.T.luAct('lu-frame-chk', {}); assert.ok(w.T.luStageHTML(w.MD_LM_U2, 'learn').includes(W.esc(copyOf('copy.learn.frame.no').vi)), 'same line twice is wrong');
+});
+t('step 5 frame stays English in Vietnamese mode, with the Vietnamese translation below', () => {
+  const h = (() => { const w = boot(); w.T.setLMV('lm-writing-ac-t1-u2'); for (let i = 0; i < 4; i++) w.T.luAct('lu-lnext', {}); return w.T.luStageHTML(w.MD_LM_U2, 'learn'); })();
+  assert.ok(/<p class="luframe" lang="en">Overall, <select/.test(h) && h.includes(W.esc(copyOf('copy.learn.frame').vi)));
+});
+t('a sample tied only to a secondary feature is marked optional', () => {
+  const h = learnAll(boot(), { reveal: true }); const shape = U2.claims.find((x) => x.id === 'a.model.shape');
+  assert.ok(new RegExp('<li class="luopt2"><span class="pill">Phụ · có thể bỏ qua</span><p class="lusent" lang="en">' + W.esc(resolved(shape, shape.en)).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).test(h));
+  const trend = A_MODELS.find((x) => x.id === 'a.model.trend'); assert.ok(h.includes('<li><p class="lusent" lang="en">' + W.esc(resolved(trend, trend.en))));
+});
+t('all dynamic UI ids exist (stage names, Controlled labels, skip hints)', () => {
+  const known = new Set(U2.copy.map((x) => x.id));
+  ['learn', 'controlled', 'guided', 'independent', 'review'].forEach((s) => assert.ok(known.has('ui.st.' + s), s));
+  ['ui.ctl.supported', 'ui.ctl.contradicted', 'ui.ctl.nd', 'copy.learn.tryLens', 'copy.learn.tryPick', 'copy.learn.tryFrame', 'copy.learn.tryReveal', 'ui.cnt', 'ui.ctl.score'].forEach((id) => assert.ok(known.has(id), id));
+  const used = (LM.match(/luUf?\(u,'([\w.]+)'[,)]/g) || []).map((m) => /'([\w.]+)'/.exec(m)[1]); assert.ok(used.length > 20); used.forEach((id) => assert.ok(known.has(id), 'missing ' + id));
+});
+t('the 8 revised items carry the reviewer wording and are still pending', () => {
+  const g = (id) => U2.copy.find((x) => x.id === id) || U2.claims.find((x) => x.id === id) || U2.controlled.find((x) => x.id === id);
+  assert.ok(/usually summarises/.test(g('copy.overview.what').en)); assert.ok(/Most exact figures/.test(g('copy.overview.detail').en)); assert.ok(/exact data only at the marked years/.test(g('copy.observed').en));
+  assert.ok(/not a fixed formula/.test(g('copy.learn.build').en)); assert.ok(/^Nhìn chung/.test(g('copy.learn.frame').vi)); assert.ok(/^You can start/.test(g('copy.guided.start').en));
+  assert.ok(/^In \{t\.x\}/.test(g('b.model.tie').en)); assert.ok(!/popular/.test(g('c.a.ovd2').statement.en));
+  ['copy.overview.what', 'copy.overview.detail', 'copy.observed', 'copy.learn.build', 'copy.learn.frame', 'copy.guided.start', 'b.model.tie', 'c.a.ovd2'].forEach((id) => assert.strictEqual(g(id).review, 'pending', id));
 });
 
 t('Unit 2 may be "published" only when the release check passes (no pending, no problems)', () => {
