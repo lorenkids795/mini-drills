@@ -892,7 +892,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-10-24a';
+const API_VERSION = '2026-10-23d';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -927,57 +927,7 @@ async function adminKick(env, body) {
   await env.MD_KV.delete('acct:' + email);
   await env.MD_KV.delete('rl:' + email);
   await env.MD_KV.put('off:' + email, 'kicked'); // open devices are signed out by /api/status
-  const purged = teacher ? null : await purgeStudent(env, email);
-  return json({ ok: true, role: teacher ? 'teacher' : 'student', envTeacher, purged });
-}
-
-/* ---------- delete a student's learning data (Kick, Delete class) ----------
-   Every document of the student in the learning collections (found by the "email" field: one query each, so a kick stays
-   far below the Workers sub-request limit), and profiles/{slug(email)} (XP, streak, prizes). Codes already handed out and the
-   "wins" marquee are left alone. Cannot be undone. */
-const PURGE_COLS = ['attempts', 'errors', 'cards', 'hwdone', 'passes', 'redeems'];
-async function fsQueryEq(env, col, field, value) {
-  const r = await fs(env, 'POST', ':runQuery', { structuredQuery: { from: [{ collectionId: col }], where: { fieldFilter: { field: { fieldPath: field }, op: 'EQUAL', value: { stringValue: value } } } } });
-  if (!r.ok) throw new Error('firestore query ' + col + ' ' + r.status);
-  const rows = await r.json();
-  return (Array.isArray(rows) ? rows : []).filter((x) => x && x.document).map((x) => x.document.name);
-}
-async function fsDeleteNames(env, names) {
-  let n = 0;
-  for (let i = 0; i < names.length; i += 400) {
-    const part = names.slice(i, i + 400);
-    const r = await fs(env, 'POST', ':batchWrite', { writes: part.map((name) => ({ delete: name })) });
-    if (!r.ok) throw new Error('firestore delete ' + r.status);
-    n += part.length;
-  }
-  return n;
-}
-async function purgeStudent(env, email) {
-  const out = {};
-  for (const col of PURGE_COLS) {
-    out[col] = await fsDeleteNames(env, await fsQueryEq(env, col, 'email', email)); // every doc of these collections has the owner's email
-  }
-  const pid = slug(email);
-  out.profiles = (await fsGet(env, 'profiles', pid)) ? (await fsDelete(env, 'profiles', pid), 1) : 0;
-  return out;
-}
-
-/* ---------- Delete a class (Classes › Class settings, admin only) ----------
-   The app first kicks every non-tester student of the class one by one (admin/kick: account + all learning data; one
-   request each, so no request goes over the Workers sub-request limit), then calls this: it deletes the class's
-   assignments, its class settings (classes/{slug}) and its names still waiting for sign-up, and says how many
-   non-tester students are still in the class. A class still in the Google Sheet comes back as "pending" until it is
-   removed from the Sheet. */
-async function adminClassDel(env, body) {
-  const cls = String(body.cls || '').trim();
-  if (!cls || cls.length > 80) return fail('Choose a class.');
-  const remaining = (await fsQueryEq(env, 'roster', 'cls', cls)).length;
-  const assignments = await fsDeleteNames(env, await fsQueryEq(env, 'assignments', 'cls', cls));
-  const names = await fsDeleteNames(env, await fsQueryEq(env, 'names', 'cls', cls));
-  const cid = slug(cls);
-  let settings = 0;
-  if (cid && (await fsGet(env, 'classes', cid))) { await fsDelete(env, 'classes', cid); settings = 1; }
-  return json({ ok: true, cls, assignments, names, settings, remaining });
+  return json({ ok: true, role: teacher ? 'teacher' : 'student', envTeacher });
 }
 
 // Move a registered student to another class (the Sheet only matters before sign-up).
@@ -1156,7 +1106,7 @@ async function spinWheel(env, request, body) {
     let code = null;
     if (prize.kind === 'mat' || prize.kind === 'custom') {
       const m = prize.rnd && matList.length ? matList[Math.floor(Math.random() * matList.length)] : null;
-      item.text = m ? String(m.title) : String((prize.kind === 'custom' && prize.text) || prize.label || 'Study pack'); item.url = m ? String(m.url || '') : String(prize.url || '');
+      item.text = m ? String(m.title) : String(prize.label || 'Study pack'); item.url = m ? String(m.url || '') : String(prize.url || '');
     } else if (prize.kind === 'title') {
       const own = (Array.isArray(p.inv) ? p.inv : []).filter((x) => x && x.kind === 'title').map((x) => x.text), fresh = TITLES.filter((t) => own.indexOf(t) < 0);
       if (prize.text) item.text = String(prize.text); else if (!fresh.length || Math.random() < 0.25) item.kind = 'ctitle'; else item.text = fresh[Math.floor(Math.random() * fresh.length)];
@@ -1968,7 +1918,6 @@ export async function onRequest(ctx) {
       if (route === 'admin/sheet') return await adminSheet(env, body);
       if (route === 'admin/class') return await adminClass(env, body);
       if (route === 'admin/kick') return await adminKick(env, body);
-      if (route === 'admin/classdel') return await adminClassDel(env, body);
       if (route === 'admin/aitest') return await adminAiTest(env, body);
       if (route === 'admin/season') return await adminSeason(env, body);
       if (route === 'admin/tester') return await adminTester(env, body);

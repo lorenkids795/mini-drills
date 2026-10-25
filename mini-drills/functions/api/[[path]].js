@@ -1,0 +1,2005 @@
+// Mini Drills auth API (Cloudflare Pages Function, served at /api/*).
+// Everyone signs in with email + password. Students pick class + name the first time;
+// teachers create their password once with a setup key. Teachers reset forgotten student passwords.
+// After a successful login it returns a Firebase custom token, so Firestore rules keep working.
+//
+// Pages -> Settings -> Variables and Secrets:
+//   FIREBASE_PROJECT_ID    text    e.g. mini-drills
+//   FIREBASE_CLIENT_EMAIL  secret  from the service account JSON (client_email)
+//   FIREBASE_PRIVATE_KEY   secret  from the service account JSON (private_key)
+//   TEACHERS               text    comma list, e.g. lorenkids795@gmail.com (old way to add teachers, still works)
+//   ADMIN_SETUP_KEY        secret  any long phrase only the teacher knows (first-time teacher password)
+//   ADMIN_EMAIL            text    the one admin account (a teacher who also manages users)
+//   ADMIN_PASSWORD         secret  the admin's first password (used once, when acct:<ADMIN_EMAIL> does not exist yet)
+//   GEMINI_KEY             secret  Google AI Studio key, for /api/ai/correct (AI Writing correction)
+//   GEMINI_MODELS          text    optional, free models tried in order, default gemini-3.8-flash,gemini-3.6-flash,gemini-3.5-flash-lite
+//   GEMINI_MODEL           text    optional, old setting: one model tried before the default list (delete it if it is gemini-2.5-flash)
+//   AI_DAILY_LIMIT         text    optional, AI checks per student per day, default 10
+//   GEMINI_PROXY_URL       text    optional, Google Apps Script relay (gemini-relay.gs) /exec link. Use it when Gemini answers
+//                                  "User location is not supported" (Cloudflare served from a blocked region, e.g. Hong Kong)
+//   GEMINI_PROXY_SECRET    secret  same value as RELAY_SECRET in the script; then GEMINI_KEY lives in the script, not here
+// Pages -> Settings -> Bindings: KV namespace, variable name MD_KV
+//
+// Roles at login, in order: ADMIN_EMAIL -> KV "staff" or TEACHERS -> Firestore roster/{email} (student).
+// Claims: { em, role: 'student' | 'teacher', nm, adm?: true }. The admin has role 'teacher' + adm, so every
+// teacher check in the app and in firestore.rules keeps working.
+// KV keys:
+//   acct:<email>   { salt, hash, ts }            password
+//   rl:<email>     wrong-password counter (10 = locked 15 minutes)
+//   staff          { "<email>": { name, ts } }   teachers added by the admin
+//   off:<email>    '1' = paused, 'moved:<new>'   blocks login; the app checks /api/status every 10 minutes
+//   adm:<key>      ADMIN_EMAIL, 12 h             admin session key, sent as X-Admin-Key to /api/admin/*
+//   sheet          { url, csv, ts }              Google Sheet class list; sheetcache = last read, 5 minutes
+//   ai:<attemptId> 'pending:<ts>' | 'done', 2 days  one AI check per Writing submission (pending older than 6 min = dead, may run again)
+//   aiq:<email>:<day>  AI checks used that day
+//   aipq:<email>:<day> AI practice exercises made that day (50)
+
+const enc = new TextEncoder();
+const PBKDF2_ITER = 100000; // Workers maximum
+
+/* ---------- small helpers ---------- */
+const json = (data, status) =>
+  new Response(JSON.stringify(data), {
+    status: status || 200,
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' },
+  });
+const fail = (msg, status) => json({ error: msg }, status || 400);
+
+/* ---------- Firebase ID token (header Authorization: Bearer <token>) ----------
+   The app is signed in with Firebase (custom token from /api/login), so every signed-in browser can send its ID token.
+   Checked here with Google's public keys (RS256, WebCrypto): audience / issuer = this Firebase project, not expired.
+   Returns { em, role, uid } from the claims, or null (no token, bad token, expired). */
+let FB_KEYS = null, FB_KEYS_AT = 0;
+async function firebaseKeys() {
+  if (FB_KEYS && Date.now() - FB_KEYS_AT < 3600000) return FB_KEYS;
+  const r = await fetch('https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com');
+  if (!r.ok) throw new Error('firebase keys ' + r.status);
+  const d = await r.json();
+  FB_KEYS = Array.isArray(d.keys) ? d.keys : [];
+  FB_KEYS_AT = Date.now();
+  return FB_KEYS;
+}
+async function idUser(env, request) {
+  const m = /^Bearer\s+([A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+)$/.exec(request.headers.get('Authorization') || '');
+  if (!m) return null;
+  const parts = m[1].split('.');
+  let head, pay;
+  try {
+    head = JSON.parse(new TextDecoder().decode(fromB64(parts[0])));
+    pay = JSON.parse(new TextDecoder().decode(fromB64(parts[1])));
+  } catch (e) { return null; }
+  const pid = env.FIREBASE_PROJECT_ID, now = Math.floor(Date.now() / 1000);
+  if (!head || head.alg !== 'RS256' || !head.kid || !pay || !pid) return null;
+  if (pay.aud !== pid || pay.iss !== 'https://securetoken.google.com/' + pid || !pay.sub) return null;
+  if (!(Number(pay.exp) > now - 30) || !(Number(pay.iat) < now + 300)) return null;
+  let keys;
+  try { keys = await firebaseKeys(); } catch (e) { console.log('[auth] keys', String(e && e.message)); return null; }
+  let jwk = keys.find((k) => k.kid === head.kid);
+  if (!jwk && FB_KEYS_AT < Date.now() - 60000) { FB_KEYS = null; try { jwk = (await firebaseKeys()).find((k) => k.kid === head.kid); } catch (e) { jwk = null; } } // keys rotate
+  if (!jwk) return null;
+  try {
+    const key = await crypto.subtle.importKey('jwk', { kty: jwk.kty, n: jwk.n, e: jwk.e, alg: 'RS256', ext: true }, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['verify']);
+    const ok = await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, fromB64(parts[2]), enc.encode(parts[0] + '.' + parts[1]));
+    if (!ok) return null;
+  } catch (e) { return null; }
+  const em = normEmail(pay.em);
+  if (!emailOk(em)) return null;
+  return { em, role: String(pay.role || ''), uid: String(pay.sub) };
+}
+const needSignIn = () => json({ error: 'Your sign-in has expired. Reload the page and sign in again.', code: 'auth' }, 401);
+
+function b64url(buf) {
+  const bytes = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
+  let s = '';
+  for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+  return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+const b64urlStr = (str) => b64url(enc.encode(str));
+function fromB64(s) {
+  const bin = atob(s.replace(/-/g, '+').replace(/_/g, '/'));
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+const emailOk = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) && e.length <= 160;
+const normEmail = (e) => String(e || '').trim().toLowerCase();
+const teachers = (env) =>
+  String(env.TEACHERS || '').split(',').map((x) => x.trim().toLowerCase()).filter(Boolean);
+const adminEmail = (env) => normEmail(env.ADMIN_EMAIL);
+
+function timingEq(a, b) {
+  if (a.length !== b.length) return false;
+  let d = 0;
+  for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return d === 0;
+}
+
+async function sha256Hex(text) {
+  const h = await crypto.subtle.digest('SHA-256', enc.encode(text));
+  return Array.from(new Uint8Array(h)).map((x) => x.toString(16).padStart(2, '0')).join('');
+}
+
+async function hashPassword(pw, saltB64) {
+  const salt = saltB64 ? fromB64(saltB64) : crypto.getRandomValues(new Uint8Array(16));
+  const key = await crypto.subtle.importKey('raw', enc.encode(pw), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt, iterations: PBKDF2_ITER, hash: 'SHA-256' }, key, 256);
+  return { salt: b64url(salt), hash: b64url(bits) };
+}
+
+/* ---------- rate limit (KV, best effort) ---------- */
+async function bump(env, key, ttl) {
+  const cur = parseInt((await env.MD_KV.get(key)) || '0', 10) + 1;
+  await env.MD_KV.put(key, String(cur), { expirationTtl: Math.max(60, ttl) });
+  return cur;
+}
+async function count(env, key) {
+  return parseInt((await env.MD_KV.get(key)) || '0', 10);
+}
+
+/* ---------- Google service account: OAuth token + Firebase custom token ---------- */
+let keyCache = null;
+async function signingKey(env) {
+  if (keyCache) return keyCache;
+  const pem = String(env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n');
+  const body = pem.replace(/-----[^-]+-----/g, '').replace(/\s+/g, '');
+  keyCache = await crypto.subtle.importKey(
+    'pkcs8', fromB64(body),
+    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign']);
+  return keyCache;
+}
+async function signJwt(env, payload) {
+  const head = b64urlStr(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+  const body = b64urlStr(JSON.stringify(payload));
+  const sig = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', await signingKey(env), enc.encode(head + '.' + body));
+  return head + '.' + body + '.' + b64url(sig);
+}
+
+let tokCache = { v: '', exp: 0 };
+async function accessToken(env) {
+  const now = Math.floor(Date.now() / 1000);
+  if (tokCache.v && tokCache.exp - 60 > now) return tokCache.v;
+  const jwt = await signJwt(env, {
+    iss: env.FIREBASE_CLIENT_EMAIL,
+    scope: 'https://www.googleapis.com/auth/datastore',
+    aud: 'https://oauth2.googleapis.com/token',
+    iat: now, exp: now + 3600,
+  });
+  const r = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'grant_type=' + encodeURIComponent('urn:ietf:params:oauth:grant-type:jwt-bearer') + '&assertion=' + jwt,
+  });
+  if (!r.ok) throw new Error('google token ' + r.status);
+  const d = await r.json();
+  tokCache = { v: d.access_token, exp: now + (d.expires_in || 3600) };
+  return tokCache.v;
+}
+
+// claims: em = email, role = student | teacher, nm = display name, adm = admin (used by firestore.rules and the app)
+async function customToken(env, email, who) {
+  const now = Math.floor(Date.now() / 1000);
+  const uid = 'u' + (await sha256Hex(email)).slice(0, 40);
+  const claims = { em: email, role: who.role, nm: String(who.name || '').slice(0, 80) };
+  if (who.adm) claims.adm = true;
+  return signJwt(env, {
+    iss: env.FIREBASE_CLIENT_EMAIL,
+    sub: env.FIREBASE_CLIENT_EMAIL,
+    aud: 'https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit',
+    iat: now, exp: now + 3600,
+    uid,
+    claims,
+  });
+}
+
+/* ---------- Firestore REST (admin) ---------- */
+const fsBase = (env) =>
+  'https://firestore.googleapis.com/v1/projects/' + env.FIREBASE_PROJECT_ID + '/databases/(default)/documents';
+
+// JS value <-> Firestore REST value. Flat values work as before (whole numbers -> integerValue, null -> '');
+// objects become mapValue and arrays arrayValue, so attempts.ai can be stored as real data.
+function toValue(v) {
+  if (typeof v === 'boolean') return { booleanValue: v };
+  if (typeof v === 'number') {
+    if (!isFinite(v)) return { integerValue: '0' };
+    return Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v };
+  }
+  if (Array.isArray(v)) return { arrayValue: { values: v.map(toValue) } };
+  if (v && typeof v === 'object') return { mapValue: { fields: toFields(v) } };
+  return { stringValue: String(v == null ? '' : v) };
+}
+function fromValue(v) {
+  if (!v || typeof v !== 'object') return undefined;
+  if ('stringValue' in v) return v.stringValue;
+  if ('booleanValue' in v) return v.booleanValue;
+  if ('integerValue' in v) return Number(v.integerValue);
+  if ('doubleValue' in v) return Number(v.doubleValue);
+  if ('timestampValue' in v) return v.timestampValue;
+  if ('nullValue' in v) return null;
+  if ('mapValue' in v) return fromFields(v.mapValue.fields);
+  if ('arrayValue' in v) return (v.arrayValue.values || []).map(fromValue);
+  return undefined;
+}
+function toFields(obj) {
+  const f = {};
+  Object.keys(obj).forEach((k) => { f[k] = toValue(obj[k]); });
+  return f;
+}
+function fromFields(fields) {
+  const o = {};
+  Object.keys(fields || {}).forEach((k) => {
+    const v = fromValue(fields[k]);
+    if (v !== undefined) o[k] = v;
+  });
+  return o;
+}
+async function fs(env, method, path, body) {
+  const r = await fetch(fsBase(env) + path, {
+    method,
+    headers: { Authorization: 'Bearer ' + (await accessToken(env)), 'Content-Type': 'application/json' },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  return r;
+}
+async function fsGet(env, col, id) {
+  const r = await fs(env, 'GET', '/' + col + '/' + encodeURIComponent(id));
+  if (r.status === 404) return null;
+  if (!r.ok) throw new Error('firestore get ' + r.status);
+  const d = await r.json();
+  return { data: fromFields(d.fields), updateTime: d.updateTime };
+}
+async function fsList(env, col) {
+  const out = [];
+  let tok = '';
+  for (let i = 0; i < 10; i++) {
+    const r = await fs(env, 'GET', '/' + col + '?pageSize=300' + (tok ? '&pageToken=' + encodeURIComponent(tok) : ''));
+    if (!r.ok) throw new Error('firestore list ' + r.status);
+    const d = await r.json();
+    (d.documents || []).forEach((doc) => {
+      out.push(Object.assign({ id: decodeURIComponent(doc.name.split('/').pop()) }, fromFields(doc.fields)));
+    });
+    tok = d.nextPageToken || '';
+    if (!tok) break;
+  }
+  return out;
+}
+// create or fully replace a document
+async function fsPut(env, col, id, obj) {
+  const r = await fs(env, 'PATCH', '/' + col + '/' + encodeURIComponent(id), { fields: toFields(obj) });
+  if (!r.ok) throw new Error('firestore put ' + r.status);
+}
+// update only some fields, only if the doc has not changed since we read it
+async function fsUpdate(env, col, id, obj, updateTime) {
+  const mask = Object.keys(obj).map((k) => 'updateMask.fieldPaths=' + encodeURIComponent(k)).join('&');
+  const pre = updateTime ? '&currentDocument.updateTime=' + encodeURIComponent(updateTime) : '';
+  const r = await fs(env, 'PATCH', '/' + col + '/' + encodeURIComponent(id) + '?' + mask + pre, { fields: toFields(obj) });
+  return r.ok;
+}
+async function fsDelete(env, col, id) {
+  const r = await fs(env, 'DELETE', '/' + col + '/' + encodeURIComponent(id));
+  if (!r.ok && r.status !== 404) throw new Error('firestore delete ' + r.status);
+}
+// create only if the document does not exist yet (false = it already exists)
+async function fsCreate(env, col, id, obj) {
+  const r = await fs(env, 'PATCH', '/' + col + '/' + encodeURIComponent(id) + '?currentDocument.exists=false', { fields: toFields(obj) });
+  return r.ok;
+}
+
+/* ---------- Google Sheet class list (CSV link, no Google API) ---------- */
+// KV sheet = { url, csv, ts }; KV sheetcache = { url, ts, rows, cols } kept 5 minutes.
+// Row id = hash of (class + full name with accents), or of the "id" column when the Sheet has one.
+// Plain slug() would mix up names that differ only by accents (VĂN THIÊN / VĂN THIỆN).
+const SHEET_TTL = 300000;
+const fold = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 'd').toLowerCase().replace(/\s+/g, ' ').trim();
+const SHEET_COLS = {
+  name: ['name', 'full name', 'student', 'student name', 'ho va ten', 'ho ten', 'ten', 'hoc sinh', 'ten hoc sinh'],
+  cls: ['class', 'lop', 'lop hoc', 'ca', 'ca hoc', 'gio', 'gio hoc', 'time'],
+  id: ['id', 'student id', 'ma', 'ma hs', 'ma hoc sinh'],
+  course: ['course', 'khoa', 'khoa hoc'],
+  grade: ['hien tai', 'khoi hien tai', 'grade'], // current grade; when empty, "Khối" is used
+  grade2: ['khoi'],
+  teacher: ['teacher', 'giao vien', 'gv'],
+};
+// Classes are named by time: "7H30" -> "7h30", "15H" -> "15h", "17PM" / "5PM" -> "17h", "7:30" -> "7h30". Other names stay as written.
+function classLabel(raw) {
+  const s = String(raw || '').trim();
+  const m = /^(\d{1,2})\s*(?:h|g|:|\.)?\s*(\d{2})?\s*(am|pm)?$/i.exec(s);
+  if (!m) return s;
+  let h = Number(m[1]);
+  const mi = m[2] || '';
+  if (m[3] && m[3].toLowerCase() === 'pm' && h < 12) h += 12;
+  if (h > 23 || (mi && Number(mi) > 59)) return s;
+  return h + 'h' + (mi && mi !== '00' ? mi : '');
+}
+const classMinutes = (c) => { const m = /^(\d{1,2})h(\d{2})?$/.exec(c); return m ? Number(m[1]) * 60 + Number(m[2] || 0) : 9999; };
+const byClassThenName = (a, b) => (classMinutes(a.cls) - classMinutes(b.cls)) || a.cls.localeCompare(b.cls) || a.name.localeCompare(b.name, 'vi');
+const nameKey = (cls, name) => String(cls || '').trim().toLowerCase() + '|' + String(name || '').normalize('NFC').replace(/\s+/g, ' ').trim().toUpperCase();
+
+// edit / share link -> CSV link. '' = not a Google Sheet link.
+function sheetCsvUrl(url) {
+  const u = String(url || '').trim();
+  if (!/^https:\/\/docs\.google\.com\/spreadsheets\//.test(u)) return '';
+  const g = /[#?&]gid=(\d+)/.exec(u);
+  if (/\/spreadsheets\/d\/e\//.test(u)) { // File -> Share -> Publish to web
+    return u.split(/[?#]/)[0].replace(/\/pub(html)?$/, '') + '/pub?output=csv' + (g ? '&single=true&gid=' + g[1] : '');
+  }
+  const m = /\/spreadsheets\/d\/([a-zA-Z0-9_-]{20,})/.exec(u);
+  return m ? 'https://docs.google.com/spreadsheets/d/' + m[1] + '/export?format=csv&gid=' + (g ? g[1] : '0') : '';
+}
+function parseCsv(text) {
+  const rows = [];
+  let row = [], cur = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += c;
+    } else if (c === '"') q = true;
+    else if (c === ',') { row.push(cur); cur = ''; }
+    else if (c === '\n' || c === '\r') {
+      if (c === '\r' && text[i + 1] === '\n') i++;
+      row.push(cur); rows.push(row); row = []; cur = '';
+    } else cur += c;
+  }
+  if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
+  return rows;
+}
+// Finds the header row (title rows above it are skipped) -> { rows: [{id, name, cls, course, teacher}], cols }
+async function parseSheet(text) {
+  const grid = parseCsv(String(text).replace(/^﻿/, ''));
+  let hi = -1, map = null;
+  for (let i = 0; i < Math.min(grid.length, 20) && hi < 0; i++) {
+    const f = grid[i].map(fold), m = {};
+    Object.keys(SHEET_COLS).forEach((k) => {
+      m[k] = -1;
+      for (const a of SHEET_COLS[k]) { const j = f.indexOf(a); if (j >= 0) { m[k] = j; break; } }
+    });
+    if (m.name >= 0 && m.cls >= 0) { hi = i; map = m; }
+  }
+  if (hi < 0) throw new Error('The Sheet needs a header row with a name column (Họ và tên or name) and a class column (Lớp or class).');
+  const rows = [], seen = {};
+  for (const r of grid.slice(hi + 1)) {
+    const cell = (k) => (map[k] >= 0 ? String(r[map[k]] || '').replace(/\s+/g, ' ').trim() : '');
+    const name = cell('name'), cls = classLabel(cell('cls'));
+    if (!name || !cls) continue;
+    let key = cell('id') ? 'id|' + cell('id') : nameKey(cls, name);
+    seen[key] = (seen[key] || 0) + 1;
+    if (seen[key] > 1) key += '#' + seen[key];
+    const grade = cell('grade') || cell('grade2');
+    rows.push({
+      id: 's' + (await sha256Hex(key)).slice(0, 20), name, cls,
+      course: cell('course') || (grade ? 'Grade ' + grade : ''), teacher: cell('teacher'),
+    });
+  }
+  const cols = {};
+  Object.keys(map).forEach((k) => { if (map[k] >= 0) cols[k] = grid[hi][map[k]]; });
+  return { rows, cols };
+}
+async function fetchSheet(csv) {
+  let r;
+  try { r = await fetch(csv, { redirect: 'follow' }); } catch (e) { throw new Error('Could not reach Google. Try again in a minute.'); }
+  if (r.status === 404) throw new Error('This Sheet was not found. Check the link.');
+  // a private Sheet answers with Google's sign-in page (HTML), not CSV
+  if (!r.ok || /text\/html/.test(r.headers.get('Content-Type') || '')) {
+    throw new Error('Google did not let the app read this Sheet. In the Sheet: Share → General access → "Anyone with the link" → Viewer.');
+  }
+  return parseSheet(await r.text());
+}
+// null = no Sheet linked. Fresh = skip the 5-minute cache. If Google fails, the last good copy is used.
+async function sheetRows(env, fresh) {
+  const conf = await env.MD_KV.get('sheet', 'json');
+  if (!conf || !conf.csv) return null;
+  const old = await env.MD_KV.get('sheetcache', 'json');
+  if (!fresh && old && old.url === conf.csv && Date.now() - old.ts < SHEET_TTL) return old;
+  try {
+    const s = await fetchSheet(conf.csv);
+    const c = { url: conf.csv, ts: Date.now(), rows: s.rows, cols: s.cols };
+    await env.MD_KV.put('sheetcache', JSON.stringify(c));
+    return c;
+  } catch (e) {
+    if (old && old.url === conf.csv) return Object.assign(old, { stale: true, error: e.message });
+    throw e;
+  }
+}
+// Sheet rows already used: names/{id} claimed, or a student with the same class + name in the roster (old CSV sign-ups)
+async function takenSet(env) {
+  const [names, roster] = await Promise.all([fsList(env, 'names'), fsList(env, 'roster')]);
+  const ids = {}, keys = {};
+  names.forEach((n) => { if (n.claimed) ids[n.id] = 1; });
+  roster.forEach((r) => {
+    if (r.role === 'teacher') return;
+    if (r.sid) ids[r.sid] = 1;
+    keys[nameKey(r.cls, r.name)] = 1;
+  });
+  return { ids, keys, taken: (row) => !!(ids[row.id] || keys[nameKey(row.cls, row.name)]) };
+}
+
+/* ---------- roles, paused accounts, admin session ---------- */
+async function staffMap(env) {
+  return (await env.MD_KV.get('staff', 'json')) || {};
+}
+// -> { role, adm, name } or null. Order: ADMIN_EMAIL, then staff / TEACHERS, then a student in the roster.
+async function roleOf(env, email) {
+  if (!email) return null;
+  if (email === adminEmail(env)) return { role: 'teacher', adm: true, name: 'Admin' };
+  const st = await staffMap(env);
+  if (st[email]) return { role: 'teacher', adm: false, name: st[email].name || 'Teacher' };
+  if (teachers(env).indexOf(email) >= 0) return { role: 'teacher', adm: false, name: 'Teacher' };
+  const row = await fsGet(env, 'roster', email);
+  if (row && row.data.role !== 'teacher') return { role: 'student', adm: false, name: row.data.name };
+  return null;
+}
+// '' | 'off' (paused by the admin) | 'moved' (email changed by the admin) | 'kicked' (account deleted, may register again)
+async function offState(env, email) {
+  const v = await env.MD_KV.get('off:' + email);
+  if (!v) return '';
+  if (v === 'kicked') return 'kicked';
+  return v.indexOf('moved:') === 0 ? 'moved' : 'off';
+}
+const OFF_MSG = {
+  off: 'Your account is paused. Ask your teacher.',
+  moved: 'Your email was changed by the admin. Sign in with your new email.',
+  kicked: 'Your account was removed. To come back, create your password again on the sign-in page.',
+};
+
+// The first admin login creates the password from ADMIN_PASSWORD. After that the password in KV is used.
+async function seedAdmin(env, email) {
+  if (!email || email !== adminEmail(env) || String(env.ADMIN_PASSWORD || '').length < 6) return;
+  if (await env.MD_KV.get('acct:' + email)) return;
+  await savePassword(env, email, String(env.ADMIN_PASSWORD));
+}
+// Random key for /api/admin/* (header X-Admin-Key), valid 12 hours.
+async function newAdminKey(env, email) {
+  const k = b64url(crypto.getRandomValues(new Uint8Array(32)));
+  await env.MD_KV.put('adm:' + k, email, { expirationTtl: 43200 });
+  return k;
+}
+async function adminKeyOk(env, request) {
+  const k = request.headers.get('X-Admin-Key') || '';
+  if (!/^[A-Za-z0-9_-]{40,}$/.test(k)) return false;
+  const em = await env.MD_KV.get('adm:' + k);
+  return !!em && em === adminEmail(env);
+}
+
+/* ---------- staff key (teachers + admin): same idea as adminKey ---------- */
+// KV stf:<key> = email (12 hours). Sent as X-Staff-Key for staff uploads (voice feedback, lesson audio) and staff AI tools.
+async function newStaffKey(env, email) {
+  const k = b64url(crypto.getRandomValues(new Uint8Array(32)));
+  await env.MD_KV.put('stf:' + k, email, { expirationTtl: 43200 });
+  return k;
+}
+// -> the teacher's email, or '' (missing / expired key, or the account is no longer a teacher / is paused)
+async function staffEmail(env, request) {
+  const k = request.headers.get('X-Staff-Key') || '';
+  if (!/^[A-Za-z0-9_-]{40,}$/.test(k)) return '';
+  const em = await env.MD_KV.get('stf:' + k);
+  if (!em || (await offState(env, em))) return '';
+  const who = await roleOf(env, em);
+  return who && who.role === 'teacher' ? em : '';
+}
+const staffLocked = () => json({ error: 'Your session ended. Enter your password to continue.', needUnlock: true }, 401);
+// POST /api/staff/unlock { email, password } -> { staffKey }
+async function staffUnlock(env, body) {
+  const email = normEmail(body.email);
+  if (!emailOk(email)) return fail('Enter a valid email.');
+  await seedAdmin(env, email);
+  const st = await checkPassword(env, email, String(body.password || ''));
+  if (st === 'locked') return fail('Too many tries. Wait 15 minutes and try again.', 429);
+  if (st !== 'ok') return fail('Wrong password.', 401);
+  const off = await offState(env, email);
+  if (off) return fail(OFF_MSG[off], 403);
+  const who = await roleOf(env, email);
+  if (!who || who.role !== 'teacher') return fail('Only teachers can do this.', 403);
+  return json({ staffKey: await newStaffKey(env, email) });
+}
+
+/* ---------- audio files (recordings, voice feedback, lesson audio) ---------- */
+// Stored in KV aud:<id> (metadata {type, size, by, kind, ts}); with an R2 binding MD_AUDIO, in R2 instead (same id).
+// id = 22 random base64url characters (128 bits): the link itself is the permission to listen.
+const AUDIO_TYPES = ['audio/webm', 'audio/ogg', 'audio/mp4', 'audio/mpeg', 'audio/wav', 'audio/x-m4a'];
+const AUDIO_MAX = 8 * 1024 * 1024; // about 10 minutes of opus
+const AUDIO_KINDS = ['speaking', 'feedback', 'lesson'];
+async function audioPut(env, id, buf, meta, ttl) {
+  if (env.MD_AUDIO) { // R2 has no per-file expiry: use an R2 lifecycle rule if old student recordings must go
+    const cm = {};
+    Object.keys(meta).forEach((k) => { cm[k] = String(meta[k]); });
+    await env.MD_AUDIO.put('aud/' + id, buf, { httpMetadata: { contentType: meta.type }, customMetadata: cm });
+    return;
+  }
+  const opt = { metadata: meta };
+  if (ttl) opt.expirationTtl = ttl;
+  await env.MD_KV.put('aud:' + id, buf, opt);
+}
+// -> { buf: ArrayBuffer, meta } | null
+async function audioGet(env, id) {
+  if (env.MD_AUDIO) {
+    const o = await env.MD_AUDIO.get('aud/' + id);
+    if (!o) return null;
+    const meta = Object.assign({}, o.customMetadata || {});
+    meta.type = (o.httpMetadata && o.httpMetadata.contentType) || meta.type || 'audio/webm';
+    return { buf: await o.arrayBuffer(), meta };
+  }
+  const r = await env.MD_KV.getWithMetadata('aud:' + id, 'arrayBuffer');
+  if (!r || !r.value) return null;
+  return { buf: r.value, meta: r.metadata || {} };
+}
+// POST /api/audio?kind=speaking|feedback|lesson, body = the file, Content-Type = its audio type.
+// Students (speaking): no key, 20 uploads per IP per hour, kept 365 days. Staff (feedback, lesson): X-Staff-Key, kept.
+async function audioUpload(env, request, url, ip) {
+  const kind = String(url.searchParams.get('kind') || '');
+  if (AUDIO_KINDS.indexOf(kind) < 0) return fail('Unknown audio kind.');
+  const type = String(request.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase();
+  if (AUDIO_TYPES.indexOf(type) < 0) return fail('This audio type is not supported (' + (type || 'unknown') + '). Use mp3, m4a, wav, webm or ogg.', 415);
+  if (Number(request.headers.get('Content-Length') || 0) > AUDIO_MAX) return fail('The file is too big (8 MB at most).', 413);
+  let by = 'student', ttl = 365 * 86400;
+  if (kind === 'speaking') {
+    const who = await idUser(env, request);
+    if (!who) return needSignIn();
+    by = who.em;
+    if ((await bump(env, 'aup:' + ip, 3600)) > 20) return fail('Too many uploads from this network. Try again in an hour.', 429);
+    if ((await bump(env, 'aue:' + who.em, 3600)) > 20) return fail('Too many uploads in one hour. Try again later.', 429);
+  } else {
+    by = await staffEmail(env, request);
+    if (!by) return staffLocked();
+    ttl = 0;
+  }
+  const buf = await request.arrayBuffer();
+  if (buf.byteLength > AUDIO_MAX) return fail('The file is too big (8 MB at most).', 413);
+  if (buf.byteLength < 200) return fail('The recording is empty. Record again.');
+  const id = b64url(crypto.getRandomValues(new Uint8Array(16))); // 22 characters
+  await audioPut(env, id, buf, { type, size: buf.byteLength, by, kind, ts: Date.now() }, ttl);
+  return json({ id, url: '/api/audio/' + id, size: buf.byteLength });
+}
+// GET /api/audio/<id>: the file, with Range support (206) so Safari / iPhone can play and seek.
+async function audioServe(env, request, id) {
+  const a = await audioGet(env, id);
+  if (!a) return new Response('Not found', { status: 404, headers: { 'Cache-Control': 'no-store' } });
+  const total = a.buf.byteLength, head = request.method === 'HEAD';
+  const base = { 'Content-Type': a.meta.type || 'audio/webm', 'Accept-Ranges': 'bytes', 'Cache-Control': 'private, max-age=31536000, immutable' };
+  const m = /^bytes=(\d*)-(\d*)$/.exec(String(request.headers.get('Range') || '').trim());
+  if (m && (m[1] !== '' || m[2] !== '')) {
+    let s, e;
+    if (m[1] === '') { s = Math.max(0, total - Number(m[2])); e = total - 1; } // last N bytes
+    else { s = Number(m[1]); e = m[2] === '' ? total - 1 : Math.min(Number(m[2]), total - 1); }
+    if (s >= total || s > e) return new Response(null, { status: 416, headers: Object.assign({}, base, { 'Content-Range': 'bytes */' + total }) });
+    return new Response(head ? null : a.buf.slice(s, e + 1), {
+      status: 206,
+      headers: Object.assign({}, base, { 'Content-Range': 'bytes ' + s + '-' + e + '/' + total, 'Content-Length': String(e - s + 1) }),
+    });
+  }
+  return new Response(head ? null : a.buf, { status: 200, headers: Object.assign({}, base, { 'Content-Length': String(total) }) });
+}
+
+/* ---------- routes ---------- */
+// Names a new student can pick. With a Sheet linked: Sheet rows nobody has taken yet, classes in time order.
+async function listNames(env) {
+  const sh = await sheetRows(env, false);
+  if (sh) {
+    const t = await takenSet(env);
+    return sh.rows.filter((r) => !t.taken(r)).map((r) => ({ id: r.id, name: r.name, cls: r.cls, course: r.course })).sort(byClassThenName);
+  }
+  const rows = await fsList(env, 'names');
+  return rows
+    .filter((n) => !n.claimed && n.name && n.cls)
+    .map((n) => ({ id: n.id, name: n.name, cls: n.cls, course: n.course || '' }))
+    .sort((a, b) => (a.cls + a.name).localeCompare(b.cls + b.name));
+}
+
+// 'ok' | 'bad' | 'locked'. Ten wrong tries lock the email for 15 minutes.
+async function checkPassword(env, email, pw) {
+  if ((await count(env, 'rl:' + email)) >= 10) return 'locked';
+  const acct = await env.MD_KV.get('acct:' + email, 'json');
+  let ok = false;
+  if (acct) {
+    const h = await hashPassword(pw, acct.salt);
+    ok = timingEq(h.hash, acct.hash);
+  } else {
+    await hashPassword(pw); // keep timing similar
+  }
+  if (!ok) { await bump(env, 'rl:' + email, 900); return 'bad'; }
+  await env.MD_KV.delete('rl:' + email);
+  return 'ok';
+}
+async function savePassword(env, email, pw) {
+  const h = await hashPassword(pw);
+  await env.MD_KV.put('acct:' + email, JSON.stringify({ salt: h.salt, hash: h.hash, ts: Date.now() }));
+}
+
+async function login(env, body) {
+  const email = normEmail(body.email), pw = String(body.password || '');
+  if (!emailOk(email) || !pw) return fail('Enter your email and password.');
+  await seedAdmin(env, email);
+  const st = await checkPassword(env, email, pw);
+  if (st === 'locked') return fail('Too many tries. Wait 15 minutes and try again.', 429);
+  if (st !== 'ok') return fail('Wrong email or password.', 401);
+  const off = await offState(env, email);
+  if (off) return fail(OFF_MSG[off], 403);
+  const who = await roleOf(env, email);
+  if (!who) return fail('This email is not on the class list. Ask your teacher.', 403);
+  const res = { token: await customToken(env, email, who), user: { email, name: who.name, role: who.role, adm: !!who.adm } };
+  if (who.adm) res.adminKey = await newAdminKey(env, email);
+  if (who.role === 'teacher') res.staffKey = await newStaffKey(env, email); // teachers and admin
+  return json(res);
+}
+
+async function register(env, body, ip) {
+  const email = normEmail(body.email), pw = String(body.password || ''), nameId = String(body.nameId || '');
+  if (!emailOk(email)) return fail('Enter a valid email.');
+  if (pw.length < 6) return fail('Password needs at least 6 characters.');
+  if ((await bump(env, 'reg:' + ip, 3600)) > 30) return fail('Too many sign-ups from this network. Try again later.', 429);
+  // the admin password only comes from ADMIN_PASSWORD (first login), never from this form
+  if (email === adminEmail(env)) return fail('This is the admin email. Use Sign in.', 403);
+  if (await env.MD_KV.get('acct:' + email)) return fail('This email already has a password. Use Sign in. If you forgot it, ask your teacher to reset it.', 409);
+  const off = await offState(env, email);
+  if (off && off !== 'kicked') return fail(OFF_MSG[off], 403); // a kicked student may register again
+
+  if (teachers(env).indexOf(email) >= 0) {
+    const key = String(body.setupKey || '');
+    if ((await bump(env, 'setup:' + ip, 3600)) > 10) return fail('Too many tries. Try again later.', 429);
+    if (!env.ADMIN_SETUP_KEY || String(env.ADMIN_SETUP_KEY).length < 8 || !timingEq(key, String(env.ADMIN_SETUP_KEY))) {
+      return fail('Wrong teacher setup key.', 403);
+    }
+    await savePassword(env, email, pw);
+    return json({ token: await customToken(env, email, { role: 'teacher', name: 'Teacher' }), user: { email, name: 'Teacher', role: 'teacher' }, staffKey: await newStaffKey(env, email) });
+  }
+
+  let name = '';
+  let sh = null;
+  try { sh = nameId ? await sheetRows(env, true) : null; } catch (e) { return fail('Could not read the class list. Try again in a minute.', 503); }
+  if (sh) {
+    // Sheet linked: the name must be in the Sheet now and not taken; names/{id} is created only once
+    const row = sh.rows.filter((r) => r.id === nameId)[0];
+    if (!row) return fail('That name is no longer on the class list. Reload the page and pick again.', 409);
+    if (await fsGet(env, 'roster', email)) return fail('This email is already on the class list. Choose "my teacher already added my email" instead.', 409);
+    if ((await takenSet(env)).taken(row)) return fail('That name was already taken. Pick it again from the list, or ask your teacher.', 409);
+    const okClaim = await fsCreate(env, 'names', row.id, {
+      name: row.name, cls: row.cls, course: row.course, teacher: row.teacher, claimed: true, email, sid: row.id, ts: Date.now(),
+    });
+    if (!okClaim) return fail('That name was just taken. Reload and pick again.', 409);
+    name = row.name;
+    await fsPut(env, 'roster', email, {
+      email, name, role: 'student', course: row.course, cls: row.cls, teacher: row.teacher, self: true, sid: row.id, ts: Date.now(),
+    });
+  } else if (nameId) {
+    const n = await fsGet(env, 'names', nameId);
+    if (!n || n.data.claimed) return fail('That name was already taken. Pick it again from the list.', 409);
+    if (await fsGet(env, 'roster', email)) return fail('This email is already on the class list. Choose "my teacher already added my email" instead.', 409);
+    const okClaim = await fsUpdate(env, 'names', nameId, { claimed: true, email }, n.updateTime);
+    if (!okClaim) return fail('That name was just taken. Reload and pick again.', 409);
+    name = n.data.name;
+    await fsPut(env, 'roster', email, {
+      email, name, role: 'student', course: n.data.course || '', cls: n.data.cls || '', self: true, ts: Date.now(),
+    });
+  } else {
+    const row = await fsGet(env, 'roster', email);
+    if (!row || row.data.role === 'teacher') return fail('This email is not on the class list. Pick your name, or ask your teacher.', 404);
+    name = row.data.name;
+  }
+  await savePassword(env, email, pw);
+  if (off === 'kicked') await env.MD_KV.delete('off:' + email);
+  return json({ token: await customToken(env, email, { role: 'student', name }), user: { email, name, role: 'student' } });
+}
+
+// A teacher sets a new password for a student (or another teacher). The teacher proves who they are with their own password.
+async function resetPassword(env, body) {
+  const admin = normEmail(body.email), apw = String(body.password || '');
+  const target = normEmail(body.target), npw = String(body.newPassword || '');
+  const me = await roleOf(env, admin);
+  if (!me || me.role !== 'teacher' || (await offState(env, admin))) return fail('Only a teacher can do this.', 403);
+  if (!emailOk(target)) return fail('Enter the student email.');
+  if (target === adminEmail(env)) return fail('Only the admin can change the admin password.', 403);
+  if (npw.length < 6) return fail('The new password needs at least 6 characters.');
+  const st = await checkPassword(env, admin, apw);
+  if (st === 'locked') return fail('Too many tries. Wait 15 minutes and try again.', 429);
+  if (st !== 'ok') return fail('Your teacher password is wrong.', 401);
+  const tr = await roleOf(env, target);
+  if (!tr) return fail('That email is not on the class list.', 404);
+  if (tr.role !== 'student') return fail('Only student passwords can be reset here. Teacher passwords are changed by the admin (Admin › Users).', 403);
+  await savePassword(env, target, npw);
+  await env.MD_KV.delete('rl:' + target);
+  return json({ ok: true });
+}
+
+/* ---------- admin APIs (header X-Admin-Key) ---------- */
+// Everyone in the app: admin, teachers (KV + TEACHERS), students (roster), with paused / moved status.
+async function adminUsers(env) {
+  const out = [], seen = {};
+  const add = (r) => { if (r.email && !seen[r.email]) { seen[r.email] = 1; out.push(r); } };
+  const ad = adminEmail(env);
+  if (ad) add({ email: ad, name: 'Admin', role: 'admin', cls: '', course: '', src: 'env' });
+  const st = await staffMap(env);
+  Object.keys(st).forEach((e) => add({ email: e, name: st[e].name || 'Teacher', role: 'teacher', cls: '', course: '', src: 'admin' }));
+  teachers(env).forEach((e) => add({ email: e, name: 'Teacher', role: 'teacher', cls: '', course: '', src: 'env' }));
+  (await fsList(env, 'roster')).forEach((r) => {
+    if (r.role === 'teacher') return;
+    add({ email: normEmail(r.email || r.id), name: r.name || '', role: 'student', cls: r.cls || '', course: r.course || '', src: 'roster', tester: r.tester === true });
+  });
+  await Promise.all(out.map(async (r) => {
+    const off = await env.MD_KV.get('off:' + r.email);
+    // 'kicked' is only seen for a teacher still listed in the TEACHERS variable (kicked students leave the roster)
+    r.status = !off ? 'active' : off === 'kicked' ? 'kicked' : off.indexOf('moved:') === 0 ? 'moved' : 'paused';
+    r.hasPassword = !!(await env.MD_KV.get('acct:' + r.email));
+  }));
+  return json({ users: out, me: ad, ver: API_VERSION });
+}
+
+// Set a new password for anyone. For the admin's own account the current password is needed too.
+async function adminPassword(env, body) {
+  const email = normEmail(body.email), pw = String(body.newPassword || '');
+  if (!emailOk(email)) return fail('Enter a valid email.');
+  if (pw.length < 6) return fail('The new password needs at least 6 characters.');
+  if (email === adminEmail(env)) {
+    const st = await checkPassword(env, email, String(body.oldPassword || ''));
+    if (st === 'locked') return fail('Too many tries. Wait 15 minutes and try again.', 429);
+    if (st !== 'ok') return fail('Your current password is wrong.', 401);
+  } else if (!(await roleOf(env, email)) && !(await rosterRow(env, email))) {
+    return fail('This email is not a student or teacher in the app.', 404);
+  }
+  await savePassword(env, email, pw);
+  await env.MD_KV.delete('rl:' + email);
+  return json({ ok: true });
+}
+
+// Pause (active:false) or resume. Paused accounts cannot sign in; open devices are signed out within 10 minutes.
+async function adminActive(env, body) {
+  const email = normEmail(body.email);
+  if (!emailOk(email)) return fail('Enter a valid email.');
+  if (email === adminEmail(env)) return fail('The admin account cannot be paused.', 403);
+  if (!(await roleOf(env, email))) return fail('This email is not a student or teacher in the app.', 404);
+  if ((await offState(env, email)) === 'moved') return fail('This email was changed to a new one. Manage the new email instead.', 409);
+  if (body.active === false) await env.MD_KV.put('off:' + email, '1');
+  else await env.MD_KV.delete('off:' + email);
+  return json({ ok: true });
+}
+
+// Add a teacher (with a password the admin chose) or remove one. Removing keeps all their data.
+async function adminTeachers(env, body) {
+  const op = String(body.op || ''), email = normEmail(body.email);
+  if (!emailOk(email)) return fail('Enter a valid email.');
+  if (email === adminEmail(env)) return fail('This is the admin account.', 403);
+  const st = await staffMap(env);
+  if (op === 'add') {
+    const name = String(body.name || '').trim().slice(0, 80), pw = String(body.password || '');
+    if (!name) return fail('Enter the teacher name.');
+    if (pw.length < 6) return fail('The password needs at least 6 characters.');
+    if (st[email] || teachers(env).indexOf(email) >= 0) return fail('This email is already a teacher. If it is paused, use Resume in Users.', 409);
+    const row = await fsGet(env, 'roster', email);
+    if (row && row.data.role !== 'teacher') return fail('This email belongs to a student. Use another email.', 409);
+    if ((await offState(env, email)) === 'moved') return fail('This email was changed to a new one. Use another email.', 409);
+    st[email] = { name, ts: Date.now() };
+    await env.MD_KV.put('staff', JSON.stringify(st));
+    await savePassword(env, email, pw);
+    await env.MD_KV.delete('rl:' + email);
+    await env.MD_KV.delete('off:' + email);
+    return json({ ok: true });
+  }
+  if (op === 'remove') {
+    if (!st[email] && teachers(env).indexOf(email) < 0) return fail('This teacher was not found.', 404);
+    delete st[email];
+    await env.MD_KV.put('staff', JSON.stringify(st));
+    await env.MD_KV.put('off:' + email, '1'); // also stops a TEACHERS email, which cannot be edited from here
+    return json({ ok: true });
+  }
+  return fail('Unknown action.');
+}
+
+async function adminUnlock(env, body) {
+  const ad = adminEmail(env);
+  if (!ad) return fail('ADMIN_EMAIL is not set on Cloudflare.', 403);
+  await seedAdmin(env, ad);
+  const st = await checkPassword(env, ad, String(body.password || ''));
+  if (st === 'locked') return fail('Too many tries. Wait 15 minutes and try again.', 429);
+  if (st !== 'ok') return fail('Wrong admin password.', 401);
+  return json({ adminKey: await newAdminKey(env, ad) });
+}
+
+// What the admin sees about the Sheet: columns found, 5 first rows, and per class who has not registered yet.
+async function sheetSummary(env, c) {
+  const t = await takenSet(env), by = {};
+  c.rows.forEach((r) => {
+    const k = by[r.cls] || (by[r.cls] = { cls: r.cls, total: 0, open: [], done: [] });
+    k.total++;
+    if (!t.taken(r)) k.open.push(r.name); else k.done.push(r.name);
+  });
+  const classes = Object.keys(by).map((k) => by[k]).sort((a, b) => byClassThenName({ cls: a.cls, name: '' }, { cls: b.cls, name: '' }));
+  return { ts: c.ts, cols: c.cols, total: c.rows.length, classes, preview: c.rows.slice(0, 5), stale: !!c.stale, error: c.error || '' };
+}
+// op: 'get' | 'check' (read a link, save nothing) | 'save' | 'refresh' (read again now) | 'unlink'
+async function adminSheet(env, body) {
+  const op = String(body.op || 'get');
+  if (op === 'check' || op === 'save') {
+    const url = String(body.url || '').trim(), csv = sheetCsvUrl(url);
+    if (!csv) return fail('Paste the link of a Google Sheet (it starts with https://docs.google.com/spreadsheets/).');
+    let s;
+    try { s = await fetchSheet(csv); } catch (e) { return fail(e.message); }
+    if (!s.rows.length) return fail('The Sheet has a header row but no students under it.');
+    const c = { url: csv, ts: Date.now(), rows: s.rows, cols: s.cols };
+    if (op === 'save') {
+      await env.MD_KV.put('sheet', JSON.stringify({ url, csv, ts: Date.now() }));
+      await env.MD_KV.put('sheetcache', JSON.stringify(c));
+      await fsPut(env, 'config', 'sheet', { linked: true, ts: Date.now() }); // lets the teacher Students tab hide the CSV box
+    }
+    return json(Object.assign({ linked: op === 'save', url, saved: op === 'save' }, await sheetSummary(env, c)));
+  }
+  if (op === 'unlink') {
+    await env.MD_KV.delete('sheet');
+    await env.MD_KV.delete('sheetcache');
+    await fsPut(env, 'config', 'sheet', { linked: false, ts: Date.now() });
+    return json({ linked: false });
+  }
+  const conf = await env.MD_KV.get('sheet', 'json');
+  if (!conf) return json({ linked: false });
+  let c;
+  try { c = await sheetRows(env, op === 'refresh'); } catch (e) { return json({ linked: true, url: conf.url, error: e.message, classes: [], preview: [], total: 0, cols: {} }); }
+  return json(Object.assign({ linked: true, url: conf.url }, await sheetSummary(env, c)));
+}
+
+// Kick a student or a teacher: delete the account (password, class-list entry / staff entry) and free the Sheet name,
+// so the person must register again by picking their name (a teacher is added again in Admin → Teachers).
+// Learning data (attempts, XP, flashcards…) is kept: registering again with the same email brings it back.
+// roster/{email} for a student. Users lists rows by their email field (or id), so an older row whose id is not the
+// normalized email (capital letters, spaces) is found by that field too. -> { id, data } | null
+// Shadow tester accounts (roster.tester = true): a normal student login (XP, homework, AI…), hidden by the app from class lists,
+// Students, Dashboard and Leaderboard. Not in the Google Sheet (the app only reads the Sheet, it never writes to it).
+// op 'create' {email, name, cls, password}: new student account without a Sheet row. op 'set' {email, on}: turn the flag on/off.
+async function adminTester(env, body) {
+  const email = normEmail(body.email);
+  if (!emailOk(email)) return fail('Enter a valid email.');
+  if (email === adminEmail(env)) return fail('This is the admin account.');
+  if (body.op === 'create') {
+    const pw = String(body.password || '');
+    if (pw.length < 6) return fail('The password needs at least 6 characters.');
+    if ((await roleOf(env, email)) || (await rosterRow(env, email))) return fail('This email already has an account. Use the Tester switch in the list instead.');
+    const name = String(body.name || 'Tester').replace(/\s+/g, ' ').trim().slice(0, 80) || 'Tester';
+    const cls = String(body.cls || 'Test').replace(/\s+/g, ' ').trim().slice(0, 40) || 'Test';
+    await fsPut(env, 'roster', email, { email, name, cls, course: '', role: 'student', tester: true, ts: Date.now() });
+    await savePassword(env, email, pw);
+    await env.MD_KV.delete('off:' + email);
+    const added = await seedTester(env, email, name, cls);
+    return json({ ok: true, email, name, cls, added });
+  }
+  if (body.op === 'seed') {
+    const row = await rosterRow(env, email);
+    if (!row || row.data.tester !== true) return fail('Sample data is only for tester accounts.', 404);
+    return json({ ok: true, added: await seedTester(env, email, row.data.name || 'Tester', row.data.cls || 'Test') });
+  }
+  if (body.op === 'set') {
+    const row = await rosterRow(env, email);
+    if (!row || row.data.role === 'teacher') return fail('Only student accounts can be testers.', 404);
+    const ok = await fsUpdate(env, 'roster', row.id, { tester: body.on === true });
+    if (!ok) return fail('Could not save. Try again.', 500);
+    return json({ ok: true, tester: body.on === true });
+  }
+  return fail('Unknown action.');
+}
+
+// a few made-up results (built-in Cam 14 Test 1 exercises) + some XP, so a tester's Home / Recent results / Leaderboard have data.
+// Same list as tSeed() in the app. Marked seeded:true. XP is only raised (never lowered).
+async function seedTester(env, email, name, cls) {
+  const now = Date.now(), D = 86400000;
+  const L = [['l1', 8, 9], ['r1', 6, 7], ['l2', 9, 5], ['r3', 5, 3], ['l3', 7, 1]];
+  for (const [ex, score, ago] of L) {
+    await fsPut(env, 'attempts', 'seed_' + slug(email) + '_' + ex, { email, student: name, cls, course: '', ex, score, total: 10, items: [], ts: now - ago * D, seeded: true });
+  }
+  // Writing (w1) + Speaking (s1) submissions, already marked, so Recent results / Open feedback have something to show.
+  // Fixed ids: pressing "Add sample data" again replaces them instead of adding copies.
+  const WT = 'The table compares internet access in four countries in 2005 and 2020. Overall, access rose everywhere, and Country C stayed the highest in both years.';
+  const sub = [
+    ['w1', { kind: 'submission', text: WT, words: WT.split(/\s+/).length, ts: now - 4 * D, grade: { scores: [6, 6.5, 6, 6], overall: 6, feedback: 'Sample feedback: clear overview; add one comparison with numbers.', by: 'Sample', ts: now - 3 * D } }],
+    ['s1', { kind: 'submission', notes: 'Sample speaking submission (no recording).', ts: now - 2 * D, grade: { scores: [6, 6, 6.5, 6], overall: 6, feedback: 'Sample feedback: speak a little longer in Part 2.', by: 'Sample', ts: now - D } }],
+  ];
+  for (const [ex, rec] of sub) {
+    await fsPut(env, 'attempts', 'seed_' + slug(email) + '_' + ex, Object.assign({ email, student: name, cls, course: '', ex, score: 0, total: 0, items: [], seeded: true }, rec));
+  }
+  const pid = slug(email), cur = await fsGet(env, 'profiles', pid), xp = Math.max(Number(cur && cur.data.xp) || 0, 160);
+  await fsUpdate(env, 'profiles', pid, { email, xp, xpLife: Math.max(Number(cur && cur.data.xpLife) || 0, xp), xpAt: now });
+  return L.length + sub.length;
+}
+async function rosterRow(env, email) {
+  const row = await fsGet(env, 'roster', email);
+  if (row) return { id: email, data: row.data };
+  const hit = (await fsList(env, 'roster')).filter((r) => normEmail(r.email || r.id) === email)[0];
+  return hit ? { id: hit.id, data: hit } : null;
+}
+
+// Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
+const API_VERSION = '2026-10-24b';
+
+async function adminKick(env, body) {
+  const email = normEmail(body.email);
+  if (!emailOk(email)) return fail('Enter a valid email.');
+  if (email === adminEmail(env)) return fail('The admin account cannot be kicked.', 403);
+  // students (roster) and teachers (KV staff, TEACHERS variable, or a teacher row in roster) can both be kicked
+  const st = await staffMap(env), envTeacher = teachers(env).indexOf(email) >= 0;
+  const row = await rosterRow(env, email);
+  const teacher = !!st[email] || envTeacher || !!(row && row.data.role === 'teacher');
+  if (!teacher && !row) return fail('This account was not found. Reload the list.', 404);
+  if (st[email]) { delete st[email]; await env.MD_KV.put('staff', JSON.stringify(st)); }
+  // free the name: Sheet claims (have sid) are deleted, old CSV names are marked unclaimed again
+  const names = (await fsList(env, 'names')).filter((n) => normEmail(n.email) === email);
+  for (const n of names) {
+    if (n.sid) await fsDelete(env, 'names', n.id);
+    else await fsUpdate(env, 'names', n.id, { claimed: false, email: '' });
+  }
+  // A student who never claimed a name (added by CSV with an email) and no Sheet linked: put the name back
+  // in the sign-up list, so they can register again by picking it. With a Sheet, the Sheet row is free again by itself.
+  if (!teacher && row && !names.length && row.data.name && row.data.cls) {
+    let sheet = null;
+    try { sheet = await sheetRows(env, false); } catch (e) { sheet = null; }
+    if (!sheet) {
+      const id = slug(row.data.cls + '-' + row.data.name) || 'name';
+      const rec = { name: row.data.name, cls: row.data.cls, course: row.data.course || '', claimed: false, email: '', ts: Date.now() };
+      const old = await fsGet(env, 'names', id);
+      if (!old) await fsPut(env, 'names', id, rec);
+      else if (old.data.claimed) await fsPut(env, 'names', id + '-' + Date.now().toString(36), rec); // same name taken by someone else
+    }
+  }
+  if (row) await fsDelete(env, 'roster', row.id);
+  await env.MD_KV.delete('acct:' + email);
+  await env.MD_KV.delete('rl:' + email);
+  await env.MD_KV.put('off:' + email, 'kicked'); // open devices are signed out by /api/status
+  const purged = teacher ? null : await purgeStudent(env, email);
+  return json({ ok: true, role: teacher ? 'teacher' : 'student', envTeacher, purged });
+}
+
+/* ---------- delete a student's learning data (Kick, Delete class) ----------
+   Every document of the student in the learning collections (found by the "email" field: one query each, so a kick stays
+   far below the Workers sub-request limit), and profiles/{slug(email)} (XP, streak, prizes). Codes already handed out and the
+   "wins" marquee are left alone. Cannot be undone. */
+const PURGE_COLS = ['attempts', 'errors', 'cards', 'hwdone', 'passes', 'redeems'];
+async function fsQueryEq(env, col, field, value) {
+  const r = await fs(env, 'POST', ':runQuery', { structuredQuery: { from: [{ collectionId: col }], where: { fieldFilter: { field: { fieldPath: field }, op: 'EQUAL', value: { stringValue: value } } } } });
+  if (!r.ok) throw new Error('firestore query ' + col + ' ' + r.status);
+  const rows = await r.json();
+  return (Array.isArray(rows) ? rows : []).filter((x) => x && x.document).map((x) => x.document.name);
+}
+async function fsDeleteNames(env, names) {
+  let n = 0;
+  for (let i = 0; i < names.length; i += 400) {
+    const part = names.slice(i, i + 400);
+    const r = await fs(env, 'POST', ':batchWrite', { writes: part.map((name) => ({ delete: name })) });
+    if (!r.ok) throw new Error('firestore delete ' + r.status);
+    n += part.length;
+  }
+  return n;
+}
+async function purgeStudent(env, email) {
+  const out = {};
+  for (const col of PURGE_COLS) {
+    out[col] = await fsDeleteNames(env, await fsQueryEq(env, col, 'email', email)); // every doc of these collections has the owner's email
+  }
+  const pid = slug(email);
+  out.profiles = (await fsGet(env, 'profiles', pid)) ? (await fsDelete(env, 'profiles', pid), 1) : 0;
+  return out;
+}
+
+/* ---------- Delete a class (Classes › Class settings, admin only) ----------
+   The app first kicks every non-tester student of the class one by one (admin/kick: account + all learning data; one
+   request each, so no request goes over the Workers sub-request limit), then calls this: it deletes the class's
+   assignments, its class settings (classes/{slug}) and its names still waiting for sign-up, and says how many
+   non-tester students are still in the class. A class still in the Google Sheet comes back as "pending" until it is
+   removed from the Sheet. */
+async function adminClassDel(env, body) {
+  const cls = String(body.cls || '').trim();
+  if (!cls || cls.length > 80) return fail('Choose a class.');
+  const remaining = (await fsQueryEq(env, 'roster', 'cls', cls)).length;
+  const assignments = await fsDeleteNames(env, await fsQueryEq(env, 'assignments', 'cls', cls));
+  const names = await fsDeleteNames(env, await fsQueryEq(env, 'names', 'cls', cls));
+  const cid = slug(cls);
+  let settings = 0;
+  if (cid && (await fsGet(env, 'classes', cid))) { await fsDelete(env, 'classes', cid); settings = 1; }
+  return json({ ok: true, cls, assignments, names, settings, remaining });
+}
+
+// Move a registered student to another class (the Sheet only matters before sign-up).
+/* ---------- Seasons (Admin › Season) ----------
+   Same rank table as RANK_START / seasonXp / seasonPatch in index.html: change both together.
+   A new season puts each profile at tier I of the rank below; lifetime XP (xpLife) and the peak of the old season (seasons[]) are kept.
+   Idempotent: profiles that already have season === id are skipped, so running "start" again only finishes the rest. */
+const RANK_START = [[0, 100, 220], [370, 550, 760], [1010, 1290, 1610], [1970, 2370, 2820], [3320, 3870, 4490], [5190, 5990, 6890]];
+const RANK_NAMES = ['Beginner', 'Learner', 'Explorer', 'Achiever', 'Expert', 'Master'];
+const RANK_SUB = ['III', 'II', 'I'];
+const OLD_RANKS = [0, 200, 500, 1000, 2000, 4000]; // the 6-rank table before 10/2026, only for the preview count
+const SEASON_ID = /^[A-Za-z0-9][A-Za-z0-9_-]{0,23}$/;
+function tierOf(xp) {
+  let idx = 0;
+  for (let i = 0; i < 18; i++) if (xp >= RANK_START[Math.floor(i / 3)][i % 3]) idx = i;
+  const r = Math.floor(idx / 3);
+  return { idx, r, name: RANK_NAMES[r] + ' ' + RANK_SUB[idx % 3] };
+}
+function seasonXp(xp) {
+  const r = tierOf(xp).r;
+  return r ? RANK_START[r - 1][2] : 0;
+}
+function seasonPatch(p, cur, id) {
+  const xp = Math.max(0, Number(p.xp) || 0);
+  const peakXp = Math.max(Number(p.peakXp) || 0, xp);
+  const pk = tierOf(peakXp);
+  const same = cur && cur.id === id;
+  const prev = p.season || (same ? cur.prev : cur && cur.id) || 'S1';
+  const prevName = (same ? cur.prevName : cur && cur.name) || prev;
+  const seasons = (Array.isArray(p.seasons) ? p.seasons : []).filter((x) => x && x.id !== prev)
+    .concat([{ id: prev, name: prevName, peak: pk.name, peakIdx: pk.idx, peakXp, endXp: xp }]);
+  const nx = seasonXp(xp);
+  return { xp: nx, xpAt: Date.now(), xpLife: p.xpLife != null && p.xpLife !== '' ? Number(p.xpLife) : xp, season: id, seasons, peakXp: nx, peakIdx: tierOf(nx).idx };
+}
+// like fsList, but keeps updateTime (used as a precondition, so a student's save in between is never overwritten)
+async function fsListTimed(env, col) {
+  const out = [];
+  let tok = '';
+  for (let i = 0; i < 20; i++) {
+    const r = await fs(env, 'GET', '/' + col + '?pageSize=300' + (tok ? '&pageToken=' + encodeURIComponent(tok) : ''));
+    if (!r.ok) throw new Error('firestore list ' + r.status);
+    const d = await r.json();
+    (d.documents || []).forEach((doc) => out.push({ name: doc.name, updateTime: doc.updateTime, data: fromFields(doc.fields) }));
+    tok = d.nextPageToken || '';
+    if (!tok) break;
+  }
+  return out;
+}
+async function adminSeason(env, body) {
+  const op = body.op === 'start' ? 'start' : 'preview';
+  const got = await fsGet(env, 'config', 'season');
+  const cur = got ? got.data : null;
+  const id = String(body.id || '').trim();
+  const name = String(body.name || '').trim().slice(0, 40) || id;
+  if (op === 'start' && !SEASON_ID.test(id)) return fail('Season id: letters, numbers, - or _, up to 24 characters (for example 2027-S1).');
+  const docs = (await fsListTimed(env, 'profiles')).filter((d) => d.data && d.data.email);
+  let legacy = 0;
+  const todo = [];
+  docs.forEach((d) => {
+    const xp = Math.max(0, Number(d.data.xp) || 0);
+    let oi = 0;
+    while (oi < 5 && xp >= OLD_RANKS[oi + 1]) oi++;
+    if (oi !== tierOf(xp).r) legacy++;
+    if (id && d.data.season === id) return;
+    todo.push(d);
+  });
+  if (op === 'preview') {
+    const rows = todo.map((d) => {
+      const xp = Math.max(0, Number(d.data.xp) || 0);
+      return { email: String(d.data.email), xp, from: tierOf(xp).name, to: tierOf(seasonXp(xp)).name, toXp: seasonXp(xp) };
+    });
+    return json({ cur, total: docs.length, todo: todo.length, done: docs.length - todo.length, legacy, rows });
+  }
+  let reset = 0, failed = 0;
+  for (let i = 0; i < todo.length; i += 100) {
+    const part = todo.slice(i, i + 100);
+    const writes = part.map((d) => {
+      const patch = seasonPatch(d.data, cur, id);
+      return { update: { name: d.name, fields: toFields(patch) }, updateMask: { fieldPaths: Object.keys(patch) }, currentDocument: { updateTime: d.updateTime } };
+    });
+    const r = await fs(env, 'POST', ':batchWrite', { writes });
+    if (!r.ok) { failed += part.length; console.log('[season] batchWrite', r.status); continue; }
+    const out = await r.json();
+    (out.status || []).forEach((st) => { if (st && st.code) failed++; else reset++; });
+  }
+  const same = cur && cur.id === id;
+  const now = Date.now();
+  const start = same && cur.start ? Number(cur.start) : now;
+  await fsPut(env, 'config', 'season', {
+    id, name: same ? cur.name || name : name, start, end: start + 91 * 86400000,
+    prev: same ? cur.prev || '' : (cur && cur.id) || 'S1', prevName: same ? cur.prevName || '' : (cur && (cur.name || cur.id)) || 'S1',
+  });
+  // audit/{id}: written by the server only (no client rule needed, clients cannot read it)
+  await fsPut(env, 'audit', 'season_' + id + '_' + now, { kind: 'season', id, name, by: adminEmail(env) || '', ts: now, reset, failed, skipped: docs.length - todo.length });
+  return json({ ok: true, reset, failed, skipped: docs.length - todo.length });
+}
+/* ---------- Lucky Wheel (server decides) ----------
+   POST /api/spin {useXP, rid} + Authorization: Bearer <ID token> (students). The server reads the profile, takes 1 spin (or 300 XP),
+   picks the tier with the pity rules, the prize inside the tier by weight, gives the prize and saves the counters — all in one write
+   with a precondition (updateTime), so two spins at once can never use the same spin or the same counters. rid = idempotency key:
+   the same rid within 10 minutes returns the same result (double click, retry after a network error). Same rules as spinRates() in the app.
+   Pity (profile.pity = {rl, tp}, never reset by month): rl = spins since the last Real-life, tp = since the last Teacher perk or better.
+     Real-life: rl 0-10 5%, 11-15 8%, 16-20 12%, 21-25 20%, 26+ = certain.  Teacher perk+: tp 0-5 20%, 6-8 28%, 9-10 40%, 11+ = certain.
+     Teacher perk = max(0, Teacher perk+ − Real-life); the rest is Common : Materials = 50 : 30. Hard pity first: rl >= 26 -> Real-life,
+     else tp >= 11 -> Teacher perk 75 : Real-life 25. A tier without prizes is left out and the others are scaled up to 100%.
+     Win Real-life: both counters to 0. Win Teacher perk: tp = 0, rl + 1. Common / Materials: both + 1. */
+const SPIN_XP = 300;
+const PRIZE_DEF = [
+  { id: 'p1', kind: 'freeze', tier: 1, label: 'Streak Freeze', weight: 25 }, { id: 'p2', kind: 'hint', tier: 1, label: 'Hint Pass', weight: 22 },
+  { id: 'p3', kind: 'peek', tier: 1, label: 'Answer Peek', weight: 22 }, { id: 'p4', kind: 'ext', tier: 1, label: '1-day Extension', weight: 18 },
+  { id: 'p5', kind: 'mat', tier: 2, label: 'Random study pack', weight: 40, rnd: true }, { id: 'p6', kind: 'mat', tier: 2, label: 'Vocabulary pack', weight: 35 },
+  { id: 'p7', kind: 'mat', tier: 2, label: 'Audio pack', weight: 25 }, { id: 'p8', kind: 'pen', tier: 3, label: 'Highlighter pen', weight: 55 },
+  { id: 'p9', kind: 'vip', tier: 3, label: 'VIP Essay Correction', weight: 45 }, { id: 'p10', kind: 'tea', tier: 4, label: 'Bubble tea/coffee voucher', weight: 60 },
+  { id: 'p11', kind: 'mock20', tier: 4, label: 'Mock Speaking -20%', weight: 30 }, { id: 'p12', kind: 'mock25', tier: 4, label: 'Mock Speaking -25%', weight: 10 },
+];
+const DEF_W = { freeze: 25, hint: 22, peek: 22, ext: 18, mat: 33, pen: 55, vip: 45, tea: 60, mock20: 30, mock25: 10, title: 20, ctitle: 20, xp: 20, custom: 30 };
+const WIN_VN = { pen: 'bút highlight', vip: 'thẻ VIP Essay Correction', tea: 'voucher trà sữa / cà phê', mock20: 'mã giảm 20% Mock Speaking 1-on-1', mock25: 'mã giảm 25% Mock Speaking 1-on-1' };
+const TITLES = ['Grammar Nazi', 'Vocab Hunter', 'Night Owl'];
+const pW = (x) => { const w = Number(x && x.weight); return w > 0 ? w : DEF_W[x && x.kind] || 1; };
+function spinRates(pity, has) {
+  const rl = Number(pity && pity.rl) || 0, tp = Number(pity && pity.tp) || 0;
+  let w;
+  if (rl >= 26) w = { 4: 100 };
+  else if (tp >= 11) w = { 3: 75, 4: 25 };
+  else {
+    const real = rl <= 10 ? 5 : rl <= 15 ? 8 : rl <= 20 ? 12 : 20, plus = tp <= 5 ? 20 : tp <= 8 ? 28 : 40;
+    const teach = Math.max(0, plus - real), rest = Math.max(0, 100 - real - teach);
+    w = { 1: rest * 50 / 80, 2: rest * 30 / 80, 3: teach, 4: real };
+  }
+  const o = {}; let tot = 0;
+  [1, 2, 3, 4].forEach((t) => { if (has[t] && w[t] > 0) { o[t] = w[t]; tot += w[t]; } });
+  if (!tot) [1, 2, 3, 4].forEach((t) => { if (has[t]) { o[t] = { 1: 50, 2: 30, 3: 15, 4: 5 }[t]; tot += o[t]; } }); // the certain tier is empty
+  Object.keys(o).forEach((t) => { o[t] = o[t] / tot * 100; });
+  return o;
+}
+function pickTier(rates) { let r = Math.random() * 100, last = 0; for (const t of [1, 2, 3, 4]) { if (rates[t] == null) continue; last = t; if (r < rates[t]) return t; r -= rates[t]; } return last; }
+function pickPrize(list) { let tot = 0; list.forEach((x) => { tot += pW(x); }); let r = Math.random() * tot; for (const x of list) { r -= pW(x); if (r < 0) return x; } return list[list.length - 1]; }
+function nextPity(pity, tier) {
+  const rl = Number(pity && pity.rl) || 0, tp = Number(pity && pity.tp) || 0;
+  if (tier === 4) return { rl: 0, tp: 0 };
+  if (tier === 3) return { rl: rl + 1, tp: 0 };
+  return { rl: rl + 1, tp: tp + 1 };
+}
+async function takeCodeFor(env, kind, email) {
+  const docs = await fsListTimed(env, 'codes');
+  for (const d of docs.filter((x) => x.data.kind === kind && !x.data.to).slice(0, 3)) {
+    const id = decodeURIComponent(d.name.split('/').pop());
+    if (await fsUpdate(env, 'codes', id, { to: email }, d.updateTime)) return { id, code: String(d.data.code || '') };
+  }
+  return null;
+}
+async function spinWheel(env, request, body) {
+  const who = await idUser(env, request);
+  if (!who) return needSignIn();
+  if (who.role === 'teacher') return fail('The wheel is for students.', 403);
+  const rid = String(body.rid || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 40);
+  if (rid.length < 8) return fail('Bad request.');
+  const memo = 'spin:' + who.em + ':' + rid, seen = await env.MD_KV.get(memo);
+  if (seen) return new Response(seen, { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
+  const cfg = await fsGet(env, 'config', 'prizes');
+  let list = cfg && Array.isArray(cfg.data.list) && cfg.data.list.length ? cfg.data.list : PRIZE_DEF;
+  list = list.filter((x) => x && x.id && [1, 2, 3, 4].indexOf(Number(x.tier)) >= 0).map((x) => Object.assign({}, x, { tier: Number(x.tier) }));
+  if (list.length < 3) return fail('The wheel has no prizes yet. Ask your teacher.');
+  const mats = await fsGet(env, 'config', 'materials'), matList = mats && Array.isArray(mats.data.list) ? mats.data.list.filter((m) => m && m.title) : [];
+  const pid = slug(who.em);
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const doc = await fsGet(env, 'profiles', pid);
+    if (!doc) return fail('Your profile is not ready yet. Reload the page and try again.', 409);
+    const p = doc.data, useXP = body.useXP === true;
+    const spins = Number(p.spins) || 0, xp = Number(p.xp) || 0;
+    if (useXP ? xp < SPIN_XP : spins < 1) return fail(useXP ? 'You need ' + SPIN_XP + ' XP to spin.' : 'You have no spins left.', 409);
+    const has = {}; list.forEach((x) => { has[x.tier] = true; });
+    const pity = p.pity && typeof p.pity === 'object' ? p.pity : { rl: 0, tp: 0 };
+    const tier = pickTier(spinRates(pity, has)), prize = pickPrize(list.filter((x) => x.tier === tier));
+    const now = Date.now(), item = { id: 'i' + now + Math.floor(Math.random() * 1000), used: false, ts: now, kind: prize.kind, tier };
+    let code = null;
+    if (prize.kind === 'mat' || prize.kind === 'custom') {
+      const m = prize.rnd && matList.length ? matList[Math.floor(Math.random() * matList.length)] : null;
+      item.text = m ? String(m.title) : String((prize.kind === 'custom' && prize.text) || prize.label || 'Study pack'); item.url = m ? String(m.url || '') : String(prize.url || '');
+    } else if (prize.kind === 'title') {
+      const own = (Array.isArray(p.inv) ? p.inv : []).filter((x) => x && x.kind === 'title').map((x) => x.text), fresh = TITLES.filter((t) => own.indexOf(t) < 0);
+      if (prize.text) item.text = String(prize.text); else if (!fresh.length || Math.random() < 0.25) item.kind = 'ctitle'; else item.text = fresh[Math.floor(Math.random() * fresh.length)];
+    } else if (prize.kind === 'tea' || prize.kind === 'mock20' || prize.kind === 'mock25') {
+      code = await takeCodeFor(env, prize.kind, who.em);
+      item.code = code ? code.code : '';
+    }
+    const upd = { pity: nextPity(pity, tier), spinTs: now, spinUsed: useXP ? 'xp' : 'spin' };
+    if (useXP) { upd.xp = xp - SPIN_XP; upd.xpAt = now; } else upd.spins = spins - 1;
+    if (item.kind === 'freeze') upd.freezes = (Number(p.freezes) || 0) + 1;
+    else if (item.kind === 'xp') { upd.xp = (upd.xp != null ? upd.xp : xp) + 100; upd.xpAt = now; upd.xpLife = (Number(p.xpLife != null ? p.xpLife : p.xp) || 0) + 100; }
+    else upd.inv = (Array.isArray(p.inv) ? p.inv : []).concat([item]);
+    if (await fsUpdate(env, 'profiles', pid, upd, doc.updateTime)) {
+      const out = JSON.stringify({ ok: true, prize_id: prize.id, tier, item, spins: upd.spins != null ? upd.spins : spins, xp: upd.xp != null ? upd.xp : xp, xpAt: upd.xpAt || p.xpAt || 0,
+        freezes: upd.freezes != null ? upd.freezes : Number(p.freezes) || 0, inv: upd.inv || p.inv || [], pity: upd.pity, spinTs: now, spinUsed: upd.spinUsed });
+      await env.MD_KV.put(memo, out, { expirationTtl: 600 });
+      if (tier >= 3) {
+        const r = await fsGet(env, 'roster', who.em);
+        const name = String(p.dname || (r && r.data.name) || 'A student').slice(0, 80);
+        await fsPut(env, 'wins', 'w' + now + Math.floor(Math.random() * 1000), { name, cls: String((r && r.data.cls) || ''), prize: String(WIN_VN[item.kind] || item.text || prize.label || '').slice(0, 120), tier, ts: now }).catch(() => {});
+      }
+      return new Response(out, { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
+    }
+    if (code) await fsUpdate(env, 'codes', code.id, { to: '' }); // the profile changed meanwhile: give the code back and try again
+  }
+  return fail('The wheel is busy. Try again.', 503);
+}
+async function adminClass(env, body) {
+  const email = normEmail(body.email), cls = classLabel(String(body.cls || '').slice(0, 60)), course = String(body.course || '').trim().slice(0, 60);
+  if (!cls) return fail('Choose a class.');
+  const row = await rosterRow(env, email);
+  if (!row || row.data.role === 'teacher') return fail('This student was not found.', 404);
+  if (!(await fsUpdate(env, 'roster', row.id, { cls, course }))) return fail('Could not save. Try again.', 500);
+  return json({ ok: true, cls });
+}
+
+/* ---------- AI writing correction (Gemini) ---------- */
+// POST /api/ai/correct { attemptId, task, exTitle, tzo }. No session: the attempt must exist in Firestore
+// (only a signed-in student can create one), be a Writing submission, and be less than 2 hours old.
+// KV ai:<attemptId> = 'pending' | 'done' (2 days): one AI check per attempt.
+// KV aiq:<email>:<YYYY-MM-DD> = checks used today (limit AI_DAILY_LIMIT, default 10).
+// Shared by /api/ai/correct (inside each correction) and /api/ai/practice.
+const AI_PRACTICE_RULES =
+  'Practice rules (field "practice", exactly 2 items for every mistake that is not Off-topic; Off-topic gets []):\n' +
+  '- practice[0] uses the student\'s OWN sentence (the sentence that contains the mistake). Fix every OTHER mistake in that sentence, so only ONE blank is left, for this mistake.\n' +
+  '- practice[1] is a NEW natural sentence on a different IELTS-style topic that tests the same rule.\n' +
+  '- sentence: a complete English sentence of 8-25 words with exactly ONE "___". The blank replaces only the part to fix (at most 4 words). Right after the blank write the clue in brackets, e.g. "___ (protect) nature is the duty of every citizen."\n' +
+  '- The clue must NOT contain the answer. Grammar: the base form, e.g. (protect), (go), (person). Vocabulary (word choice, collocation): the Vietnamese meaning, e.g. (đưa ra quyết định), or the first letter and letter count, e.g. (m_ _ _). Spelling: the Vietnamese meaning.\n' +
+  '- Articles or words that belong to the mistake are part of the blank. Example: "protect the nature" -> "___ (protect) nature is ..." (the rest is already correct, no "the").\n' +
+  '- answers: every correct way to fill the blank (capital letter at the start of a sentence, equivalent tenses), e.g. ["Protecting"], ["wrote", "was writing"].\n' +
+  '- clue_type: "base_form", "meaning" or "wrong_word".\n';
+const AI_PRACTICE_ITEMS = {
+  type: 'ARRAY',
+  items: {
+    type: 'OBJECT',
+    properties: {
+      sentence: { type: 'STRING' },
+      answers: { type: 'ARRAY', items: { type: 'STRING' } },
+      clue_type: { type: 'STRING' },
+    },
+    required: ['sentence', 'answers', 'clue_type'],
+  },
+};
+const AI_PROMPT =
+  'You are an IELTS Writing examiner and tutor. Read the task and the student essay below and return JSON that matches the schema.\n' +
+  'Rules:\n' +
+  '- corrections: real mistakes only. Never invent mistakes. If the essay has no mistakes, return "corrections": [].\n' +
+  '- original_text must be copied EXACTLY from the essay (same spelling, case and punctuation), as short as possible but long enough to be found in the essay.\n' +
+  '- corrected_text is the fixed words. Two good options may be written as "wrote / was writing". For an Off-topic sentence, corrected_text may be "".\n' +
+  '- category is a short error-notebook label, for example: Stative Verbs, Gerund as Subject & Articles, Irregular Plural Nouns, Subject-Verb Agreement, Verb Tense, Articles, Prepositions, Collocation, Word Form, Spelling, Punctuation, Off-topic.\n' +
+  '- type: "Grammar" (includes punctuation), "Vocabulary" (word choice, collocation, spelling) or "Off-topic" (a sentence that does not answer the task).\n' +
+  '- explanation: one short sentence in simple English.\n' +
+  '- explanation_vi: the same idea in Vietnamese, ONE sentence of at most about 20 words, the way a teacher talks to a 13-16 year old student. ' +
+  'Name the exact word in brackets or quotes. Only use these simple labels: V nguyên mẫu, V-ing, V3/V-ed, danh từ, tính từ, trạng từ, số ít, số nhiều. ' +
+  'NEVER use grammar terms such as absolute clause, participle clause, stative verb, base verb, direct object, uncountable, gerund, auxiliary: say it in plain words instead. Examples:\n' +
+  '  could accessing -> could access: "Sau could phải là V nguyên mẫu."\n' +
+  '  illustrate about -> illustrates: "Sau illustrate không dùng about."\n' +
+  '  most highest -> highest: "highest đã là \'cao nhất\' rồi, không thêm most."\n' +
+  '  18 percents -> 18 percent: "percent không thêm s, kể cả khi có số đứng trước."\n' +
+  '  Despite of -> Despite: "Despite không đi với of (hoặc dùng In spite of)."\n' +
+  '  with Country C stayed -> with Country C staying: "Sau with + danh từ, động từ dùng V-ing."\n' +
+  '- At most 15 corrections, most important first.\n' +
+  '- vocabulary_upgrades: up to 6 simple words or phrases from the essay and a better IELTS alternative, with a short example sentence and a short note.\n' +
+  AI_PRACTICE_RULES;
+const AI_SCHEMA = {
+  type: 'OBJECT',
+  properties: {
+    corrections: {
+      type: 'ARRAY',
+      items: {
+        type: 'OBJECT',
+        properties: {
+          original_text: { type: 'STRING' },
+          corrected_text: { type: 'STRING' },
+          category: { type: 'STRING' },
+          explanation: { type: 'STRING' },
+          explanation_vi: { type: 'STRING' },
+          type: { type: 'STRING' },
+          practice: AI_PRACTICE_ITEMS,
+        },
+        required: ['original_text', 'corrected_text', 'category', 'explanation', 'explanation_vi', 'type', 'practice'],
+      },
+    },
+    vocabulary_upgrades: {
+      type: 'ARRAY',
+      items: {
+        type: 'OBJECT',
+        properties: {
+          original: { type: 'STRING' },
+          upgraded: { type: 'STRING' },
+          example: { type: 'STRING' },
+          note: { type: 'STRING' },
+        },
+        required: ['original', 'upgraded'],
+      },
+    },
+  },
+  required: ['corrections', 'vocabulary_upgrades'],
+};
+const AI_MAX_AGE = 2 * 3600 * 1000;
+const aiStr = (v, n) => String(v == null ? '' : v).replace(/\s+/g, ' ').trim().slice(0, n);
+const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); // same as slug() in the app
+
+// The sentence that contains text[i .. i+len] (split on . ! ? and new lines), at most 300 characters.
+function sentenceAt(text, i, len) {
+  let s = i, e = i + len;
+  while (s > 0 && !/[.!?\n]/.test(text[s - 1])) s--;
+  while (e < text.length && !/[.!?\n]/.test(text[e])) e++;
+  if (e < text.length && text[e] !== '\n') e++;
+  let out = text.slice(s, e).trim();
+  if (out.length > 300) {
+    const a = Math.max(s, i - 120);
+    out = (a > s ? '…' : '') + text.slice(a, Math.min(e, a + 298)).trim() + '…';
+  }
+  return out;
+}
+
+// Gemini call. Every failure has a short code (shown to the student as "code: …", logged for Cloudflare Real-time logs):
+// nokey, timeout, network, relay, http<status> (400/403 key or blocked location, 404 model, 429 quota, 5xx busy), blocked, empty, too_long, parse.
+// One automatic retry: without the schema if Gemini rejects it, without thinking settings if those are rejected,
+// or after a short wait when Gemini is busy / returned something unreadable.
+class AiError extends Error {
+  constructor(code, detail) { super(code + (detail ? ': ' + detail : '')); this.code = code; this.detail = String(detail || ''); }
+}
+const aiReady = (env) => !!(env.GEMINI_KEY || env.GEMINI_PROXY_URL); // key on Cloudflare, or in the Apps Script relay
+const AI_TIMEOUT = 300000; // 5 minutes: long essays (corrections + 2 practice sentences per mistake) can be slow on a busy day
+const AI_SHAPE =
+  '\nReturn ONLY one JSON object, no other text, in this shape: {"corrections":[{"original_text":"...","corrected_text":"...","category":"...","explanation":"...","explanation_vi":"...","type":"Grammar","practice":[{"sentence":"... ___ (clue) ...","answers":["..."],"clue_type":"base_form"}]}],"vocabulary_upgrades":[{"original":"...","upgraded":"...","example":"...","note":"..."}]}\n';
+const PRACTICE_SHAPE = '\nReturn ONLY one JSON object, no other text, in this shape: {"practice":[{"sentence":"... ___ (clue) ...","answers":["..."],"clue_type":"base_form"}]}\n';
+function parseJsonLoose(raw) {
+  try { return JSON.parse(raw); } catch (e) { /* try the part between the first { and the last } */ }
+  const a = raw.indexOf('{'), b = raw.lastIndexOf('}');
+  if (a >= 0 && b > a) { try { return JSON.parse(raw.slice(a, b + 1)); } catch (e) { return null; } }
+  return null;
+}
+// Free-tier models, tried in this order (all "Free of charge" on the Gemini API Free Tier, checked 10/2026).
+// GEMINI_MODELS (comma list) replaces the list; the old GEMINI_MODEL (one model) is tried first.
+// Paid-only models (Pro, Argon, Gemini 4…) are never used, even when written in a variable.
+const AI_MODELS = ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite'];
+const PAID_ONLY = /(^|-)pro(-|$)|argon|^gemini-[4-9]/i;
+function aiModels(env) {
+  const want = env.GEMINI_MODELS ? String(env.GEMINI_MODELS).split(',') : [String(env.GEMINI_MODEL || '')].concat(AI_MODELS);
+  const out = [];
+  want.map((m) => m.trim()).filter(Boolean).forEach((m) => {
+    if (PAID_ONLY.test(m)) { console.log('[gemini] skipped paid-only model', m); return; }
+    if (out.indexOf(m) < 0) out.push(m);
+  });
+  return out.length ? out : AI_MODELS.slice();
+}
+// Grammar correction does not need long thinking: as little as each model allows (faster, fewer tokens).
+// Gemini 3+: Google recommends keeping the default temperature, so it is only lowered for older models.
+function genConfig(model, schema, thinking) {
+  const gc = { responseMimeType: 'application/json' };
+  if (!/^gemini-[3-9]/.test(model)) gc.temperature = 0.2;
+  if (schema) gc.responseSchema = schema;
+  if (thinking) {
+    if (/^gemini-2\.5-flash/.test(model)) gc.thinkingConfig = { thinkingBudget: 0 };
+    else if (/^gemini-3\.[89]/.test(model)) gc.thinkingConfig = { thinkingLevel: 'low' }; // 3.8: low is the lowest
+    else if (/^gemini-3/.test(model)) gc.thinkingConfig = { thinkingLevel: 'minimal' };
+  }
+  return gc;
+}
+async function geminiOnce(env, model, prompt, schema, thinking, ms) {
+  const gc = genConfig(model, schema, thinking);
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), ms || AI_TIMEOUT);
+  // prompt = text, or a list of parts (e.g. [{ inline_data: { mime_type, data } }, { text }] for audio)
+  const req = { contents: [{ role: 'user', parts: Array.isArray(prompt) ? prompt : [{ text: prompt }] }], generationConfig: gc };
+  let r, d;
+  try {
+    if (env.GEMINI_PROXY_URL) {
+      // Relay (gemini-relay.gs on Google Apps Script, runs in the US): it always answers 200 with { status, body } or { relayError }
+      r = await fetch(String(env.GEMINI_PROXY_URL).trim(), {
+        method: 'POST',
+        signal: ctl.signal,
+        redirect: 'follow', // Apps Script answers POST with a redirect to the result
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret: String(env.GEMINI_PROXY_SECRET || ''), model, body: req }),
+      });
+      const txt = await r.text().catch(() => '');
+      let j = null;
+      try { j = JSON.parse(txt); } catch (e) { /* not JSON = wrong URL or the script is not shared with "Anyone" */ }
+      if (!r.ok || !j) throw new AiError('relay', 'HTTP ' + r.status + ' ' + txt.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').slice(0, 200));
+      if (j.relayError) throw new AiError('relay', String(j.relayError).slice(0, 300));
+      if (Number(j.status) !== 200) throw new AiError('http' + Number(j.status || 0), String(j.body || '').slice(0, 400));
+      try { d = JSON.parse(j.body); } catch (e) { d = null; }
+    } else {
+      r = await fetch(
+        'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) +
+          ':generateContent?key=' + encodeURIComponent(env.GEMINI_KEY),
+        { method: 'POST', signal: ctl.signal, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(req) });
+      if (!r.ok) throw new AiError('http' + r.status, (await r.text().catch(() => '')).slice(0, 400));
+      d = await r.json().catch(() => null);
+    }
+  } catch (e) {
+    if (e instanceof AiError) throw e;
+    throw new AiError(e && e.name === 'AbortError' ? 'timeout' : 'network', String((e && e.message) || e).slice(0, 200));
+  } finally {
+    clearTimeout(timer);
+  }
+  const cand = d && d.candidates && d.candidates[0];
+  if (!cand) throw new AiError('blocked', JSON.stringify((d && d.promptFeedback) || d || {}).slice(0, 200));
+  const raw = ((cand.content && cand.content.parts) || []).filter((p) => !p.thought).map((p) => p.text || '').join('');
+  const fr = String(cand.finishReason || '');
+  if (!raw.trim()) throw new AiError(fr === 'MAX_TOKENS' ? 'too_long' : (fr && fr !== 'STOP' ? 'blocked' : 'empty'), fr);
+  const out = parseJsonLoose(raw);
+  if (!out || typeof out !== 'object') throw new AiError(fr === 'MAX_TOKENS' ? 'too_long' : 'parse', raw.slice(0, 160));
+  return out;
+}
+// maxMs: total time for all models together (default AI_TIMEOUT)
+async function askGemini(env, prompt, schema, shape, maxMs) {
+  if (!aiReady(env)) throw new AiError('nokey', 'GEMINI_KEY / GEMINI_PROXY_URL is not set');
+  const models = aiModels(env), t0 = Date.now(), via = env.GEMINI_PROXY_URL ? 'relay' : 'direct', tried = [], LIM = maxMs || AI_TIMEOUT;
+  let last = null;
+  for (let i = 0; i < models.length; i++) {
+    const model = models[i];
+    if (i && Date.now() - t0 > Math.min(90000, LIM - 20000)) break; // never start another model after a long wait
+    let thinking = true, useSchema = true;
+    for (let k = 0; k < 2; k++) {
+      try {
+        const left = Math.max(20000, LIM - (Date.now() - t0)); // all models together stay within the limit
+        const p2 = useSchema || !shape ? prompt : Array.isArray(prompt) ? prompt.concat([{ text: shape }]) : prompt + shape;
+        const out = await geminiOnce(env, model, p2, useSchema ? schema : null, thinking, left);
+        return { out, model, via, retried: tried.join(', ') };
+      } catch (e) {
+        last = e;
+        const c = e.code || 'error', det = e.detail || '';
+        console.log('[gemini] failed', model, c, det.slice(0, 200));
+        tried.push(model + ' ' + c);
+        // same model once more: without the thinking setting, or without the schema (JSON shape in the prompt instead)
+        if (k === 0 && c === 'http400' && /thinking/i.test(det)) { thinking = false; continue; }
+        if (k === 0 && c === 'http400' && /schema|response_schema|responseSchema|Invalid JSON payload|too many states|enum/i.test(det)) { useSchema = false; continue; }
+        break;
+      }
+    }
+    // Next model when this one is busy, over its free quota, unknown, or answered badly.
+    // Stop at once for problems every model would have: wrong key (403), blocked location / bad key (400), timeout, safety, relay.
+    const c = last.code || '', det = last.detail || '';
+    const next = /^http(404|429|500|502|503|504)$/.test(c) || ['network', 'empty', 'parse', 'too_long'].indexOf(c) >= 0 ||
+      (c === 'http400' && !/location|api[ _]?key/i.test(det));
+    if (!next) throw last;
+    if (/^http(429|5)/.test(c)) await new Promise((res) => setTimeout(res, 800));
+  }
+  throw last;
+}
+
+// Practice check: one ___ with a (clue) right after it, answers not empty and at most 4 words,
+// the clue must not give the answer away (except when the answer is the clue word itself and was already
+// in the mistake, e.g. "am disagree" -> "disagree"), and practice[0] filled in must not contain the mistake.
+const pNorm = (s) => String(s || '').toLowerCase().replace(/[‘’]/g, "'").replace(/[^\p{L}\p{N}' ]+/gu, ' ').replace(/\s+/g, ' ').trim();
+const pHas = (hay, needle) => (' ' + pNorm(hay) + ' ').indexOf(' ' + pNorm(needle) + ' ') >= 0;
+function cleanPractice(list, c) {
+  if (c.type === 'Off-topic' || !Array.isArray(list)) return [];
+  const out = [];
+  list.slice(0, 2).forEach((p, i) => {
+    let sentence = aiStr(p && p.sentence, 300).replace(/_{3,}/g, '___');
+    const answers = (Array.isArray(p && p.answers) ? p.answers : [])
+      .map((a) => aiStr(a, 60)).filter((a) => a && a.split(' ').length <= 4)
+      .filter((a, j, arr) => arr.indexOf(a) === j).slice(0, 6);
+    if (!sentence || sentence.split('___').length !== 2 || !answers.length) return;
+    const m = /___\s*\(([^()]{1,60})\)/.exec(sentence);
+    if (!m) return;
+    const clue = m[1];
+    const gives = answers.some((a) => pHas(clue, a) && !(pNorm(clue) === pNorm(a) && pHas(c.original_text, a)));
+    if (gives) return;
+    if (i === 0) {
+      const filled = sentence.replace(/___\s*\([^()]*\)/, answers[0]);
+      if (pHas(filled, c.original_text) && pNorm(c.original_text) !== pNorm(answers[0])) return;
+    }
+    const wc = sentence.replace(/\([^()]*\)/, '').split(/\s+/).filter(Boolean).length;
+    if (wc < 4 || wc > 40) return;
+    const ct = ['base_form', 'meaning', 'wrong_word'].indexOf(p.clue_type) >= 0 ? p.clue_type : 'base_form';
+    out.push({ sentence, answers, clue_type: ct, own: i === 0 });
+  });
+  return out;
+}
+
+// explanation_vi: one short Vietnamese sentence, cut at about 160 characters (on a word boundary)
+function viShort(v) {
+  const t = aiStr(v, 400);
+  if (t.length <= 160) return t;
+  const cut = t.slice(0, 158), sp = cut.lastIndexOf(' ');
+  return (sp > 100 ? cut.slice(0, sp) : cut).replace(/[,;:\s]+$/, '') + '…';
+}
+
+// Do not trust the AI blindly: keep only mistakes found word for word in the essay, sorted by position.
+function cleanAi(raw, text, model) {
+  const seen = {};
+  const corrections = (Array.isArray(raw && raw.corrections) ? raw.corrections : [])
+    .map((c) => {
+      const type = ['Grammar', 'Vocabulary', 'Off-topic'].indexOf(c && c.type) >= 0 ? c.type : 'Grammar';
+      const original = String((c && c.original_text) || '').trim().slice(0, 400);
+      const corrected = aiStr(c && c.corrected_text, 400);
+      const category = aiStr(c && c.category, 60);
+      const pos = original ? text.indexOf(original) : -1;
+      if (pos < 0 || !category || seen[original]) return null;
+      if (type !== 'Off-topic' && (!corrected || corrected === original)) return null;
+      seen[original] = 1;
+      const out = {
+        original_text: original, corrected_text: corrected,
+        category, explanation: aiStr(c.explanation, 300), type, context: sentenceAt(text, pos, original.length), pos,
+      };
+      out.explanation_vi = viShort(c.explanation_vi) || out.explanation; // Vietnamese for students; English when missing
+      out.practice = cleanPractice(c.practice, out);
+      return out;
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.pos - b.pos)
+    .slice(0, 15)
+    .map((c) => { delete c.pos; return c; });
+  const vocabulary_upgrades = (Array.isArray(raw && raw.vocabulary_upgrades) ? raw.vocabulary_upgrades : [])
+    .map((v) => ({ original: aiStr(v && v.original, 80), upgraded: aiStr(v && v.upgraded, 80), example: aiStr(v && v.example, 240), note: aiStr(v && v.note, 200) }))
+    .filter((v) => v.original && v.upgraded && v.original !== v.upgraded)
+    .slice(0, 8);
+  // attempts.ai = { corrections, vocabulary_upgrades, model, ts } (no summary / improved essay any more)
+  return {
+    corrections,
+    vocabulary_upgrades,
+    model,
+    ts: Date.now(),
+  };
+}
+
+// One errors/{slug(email)}_{attemptId}_{i} doc per mistake (repeated mistakes are NOT merged; each has its own boxes).
+// The id is fixed per attempt + position, so running again never makes duplicates (existing docs are skipped).
+// 2 requests in total: batchGet (which already exist) + one atomic commit.
+async function saveErrors(env, att, attemptId, ai, meta) {
+  if (!ai.corrections.length) return 0;
+  const em = normEmail(att.email), now = Date.now();
+  const docBase = 'projects/' + env.FIREBASE_PROJECT_ID + '/databases/(default)/documents/errors/';
+  const rows = ai.corrections.map((c, i) => ({ id: slug(em) + '_' + attemptId + '_' + i, c }));
+  const g = await fs(env, 'POST', ':batchGet', { documents: rows.map((r) => docBase + r.id) });
+  if (!g.ok) throw new Error('firestore batchGet ' + g.status);
+  const found = {};
+  (await g.json()).forEach((x) => { if (x.found) found[x.found.name.split('/').pop()] = 1; });
+  const writes = rows.filter((r) => !found[r.id]).map((r) => ({
+    update: {
+      name: docBase + r.id,
+      fields: toFields({
+        email: em, student: String(att.student || ''), cls: String(att.cls || ''),
+        original: r.c.original_text, corrected: r.c.corrected_text, category: r.c.category,
+        explanation: r.c.explanation, explanation_vi: r.c.explanation_vi || r.c.explanation, type: r.c.type, context: r.c.context, practice: r.c.practice || [],
+        attemptId, ex: String(att.ex || ''), exTitle: meta.exTitle,
+        box: 1, due: meta.dayStart, reviews: 0, lapses: 0, mastered: false, createdAt: now, lastPractice: 0,
+      }),
+    },
+    currentDocument: { exists: false },
+  }));
+  if (writes.length) {
+    const r = await fs(env, 'POST', ':commit', { writes });
+    if (!r.ok) throw new Error('firestore commit ' + r.status);
+  }
+  return rows.length;
+}
+
+// Student day from tzo (= getTimezoneOffset() in minutes, Vietnam = -420)
+function dayOf(tzoIn) {
+  let tzo = Number(tzoIn);
+  if (!isFinite(tzo) || Math.abs(tzo) > 840) tzo = -420;
+  const day = new Date(Date.now() - tzo * 60000).toISOString().slice(0, 10);
+  return { day, dayStart: Date.parse(day + 'T00:00:00Z') + tzo * 60000 };
+}
+
+// POST /api/ai/lesson { title, transcript, questions, prompt, tzo } (X-Staff-Key): Gemini writes a 5-stage Listening lesson.
+// The prompt is sent by the app (LPROMPT, or the template an admin saved in Create), so there is only ONE copy of it:
+// the same text teachers copy by hand. The app then checks the JSON fully with parseLesson. KV ail:<email>:<day>, 30 a day.
+const LESSON_KEYS = ['stage_1_vocabulary', 'stage_2_autopsy', 'stage_3_dictation', 'stage_4_summary', 'stage_5_retest'];
+async function aiLesson(env, request, body) {
+  const em = await staffEmail(env, request);
+  if (!em) return staffLocked();
+  if (!aiReady(env)) return json({ error: AI_WHY.nokey, code: 'nokey' }, 502);
+  const transcript = String(body.transcript || '').trim(), questions = String(body.questions || '').trim();
+  const title = String(body.title || '').replace(/\s+/g, ' ').trim().slice(0, 120), prompt = String(body.prompt || '').trim();
+  if (transcript.length < 150) return fail('Paste the whole transcript first (a few sentences at least).');
+  if (transcript.length > 20000) return fail('The transcript is too long (20,000 characters at most).');
+  if (questions.length > 8000) return fail('The questions are too long (8,000 characters at most).');
+  if (prompt.length < 200 || prompt.length > 40000) return fail('The lesson prompt is missing. Reload the page and try again.');
+  const qKey = 'ail:' + em + ':' + dayOf(body.tzo).day;
+  if ((await count(env, qKey)) >= 30) return fail('You have used today\'s 30 AI lesson runs. Try again tomorrow.', 429);
+  await bump(env, qKey, 172800);
+  const full = prompt + '\n\n' + (title ? 'TITLE: ' + title + '\n\n' : '') + 'TRANSCRIPT:\n' + transcript + '\n\n' +
+    (questions ? 'ORIGINAL QUESTIONS AND ANSWERS:\n' + questions
+      : 'ORIGINAL QUESTIONS AND ANSWERS: not given. For stage_2 write each question_text yourself as a short IELTS note line about a key detail, ' +
+        'with its answer filled in; for stage_3 blank useful words; for stage_5 write 10 questions about details in the transcript.');
+  let g;
+  try {
+    g = await askGemini(env, full, null, '');
+  } catch (e) {
+    const c = e.code || 'server';
+    console.log('[ai] lesson failed', c, String(e.detail || e.message || '').slice(0, 300));
+    return json({ error: 'The AI could not write the lesson (code: ' + c + '). ' + (AI_WHY[c] || AI_WHY[c.replace(/\d+$/, (n) => n[0] + 'xx')] || 'Try again.'), code: c }, 502);
+  }
+  const o = g.out && typeof g.out === 'object' ? g.out : {};
+  const miss = LESSON_KEYS.filter((k) => !o[k] || typeof o[k] !== 'object');
+  if (miss.length) return json({ error: 'The AI answer was incomplete (missing ' + miss.join(', ') + '). Press Try again.', code: 'shape' }, 502);
+  if (!o.material) o.material = transcript;
+  if (title) o.title = title;
+  o.skill = 'listening';
+  return json({ lesson: o, model: g.model });
+}
+
+// POST /api/ai/transcribe { audioId, tzo } (X-Staff-Key): Gemini writes the transcript of an uploaded listening file.
+// The file is sent inline (base64). Shares the ail:<email>:<day> limit (30 a day) with /api/ai/lesson.
+const TRANSCRIBE_PROMPT = 'Transcribe this IELTS listening recording verbatim. Label speakers (e.g. MAN:, WOMAN:, or names if spoken). ' +
+  'Keep numbers and spellings exactly as spoken. Put each turn on its own line, with a blank line between turns. ' +
+  'Return JSON: {"transcript": "the plain text transcript"}.';
+const GEMINI_AUDIO = { 'audio/mpeg': 'audio/mp3', 'audio/wav': 'audio/wav', 'audio/ogg': 'audio/ogg', 'audio/webm': 'audio/webm', 'audio/mp4': 'audio/mp4', 'audio/x-m4a': 'audio/mp4' };
+function b64std(buf) {
+  const b = new Uint8Array(buf);
+  let s = '';
+  for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+async function aiTranscribe(env, request, body) {
+  const em = await staffEmail(env, request);
+  if (!em) return staffLocked();
+  if (!aiReady(env)) return json({ error: AI_WHY.nokey, code: 'nokey' }, 502);
+  const id = String(body.audioId || '');
+  if (!/^[A-Za-z0-9_-]{22}$/.test(id)) return fail('Upload or record the audio first.');
+  const a = await audioGet(env, id);
+  if (!a) return fail('This audio file was not found. Upload it again.', 404);
+  if (a.buf.byteLength > AUDIO_MAX) return fail('The file is too big to transcribe (8 MB at most).', 413);
+  const qKey = 'ail:' + em + ':' + dayOf(body.tzo).day;
+  if ((await count(env, qKey)) >= 30) return fail('You have used today\'s 30 AI lesson runs. Try again tomorrow.', 429);
+  await bump(env, qKey, 172800);
+  const mime = GEMINI_AUDIO[a.meta.type] || a.meta.type || 'audio/mp3';
+  const parts = [{ inline_data: { mime_type: mime, data: b64std(a.buf) } }, { text: TRANSCRIBE_PROMPT }];
+  let g;
+  try {
+    g = await askGemini(env, parts, { type: 'OBJECT', properties: { transcript: { type: 'STRING' } }, required: ['transcript'] }, '');
+  } catch (e) {
+    const c = e.code || 'server';
+    console.log('[ai] transcribe failed', c, mime, String(e.detail || e.message || '').slice(0, 300));
+    const hint = c === 'http400' ? ' Gemini could not read this audio: try an mp3 or wav file.' : '';
+    return json({ error: 'The AI could not transcribe the audio (code: ' + c + ').' + hint + ' ' + (AI_WHY[c] || AI_WHY[c.replace(/\d+$/, (n) => n[0] + 'xx')] || ''), code: c }, 502);
+  }
+  const t = String((g.out && g.out.transcript) || '').trim();
+  if (t.length < 20) return json({ error: 'The AI returned an empty transcript. Check that the file has speech, then try again.', code: 'empty' }, 502);
+  return json({ transcript: t.slice(0, 20000), model: g.model });
+}
+
+// POST /api/ai/reading { title, passage, tzo } (X-Staff-Key): Gemini writes a 4-stage Reading lesson (kind 'reading-ms').
+// { op: 'prompt' } returns RPROMPT, so the "copy prompt" button in Create uses this same text. Shares ail:<email>:<day> (30 a day).
+// The AI never copies the passage back (long texts always came back slightly changed). It gets the paragraphs numbered
+// [P1], [P2]… and only names words / phrases in them; the app builds the lesson text from the teacher's own passage
+// (rdBuild in index.html) and checks everything with parseReading. Paragraphs = blocks separated by a blank line (same split as the app).
+const readingParas = (t) => String(t || '').replace(/\r\n?/g, '\n').split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean);
+const RPROMPT =
+  'You are an expert IELTS Reading teacher and a strict JSON formatter. I will give you an IELTS-style reading passage. ' +
+  'Its paragraphs are numbered [P1], [P2], [P3]… (when you get a passage without numbers: paragraphs are separated by a blank line, number them from P1 yourself). ' +
+  'Build a 4-stage reading lesson: 1. Deep reading, 2. Pronouns, 3. Vocabulary, 4. Output. Language level: IELTS Band 6-7.5. ' +
+  'Output ONLY one JSON object, no markdown fences, no text outside the JSON.\n\n' +
+  'General rules:\n' +
+  '- Do NOT copy or rewrite the passage: the app already has it. Only name words and phrases that are in it.\n' +
+  '- Every answer must be traceable to the passage. Never invent facts.\n' +
+  '- Do not use the same sentence of the passage in more than one exercise type.\n' +
+  '- There is NO "put the paragraphs in order" exercise. Do not add any ordering field.\n' +
+  '- ORDER: list the completion items and the TRUE/FALSE/NOT GIVEN items in the order their answers appear in the passage (P1 first, then P2…); a NOT GIVEN statement may go anywhere. Matching exercises do not follow this rule.\n' +
+  '- "paragraph_id" (in "deep") is a string: "P1", "P2"… "p" (in prons, words, pairs) is the paragraph NUMBER: 1 = [P1], 2 = [P2]… ' +
+  'Every "w", "ph" and completion "answer" must be copied from THAT paragraph character for character ' +
+  '(same spelling, same word form: "obligations" is not "obligation"; never join words from two sentences).\n\n' +
+  'Stage 1, "deep":\n' +
+  '- "passage_id": a slug of the title. "paragraphs": for each paragraph {"id": "P1", "main_idea", "key_sentences": [{"text": copied from the passage, "fact_type": "date" | "person" | "event" | "definition" | "opinion", "related_entities": [names]}]}. ' +
+  '"entities": the people, groups, places and things of the passage, each {"name": exactly as written in the passage, "attributes": [short facts]}. "timeline": [{"year", "event", "paragraph_id"}] (empty list when there are no dates). ' +
+  '"vocab_targets": [{"word", "paragraph_id", "meaning"}]. Use these notes to build the exercises.\n' +
+  '- "exercises.completion": {"type": "summary" | "form" | "table", "instructions": "Complete the summary below. Choose NO MORE THAN TWO WORDS from the passage for each answer.", ' +
+  '"items": 3 to 5 items {"id": "C1", "prompt_with_blank": a sentence with ONE blank written ______, "answer": 1 or 2 words (never more than 3) copied EXACTLY from that paragraph, "paragraph_id"}}.\n' +
+  '- "exercises.true_false_not_given": {"instructions": "Do the following statements agree with the information given in the passage? Write TRUE, FALSE, or NOT GIVEN.", ' +
+  '"items": 3 to 6 items {"id": "TFNG1", "statement", "answer": "TRUE" | "FALSE" | "NOT GIVEN", "paragraph_id": "P2", or null when the answer is NOT GIVEN}}. ' +
+  'Use about the same number of TRUE, FALSE and NOT GIVEN.\n' +
+  '- "exercises.matching_headings": {"instructions": "Choose the correct heading for each paragraph from the list below.", ' +
+  '"heading_options": the 3 right headings plus 2 or 3 distractor headings that match no paragraph (5 or 6 in total, in random order), ' +
+  '"items": EXACTLY 3 items {"id": "MH1", "paragraph_id", "answer_heading": copied exactly from heading_options, "difficulty": "easy" | "medium" | "hard"}, ' +
+  'one of each difficulty, listed easy, then medium, then hard, for 3 different paragraphs}. ' +
+  'A heading is a short IELTS-style noun phrase that states the main idea of the paragraph; never copy a sentence from the passage.\n' +
+  '- "exercises.matching_information": {"instructions": "Match each entity or piece of information to the correct paragraph or related entity.", ' +
+  '"items": 3 to 5 items {"id": "MI1", "prompt", "answer": a paragraph id such as "P4", OR the exact "name" of one of the entities}}. ' +
+  'Prefer matching an entity with an event, or an entity with a paragraph, so it does not repeat Matching headings.\n\n' +
+  'Stages 2 to 4:\n' +
+  '- "prons": 4 to 6 pronouns or reference phrases (it, they, their, this policy, this trend, such…) that the reader must understand to follow the argument, ' +
+  'in the order they appear in the passage: {"w": the exact words as written, "p": paragraph number, "opts": 4 options, "a": index (from 0) of the right option, "why": one short explanation}. ' +
+  'Choose each w only once per paragraph. The right answer and the 3 distractors must all be phrases taken from the passage.\n' +
+  '- "words" (Guess the meaning): 3 to 6 important words a student MUST understand to follow the main ideas: academic or common words at level B1-C1, preferably in topic sentences or sentences with a main idea ' +
+  '(you may take them from "vocab_targets"). NEVER choose technical terms, proper names, numbers, very easy words (A1-A2) or words that appear only in a minor example. ' +
+  'Each: {"w": the word exactly as written, "p": its paragraph number, "pos": "n" | "v" | "adj" | "adv", "opts": 4 short meanings in easy English (distractors that fit the sentence), "a": index of the right meaning, ' +
+  '"en": English definition, "syn": 1 or 2 simple synonyms, comma-separated (e.g. "rich, wealthy"), "vi": Vietnamese meaning, "fam": word family, e.g. "congest (v), congested (adj), congestion (n)", "col": 2 common collocations, "ex": a new example sentence}.\n' +
+  '- "pairs": 4 to 6 key phrases of 2 to 6 words copied exactly from one sentence of the passage, each {"ph": the phrase, "p": its paragraph number, "par": a simpler paraphrase (as an exam question would say it), "why": one short sentence on how the two match, ' +
+  '"segs": the match split into 1 to 3 meaningful pairs [{"q": words copied from "par", "t": the words of "ph" they match, copied exactly, "note": optional few words on the difference}] ' +
+  '(e.g. "tailored to promote those cultural activities" → "geared toward such pursuits" gives [{"q":"geared toward","t":"tailored to"},{"q":"such pursuits","t":"those cultural activities"}]); ' +
+  'only pair parts that really match in meaning in this context, never word by word}. ' +
+  '"pdist": one extra paraphrase that sounds plausible but matches none of them.\n' +
+  '- "cloze": {"text": a summary of the whole passage in 3 to 5 sentences with blanks written {{1}}, {{2}}, … in order (5 to 8 blanks on key words; reuse the "words" when you can), ' +
+  '"answers": exactly ONE word for EACH blank, in blank order, "extra": ONE extra wrong word of the same word class that is not an answer}. Count the blanks and the answers: they must be equal.\n' +
+  '- "wprompt": ONE open question about the topic that a student can answer in 1 or 2 sentences, e.g. "Should your city spend more on cycling lanes?" ' +
+  'If it has a difficult word, put a simple synonym right after it with a slash, e.g. "Should affluent / rich countries pay more?"\n' +
+  '- "wguide": 2 or 3 short guiding questions that help the student plan the answer (e.g. "Who would benefit?", "What could go wrong?").\n' +
+  '- "title": a short title (keep the given title if there is one).\n\n' +
+  'Shape: {"title":"…","deep":{"passage_id":"…","paragraphs":[{"id":"P1","main_idea":"…","key_sentences":[{"text":"…","fact_type":"event","related_entities":["…"]}]}],' +
+  '"entities":[{"name":"…","attributes":["…"]}],"timeline":[],"vocab_targets":[{"word":"…","paragraph_id":"P1","meaning":"…"}],' +
+  '"exercises":{"completion":{"type":"summary","instructions":"…","items":[{"id":"C1","prompt_with_blank":"… ______ …","answer":"…","paragraph_id":"P3"}]},' +
+  '"true_false_not_given":{"instructions":"…","items":[{"id":"TFNG1","statement":"…","answer":"TRUE","paragraph_id":"P2"}]},' +
+  '"matching_headings":{"instructions":"…","heading_options":["…"],"items":[{"id":"MH1","paragraph_id":"P2","answer_heading":"…","difficulty":"easy"}]},' +
+  '"matching_information":{"instructions":"…","items":[{"id":"MI1","prompt":"…","answer":"P4"}]}}},' +
+  '"prons":[{"w":"…","p":1,"opts":["…","…","…","…"],"a":0,"why":"…"}],' +
+  '"words":[{"w":"…","p":1,"pos":"n","opts":["…","…","…","…"],"a":0,"en":"…","syn":"…","vi":"…","fam":"…","col":"…","ex":"…"}],' +
+  '"pairs":[{"ph":"…","p":1,"par":"…","why":"…","segs":[{"q":"…","t":"…","note":"…"}]}],"pdist":"…","cloze":{"text":"… {{1}} … {{2}} …","answers":["…","…"],"extra":"…"},"wprompt":"…","wguide":["…","…"]}\n';
+const R_STR = { type: 'STRING' }, R_INT = { type: 'INTEGER' }, R_LIST = { type: 'ARRAY', items: { type: 'STRING' } };
+const R_NSTR = { type: 'STRING', nullable: true };
+const R_ITEMS = (props, req) => ({ type: 'OBJECT', properties: { instructions: R_STR, items: { type: 'ARRAY', items: { type: 'OBJECT', properties: props, required: req } } }, required: ['instructions', 'items'] });
+const RSCHEMA = {
+  type: 'OBJECT',
+  properties: {
+    title: R_STR,
+    deep: {
+      type: 'OBJECT',
+      properties: {
+        passage_id: R_STR,
+        paragraphs: { type: 'ARRAY', items: { type: 'OBJECT', properties: { id: R_STR, main_idea: R_STR, key_sentences: { type: 'ARRAY', items: { type: 'OBJECT', properties: { text: R_STR, fact_type: R_STR, related_entities: R_LIST } } } } } },
+        entities: { type: 'ARRAY', items: { type: 'OBJECT', properties: { name: R_STR, attributes: R_LIST }, required: ['name'] } },
+        timeline: { type: 'ARRAY', items: { type: 'OBJECT', properties: { year: R_STR, event: R_STR, paragraph_id: R_STR } } },
+        vocab_targets: { type: 'ARRAY', items: { type: 'OBJECT', properties: { word: R_STR, paragraph_id: R_STR, meaning: R_STR } } },
+        exercises: {
+          type: 'OBJECT',
+          properties: {
+            completion: Object.assign(R_ITEMS({ id: R_STR, prompt_with_blank: R_STR, answer: R_STR, paragraph_id: R_STR }, ['prompt_with_blank', 'answer', 'paragraph_id']), { properties: { type: R_STR, instructions: R_STR, items: { type: 'ARRAY', items: { type: 'OBJECT', properties: { id: R_STR, prompt_with_blank: R_STR, answer: R_STR, paragraph_id: R_STR }, required: ['prompt_with_blank', 'answer', 'paragraph_id'] } } } }),
+            true_false_not_given: R_ITEMS({ id: R_STR, statement: R_STR, answer: R_STR, paragraph_id: R_NSTR }, ['statement', 'answer']),
+            matching_headings: {
+              type: 'OBJECT',
+              properties: { instructions: R_STR, heading_options: R_LIST, items: { type: 'ARRAY', items: { type: 'OBJECT', properties: { id: R_STR, paragraph_id: R_STR, answer_heading: R_STR, difficulty: R_STR }, required: ['paragraph_id', 'answer_heading', 'difficulty'] } } },
+              required: ['instructions', 'heading_options', 'items'],
+            },
+            matching_information: R_ITEMS({ id: R_STR, prompt: R_STR, answer: R_STR }, ['prompt', 'answer']),
+          },
+          required: ['completion', 'true_false_not_given', 'matching_headings', 'matching_information'],
+        },
+      },
+      required: ['passage_id', 'entities', 'exercises'],
+    },
+    prons: { type: 'ARRAY', items: { type: 'OBJECT', properties: { w: R_STR, p: R_INT, opts: R_LIST, a: R_INT, why: R_STR }, required: ['w', 'p', 'opts', 'a', 'why'] } },
+    words: { type: 'ARRAY', items: { type: 'OBJECT', properties: { w: R_STR, p: R_INT, pos: R_STR, opts: R_LIST, a: R_INT, en: R_STR, syn: R_STR, vi: R_STR, fam: R_STR, col: R_STR, ex: R_STR }, required: ['w', 'p', 'pos', 'opts', 'a', 'en', 'vi', 'fam', 'col', 'ex'] } },
+    pairs: { type: 'ARRAY', items: { type: 'OBJECT', properties: { ph: R_STR, p: R_INT, par: R_STR, why: R_STR, segs: { type: 'ARRAY', items: { type: 'OBJECT', properties: { q: R_STR, t: R_STR, note: R_STR }, required: ['q', 't'] } } }, required: ['ph', 'p', 'par'] } },
+    pdist: R_STR,
+    cloze: { type: 'OBJECT', properties: { text: R_STR, answers: R_LIST, extra: R_STR }, required: ['text', 'answers', 'extra'] },
+    wprompt: R_STR,
+    wguide: R_LIST,
+  },
+  required: ['title', 'deep', 'prons', 'words', 'pairs', 'pdist', 'cloze', 'wprompt'],
+};
+// Problems the app cannot repair (it repairs or leaves out the other items: parseReading / rmParseDeep in index.html).
+// Matching headings: exactly 3 paragraphs (easy, medium, hard) that exist, answers in the list, 2-3 extra headings.
+function deepProblems(o, N) {
+  const ex = o.deep && typeof o.deep === 'object' ? o.deep.exercises : null;
+  if (!ex || typeof ex !== 'object') return ['Deep reading ("deep.exercises") is missing.'];
+  const out = [];
+  const norm = (t) => String(t || '').toLowerCase().replace(/[‘’]/g, "'").replace(/\s+/g, ' ').replace(/[.;:!?]+$/, '').trim();
+  const pid = (x) => { const m = /^\s*P\s*(\d+)\s*$/i.exec(String(x == null ? '' : x)); return m && +m[1] >= 1 && +m[1] <= N ? +m[1] : 0; };
+  const mh = ex.matching_headings;
+  if (!mh || !Array.isArray(mh.items) || !Array.isArray(mh.heading_options)) out.push('Matching headings is missing.');
+  else {
+    const opts = mh.heading_options.map(norm).filter(Boolean);
+    const by = {};
+    mh.items.forEach((x) => { const d = String((x && x.difficulty) || '').toLowerCase().trim(); if (!by[d]) by[d] = x; });
+    const three = ['easy', 'medium', 'hard'].map((d) => by[d]).filter(Boolean);
+    if (three.length < 3) out.push('Matching headings needs exactly 3 paragraphs: one easy, one medium and one hard.');
+    else {
+      if (three.some((x) => !pid(x.paragraph_id))) out.push('A Matching headings paragraph is not in the passage (the passage has P1 to P' + N + ').');
+      if (new Set(three.map((x) => pid(x.paragraph_id))).size < 3) out.push('Matching headings uses the same paragraph twice.');
+      if (three.some((x) => opts.indexOf(norm(x.answer_heading)) < 0)) out.push('A Matching headings answer is not in the List of Headings.');
+      else if (new Set(three.map((x) => norm(x.answer_heading))).size < 3) out.push('Matching headings uses the same heading for 2 paragraphs.');
+      if (new Set(opts).size < 5) out.push('The List of Headings needs the 3 right headings plus 2 or 3 extra ones.');
+    }
+  }
+  const tf = ex.true_false_not_given;
+  if (tf && Array.isArray(tf.items) && tf.items.length && tf.items.every((x) => ['TRUE', 'FALSE', 'NOT GIVEN'].indexOf(String((x && x.answer) || '').toUpperCase().trim()) < 0)) {
+    out.push('True / False / Not Given answers must be TRUE, FALSE or NOT GIVEN.');
+  }
+  return out;
+}
+const READING_KEYS = ['deep', 'prons', 'words', 'pairs', 'cloze'];
+// One passage, three versions (the app runs medium, then easy, then hard). The difficulty is in the thinking asked for,
+// the question types, the distractors and the support, not only in the label. Every version keeps all the rules above.
+const READING_LEVELS = {
+  easy: 'VERSION: EASY (Beginner students, about IELTS Band 4.5-5.5). This overrides the language level above. Statements and prompts are short and close to the wording of the passage; ' +
+    'completion answers are ONE word; TRUE/FALSE/NOT GIVEN: 3 items, at most one NOT GIVEN; distractors in prons and words are clearly wrong; words are A2-B1; pairs use simple, direct paraphrases; the cloze has 5 blanks; wguide gives very concrete hints.',
+  medium: 'VERSION: MEDIUM (Intermediate students). Use the rules and the language level above as they are.',
+  hard: 'VERSION: HARD (Advanced students, about IELTS Band 7-8). This overrides the language level above. Statements paraphrase the passage more and need inference from two sentences; ' +
+    'completion answers may be 2 words; TRUE/FALSE/NOT GIVEN: 5 or 6 items with at least two NOT GIVEN; distractors are close and plausible; words are B2-C1; pairs use less obvious paraphrases; the cloze has 7 or 8 blanks; wprompt asks for an opinion with a reason.',
+};
+async function aiReading(env, request, body) {
+  const em = await staffEmail(env, request);
+  if (!em) return staffLocked();
+  if (body.op === 'prompt') return json({ prompt: RPROMPT });
+  if (!aiReady(env)) return json({ error: AI_WHY.nokey, code: 'nokey' }, 502);
+  const passage = String(body.passage || '').replace(/\r\n?/g, '\n').trim(), title = String(body.title || '').replace(/\s+/g, ' ').trim().slice(0, 120);
+  const words = passage.split(/\s+/).filter(Boolean).length, P = readingParas(passage);
+  if (words < 80) return fail('Paste the whole passage first (at least 80 words).');
+  if (passage.length > 12000) return fail('The passage is too long (12,000 characters at most).');
+  if (P.length < 2) return fail('Leave a blank line between the paragraphs of the passage (at least 2 paragraphs).');
+  const qKey = 'ail:' + em + ':' + dayOf(body.tzo).day;
+  if ((await count(env, qKey)) >= 30) return fail('You have used today\'s 30 AI lesson runs. Try again tomorrow.', 429);
+  await bump(env, qKey, 172800);
+  const level = READING_LEVELS[body.level] ? body.level : 'medium';
+  const full = RPROMPT + '\n' + READING_LEVELS[level] + '\n' + (title ? 'TITLE: ' + title + '\n\n' : '') + 'The passage has ' + P.length + ' paragraphs ([P1] to [P' + P.length + ']). ' +
+    'Use only these paragraph ids and numbers.\n\nPASSAGE:\n' + P.map((t, i) => '[P' + (i + 1) + '] ' + t).join('\n\n');
+  let g;
+  try {
+    g = await askGemini(env, full, RSCHEMA, '', AI_TIMEOUT); // 5 minutes, like the Writing check and the Listening lesson
+  } catch (e) {
+    const c = e.code || 'server';
+    console.log('[ai] reading failed', c, String(e.detail || e.message || '').slice(0, 300));
+    return json({ error: 'The AI could not write the lesson (code: ' + c + '). ' + (AI_WHY[c] || AI_WHY[c.replace(/\d+$/, (n) => n[0] + 'xx')] || 'Try again.'), code: c }, 502);
+  }
+  const o = g.out && typeof g.out === 'object' ? g.out : {};
+  const miss = READING_KEYS.filter((k) => !o[k] || typeof o[k] !== 'object');
+  if (!o.wprompt) miss.push('wprompt');
+  if (miss.length) return json({ error: 'The AI answer was incomplete (missing ' + miss.join(', ') + '). Press Try again.', code: 'shape' }, 502);
+  const dp = deepProblems(o, P.length);
+  if (dp.length) {
+    console.log('[ai] reading deep', dp.join(' | '));
+    return json({ error: 'The AI lesson broke a rule: ' + dp.join(' ') + ' Press Try again.', code: 'shape' }, 502);
+  }
+  ['sums', 'sum_extra', 'why', 'ordering', 'order', 'paragraph_order'].forEach((k) => { delete o[k]; }); // no ordering exercise any more
+  delete o.paras; // the app always builds the text from the teacher's passage
+  if (title) o.title = title;
+  o.skill = 'reading';
+  return json({ lesson: o, model: g.model, paras: P.length, level });
+}
+
+// 502 { error: 'busy', code } + a log line (Cloudflare Pages -> Functions -> Real-time logs)
+function aiFail(code, where, detail) {
+  console.log('[ai] failed', code, where || '', String(detail || '').slice(0, 300));
+  return json({ error: 'busy', code }, 502);
+}
+
+async function aiCorrect(env, request, body) {
+  const who = await idUser(env, request);
+  if (!who) return needSignIn();
+  const id = String(body.attemptId || '');
+  if (!/^[A-Za-z0-9]{10,40}$/.test(id)) return fail('This submission was not found.', 404);
+  if (!aiReady(env)) return aiFail('nokey', id);
+  const doc = await fsGet(env, 'attempts', id);
+  if (!doc) return fail('This submission was not found.', 404);
+  const att = doc.data, text = String(att.text || '');
+  if (att.kind !== 'submission' || !text) return fail('Only Writing submissions can be checked.', 400);
+  // already checked: return the saved result, no new Gemini call, no quota used
+  if (att.ai && typeof att.ai === 'object' && Array.isArray(att.ai.corrections)) return json({ ai: att.ai, added: (att.ai.corrections || []).length, again: true });
+  if (text.trim().length < 8) return fail('Your answer is too short for an AI check.', 400);
+  if (text.length > 6000) return fail('Your answer is too long for an AI check (6000 characters at most).', 400);
+  if (!(Number(att.ts) > Date.now() - AI_MAX_AGE)) return fail('AI checks are only available within 2 hours of submitting.', 400);
+  const em = normEmail(att.email);
+  if (!emailOk(em)) return fail('This submission was not found.', 404);
+  if (who.em !== em && who.role !== 'teacher') return fail('This submission was not found.', 404); // someone else's essay
+  // 'pending:<ts>' = a check is running. Older than 6 minutes (longer than the 5-minute Gemini limit) = that request died: run again.
+  const lock = String((await env.MD_KV.get('ai:' + id)) || '');
+  if (/^pending/.test(lock) && Date.now() - Number(lock.split(':')[1] || 0) < 360000) return fail('Your writing is already being checked. Wait a few seconds.', 409);
+  const { day, dayStart } = dayOf(body.tzo);
+  const limit = Math.max(1, parseInt(env.AI_DAILY_LIMIT || '10', 10) || 10);
+  const qKey = 'aiq:' + em + ':' + day;
+  if ((await count(env, qKey)) >= limit) return fail("You have used today's AI checks. Try again tomorrow.", 429);
+  await env.MD_KV.put('ai:' + id, 'pending:' + Date.now(), { expirationTtl: 172800 });
+  let ai;
+  try {
+    const task = String(body.task || '').slice(0, 1500);
+    const g = await askGemini(env, AI_PROMPT + '\nTASK:\n' + (task || '(not given)') + '\n\nSTUDENT ESSAY:\n' + text, AI_SCHEMA, AI_SHAPE);
+    ai = cleanAi(g.out, text, g.model);
+  } catch (e) {
+    await env.MD_KV.delete('ai:' + id); // a failed call may be tried again
+    return aiFail(e.code || 'error', id, e.detail || e.message);
+  }
+  const fixes = ai.corrections.filter((c) => c.type !== 'Off-topic')
+    .map((c) => ({ from: c.original_text, to: c.corrected_text, type: c.type, why: c.explanation }));
+  if (!(await fsUpdate(env, 'attempts', id, { ai, fixes }))) {
+    await env.MD_KV.delete('ai:' + id);
+    return aiFail('save', id, 'attempts update failed');
+  }
+  await env.MD_KV.put('ai:' + id, 'done', { expirationTtl: 172800 });
+  await bump(env, qKey, 172800);
+  let added = 0;
+  try { added = await saveErrors(env, att, id, ai, { dayStart, exTitle: aiStr(body.exTitle, 120) }); } catch (e) { added = 0; }
+  return json({ ai, added });
+}
+
+// POST /api/ai/practice { errorId, tzo }: makes the 2 practice items for a mistake saved before practice existed.
+// Same simple check as /api/ai/correct: the errors doc must exist. KV aipq:<email>:<day>, 50 a day.
+const PRACTICE_PROMPT =
+  'You write fill-in-the-blank practice for one IELTS student mistake. Return JSON that matches the schema.\n' + AI_PRACTICE_RULES;
+const PRACTICE_SCHEMA = { type: 'OBJECT', properties: { practice: AI_PRACTICE_ITEMS }, required: ['practice'] };
+async function aiPractice(env, request, body) {
+  const who = await idUser(env, request);
+  if (!who) return needSignIn();
+  const id = String(body.errorId || '');
+  if (!/^[A-Za-z0-9_-]{5,200}$/.test(id)) return fail('This mistake was not found.', 404);
+  const doc = await fsGet(env, 'errors', id);
+  if (!doc) return fail('This mistake was not found.', 404);
+  const e = doc.data;
+  if (normEmail(e.email) !== who.em && who.role !== 'teacher') return fail('This mistake was not found.', 404);
+  if (Array.isArray(e.practice) && e.practice.length) return json({ practice: e.practice, again: true });
+  if (e.type === 'Off-topic') return json({ practice: [] });
+  if (!aiReady(env)) return aiFail('nokey', id);
+  const em = normEmail(e.email);
+  if (!emailOk(em)) return fail('This mistake was not found.', 404);
+  const qKey = 'aipq:' + em + ':' + dayOf(body.tzo).day;
+  if ((await count(env, qKey)) >= 50) return fail("You have used today's AI exercises. Try again tomorrow.", 429);
+  const c = { original_text: String(e.original || ''), corrected_text: String(e.corrected || ''), type: String(e.type || 'Grammar') };
+  let practice;
+  try {
+    const g = await askGemini(env, PRACTICE_PROMPT + '\nMISTAKE:\n' + JSON.stringify({
+      original_text: c.original_text, corrected_text: c.corrected_text, category: String(e.category || ''),
+      explanation: String(e.explanation || ''), context: String(e.context || ''),
+    }), PRACTICE_SCHEMA, PRACTICE_SHAPE);
+    practice = cleanPractice(g.out && g.out.practice, c);
+  } catch (err) {
+    return aiFail(err.code || 'error', id, err.detail || err.message);
+  }
+  await bump(env, qKey, 172800);
+  if (!practice.length) return json({ practice: [] });
+  await fsUpdate(env, 'errors', id, { practice });
+  return json({ practice });
+}
+
+// POST /api/admin/aitest { text, task }: the admin checks any essay with the real AI (same prompt, schema and filter
+// as /api/ai/correct). Nothing is saved, no student quota is used. KV aitest:<day>, 200 a day.
+const AI_WHY = {
+  nokey: 'GEMINI_KEY is not set on Cloudflare, or the site was not deployed again after adding it.',
+  timeout: 'Gemini did not answer within 5 minutes. Try again in a few minutes.',
+  network: 'The server could not reach Gemini. Try again.',
+  http400: 'Gemini rejected the request: a wrong GEMINI_KEY, a model that does not support these settings, or "User location is not supported" (Cloudflare runs in a blocked region: set up the Apps Script relay, README 3e).',
+  relay: 'The Apps Script relay failed: check GEMINI_PROXY_URL (the /exec link), GEMINI_PROXY_SECRET = RELAY_SECRET in the script, and that the web app is deployed for "Anyone".',
+  http403: 'The key is not allowed: check GEMINI_KEY (Google AI Studio) and that the Gemini API is enabled.',
+  http404: 'Model not found or not available to this key: check GEMINI_MODELS (default gemini-3.8-flash, gemini-3.6-flash, gemini-3.5-flash-lite).',
+  http429: 'The free Gemini quota of every model in the list is used up for now. Wait a minute (per-minute limit) or until tomorrow (daily limit).',
+  http5xx: 'Every Gemini model in the list is busy right now. Try again in a few minutes.',
+  blocked: 'Gemini refused to answer this text (safety filter).',
+  empty: 'Gemini returned an empty answer. Try again.',
+  too_long: 'The answer was cut off (too long). Try a shorter essay.',
+  parse: 'Gemini returned something that is not JSON. Try again.',
+};
+async function adminAiTest(env, body) {
+  const text = String(body.text || '');
+  if (text.trim().length < 8) return fail('Paste an essay first (at least a few words).');
+  if (text.length > 6000) return fail('The essay is too long (6000 characters at most).');
+  if (!aiReady(env)) return fail('GEMINI_KEY (or GEMINI_PROXY_URL) is not set on Cloudflare (Settings → Variables and Secrets), or the site was not deployed again after adding it.');
+  const qKey = 'aitest:' + new Date().toISOString().slice(0, 10);
+  if ((await count(env, qKey)) >= 200) return fail('AI test limit reached for today (200).', 429);
+  const task = String(body.task || '').slice(0, 1500), t0 = Date.now();
+  let g;
+  try {
+    g = await askGemini(env, AI_PROMPT + '\nTASK:\n' + (task || '(not given)') + '\n\nSTUDENT ESSAY:\n' + text, AI_SCHEMA, AI_SHAPE);
+  } catch (e) {
+    const c = e.code || 'error', why = AI_WHY[c] || AI_WHY[c.replace(/\d+$/, (n) => n[0] + 'xx')] || '';
+    console.log('[ai] admin test failed', c, String(e.detail || e.message || '').slice(0, 300));
+    return json({ error: 'Gemini failed (code: ' + c + '). ' + why + (e.detail ? ' Details: ' + String(e.detail).slice(0, 300) : ''), code: c }, 502);
+  }
+  await bump(env, qKey, 172800);
+  const ai = cleanAi(g.out, text, g.model);
+  const raw = Array.isArray(g.out && g.out.corrections) ? g.out.corrections : [];
+  const kept = {};
+  ai.corrections.forEach((c) => { kept[c.original_text] = 1; });
+  const dropped = raw.map((c) => String((c && c.original_text) || '')).filter((o) => o && !kept[o.trim()]).slice(0, 10);
+  return json({ ai, ms: Date.now() - t0, model: g.model + (g.via === 'relay' ? ' via Apps Script relay' : ' direct'), raw: raw.length, dropped });
+}
+
+export async function onRequest(ctx) {
+  const { request, env } = ctx;
+  const url = new URL(request.url);
+  const route = url.pathname.replace(/^\/api\/?/, '').replace(/\/$/, '');
+  try {
+    if (!env.MD_KV || !env.FIREBASE_PROJECT_ID || !env.FIREBASE_PRIVATE_KEY) return fail('Server is not configured yet.', 500);
+    if (route === 'names' && request.method === 'GET') return json(await listNames(env));
+    if (route === 'status' && request.method === 'GET') {
+      const em = normEmail(url.searchParams.get('em'));
+      const s = emailOk(em) ? await offState(env, em) : '';
+      const st = {}; st[s || 'ok'] = true; // { ok } | { off } | { moved } | { kicked }
+      return json(st);
+    }
+    const am = /^audio\/([A-Za-z0-9_-]{22})$/.exec(route);
+    if (am && (request.method === 'GET' || request.method === 'HEAD')) return await audioServe(env, request, am[1]);
+    if (request.method !== 'POST') return fail('Not found.', 404);
+    // audio upload: the body is the file, not JSON
+    if (route === 'audio') return await audioUpload(env, request, url, request.headers.get('CF-Connecting-IP') || 'x');
+    let body = {};
+    try { body = await request.json(); } catch (e) { return fail('Bad request.'); }
+    const ip = request.headers.get('CF-Connecting-IP') || 'x';
+    if (route === 'login') return await login(env, body);
+    if (route === 'register') return await register(env, body, ip);
+    if (route === 'reset') return await resetPassword(env, body);
+    if (route === 'admin/unlock') return await adminUnlock(env, body);
+    if (route === 'staff/unlock') return await staffUnlock(env, body);
+    if (route === 'ai/correct') return await aiCorrect(env, request, body);
+    if (route === 'spin') return await spinWheel(env, request, body);
+    if (route === 'ai/practice') return await aiPractice(env, request, body);
+    if (route === 'ai/lesson') return await aiLesson(env, request, body);
+    if (route === 'ai/transcribe') return await aiTranscribe(env, request, body);
+    if (route === 'ai/reading') return await aiReading(env, request, body);
+    if (route.indexOf('admin/') === 0) {
+      if (!(await adminKeyOk(env, request))) {
+        return json({ error: 'Your admin session ended. Enter your admin password to continue.', needUnlock: true }, 401);
+      }
+      if (route === 'admin/users') return await adminUsers(env);
+      if (route === 'admin/password') return await adminPassword(env, body);
+      if (route === 'admin/active') return await adminActive(env, body);
+      if (route === 'admin/teachers') return await adminTeachers(env, body);
+      if (route === 'admin/sheet') return await adminSheet(env, body);
+      if (route === 'admin/class') return await adminClass(env, body);
+      if (route === 'admin/kick') return await adminKick(env, body);
+      if (route === 'admin/classdel') return await adminClassDel(env, body);
+      if (route === 'admin/aitest') return await adminAiTest(env, body);
+      if (route === 'admin/season') return await adminSeason(env, body);
+      if (route === 'admin/tester') return await adminTester(env, body);
+    }
+    return fail('Not found.', 404);
+  } catch (e) {
+    console.log('[api] server error', route, String((e && e.stack) || e).slice(0, 500));
+    return json({ error: 'Server error. Try again.', code: 'server' }, 500);
+  }
+}
