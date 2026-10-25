@@ -47,9 +47,9 @@ function lmMatch(f,e){if(!f)return false;if(e.status!=null&&f.status!==e.status)
 function lmItems(u){
   var L=[];
   (u.copy||[]).forEach(function(x){L.push({kind:'copy',x:x,pairs:[[x.en,x.vi]]})});
-  (u.claims||[]).forEach(function(x){L.push({kind:'claim',x:x,pairs:x.why?[[x.en,x.vi],[x.why.en,x.why.vi]]:[[x.en,x.vi]]})});
+  (u.claims||[]).forEach(function(x){var P=[[x.en,x.vi]];if(x.why)P.push([x.why.en,x.why.vi]);if(x.q)P.push([x.q.en,x.q.vi]);L.push({kind:'claim',x:x,pairs:P})});
   (u.controlled||[]).forEach(function(x){L.push({kind:'controlled',x:x,pairs:[[x.why&&x.why.en,x.why&&x.why.vi]]})});
-  (u.keyFeatures||[]).forEach(function(x){L.push({kind:'keyFeature',x:x,pairs:[[x.reason&&x.reason.en,x.reason&&x.reason.vi]]})});
+  (u.keyFeatures||[]).forEach(function(x){var P=[[x.reason&&x.reason.en,x.reason&&x.reason.vi]];if(x.self)P.push([x.self.en,x.self.vi]);L.push({kind:'keyFeature',x:x,pairs:P})});
   return L;
 }
 // full check -> {errors[], pending, approved, total, ctx}. release=true: any 'pending' is an error too.
@@ -84,7 +84,7 @@ function lmCheck(u,release){
       else if(!lmMatch(f,e))E.push(n+': fact '+B[k]+' now gives '+f.status+' / '+JSON.stringify(f.result)+', expected '+JSON.stringify(e)+'.');
       if((it.kind==='claim'||it.kind==='keyFeature')&&f.status!=='supported')E.push(n+': a model sentence / key feature can only use supported facts ('+B[k]+' is '+f.status+').')});
     // every placeholder resolves
-    var texts=[];if(it.kind==='claim')texts=[x.en,x.vi];else if(it.kind==='controlled')texts=[x.statement&&x.statement.en,x.why&&x.why.en,x.why&&x.why.vi];else if(it.kind==='keyFeature')texts=[x.reason&&x.reason.en,x.reason&&x.reason.vi];else texts=[x.en,x.vi];
+    var texts=[];if(it.kind==='claim')texts=[x.en,x.vi].concat(x.q?[x.q.en,x.q.vi]:[]);else if(it.kind==='controlled')texts=[x.statement&&x.statement.en,x.why&&x.why.en,x.why&&x.why.vi];else if(it.kind==='keyFeature')texts=[x.reason&&x.reason.en,x.reason&&x.reason.vi].concat(x.self?[x.self.en,x.self.vi]:[]);else texts=[x.en,x.vi];
     texts.forEach(function(t){if(t==null)return;if(!chartBound&&lmPlaceholders(t).length)E.push(n+': general teaching copy cannot use chart placeholders.');
       else if(chartBound){var r=lmResolve(t,x,ctx);if(r.missing.length)E.push(n+': cannot fill '+r.missing.join(' ')+'.')}});
     // Learn redesign: "why" notes are bilingual teaching copy (no chart placeholders needed, but allowed); kf links must exist on the same chart
