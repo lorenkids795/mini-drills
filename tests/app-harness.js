@@ -32,7 +32,7 @@ function boot(opt) {
   W.window = W; W.calls = []; W.reply = () => ({ status: 200, body: { ok: true } });
   W.fetch = (url, o) => { W.calls.push({ url, opt: o }); const r = W.reply(url, o); return Promise.resolve({ ok: r.status < 400, status: r.status, json: () => Promise.resolve(JSON.parse(JSON.stringify(r.body))) }); };
   const ctx = vm.createContext(W);
-  ['md-chart.js', 'lm-content.js', 'lm-engine.js', 'lm-unit2.js'].forEach((f) => vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), ctx));
+  ['md-chart.js', 'lm-content.js', 'lm-engine.js', 'lm-unit2.js', 'lm-unit0.js'].forEach((f) => vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), ctx));
   vm.runInContext(SRC, ctx, { filename: 'index.html#app' });
   const T = W.__T; T.setU(Object.assign({ cls: '' }, user));
   const press = (dataset) => { const btn = { tagName: 'BUTTON', id: '', dataset, disabled: false, attrs: {}, setAttribute(k, v) { this.attrs[k] = v; }, getAttribute(k) { return this.attrs[k] || null; }, closest(s) { return s === '[data-act]' ? this : null; } };

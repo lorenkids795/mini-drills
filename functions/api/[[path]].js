@@ -880,9 +880,19 @@ async function seedTester(env, email, name, cls) {
   for (const [ex, score, ago] of L) {
     await fsPut(env, 'attempts', 'seed_' + slug(email) + '_' + ex, { email, student: name, cls, course: '', ex, score, total: 10, items: [], ts: now - ago * D, seeded: true });
   }
+  // Writing (w1) + Speaking (s1) submissions, already marked, so Recent results / Open feedback have something to show.
+  // Fixed ids: pressing "Add sample data" again replaces them instead of adding copies.
+  const WT = 'The table compares internet access in four countries in 2005 and 2020. Overall, access rose everywhere, and Country C stayed the highest in both years.';
+  const sub = [
+    ['w1', { kind: 'submission', text: WT, words: WT.split(/\s+/).length, ts: now - 4 * D, grade: { scores: [6, 6.5, 6, 6], overall: 6, feedback: 'Sample feedback: clear overview; add one comparison with numbers.', by: 'Sample', ts: now - 3 * D } }],
+    ['s1', { kind: 'submission', notes: 'Sample speaking submission (no recording).', ts: now - 2 * D, grade: { scores: [6, 6, 6.5, 6], overall: 6, feedback: 'Sample feedback: speak a little longer in Part 2.', by: 'Sample', ts: now - D } }],
+  ];
+  for (const [ex, rec] of sub) {
+    await fsPut(env, 'attempts', 'seed_' + slug(email) + '_' + ex, Object.assign({ email, student: name, cls, course: '', ex, score: 0, total: 0, items: [], seeded: true }, rec));
+  }
   const pid = slug(email), cur = await fsGet(env, 'profiles', pid), xp = Math.max(Number(cur && cur.data.xp) || 0, 160);
   await fsUpdate(env, 'profiles', pid, { email, xp, xpLife: Math.max(Number(cur && cur.data.xpLife) || 0, xp), xpAt: now });
-  return L.length;
+  return L.length + sub.length;
 }
 async function rosterRow(env, email) {
   const row = await fsGet(env, 'roster', email);
@@ -892,7 +902,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-10-23d';
+const API_VERSION = '2026-10-24b';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -927,7 +937,57 @@ async function adminKick(env, body) {
   await env.MD_KV.delete('acct:' + email);
   await env.MD_KV.delete('rl:' + email);
   await env.MD_KV.put('off:' + email, 'kicked'); // open devices are signed out by /api/status
-  return json({ ok: true, role: teacher ? 'teacher' : 'student', envTeacher });
+  const purged = teacher ? null : await purgeStudent(env, email);
+  return json({ ok: true, role: teacher ? 'teacher' : 'student', envTeacher, purged });
+}
+
+/* ---------- delete a student's learning data (Kick, Delete class) ----------
+   Every document of the student in the learning collections (found by the "email" field: one query each, so a kick stays
+   far below the Workers sub-request limit), and profiles/{slug(email)} (XP, streak, prizes). Codes already handed out and the
+   "wins" marquee are left alone. Cannot be undone. */
+const PURGE_COLS = ['attempts', 'errors', 'cards', 'hwdone', 'passes', 'redeems'];
+async function fsQueryEq(env, col, field, value) {
+  const r = await fs(env, 'POST', ':runQuery', { structuredQuery: { from: [{ collectionId: col }], where: { fieldFilter: { field: { fieldPath: field }, op: 'EQUAL', value: { stringValue: value } } } } });
+  if (!r.ok) throw new Error('firestore query ' + col + ' ' + r.status);
+  const rows = await r.json();
+  return (Array.isArray(rows) ? rows : []).filter((x) => x && x.document).map((x) => x.document.name);
+}
+async function fsDeleteNames(env, names) {
+  let n = 0;
+  for (let i = 0; i < names.length; i += 400) {
+    const part = names.slice(i, i + 400);
+    const r = await fs(env, 'POST', ':batchWrite', { writes: part.map((name) => ({ delete: name })) });
+    if (!r.ok) throw new Error('firestore delete ' + r.status);
+    n += part.length;
+  }
+  return n;
+}
+async function purgeStudent(env, email) {
+  const out = {};
+  for (const col of PURGE_COLS) {
+    out[col] = await fsDeleteNames(env, await fsQueryEq(env, col, 'email', email)); // every doc of these collections has the owner's email
+  }
+  const pid = slug(email);
+  out.profiles = (await fsGet(env, 'profiles', pid)) ? (await fsDelete(env, 'profiles', pid), 1) : 0;
+  return out;
+}
+
+/* ---------- Delete a class (Classes › Class settings, admin only) ----------
+   The app first kicks every non-tester student of the class one by one (admin/kick: account + all learning data; one
+   request each, so no request goes over the Workers sub-request limit), then calls this: it deletes the class's
+   assignments, its class settings (classes/{slug}) and its names still waiting for sign-up, and says how many
+   non-tester students are still in the class. A class still in the Google Sheet comes back as "pending" until it is
+   removed from the Sheet. */
+async function adminClassDel(env, body) {
+  const cls = String(body.cls || '').trim();
+  if (!cls || cls.length > 80) return fail('Choose a class.');
+  const remaining = (await fsQueryEq(env, 'roster', 'cls', cls)).length;
+  const assignments = await fsDeleteNames(env, await fsQueryEq(env, 'assignments', 'cls', cls));
+  const names = await fsDeleteNames(env, await fsQueryEq(env, 'names', 'cls', cls));
+  const cid = slug(cls);
+  let settings = 0;
+  if (cid && (await fsGet(env, 'classes', cid))) { await fsDelete(env, 'classes', cid); settings = 1; }
+  return json({ ok: true, cls, assignments, names, settings, remaining });
 }
 
 // Move a registered student to another class (the Sheet only matters before sign-up).
@@ -1106,7 +1166,7 @@ async function spinWheel(env, request, body) {
     let code = null;
     if (prize.kind === 'mat' || prize.kind === 'custom') {
       const m = prize.rnd && matList.length ? matList[Math.floor(Math.random() * matList.length)] : null;
-      item.text = m ? String(m.title) : String(prize.label || 'Study pack'); item.url = m ? String(m.url || '') : String(prize.url || '');
+      item.text = m ? String(m.title) : String((prize.kind === 'custom' && prize.text) || prize.label || 'Study pack'); item.url = m ? String(m.url || '') : String(prize.url || '');
     } else if (prize.kind === 'title') {
       const own = (Array.isArray(p.inv) ? p.inv : []).filter((x) => x && x.kind === 'title').map((x) => x.text), fresh = TITLES.filter((t) => own.indexOf(t) < 0);
       if (prize.text) item.text = String(prize.text); else if (!fresh.length || Math.random() < 0.25) item.kind = 'ctitle'; else item.text = fresh[Math.floor(Math.random() * fresh.length)];
@@ -1584,6 +1644,7 @@ const RPROMPT =
   '- Every answer must be traceable to the passage. Never invent facts.\n' +
   '- Do not use the same sentence of the passage in more than one exercise type.\n' +
   '- There is NO "put the paragraphs in order" exercise. Do not add any ordering field.\n' +
+  '- ORDER: list the completion items and the TRUE/FALSE/NOT GIVEN items in the order their answers appear in the passage (P1 first, then P2…); a NOT GIVEN statement may go anywhere. Matching exercises do not follow this rule.\n' +
   '- "paragraph_id" (in "deep") is a string: "P1", "P2"… "p" (in prons, words, pairs) is the paragraph NUMBER: 1 = [P1], 2 = [P2]… ' +
   'Every "w", "ph" and completion "answer" must be copied from THAT paragraph character for character ' +
   '(same spelling, same word form: "obligations" is not "obligation"; never join words from two sentences).\n\n' +
@@ -1612,7 +1673,10 @@ const RPROMPT =
   '(you may take them from "vocab_targets"). NEVER choose technical terms, proper names, numbers, very easy words (A1-A2) or words that appear only in a minor example. ' +
   'Each: {"w": the word exactly as written, "p": its paragraph number, "pos": "n" | "v" | "adj" | "adv", "opts": 4 short meanings in easy English (distractors that fit the sentence), "a": index of the right meaning, ' +
   '"en": English definition, "syn": 1 or 2 simple synonyms, comma-separated (e.g. "rich, wealthy"), "vi": Vietnamese meaning, "fam": word family, e.g. "congest (v), congested (adj), congestion (n)", "col": 2 common collocations, "ex": a new example sentence}.\n' +
-  '- "pairs": 4 to 6 key phrases of 2 to 6 words copied exactly from one sentence of the passage, each {"ph": the phrase, "p": its paragraph number, "par": a simpler paraphrase (as an exam question would say it), "why": one short sentence on how the two match}. ' +
+  '- "pairs": 4 to 6 key phrases of 2 to 6 words copied exactly from one sentence of the passage, each {"ph": the phrase, "p": its paragraph number, "par": a simpler paraphrase (as an exam question would say it), "why": one short sentence on how the two match, ' +
+  '"segs": the match split into 1 to 3 meaningful pairs [{"q": words copied from "par", "t": the words of "ph" they match, copied exactly, "note": optional few words on the difference}] ' +
+  '(e.g. "tailored to promote those cultural activities" → "geared toward such pursuits" gives [{"q":"geared toward","t":"tailored to"},{"q":"such pursuits","t":"those cultural activities"}]); ' +
+  'only pair parts that really match in meaning in this context, never word by word}. ' +
   '"pdist": one extra paraphrase that sounds plausible but matches none of them.\n' +
   '- "cloze": {"text": a summary of the whole passage in 3 to 5 sentences with blanks written {{1}}, {{2}}, … in order (5 to 8 blanks on key words; reuse the "words" when you can), ' +
   '"answers": exactly ONE word for EACH blank, in blank order, "extra": ONE extra wrong word of the same word class that is not an answer}. Count the blanks and the answers: they must be equal.\n' +
@@ -1628,7 +1692,7 @@ const RPROMPT =
   '"matching_information":{"instructions":"…","items":[{"id":"MI1","prompt":"…","answer":"P4"}]}}},' +
   '"prons":[{"w":"…","p":1,"opts":["…","…","…","…"],"a":0,"why":"…"}],' +
   '"words":[{"w":"…","p":1,"pos":"n","opts":["…","…","…","…"],"a":0,"en":"…","syn":"…","vi":"…","fam":"…","col":"…","ex":"…"}],' +
-  '"pairs":[{"ph":"…","p":1,"par":"…","why":"…"}],"pdist":"…","cloze":{"text":"… {{1}} … {{2}} …","answers":["…","…"],"extra":"…"},"wprompt":"…","wguide":["…","…"]}\n';
+  '"pairs":[{"ph":"…","p":1,"par":"…","why":"…","segs":[{"q":"…","t":"…","note":"…"}]}],"pdist":"…","cloze":{"text":"… {{1}} … {{2}} …","answers":["…","…"],"extra":"…"},"wprompt":"…","wguide":["…","…"]}\n';
 const R_STR = { type: 'STRING' }, R_INT = { type: 'INTEGER' }, R_LIST = { type: 'ARRAY', items: { type: 'STRING' } };
 const R_NSTR = { type: 'STRING', nullable: true };
 const R_ITEMS = (props, req) => ({ type: 'OBJECT', properties: { instructions: R_STR, items: { type: 'ARRAY', items: { type: 'OBJECT', properties: props, required: req } } }, required: ['instructions', 'items'] });
@@ -1663,7 +1727,7 @@ const RSCHEMA = {
     },
     prons: { type: 'ARRAY', items: { type: 'OBJECT', properties: { w: R_STR, p: R_INT, opts: R_LIST, a: R_INT, why: R_STR }, required: ['w', 'p', 'opts', 'a', 'why'] } },
     words: { type: 'ARRAY', items: { type: 'OBJECT', properties: { w: R_STR, p: R_INT, pos: R_STR, opts: R_LIST, a: R_INT, en: R_STR, syn: R_STR, vi: R_STR, fam: R_STR, col: R_STR, ex: R_STR }, required: ['w', 'p', 'pos', 'opts', 'a', 'en', 'vi', 'fam', 'col', 'ex'] } },
-    pairs: { type: 'ARRAY', items: { type: 'OBJECT', properties: { ph: R_STR, p: R_INT, par: R_STR, why: R_STR }, required: ['ph', 'p', 'par'] } },
+    pairs: { type: 'ARRAY', items: { type: 'OBJECT', properties: { ph: R_STR, p: R_INT, par: R_STR, why: R_STR, segs: { type: 'ARRAY', items: { type: 'OBJECT', properties: { q: R_STR, t: R_STR, note: R_STR }, required: ['q', 't'] } } }, required: ['ph', 'p', 'par'] } },
     pdist: R_STR,
     cloze: { type: 'OBJECT', properties: { text: R_STR, answers: R_LIST, extra: R_STR }, required: ['text', 'answers', 'extra'] },
     wprompt: R_STR,
@@ -1702,6 +1766,15 @@ function deepProblems(o, N) {
   return out;
 }
 const READING_KEYS = ['deep', 'prons', 'words', 'pairs', 'cloze'];
+// One passage, three versions (the app runs medium, then easy, then hard). The difficulty is in the thinking asked for,
+// the question types, the distractors and the support, not only in the label. Every version keeps all the rules above.
+const READING_LEVELS = {
+  easy: 'VERSION: EASY (Beginner students, about IELTS Band 4.5-5.5). This overrides the language level above. Statements and prompts are short and close to the wording of the passage; ' +
+    'completion answers are ONE word; TRUE/FALSE/NOT GIVEN: 3 items, at most one NOT GIVEN; distractors in prons and words are clearly wrong; words are A2-B1; pairs use simple, direct paraphrases; the cloze has 5 blanks; wguide gives very concrete hints.',
+  medium: 'VERSION: MEDIUM (Intermediate students). Use the rules and the language level above as they are.',
+  hard: 'VERSION: HARD (Advanced students, about IELTS Band 7-8). This overrides the language level above. Statements paraphrase the passage more and need inference from two sentences; ' +
+    'completion answers may be 2 words; TRUE/FALSE/NOT GIVEN: 5 or 6 items with at least two NOT GIVEN; distractors are close and plausible; words are B2-C1; pairs use less obvious paraphrases; the cloze has 7 or 8 blanks; wprompt asks for an opinion with a reason.',
+};
 async function aiReading(env, request, body) {
   const em = await staffEmail(env, request);
   if (!em) return staffLocked();
@@ -1715,7 +1788,8 @@ async function aiReading(env, request, body) {
   const qKey = 'ail:' + em + ':' + dayOf(body.tzo).day;
   if ((await count(env, qKey)) >= 30) return fail('You have used today\'s 30 AI lesson runs. Try again tomorrow.', 429);
   await bump(env, qKey, 172800);
-  const full = RPROMPT + '\n' + (title ? 'TITLE: ' + title + '\n\n' : '') + 'The passage has ' + P.length + ' paragraphs ([P1] to [P' + P.length + ']). ' +
+  const level = READING_LEVELS[body.level] ? body.level : 'medium';
+  const full = RPROMPT + '\n' + READING_LEVELS[level] + '\n' + (title ? 'TITLE: ' + title + '\n\n' : '') + 'The passage has ' + P.length + ' paragraphs ([P1] to [P' + P.length + ']). ' +
     'Use only these paragraph ids and numbers.\n\nPASSAGE:\n' + P.map((t, i) => '[P' + (i + 1) + '] ' + t).join('\n\n');
   let g;
   try {
@@ -1738,7 +1812,7 @@ async function aiReading(env, request, body) {
   delete o.paras; // the app always builds the text from the teacher's passage
   if (title) o.title = title;
   o.skill = 'reading';
-  return json({ lesson: o, model: g.model, paras: P.length });
+  return json({ lesson: o, model: g.model, paras: P.length, level });
 }
 
 // 502 { error: 'busy', code } + a log line (Cloudflare Pages -> Functions -> Real-time logs)
@@ -1918,6 +1992,7 @@ export async function onRequest(ctx) {
       if (route === 'admin/sheet') return await adminSheet(env, body);
       if (route === 'admin/class') return await adminClass(env, body);
       if (route === 'admin/kick') return await adminKick(env, body);
+      if (route === 'admin/classdel') return await adminClassDel(env, body);
       if (route === 'admin/aitest') return await adminAiTest(env, body);
       if (route === 'admin/season') return await adminSeason(env, body);
       if (route === 'admin/tester') return await adminTester(env, body);

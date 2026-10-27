@@ -20,10 +20,10 @@
    Reading = passage left / questions right on desktop (tabs on phone). Listening = one column with a sticky audio bar on top.
    Teacher: dashboard with 3 sub-tabs, assignments, roster (CSV sync), create. */
 :root{
-  --bg:#f2f4f8; --surface:#ffffff; --ink:#14213d; --muted:#586379; --line:#d8dee8;
+  --bg:#f2f4f8; --surface:#ffffff; --ink:#14213d; --muted:#535e74; --line:#d8dee8;
   --accent:#2347d6; --accent-ink:#ffffff; --hl:#ffe45c; --hl-soft:#fff3b0;
-  --good:#12703f; --good-bg:#def3e7; --bad:#be2a2a; --bad-bg:#fde6e6; --bad-ink:#ffffff; --warn:#a56a0a;
-  --surface-2:#ffffff; --line-2:#d8dee8; --fill-bg:var(--hl-soft); --fill-line:var(--ink); --dis-op:.5;
+  --good:#12703f; --good-bg:#def3e7; --bad:#be2a2a; --bad-bg:#fde6e6; --bad-ink:#ffffff; --warn:#8f5b06;
+  --surface-2:#ffffff; --line-2:#858fa3; --fill-bg:var(--hl-soft); --fill-line:var(--ink); --dis-op:.5;
   --ch0:#1d4ed8;--ch1:#b45309;--ch2:#047857;--ch3:#be185d;--ta:#cfe0ff;--tal:#2650b8;--cc:#c9f0dc;--ccl:#0d6b56;--star:#f5b301;--mk-y:#fde68a;--mk-g:#bbf7d0;--mk-p:#fbcfe8;--elev:#ffffff; --line-strong:#c5ccd9; --elev-shadow:0 10px 28px rgba(10,15,30,.18); --sel-arrow:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23586379' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --done:#16803c; --done-ink:#ffffff; --more:#e8820c; --more-ink:#1b1200;
   --gold-a:#fbecb8; --gold-b:#f3d277; --gold-e:#c99a1c; --silv-a:#eff1f5; --silv-b:#d8dde5; --silv-e:#98a2b1; --brz-a:#f7e4d3; --brz-b:#e8c09b; --brz-e:#b06f3a;
@@ -161,7 +161,7 @@ body.lg .shell{margin-top:0}
 .lgform .login h1{margin:0 0 20px;font-size:34px;font-weight:800;letter-spacing:-.02em}
 .lgform .login form{gap:0}
 .lgform .field{display:block;margin:16px 0 0;font-size:13px;font-weight:700;color:var(--muted);text-transform:none;letter-spacing:0}
-.lgform .field input,.lgform .field select{display:block;width:100%;margin-top:6px;font:inherit;font-size:16px;font-weight:400;padding:14px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);min-height:0}
+.lgform .field input,.lgform .field select{display:block;width:100%;margin-top:6px;font:inherit;font-size:16px;font-weight:400;padding:14px 16px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);min-height:0}
 .lgform .field select:disabled{opacity:.55}
 .lgform input:focus-visible,.lgform select:focus-visible,.lgform button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .lgbtn{width:100%;margin-top:22px;font:inherit;font-weight:700;font-size:17px;padding:15px;border-radius:10px;border:0;background:var(--accent);color:var(--accent-ink);cursor:pointer}
@@ -317,7 +317,10 @@ body.lg .shell{margin-top:0}
   .lulside{position:sticky;top:12px}}
 @media (max-width:640px){.luovd{grid-template-columns:1fr}.lucard{padding:12px}}
 /* Unit 2 v4: practice-chart caption, trend groups, FAQ, Overall/while, model paragraph by group, Guided selects, admin auto-fill */
-.lucap{margin:6px 0 0;font-size:.8rem;color:var(--muted)}
+.lutop{display:flex;align-items:center;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;width:100%}
+.lutop .lulang{margin:0 0 0 auto}
+.lmcrumb{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;font-size:.88rem;color:var(--muted);min-height:44px}
+.lmcrumb .linkish{font-weight:600}
 .lukw{background:var(--hl-soft);color:var(--ink);border-radius:4px;padding:0 3px;font-weight:700}
 .lutr{display:flex;flex-direction:column;gap:4px}.lutr ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
 .lufaq{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--surface)}
@@ -335,6 +338,18 @@ body.lg .shell{margin-top:0}
 .luopts.luv{flex-direction:column}.luopts.luv .luopt{text-align:left}
 .luself{margin-left:6px}
 .luaf[aria-pressed="true"]{border-color:var(--warn);color:var(--warn)}
+/* Unit 0 (Data Reading & Selection): checklist, reference notes, Guided rows; everything else reuses the Unit 2 lesson classes */
+.u0ckh{margin:4px 0 0;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.u0ck{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}.u0ck li{line-height:1.5}.u0ck span{color:var(--muted)}
+.u0sim{margin:0;font-size:.82rem;color:var(--muted)}
+.u0notes{margin:0;display:grid;grid-template-columns:minmax(0,9em) minmax(0,1fr);gap:8px 14px}.u0notes dt{font-weight:700;font-size:.88rem}.u0notes dd{margin:0;display:flex;flex-direction:column;gap:2px}
+.u0grow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:6px 12px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.u0grow label{font-weight:600;font-size:.92rem}.u0grow .u0gfb{grid-column:1/-1;font-size:.88rem}.u0grow.ok .u0gfb{color:var(--good)}.u0grow.no .u0gfb{color:var(--bad)}
+.u0sel{min-height:44px;width:100%;padding:6px 10px;border:1px solid var(--line-2);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit}
+.u0box{min-height:0}
+.u0rev{display:flex;gap:8px;align-items:flex-start;font-weight:600;min-height:44px}.u0rev input{margin-top:4px}
+.u0draft{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+@media (max-width:640px){.u0notes{grid-template-columns:1fr}.u0grow{grid-template-columns:1fr}}
 .covers{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:14px}
 .bk{position:relative;aspect-ratio:3/4;border:0;border-radius:6px 14px 14px 6px;padding:14px 12px 12px 20px;color:#fff;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:10px;overflow:hidden;text-align:left;font:inherit;cursor:pointer;background:linear-gradient(145deg,hsl(var(--h) 65% 52%),hsl(var(--h) 65% 36%));box-shadow:0 4px 12px rgba(0,0,0,.14)}
 .bk::before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:rgba(0,0,0,.22)}
@@ -347,7 +362,7 @@ body.lg .shell{margin-top:0}
 .lsub{margin:0 0 6px 16px;border-left:3px solid var(--accent);padding-left:8px}.lrow.open{background:var(--bg)}
 .xed .xf{border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:8px 0;background:var(--surface)}.xed .xf .xf{background:var(--bg)}
 .xed .xl{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin:6px 0 3px}.xed .xl small{font-weight:400}
-.xed input[type=text],.xed input[type=number],.xed textarea{width:100%;border:1px solid var(--line);border-radius:6px;padding:.4rem .55rem;background:var(--surface);color:var(--ink);font:inherit;box-sizing:border-box}
+.xed input[type=text],.xed input[type=number],.xed textarea{width:100%;border:1px solid var(--line-2);border-radius:6px;padding:.4rem .55rem;background:var(--surface);color:var(--ink);font:inherit;box-sizing:border-box}
 .xed textarea{resize:vertical;line-height:1.5}.xed .xi{display:flex;gap:6px;align-items:flex-start;margin:4px 0}
 .xed .xh{display:flex;justify-content:space-between;align-items:center}.xed .xi.ob{border-left:3px solid var(--accent);padding-left:6px}
 .lrowwrap{display:flex;align-items:center;border-bottom:1px solid var(--line)}.lrowwrap .lrow{border-bottom:0;flex:1;min-width:0}.ib{border:0;background:none;color:var(--muted);padding:10px;border-radius:6px;font-weight:600;font-size:.8rem}.ib:hover{color:var(--ink);background:var(--surface)}.ib.bad{color:var(--bad)}
@@ -433,6 +448,7 @@ body.lg .shell{margin-top:0}
 .tag{font-size:.8rem;border:1px solid var(--bad);color:var(--bad);border-radius:99px;padding:.1rem .6rem;white-space:nowrap}
 .saved{font-size:.82rem;color:var(--muted)}
 .banner{background:var(--hl-soft);border-radius:6px;padding:.5rem .8rem;font-size:.85rem;margin-bottom:14px}
+.tscr{overflow-x:auto;max-width:100%;margin:0 0 14px}.tscr>.wtable{margin:0}
 .wtable{border-collapse:collapse;margin:0 0 14px;min-width:0;width:auto;font-size:.9rem}
 .wtable th,.wtable td{border:1px solid var(--line);padding:.35rem .8rem;text-align:left}
 .wbox{width:100%;min-height:260px;background:var(--surface);border:1px solid var(--line-2);border-radius:8px;padding:.8rem;line-height:1.65;resize:vertical}
@@ -509,7 +525,7 @@ td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:now
 .exlist input{accent-color:var(--accent)}
 .create{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;padding-top:18px}
 /* Create › Pick a free slot (Book select + Test 1-4 + one row of Part / Passage / Task slots) */
-.cpslot{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:6px}
+.cpslot{background:var(--surface);border:1px solid var(--line-2);border-radius:16px;padding:16px;margin-top:6px}
 .cpslot h3{margin:0 0 12px}
 .cptests{display:flex;gap:8px;flex-wrap:wrap}
 .cptp{min-height:44px;padding:10px 16px;font:inherit;font-size:14px;font-weight:500;border:1px solid var(--line-2);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer}
@@ -677,7 +693,7 @@ body.locked #who,body.locked .crumbs{visibility:hidden}
 .covl{position:absolute;inset:0}
 .cn{position:absolute;left:14px;right:48px;top:12px;color:#fff;font-weight:700;font-size:1.15rem;line-height:1.25;text-shadow:0 1px 3px rgba(0,0,0,.4)}
 .cfoot{display:block;padding:12px 14px;font-size:.82rem;color:var(--muted);min-height:64px}
-.cgear{position:absolute;right:8px;top:8px;border:0;background:rgba(255,255,255,.25);color:#fff;width:32px;height:32px;border-radius:50%;font-size:1.05rem}
+.cgear{position:absolute;right:8px;top:8px;border:1px solid rgba(255,255,255,.7);background:rgba(10,15,30,.5);color:#fff;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;cursor:pointer}
 .cset{display:grid;gap:22px;max-width:760px;margin-top:14px}
 .cset .ccard{max-width:280px}
 .srow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:.5rem 0;border-bottom:1px solid var(--line);font-size:.92rem}
@@ -733,7 +749,7 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .vpop .ex{border-left:3px solid var(--hl);padding-left:10px;color:var(--ink)}
 .vpop .ex b,.fcard .ex b{background:var(--hl-soft);padding:0 .15em;border-radius:2px}
 .vx{position:absolute;right:10px;top:8px;border:0;background:none;font-size:1.4rem;color:var(--muted);line-height:1}
-.spk{border:1px solid var(--line);background:var(--surface);border-radius:50%;width:34px;height:34px;font-size:1rem}
+.spk{border:1px solid var(--line-2);background:var(--surface);color:var(--ink);border-radius:50%;width:40px;height:40px;display:inline-grid;place-items:center;vertical-align:middle;cursor:pointer}.spk:hover{border-color:var(--accent);color:var(--accent)}
 .wchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
 .wc{font-size:.8rem;border-radius:99px;padding:.1rem .6rem;border:1px solid var(--line)}
 .wc.s{border-color:var(--good);color:var(--good)}
@@ -758,7 +774,7 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .ens.due{background:var(--bad-bg);color:var(--bad)}.ens.mast{background:var(--good-bg);color:var(--good)}
 .ens.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 .enbar{margin:0 0 14px;flex-wrap:wrap}
-.enbar select{border:1px solid var(--line);border-radius:8px;padding:.45rem .6rem;background:var(--surface);color:var(--ink);font:inherit;font-size:.9rem;max-width:100%}
+.enbar select{border:1px solid var(--line-2);border-radius:8px;padding:.45rem .6rem;background:var(--surface);color:var(--ink);font:inherit;font-size:.9rem;max-width:100%}
 .enlist{display:flex;flex-direction:column;gap:12px}
 .errc{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0}
 .errtop{display:flex;justify-content:space-between;align-items:center;gap:6px 10px;flex-wrap:wrap}
@@ -816,7 +832,7 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .vocalt{margin:6px 0 12px}.vocalt summary{cursor:pointer;color:var(--muted);font-size:.88rem;padding:4px 0}
 .spaud{margin:6px 0 12px}.spp{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:2px}
 .wver{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}.wver .lbl{margin:0}
-.wver select{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:.45rem .6rem;font:inherit;font-size:.9rem;max-width:100%;min-width:0}
+.wver select{background:var(--surface);color:var(--ink);border:1px solid var(--line-2);border-radius:6px;padding:.45rem .6rem;font:inherit;font-size:.9rem;max-width:100%;min-width:0}
 .subst{margin:4px 0 12px;font-size:.95rem}.subst.ok b{color:var(--good)}
 @media (prefers-reduced-motion:no-preference){.fx-hot{transition:outline-color .2s}}
 .cxhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:30px 0 4px}.cxhead .tk{margin:0}
@@ -987,7 +1003,7 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .lsc .ex{margin:6px 0;font-style:italic}.lsc .ex b{background:var(--hl-soft);padding:0 .15em;border-radius:2px}
 .lsq{margin:10px 0 6px;font-weight:600;font-size:.92rem}.lsh{font-size:1.05rem;margin:18px 0 4px}
 .lsseg{line-height:2;background:var(--bg);border-radius:8px;padding:8px 10px}.lscl{line-height:2.4}
-.lshw{cursor:pointer;border-radius:3px;padding:1px 2px}.lshw.on{background:var(--hl)}.lshw.tg{outline:2px solid var(--good);background:var(--good-bg)}.lshw.wr{background:var(--bad-bg);text-decoration:line-through}
+.lshw{cursor:pointer;border-radius:3px;padding:1px 2px}.lshw.on{background:var(--hl);color:#14213d}.lshw.tg{outline:2px solid var(--good);background:var(--good-bg)}.lshw.wr{background:var(--bad-bg);text-decoration:line-through}
 .lsc .opts{gap:2px}.lsc .opt{border-color:transparent;padding:.4rem .8rem}.lsc .opt:hover{border-color:transparent;background:var(--hl-soft)}
 .lsc .opt:has(input:checked){border-color:transparent}.lsc .opt.good,.lsc .opt.bad{border-color:transparent}
 .lsseg .gap{margin:.2em .15em;padding:.15em .35em;vertical-align:middle}.lsseg.lscl{line-height:2.6}
@@ -1030,7 +1046,7 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 }
 .abar.noseek [data-act="aback"],.abar.noseek [data-act="afwd"],.abar.noseek #aRange{display:none}
 .lsimg{display:block;max-width:100%;max-height:170px;border-radius:10px;margin:8px 0;object-fit:cover}
-.lsimged{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}.lsimged input{flex:1 1 200px;min-width:0;border:1px solid var(--line);border-radius:6px;padding:.35rem .5rem;background:var(--surface);color:var(--ink)}.lsimged .lsimg{flex-basis:100%}.lsimged.nw{flex-wrap:nowrap}.lsimged.nw .btn{flex:none}.lsic{margin:10px 0 0}.lsic .lsimg{margin-top:6px}
+.lsimged{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}.lsimged input{flex:1 1 200px;min-width:0;border:1px solid var(--line-2);border-radius:6px;padding:.35rem .5rem;background:var(--surface);color:var(--ink)}.lsimged .lsimg{flex-basis:100%}.lsimged.nw{flex-wrap:nowrap}.lsimged.nw .btn{flex:none}.lsic{margin:10px 0 0}.lsic .lsimg{margin-top:6px}
 .lsprev{padding-left:1.2rem;line-height:1.7}
 /* ---- Reading lesson (4 stages, kind reading-ms): same cards as the Listening lesson (.lsc) ---- */
 .rm .lsh{margin:20px 0 4px}.rm .lsh+.muted{margin:0 0 8px}
@@ -1074,7 +1090,7 @@ mark.rmhl.y{background:var(--mk-y)}mark.rmhl.g{background:var(--mk-g)}mark.rmhl.
 /* Speaking marking modal v4 */
 .mbox.spmx{width:min(1040px,100%)}
 /* Writing Task 1 line chart (chartHTML) + t1-overview scaffold */
-.chfig{margin:6px 0 14px;max-width:620px}.chfig figcaption{font-weight:700;margin:0 0 2px}.chu{font-size:.82rem;color:var(--muted);margin:0 0 4px}
+.chfig{margin:6px 0 14px;max-width:620px}.chfig figcaption{font-weight:800;font-size:1.08rem;line-height:1.35;text-align:center;margin:0 0 2px;color:var(--ink)}.chfig .chu{text-align:center}.chu{font-size:.82rem;color:var(--muted);margin:0 0 4px}
 .chsvg{width:100%;height:auto;display:block;overflow:visible}
 .chgrid{stroke:var(--line);stroke-width:1}.chzero{stroke:var(--line-strong);stroke-width:1.6}.chaxis{stroke:var(--line-strong);stroke-width:1.2}
 .chtk{fill:var(--muted);font-size:14px;font-family:var(--font)}
@@ -1082,7 +1098,13 @@ mark.rmhl.y{background:var(--mk-y)}mark.rmhl.g{background:var(--mk-g)}mark.rmhl.
 .chlg{display:flex;flex-wrap:wrap;gap:6px 18px;list-style:none;padding:0;margin:8px 0 0}.chlg li{display:flex;align-items:center;gap:6px;font-size:.88rem;min-width:0;overflow-wrap:anywhere}
 .chsw{width:36px;height:12px;flex:none}
 .chtbl{margin-top:8px;font-size:.86rem}.chtbl summary{cursor:pointer;color:var(--accent);min-height:32px;display:flex;align-items:center}
-.chtbl table{border-collapse:collapse}.chtbl th,.chtbl td{border:1px solid var(--line);padding:4px 10px;text-align:right}.chtbl thead th{text-align:center}
+.chtbl .scroll{display:inline-block;max-width:100%;vertical-align:top;border-radius:8px}
+.chtbl table{border-collapse:collapse;min-width:0;width:auto;font-size:.85rem}
+.chtbl th,.chtbl td{border:1px solid var(--line);padding:5px 14px;text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap}
+.chtbl thead th{font-size:.78rem;text-transform:none;letter-spacing:0;font-weight:600;color:var(--muted)}
+.chtbl tbody th{font-size:.85rem;text-transform:none;letter-spacing:0;font-weight:600;color:var(--ink)}
+.chtbl td{color:var(--ink)}
+.chnote{margin:6px 0 0;font-size:.8rem;color:var(--muted)}
 .cherr{border:1px solid var(--bad);background:var(--bad-bg);color:var(--ink);border-radius:10px;padding:10px 12px;font-size:.88rem;margin:6px 0 12px}.cherr ul{margin:4px 0 0;padding-left:18px}
 .chwarn{font-size:.82rem;color:var(--muted);margin:6px 0 0}
 .t1grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;align-items:start}
@@ -1329,7 +1351,7 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
 .kh{margin-top:12px;font-size:.78rem;color:var(--muted)}
 @media (pointer:coarse){.kh{display:none}}
 :root{--m1:#fbcfcf;--m1l:#b42323;--m2:#fdd9b0;--m2l:#b8560a;--m3:#fff09a;--m3l:#8a7400}
-:root{--lm-w:#4f5bd5;--lm-l:#0f9d8a;--lm-r:#d9822b;--lm-s:#d6458f;--lm-amber:#a8691a;--you-bg:#faf1b8;--track:#e1e4ee;--nav:#161a2e;--nav-ink:#fff}
+:root{--lm-w:#4f5bd5;--lm-l:#0f9d8a;--lm-r:#b5651a;--lm-s:#d6458f;--lm-amber:#8a5512;--you-bg:#faf1b8;--track:#e1e4ee;--nav:#161a2e;--nav-ink:#fff}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--lm-w:#8b95ff;--lm-l:#4fd1bd;--lm-r:#f0a35a;--lm-s:#f07ab5;--lm-amber:#e0b45c;--you-bg:#3a3520;--track:#2f3350;--nav:#eceef8;--nav-ink:#161a2e}
   :root:not([data-theme="light"]) .lbhero{background:radial-gradient(circle at 30% 20%,#5b4bd0,transparent 55%),linear-gradient(135deg,#17165e,#3c2290);border:1px solid rgba(255,255,255,.14);box-shadow:0 0 40px rgba(110,90,240,.28)}}
 :root[data-theme="dark"]{--lm-w:#8b95ff;--lm-l:#4fd1bd;--lm-r:#f0a35a;--lm-s:#f07ab5;--lm-amber:#e0b45c;--you-bg:#3a3520;--track:#2f3350;--nav:#eceef8;--nav-ink:#161a2e}
@@ -1429,7 +1451,7 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
 /* Student Settings: 4 boxes in a 2-column grid (1 column on phones), same label style, all 44px high */
 .stform{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px;align-items:end;max-width:640px;padding-block:8px 4px}
 .stform .field{font-size:.74rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);gap:6px;min-width:0}
-.stform .field input,.stform .field select{box-sizing:border-box;display:block;width:100%;min-width:0;height:44px;min-height:44px;margin:0;padding:0 12px;font-family:var(--font);font-size:1rem;line-height:1.2;font-weight:500;letter-spacing:0;text-transform:none;color:var(--ink);background-color:var(--surface);border:1px solid var(--line);border-radius:8px}
+.stform .field input,.stform .field select{box-sizing:border-box;display:block;width:100%;min-width:0;height:44px;min-height:44px;margin:0;padding:0 12px;font-family:var(--font);font-size:1rem;line-height:1.2;font-weight:500;letter-spacing:0;text-transform:none;color:var(--ink);background-color:var(--surface);border:1px solid var(--line-2);border-radius:8px}
 .stform .field input:hover,.stform .field select:hover{border-color:var(--line-strong)}
 .stform .field input:focus,.stform .field select:focus{border-color:var(--accent);outline:2px solid var(--accent);outline-offset:1px}
 .stform .field select{-webkit-appearance:none;appearance:none;padding-right:36px;background-image:var(--sel-arrow);background-repeat:no-repeat;background-position:right 12px center;background-size:12px 8px}
@@ -1481,6 +1503,24 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
   .adt td[data-l="Email"]{overflow-wrap:anywhere}
   .adt .acts{margin-top:4px}.adt .acts .btn{flex:1 1 auto;min-height:38px}
 }
+/* ---------- UI/UX baseline (CLAUDE.md 5b): tap targets, hover/focus, reduced motion ---------- */
+.btn{min-height:40px;cursor:pointer}.btn.sm{min-height:34px}.iconbtn{min-height:34px;cursor:pointer}
+.btn:not(:disabled):not(.pri):not(.bad):not(.done):not(.good):not(.more):hover{background:color-mix(in srgb,var(--ink) 6%,var(--surface))}
+.btn.pri:not(:disabled):hover,.btn.bad:not(:disabled):hover,.btn.done:not(:disabled):hover,.btn.good:not(:disabled):hover,.btn.more:not(:disabled):hover{filter:brightness(1.08)}
+.iconbtn:not(:disabled):hover{border-color:var(--line-strong);background:color-mix(in srgb,var(--ink) 6%,var(--surface))}
+@media (pointer:coarse){.btn,.btn.sm,.iconbtn,.linkish{min-height:44px}.btn.sm{padding-inline:.85rem}}
+.enin:focus{box-shadow:inset 0 -2px 0 var(--accent)}
+/* right / wrong never by colour alone: ✓ / ✗ marks, dashed border on a wrong blank */
+.opt.good::after,.opt.bad::after{margin-left:auto;padding-left:8px;font-weight:700}.opt.good::after{content:'✓'}.opt.bad::after{content:'✗'}
+.ls .opt.good::after,.ls .opt.bad::after,.rm .opt.good::after,.rm .opt.bad::after{content:none}
+.gap.ok,.msel.ok{border-width:2px}.gap.bad,.msel.bad{border-style:dashed}
+.rmslot.ok::after,.rmblank.ok::after{content:' ✓';font-weight:700}.rmslot.no::after,.rmblank.no::after{content:' ✗';font-weight:700}
+.luopt.cor::before{content:'✓ ';font-weight:700}
+.rmpn.no{outline-style:dashed}
+.mainc p{line-height:1.6}
+/* phones: while typing in a lesson, the sticky action bar stops floating so it never covers the box or the keyboard */
+@media (max-width:640px){.ls:has(input[type=text]:focus,input:not([type]):focus,textarea:focus)>.actions,.rm:has(input[type=text]:focus,input:not([type]):focus,textarea:focus)>.actions{position:static;box-shadow:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 </style>
 
 <div class="app">
@@ -1595,6 +1635,7 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
 <script src="lm-content.js"></script>
 <script src="lm-engine.js"></script>
 <script src="lm-unit2.js"></script>
+<script src="lm-unit0.js"></script>
 <script>
 (function(){
 'use strict';
@@ -2013,6 +2054,8 @@ function setLock(b){try{document.body.classList.toggle('locked',b)}catch(e){}}
 /* Library book panel: one card per test (open / close), skill tabs with counts, exercise rows with a line icon. */
 var SKC={listening:'#2563eb',reading:'#0f9d6e',writing:'#7c4dcc',speaking:'#c2651a'};
 var SKSVG={listening:'<path d="M4 14v-2a8 8 0 0116 0v2M4 14h3v6H5a1 1 0 01-1-1v-5zM20 14h-3v6h2a1 1 0 001-1v-5z"/>',reading:'<path d="M2 4h7a3 3 0 013 3v13a2 2 0 00-2-2H2zM22 4h-7a3 3 0 00-3 3v13a2 2 0 012-2h8z"/>',writing:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/>',speaking:'<path d="M12 2a3 3 0 00-3 3v6a3 3 0 006 0V5a3 3 0 00-3-3zM19 10v1a7 7 0 01-14 0v-1M12 18v4"/>'};
+// stroke icons for icon-only buttons (same set as ICO_EDIT: 24 grid, stroke 2)
+var ICO_SPK='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7"/><path d="M19 5a10 10 0 010 14"/></svg>',ICO_GEAR='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>';
 var ICO_EDIT='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>';
 var ICO_DEL='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
 function skIco(s){return '<span class="lico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+(SKSVG[s]||'')+'</svg></span>'}
@@ -2083,11 +2126,15 @@ function lmHTML(){
   return '<div class="lmwrap lmtree">'+h+'</div>';
 }
 // a lesson with content (lm-unit2.js) -> the 5 stages (luHTML); otherwise an honest empty shell
+// "Learning Materials › Writing › IELTS Academic Task 1": the first part is the way back to the list (keyboard / phone)
+function lmCrumbHTML(l){var D=lmData(),m=D.modules.filter(function(x){return x.id===l.module})[0],sk=D.skills.filter(function(x){return x.id===l.skill})[0];
+  return '<nav class="lmcrumb" aria-label="Breadcrumb"><button type="button" class="linkish" data-act="lm-back">Learning Materials</button>'+(sk?'<span aria-hidden="true">›</span><span>'+esc(sk.title)+'</span>':'')+(m?'<span aria-hidden="true">›</span><span>'+esc(m.title)+'</span>':'')+'</nav>'}
 function lmLessonHTML(l){
-  var lu=luUnit(l.id);if(lu)return '<div class="lmwrap"><button type="button" class="btn sm" data-act="lm-back">‹ Learning Materials</button>'+luHTML(l,lu)+'</div>';
+  var lu=luUnit(l.id);if(lu)return '<div class="lmwrap">'+luHTML(l,lu)+'</div>';
+  var u0=u0Unit(l.id);if(u0)return '<div class="lmwrap">'+u0HTML(l,u0)+'</div>';
   var m=lmData().modules.filter(function(x){return x.id===l.module})[0];
-  return '<div class="lmwrap"><button type="button" class="btn sm" data-act="lm-back">‹ Learning Materials</button>'+
-    '<div class="lmshell"><p class="lmpath">'+esc((m?m.title:'')+' · Unit '+l.unit)+'</p><h3>'+esc(l.title)+'</h3>'+
+  return '<div class="lmwrap"><div class="lutop">'+lmCrumbHTML(l)+'</div>'+
+    '<div class="lmshell"><h3>'+esc(l.title)+'</h3>'+
     (l.status!=='published'?'<p class="pill pend">Unpublished preview · students cannot see this lesson</p>':'')+
     '<p class="saved">This lesson has no content yet.</p></div></div>';
 }
@@ -2161,8 +2208,8 @@ function luImp(u,k){return '<span class="pill'+(k.importance==='main'?' acc':'')
 function luKw(t){return esc(t).replace(/\b(Overall,?|while)\b/g,'<mark class="lukw">$1</mark>')}
 // layout of every stage: chart on the left (sticky on wide screens), activity on the right; phones stack them
 function luLayout(u,k,inner,hl){
-  return '<div class="lulearn"><div class="lulside"><div class="luchart lulc"'+(hl&&hl.length?' data-hl="'+hl.map(function(i){return 's'+i}).join(' ')+'"':'')+'>'+chartHTML(u.charts[k].chart)+'</div>'+
-    '<p class="lucap">'+esc(luU(u,'copy.synthetic'))+'</p></div><div class="lulsteps">'+inner+'</div></div>';
+  var src=u.charts[k].chart,c={},key;for(key in src)if(Object.prototype.hasOwnProperty.call(src,key))c[key]=src[key];c.note=luU(u,'copy.synthetic'); // made-up data: said once, inside the data table
+  return '<div class="lulearn"><div class="lulside"><div class="luchart lulc"'+(hl&&hl.length?' data-hl="'+hl.map(function(i){return 's'+i}).join(' ')+'"':'')+'>'+chartHTML(c)+'</div></div><div class="lulsteps">'+inner+'</div></div>';
 }
 function luNeed(n,tt){return Math.ceil(.7*tt)} // pass mark for objectively checked items: ceil(70 % of N), e.g. 6 of 8
 // ---- Learn step 2: three questions answered from verified facts (a question is left out when the chart has no single answer) ----
@@ -2200,7 +2247,7 @@ function luLearn(u){
   // no skip: Continue works once the step's action is done; finished steps stay open above to review or redo
   var card=function(n,head,body){if(n>st)return '';var ok=luLearnDone(n);
     return '<section class="lucard'+(n===st?' cur':'')+'" aria-labelledby="luS'+n+'"><h4 class="luh" id="luS'+n+'"><span class="lun" aria-hidden="true">'+n+'</span>'+esc(luU(u,head))+'</h4>'+body+
-      (n===st&&n<7?(!ok&&need[n]?'<p class="lunote luhint" id="luNeed'+n+'">'+esc(luU(u,need[n]))+'</p>':'')+'<div class="actions"><button type="button" class="btn pri" data-act="lu-lnext"'+(ok?'':' disabled aria-describedby="luNeed'+n+'"')+'>'+esc(luU(u,'ui.btn.continue'))+'</button></div>':'')+'</section>'};
+      (n===st&&n<7?(!ok&&need[n]?'<span class="sr" id="luNeed'+n+'">'+esc(luU(u,need[n]))+'</span>':'')+'<div class="actions"><button type="button" class="btn pri" data-act="lu-lnext"'+(ok?'':' disabled aria-describedby="luNeed'+n+'" title="'+esc(luU(u,need[n]||'ui.btn.continue'))+'"')+'>'+esc(luU(u,'ui.btn.continue'))+'</button></div>':'')+'</section>'};
   var h=card(1,'ui.learn.s1',luCopy(u,'copy.learn.objective'));
   // 2: explore — choose, check, see why (facts)
   var Q=luExploreQs(u);
@@ -2239,7 +2286,7 @@ function luLearn(u){
         (ks.length?'<div class="lurow"><span class="lulbl">'+esc(luU(u,'ui.lbl.features'))+':</span>'+ks.map(function(k){return luChip(u,k)}).join('')+'</div>':'')+'</li>'}).join('')+'</ul>';
   var revBtn='<div class="actions"><button type="button" class="btn" data-act="lu-lrev">'+esc(luU(u,'ui.btn.reveal'))+'</button></div>';
   h+=card(6,'ui.learn.s6',luCopy(u,'copy.learn.reveal')+(LU.lrev?'<p class="lulbl">'+esc(luU(u,'ui.learn.concise'))+'</p>'+luParaHTML(u,conc,false)+
-    '<p class="lulbl">'+esc(luU(u,'ui.learn.annot'))+'</p>'+luParaHTML(u,models,true)+legend+luCopy(u,'copy.learn.annot.note'):revBtn));
+    '<p class="lulbl">'+esc(luU(u,'ui.learn.annot'))+'</p>'+luParaHTML(u,models,true)+legend:revBtn));
   // 7: overview vs body paragraph
   var dt=M.filter(function(x){return x.kind==='detail'})[0];
   h+=card(7,'ui.learn.s7',luCopy(u,'copy.learn.ovd')+'<div class="luovd"><div class="luovb ov"><span class="lulbl">'+esc(luU(u,'ui.lbl.overview'))+'</span>'+(LU.lrev?luParaHTML(u,conc,false):luCopy(u,'copy.learn.ovdLocked')+revBtn)+'</div>'+
@@ -2335,13 +2382,12 @@ function luAutoFill(u){
 }
 function luHTML(l,u){
   var c=luCtx(u),bad=c.errs.filter(function(e){return !/pending/.test(e)}),rv=!!(luGet(u,'indep')||{}).rv;
-  if(bad.length)return '<div class="lmshell"><h3>'+esc(l.title)+'</h3><p class="luwarn" role="alert">This lesson cannot be shown: its content check failed ('+bad.length+' problem'+(bad.length>1?'s':'')+').</p>'+(U&&U.adm?'<ul class="saved">'+bad.slice(0,8).map(function(e){return '<li>'+esc(e)+'</li>'}).join('')+'</ul>':'')+'</div>';
+  if(bad.length)return '<div class="lutop">'+lmCrumbHTML(l)+'</div><div class="lmshell"><h3>'+esc(l.title)+'</h3><p class="luwarn" role="alert">This lesson cannot be shown: its content check failed ('+bad.length+' problem'+(bad.length>1?'s':'')+').</p>'+(U&&U.adm?'<ul class="saved">'+bad.slice(0,8).map(function(e){return '<li>'+esc(e)+'</li>'}).join('')+'</ul>':'')+'</div>';
   if(!luUnlocked(u,LU.stage))LU.stage='learn';
   var bar='<nav class="lusteps" aria-label="'+esc(luU(u,'ui.st.nav'))+'">'+LU_ST.map(function(s,i){var lock=!luUnlocked(u,s[0]);return '<button type="button" class="lustep'+(LU.stage===s[0]?' on':'')+'" data-act="lu-go" data-s="'+s[0]+'"'+(LU.stage===s[0]?' aria-current="step"':'')+(lock?' disabled title="'+esc(luU(u,s[0]==='review'?'ui.st.locked':'ui.st.lockedPrev'))+'"':'')+'><span class="mono">'+(i+1)+'</span> '+esc(luU(u,'ui.st.'+s[0]))+'</button>'}).join('')+'</nav>';
-  var pend=c.pending?'<p class="pill pend">Unpublished preview · '+c.pending+' content item'+(c.pending>1?'s':'')+' still waiting for review</p>':(l.status!=='published'?'<p class="pill pend">Unpublished preview · students cannot see this lesson</p>':'');
   var lg='<div class="lulang"><div class="seg" role="group" aria-label="Explanation language / Ngôn ngữ giải thích"><button type="button" data-act="lu-lang" data-v="en" aria-pressed="'+(luL()==='en')+'" lang="en">ENG</button><button type="button" data-act="lu-lang" data-v="vi" aria-pressed="'+(luL()==='vi')+'" lang="vi">VI</button></div>'+
     (U&&U.adm?'<button type="button" class="btn sm luaf" data-act="lu-af" aria-pressed="'+!!LU.af+'" title="Admin preview only: fills the checkable answers with the right ones. Nothing is saved.">Preview: auto-fill '+(LU.af?'on':'off')+'</button>':'')+'</div>';
-  return '<div class="lmshell lu"><p class="lmpath">IELTS Academic Task 1 · Unit '+esc(l.unit)+'</p><h3>'+esc(l.title)+'</h3>'+pend+lg+bar+'<div class="lubody" id="luBody">'+luStageHTML(u,LU.stage)+'</div></div>';
+  return '<div class="lutop">'+lmCrumbHTML(l)+lg+'</div><div class="lmshell lu"><h3>'+esc(l.title)+'</h3>'+bar+'<div class="lubody" id="luBody">'+luStageHTML(u,LU.stage)+'</div></div>';
 }
 function luAct(a,t){
   var l=LMV&&lmLesson(LMV),u=l&&luUnit(l.id);if(!u)return false;luCtx(u);
@@ -2376,7 +2422,7 @@ function luAct(a,t){
   if(a==='lu-old'){var ak=t.dataset.a==='guided'?'guided':'indep';if(!confirm(luU(u,'ui.dr.confirmOld')))return true;luOld(u,ak).forEach(function(k){try{localStorage.removeItem(k)}catch(e){}});redraw();return true}
   return false;
 }
-// <select> choices (change event): the Learn frame and the Guided sentences
+// select-box choices (change event): the Learn frame and the Guided sentences
 document.addEventListener('change',function(e){var t=e.target;if(!t||!t.classList)return;
   if(t.classList.contains('luslot')){LU.frame=LU.frame||[];LU.frame[+t.getAttribute('data-i')]=t.value}
   if(t.classList.contains('lugsel')&&!LU.gchk){LU.g[t.getAttribute('data-g')]=t.value}});
@@ -2385,6 +2431,226 @@ document.addEventListener('input',function(e){var t=e.target;if(!t||(t.id!=='luG
   var act=t.id==='luG'?'guided':'indep',old=luGet(u,act)||{},ok=luPut(u,act,{t:t.value,rv:!!old.rv}),m=$('#luSv_'+act);if(m)m.textContent=luU(u,ok?'ui.dr.saved':'ui.dr.notSaved');
   var c=$('#luCnt');if(c&&act==='indep')c.textContent=luCnt(u,t.value);
   if(act==='guided'){var nb=document.querySelector('[data-act="lu-go"][data-s="independent"]');if(nb)nb.disabled=!luUnlocked(u,'independent')}});
+/* ---------- Learning Materials · Unit 0 lesson (Data Reading & Selection) ---------- */
+// Content: lm-unit0.js (window.MD_LM_U0), checked by lm-engine.js like Unit 2 (every right option / label is recomputed from the chart).
+// Reuses the generic helpers of the Unit 2 block (luCtx, luTxt, luPair, luU, luUf, luCopy, luL, luKey/luGet/luPut/luOld/luStoreOk)
+// but has its own state U0S and actions u0-*; Unit 2 code and state are not touched. Progress = this browser only (versioned key, see u0Save).
+var U0_ST=['learn','controlled','guided','independent','review'],U0_CK=['measure','time','trends','high','leave'],U0S=null,U0_SNAP=null;
+var U0_LS={2:['q0.l.unit','q0.l.series'],3:['q0.l.period','q0.l.xs','ct0.1','ct0.2'],4:['q0.l.shape'],5:['q0.l.high','q0.l.low']};
+var U0_C=['q0.c.mean','q0.c.notshown','c0.y1','c0.y2','c0.y3','c0.y4','c0.m1','c0.m2'],U0_G=['q0.g.measure','q0.g.time','t:src-coal','t:src-wind','t:src-solar','q0.g.high','q0.g.leave'];
+var U0_I=['measure','time','trends','high','leave','main','omit'];
+function u0Unit(id){var u=window.MD_LM_U0;return u&&window.LMX&&u.lesson===id?u:null}
+function u0Fresh(){return {stage:'learn',ls:1,a:{},chk:{},tries:{},seen:{},line:null,sel:{},selChk:false,ldone:false,cchk:false,cpass:false,g:{},gchk:false,gpass:false,gsel:{},gwhy:'',obs:['','',''],gsum:'',grev:false,ind:{},rv:false,self:{},rdone:false}}
+// state of this lesson version, restored from this browser (never mixed with an older content version)
+function u0State(u){if(!U0S||U0S._v!==u.version){var d=luGet(u,'state'),f=u0Fresh(),k;U0S=f;if(d&&d.s)for(k in f)if(Object.prototype.hasOwnProperty.call(d.s,k))U0S[k]=d.s[k];U0S._v=u.version;U0S.af=false}return U0S}
+// admin auto-fill never saves: answers it fills stay in memory and are dropped when it is switched off
+function u0Save(u){if(!U0S||U0S.af)return true;var c={},k;for(k in U0S)if(k!=='af'&&k!=='_v'&&Object.prototype.hasOwnProperty.call(U0S,k))c[k]=U0S[k];return luPut(u,'state',{s:c})}
+function u0Item(u,id){var L=(u.questions||[]).concat(u.controlled||[]);for(var i=0;i<L.length;i++)if(L[i].id===id)return L[i];return null}
+// right answer of a stored item: questions = answer; Learn statements = can / cannot tell; Controlled = YES / NO / NOT GIVEN or main / minor
+function u0Ans(x){if(!x.statement)return x.answer;if(x.stage==='learn')return x.label==='not_determinable'?'cannot':'can';return x.type==='ovd'?x.answer:x.label}
+function u0Ok(x){return U0S.a[x.id]===u0Ans(x)}
+function u0Shown(x){return !!U0S.chk[x.id]&&!u0Ok(x)&&(U0S.tries[x.id]||0)>=2}
+function u0Done(x){return !!U0S.chk[x.id]&&(u0Ok(x)||u0Shown(x))} // right, or the answer was shown after two tries (no dead end)
+function u0Opts(u,x){
+  if(x.statement){if(x.stage==='learn')return [['can',luU(u,'u0.can')],['cannot',luU(u,'u0.cannot')]];
+    if(x.type==='ovd')return [['overview',luU(u,'u0.ctl.main')],['detail',luU(u,'u0.ctl.minor')]];
+    return [['supported',luU(u,'u0.ctl.yes')],['contradicted',luU(u,'u0.ctl.no')],['not_determinable',luU(u,'u0.ctl.ng')]]}
+  return x.opts.map(function(o){return [o.v,luTxt(x,o.en),1]});
+}
+function u0QText(x){return luL()==='vi'?luTxt(x,x.q.vi):luTxt(x,x.q.en)}
+// one question or statement; lock = checked (frozen); reveal = show the right answer + why (always after a scored Check)
+function u0ItemHTML(u,x,lock,reveal){
+  var me=U0S.a[x.id],ans=u0Ans(x),ok=me===ans,O=u0Opts(u,x),lab=x.statement?luU(u,x.stage==='learn'?'u0.cantell.q':(x.type==='ovd'?'u0.ctl.mainq':'u0.fb.answer')):u0QText(x);
+  var show=lock&&(ok||reveal),aTxt='';O.forEach(function(o){if(o[0]===ans)aTxt=o[1]});
+  return '<div class="luq'+(lock?(ok?' ok':' no'):'')+'">'+(x.statement?'<p class="lust" lang="en">'+esc(luTxt(x,x.statement.en))+'</p>':'<p class="lust">'+esc(u0QText(x))+'</p>')+
+    '<div class="luopts'+(O.length>3?' luv':'')+'" role="group" aria-label="'+esc(lab)+'">'+O.map(function(o){
+      return '<button type="button" class="luopt'+(show&&o[0]===ans?' cor':'')+'" data-act="u0-ans" data-id="'+esc(x.id)+'" data-v="'+esc(o[0])+'" aria-pressed="'+(me===o[0])+'"'+(o[2]?' lang="en"':'')+(lock?' disabled':'')+'>'+esc(o[1])+'</button>'}).join('')+'</div>'+
+    (lock?'<div class="lufb" role="status"><b>'+esc(luU(u,ok?'u0.fb.right':'u0.fb.wrong'))+'</b>'+(show&&!ok?' '+esc(luU(u,'u0.fb.answer'))+' <span'+(x.statement?'':' lang="en"')+'>'+esc(aTxt)+'</span>':'')+
+      (show?luPair(luTxt(x,x.why.en),luTxt(x,x.why.vi)):'')+'</div>':'')+'</div>';
+}
+// verified line facts (labels and numbers only from chGetVerifiedFacts)
+function u0F(u,k,type,ser){var fx=u.charts[k];return LUC.ctx.byId[fx.id+'@'+fx.version+':'+type+':'+ser]||null}
+function u0Ser(u,k){return u.charts[k].chart.series}
+function u0Chip(t){return '<span class="luchip">✓ '+esc(t)+'</span>'}
+function u0KfChip(u,kf){var f=LUC.ctx.byId[kf.fact],c=u.charts[kf.chart].chart,e,lab=function(id){var s=chSeries(c,id);return s?s.label:id};if(!f||f.status!=='supported')return '';e=f.evidence||{};
+  if(f.type==='endpoint')return u0Chip(lab(f.series[0])+': '+e.y0+' → '+e.y1+' ('+e.x0+'–'+e.x1+')');
+  if(f.type==='shape')return u0Chip(lab(f.series[0])+': '+luU(u,'u0.sh.'+f.result));
+  if(f.type==='highest-throughout')return u0Chip(lab(f.result)+': '+luU(u,'u0.chip.top'));
+  if(f.type==='lowest-throughout')return u0Chip(lab(f.result)+': '+luU(u,'u0.chip.bottom'));
+  if(f.type==='rank-change')return u0Chip(lab(f.series[0])+' / '+lab(f.series[1])+': '+luU(u,'u0.chip.swap')+' ('+f.period[0]+'–'+f.period[1]+')');
+  if(f.type==='tie')return u0Chip(lab(f.series[0])+' = '+lab(f.series[1])+': '+luU(u,'u0.chip.tie')+' '+f.x+' ('+e.y+')');
+  return ''}
+function u0Imp(u,kf){return '<span class="pill'+(kf.importance==='main'?' acc':'')+'">'+esc(luU(u,kf.importance==='main'?'u0.lbl.main':'u0.lbl.minor'))+'</span>'}
+function u0Layout(u,k,inner,hl){return '<div class="lulearn"><div class="lulside"><div class="luchart lulc"'+(hl&&hl.length?' data-hl="'+hl.map(function(i){return 's'+i}).join(' ')+'"':'')+'>'+chartHTML(u.charts[k].chart)+'</div></div><div class="lulsteps">'+inner+'</div></div>'}
+function u0CkHTML(u){return '<ol class="u0ck">'+U0_CK.map(function(k){return '<li><b>'+esc(luU(u,'u0.ck.'+k))+'</b> <span>'+esc(luU(u,'u0.ck.'+k+'.d'))+'</span></li>'}).join('')+'</ol>'+luCopy(u,'u0.ck.note')}
+// reference notes of a chart, by checklist step (English chart wording; the Vietnamese version below in VI mode)
+function u0NotesHTML(u,k,stage){return '<dl class="u0notes">'+U0_CK.map(function(c){var x=(u.claims||[]).filter(function(y){return y.chart===k&&y.stage===stage&&y.ck===c})[0];if(!x)return '';
+  return '<dt>'+esc(luU(u,'u0.ck.'+c))+'</dt><dd><p class="lusent" lang="en">'+esc(luTxt(x,x.en))+'</p>'+(luL()==='vi'?luPair(null,luTxt(x,x.vi),'luwhy'):'')+'</dd>'}).join('')+'</dl>'}
+// ---- Learn: the checklist taught on Chart A, one step at a time (no Skip; a wrong answer twice shows the answer, so no dead end)
+function u0LDone(u,n){if(n===1||n===7)return true;if(n===6)return !!U0S.selChk;if(n===4&&!u0Ser(u,'A').every(function(s){return U0S.seen[s.id]}))return false;
+  return (U0_LS[n]||[]).every(function(id){var x=u0Item(u,id);return x&&u0Done(x)})}
+function u0StepQs(u,n){var ids=U0_LS[n]||[],L=ids.map(function(id){return u0Item(u,id)}).filter(Boolean),chk=L.some(function(x){return U0S.chk[x.id]}),all=L.every(function(x){return U0S.a[x.id]!=null});
+  var h=L.map(function(x){return u0ItemHTML(u,x,!!U0S.chk[x.id],u0Shown(x))}).join(''),open=L.filter(function(x){return U0S.chk[x.id]&&!u0Done(x)}).length;
+  if(!chk)h+='<div class="actions"><button type="button" class="btn" data-act="u0-lchk" data-ids="'+esc(ids.join(','))+'"'+(all?'':' disabled')+'>'+esc(luU(u,'u0.btn.check'))+'</button></div>';
+  else if(open)h+='<div class="actions"><button type="button" class="btn sm" data-act="u0-lretry" data-ids="'+esc(ids.join(','))+'">'+esc(luU(u,'u0.btn.retry'))+'</button></div>';
+  return h}
+function u0Learn(u){
+  var st=U0S.ls,S=u0Ser(u,'A'),hl=[],K=(u.keyFeatures||[]).filter(function(x){return x.chart==='A'&&x.stage==='learn'}),need={2:'u0.try.answer',3:'u0.try.answer',4:'u0.try.lines',5:'u0.try.answer',6:'u0.try.pick'};
+  if(st===4&&U0S.line){S.forEach(function(s,i){if(s.id===U0S.line)hl=[i]})}
+  if(st===5){var all=S.map(function(s){return s.id}).join('+'),fh=u0F(u,'A','highest-throughout',all),fl=u0F(u,'A','lowest-throughout',all),hi=u0Item(u,'q0.l.high'),lo=u0Item(u,'q0.l.low');
+    S.forEach(function(s,i){if((hi&&u0Done(hi)&&fh&&fh.result===s.id)||(lo&&u0Done(lo)&&fl&&fl.result===s.id))hl.push(i)})}
+  var card=function(n,body){if(n>st)return '';var ok=u0LDone(u,n);
+    return '<section class="lucard'+(n===st?' cur':'')+'" aria-labelledby="u0S'+n+'"><h4 class="luh" id="u0S'+n+'"><span class="lun" aria-hidden="true">'+n+'</span>'+esc(luU(u,'u0.l.s'+n))+'</h4>'+body+
+      (n===st&&n<7?(!ok&&need[n]?'<span class="sr" id="u0Need'+n+'">'+esc(luU(u,need[n]))+'</span>':'')+'<div class="actions"><button type="button" class="btn pri" data-act="u0-lnext"'+(ok?'':' disabled aria-describedby="u0Need'+n+'" title="'+esc(luU(u,need[n]))+'"')+'>'+esc(luU(u,'u0.btn.continue'))+'</button></div>':'')+'</section>'};
+  var h=card(1,luCopy(u,'u0.l.obj')+'<p class="u0ckh">'+esc(luU(u,'u0.ck.title'))+'</p>'+u0CkHTML(u)+'<p class="u0sim">'+esc(luU(u,'u0.l.sim'))+'</p>');
+  h+=card(2,luCopy(u,'u0.l.measure')+u0StepQs(u,2));
+  h+=card(3,luCopy(u,'u0.l.time')+u0StepQs(u,3));
+  // 3. tap a line: its verified endpoint direction and shape
+  var ln=null;S.forEach(function(s){if(s.id===U0S.line)ln=s});
+  var panel=ln?(function(){var e=u0F(u,'A','endpoint',ln.id),sh=u0F(u,'A','shape',ln.id);return '<div class="lupanel" aria-live="polite"><b>'+esc(ln.label)+'</b>'+(e&&e.status==='supported'?u0Chip(e.evidence.y0+' → '+e.evidence.y1+' ('+e.evidence.x0+'–'+e.evidence.x1+')')+'<p class="lunote">'+esc(luU(u,'u0.ep.'+e.result))+'</p>':'')+(sh&&sh.status==='supported'?'<p class="lunote">'+esc(luU(u,'u0.sh.'+sh.result))+'</p>':'')+'</div>'})():'';
+  h+=card(4,luCopy(u,'u0.l.trends')+'<div class="luopts" role="group" aria-label="'+esc(luU(u,'u0.l.lines'))+'">'+S.map(function(s){var seen=!!U0S.seen[s.id];
+      return '<button type="button" class="luopt'+(seen?' seen':'')+'" data-act="u0-line" data-id="'+esc(s.id)+'" aria-pressed="'+(U0S.line===s.id)+'" lang="en">'+(seen?'✓ ':'')+esc(s.label)+'</button>'}).join('')+'</div>'+panel+
+    (S.every(function(s){return U0S.seen[s.id]})?u0StepQs(u,4):''));
+  h+=card(5,luCopy(u,'u0.l.high')+u0StepQs(u,5));
+  // 5. choose first, then see main / minor and the reviewed reason
+  h+=card(6,luCopy(u,'u0.l.select')+'<ul class="lukf pick">'+K.map(function(k){var me=!!U0S.sel[k.id];
+      return '<li><label><input type="checkbox" data-act="u0-sel" data-id="'+esc(k.id)+'"'+(me?' checked':'')+(U0S.selChk?' disabled':'')+'><div>'+u0KfChip(u,k)+
+        (U0S.selChk?'<div class="lurow">'+u0Imp(u,k)+(me?'<span class="luchip me">'+esc(luU(u,'u0.l.picked'))+'</span>':'')+'</div>'+luPair(k.reason.en,k.reason.vi,'luwhy'):'')+'</div></label></li>'}).join('')+'</ul>'+
+    (U0S.selChk?'<div class="lufb" role="status">'+luCopy(u,'u0.l.selectFb')+'</div><div class="actions"><button type="button" class="btn sm" data-act="u0-selredo">'+esc(luU(u,'u0.btn.retry'))+'</button></div>'
+      :'<div class="actions"><button type="button" class="btn" data-act="u0-selchk"'+(u0SelN()>=2?'':' disabled')+'>'+esc(luU(u,'u0.btn.check'))+'</button></div>'));
+  h+=card(7,u0NotesHTML(u,'A','learn')+luCopy(u,'u0.l.sumNote')+'<div class="actions"><button type="button" class="btn pri" data-act="u0-go" data-s="controlled">'+esc(luU(u,'u0.btn.toControlled'))+'</button></div>');
+  return u0Layout(u,'A',h,hl);
+}
+function u0SelN(){var n=0,k;for(k in U0S.sel)if(U0S.sel[k])n++;return n}
+function u0Need(n){return Math.ceil(.7*n)} // pass mark for objectively scored items: ceil(70 % of N)
+// ---- Controlled: 8 scored items on Chart A
+function u0CScore(u){var ok=0;U0_C.forEach(function(id){var x=u0Item(u,id);if(x&&u0Ok(x))ok++});return {ok:ok,n:U0_C.length,need:u0Need(U0_C.length)}}
+function u0Controlled(u){
+  var sc=u0CScore(u),chk=U0S.cchk,L=U0_C.map(function(id){return u0Item(u,id)}).filter(Boolean),yn=false;
+  var h='<p class="lunote">'+esc(luUf(u,'u0.sc.need',sc.need,sc.n))+'</p><ol class="luctl">'+L.map(function(x){var pre='';
+    if(x.statement&&!x.type&&!yn){yn=true;pre=luCopy(u,'u0.ctl.note')}
+    return '<li>'+pre+u0ItemHTML(u,x,chk,true)+'</li>'}).join('')+'</ol>';
+  if(chk){var pass=sc.ok>=sc.need;if(pass&&!U0S.cpass){U0S.cpass=true;u0Save(u)}
+    h+='<p class="lusc" role="status">'+esc(luUf(u,'u0.sc.score',sc.ok,sc.n))+' '+esc(pass?luU(u,'u0.sc.pass'):luUf(u,'u0.sc.need',sc.need,sc.n))+'</p><div class="actions"><button type="button" class="btn" data-act="u0-credo">'+esc(luU(u,'u0.btn.retry'))+'</button>'+
+      '<button type="button" class="btn pri" data-act="u0-go" data-s="guided"'+(U0S.cpass?'':' disabled')+'>'+esc(luU(u,'u0.btn.toGuided'))+'</button></div>'}
+  else h+='<div class="actions"><button type="button" class="btn pri" data-act="u0-cchk"'+(L.every(function(x){return U0S.a[x.id]!=null})?'':' disabled')+'>'+esc(luU(u,'u0.btn.check'))+'</button></div>';
+  return u0Layout(u,'A',h);
+}
+// ---- Guided: checklist selects (objective, 70 %), then choices, observations, summary and revision (not graded)
+var U0_V={monotonic_increase:'up',monotonic_decrease:'down'};
+function u0GItem(u,id){if(id.indexOf('t:')===0){var s=id.slice(2),sh=u0F(u,'A','shape',s),e=u0F(u,'A','endpoint',s),k=sh&&sh.status==='supported'?(U0_V[sh.result]||(sh.result==='fluctuating'&&e?(e.result==='increase'?'fup':(e.result==='decrease'?'fdown':'')):'')):'';
+    return {id:id,trend:s,ans:k}}var x=u0Item(u,id);return x?{id:id,x:x,ans:x.answer}:null}
+function u0GScore(u){var ok=0;U0_G.forEach(function(id){var g=u0GItem(u,id);if(g&&g.ans&&U0S.g[id]===g.ans)ok++});return {ok:ok,n:U0_G.length,need:u0Need(U0_G.length)}}
+function u0GDone(){return !!(U0S.gpass&&String(U0S.gwhy||'').trim()&&u0ObsN()>=2&&String(U0S.gsum||'').trim()&&U0S.grev)}
+function u0ObsN(){return (U0S.obs||[]).filter(function(t){return String(t||'').trim()}).length}
+function u0Guided(u){
+  var sc=u0GScore(u),chk=U0S.gchk,S=u0Ser(u,'A'),K=(u.keyFeatures||[]).filter(function(x){return x.chart==='A'&&x.stage==='learn'});
+  var row=function(id){var g=u0GItem(u,id),me=U0S.g[id],ok=chk&&me===g.ans,lab,opts;
+    if(g.trend){var s=chSeries(u.charts.A.chart,g.trend);lab=luU(u,'u0.g.trendOf')+' '+s.label;opts=['up','down','fup','fdown'].map(function(v){var c=luC(u,'u0.v.'+v);return [v,c?c.en:v]})}
+    else{lab=u0QText(g.x);opts=g.x.opts.map(function(o){return [o.v,luTxt(g.x,o.en)]})}
+    var right='';opts.forEach(function(o){if(o[0]===g.ans)right=o[1]});
+    return '<div class="u0grow'+(chk?(ok?' ok':' no'):'')+'"><label for="u0g_'+esc(id)+'">'+esc(lab)+'</label><select class="u0sel" id="u0g_'+esc(id)+'" data-g="'+esc(id)+'"'+(chk?' disabled':'')+'><option value="">…</option>'+opts.map(function(o){return '<option value="'+esc(o[0])+'"'+(me===o[0]?' selected':'')+'>'+esc(o[1])+'</option>'}).join('')+'</select>'+
+      (chk?'<span class="u0gfb" role="status">'+(ok?'✓ '+esc(luU(u,'u0.fb.right')):'✗ '+esc(luU(u,'u0.fb.answer'))+' <span lang="en">'+esc(right)+'</span>')+'</span>':'')+'</div>'};
+  var h='<p class="lunote">'+esc(luU(u,'u0.g.note'))+'</p><section class="lucard"><h4 class="luh">'+esc(luU(u,'u0.g.h1'))+'</h4><p class="lunote">'+esc(luUf(u,'u0.sc.need',sc.need,sc.n))+'</p>'+U0_G.map(row).join('');
+  if(chk){var pass=sc.ok>=sc.need;if(pass&&!U0S.gpass){U0S.gpass=true;u0Save(u)}
+    h+='<p class="lusc" role="status">'+esc(luUf(u,'u0.sc.score',sc.ok,sc.n))+' '+esc(pass?luU(u,'u0.sc.pass'):luUf(u,'u0.sc.need',sc.need,sc.n))+'</p><div class="actions"><button type="button" class="btn sm" data-act="u0-gredo">'+esc(luU(u,'u0.btn.retry'))+'</button></div>'}
+  else h+='<div class="actions"><button type="button" class="btn pri" data-act="u0-gchk"'+(U0_G.every(function(id){return U0S.g[id]})?'':' disabled')+'>'+esc(luU(u,'u0.btn.check'))+'</button></div>';
+  h+='</section>';
+  if(U0S.gpass){
+    h+='<section class="lucard"><h4 class="luh">'+esc(luU(u,'u0.g.h2'))+'</h4><ul class="lukf pick">'+K.map(function(k){return '<li><label><input type="checkbox" data-act="u0-gsel" data-id="'+esc(k.id)+'"'+(U0S.gsel[k.id]?' checked':'')+'><div>'+u0KfChip(u,k)+'</div></label></li>'}).join('')+'</ul>'+
+      '<label class="lbl" for="u0_gwhy">'+esc(luU(u,'u0.g.why'))+'</label><textarea class="wbox u0box" id="u0_gwhy" data-u0="gwhy" rows="2">'+esc(U0S.gwhy||'')+'</textarea></section>';
+    h+='<section class="lucard"><h4 class="luh">'+esc(luU(u,'u0.g.h3'))+'</h4><p class="lunote">'+esc(luU(u,'u0.g.obsNote'))+'</p>'+[0,1,2].map(function(i){
+      return '<label class="lbl" for="u0_obs'+i+'">'+esc(luU(u,'u0.g.obs'))+' '+(i+1)+'</label><textarea class="wbox u0box" id="u0_obs'+i+'" data-u0="obs'+i+'" rows="2" lang="en" spellcheck="true">'+esc((U0S.obs||[])[i]||'')+'</textarea>'}).join('')+
+      '<div class="actions"><button type="button" class="btn" data-act="u0-gcomp">'+esc(luU(u,'u0.btn.compile'))+'</button></div></section>';
+    if(String(U0S.gsum||'').trim()){
+      h+='<section class="lucard"><h4 class="luh">'+esc(luU(u,'u0.g.h4'))+'</h4><p class="lunote">'+esc(luU(u,'u0.g.sumNote'))+'</p><label class="lbl sr" for="u0_gsum">'+esc(luU(u,'u0.g.h4'))+'</label><textarea class="wbox u0box" id="u0_gsum" data-u0="gsum" rows="5" lang="en" spellcheck="true">'+esc(U0S.gsum)+'</textarea></section>';
+      h+='<section class="lucard"><h4 class="luh">'+esc(luU(u,'u0.g.h5'))+'</h4><p class="u0ckh">'+esc(luU(u,'u0.g.ref'))+'</p>'+u0NotesHTML(u,'A','learn')+
+        '<label class="u0rev"><input type="checkbox" data-act="u0-grev"'+(U0S.grev?' checked':'')+'> '+esc(luU(u,'u0.g.revised'))+'</label>'+
+        '<div class="actions"><button type="button" class="btn pri" data-act="u0-go" data-s="independent"'+(u0Unlocked(u,'independent')?'':' disabled')+'>'+esc(luU(u,'u0.btn.toIndep'))+'</button></div></section>';
+    }
+  }
+  return u0Layout(u,'A',h);
+}
+// ---- Independent: Chart B for the first time; the checklist on your own; the hint is the METHOD only (nothing about this chart)
+function u0Fields(u,lock){return U0_I.map(function(k){var lab=k==='main'?luU(u,'u0.i.main'):(k==='omit'?luU(u,'u0.i.omit'):luU(u,'u0.ck.'+k));
+  return '<label class="lbl" for="u0_i_'+k+'">'+esc(lab)+'</label><textarea class="wbox u0box" id="u0_i_'+k+'" data-u0="i_'+k+'" rows="2" lang="en" spellcheck="true">'+esc((U0S.ind||{})[k]||'')+'</textarea>'}).join('')}
+function u0IndDone(){return U0_I.every(function(k){return String((U0S.ind||{})[k]||'').trim()})}
+function u0Independent(u){
+  return u0Layout(u,'B',luCopy(u,'u0.i.task')+u0Fields(u)+
+    '<details class="lufaq"><summary>'+esc(luU(u,'u0.i.hint'))+'</summary>'+luCopy(u,'u0.i.hintText')+'</details>'+
+    '<div class="actions"><button type="button" class="btn pri" data-act="u0-idone">'+esc(luU(u,'u0.btn.done'))+'</button></div>');
+}
+// ---- Review: the reference for Chart B (verified facts + reviewed choices), "I included / I avoided" self-check, edit and compare
+function u0Review(u){
+  var KB=(u.keyFeatures||[]).filter(function(x){return x.chart==='B'&&x.stage==='review'}),av=['u0.r.avoid1','u0.r.avoid2','u0.r.avoid3'];
+  var h='<section class="lucard"><h4 class="luh">'+esc(luU(u,'u0.r.h1'))+'</h4>'+u0Fields(u)+'</section>';
+  h+='<section class="lucard"><h4 class="luh">'+esc(luU(u,'u0.r.h2'))+'</h4>'+u0NotesHTML(u,'B','review')+'</section>';
+  h+='<section class="lucard"><h4 class="luh">'+esc(luU(u,'u0.r.h3'))+'</h4><ul class="lukf">'+KB.map(function(k){return '<li>'+u0Imp(u,k)+'<div>'+u0KfChip(u,k)+luPair(k.reason.en,k.reason.vi,'luwhy')+'</div></li>'}).join('')+'</ul></section>';
+  var selfs=KB.filter(function(k){return k.self}).map(function(k){return [k.id,luL()==='vi'?luTxt(k,k.self.vi):luTxt(k,k.self.en)]}).concat(av.map(function(id){return [id,luU(u,id)]}));
+  h+='<section class="lucard"><h4 class="luh">'+esc(luU(u,'u0.r.h4'))+'</h4>'+luCopy(u,'u0.r.selfNote')+'<ul class="lukf pick">'+selfs.map(function(s){return '<li><label><input type="checkbox" data-act="u0-self" data-id="'+esc(s[0])+'"'+(U0S.self[s[0]]?' checked':'')+'> <span class="luself">'+esc(s[1])+'</span></label></li>'}).join('')+'</ul>'+
+    '<p class="lunote">'+esc(luU(u,'u0.r.free'))+'</p>'+(U0S.rdone?'<p class="lufb" role="status">'+esc(luU(u,'u0.r.done'))+'</p>':'<div class="actions"><button type="button" class="btn pri" data-act="u0-rdone">'+esc(luU(u,'u0.btn.finish'))+'</button></div>')+'</section>';
+  return u0Layout(u,'B',h);
+}
+var U0_FN={learn:u0Learn,controlled:u0Controlled,guided:u0Guided,independent:u0Independent,review:u0Review};
+// students follow the order; the admin preview opens every stage
+function u0Unlocked(u,st){if(U&&U.adm)return true;return st==='learn'||(st==='controlled'&&U0S.ldone)||(st==='guided'&&U0S.cpass)||(st==='independent'&&u0GDone())||(st==='review'&&U0S.rv)}
+// admin preview helper (default off, admin only): fills the objective answers with the right ones; writing boxes stay empty; nothing is saved
+function u0AutoFill(u){
+  Object.keys(U0_LS).forEach(function(n){U0_LS[n].forEach(function(id){var x=u0Item(u,id);if(x&&U0S.a[id]==null)U0S.a[id]=u0Ans(x)})});
+  u0Ser(u,'A').forEach(function(s){U0S.seen[s.id]=true});
+  U0_C.forEach(function(id){var x=u0Item(u,id);if(x&&U0S.a[id]==null)U0S.a[id]=u0Ans(x)});
+  U0_G.forEach(function(id){var g=u0GItem(u,id);if(g&&!U0S.g[id])U0S.g[id]=g.ans});
+  (u.keyFeatures||[]).forEach(function(k){if(k.chart==='A'&&k.importance==='main'&&U0S.sel[k.id]==null)U0S.sel[k.id]=true});
+}
+function u0StageHTML(u,st){luCtx(u);u0State(u);if(U0S.af)u0AutoFill(u);return U0_FN[st](u)}
+function u0DraftHTML(u){var h='',old=luOld(u,'state');
+  if(!luStoreOk())h+='<p class="luwarn" role="status">'+esc(luU(u,'u0.dr.blocked'))+'</p>';
+  if(old.length)h+='<p class="luwarn" role="status">'+esc(luU(u,'u0.dr.old'))+' <button type="button" class="btn sm" data-act="u0-old">'+esc(luU(u,'u0.btn.discardOld'))+'</button></p>';
+  return '<div class="u0draft">'+h+luCopy(u,'u0.dr.local')+'<div class="actions"><button type="button" class="btn sm bad" data-act="u0-clear">'+esc(luU(u,'u0.btn.clear'))+'</button></div></div>'}
+function u0HTML(l,u){
+  var c=luCtx(u),bad=c.errs.filter(function(e){return !/pending/.test(e)});u0State(u);
+  if(bad.length)return '<div class="lutop">'+lmCrumbHTML(l)+'</div><div class="lmshell"><h3>'+esc(l.title)+'</h3><p class="luwarn" role="alert">This lesson cannot be shown: its content check failed ('+bad.length+' problem'+(bad.length>1?'s':'')+').</p>'+(U&&U.adm?'<ul class="saved">'+bad.slice(0,8).map(function(e){return '<li>'+esc(e)+'</li>'}).join('')+'</ul>':'')+'</div>';
+  if(!u0Unlocked(u,U0S.stage))U0S.stage='learn';
+  var bar='<nav class="lusteps" aria-label="'+esc(luU(u,'u0.st.nav'))+'">'+U0_ST.map(function(s,i){var lock=!u0Unlocked(u,s);return '<button type="button" class="lustep'+(U0S.stage===s?' on':'')+'" data-act="u0-go" data-s="'+s+'"'+(U0S.stage===s?' aria-current="step"':'')+(lock?' disabled title="'+esc(luU(u,s==='review'?'u0.st.lockedRv':'u0.st.lockedPrev'))+'"':'')+'><span class="mono">'+(i+1)+'</span> '+esc(luU(u,'u0.st.'+s))+'</button>'}).join('')+'</nav>';
+  var lg='<div class="lulang"><div class="seg" role="group" aria-label="Explanation language / Ngôn ngữ giải thích"><button type="button" data-act="u0-lang" data-v="en" aria-pressed="'+(luL()==='en')+'" lang="en">ENG</button><button type="button" data-act="u0-lang" data-v="vi" aria-pressed="'+(luL()==='vi')+'" lang="vi">VI</button></div>'+
+    (U&&U.adm?'<button type="button" class="btn sm luaf" data-act="u0-af" aria-pressed="'+!!U0S.af+'" title="Admin preview only: fills the checkable answers with the right ones. Nothing is saved.">Preview: auto-fill '+(U0S.af?'on':'off')+'</button>':'')+'</div>';
+  return '<div class="lutop">'+lmCrumbHTML(l)+lg+'</div><div class="lmshell lu u0"><h3>'+esc(l.title)+'</h3>'+bar+'<div class="lubody" id="u0Body">'+u0StageHTML(u,U0S.stage)+'</div>'+u0DraftHTML(u)+'</div>';
+}
+function u0Act(a,t){
+  var l=LMV&&lmLesson(LMV),u=l&&u0Unit(l.id);if(!u)return false;luCtx(u);u0State(u);
+  var keep=function(){var y=window.scrollY||0;renderLib();if(window.scrollTo)window.scrollTo(0,y)},save=function(){u0Save(u)},top=function(){renderLib();var b=$('.lusteps');if(b&&b.scrollIntoView)b.scrollIntoView({block:'start'})};
+  var ids=function(){return String(t.dataset.ids||'').split(',').filter(Boolean)};
+  if(a==='u0-lang'){LU.lang=t.dataset.v==='en'?'en':'vi';try{localStorage.setItem('md-lm-lang',LU.lang)}catch(e){}keep();return true}
+  if(a==='u0-af'){if(!(U&&U.adm))return true;if(!U0S.af){U0_SNAP=JSON.stringify(U0S);U0S.af=true}else{var sn=U0_SNAP?JSON.parse(U0_SNAP):null;if(sn){U0S=sn;U0S.af=false}else U0S.af=false;U0_SNAP=null}keep();return true}
+  if(a==='u0-ans'){var x=u0Item(u,t.dataset.id);if(!x||U0S.chk[x.id]||(x.stage==='controlled'&&U0S.cchk))return true;U0S.a[x.id]=t.dataset.v;save();keep();return true}
+  if(a==='u0-lchk'){ids().forEach(function(id){var x=u0Item(u,id);if(!x||U0S.a[id]==null||U0S.chk[id])return;U0S.chk[id]=true;if(!u0Ok(x))U0S.tries[id]=(U0S.tries[id]||0)+1});save();keep();return true}
+  if(a==='u0-lretry'){ids().forEach(function(id){var x=u0Item(u,id);if(x&&U0S.chk[id]&&!u0Done(x)){U0S.chk[id]=false;delete U0S.a[id]}});save();keep();return true}
+  if(a==='u0-lnext'){if(!u0LDone(u,U0S.ls))return true;U0S.ls=Math.min(7,U0S.ls+1);if(U0S.ls===7)U0S.ldone=true;save();keep();var nc=document.getElementById('u0S'+U0S.ls);if(nc&&nc.scrollIntoView)nc.scrollIntoView({block:'nearest'});return true}
+  if(a==='u0-line'){U0S.line=t.dataset.id;U0S.seen[t.dataset.id]=true;save();keep();return true}
+  if(a==='u0-sel'){if(!U0S.selChk){U0S.sel[t.dataset.id]=!!t.checked;save();var cb=document.querySelector('[data-act="u0-selchk"]');if(cb)cb.disabled=u0SelN()<2}return true}
+  if(a==='u0-selchk'){if(u0SelN()>=2)U0S.selChk=true;save();keep();return true}
+  if(a==='u0-selredo'){U0S.selChk=false;U0S.sel={};save();keep();return true}
+  if(a==='u0-go'){var s=t.dataset.s;if(!U0_FN[s]||!u0Unlocked(u,s))return true;U0S.stage=s;save();top();return true}
+  if(a==='u0-cchk'){if(U0_C.every(function(id){return U0S.a[id]!=null}))U0S.cchk=true;save();keep();return true}
+  if(a==='u0-credo'){U0S.cchk=false;U0_C.forEach(function(id){delete U0S.a[id]});save();top();return true}
+  if(a==='u0-gchk'){if(U0_G.every(function(id){return U0S.g[id]}))U0S.gchk=true;save();keep();return true}
+  if(a==='u0-gredo'){U0S.gchk=false;U0S.g={};save();keep();return true}
+  if(a==='u0-gsel'){U0S.gsel[t.dataset.id]=!!t.checked;save();return true}
+  if(a==='u0-gcomp'){if(u0ObsN()<2){toast(luU(u,'u0.g.needObs'));return true}U0S.gsum=(U0S.obs||[]).filter(function(x){return String(x||'').trim()}).map(function(x){return '- '+String(x).trim()}).join('\n');U0S.grev=false;save();keep();return true}
+  if(a==='u0-grev'){U0S.grev=!!t.checked;save();var nb=document.querySelector('[data-act="u0-go"][data-s="independent"]');if(nb)nb.disabled=!u0Unlocked(u,'independent');return true}
+  if(a==='u0-idone'){if(!u0IndDone()){toast(luU(u,'u0.i.need'));return true}U0S.rv=true;U0S.stage='review';save();top();return true}
+  if(a==='u0-self'){U0S.self[t.dataset.id]=!!t.checked;save();return true}
+  if(a==='u0-rdone'){U0S.rdone=true;save();keep();return true}
+  if(a==='u0-clear'){if(!confirm(luU(u,'u0.dr.confirmClear')))return true;luDrop(u,'state');U0S=null;u0State(u);keep();toast(luU(u,'u0.dr.cleared'));return true}
+  if(a==='u0-old'){if(!confirm(luU(u,'u0.dr.confirmOld')))return true;luOld(u,'state').forEach(function(k){try{localStorage.removeItem(k)}catch(e){}});keep();return true}
+  return false;
+}
+// Guided selects (change) and the writing boxes (input): save on this device, no redraw while typing
+document.addEventListener('change',function(e){var t=e.target;if(!t||!t.classList||!t.classList.contains('u0sel'))return;var l=LMV&&lmLesson(LMV),u=l&&u0Unit(l.id);if(!u||!U0S||U0S.gchk)return;
+  U0S.g[t.getAttribute('data-g')]=t.value;u0Save(u);var b=document.querySelector('[data-act="u0-gchk"]');if(b)b.disabled=!U0_G.every(function(id){return U0S.g[id]})});
+document.addEventListener('input',function(e){var t=e.target,k=t&&t.getAttribute&&t.getAttribute('data-u0');if(!k)return;var l=LMV&&lmLesson(LMV),u=l&&u0Unit(l.id);if(!u||!U0S)return;
+  if(k==='gwhy'||k==='gsum')U0S[k]=t.value;else if(/^obs\d$/.test(k)){U0S.obs=U0S.obs||['','',''];U0S.obs[+k.slice(3)]=t.value}else if(k.indexOf('i_')===0){U0S.ind=U0S.ind||{};U0S.ind[k.slice(2)]=t.value}
+  u0Save(u);var nb=document.querySelector('[data-act="u0-go"][data-s="independent"]');if(nb)nb.disabled=!u0Unlocked(u,'independent')});
 function renderLib(){
   stopAudio();clearTimer();WL.on=false;setLock(false);crumbs();
   if(!NAV.ex&&!NAV.daily){recClearAll();REC_EX=null} // left the exercise: drop its recorders (microphone off)
@@ -2718,7 +2984,7 @@ function renderPlayer(){
   }
   var teacher=U.role==='teacher',ban=''; // teachers preview: nothing is saved (saveAttempt is skipped for teachers), no banner
   var head='<div class="phead"><span class="chip">'+SNAME[ex.skill]+'</span><h2>'+esc(ex.title)+'</h2><p>'+esc(ex.hint)+'</p></div>';
-  var tail='<div class="actions"><button class="btn pri" data-act="submit" id="submit" type="button">Submit</button><span class="saved" id="saveMsg"></span></div><div id="result"></div>';
+  var tail='<div class="actions"><button class="btn pri" data-act="submit" id="submit" type="button">Submit answers</button><span class="saved" id="saveMsg"></span></div><div id="result"></div>';
   if(ex.kind==='writing')return renderWriting(ex,head,ban);
   if(ex.kind==='speaking'||ex.kind==='readaloud')return renderSpeaking(ex,head,ban);
   if(ex.kind==='lesson')return renderLesson(ex,head,ban);
@@ -2852,7 +3118,7 @@ function chLineHTML(c){
   var svg='<svg class="chsvg" viewBox="0 0 '+W+' '+H+'" role="img" aria-labelledby="'+uid+'t" aria-describedby="'+uid+'d"><title id="'+uid+'t">'+esc(title)+'</title><desc id="'+uid+'d">'+esc(S.length+' line'+(S.length>1?'s':'')+': '+S.map(function(s){return s.label}).join(', ')+'. The data table below has every value.')+'</desc>'+h+'</svg>';
   var lg='<ul class="chlg">'+S.map(function(s,k){return '<li><svg class="chsw" viewBox="0 0 36 12" aria-hidden="true" focusable="false"><g class="chs chs'+k+'"><line x1="2" y1="6" x2="34" y2="6" stroke-width="2.4"'+(CH_DASH[k]?' stroke-dasharray="'+CH_DASH[k]+'"':'')+'/>'+chMarker(k,18,6)+'</g></svg><span>'+esc(s.label)+'</span></li>'}).join('')+'</ul>';
   var tb='<details class="chtbl"><summary>Data table</summary><div class="scroll"><table><thead><tr><th scope="col">'+(c.hasTime?'Year':'x')+'</th>'+S.map(function(s){return '<th scope="col">'+esc(s.label)+'</th>'}).join('')+'</tr></thead><tbody>'+
-    xs.map(function(x){return '<tr><th scope="row">'+esc(chNum(x))+'</th>'+S.map(function(s){var y=chY(s,x);return '<td>'+(typeof y==='number'?esc(chNum(y)):'<span title="No value">–</span>')+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div></details>';
+    xs.map(function(x){return '<tr><th scope="row">'+esc(chNum(x))+'</th>'+S.map(function(s){var y=chY(s,x);return '<td>'+(typeof y==='number'?esc(chNum(y)):'<span title="No value">–</span>')+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div>'+(c.note?'<p class="chnote">'+esc(c.note)+'</p>':'')+'</details>';
   return '<figure class="chfig">'+(c.title?'<figcaption>'+esc(c.title)+'</figcaption>':'')+(c.unit?'<p class="chu">Unit: '+esc(c.unit)+'</p>':'')+'<div class="chbox">'+svg+'</div>'+lg+
     (v.warnings.length?'<p class="chwarn">'+v.warnings.map(esc).join(' ')+'</p>':'')+tb+'</figure>';
 }
@@ -2875,7 +3141,7 @@ var CH_EXAMPLE={title:'Task 1: international visitors',skill:'writing',minWords:
     {id:'spain',label:'Spain',points:[{x:2000,y:30},{x:2005,y:40},{x:2010,y:50},{x:2015,y:60},{x:2020,y:70}]},
     {id:'italy',label:'Italy',points:[{x:2000,y:40},{x:2005,y:38},{x:2010,y:35},{x:2015,y:32},{x:2020,y:30}]}]}};
 function writingTask(ex){
-  var tbl=ex.table?'<table class="wtable">'+ex.table.map(function(r,i){return '<tr>'+r.map(function(c){return i?'<td>'+esc(c)+'</td>':'<th>'+esc(c)+'</th>'}).join('')+'</tr>'}).join('')+'</table>':'';
+  var tbl=ex.table?'<div class="tscr"><table class="wtable">'+ex.table.map(function(r,i){return '<tr>'+r.map(function(c){return i?'<td>'+esc(c)+'</td>':'<th>'+esc(c)+'</th>'}).join('')+'</tr>'}).join('')+'</table></div>':'';
   return '<p style="margin:0 0 10px"><b>'+esc(ex.prompt||'')+'</b></p>'+(tbl?'<div class="scroll" style="display:inline-block;max-width:100%;border:0;background:none">'+tbl+'</div>':'')+(ex.chart?chartHTML(ex.chart):'');
 }
 function vocEmbed(link){
@@ -2930,7 +3196,7 @@ function correctedBlockHTML(text,items,sp){
 }
 function fixListHTML(items,en){
   // each mistake on 3 lines: number + category / mistake -> fix / reason
-  return '<ul class="fxl">'+items.map(function(f){return '<li'+(f.n?' data-act="fx-tip" data-fn="'+f.n+'"':'')+'>'+((f.n||f.cat)?'<div class="fxc">'+(f.n?'<span class="fx-n">'+f.n+'</span>':'')+(f.cat?'<b class="aicat">'+esc(f.cat)+'</b>':'')+'</div>':'')+'<div class="fxp"><del class="fx-del">'+esc(f.from)+'</del>'+(f.to&&!f.off?' → <ins class="fx-ins">'+esc(f.to)+'</ins>':'')+'</div><small'+(en&&f.vi&&f.why&&f.vi!==f.why?' title="'+esc(f.why)+'"':'')+'>'+(f.off?'Off-topic · ':'')+esc(fixWhy(f))+'</small></li>'}).join('')+'</ul>';
+  return '<ul class="fxl">'+items.map(function(f){return '<li'+(f.n?' data-act="fx-tip" data-fn="'+f.n+'" role="button" tabindex="0"':'')+'>'+((f.n||f.cat)?'<div class="fxc">'+(f.n?'<span class="fx-n">'+f.n+'</span>':'')+(f.cat?'<b class="aicat">'+esc(f.cat)+'</b>':'')+'</div>':'')+'<div class="fxp"><del class="fx-del">'+esc(f.from)+'</del>'+(f.to&&!f.off?' → <ins class="fx-ins">'+esc(f.to)+'</ins>':'')+'</div><small'+(en&&f.vi&&f.why&&f.vi!==f.why?' title="'+esc(f.why)+'"':'')+'>'+(f.off?'Off-topic · ':'')+esc(fixWhy(f))+'</small></li>'}).join('')+'</ul>';
 }
 // Corrections + Corrected essay (students after submitting / Open feedback, and the teacher Marking modal)
 function correctionsHTML(text,items,en){
@@ -2965,7 +3231,9 @@ document.addEventListener('scroll',function(){if(FXP)fxPopClose()},true);
 window.addEventListener('resize',function(){if(FXP)fxPopClose()});
 document.addEventListener('keydown',function(e){
   var t=e.target;
-  if((e.key==='Enter'||e.key===' ')&&t&&t.getAttribute&&t.getAttribute('data-act')==='fx-tip'&&t.getAttribute('data-why')!=null){e.preventDefault();fxPopOpen(t);fxHot(t)}
+  if((e.key==='Enter'||e.key===' ')&&t&&t.getAttribute&&t.getAttribute('data-act')==='fx-tip'&&t.getAttribute('data-why')!=null){e.preventDefault();fxPopOpen(t);fxHot(t);return}
+  // any other clickable that is not a real button (role="button" + tabindex): Enter / Space = click
+  if((e.key==='Enter'||e.key===' ')&&t&&t.getAttribute&&t.getAttribute('role')==='button'&&t.tagName!=='BUTTON'&&t.getAttribute('data-act')&&t.click){e.preventDefault();t.click()}
 });
 // Tap a mistake / correction: show the reason and light up every place with the same number
 var fxHotT=null;
@@ -3048,7 +3316,7 @@ function aiHTML(ai,text){
 function aiShow(ai,text,added,demo){
   var b=$('#fixes');if(!b)return;AIX=ai;markAnswer(text,ai);
   var ws=$('#wSub'),wi=aiItems(ai);if(ws&&fixSpans(text,wi).length){ws.innerHTML=answerHTML(text,wi);var wn=$('#wSubNote');if(wn)wn.hidden=false}
-  b.innerHTML=(demo?'<p class="banner">'+esc(demo===true?'Demo: sample AI result. On the live site the AI checks your own text.':demo)+'</p>':'')+aiHTML(ai,text)+(added?'<p class="saved" style="margin-top:8px">'+added+' mistake'+(added>1?'s were':' was')+' added to your <b>Error Notebook</b>. <button class="linkish" data-act="tab" data-tab="errors" type="button">Open it</button></p>':'');
+  b.innerHTML=(demo?'<p class="banner">'+esc(demo===true?'Demo: sample AI result. On the live site the AI checks your own text.':demo)+'</p>':'')+aiHTML(ai,text)+(added?'<p class="saved" style="margin-top:8px">'+added+' mistake'+(added>1?'s were':' was')+' added to your <b>Error Notebook</b>. <button class="linkish" data-act="tab" data-tab="errors" type="button">Open Error Notebook</button></p>':'');
 }
 function aiSay(msg,code,retry){var b=$('#fixes');if(b)b.innerHTML='<p class="saved" aria-live="polite">'+esc(msg)+(code?' <span class="mono">(code: '+esc(code)+')</span>':'')+'</p>'+(retry?'<div class="actions" style="margin-top:6px"><button class="btn sm" data-act="ai-retry" type="button">Try again</button></div>':'')}
 // AIR = the submission being checked, so "Try again" can call the server again (the server allows it after a failure).
@@ -3145,7 +3413,7 @@ function renderWriting(ex,head,ban){
   WL.n=lock?(+lsGet('md-wl-'+U.email+'-'+ex.id)||0):0;WL.on=lock;if(lock){setLock(true);$('#crumbs').innerHTML=''}
   $('#libBody').innerHTML='<div class="pane single">'+head+ban+(lock?'<p class="banner lockmsg" id="wLock">Stay on this page until you submit. If you leave it 3 times, the exercise restarts.'+(WL.n?' Left so far: '+WL.n+'/3.':'')+'</p>':'')+writingTask(ex)+
   (t1On(ex)?'<div class="t1grid"><div><label class="lbl" for="wText">Your overview</label>':'<label class="lbl" for="wText">Your answer</label>')+'<textarea class="wbox" id="wText" spellcheck="true">'+esc(draft)+'</textarea>'+(t1On(ex)?'</div>'+t1PanelHTML(ex)+'</div>':'')+'<div class="wmeta"><span id="wCount"></span><span id="wDraft">Drafts save automatically on this device.</span></div>'+
-  '<div class="actions"><button class="btn pri" data-act="sub-w" id="submit" type="button">Submit</button><span class="saved" id="saveMsg"></span></div><div id="result"></div></div>';
+  '<div class="actions"><button class="btn pri" data-act="sub-w" id="submit" type="button">Submit essay</button><span class="saved" id="saveMsg"></span></div><div id="result"></div></div>';
   updWords();
 }
 function updWords(){
@@ -3201,7 +3469,7 @@ function renderSpeaking(ex,head,ban){
   }
   var voc='<label class="lbl" for="spLink">Vocaroo link</label><p class="muted" style="margin:0 0 8px;font-size:.86rem">Record at <a href="https://vocaroo.com" target="_blank" rel="noopener">vocaroo.com</a>, click Save &amp; Share, copy the link and paste it here.</p><input class="linkin" id="spLink" placeholder="https://vocaroo.com/..." autocomplete="off"><div id="spPrev"></div>';
   h+=(can?'<details class="vocalt"><summary>Recording does not work? Paste a Vocaroo link instead</summary>'+voc+'</details>':'<p class="banner">Recording is not available in this browser. Record on vocaroo.com and paste the link below.</p>'+voc)+
-    '<p class="saved" id="spHint" aria-live="polite"></p><p class="err" id="spErr"></p><div class="actions"><button class="btn pri" data-act="sub-s" id="submit" type="button" disabled>Submit</button><span class="saved" id="saveMsg"></span></div><div id="result"></div></div>';
+    '<p class="saved" id="spHint" aria-live="polite"></p><p class="err" id="spErr"></p><div class="actions"><button class="btn pri" data-act="sub-s" id="submit" type="button" disabled>Submit recordings</button><span class="saved" id="saveMsg"></span></div><div id="result"></div></div>';
   $('#libBody').innerHTML=h;spSync();
 }
 // recordings of a submission (new: attempt.audio; old: Vocaroo link)
@@ -3306,7 +3574,7 @@ function renderDash(){
     h+='<div class="dcard dhero"><div><span class="dsub" style="margin:0 0 8px">Average score</span>'+dRing(avg,'xl')+'<div class="dchips"><span class="dpl">'+A.length+' attempt'+(A.length===1?'':'s')+'</span><span class="dpl">'+S.length+' student'+(S.length===1?'':'s')+' active</span></div></div>'+
       '<div><h3>Average score per week</h3><p class="dsub">Share of questions answered correctly.</p>'+dLine(wks,wm)+'</div></div>';
     var ct=Object.keys(byCls).sort();
-    var tbl=ct.length?'<table class="dtbl dtc"><thead><tr><th>Class</th><th>Attempts</th><th>Avg score</th></tr></thead><tbody>'+ct.map(function(c){var b=byCls[c],p=Math.round(b.sc/b.tot*100);return '<tr><td><b>'+esc(classTitle(c))+'</b></td><td class="mono">'+b.n+'</td><td>'+dScore(p)+'</td></tr>'}).join('')+'</tbody></table>':'<p class="saved">No results match these filters.</p>';
+    var tbl=ct.length?'<div class="dscr"><table class="dtbl dtc"><thead><tr><th>Class</th><th>Attempts</th><th>Avg score</th></tr></thead><tbody>'+ct.map(function(c){var b=byCls[c],p=Math.round(b.sc/b.tot*100);return '<tr><td><b>'+esc(classTitle(c))+'</b></td><td class="mono">'+b.n+'</td><td>'+dScore(p)+'</td></tr>'}).join('')+'</tbody></table></div>':'<p class="saved">No results match these filters.</p>';
     h+='<div class="dg2">'+dCard('Classes','Across the filtered attempts.',tbl)+dCard('Hardest exercises','Share of answers that were wrong.',dRank(hardEx.slice(0,5)))+'</div>';
     var clo=uniq(SS.filter(inF).map(function(x){return [x.cls,x.cls]}));
     var hw=clo.length?clo.map(function(c){
@@ -3435,7 +3703,7 @@ function classCard(c,bare){
   var cst=clsStatus(c),pill=cst==='active'?'':'<span class="pill cst '+cst+'">'+(cst==='pending'?'Pending':'Archived')+'</span> ';
   var foot='<span class="cfoot">'+pill+n+' student'+(n===1?'':'s')+'<br>'+(cur?'Active: '+esc(asgName(cur)):'No active assignment')+'</span>';
   if(bare)return '<div class="ccard">'+head+foot+'</div>';
-  return '<div class="ccard"><button class="cmain" data-act="cls-open" data-cls="'+esc(c)+'" type="button">'+head+foot+'</button><button class="cgear" data-act="cls-set" data-cls="'+esc(c)+'" type="button" aria-label="Class settings">⚙</button></div>';
+  return '<div class="ccard"><button class="cmain" data-act="cls-open" data-cls="'+esc(c)+'" type="button">'+head+foot+'</button><button class="cgear" data-act="cls-set" data-cls="'+esc(c)+'" type="button" aria-label="Class settings">'+ICO_GEAR+'</button></div>';
 }
 function saveClass(c,patch){
   var cf=classCfg(c),id=slug(c),rec=Object.assign({cls:c,title:cf.title,color:cf.color,cover:cf.cover,code:cf.code,removed:cf.removed,status:cf.status},patch);
@@ -3574,7 +3842,7 @@ function mkLabels(e){return e.kind==='readaloud'?['Wrong word or sound','Wrong s
 function markSrc(a,e){return e.kind==='readaloud'?e.text:(e.skill==='writing'?(a.text||''):null)}
 function wordsHTML(text,marks,edit){
   var i=0;
-  return String(text||'').split(/\n\s*\n/).map(function(p){return '<p>'+p.split(/\s+/).filter(Boolean).map(function(w){var k=i++,m=marks&&marks[k];return '<span class="w'+(m?' m'+m:'')+'"'+(edit?' data-act="mk-word" data-w="'+k+'"':'')+'>'+esc(w)+'</span>'}).join(' ')+'</p>'}).join('');
+  return String(text||'').split(/\n\s*\n/).map(function(p){return '<p>'+p.split(/\s+/).filter(Boolean).map(function(w){var k=i++,m=marks&&marks[k];return '<span class="w'+(m?' m'+m:'')+'"'+(edit?' data-act="mk-word" data-w="'+k+'" role="button" tabindex="0"':'')+'>'+esc(w)+'</span>'}).join(' ')+'</p>'}).join('');
 }
 function legendHTML(e){var L=mkLabels(e);return '<div class="mleg">'+[1,2,3].map(function(t){return '<span><i class="w m'+t+'">'+['red','orange','yellow'][t-1]+'</i> '+L[t-1]+'</span>'}).join('')+'</div>'}
 function markCnt(){var n=Object.keys(MK.marks||{}).length;return n+' word'+(n===1?'':'s')+' marked'}
@@ -4157,7 +4425,7 @@ function renderAutoL(){
   if(!$('#alTr'))b.innerHTML='<h3>Auto-create a 5-stage lesson (AI)</h3>'+
     '<label class="field" for="alTitle">Title (optional)<input id="alTitle" maxlength="120" autocomplete="off" value="'+esc(AL.title||'')+'"></label>'+
     '<div class="row" style="justify-content:space-between;align-items:end;margin:6px 0 0"><label class="lbl" for="alTr" style="margin:0">Transcript</label><button class="btn sm" type="button" data-act="al-trn" id="alTrn">Transcribe from audio (AI)</button></div><textarea id="alTr" spellcheck="false" placeholder="AMBER: Hello William, this is Amber…">'+esc(AL.tr||'')+'</textarea>'+
-    '<details class="alq"'+(AL.q?' open':'')+'><summary>Original questions and answer key (optional, recommended)</summary><textarea id="alQ" spellcheck="false" placeholder="1. Name of the agency: ______  Answer: Bankside">'+esc(AL.q||'')+'</textarea>'+
+    '<details class="alq"'+(AL.q?' open':'')+'><summary>Original questions and answer key (optional, recommended)</summary><textarea id="alQ" aria-label="Original questions and answer key" spellcheck="false" placeholder="1. Name of the agency: ______  Answer: Bankside">'+esc(AL.q||'')+'</textarea>'+
     '<p class="saved" style="margin:4px 0 0">With the answers, the dictation never blanks a word the original test already asked.</p></details>'+
     '<div class="row" style="margin-top:10px"><button class="btn pri" type="button" data-act="al-gen" id="alGo">Generate 5-stage lesson</button><span class="saved" id="alMsg" aria-live="polite"></span></div>';
   alStatus();
@@ -4388,10 +4656,10 @@ function pvHTML(d){
   var kind=d.kind||'list',h='',st=CP.pvSt;
   var head='<div class="phead"><span class="chip">'+esc(SNAME[d.skill]||d.skill)+'</span><h2>'+esc(d.title)+'</h2>'+(d.hint?'<p>'+esc(d.hint)+'</p>':'')+'</div>';
   if(kind==='writing'){
-    h=writingTask(d)+(t1On(d)?'<div class="t1grid"><div><label class="lbl" for="pvW">Your overview</label><textarea class="wbox" id="pvW" spellcheck="true"></textarea></div>'+t1PanelHTML(d)+'</div>':'<label class="lbl" for="pvW">Your answer</label><textarea class="wbox" id="pvW" spellcheck="true"></textarea>')+'<div class="wmeta"><span id="pvWc"><span class="mono">0</span> words <span class="low">· minimum '+d.minWords+'</span></span><span>Drafts save automatically on this device.</span></div><div class="actions"><button class="btn pri" data-act="pv-submit" type="button">Submit</button></div>';
+    h=writingTask(d)+(t1On(d)?'<div class="t1grid"><div><label class="lbl" for="pvW">Your overview</label><textarea class="wbox" id="pvW" spellcheck="true"></textarea></div>'+t1PanelHTML(d)+'</div>':'<label class="lbl" for="pvW">Your answer</label><textarea class="wbox" id="pvW" spellcheck="true"></textarea>')+'<div class="wmeta"><span id="pvWc"><span class="mono">0</span> words <span class="low">· minimum '+d.minWords+'</span></span><span>Drafts save automatically on this device.</span></div><div class="actions"><button class="btn pri" data-act="pv-submit" type="button">Submit essay</button></div>';
   }else if(kind==='speaking'){
     h='<h3 style="font-size:1rem">Part 1</h3><ol class="sp-q">'+d.part1.map(function(q){return '<li>'+esc(q)+'</li>'}).join('')+'</ol><h3 style="font-size:1rem">Part 2</h3><div class="cue"><b>'+esc(d.cue.title)+'</b><div style="margin-top:6px">You should say:</div><ul>'+d.cue.points.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>'+
-    '<div class="arow"><button class="btn sm" type="button" disabled>Start 1:00 preparation</button><span class="timer">1:00</span></div><label class="lbl" for="pvN">Notes (for your preparation only)</label><textarea class="wbox" id="pvN" style="min-height:90px"></textarea><label class="lbl" for="pvL">Vocaroo link</label><input class="linkin" id="pvL" placeholder="https://vocaroo.com/..." autocomplete="off"><p class="err" id="pvErr"></p><div class="actions"><button class="btn pri" data-act="pv-submit" type="button">Submit</button></div>';
+    '<div class="arow"><button class="btn sm" type="button" disabled>Start 1:00 preparation</button><span class="timer">1:00</span></div><label class="lbl" for="pvN">Notes (for your preparation only)</label><textarea class="wbox" id="pvN" style="min-height:90px"></textarea><label class="lbl" for="pvL">Vocaroo link</label><input class="linkin" id="pvL" placeholder="https://vocaroo.com/..." autocomplete="off"><p class="err" id="pvErr"></p><div class="actions"><button class="btn pri" data-act="pv-submit" type="button">Submit recordings</button></div>';
   }else if(kind==='lesson'){
     var bar='<div class="lsbar" role="tablist" aria-label="Lesson stages">'+STG.map(function(n,i){return '<button type="button" role="tab" class="lsstep'+(i===st?' cur':'')+'" aria-selected="'+(i===st)+'" data-act="pv-stage" data-i="'+i+'">'+(i+1)+'. '+n+'</button>'}).join('')+'</div>';
     h=bar+demoBarHTML('pvl')+'<div id="lsBody">'+pvStage(d,st)+'</div><div class="actions"><button class="btn pri" data-act="pv-check" type="button">Check answers</button>'+(st<4?'<button class="btn" data-act="pv-stage" data-i="'+(st+1)+'" type="button">Next: '+STG[st+1]+' →</button>':'')+'</div>';
@@ -4399,7 +4667,7 @@ function pvHTML(d){
     var ex={id:'prev',skill:d.skill,title:d.title,kind:'list',qs:d.qs},body=demoBarHTML('pv')+qHTML(ex);
     if(d.skill==='listening')h=pvAudio(d)+'<details class="tdet"><summary>Show transcript</summary><div class="tr">'+pvMat(d).lines.map(function(l){return '<div>'+(l[0]?'<b>'+esc(l[0])+'</b>':'')+esc(l[1])+'</div>'}).join('')+'</div></details>'+body;
     else h='<div class="pane mat" style="margin-bottom:12px">'+passageHTML(pvMat(d))+'</div>'+body;
-    h+='<div class="actions"><button class="btn pri" data-act="pv-check" type="button">Submit</button></div>';
+    h+='<div class="actions"><button class="btn pri" data-act="pv-check" type="button">Submit answers</button></div>';
   }
   return '<div class="pvframe"><div class="pvbar"><span class="pvdot" aria-hidden="true"></span>Student view · preview only, nothing is saved</div><div class="pane single pvpane" id="pvPane">'+head+h+'<div id="pvRes" aria-live="polite"></div></div></div>';
 }
@@ -4764,7 +5032,7 @@ function popHTML(){
     return h+'</div>';
   }
   var saved=U&&U.role==='student'&&cardList(U.email).some(function(c){return c.word===e.w});
-  h+='<h3>'+esc(e.w)+' <span class="ipa">'+esc(e.ipa||'')+'</span><button class="spk" data-act="vp-say" type="button" aria-label="Pronounce">🔊</button></h3><span class="pos">'+esc(e.pos||'')+'</span>'+
+  h+='<h3>'+esc(e.w)+' <span class="ipa">'+esc(e.ipa||'')+'</span><button class="spk" data-act="vp-say" type="button" aria-label="Pronounce">'+ICO_SPK+'</button></h3><span class="pos">'+esc(e.pos||'')+'</span>'+
   '<p><b>EN</b> · '+esc(e.en)+'</p><p><b>VI</b> · '+esc(e.vi)+'</p>'+(e.ex?'<p class="ex">'+hlWord(e.ex,e.w)+'</p>':'')+
   ((e.syn&&e.syn.length)?'<p class="muted" style="font-size:.8rem;margin-bottom:0">Synonyms</p><div class="wchips">'+e.syn.map(function(s){return '<span class="wc s">'+esc(s)+'</span>'}).join('')+'</div>':'')+
   ((e.ant&&e.ant.length)?'<p class="muted" style="font-size:.8rem;margin:8px 0 0">Antonyms</p><div class="wchips">'+e.ant.map(function(s){return '<span class="wc a">'+esc(s)+'</span>'}).join('')+'</div>':'')+
@@ -4824,7 +5092,7 @@ function reviewHTML(){
   if(CV.i>=CV.q.length){return '<div class="fcard"><div class="big">Session complete</div><p>You remembered <b>'+CV.ok+'</b> of '+CV.q.length+' cards.</p><p class="muted">Cards you forgot come back tomorrow; the others return after 3 or 7 days.</p><div class="fbtns"><button class="btn pri" data-act="rv-end" type="button">Done</button></div></div>'}
   var c=cardById(CV.q[CV.i]);if(!c){CV.i++;return reviewHTML()}
   var e=c.data||{w:c.word};
-  var h='<div class="fcard"><span class="muted" style="font-size:.8rem">Card '+(CV.i+1)+' of '+CV.q.length+'</span><div class="big">'+esc(c.word)+'</div><div class="ipa muted mono">'+esc(e.ipa||'')+' <button class="spk" data-act="rv-say" type="button" aria-label="Pronounce">🔊</button></div>';
+  var h='<div class="fcard"><span class="muted" style="font-size:.8rem">Card '+(CV.i+1)+' of '+CV.q.length+'</span><div class="big">'+esc(c.word)+'</div><div class="ipa muted mono">'+esc(e.ipa||'')+' <button class="spk" data-act="rv-say" type="button" aria-label="Pronounce">'+ICO_SPK+'</button></div>';
   if(!CV.flip)return h+'<div class="fbtns"><button class="btn pri" data-act="rv-flip" type="button">Show answer</button></div><div class="kh">Space: show answer · Backspace: got it · Backspace ×2 (quick): forgot</div></div>';
   h+='<div class="back"><span><b>EN</b> · '+esc(e.en||'')+'</span><span><b>VI</b> · '+esc(e.vi||'')+'</span>'+(e.ex?'<span class="ex">'+hlWord(e.ex,c.word)+'</span>':'')+'</div>';
   return h+'<div class="fbtns"><button class="btn bad" data-act="rv-no" type="button">Forgot</button><button class="btn good" data-act="rv-yes" type="button">Got it</button></div><div class="kh">Backspace: got it · Backspace ×2 (quick): forgot</div></div>';
@@ -5398,7 +5666,7 @@ function renderDailyTask(){
   }
   if(it.k==='dict'){
     h+='<p class="muted" style="margin:0 0 10px">Listen to the sentence, then type exactly what you hear.</p>'+dyPlayHTML(it);
-    if(DY.stage==='q')h+='<textarea class="wbox" id="dyDict" style="min-height:90px" spellcheck="false" autocomplete="off">'+esc(DY.val)+'</textarea><div class="actions"><button class="btn pri" data-act="dy-dcheck" type="button">Check</button></div>';
+    if(DY.stage==='q')h+='<textarea class="wbox" id="dyDict" aria-label="Type what you hear" style="min-height:90px" spellcheck="false" autocomplete="off">'+esc(DY.val)+'</textarea><div class="actions"><button class="btn pri" data-act="dy-dcheck" type="button">Check</button></div>';
     else{
       var rf=normW(it.text),ty2=normW(DY.val),df=lcsDiff(rf,ty2);
       h+='<h4 class="tk">Your answer</h4><div>'+(ty2.length?ty2.map(function(w,k){return '<span class="dword '+(df.tm[k]?'dw-ok':'dw-bad')+'">'+esc(w)+'</span> '}).join(''):'<span class="muted">(empty)</span>')+'</div><h4 class="tk">Correct text</h4><div>'+rf.map(function(w,k){return '<span class="dword '+(df.rm[k]?'dw-ok':'')+'">'+esc(w)+'</span> '}).join('')+'</div><div class="actions"><button class="btn pri" data-act="dy-fin" type="button">Finish</button></div>';
@@ -5415,7 +5683,7 @@ function renderDailyTask(){
     h+=fb?'<div class="actions"><button class="btn pri" data-act="dy-fin" type="button">Finish</button></div>':'<div class="actions"><button class="btn pri" data-act="dy-gcheck" type="button">Check</button></div>';
     return $('#libBody').innerHTML=h+'</div>';
   }
-  if(ty==='wotd'&&it.learn){var e=it.learn;h+='<div class="dsum" style="margin:0 0 12px"><b style="font-size:1.15rem">'+esc(e.w)+'</b> <span class="mono muted">'+esc(e.ipa)+'</span> <button class="spk" data-act="dy-say" type="button" aria-label="Pronounce">🔊</button><br><span class="muted">'+esc(e.pos)+'</span> · '+esc(e.vi)+'<br><span class="ex">'+hlWord(e.ex,e.w)+'</span></div>'}
+  if(ty==='wotd'&&it.learn){var e=it.learn;h+='<div class="dsum" style="margin:0 0 12px"><b style="font-size:1.15rem">'+esc(e.w)+'</b> <span class="mono muted">'+esc(e.ipa)+'</span> <button class="spk" data-act="dy-say" type="button" aria-label="Pronounce">'+ICO_SPK+'</button><br><span class="muted">'+esc(e.pos)+'</span> · '+esc(e.vi)+'<br><span class="ex">'+hlWord(e.ex,e.w)+'</span></div>'}
   h+='<p style="margin:10px 0 8px"><b>'+(DY.items.length>1?(DY.i+1)+'/'+DY.items.length+' · ':'')+esc(it.q)+'</b></p>';
   h+='<div class="opts">'+it.opts.map(function(o,k){
     var cls='opt',fb=DY.stage==='fb';if(fb){if(k===it.ans)cls+=' good';else if(k===DY.pick)cls+=' bad';else cls+=' dim'}
@@ -5700,11 +5968,11 @@ function renderBag(){
   h+=L.length?'<div class="inv">'+L.map(function(it){
     var d=PZ[it.kind],act='';
     if(it.kind==='title')act=p.title===it.text?'<button class="btn sm" data-act="bag-unequip" type="button">Unequip</button>':'<button class="btn pri sm" data-act="bag-equip" data-id="'+it.id+'" type="button">Equip</button>';
-    else if(it.kind==='ctitle')act=BAG.ct===it.id?'<input class="linkin" id="ctIn" maxlength="20" placeholder="Your title (max 20)" style="flex:1;min-width:140px"><button class="btn pri sm" data-act="bag-ctsave" data-id="'+it.id+'" type="button">Save</button>':'<button class="btn pri sm" data-act="bag-ct" data-id="'+it.id+'" type="button">Write title</button>';
+    else if(it.kind==='ctitle')act=BAG.ct===it.id?'<input class="linkin" id="ctIn" aria-label="Your title" maxlength="20" placeholder="Your title (max 20)" style="flex:1;min-width:140px"><button class="btn pri sm" data-act="bag-ctsave" data-id="'+it.id+'" type="button">Save</button>':'<button class="btn pri sm" data-act="bag-ct" data-id="'+it.id+'" type="button">Write title</button>';
     else if(it.kind==='mat'||(it.kind==='custom'&&it.url))act='';
     else if(it.kind==='hint')act='<span class="saved">Applies by itself when you open a Writing hint.</span>';
-    else if(it.kind==='ext'){act=it.used?'<span class="saved">Used</span>':(BAG.ext===it.id?extPick():'<button class="btn pri sm" data-act="bag-ext" data-id="'+it.id+'" type="button">Use</button>')}
-    else if(it.kind==='vip'){act=it.used?'<span class="saved">Sent to your teacher</span>':(BAG.vip===it.id?vipPick(it):'<button class="btn pri sm" data-act="bag-vip" data-id="'+it.id+'" type="button">Use</button>')}
+    else if(it.kind==='ext'){act=it.used?'<span class="saved">Used</span>':(BAG.ext===it.id?extPick():'<button class="btn pri sm" data-act="bag-ext" data-id="'+it.id+'" type="button">Use extension</button>')}
+    else if(it.kind==='vip'){act=it.used?'<span class="saved">Sent to your teacher</span>':(BAG.vip===it.id?vipPick(it):'<button class="btn pri sm" data-act="bag-vip" data-id="'+it.id+'" type="button">Use VIP correction</button>')}
     else act=it.used?'<span class="saved">'+(it.kind==='peek'?'Used':'Claimed')+'</span>':'<button class="btn pri sm" data-act="bag-use" data-id="'+it.id+'" type="button">'+(it.kind==='peek'?'Use':'Claim')+'</button>';
     return '<div class="item'+(it.used?' used':'')+'"><span class="ii">'+iconOf(it.kind)+'</span><span><b><span class="tb t'+it.tier+'">'+TIERNAME[it.tier]+'</span>'+esc(prizeName(it))+'</b><small>'+esc(it.kind==='mat'?d.d:(d?d.d:''))+'</small>'+(it.code?'<small class="mono">Code: <b>'+esc(it.code)+'</b></small>':((it.tier===4)?'<small>Your teacher will send the code.</small>':''))+'</span><div class="ia">'+act+'</div></div>';
   }).join('')+'</div>':'<p class="saved">Nothing here yet. Win prizes on the Lucky Wheel.</p>';
@@ -5718,7 +5986,7 @@ function extPick(){
 }
 function vipPick(it){
   var L=writingSubs();
-  return L.length?'<div style="width:100%"><select class="linkin" id="vipSel">'+L.map(function(a){return '<option value="'+esc(a.id||'')+'">'+esc(exOf(a.ex).title)+' · '+fmtD(a.ts)+'</option>'}).join('')+'</select><div class="prow" style="margin-top:6px"><button class="btn pri sm" data-act="bag-vipgo" data-id="'+it.id+'" type="button">Send to teacher</button></div></div>':'<span class="saved">Submit a Writing task first, then use this.</span>';
+  return L.length?'<div style="width:100%"><select class="linkin" id="vipSel" aria-label="Choose the essay to send">'+L.map(function(a){return '<option value="'+esc(a.id||'')+'">'+esc(exOf(a.ex).title)+' · '+fmtD(a.ts)+'</option>'}).join('')+'</select><div class="prow" style="margin-top:6px"><button class="btn pri sm" data-act="bag-vipgo" data-id="'+it.id+'" type="button">Send to teacher</button></div></div>':'<span class="saved">Submit a Writing task first, then use this.</span>';
 }
 function claimItem(it,note){
   var p=myProf(),rec={email:U.email,name:U.name,cls:U.cls,kind:it.kind,label:prizeName(it),code:it.code||'',note:note||'',ts:Date.now(),done:false};
@@ -5755,7 +6023,7 @@ function renderPrize(){
   h+='<div class="sec"><h3>Prize list</h3><p class="sub">The wheel always shows '+WSLOTS+' slices. The server picks the tier (Common 50%, Materials 30%, Teacher perk 15%, Real-life 5%, raised by the pity counters), then a prize inside the tier by its weight. Chances below are for a student with no pity yet.'+(P.length>WSLOTS?' Only the first '+WSLOTS+' prizes fit on the wheel; the others can still be won.':'')+'</p>'+
   '<div class="scroll"><table class="pzt"><thead><tr><th>Prize</th><th>Tier</th><th>Type</th><th>Weight</th><th>Chance</th><th></th></tr></thead><tbody>'+[1,2,3,4].map(function(t){var L=P.filter(function(x){return x.tier===t});if(!L.length)return '';
     return '<tr class="pzh"><td colspan="6"><span class="tb t'+t+'" style="margin:0">'+TIERNAME[t]+'</span> <span class="muted" data-pzt="'+t+'">tier '+fmtP(OD.tier[t]||0)+' · total weight '+OD.tw[t]+'</span></td></tr>'+L.map(function(x){return '<tr><td>'+esc(x.label)+(x.url?'<small>'+esc(x.url)+'</small>':'')+(x.rnd?'<small>One random file from the study materials</small>':'')+'</td><td>'+TIERNAME[x.tier]+'</td><td>'+esc(x.kind==='custom'?'Custom'+(x.text?': '+x.text:''):(PZ[x.kind]?PZ[x.kind].n:x.kind))+'</td><td><input type="number" class="pzw" min="1" max="1000" step="1" data-pw="'+esc(x.id)+'" value="'+pW(x)+'" aria-label="Weight of '+esc(x.label)+'"></td><td class="mono" data-pzc="'+esc(x.id)+'">'+fmtP(OD.odds[x.id]||0)+'</td><td><button class="linkish" data-act="pr-rm" data-id="'+esc(x.id)+'" type="button">Remove</button></td></tr>'}).join('')}).join('')+'</tbody></table></div>'+
-  '<h4 class="tk">Add a prize</h4><div class="form-row" style="padding-block:4px 6px"><label class="field" for="prType">Type<select id="prType">'+Object.keys(DEFT).map(function(k){return '<option value="'+k+'">'+esc(k==='custom'?'Custom / Other…':PZ[k].n)+'</option>'}).join('')+'</select></label><label class="field" for="prCustom" id="prCustomL" hidden>Custom prize<input type="text" id="prCustom" maxlength="60" placeholder="e.g. Mini Drills T-shirt"></label><label class="field" for="prTier">Tier<select id="prTier">'+[1,2,3,4].map(function(t){return '<option value="'+t+'"'+(t===1?' selected':'')+'>'+TIERNAME[t]+'</option>'}).join('')+'</select></label><label class="field" for="prName">Name on the wheel<input type="text" id="prName" maxlength="40" placeholder="e.g. Cam 15 audio pack"></label><label class="field" for="prLink">Link (materials, optional)<input type="text" id="prLink" placeholder="https://..."></label><label class="field" for="prW">Weight<input type="number" id="prW" min="1" max="1000" step="1" placeholder="e.g. 20" style="max-width:100px"></label><button class="btn pri sm" data-act="pr-add" type="button">Add</button><button class="btn sm" data-act="pr-reset" type="button">Reset to default</button></div>'+
+  '<h4 class="tk">Add a prize</h4><div class="form-row" style="padding-block:4px 6px"><label class="field" for="prType">Type<select id="prType">'+Object.keys(DEFT).map(function(k){return '<option value="'+k+'">'+esc(k==='custom'?'Custom / Other…':PZ[k].n)+'</option>'}).join('')+'</select></label><label class="field" for="prCustom" id="prCustomL" hidden>Custom prize<input type="text" id="prCustom" maxlength="60" placeholder="e.g. Mini Drills T-shirt"></label><label class="field" for="prTier">Tier<select id="prTier">'+[1,2,3,4].map(function(t){return '<option value="'+t+'"'+(t===1?' selected':'')+'>'+TIERNAME[t]+'</option>'}).join('')+'</select></label><label class="field" for="prName">Name on the wheel<input type="text" id="prName" maxlength="40" placeholder="e.g. Cam 15 audio pack"></label><label class="field" for="prLink">Link (materials, optional)<input type="text" id="prLink" placeholder="https://..."></label><label class="field" for="prW">Weight<input type="number" id="prW" min="1" max="1000" step="1" placeholder="e.g. 20" style="max-width:100px"></label><button class="btn pri sm" data-act="pr-add" type="button">Add prize</button><button class="btn sm" data-act="pr-reset" type="button">Reset to default</button></div>'+
   '<h4 class="tk">Add many study materials from CSV</h4><textarea class="csv" id="prMat" spellcheck="false" aria-label="Materials CSV" placeholder="Title,https://link" style="min-height:70px"></textarea><div class="actions"><button class="btn sm" data-act="pr-mat" type="button">Add materials</button><span class="saved">On the live site this reads your published Google Sheet automatically.</span></div></div>';
   h+='<div class="sec"><h3>Codes and vouchers</h3><p class="sub">Each win hands out one unused code of its kind. Keep vouchers within 40k VND.</p><div class="form-row" style="padding-block:4px 10px"><label class="field" for="prKind">Kind<select id="prKind"><option value="tea">Bubble tea / coffee voucher</option><option value="mock20">Mock Speaking 20% off</option><option value="mock25">Mock Speaking 25% off</option></select></label><label class="field" for="prCode">Code<input type="text" id="prCode" placeholder="e.g. TEA-1234"></label><button class="btn pri sm" data-act="pr-code" type="button">Add code</button></div>'+
   '<div class="scroll"><table><thead><tr><th>Kind</th><th>Code</th><th>Status</th></tr></thead><tbody>'+C.map(function(c){return '<tr><td>'+esc(PZ[c.kind].n)+'</td><td class="mono">'+esc(c.code)+'</td><td>'+(c.to?'<span class="pill ok">Won by '+esc(nameOf(c.to))+'</span>':'<span class="pill">Available</span>')+'</td></tr>'}).join('')+'</tbody></table></div></div>';
@@ -5872,13 +6140,13 @@ var XH={ans:'(gap: accepted answers · mcq/match: position of the right option, 
 var XN={audio_url:'Audio link',material:'Transcript / passage',target_word:'Target word',context_sentence:'Sentence in transcript',image_search_keyword:'Image keyword',guessing_options:'Meaning options',correct_option_index:'Correct option',meaning_en:'Meaning (English)',meaning_vi:'Meaning (Vietnamese)',word_family:'Word family',collocations:'Collocations',new_example:'New example',ccq:'Concept check question',question_text:'Question',transcript_segment:'Transcript excerpt',highlight_target:'Part to highlight',explanation:'Explanation',paraphrase_highlight:'Stage 2 · Highlight',trap_alert:'Stage 2 · Trap alert',cloze_material:'Text with gaps (__________)',answers:'Answers',guided_summary_text:'Summary with gaps',summary_answers:'Summary answers',instructions:'Instructions',stage_1_vocabulary:'Stage 1 · Vocabulary',stage_2_autopsy:'Stage 2 · Autopsy',stage_3_dictation:'Stage 3 · Dictation',stage_4_summary:'Stage 4 · Summary',stage_5_retest:'Stage 5 · Re-test'};
 XH.audio_url='(mp3 link, e.g. audio/test1.mp3 from the repo audio folder)';XH.correct_index='(0 = first option, 1 = second)';
 function xLabel(k){if(XN[k])return XN[k];return /^\d+$/.test(k)?'#'+(+k+1):k.replace(/_/g,' ').replace(/^./,function(c){return c.toUpperCase()})}
-function xLeaf(v,p){
-  if(typeof v==='number')return '<input type="number" data-xp="'+p+'" value="'+v+'">';
+function xLeaf(v,p,lab){var al=' aria-label="'+esc(lab||'')+'"';p=esc(p);
+  if(typeof v==='number')return '<input type="number" data-xp="'+p+'" value="'+v+'"'+al+'>';
   v=v==null?'':String(v);
-  if(v.length>70||/\n/.test(v))return '<textarea data-xp="'+p+'" rows="'+Math.min(16,Math.max(2,Math.ceil(v.length/90)+(v.match(/\n/g)||[]).length))+'">'+esc(v)+'</textarea>';
-  return '<input type="text" data-xp="'+p+'" value="'+esc(v)+'">';
+  if(v.length>70||/\n/.test(v))return '<textarea data-xp="'+p+'"'+al+' rows="'+Math.min(16,Math.max(2,Math.ceil(v.length/90)+(v.match(/\n/g)||[]).length))+'">'+esc(v)+'</textarea>';
+  return '<input type="text" data-xp="'+p+'" value="'+esc(v)+'"'+al+'>';
 }
-function xField(v,p,k){return isArr(v)||(v&&typeof v==='object')?xNode(v,p,k):'<div><label class="xl">'+esc(xLabel(k))+(XH[k]?' <small>'+esc(XH[k])+'</small>':'')+'</label>'+xLeaf(v,p)+'</div>'}
+function xField(v,p,k){return isArr(v)||(v&&typeof v==='object')?xNode(v,p,k):'<div><label class="xl">'+esc(xLabel(k))+(XH[k]?' <small>'+esc(XH[k])+'</small>':'')+'</label>'+xLeaf(v,p,xLabel(k))+'</div>'}
 function xNode(v,p,k){
   var lab='<label class="xl">'+esc(xLabel(k))+(XH[k]?' <small>'+esc(XH[k])+'</small>':'')+'</label>';
   if(isArr(v)){
@@ -5916,6 +6184,7 @@ function extAct(a,t){
   if(a==='lm-back'){LMV=null;renderLib();return true}
   if(a==='lm-tg'){var lk=t.dataset.k;LMO[lk]=!LMO[lk];renderLib();var nb=document.querySelector('[data-act="lm-tg"][data-k="'+lk+'"]');if(nb)nb.focus({preventScroll:true});return true}
   if(a.indexOf('lu-')===0&&luAct(a,t))return true;
+  if(a.indexOf('u0-')===0&&u0Act(a,t))return true;
   if(a==='lx'){var lv=t.dataset.l,v=t.dataset.v;
     if(lv==='book')LIBX=LIBX.book===v?{}:{book:v};
     else if(lv==='test')LIBX={book:LIBX.book,test:LIBX.test===v?null:v};
@@ -6182,7 +6451,7 @@ function lsBody(){
       h+='<div class="lsc"><p class="lsq"><b>'+(i+1)+'.</b> '+esc(p.question_text)+'</p><div class="lsseg">'+tk.map(function(t,x){
         var inT=rg&&t.s<rg[1]&&t.e>rg[0],cl='lshw'+(sel[x]?' on':'');
         if(chk){if(inT)cl+=' tg';if(sel[x]&&!inT)cl+=' wr'}
-        return '<span class="'+cl+'" data-act="ls-hw" data-i="'+i+'" data-w="'+x+'">'+esc(t.w)+'</span>'}).join(' ')+'</div>'+
+        return '<span class="'+cl+'" data-act="ls-hw" data-i="'+i+'" data-w="'+x+'" role="button" tabindex="0">'+esc(t.w)+'</span>'}).join(' ')+'</div>'+
       (chk?'<div class="lsexp">'+(p.question_phrase&&p.transcript_phrase?'<b>“'+esc(p.question_phrase)+'”</b> → <b>“'+esc(p.transcript_phrase)+'”</b><br>':'')+esc(p.explanation||'')+'</div>':'')+'</div>';
     });
     h+='<h3 class="lsh">2.2 Trap alert</h3>';

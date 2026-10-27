@@ -477,5 +477,35 @@ Tự động (đã chạy): `lm-meta` 22/22, các bộ khác như cũ.
 4. [ ] Học sinh/giáo viên: mở Task 1 → "No units yet" (bài chưa phát hành không hiện).
 5. [ ] Dark mode và 390px: màu đọc được, không tràn ngang; Tab bàn phím thấy viền focus.
 
+## Rà UI/UX toàn app (10/2026)
+Tự động (đã chạy): `ui-audit` 15/15, `contrast.js` 0 cặp lỗi, các bộ khác như cũ.
+1. [ ] Chế độ sáng: chữ xám (ghi chú, ngày giờ) đậm hơn một chút; viền ô nhập rõ hơn (xám đậm) ở Settings, Create, trang đăng nhập.
+2. [ ] Điện thoại: mọi nút bấm dễ (≥ 44px); bảng dữ liệu của bài Writing và bảng Classes ở Dashboard kéo ngang được, trang không tràn.
+3. [ ] Làm bài thường (Library): sau Submit answers, lựa chọn đúng có ✓, sai có ✗; ô điền sai có viền đứt.
+4. [ ] Listening/Reading trên điện thoại: chạm vào ô điền → thanh nút ở đáy không còn che ô và bàn phím; rời ô → thanh dính lại.
+5. [ ] Flashcard / popup từ vựng / Daily: nút phát âm là icon loa (không còn emoji 🔊). Classes: nút bánh răng trên ảnh bìa nhìn rõ cả với ảnh sáng.
+6. [ ] Windows tắt "Animation effects" (hoặc máy bật giảm chuyển động): không còn hiệu ứng chạy ở bất kỳ đâu.
+7. [ ] Dùng phím Tab đi qua trang: luôn thấy viền focus; ở danh sách lỗi AI và chế độ chọn từ Listening, Enter/Space chọn được.
+
+## Unit 2 — feedback bổ sung (10/2026)
+Tự động (đã chạy): `lm-unit2-ui` 41/41, `chart-facts` 56/56, `lm-check` 0 lỗi (152 pending), các bộ khác như cũ.
+1. [ ] Admin mở Unit 2: hàng trên cùng có "Learning Materials › Writing › IELTS Academic Task 1" bên trái, ENG | VI và "Preview: auto-fill" bên phải; không còn nút "‹ Learning Materials" và dòng "Unpublished preview · 152…". Bấm "Learning Materials" (breadcrumb hoặc tab trên) → về danh sách. Điện thoại 390px: hàng này xuống dòng gọn.
+2. [ ] Tiêu đề biểu đồ căn giữa, to và đậm hơn (Learn, Independent và cả bài Writing có biểu đồ trong Cambridge).
+3. [ ] Tên đường: Larkfield / Westmere / Corvale Museum (Chart A), Chatora / Pixlo / Notivo (Chart B), ở biểu đồ, câu hỏi, câu mẫu, Controlled, Guided.
+4. [ ] Không còn dòng "Practice chart (made-up data)." dưới biểu đồ; mở "Data table" → bảng gọn, số căn giữa, có dòng nhỏ "Biểu đồ luyện tập (số liệu giả định)" ở dưới; điện thoại không cuộn ngang nữa.
+5. [ ] Bước 2–3 của Learn: không còn chữ "Answer the questions…" / "Open all three lenses…" (rê chuột lên nút Continue mờ vẫn thấy gợi ý). Bước 6: không còn "You do not need all three parts…"; câu mẫu có "also" và "Notably,".
+6. [ ] Học sinh vẫn không thấy Unit 2.
+
+## Learning Materials — Unit 0: Data Reading & Selection (10/2026)
+Tự động (đã chạy): `lm-unit0` 23/23, `lm-check` 0 lỗi (Unit 0: 165 pending, Unit 2: 152 pending), các bộ khác như cũ. Cần deploy thêm file `lm-unit0.js`.
+1. [ ] Admin › Library › Learning Materials › Writing › IELTS Academic Task 1: có "Unit 0: Data Reading & Selection" (badge Unpublished preview) trên Unit 2. Học sinh/giáo viên không thấy.
+2. [ ] Learn: bước 1 có bảng kiểm 5 bước + một dòng "số liệu giả định"; Continue mờ tới khi trả lời + Kiểm tra; trả lời sai 2 lần thì hiện đáp án và đi tiếp được. Bước 3: bấm từng đường → đường đó sáng lên, hiện "80 → 48 (2005–2025)" và mô tả. Bước 5: Chính/Phụ chỉ hiện sau Kiểm tra.
+3. [ ] Controlled: 8 câu, nút YES / NO / NOT GIVEN và Đặc điểm chính / Chi tiết phụ; đúng 5/8 → không sang Guided được, 6/8 → được.
+4. [ ] Guided: 7 ô chọn (đúng ≥ 5 mới mở phần sau) → chọn đặc điểm + lý do → viết ≥ 2 nhận xét → "Put my observations together" → sửa bản tóm tắt → tick "I compared…" → sang Independent.
+5. [ ] Independent: biểu đồ Brennick lần đầu xuất hiện; mở "Need a reminder…" chỉ thấy phương pháp, không có số liệu hay đáp án. Thiếu ô nào thì "I am done" báo cần điền đủ.
+6. [ ] Review: bảng tham khảo (Car dẫn đầu 2016, Bicycle dẫn đầu 2024, Bus = Bicycle năm 2022), tự kiểm "Tôi đã nêu… / Tôi đã tránh…".
+7. [ ] Tải lại trang giữa chừng: quay lại đúng bước, đáp án và ghi chú còn. ENG | VI không làm mất gì. "Preview: auto-fill" (admin) bật → câu chấm được có sẵn đáp án; tắt → về như cũ.
+8. [ ] Điện thoại 390px + dark mode: biểu đồ trên, bài dưới; ô chọn Guided xếp 1 cột; không tràn ngang.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

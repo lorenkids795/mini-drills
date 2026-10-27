@@ -1,6 +1,7 @@
 // Mini Drills · Learning Materials · Writing › IELTS Academic Task 1 › Unit 2: Overview (time-series line charts).
 // CONTENT DRAFT (PR 2). Every item is review:'pending' until the owner approves its id; nothing here is shown to students yet.
 // Chart numbers are owner-approved (10/2026). All data is ILLUSTRATIVE / SYNTHETIC, not real statistics.
+// Series names (Larkfield / Westmere / Corvale Museum, Chatora / Pixlo / Notivo) are invented on purpose: they must not point to real places or companies.
 // Text uses placeholders {key.field} filled from verified facts (lm-engine.js); "binds" name the facts, "expect" the result each must give.
 // Model sentences and statements to judge are English; explanations are English + Vietnamese with the same placeholders.
 // Plain ES5. Browser: window.MD_LM_U2. Node: module.exports. Check: node tests/lm-check.js
@@ -13,10 +14,10 @@ var U2={
   charts:{
     A:{id:'lm-u2-a',version:1,synthetic:true,stages:['learn','controlled','guided'],
       chart:{type:'line',hasTime:true,unit:'thousands of visitors',title:'Visitors to three museums, 2000–2020',
-        series:[S('museum-a','Museum A',[60,68,75,82,90],XA),S('museum-b','Museum B',[50,44,40,35,30],XA),S('museum-c','Museum C',[20,26,23,29,27],XA)]}},
+        series:[S('museum-a','Larkfield Museum',[60,68,75,82,90],XA),S('museum-b','Westmere Museum',[50,44,40,35,30],XA),S('museum-c','Corvale Museum',[20,26,23,29,27],XA)]}},
     B:{id:'lm-u2-b',version:1,synthetic:true,stages:['independent','review'],
       chart:{type:'line',hasTime:true,unit:'millions of daily users',title:'Daily users of three apps, 2016–2024',
-        series:[S('app-x','App X',[40,38,35,30,26],XB),S('app-y','App Y',[15,22,30,38,45],XB),S('app-z','App Z',[10,16,14,22,26],XB)]}}
+        series:[S('app-x','Chatora',[40,38,35,30,26],XB),S('app-y','Pixlo',[15,22,30,38,45],XB),S('app-z','Notivo',[10,16,14,22,26],XB)]}}
   },
   // general teaching copy (no chart claims, so no facts)
   copy:[
@@ -129,7 +130,6 @@ var U2={
     {id:'copy.learn.choose.opt',stage:'learn',review:'pending',en:'Optional: true, but a short overview can leave it out.',vi:'Có thể bỏ qua: đúng, nhưng overview ngắn có thể không nêu.'},
     {id:'ui.learn.concise',stage:'learn',review:'pending',en:'Recommended short overview (2 sentences)',vi:'Overview ngắn nên dùng (2 câu)'},
     {id:'ui.learn.annot',stage:'learn',review:'pending',en:'Annotated example (3 sentences, to show the structure)',vi:'Ví dụ có chú thích (3 câu, để thấy cấu trúc)'},
-    {id:'copy.learn.annot.note',stage:'learn',review:'pending',en:'You do not need all three parts: this longer version only shows what each part does.',vi:'Bạn không cần đủ cả ba phần: bản dài này chỉ để thấy vai trò của từng phần.'},
     {id:'ui.ctl.need',stage:'controlled',review:'pending',en:'You need %n of %t correct to continue.',vi:'Cần đúng %n / %t câu để đi tiếp.'},
     {id:'ui.ctl.passed',stage:'controlled',review:'pending',en:'Well done: you can move on.',vi:'Làm tốt lắm: bạn có thể đi tiếp.'},
     {id:'ui.st.lockedPrev',stage:'learn',review:'pending',en:'Finish the previous stage first.',vi:'Hãy hoàn thành bước trước.'},
@@ -164,14 +164,14 @@ var U2={
       group:'trends',kf:['kf.a.rise','kf.a.fall'],why:{en:'It groups the lines by direction (up or down) and gives no exact numbers.',vi:'Câu gom các đường theo hướng (tăng hoặc giảm) và không nêu số liệu cụ thể.'}},
     {id:'a.model.highest',chart:'A',stage:'learn',kind:'model',review:'pending',
       binds:{h:A+'highest-throughout:museum-a+museum-b+museum-c'},expect:{h:{status:'supported',result:'museum-a'}},
-      en:'{h.resultLabel} had the most visitors in every year shown.',
+      en:'{h.resultLabel} also had the most visitors in every year shown.',
       vi:'{h.resultLabel} đứng đầu ở mọi năm được cho trên biểu đồ, không có năm nào bằng hoặc thua đường khác.',
-      group:'highest',kf:['kf.a.highest'],why:{en:'It states the clearest comparison, and it is true in every year shown.',vi:'Câu nêu phép so sánh rõ nhất và đúng ở mọi năm có trên biểu đồ.'}},
+      group:'highest',kf:['kf.a.highest'],why:{en:'It states the clearest comparison, and it is true in every year shown. "also" links it to the first sentence.',vi:'Câu nêu phép so sánh rõ nhất và đúng ở mọi năm có trên biểu đồ. Từ "also" nối câu này với câu trước.'}},
     {id:'a.model.shape',chart:'A',stage:'learn',kind:'model',review:'pending',
       binds:{c:A+'shape:museum-c',e:A+'endpoint:museum-c'},expect:{c:{status:'supported',result:'fluctuating'},e:{status:'supported',result:'increase'}},
-      en:'{c.label} fluctuated but ended higher than it started.',
+      en:'Notably, {c.label} fluctuated but ended higher than it started.',
       vi:'{c.label} lên xuống (fluctuate) nhưng điểm cuối vẫn cao hơn điểm đầu.',
-      group:'highlights',kf:['kf.a.fluct'],why:{en:'It describes the shape of the smallest line without listing every change.',vi:'Câu mô tả hình dạng của đường thấp nhất mà không kể từng thay đổi.'}},
+      group:'highlights',kf:['kf.a.fluct'],why:{en:'It describes the shape of the smallest line without listing every change. "Notably" marks an extra detail worth pointing out.',vi:'Câu mô tả hình dạng của đường thấp nhất mà không kể từng thay đổi. "Notably" báo hiệu một chi tiết đáng chú ý thêm.'}},
     {id:'a.faq.fluct',chart:'A',stage:'learn',kind:'faq',review:'pending',
       binds:{c:A+'shape:museum-c',e:A+'endpoint:museum-c'},expect:{c:{status:'supported',result:'fluctuating'},e:{status:'supported',result:'increase'}},
       q:{en:'Why is {c.label} not a main trend in the overview?',vi:'Vì sao {c.label} không phải xu hướng chính trong overview?'},

@@ -78,7 +78,7 @@ t('Chart B: leader changes and a tie (owner rule)', () => {
 });
 t('both charts are marked synthetic and use made-up labels', () => Object.values(U2.charts).forEach((c) => { assert.strictEqual(c.synthetic, true); c.chart.series.forEach((s) => assert.ok(!/france|spain|italy/i.test(s.label))); }));
 t('all three Controlled labels are used', () => ['supported', 'contradicted', 'not_determinable'].forEach((l) => assert.ok(U2.controlled.some((x) => x.label === l), l)));
-t('placeholders resolve to the chart numbers', () => { const x = U2.claims.find((c) => c.id === 'a.detail.example'); assert.strictEqual(LMX.lmResolve(x.en, x, base.ctx).text, 'Visitors to Museum A rose from 60 thousand in 2000 to 90 thousand in 2020.'); });
+t('placeholders resolve to the chart numbers', () => { const x = U2.claims.find((c) => c.id === 'a.detail.example'); assert.strictEqual(LMX.lmResolve(x.en, x, base.ctx).text, 'Visitors to Larkfield Museum rose from 60 thousand in 2000 to 90 thousand in 2020.'); });
 t('pending items are counted; release gate fails while any is pending', () => { assert.ok(base.pending > 0); const r = LMX.lmCheck(U2, true); assert.ok(r.errors.some((e) => /pending/.test(e))); });
 t('release gate passes when every item is approved', () => {
   const u = clone(U2); ['copy', 'claims', 'controlled', 'keyFeatures'].forEach((k) => u[k].forEach((x) => { x.review = 'approved'; }));
@@ -97,7 +97,7 @@ t('unfillable placeholder is caught', () => bad((u) => { u.claims[0].en += ' {a.
 t('"throughout" without a verified throughout fact is caught', () => bad((u) => { u.claims[0].en = 'Overall, {a.label} rose throughout, {c.label} too, {b.label} fell ({a.x0}–{a.x1}).'; }, /throughout/));
 t('model sentence on an unsupported fact is caught', () => bad((u) => { u.claims.push({ id: 'b.x', chart: 'B', stage: 'review', kind: 'model', review: 'pending', binds: { h: 'lm-u2-b@1:highest-throughout:app-x+app-y+app-z' }, expect: { h: { status: 'unsupported' } }, en: 'x', vi: 'x' }); }, /only use supported facts/));
 t('answer leak: Chart B fact before Independent is caught', () => bad((u) => { u.controlled[0].binds.m = 'lm-u2-b@1:endpoint:app-x'; }, /later chart|belongs to chart/));
-t('answer leak: Chart B label in pre-Independent text is caught', () => bad((u) => { u.copy[0].en = 'Look at App Y.'; }, /mentions "App Y"/));
+t('answer leak: Chart B label in pre-Independent text is caught', () => bad((u) => { u.copy[0].en = 'Look at Pixlo.'; }, /mentions "Pixlo"/));
 t('answer leak: Chart B item placed in Guided is caught', () => bad((u) => { u.claims.find((c) => c.chart === 'B').stage = 'guided'; }, /hidden until Independent|not used in stage/));
 t('duplicate content id is caught', () => bad((u) => { u.copy[1].id = u.copy[0].id; }, /Duplicate/));
 t('general copy with a chart placeholder is caught', () => bad((u) => { u.copy[0].en = '{a.label}'; u.copy[0].vi = '{a.label}'; }, /general teaching copy/));

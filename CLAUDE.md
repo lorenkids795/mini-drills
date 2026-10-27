@@ -42,8 +42,9 @@ Giao diện người dùng viết bằng **tiếng Anh**. Chú thích trong code
 ├── md-chart.js           # phân tích biểu đồ đường (ES5, không DOM): chValidate … chGetVerifiedFacts; BẮT BUỘC nạp trước app (mục 7.49)
 ├── lm-engine.js          # Learning Materials: gắn chữ với fact đã kiểm, lmCheck (window.LMX)
 ├── lm-unit2.js           # nội dung Unit 2: Chart A/B + câu + Controlled + keyFeatures (window.MD_LM_U2)
+├── lm-unit0.js           # nội dung Unit 0 Data Reading & Selection: Chart A/B + questions + Controlled + notes + keyFeatures (window.MD_LM_U0), mục 7.62
 ├── lm-content.js         # Library › Learning Materials: metadata bài học dựng sẵn (window.MD_LM / module.exports), xem mục 7.48
-├── tests/                # test Node không cần package: lm-meta, chart-facts, lm-unit2-ui, admin-kick, sign-in, server-purge, reading, misc (*.test.js; app-harness.js chạy script thật của index.html với DOM giả), lm-check.js (--release, --report → lm-review.html); không đưa lên site
+├── tests/                # test Node không cần package: lm-meta, chart-facts, lm-unit2-ui, admin-kick, sign-in, server-purge, reading, misc, ui-audit, lm-unit0 (*.test.js; contrast.js + contrast-rules.js = đo tương phản màu; app-harness.js chạy script thật của index.html với DOM giả), lm-check.js (cả Unit 2 + Unit 0; --release, --report → lm-review.html + lm-review-u0.html, --unit 0|2); không đưa lên site
 ├── site.webmanifest      # Manifest cho "Thêm vào màn hình chính" (Android/iOS): tên, icon 192/512, standalone, màu #12141f
 ├── assets/               # favicon-16x16.png, favicon-32x32.png, favicon.ico, apple-touch-icon.png (180), android-chrome-192x192.png, android-chrome-512x512.png (tạo từ logo, xem mục 7.38)
 ├── _headers              # Header bảo mật của Cloudflare Pages (CSP, chống nhúng khung, nosniff…), xem mục 7.37
@@ -55,7 +56,7 @@ Giao diện người dùng viết bằng **tiếng Anh**. Chú thích trong code
 └── functions/api/[[path]].js   # Route: xem mục 4 "Endpoint /api"
 ```
 
-Thứ tự nạp script cuối `index.html`: `md-config.js` → `md-backend.js` → `md-chart.js` → `lm-content.js` → `lm-engine.js` → `lm-unit2.js` → `<script>` inline của app.
+Thứ tự nạp script cuối `index.html`: `md-config.js` → `md-backend.js` → `md-chart.js` → `lm-content.js` → `lm-engine.js` → `lm-unit2.js` → `lm-unit0.js` → `<script>` inline của app.
 
 ### Bản đồ `index.html` (số dòng xấp xỉ, có thể lệch; dùng grep để tìm chính xác)
 
@@ -201,6 +202,24 @@ Prompt AI (`AI_PROMPT`) và schema (`AI_SCHEMA`) nằm ở server, không ở cl
 9. Không đưa secret vào repo (service account JSON, `ADMIN_SETUP_KEY`). `apiKey` Firebase web trong `md-config.js` là công khai theo thiết kế.
 
 ---
+
+## 5b. UI/UX Design Principles (BẮT BUỘC cho mọi thay đổi giao diện)
+
+Áp dụng mặc định mỗi khi tạo mới hoặc sửa trang, component hay tương tác, không chỉ cho một task. Nguồn: ghi chú "15 Product Page Mistakes + 3 Advanced Improvements" (10/2026); chỉ lấy **nguyên lý**, không chép mô-típ trang bán hàng vào web học tập.
+
+1. **Visual hierarchy**: mỗi màn hình/bước chỉ một tâm điểm và **một CTA chính** (Start / Check / Submit / Revise / Next); phân cấp bằng cỡ, độ đậm, màu. Tiêu đề nổi nhưng không "hét" (không ALL CAPS, không chiếm nửa màn hình).
+2. **Consistency**: dùng biến màu có sẵn (mục 5.4) và component có sẵn (`.btn`, `.pill`, `.seg`, `.lucard`…) trước khi tạo cái mới; một font (`--font`, `--mono` cho số/mã), icon SVG **nét** cùng stroke/cỡ (không trộn filled/outline, không emoji làm icon chức năng); radius, shadow, divider mảnh, spacing và lề trái theo cùng một hệ.
+3. **Readability & accessibility**: tương phản chữ ≥ 4.5:1 (chữ lớn/icon ≥ 3:1) ở **cả sáng và tối**, kể cả icon nằm trên ảnh/biểu đồ (cho nền hoặc viền); line-height đoạn văn ≥ 1.6; vùng bấm ≥ 44px; có focus-visible / hover / disabled rõ; đúng/sai không chỉ bằng màu (thêm ✓/✗ hoặc chữ); control có tên truy cập được (`aria-label`/`<label>`), bỏ nhãn thừa ngoài màn hình nhưng **không** bỏ nhãn cho trình đọc màn hình; tôn trọng `prefers-reduced-motion`.
+4. **Clarity & concision**: label, badge, hướng dẫn, CTA ngắn và đúng nghĩa, không lặp ("20% off", không "20% OFF DISCOUNT"); nút ghi rõ hành động và hệ quả (vd. "Submit test · 20 questions", không "Continue" mơ hồ khi thực ra là nộp bài); tên bài cố định, thông tin thay đổi (độ khó, số câu, mức, trạng thái) đặt riêng, không nhét vào tiêu đề.
+5. **Proximity & information flow**: sắp theo luồng **hiểu nhiệm vụ → làm → nhận feedback → sửa/tiếp tục**; metadata cần để quyết định (mục tiêu, độ khó, thời gian, tiến độ) nằm sát tên bài; feedback nằm **ngay cạnh** câu/ô trả lời; control cùng tác vụ đặt cạnh nhau; khoảng cách trong nhóm nhỏ hơn khoảng cách giữa các nhóm.
+6. **Responsive & real-content robustness**: thử 390px và ≥ 1280px, sáng/tối, nội dung dài/ngắn, tiếng Anh/Việt, biểu đồ/ảnh sáng-tối, trạng thái trống / lỗi / loading / disabled; không tràn ngang, không che nội dung, biểu đồ vẫn đọc đúng số, đơn vị, trục.
+7. **Reduce friction**: bớt thao tác thừa, giữ ngữ cảnh và tiến độ (vd. biểu đồ dính bên cạnh khi viết, thanh stage dính). Sticky bar, animation, preset chỉ thêm khi thật sự giảm thao tác; sticky ở đáy điện thoại không được che ô nhập/lựa chọn/bàn phím; không để "Next" thay "Revise" khi người học còn cần sửa.
+
+**Quy trình**
+- *Trước khi code*: nêu mục tiêu người dùng, vấn đề UI/UX cụ thể (màn hình → vị trí → bằng chứng → ảnh hưởng tới học sinh), component và biến màu đang có.
+- *Khi code*: giải pháp tối giản, nhất quán; không đổi logic chấm điểm, dữ liệu câu hỏi, quyền hay giao diện ngoài phạm vi task.
+- *Sau khi code*: tự rà 7 nguyên tắc, các trạng thái tương tác, mobile/desktop, sáng/tối; sửa lỗi tìm thấy. Phần tổng kết gửi người dùng nêu ngắn: **đã áp dụng nguyên tắc nào, đã kiểm tra gì (tự động / chưa xem trên trình duyệt), còn giới hạn gì**.
+- Xung đột với yêu cầu cụ thể: giải thích trade-off, chọn phương án giữ chức năng, dễ dùng và nhất quán; **không** ưu tiên "đẹp" nếu làm giảm hiệu quả học tập.
 
 ## 6. Chạy thử trên máy
 
@@ -483,6 +502,30 @@ Các thay đổi đã có trong code. **Không đảo ngược** nếu không đ
    - Tiến độ chỉ trong phiên (biến `LU`) + nháp localStorage (mục 50); **chưa** lưu theo tài khoản (đề xuất `lmprogress`, chưa làm). Test `lm-unit2-ui.test.js` 37.
 
 59. **Learning Materials dạng cây (10/2026)** (spec "Library > Learning Materials", bản "Tree line"): `lmHTML` vẽ cây 3 cấp, không thẻ: **kỹ năng** (`lm-content.js` `skills` theo thứ tự Writing · Listening · Reading · Speaking) › **nhóm bài** (`modules`: IELTS Academic Task 1, **IELTS Task 2** mới, chưa có bài) › **unit** (`.lmu`, `lm-open`). Kỹ năng không có nhóm = mờ 65%, `disabled`, pill "Coming soon". Mở/đóng bằng `data-act="lm-tg"` (`data-k` = `s:<skill>` / `m:<module>`, `aria-expanded`, `aria-controls`), trạng thái `LMO` trong phiên (mặc định Writing mở, các nhóm đóng). Icon SVG `LM_ICO`/`lmIco`, mũi tên `LM_CH`/`LM_AR`. Unit vẫn qua `lmVisible` (học sinh/GV không thấy bài `unpublished`, nhóm hiện "No units yet"); badge "Unpublished preview" màu `--lm-amber`. Màu kỹ năng `--lm-w/--lm-l/--lm-r/--lm-s` + `--lm-amber` (đủ 3 chỗ), mỗi kỹ năng đặt `--c`, nền nhạt bằng `color-mix`. CSS `.lmtree .lmmod .lmhd .lmic .lmnm .lmchev .lmsoon .lmtw .lmth .lmuw .lmu .lmbd .lmarr .lmno`. Giữ font Be Vietnam Pro của app (spec ghi Inter) và tên tab "Cambridge" (yêu cầu trước). Test `lm-meta` 22.
+
+60. **Rà UI/UX toàn app theo mục 5b (10/2026)** (chỉ phần kiểm được từ code; chưa xem trên trình duyệt):
+   - **Tương phản**: `tests/contrast.js` (cặp biến màu, sáng + tối) và `tests/contrast-rules.js` (chữ/nền cùng một quy tắc CSS). Đổi bản sáng: `--muted #535e74`, `--warn #8f5b06`, `--line-2 #858fa3` (viền ô nhập 3:1), `--lm-r #b5651a`, `--lm-amber #8a5512`; `.lshw.on` chữ `#14213d` trên nền vàng ở dark. Ô nhập dùng `--line` (`.lgform`, `.xed`, `.enbar`, `.wver`, `.lsimged`, `.stform`…) đổi sang `--line-2`.
+   - **Khối CSS "UI/UX baseline"** (cuối `<style>` chính): `.btn` cao ≥ 40px (`.sm`/`.iconbtn` 34px), máy cảm ứng (`pointer:coarse`) ≥ 44px; hover cho `.btn`/`.iconbtn`; `.mainc p` line-height 1.6; **một luật reduced-motion chung** tắt mọi animation/transition; đúng/sai không chỉ bằng màu (`.opt.good::after` ✓ / `.opt.bad::after` ✗ — trừ `.ls`/`.rm` đã có sẵn — ô sai `.gap.bad` viền đứt, `.rmslot`/`.rmblank` ✓/✗, `.luopt.cor` ✓); điện thoại: thanh nút dính đáy `.ls>.actions`/`.rm>.actions` thôi dính khi đang gõ (`:has(…:focus)`) để không che ô nhập/bàn phím; `.enin:focus` có gạch chân `--accent`.
+   - **Bàn phím / trình đọc màn hình**: phần tử bấm không phải nút (`fx-tip` trong danh sách lỗi, `mk-word`, `ls-hw`) có `role="button" tabindex="0"` + một listener Enter/Space chung; thêm `aria-label` cho `#alQ`, `#dyDict`, `#ctIn`, `#vipSel` và ô của trình sửa bài (`xLeaf(v,p,lab)`, `data-xp` qua `esc`).
+   - **Icon**: 🔊 → `ICO_SPK`, ⚙ → `ICO_GEAR` (SVG nét cùng bộ `ICO_EDIT`); nút ⚙ trên ảnh bìa lớp `.cgear` nền tối mờ + viền trắng (rõ trên ảnh sáng); `.spk` 40px.
+   - **Nút rõ hành động**: Submit answers / Submit essay / Submit recordings (cả preview), Open Error Notebook, Use extension, Use VIP correction, Add prize.
+   - **Điện thoại**: bảng dữ liệu Writing (`.tscr`) và bảng Classes của Dashboard (`.dscr`) cuộn ngang trong khung (CSS `table{min-width:520px}`).
+   - `tests/ui-audit.test.js` (15) giữ các luật này: tương phản, nút icon có `aria-label`, không emoji trên nút, ô nhập có nhãn, phần tử bấm được dùng bàn phím, focus, cỡ vùng bấm, reduced motion, ✓/✗, letter-spacing chữ in hoa, một font, bảng cuộn, thanh dính, chữ nút cụ thể.
+
+61. **Unit 2 — feedback bổ sung (10/2026)** (`Mini_Drills_Unit2_Additional_Feedback.md`; vẫn `unpublished`, **152 mục `pending`**):
+   - **Tên đường hư cấu**: Chart A = Larkfield Museum / Westmere Museum / Corvale Museum, Chart B = Chatora / Pixlo / Notivo (chỉ đổi `label`; id `museum-a…`/`app-x…`, số liệu, fact, đáp án giữ nguyên; mọi câu dùng `{x.label}` nên tự đổi theo). Cố ý **không** dùng tên giống tổ chức thật.
+   - **Từ nối trong câu mẫu**: `a.model.highest` = "{h.resultLabel} **also** had…", `a.model.shape` = "**Notably,** {c.label}…" (+ `why` giải thích từ nối). Không dùng "Most importantly" (ngụ ý xếp hạng, sai khi xu hướng mới là ý chính). Chart B giữ nguyên. FAQ "No…" vẫn nói rõ không cần đủ 3 phần.
+   - Bỏ dòng `.lucap` dưới biểu đồ; câu "made-up data" (`copy.synthetic`) chỉ còn **trong Data table** (`chart.note` → `.chnote`, `luLayout` truyền bản sao biểu đồ có `note`). Gợi ý dưới nút Continue bị mờ (`copy.learn.try*`) chỉ còn cho trình đọc màn hình (`.sr` + `aria-describedby`) và `title`. Đã xóa `copy.learn.annot.note`.
+   - **Đầu bài**: `.lutop` = breadcrumb `lmCrumbHTML(l)` ("Learning Materials › Writing › IELTS Academic Task 1", phần đầu là nút `lm-back`) bên trái + ENG | VI + "Preview: auto-fill" (admin) bên phải. Bỏ nút "‹ Learning Materials", bỏ dòng "Unpublished preview · N content items…" trong bài (pill ở cây Learning Materials vẫn còn; `lmVisible`, `pending`, release gate, báo lỗi nội dung không đổi). Bấm tab "Learning Materials" khi đang ở bài cũng về danh sách (`lib-tab` đặt `LMV=null`).
+   - **Biểu đồ dùng chung** (cả bài Writing Cambridge): tiêu đề `figcaption` căn giữa, 1.08rem, weight 800; dòng Unit căn giữa. **Data table** `.chtbl`: bảng vừa nội dung (bỏ `min-width:520px` chung), .85rem, số căn giữa + `tabular-nums`, tiêu đề cột không in hoa.
+   - Chưa làm: ghi chú "thay" ở trang 5 của PDF (không rõ thay gì).
+
+62. **Learning Materials — Unit 0: Data Reading & Selection (10/2026)** (`Mini_Drills_Unit_0_Data_Reading_Implementation_Prompt.md`; `lm-writing-ac-t1-u0`, `unit:0`, `version:1`, **`unpublished`**, **165 mục `pending`**; làm tại máy, không git):
+   - **Nội dung** `lm-unit0.js` (`window.MD_LM_U0`, cùng dạng Unit 2 nên `lmCheck` kiểm được): Chart A "Electricity generated from three sources in Valmora, 2005–2025" (Coal 80→48 giảm đều + đứng đầu mọi năm, Wind 10→44 tăng đều, Solar 2→15 lên xuống + thấp nhất mọi năm) cho learn/controlled/guided; Chart B "Daily journeys to work in Brennick by type of transport, 2016–2024" (Car 60→45 giảm đều, Bus 35→38 lên xuống, Bicycle 8→48 tăng đều; đổi dẫn đầu Car→Bicycle, Bus = Bicycle năm 2022, không có "highest throughout") cho independent/review. Tên nơi hư cấu, số liệu giả định — **chờ chủ dự án duyệt**. Bảng kiểm 5 bước `U0_CK` = measure · time · trends · high · leave (`u0.ck.*`).
+   - **Engine** (`lm-engine.js`, mở rộng, Unit 2 không đổi): loại mục mới **`questions`** `{q{en,vi}, opts[{v,en}], answer, key, why{en,vi}}`, `lmQuestionCheck` tính lại đáp án: `key.src` = `unit` / `period` / `xs` / `series` / `not_series` (đọc từ JSON biểu đồ), `key.fact`+`field` (giá trị của fact đã kiểm), hoặc `key.reviewed:true` (đáp án do giáo viên chọn: chính/phụ, nên bỏ qua). `controlled` dùng cả ở stage `learn` (câu "biểu đồ có cho biết không?"). `claims` kiểu `kind:'note'` + `ck` = ghi chú tham khảo theo từng bước bảng kiểm.
+   - **Màn hình** (khối JS "Learning Materials · Unit 0 lesson" trước `renderLib`; `lmLessonHTML` → `u0HTML` khi `u0Unit(id)`): dùng lại hàm chung của Unit 2 (`luCtx luTxt luPair luU luUf luCopy luL luKey/luGet/luPut/luOld`, `lmCrumbHTML`, CSS `.lu*`), state riêng **`U0S`**, thao tác `u0-*` (`u0Act`, gọi trong `extAct`). Learn 7 bước (`U0_LS`, `u0LDone`): mục tiêu + bảng kiểm + câu "số liệu giả định" (chỉ 1 lần) → đo gì/đơn vị → thời gian/phạm vi + "có cho biết không?" → bấm từng đường (fact endpoint + shape) → cao nhất/thấp nhất → chọn đặc điểm rồi mới hiện Chính/Phụ → ghi chú tham khảo. Sai 2 lần thì hiện đáp án (không kẹt), không có nút Bỏ qua. Controlled 8 câu (`U0_C`, YES/NO/NOT GIVEN + chính/phụ, ceil(70%) = 6/8). Guided: 7 ô chọn (`U0_G`, xu hướng tính từ fact, 5/7) → chọn đặc điểm + lý do → ≥ 2 nhận xét → gộp thành bản tóm tắt → so với bảng tham khảo + tick đã sửa. Independent: Chart B lần đầu, 7 ô tự viết, gợi ý chỉ là phương pháp. Review: bảng tham khảo Chart B, đặc điểm chính + lý do, tự kiểm "I included…/I avoided…" (không phải điểm). Học sinh mở stage theo thứ tự (`u0Unlocked`), admin mở mọi stage; "Preview: auto-fill" chỉ admin, không ghi gì, tắt thì trả lại trạng thái thật (`U0_SNAP`).
+   - **Lưu tiến độ trên máy** (stage, đáp án, ghi chú): `localStorage md-lm:lm-writing-ac-t1-u0:v1:state` (`u0Save`/`u0State`); phiên bản khác chỉ báo + nút "Discard old answers" (`u0-old`); "Clear my answers" có `confirm`. **Chưa** đồng bộ theo tài khoản (cần collection + rules mới, chưa được duyệt).
+   - Test: `node tests/lm-unit0.test.js` (23), `node tests/lm-check.js --report` → `tests/lm-review-u0.html`. Phát hành: chủ dự án duyệt theo id → `--release` qua → đổi `status:'published'` trong `lm-content.js`.
 
 ## 8. Giới hạn đã biết / chưa làm
 

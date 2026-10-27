@@ -26,7 +26,7 @@ function boot(opt) {
   win.isArr = Array.isArray; win.U = opt.user || { email: 'a@x', role: 'teacher', adm: true }; win.lsGet = () => null; win.lsSet = () => {};
   win.toast = (m) => { win._toast = m; }; win.confirm = () => true; win.$ = () => null; win.renderLib = () => {};
   const ctx = vm.createContext(win);
-  ['md-chart.js', 'lm-content.js', 'lm-engine.js', 'lm-unit2.js'].forEach((f) => vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), ctx, { filename: f }));
+  ['md-chart.js', 'lm-content.js', 'lm-engine.js', 'lm-unit2.js', 'lm-unit0.js'].forEach((f) => vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), ctx, { filename: f }));
   if (opt.mutate) opt.mutate(win.MD_LM_U2);
   vm.runInContext(RENDER + LM + ';this.T={luStageHTML,luHTML,luAct,luKey,luGet,luPut,lmLesson,lmHTML,luPair,setLMV:function(v){LMV=v},LU:function(){return LU}};', ctx);
   return win;
@@ -63,9 +63,27 @@ const G_OK = { 't:museum-a': 'up', 't:museum-b': 'down', 't:museum-c': 'fup', to
 t('language switch reads ENG | VI; no long language note', () => {
   const h = T.luHTML(L, U2); assert.ok(/data-v="en"[^>]*>ENG<\/button><button[^>]*data-v="vi"[^>]*>VI</.test(h)); assert.ok(!copyOf('ui.lang.note'));
 });
-t('chart titles have no "(illustrative data)"; a short "Practice chart" caption under every stage chart; synthetic flag kept', () => {
+t('feedback 10/2026: no caption under the chart; "made-up data" said once inside the Data table; titles without "(illustrative data)"; synthetic flag kept', () => {
   ['A', 'B'].forEach((k) => { assert.ok(!/illustrative/i.test(U2.charts[k].chart.title)); assert.strictEqual(U2.charts[k].synthetic, true); });
-  ['learn', 'controlled', 'guided', 'independent', 'review'].forEach((st) => { const h = T.luStageHTML(U2, st); assert.ok(h.includes('<p class="lucap">' + W.esc(copyOf('copy.synthetic').vi) + '</p>'), st); assert.ok(/illustrative data/i.test(h) === false, st); });
+  ['learn', 'controlled', 'guided', 'independent', 'review'].forEach((st) => { const h = T.luStageHTML(U2, st); assert.ok(!h.includes('lucap'), st);
+    assert.ok(/<details class="chtbl">[\s\S]*<p class="chnote">/.test(h) && h.includes(W.esc(copyOf('copy.synthetic').vi)), st + ' note in the data table'); });
+});
+t('feedback 10/2026: removed lines are gone from the screen (hints only for screen readers / tooltip)', () => {
+  const w = open(boot()); act(w, 'lu-lnext'); let h = learn(w); const ex = W.esc(copyOf('copy.learn.tryExplore').vi);
+  assert.ok(!h.includes('<p class="lunote luhint"') && h.includes('<span class="sr" id="luNeed2">' + ex + '</span>') && h.includes('title="' + ex + '"'));
+  act(w, 'lu-lang', { v: 'en' }); h = learn(w); assert.ok(!/<p[^>]*>Answer the questions and press Check to continue\.<\/p>/.test(h));
+  assert.ok(!U2.copy.some((x) => x.id === 'copy.learn.annot.note')); assert.ok(!learnTo(boot(), 7).includes('You do not need all three parts'));
+});
+t('feedback 10/2026: invented, natural series names everywhere; data, facts and answers unchanged', () => {
+  assert.strictEqual(JSON.stringify(U2.charts.A.chart.series.map((s) => s.label)), JSON.stringify(['Larkfield Museum', 'Westmere Museum', 'Corvale Museum']));
+  assert.strictEqual(JSON.stringify(U2.charts.B.chart.series.map((s) => s.label)), JSON.stringify(['Chatora', 'Pixlo', 'Notivo']));
+  assert.strictEqual(U2.charts.A.chart.series.map((s) => s.points.map((p) => p.y).join()).join('|'), '60,68,75,82,90|50,44,40,35,30|20,26,23,29,27');
+  const all = JSON.stringify(U2); assert.ok(!/Museum [ABC]\b|App [XYZ]\b/.test(all)); const r = W.LMX.lmCheck(U2); assert.strictEqual(r.errors.length, 0, r.errors.join(' | '));
+});
+t('feedback 10/2026: linkers in the model overview ("also", "Notably,"), never a fixed formula', () => {
+  const g = (id) => U2.claims.find((x) => x.id === id); assert.ok(/^\{h\.resultLabel\} also had/.test(g('a.model.highest').en)); assert.ok(/^Notably, \{c\.label\}/.test(g('a.model.shape').en));
+  assert.ok(!/Most importantly/i.test(JSON.stringify(U2))); assert.ok(/^No\b/.test(copyOf('copy.lens.flexible').en), 'FAQ still says all three are not needed');
+  const h = learnTo(boot(), 7); assert.ok(h.includes('Larkfield Museum also had the most visitors in every year shown.') && h.includes('Notably, Corvale Museum fluctuated'));
 });
 t('every stage uses the same layout: chart column left, activity right', () => ['learn', 'controlled', 'guided', 'independent', 'review'].forEach((st) => {
   const h = T.luStageHTML(U2, st); assert.ok(/^<div class="lulearn"><div class="lulside"><div class="luchart lulc"/.test(h) && h.includes('<div class="lulsteps">'), st);
@@ -94,31 +112,31 @@ t('all 7 steps can be finished by doing them (no deadlock); the last one leads t
 t('step 2 explore: answers come from the facts; wrong answers can be retried', () => {
   const w = open(boot()); act(w, 'lu-lnext'); act(w, 'lu-xq', { q: 'top', v: 'museum-b' }); act(w, 'lu-xq', { q: 'down', v: 'museum-b' }); act(w, 'lu-xq', { q: 'fluct', v: 'museum-c' }); act(w, 'lu-xchk');
   let h = s(learn(w), 2); assert.strictEqual((h.match(/class="luq no"/g) || []).length, 1); assert.strictEqual((h.match(/class="luq ok"/g) || []).length, 2);
-  assert.ok(h.includes('Museum A: đứng đầu ở mọi năm được cho') && h.includes('Museum B: 50 → 30 (2000–2020)') && h.includes('Museum C: lên xuống'));
+  assert.ok(h.includes('Larkfield Museum: đứng đầu ở mọi năm được cho') && h.includes('Westmere Museum: 50 → 30 (2000–2020)') && h.includes('Corvale Museum: lên xuống'));
   act(w, 'lu-xredo'); assert.strictEqual(w.T.LU().xchk, false); assert.ok(/data-act="lu-xchk" disabled/.test(learn(w)), 'Check needs an answer to every question');
 });
-t('step 3 Trends covers ALL lines grouped Upward / Downward / Fluctuating; Museum C is not dimmed; FAQ about Museum C', () => {
+t('step 3 Trends covers ALL lines grouped Upward / Downward / Fluctuating; Corvale Museum is not dimmed; FAQ about Corvale Museum', () => {
   const w = open(boot()); act(w, 'lu-lnext'); DO[2](w); act(w, 'lu-lnext'); act(w, 'lu-lens', { v: 'trends' }); const h = learn(w);
   assert.strictEqual((/class="luchart lulc" data-hl="([^"]*)"/.exec(h) || [])[1], 's0 s1 s2');
-  const p = h.slice(h.indexOf('lupanel')); assert.ok(/Đi lên<\/b><ul><li>[^]*Museum A: 60 → 90/.test(p) && /Đi xuống<\/b><ul><li>[^]*Museum B: 50 → 30/.test(p) && /Dao động<\/b><ul><li>[^]*Museum C: 20 → 27/.test(p));
-  const fq = U2.claims.find((x) => x.id === 'a.faq.fluct'); assert.ok(p.includes(W.esc(resolved(fq, fq.q.vi))) && p.includes('Museum C'));
+  const p = h.slice(h.indexOf('lupanel')); assert.ok(/Đi lên<\/b><ul><li>[^]*Larkfield Museum: 60 → 90/.test(p) && /Đi xuống<\/b><ul><li>[^]*Westmere Museum: 50 → 30/.test(p) && /Dao động<\/b><ul><li>[^]*Corvale Museum: 20 → 27/.test(p));
+  const fq = U2.claims.find((x) => x.id === 'a.faq.fluct'); assert.ok(p.includes(W.esc(resolved(fq, fq.q.vi))) && p.includes('Corvale Museum'));
 });
-t('step 3 Highest / lowest names Museum A on top and Museum C at the bottom; all three lenses are needed', () => {
+t('step 3 Highest / lowest names Larkfield Museum on top and Corvale Museum at the bottom; all three lenses are needed', () => {
   const w = open(boot()); act(w, 'lu-lnext'); DO[2](w); act(w, 'lu-lnext'); act(w, 'lu-lens', { v: 'highest' }); let h = learn(w);
-  assert.strictEqual((/data-hl="([^"]*)"/.exec(h) || [])[1], 's0 s2'); assert.ok(h.includes('Museum A: đứng đầu') && h.includes('Museum C: thấp nhất ở mọi năm được cho'));
+  assert.strictEqual((/data-hl="([^"]*)"/.exec(h) || [])[1], 's0 s2'); assert.ok(h.includes('Larkfield Museum: đứng đầu') && h.includes('Corvale Museum: thấp nhất ở mọi năm được cho'));
   assert.ok(/data-act="lu-lnext" disabled/.test(h)); act(w, 'lu-lens', { v: 'trends' }); act(w, 'lu-lens', { v: 'highlights' }); assert.ok(!/data-act="lu-lnext" disabled/.test(learn(w)));
   assert.ok(h.includes(W.esc(copyOf('ui.faq.lenses.q').vi)) && h.includes(W.esc(copyOf('copy.lens.flexible').vi)));
 });
 t('step 4: lines shown with each feature; Main / Optional and the explanation only after Check', () => {
   const w = boot(); learnTo(w, 4); let h = s(learn(w), 4);
-  assert.ok(h.includes('<span class="luser">Museum A</span>') && h.includes('<span class="luser">Museum C</span>')); assert.ok(!/class="pill( acc)?">(Chính|Phụ)/.test(h));
+  assert.ok(h.includes('<span class="luser">Larkfield Museum</span>') && h.includes('<span class="luser">Corvale Museum</span>')); assert.ok(!/class="pill( acc)?">(Chính|Phụ)/.test(h));
   DO[4](w); h = s(learn(w), 4); assert.ok(/class="pill acc">Chính/.test(h) && h.includes(W.esc(copyOf('copy.learn.choose.main').vi)) && h.includes(W.esc(copyOf('copy.learn.choose.opt').vi)));
 });
 t('step 5 frame: Overall / while highlighted; right lines = correct; two wrong tries show the answer (no deadlock)', () => {
   const w = boot(); learnTo(w, 5); let h = s(learn(w), 5);
   assert.ok(/<p class="luframe" lang="en"><mark class="lukw">Overall<\/mark>, <select/.test(h) && h.includes('<mark class="lukw">while</mark>'));
   w.T.LU().frame = ['museum-a', 'museum-b', 'museum-c']; act(w, 'lu-frame-chk'); h = s(learn(w), 5); assert.ok(h.includes(W.esc(copyOf('copy.learn.frame.no').vi)) && h.includes('lu-frame-redo')); assert.ok(!w.T.LU().frameOk);
-  act(w, 'lu-frame-redo'); act(w, 'lu-frame-chk'); h = s(learn(w), 5); assert.ok(w.T.LU().frameOk, 'opens after 2 tries'); assert.ok(h.includes('Museum A') && /<p class="lusent" lang="en"><mark class="lukw">Overall<\/mark>, Museum A and Museum C/.test(h));
+  act(w, 'lu-frame-redo'); act(w, 'lu-frame-chk'); h = s(learn(w), 5); assert.ok(w.T.LU().frameOk, 'opens after 2 tries'); assert.ok(h.includes('Larkfield Museum') && /<p class="lusent" lang="en"><mark class="lukw">Overall<\/mark>, Larkfield Museum and Corvale Museum/.test(h));
   const w2 = boot(); learnTo(w2, 5); w2.T.LU().frame = ['museum-c', 'museum-a', 'museum-b']; act(w2, 'lu-frame-chk'); assert.ok(w2.T.LU().frameOk && s(learn(w2), 5).includes(W.esc(copyOf('copy.learn.frame.ok').vi)));
 });
 t('step 6: samples hidden until "show"; then a concise paragraph (trends + highest) and the full paragraph coloured by group with a legend', () => {
@@ -146,7 +164,7 @@ t('Controlled: a wrong answer shows the right label and the explanation', () => 
 // ---------- Guided ----------
 t('Guided: three small exercises with answers from the facts (trend verb, highest / lowest, what to leave out)', () => {
   const w = open(boot()); act(w, 'lu-lang', { v: 'en' }); const h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
-  assert.strictEqual((h.match(/<select class="lugsel"/g) || []).length, 5); assert.ok(/Museum A <select class="lugsel" data-g="t:museum-a"[\s\S]*?<\/select> between 2000 and 2020\./.test(h));
+  assert.strictEqual((h.match(/<select class="lugsel"/g) || []).length, 5); assert.ok(/Larkfield Museum <select class="lugsel" data-g="t:museum-a"[\s\S]*?<\/select> between 2000 and 2020\./.test(h));
   assert.ok(h.includes('data-act="lu-gpick" data-id="kf.a.fluct"')); assert.ok(h.includes('You need 5 of 6 correct to continue.'));
   assert.ok(!h.includes('id="luG"'), 'writing box only after passing');
 });
@@ -155,14 +173,14 @@ t('Guided: under 70 % stays closed (retry), 5 / 6 opens the pieces + writing box
   Object.assign(L1.g, G_OK, { 't:museum-a': 'down', top: 'museum-b' }); act(w, 'lu-gchk'); let h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
   assert.ok(h.includes('Đúng 4 / 6 câu') && !h.includes('id="luG"') && !L1.gpass); act(w, 'lu-gredo'); assert.deepStrictEqual(Object.keys(L1.g), []);
   Object.assign(L1.g, G_OK, { top: 'museum-b' }); act(w, 'lu-gchk'); h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
-  assert.ok(L1.gpass && h.includes('id="luG"') && h.includes('<ul class="lupieces" lang="en"><li>Museum A increased between 2000 and 2020.</li>')); assert.ok(!h.includes('Museum B had the most'), 'wrong piece not offered');
+  assert.ok(L1.gpass && h.includes('id="luG"') && h.includes('<ul class="lupieces" lang="en"><li>Larkfield Museum increased between 2000 and 2020.</li>')); assert.ok(!h.includes('Westmere Museum had the most'), 'wrong piece not offered');
   assert.ok(/data-s="independent" disabled/.test(h)); w.T.luPut(w.MD_LM_U2, 'guided', { t: 'Overall, A rose.' }); assert.ok(!/data-s="independent" disabled/.test(w.T.luStageHTML(w.MD_LM_U2, 'guided')));
   act(w, 'lu-go', { s: 'independent' }); assert.strictEqual(L1.stage, 'independent');
 });
 // ---------- Independent / Review ----------
 t('Independent: Chart B, a hint that opens only the Chart A sample; no B sample or feature', () => {
-  const h = T.luStageHTML(U2, 'independent'); assert.ok(h.includes('App X') && h.includes('id="luI"') && h.includes(W.esc(copyOf('ui.ind.hint').vi)));
-  const hint = h.slice(h.indexOf('luhintA'), h.indexOf('</details>', h.indexOf('luhintA'))); assert.ok(hint.includes('Museum A') && !bWords.some((x) => hint.includes(x)));
+  const h = T.luStageHTML(U2, 'independent'); assert.ok(h.includes('Chatora') && h.includes('id="luI"') && h.includes(W.esc(copyOf('ui.ind.hint').vi)));
+  const hint = h.slice(h.indexOf('luhintA'), h.indexOf('</details>', h.indexOf('luhintA'))); assert.ok(hint.includes('Larkfield Museum') && !bWords.some((x) => hint.includes(x)));
   U2.claims.filter((x) => x.chart === 'B').forEach((x) => assert.ok(!h.includes(W.esc(resolved(x, x.en))), x.id));
 });
 t('free writing is never scored: "not graded automatically", no 150 words / minimum / band', () => {
@@ -170,7 +188,7 @@ t('free writing is never scored: "not graded automatically", no 150 words / mini
 });
 t('"I\'m done" with an empty answer does nothing; with text it opens Review', () => {
   const w = open(boot()); w.$ = () => ({ value: '  ', focus: () => {} }); act(w, 'lu-rv'); assert.notStrictEqual(w.T.LU().stage, 'review');
-  w.$ = () => ({ value: 'Overall, App Y grew.', focus: () => {} }); act(w, 'lu-rv'); assert.strictEqual(w.T.LU().stage, 'review');
+  w.$ = () => ({ value: 'Overall, Pixlo grew.', focus: () => {} }); act(w, 'lu-rv'); assert.strictEqual(w.T.LU().stage, 'review');
 });
 // ---------- stage order (students) / admin ----------
 t('students: stages open in order (titles say why); admin preview opens every stage', () => {
@@ -202,7 +220,7 @@ t('no hard-coded English UI words left in Vietnamese mode', () => ['learn', 'con
 }));
 // ---------- content / ids / drafts / safety ----------
 t('every UI text id used by the lesson code exists in the content; all content still pending, no problems', () => {
-  const known = new Set(U2.copy.map((x) => x.id)); const used = (LM.match(/luUf?\(u,'([\w.]+)'[,)]|luCopy\(u,'([\w.]+)'\)|luC\(u,'([\w.]+)'\)/g) || []).map((m) => /'([\w.]+)'/.exec(m)[1]);
+  const known = new Set(U2.copy.map((x) => x.id)); const LM2 = LM.slice(0, LM.indexOf('/* ---------- Learning Materials · Unit 0 lesson')); const used = (LM2.match(/luUf?\(u,'([\w.]+)'[,)]|luCopy\(u,'([\w.]+)'\)|luC\(u,'([\w.]+)'\)/g) || []).map((m) => /'([\w.]+)'/.exec(m)[1]);
   assert.ok(used.length > 30); used.forEach((id) => assert.ok(known.has(id), 'missing ' + id));
   ['up', 'down', 'fluct'].forEach((c) => assert.ok(known.has('ui.tr.' + c))); ['learn', 'controlled', 'guided', 'independent', 'review'].forEach((x) => assert.ok(known.has('ui.st.' + x)));
   const r = W.LMX.lmCheck(U2); assert.strictEqual(r.errors.length, 0, r.errors.join(' | ')); assert.strictEqual(r.approved, 0);
@@ -217,8 +235,17 @@ t('drafts: version-scoped key, restored; older version only offered for discard;
   h = boot({ broken: true }).T.luStageHTML(U2, 'independent'); assert.ok(h.includes('luwarn'));
 });
 t('changed chart data: lesson refuses to show', () => { const w = boot({ mutate: (u) => { u.charts.A.chart.series[1].points[4].y = 70; } }); const h = w.T.luHTML(L, w.MD_LM_U2); assert.ok(h.includes('cannot be shown') && !h.includes('lusteps')); });
-t('pending content: admin preview says so; students cannot open the unpublished lesson', () => {
-  assert.ok(T.luHTML(L, U2).includes('still waiting for review')); const w = boot({ user: STU }); w.T.setLMV(LID); const h = w.T.lmHTML(); assert.ok(!h.includes('lusteps') && !h.includes('lm-open') && h.includes('lmtree'));
+t('feedback 10/2026: header = breadcrumb (way back) + ENG | VI + admin auto-fill on the right; no separate back button, no duplicate "Unpublished preview" line', () => {
+  const h = T.luHTML(L, U2), top = h.slice(0, h.indexOf('<div class="lmshell lu">'));
+  assert.ok(/^<div class="lutop"><nav class="lmcrumb" aria-label="Breadcrumb"><button type="button" class="linkish" data-act="lm-back">Learning Materials<\/button>/.test(h));
+  assert.ok(top.includes('>Writing<') && top.includes('>IELTS Academic Task 1<') && top.includes('data-act="lu-lang"') && top.includes('data-act="lu-af"'));
+  assert.ok(!h.includes('still waiting for review') && !h.includes('‹ Learning Materials') && !h.includes('lmpath'));
+  const s = boot({ user: STU }); s.T.setLMV(LID); assert.ok(!s.T.lmHTML().includes('lusteps'), 'students still cannot open it');
+  assert.ok(!boot({ user: STU }).T.luHTML(L, U2).includes('lu-af'), 'auto-fill admin only');
+});
+t('pending content stays gated: students cannot open the unpublished lesson; content check still runs', () => {
+  const w = boot({ user: STU }); w.T.setLMV(LID); const h = w.T.lmHTML(); assert.ok(!h.includes('lusteps') && !h.includes('lm-open') && h.includes('lmtree'));
+  assert.ok(W.LMX.lmCheck(U2).pending > 0 && L.status === 'unpublished');
 });
 t('lesson code: no database, XP or AI calls', () => { const blk = LM.slice(LM.indexOf('Learning Materials · Unit 2 lesson')); assert.ok(!/dbh|collection\(|addXP|gainXP|putProf|grantSpin|\/api\//.test(blk)); });
 t('index.html loads the content after md-chart.js and before the app', () => {
