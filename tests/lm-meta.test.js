@@ -51,7 +51,9 @@ t('tree: open Task 1 shows the unit row (title, amber preview badge, chevron); e
   assert.ok(/<button type="button" class="lmu" data-act="lm-open" data-id="lm-writing-ac-t1-u2"><span>Unit 2: Overview \(Time-series Line Charts\)<\/span><span class="lmbd">Unpublished preview<\/span><span class="lmarr"/.test(h));
   assert.ok(h.includes('<p class="lmno">No units yet</p>')); api.close('m:ielts-task2');
 });
-t('tree: a student never sees the unpublished unit, even with the group open', () => { ctx.U = STU; api.open('m:ielts-academic-task1'); const h = api.lmHTML(); assert.ok(!h.includes('Unit 2') && h.includes('No units yet')); });
+t('tree: an ordinary student sees Writing as "Coming soon" (disabled), never a unit, even with the group state open', () => { ctx.U = STU; api.open('s:writing'); api.open('m:ielts-academic-task1'); const h = api.lmHTML();
+  assert.ok(!h.includes('Unit 2') && !h.includes('Unit 0') && !h.includes('data-k="s:writing"') && /<section class="lmmod lm-writing dis"[^>]*><button type="button" class="lmhd" disabled>[\s\S]*?Coming soon/.test(h)); });
+t('tree: a teacher keeps the old view (Writing opens, unpublished units hidden)', () => { ctx.U = TEA; api.open('m:ielts-academic-task1'); const h = api.lmHTML(); assert.ok(h.includes('data-k="s:writing"') && !h.includes('Unit 2') && h.includes('No units yet')); });
 t('tree: every unit title / skill name is escaped; toggles are buttons with aria-expanded', () => { ctx.U = ADM; const h = api.lmHTML(); assert.ok(!/<div[^>]*data-act=/.test(h)); assert.strictEqual((h.match(/data-act="lm-tg"/g) || []).length, (h.match(/data-act="lm-tg"[^>]*aria-expanded=/g) || []).length); });
 t('no Firestore use in the Learning Materials block', () => assert.ok(!/dbh|collection\(|firestore/i.test(html.slice(a, b))));
 
