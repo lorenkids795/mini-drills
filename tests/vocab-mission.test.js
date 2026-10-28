@@ -1,6 +1,11 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),C=require('../vocab-mission-core'),D=require('../vocab-mission-content'),bank=require('../data/vocab-lab-p1.json');
 const linked=D.linked(bank),demo=D.coast();let serial=0;
+test('opening/replaying/switching accounts never mutates shared authored content',()=>{
+ const expected=JSON.stringify(D.coast());for(let i=0;i<4;i++)assert.equal(JSON.stringify(D.coast()),expected);
+ assert.equal(JSON.stringify(D.linked(bank)),JSON.stringify(linked));
+ for(const m of [D.coast(),D.linked(bank)])m.terms.forEach(t=>assert.ok(t.investigate.prompt&&t.investigate.context));
+});
 const act=(s,type,x={})=>C.apply(s,{type,id:'test-'+(++serial),...x});
 function profile(m=linked,statuses=['new','unsure','verified_for_current_task','self_reported_known','needs_practice']){return {email:'qa@local.invalid',lessonId:bank.lessonId,revision:12,termProgress:Object.fromEntries(m.terms.map((t,i)=>[t.senseId,{status:statuses[i%statuses.length]}]))}}
 function start(m=demo,p=null){let s=C.create(m,p,'qa@local.invalid');s=act(s,'begin');s=act(s,'fullReport');return act(s,'revealSentence')}
@@ -29,7 +34,7 @@ test('Case File reveals exactly one sentence per action and supports full report
  let full=act(C.create(demo,null,'qa@local.invalid'),'begin');full=act(full,'fullReport');assert.equal(full.revealed,5);
 });
 test('first wrong stays open; retry, hint, reveal and supported discovery are never independent',()=>{
- for(const mode of ['retry','hint','reveal','guided']){
+ for(const mode of ['retry','hint','reveal']){
   let s=start();const q=C.current(s);if(mode==='retry'){s=act(s,'answer',{value:(q.answer+1)%3});assert.equal(s.records[q.id].done,false)}
   if(mode==='hint')s=act(s,'hint');s=mode==='reveal'?act(s,'reveal'):act(s,'answer',{value:q.answer});assert.equal(s.records[q.id].independent,false);
  }
@@ -56,7 +61,45 @@ test('complete both coherent missions; preserve source and capture recall/recons
 test('session snapshot pins version on resume and is bound to identity and mission; actions are idempotent',()=>{
  let s=C.create(demo,null,'qa@local.invalid'),a={type:'begin',id:'once'};s=C.apply(s,a);assert.deepEqual(C.apply(s,a),s);
  const saved=JSON.parse(JSON.stringify(s));assert.equal(C.resume(saved,'qa@local.invalid',demo.id),true);assert.equal(C.resume(saved,'other',demo.id),false);
- const changed={...demo,version:2};assert.equal(saved.snapshot.version,1);assert.equal(changed.version,2);assert.equal(C.resume({...saved,contentVersion:2},'qa@local.invalid',demo.id),false);
+ const changed={...demo,version:demo.version+1};assert.equal(saved.snapshot.version,demo.version);assert.equal(changed.version,demo.version+1);assert.equal(C.resume({...saved,contentVersion:changed.version},'qa@local.invalid',demo.id),false);
+});
+
+test('contextual inference earns independent evidence; teaching support is opt-in after an attempt',()=>{
+ for(const m of [demo,linked]){
+  let s=start(m,m===linked?profile():null),q=C.current(s);
+  assert.equal(q.mode,'discover');assert.equal(q.guided,false);assert.ok(q.context&&q.teaching);
+  assert.ok(!q.prompt.includes(q.teaching));assert.throws(()=>act(s,'support'));
+  const independent=solve(s);assert.equal(independent.records[q.id].independent,true);
+  s=act(s,'answer',{value:(q.answer+1)%3});assert.equal(s.records[q.id].done,false);
+  assert.ok(!q.clue.includes(q.options[q.answer]));s=act(s,'hint');assert.equal(s.records[q.id].hintLevel,2);
+  s=act(s,'support');assert.equal(s.records[q.id].supported,true);s=solve(s);
+  assert.equal(s.records[q.id].correct,true);assert.equal(s.records[q.id].independent,false);
+  assert.equal(s.attempts.at(-1).assisted,true);
+ }
+});
+
+test('both missions have contextual artifacts, fixed unique answer lists and specific memo feedback',()=>{
+ for(const m of [demo,linked]){
+  const p=C.plan(m,m===linked?profile(linked,['new']):null);
+  for(const list of Object.values(p.tasks))for(const q of list){
+   assert.ok(q.artifact&&q.purpose);assert.ok(q.clue&&q.why);
+   assert.ok(!/normal English word order|make possible to avoid/.test(q.why+' '+q.clue));
+   if(q.options){assert.equal(new Set(q.options).size,q.options.length);assert.ok(q.options[q.answer]);assert.ok(!(' '+C.normal(q.clue)+' ').includes(' '+C.normal(q.options[q.answer])+' '));if(q.phase==='investigate')assert.ok(q.context);}
+   if(q.answers)assert.equal(new Set(q.answers.map(C.normal)).size,q.answers.length);
+  }
+ }
+ const memo=demo.terms[1].decode;assert.match(memo.artifact,/memo/);assert.match(memo.why,/verb–noun collocation/);assert.match(memo.why,/time clause/);
+ assert.match(demo.terms[4].investigate.clue,/leak continues unchecked/);
+ assert.equal(C.normal('  CONDUCT research! '),'conduct research');
+});
+
+test('legacy version 1 snapshots keep their questions, conservative guided evidence and stored outcomes',()=>{
+ const legacy={...C.copy(demo),version:1};let s=C.create(legacy,null,'qa@local.invalid');
+ s.plan.tasks.investigate[0].guided=true;s.plan.tasks.investigate[0].prompt='Original saved prompt';
+ const saved=JSON.stringify(s);assert.ok(C.resume(s,'qa@local.invalid',demo.id));
+ s=act(act(act(s,'begin'),'fullReport'),'revealSentence');assert.equal(C.current(s).prompt,'Original saved prompt');s=solve(s);
+ assert.equal(s.records[C.current(s).id].independent,false);assert.equal(s.contentVersion,1);
+ assert.equal(JSON.parse(saved).snapshot.version,1);assert.equal(demo.version,2);
 });
 test('form evidence alone never upgrades sense meaning; fully verified source avoids all basic task repetition',()=>{
  let s=C.create(demo,null,'qa@local.invalid');s.phase='morph';s.index=6;s=solve(s);assert.equal(C.summary(s).find(r=>r.senseId===demo.morph[0].senseId).status,'needs_practice');

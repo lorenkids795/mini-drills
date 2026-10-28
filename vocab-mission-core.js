@@ -10,7 +10,7 @@ function task(m,t,phase,q,round){var o=copy(q);o.id=m.id+'@'+m.version+':'+phase
 function plan(mission,source,knownForms){
  var eligible=mission.terms.filter(function(t){return mission.provenance==='authored_demo'||!!(source&&source.lessonId===mission.lessonId&&source.termProgress&&source.termProgress[t.senseId])}),out={investigate:[],decode:[],morph:[],final:[]},included={},routes={};
  eligible.forEach(function(t,i){var p=source&&source.termProgress&&source.termProgress[t.senseId],r=route(p)||(i%3===0?'discover':i%3===1?'strengthen':'light_check');included[t.senseId]=true;routes[t.senseId]=r;if(r==='bypass')return;
-  var q=task(mission,t,'investigate',t.investigate);q.mode=r;q.guided=r==='discover';if(q.guided)q.teaching=t.definition;out.investigate.push(q);
+  var q=task(mission,t,'investigate',t.investigate);q.mode=r;q.guided=false;if(r==='discover')q.teaching=t.definition;out.investigate.push(q);
   out.decode.push(task(mission,t,'decode',t.decode));if(out.final.length<2)out.final.push(task(mission,t,'final',t.final));
  });
  ['discover','transform','recall'].forEach(function(round){mission.morph.forEach(function(f){if(!included[f.senseId]||routes[f.senseId]==='bypass'||(knownForms&&knownForms[f.senseId+'::'+f.form]&&knownForms[f.senseId+'::'+f.form].independent))return;var t=eligible.filter(function(x){return x.senseId===f.senseId})[0],q=task(mission,t,'morph',f[round],round+':'+f.form);q.round=round;q.form=f.form;q.guided=round==='discover';if(q.guided)q.teaching=f.form+' — '+f.definition;q.extra=copy(f.extra);out.morph.push(q)})});
@@ -33,9 +33,10 @@ function apply(before,a){var s=copy(before),q=current(s),r;if(a.id&&s.lastOperat
  else if(a.type==='textDraft'){if(!q||q.options||q.kind==='reconstruct')throw Error('No text answer');r=record(s,q);if(r.done)throw Error('Task completed');r.text=String(a.value||'').slice(0,300)}
  else if(a.type==='draft'){if(!q||q.kind!=='reconstruct')throw Error('No reconstruction');r=record(s,q);if(r.done)throw Error('Task completed');if(a.clear)r.draft=[];else if(a.undo)r.draft.pop();else{if(typeof a.index!=='number'||a.index%1||a.index<0||a.index>=q.tokens.length||r.draft.indexOf(a.index)>=0)throw Error('Invalid token');r.draft.push(a.index)}}
  else if(a.type==='next'){if(!q||!record(s,q).done)throw Error('Complete the current task');advance(s)}
- else if(a.type==='answer'||a.type==='hint'||a.type==='reveal'){
+ else if(a.type==='answer'||a.type==='hint'||a.type==='support'||a.type==='reveal'){
   if(!q)throw Error('No active task');r=record(s,q);if(r.done)throw Error('Task completed');
-  if(a.type==='hint')r.hinted=true;
+  if(a.type==='hint'){r.hinted=true;r.hintLevel=Math.min(2,(r.hintLevel||(r.tries?1:0))+1)}
+  else if(a.type==='support'){if(!q.teaching||!r.tries)throw Error('Try the context first.');r.hinted=true;r.supported=true;}
   else if(a.type==='reveal'){r.hinted=true;settle(s,q,r,false)}
   else{
    var given=a.value,correct;if(q.options){if(typeof given!=='number'||given%1||given<0||given>=q.options.length||r.wrong.indexOf(given)>=0)throw Error('Choose an available option');correct=given===q.answer}

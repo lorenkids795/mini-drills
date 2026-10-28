@@ -21,7 +21,7 @@ function open(host,opt){
   // Preview profiles are labelled, in-memory fixtures. Never write them into Vocab Check.
   if(opt.sampleProfile&&mission.provenance==='approved_p1'){source={lessonId:bank.lessonId,email:identity,revision:0,termProgress:{}};mission.terms.forEach(function(t,i){source.termProgress[t.senseId]={status:['new','unsure','verified_for_current_task','self_reported_known','needs_practice'][i]}})}
   if(source&&(source.email!==identity||source.lessonId!==bank.lessonId))source=null;
-  s.source=source;s.profileLabel=mission.provenance==='authored_demo'?'':opt.sampleProfile?'Labelled QA profile · Vocab Check unchanged':'Your saved Vocab Check classifications';
+  s.source=source;
   var saved=null;try{saved=JSON.parse(localStorage.getItem(key)||'null')}catch(e){}
   if(saved&&!C.resume(saved,identity,mission.id)){host.textContent='This saved mission could not be opened. It has not been overwritten.';return false}
   s.state=C.resume(saved,identity,mission.id)?saved:C.create(mission,source,identity,null,Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8));
@@ -29,25 +29,27 @@ function open(host,opt){
   function render(focus){
    if(active!==s)return;
    var state=s.state,m=state.snapshot,q=C.current(state),r=q&&(state.records[q.id]||{tries:0,hinted:false,done:false,wrong:[],draft:[]}),chapters={briefing:'Mission briefing',case:'Case File',investigate:'Investigate',decode:'Decode Evidence',morph:'Decode Evidence · Word Morph',final:'Final Report',debrief:'Debrief'};
-   var h='<header class="vm-head"><span class="vm-tag">'+esc(m.provenance==='authored_demo'?'Independent authored demo · not Cambridge P1':'P1-linked · original authored story')+'</span><h2>'+esc(m.title)+'</h2>'+(s.profileLabel?'<p class="vm-profile">'+esc(s.profileLabel)+'</p>':'')+'</header><section class="vm-card"><div class="vm-step"><h3 id="vmStep" tabindex="-1">'+chapters[state.phase]+'</h3>'+(q?'<span>'+((state.index||0)+1)+' / '+state.plan.tasks[state.phase].length+'</span>':'')+'</div>';
+   var h='<header class="vm-head"><h2>'+esc(m.title)+'</h2></header><section class="vm-card"><div class="vm-step"><h3 id="vmStep" tabindex="-1">'+chapters[state.phase]+'</h3>'+(q?'<span>'+((state.index||0)+1)+' / '+state.plan.tasks[state.phase].length+'</span>':'')+'</div>';
    if(!state.plan.eligible.length){h+='<p>Not enough classified words for this mission yet. Sort a few words first; you do not need to finish all 102.</p>'+button('sorting','Continue Sorting')}
-   else if(state.phase==='briefing'){h+=(m.provenance==='authored_demo'?scene():town())+'<p class="vm-story">'+esc(m.briefing)+'</p><p class="vm-quiet">'+state.plan.eligible.length+' words · one connected investigation</p>'+button('begin','Open the case file')}
+   else if(state.phase==='briefing'){h+=(m.provenance==='authored_demo'?scene():town())+'<p class="vm-alert">'+esc(m.alert||'Evidence review')+'</p><p class="vm-story">'+esc(m.briefing)+'</p>'+button('begin','Open the case file')}
    else if(state.phase==='case'){
     h+='<div class="vm-report" role="button" tabindex="0" data-vm="sentence" aria-label="'+(state.revealed<state.plan.story.length?'Reveal the next report sentence':'Open the investigation')+'"><p class="vm-report-paragraph" aria-live="polite" aria-atomic="false">'+esc(state.plan.story.slice(0,state.revealed).join(' '))+'</p><span class="vm-report-action">'+(state.revealed<state.plan.story.length?'Reveal next sentence · '+state.revealed+'/'+state.plan.story.length:'Open the investigation →')+'</span></div>';
     if(state.revealed<state.plan.story.length)h+=button('full','Show full report',' class="vm-secondary"');
    }else if(q){
     if(state.phase==='morph')h+='<span class="vm-round">'+esc({discover:'Discover a form',transform:'Transform the sentence',recall:'Independent recall',adaptive:'One more context'}[q.round])+'</span>';
-    if(state.phase==='investigate')h+='<span class="vm-round">'+esc({discover:'Discover',strengthen:'Strengthen',light_check:'A light context check'}[q.mode])+'</span>';
-    if(q.teaching)h+='<p class="vm-teaching">'+esc(q.teaching)+'</p><p class="vm-quiet">Try this with support before recalling it on your own.</p>';
+    if(state.phase==='investigate')h+='<span class="vm-round">'+esc({discover:'Read the evidence and infer the meaning',strengthen:'Revisit the meaning using this evidence',light_check:'Check the meaning in a fresh context'}[q.mode])+'</span>';
+    if(q.artifact)h+='<div class="vm-artifact"><strong>'+esc(q.artifact)+'</strong><p>'+esc(q.purpose)+'</p>'+(q.context?'<blockquote>'+esc(q.context)+'</blockquote>':'')+'</div>';
+    if(q.family)h+='<p class="vm-quiet">Use a form from the '+esc(q.family)+' word family.</p>';
+    if(q.teaching&&(r.supported||r.done))h+='<p class="vm-teaching">'+esc(q.teaching)+'</p>';
     h+='<p class="vm-prompt">'+esc(q.prompt)+'</p>';
     if(q.options){h+='<div class="vm-options">';q.options.forEach(function(option,i){h+=button('answer',option,' data-choice="'+i+'"'+(r.wrong.indexOf(i)>=0?' data-wrong="true"':''),r.done||r.wrong.indexOf(i)>=0)});h+='</div>'}
     else if(q.kind==='reconstruct'){
-     h+='<div class="vm-built" aria-live="polite">'+esc(r.draft.map(function(i){return q.tokens[i]}).join(' ')||'Build the sentence from the words below.')+'</div><div class="vm-tokens">';q.tokens.forEach(function(t,i){h+=button('token',t,' data-index="'+i+'"',r.done||r.draft.indexOf(i)>=0)});h+='</div><div class="vm-tools">'+button('undoToken','Undo word','',r.done||!r.draft.length)+button('clearTokens','Clear sentence','',r.done||!r.draft.length)+'</div>'+button('answer','Check sentence','',r.done||!r.draft.length);
-    }else{h+='<form data-vm-form><label for="vmAnswer">Your answer</label><input id="vmAnswer" name="answer" maxlength="300" value="'+esc(r.text||'')+'" autocomplete="off" spellcheck="false" autocapitalize="off"'+(r.done?' disabled':'')+'><button type="submit" class="vm-btn" data-vm="answer"'+(r.done?' disabled':'')+'>Check answer</button></form>'}
-    if(r.done){var answer=q.options?q.options[q.answer]:q.answers[0];h+='<div class="vm-feedback" role="status"><strong>'+(r.independent?'Ready for review · independent in this task':r.correct&&q.guided?'Learning step complete':'Needs practice')+'</strong><p>'+esc(r.correct?q.why:answer+'. '+q.why)+'</p></div>'+button('next','Continue')}
+     h+='<div class="vm-built" aria-live="polite">'+esc(r.draft.map(function(i){return q.tokens[i]}).join(' ')||'Build the sentence from the words below.')+'</div><div class="vm-tokens">';q.tokens.forEach(function(t,i){h+=button('token',t,' data-index="'+i+'"',r.done||r.draft.indexOf(i)>=0)});h+='</div><div class="vm-tools vm-edit-tools">'+button('undoToken','Undo','',r.done||!r.draft.length)+button('clearTokens','Clear','',r.done||!r.draft.length)+'</div>'+button('answer','Check sentence','',r.done||!r.draft.length);
+    }else{h+='<form data-vm-form><label for="vmAnswer">Your answer</label><input id="vmAnswer" name="answer" maxlength="300" value="'+esc(r.text||'')+'" autocomplete="off" spellcheck="false" autocapitalize="off"'+(r.done?' disabled':'')+'><button type="submit" class="vm-btn" data-vm="answer"'+(r.done?' disabled':'')+'>Check answer</button></form><p class="vm-quiet vm-answer-policy">Practise the mission wording. Answers use a fixed list, ignoring capitals, sentence punctuation and extra spaces; other valid wording may need review. No automatic meaning grading.</p>'}
+    if(r.done){var answer=q.options?q.options[q.answer]:q.answers[0];h+='<div class="vm-feedback" role="status"><strong>'+(r.independent?'Ready for review · independent in this task':r.correct?'Completed with support · keep practising':'Let’s review this together')+'</strong><p>'+esc(r.correct?q.why:answer+'. '+q.why)+'</p></div>'+button('next','Continue')}
     else{
-     if(r.tries||r.hinted)h+='<div class="vm-feedback" role="status"><strong>'+(r.tries?'Not quite — try again':'A small clue')+'</strong><p>'+esc(q.clue)+'</p></div>';
-     h+='<div class="vm-tools">'+button('hint','Get a clue','',r.hinted)+'<details><summary>Stuck?</summary><p>Revealing the answer means more practice is needed.</p>'+button('reveal','Show explanation')+'</details></div>';
+     if(r.tries||r.hinted)h+='<div class="vm-feedback" role="status"><strong>'+(r.tries?'Not quite — try again':'A small clue')+'</strong><p>'+esc((r.hintLevel||0)>1&&q.clue2?q.clue2:q.clue)+'</p></div>';
+     h+='<div class="vm-tools">'+button('hint',r.hintLevel||r.tries?'Another clue':'Get a clue','',(r.hintLevel||0)>=(q.clue2?2:1))+(q.teaching&&r.tries&&!r.supported?button('support','Show teaching support'):'')+'<details><summary>Stuck?</summary><p>Use the explanation to learn, then revisit this language in a fresh context. Help is welcome; supported work is recorded separately.</p>'+button('reveal','Show explanation')+'</details></div>';
     }
    }else if(state.phase==='debrief'){
     h+='<p class="vm-story">The team can now turn its evidence into a careful recommendation. Keep reviewing the language in fresh contexts; a successful mission is a starting point, not mastery.</p><h4>Meaning in context</h4><ul class="vm-evidence">';
@@ -56,7 +58,7 @@ function open(host,opt){
     if(forms.length){h+='<h4>Word forms · separate evidence</h4><ul class="vm-evidence">';forms.forEach(function(k){var f=state.forms[k];h+='<li><span>'+esc(f.form)+'</span><b>'+(f.independent?'Ready for Review':'Needs Practice')+'</b></li>'});h+='</ul>'}
     h+='<p class="vm-quiet">Ready for Review calls for a short follow-up; Needs Practice calls for guided practice.</p><div class="vm-tools">'+button('sorting','Continue Sorting')+button('replay','Replay Demo')+'</div>';
    }
-   h+='</section><footer class="vm-save"><span role="status" aria-live="polite">'+esc(s.message)+'</span>'+(state.plan.eligible.length&&state.phase!=='debrief'?button('sorting','Continue Sorting',' title="Your mission stays saved here"'):'')+'</footer>';host.innerHTML=h;
+   h+='</section><footer class="vm-save"><span role="status" aria-live="polite">'+esc(s.message==='Saved in this browser'?'':s.message)+'</span>'+(state.plan.eligible.length&&state.phase!=='debrief'?button('sorting','Continue Sorting',' title="Your mission stays saved here"'):'')+'</footer>';host.innerHTML=h;
    if(focus){var target=host.querySelector('#vmStep');if(target)target.focus({preventScroll:true});var feedback=host.querySelector('.vm-feedback');if(feedback)feedback.scrollIntoView({block:'nearest'})}
   }
   s.render=render;
@@ -66,13 +68,13 @@ function open(host,opt){
     if(type==='sorting'){host.classList.remove('vm');if(opt.onContinueSorting)opt.onContinueSorting();else location.href='vocab-lab-preview.html';return}
     if(type==='replay'){s.state=C.create(s.mission,s.source,s.identity,null,Date.now().toString(36));save();render(true);return}
     var a={id:'local-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),at:Date.now()},q=C.current(s.state);
-    var map={begin:'begin',sentence:'revealSentence',full:'fullReport',next:'next',hint:'hint',reveal:'reveal'};
+    var map={begin:'begin',sentence:'revealSentence',full:'fullReport',next:'next',hint:'hint',support:'support',reveal:'reveal'};
     if(type==='token'||type==='clearTokens'||type==='undoToken'){a.type='draft';a.index=Number(target&&target.getAttribute('data-index'));a.clear=type==='clearTokens';a.undo=type==='undoToken'}
     else if(type==='answer'){a.type='answer';a.value=q&&q.options?Number(target.getAttribute('data-choice')):(host.querySelector('#vmAnswer')||{}).value}
     else if(type==='text'){a.type='textDraft';a.value=target.value}
     else a.type=map[type];
-    var old=s.state;s.state=C.apply(old,a);if(!save())s.state=old;
-    if(type==='text'){var status=host.querySelector('.vm-save [role="status"]');if(status)status.textContent=s.message;return}
+    var old=s.state;s.state=C.apply(old,a);if(!save()){s.state=old;render(false);return}
+    if(type==='text'){var status=host.querySelector('.vm-save [role="status"]');if(status)status.textContent=s.message==='Saved in this browser'?'':s.message;return}
     if((type==='sentence'||type==='full')&&s.state.phase==='case'){
       var para=host.querySelector('.vm-report-paragraph'),report=host.querySelector('.vm-report');
       for(var i=old.revealed;i<s.state.revealed;i++){var span=document.createElement('span');span.textContent=(i?' ':'')+s.state.plan.story[i];para.appendChild(span)}

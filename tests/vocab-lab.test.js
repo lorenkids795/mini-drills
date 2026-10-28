@@ -7,6 +7,14 @@ let serial=0;
 const fresh=()=>C.begin(C.fresh('a@example.com',bank),bank);
 const act=(s,type,extra={})=>C.apply(s,{type,id:'op-test-'+(++serial),...extra},bank,practice);
 const sorted=(bin='know',n=12)=>{let s=fresh();for(let i=0;i<n;i++)s=act(s,'sort',{bin});return s};
+test('succeed current key matches editorial builder source; immutable v1 retains its original key',()=>{
+ const q=items.find(q=>q.context==='With careful preparation, the team hoped to succeed.');
+ assert.equal(q.options[q.answer],'The team hoped to achieve its goal.');
+ const source=fs.readFileSync(path.join(__dirname,'../editorial/vocab-lab-contexts.tsv'),'utf8');
+ assert.ok(source.split(/\r?\n/).some(row=>row.startsWith('024|')&&row.split('|')[2]===q.options[q.answer]));
+ const old=require('../data/vocab-lab-practice-v1.json').find(x=>x.senseId===q.senseId);
+ assert.equal(old.options[old.answer],'It hoped to achieve its goal.');assert.notEqual(old.id,q.id);
+});
 test('approved bank: 102 P1, pending P2 isolated, no Royal Commission, slum supporting',()=>{
   assert.equal(bank.lesson_term_links.length,102);assert.equal(pending.entries.length,100);
   assert.ok(pending.entries.every(e=>e.link.status==='pending_review'));
