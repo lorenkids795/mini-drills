@@ -117,6 +117,53 @@ service cloud.firestore {
       allow delete: if teacher() || ownsOld();
     }
 
+    // Vocab Lab is preview-only until config/vocabLab.enabled is explicitly true.
+    // New collections are isolated from cards/errors and require their own rules publication.
+    function vocabPreview() {
+      return signedIn() && (
+        request.auth.token.get('adm', false) == true
+        || (exists(/databases/$(database)/documents/roster/$(me()))
+            && get(/databases/$(database)/documents/roster/$(me())).data.get('tester', false) == true)
+        || (request.auth.token.role == 'student'
+            && exists(/databases/$(database)/documents/config/vocabLab)
+            && get(/databases/$(database)/documents/config/vocabLab).data.get('enabled', false) == true));
+    }
+    match /student_lesson_sort_progress/{id} {
+      // Allow the owner's initial read even before the document exists.
+      allow read: if teacher() || (vocabPreview() && id == request.auth.uid + '__cam17-t1-reading-p1');
+      allow create: if vocabPreview() && ownsNew()
+        && id == request.auth.uid + '__' + request.resource.data.lessonId
+        && request.resource.data.lessonId == 'cam17-t1-reading-p1'
+        && request.resource.data.schemaVersion == 1 && request.resource.data.revision == 1
+        && request.resource.data.termProgress is map && request.resource.data.termProgress.size() <= 102
+        && request.resource.data.attempts is list && request.resource.data.attempts.size() <= 5000;
+      allow update: if vocabPreview() && ownsOld() && ownsNew()
+        && id == request.auth.uid + '__' + resource.data.lessonId
+        && request.resource.data.lessonId == resource.data.lessonId
+        && request.resource.data.schemaVersion == 1
+        && request.resource.data.revision == resource.data.revision + 1
+        && request.resource.data.termProgress is map && request.resource.data.termProgress.size() <= 102
+        && request.resource.data.attempts is list && request.resource.data.attempts.size() <= 5000;
+      allow delete: if false;
+    }
+    match /student_term_progress/{id} {
+      allow read: if teacher() || (vocabPreview() && ownsOld());
+      allow create, update: if vocabPreview() && ownsNew()
+        && id == request.auth.uid + '__' + request.resource.data.senseId
+        && request.resource.data.lessonId == 'cam17-t1-reading-p1'
+        && request.resource.data.progress.classification in ['know', 'unsure', 'new']
+        && request.resource.data.progress.status in ['self_reported_known', 'verified_for_current_task', 'needs_practice', 'unsure', 'new'];
+      allow delete: if vocabPreview() && ownsOld() && id == request.auth.uid + '__' + resource.data.senseId;
+    }
+    match /student_attempts/{id} {
+      allow read: if teacher() || (vocabPreview() && ownsOld());
+      allow create: if vocabPreview() && ownsNew()
+        && id == request.auth.uid + '__' + request.resource.data.attempt.id
+        && request.resource.data.lessonId == 'cam17-t1-reading-p1'
+        && request.resource.data.attempt.type in ['answer', 'hint', 'reveal'];
+      allow update, delete: if false;
+    }
+
     match /names/{id}       { allow read, write: if teacher(); }
     match /roster/{id}      { allow read: if signedIn(); allow write: if teacher(); }
     match /exercises/{id}   { allow read: if signedIn(); allow write: if teacher(); }

@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vocab Lab · local sandbox</title>
+<style>
+:root{--bg:#f4f6fa;--surface:#fff;--ink:#1c2434;--muted:#526078;--line:#c2cbd9;--accent:#315fd5;--font:'Be Vietnam Pro',system-ui,sans-serif;--mono:monospace}
+:root[data-theme="dark"]{--bg:#12141f;--surface:#1c2030;--ink:#edf1fa;--muted:#b5bfd4;--line:#505b73;--accent:#9ab9ff}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font)}.sandbox{max-width:1050px;margin:auto;padding:16px;line-height:1.6}.btn{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 16px;cursor:pointer}.btn.pri{background:var(--accent);color:var(--surface)}.pill{border:1px solid var(--line);border-radius:20px;padding:4px 10px;font-size:.85rem}.meta{color:var(--muted)}
+</style><link rel="stylesheet" href="vocab-lab.css"></head>
+<body><div class="sandbox"><p><strong>Local sandbox only.</strong> Uses the approved 102-entry P1 bank. No Firebase SDK, credentials, API calls or account writes. Serve this page on localhost.</p><label for="sandboxUser">Sandbox account</label> <select id="sandboxUser"><option value="a">Tester A</option><option value="b">Tester B</option></select> <button type="button" class="btn" id="theme">Toggle theme</button></div><main id="preview" class="vl"></main>
+<script src="vocab-lab-core.js"></script><script src="vocab-lab-store.js"></script><script src="vocab-lab.js"></script>
+<script>
+(function(){
+  var host=location.hostname;
+  if(['localhost','127.0.0.1','[::1]'].indexOf(host)<0){document.getElementById('preview').textContent='Sandbox runs on localhost only.';return}
+  function start(){window.MD_VOCAB.mount(document.getElementById('preview'),{demo:true,user:{email:'sandbox-'+document.getElementById('sandboxUser').value+'@local.invalid',role:'student',tester:true}})}
+  document.getElementById('sandboxUser').addEventListener('change',start);
+  document.getElementById('theme').addEventListener('click',function(){document.documentElement.setAttribute('data-theme',document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')});start();
+})();
+</script></body></html>

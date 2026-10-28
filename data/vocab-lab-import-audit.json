@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "sourceFile": "Mini_Drill_Cam17_Test1_Combined_Vocab_Bank.xlsx",
+  "sourceSha256": "d169572d27dd7110f21f3762361a577c2455ec2c450dbfc41360c8cc643a82d8",
+  "approvalAuthority": "CODEX-TASK-01.md and VOCAB-LAB-SPEC.md: P1 only",
+  "approvedP1": 102,
+  "pendingP2": 100,
+  "excluded": [
+    "Royal Commission"
+  ],
+  "overrides": {
+    "slum": "supporting"
+  },
+  "exactDuplicateSources": [],
+  "crossPassageSameSenseKeys": [],
+  "priorityCounts": {
+    "core": 69,
+    "supporting": 20,
+    "advanced": 13
+  }
+}

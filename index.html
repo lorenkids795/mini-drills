@@ -7,6 +7,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
 <!-- Android / Web App Manifest -->
 <link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="vocab-lab.css">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Mini Drills">
 <style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}#who[hidden]~#logoutBtn{display:none}
@@ -1575,6 +1576,7 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
   </section>
 
   <section id="v-set" hidden></section>
+  <section id="v-vocab" class="vl" hidden></section>
   <section id="v-cards" hidden></section>
   <section id="v-errors" hidden></section>
   <section id="v-ranks" hidden></section>
@@ -1629,6 +1631,9 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
   <p class="note-foot">Demo build. Passages, transcripts, tasks and students are made-up examples. Rows marked "sample" in the dashboard are fake data to show the statistics.</p>
 </div>
 
+<script src="vocab-lab-core.js"></script>
+<script src="vocab-lab-store.js"></script>
+<script src="vocab-lab.js"></script>
 <script src="md-config.js"></script>
 <script src="md-backend.js"></script>
 <script src="md-chart.js"></script>
@@ -2092,10 +2097,10 @@ function libTestHTML(bk,t,dm,stu){
 }
 /* ---------- Library › Learning Materials (built-in lessons from lm-content.js, not tied to Cambridge books) ---------- */
 // LIBT = which Library tab is open ('cam' | 'lm', localStorage md-libt). LMV = id of the lesson opened in the Learning Materials tab.
-// A lesson with status 'unpublished' is only shown to the admin (preview); lmVisible is the only gate, checked when listing AND when opening.
+// Unpublished lessons are previewed by admin/tester; lmVisible gates listing and opening.
 var LIBT=(function(){try{return lsGet('md-libt')==='lm'?'lm':'cam'}catch(e){return 'cam'}})(),LMV=null;
 function lmData(){var d=window.MD_LM;return d&&d.lessons?d:{skills:[],modules:[],lessons:[]}}
-function lmVisible(l){return !!(l&&(l.status==='published'||(U&&U.adm)))}
+function lmVisible(l){return !!(l&&(l.status==='published'||(U&&(U.adm||U.tester===true))))}
 function lmLesson(id){return lmData().lessons.filter(function(l){return l.id===id})[0]||null}
 // tree rows that are open ('s:<skill>' / 'm:<module>'), this session only; default = Writing open, its task groups closed
 var LMO={'s:writing':true};
@@ -2111,9 +2116,9 @@ function lmHTML(){
   if(cur&&lmVisible(cur))return lmLessonHTML(cur);
   LMV=null;
   // 3-level tree (skill › task group › unit), no cards. A skill without task groups = dimmed, disabled, "Coming soon".
-  // Units go through lmVisible: students/teachers never see an unpublished unit (its group then says "No units yet").
+  // Ordinary students/teachers cannot open unpublished units; tester/admin can preview.
   var h=D.skills.map(function(sk){
-    var G=D.modules.filter(function(m){return m.skill===sk.id}),k='s:'+sk.id,o=!!(LMO[k]&&G.length),id='lmt_'+esc(sk.id);
+    var G=D.modules.filter(function(m){return m.skill===sk.id&&!(sk.id==='writing'&&U&&U.role==='student'&&!U.tester)}),k='s:'+sk.id,o=!!(LMO[k]&&G.length),id='lmt_'+esc(sk.id);
     var head='<button type="button" class="lmhd"'+(G.length?' data-act="lm-tg" data-k="'+esc(k)+'" aria-expanded="'+o+'" aria-controls="'+id+'"':' disabled')+'><span class="lmic" aria-hidden="true">'+lmIco(sk.id)+'</span><span class="lmnm">'+esc(sk.title)+'</span>'+
       (G.length?'<span class="lmchev">'+LM_CH+'</span>':'<span class="lmsoon">Coming soon</span>')+'</button>';
     var body=o?'<div class="lmtw" id="'+id+'">'+G.map(function(m){var gk='m:'+m.id,go=!!LMO[gk],gid='lmg_'+esc(m.id);
@@ -2121,6 +2126,7 @@ function lmHTML(){
       return '<div class="lmtk"><button type="button" class="lmth" data-act="lm-tg" data-k="'+esc(gk)+'" aria-expanded="'+go+'" aria-controls="'+gid+'"><span>'+esc(m.title)+'</span><span class="lmchev">'+LM_CH+'</span></button>'+
         (go?'<div class="lmuw" id="'+gid+'">'+(L.length?L.map(function(l){
           return '<button type="button" class="lmu" data-act="lm-open" data-id="'+esc(l.id)+'"><span>'+esc(l.title)+'</span>'+(l.status!=='published'?'<span class="lmbd">Unpublished preview</span>':'')+'<span class="lmarr" aria-hidden="true">'+LM_AR+'</span></button>'}).join(''):'<p class="lmno">No units yet</p>')+'</div>':'')+'</div>'}).join('')+'</div>':'';
+    if(sk.id==='writing'&&U&&U.role==='student'&&!U.tester)body='<p class="lmno">No units yet</p>';
     return '<section class="lmmod lm-'+esc(sk.id)+(o?' open':'')+(G.length?'':' dis')+'" aria-label="'+esc(sk.title)+'">'+head+body+'</section>';
   }).join('');
   return '<div class="lmwrap lmtree">'+h+'</div>';
@@ -4758,8 +4764,11 @@ function sbInit(){sbSet(sbWide()?sbPref():false)}
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&SB.open&&!sbWide()&&document.body.classList.contains('nav-on')){e.preventDefault();e.stopImmediatePropagation();sbSet(false,true)}},true);
 function curDark(){var t=document.documentElement.getAttribute('data-theme');if(t)return t==='dark';return !!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)}
 // Admin: everything (Students and XP live inside Admin). Teacher: only their classes (see myCls). Student: unchanged.
-function tabsFor(){return U.adm?[['dash','Dashboard'],['asg','Classes'],['mark','Marking'],['library','Library'],['create','Create'],['prize','Prizes'],['admin','Admin']]:U.role==='teacher'?[['asg','Classes'],['mark','Marking'],['dash','Dashboard'],['library','Library']]:[['library','Home'],['cards','Flashcards'],['errors','Error Notebook'],['ranks','Leaderboard'],['wheel','Lucky Wheel'],['bag','Inventory'],['set','Settings']]}
+function vocabAllowed(){return !!(window.MD_VOCAB&&window.MD_VOCAB.allowed(U,(cfgGet('vocabLab')||{}).enabled===true))}
+function vocabRender(){var el=document.getElementById('v-vocab');if(el&&vocabAllowed())window.MD_VOCAB.mount(el,{user:U,db:dbh,demo:DEMO,enabled:(cfgGet('vocabLab')||{}).enabled===true})}
+function tabsFor(){var tabs=U.adm?[['dash','Dashboard'],['asg','Classes'],['mark','Marking'],['library','Library'],['create','Create'],['prize','Prizes'],['admin','Admin']]:U.role==='teacher'?[['asg','Classes'],['mark','Marking'],['dash','Dashboard'],['library','Library']]:[['library','Home'],['cards','Flashcards'],['errors','Error Notebook'],['ranks','Leaderboard'],['wheel','Lucky Wheel'],['bag','Inventory'],['set','Settings']];if(vocabAllowed())tabs.push(['vocab','Vocab Lab']);return tabs}
 function showTab(t){
+  $('#v-vocab').hidden=true;
   TAB=t;stopAudio();clearTimer();MK.open=false;recClearAll();
   if(t!=='admin'){AD.modal=null;var amr=document.getElementById('adModalRoot');if(amr)amr.innerHTML=''} // leaving Admin closes its confirm box
   ['login','lib','cards','errors','ranks','wheel','bag','set','prize','xps','dash','asg','mark','roster','create','admin'].forEach(function(n){$('#v-'+n).hidden=true});
@@ -4768,7 +4777,8 @@ function showTab(t){
   if(t!=='library'&&!tabsFor().some(function(x){return x[0]===t})){t=tabsFor()[0][0];TAB=t} // a tab this role does not have
   $('#tabs').hidden=tabsFor().length<2;document.body.classList.toggle('nav-on',!$('#tabs').hidden);$('#sbBtn').hidden=$('#tabs').hidden;sbSet(SB.open);/* keeps the open / closed state */$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28,true)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b>'+(U.adm||U.role==='student'?'':'<span class="rl"> · '+U.role+'</span>');
   $('#tabs').innerHTML=tabsFor().map(function(x){return '<button role="tab" data-act="tab" data-tab="'+x[0]+'" aria-selected="'+(x[0]===t)+'">'+x[1]+'</button>'}).join('');
-  var id={library:'lib',cards:'cards',errors:'errors',ranks:'ranks',wheel:'wheel',bag:'bag',set:'set',prize:'prize',xps:'xps',dash:'dash',asg:'asg',mark:'mark',roster:'roster',create:'create',admin:'admin'}[t];$('#v-'+id).hidden=false;updMarq();
+  var id={library:'lib',cards:'cards',errors:'errors',ranks:'ranks',wheel:'wheel',bag:'bag',set:'set',prize:'prize',xps:'xps',dash:'dash',asg:'asg',mark:'mark',roster:'roster',create:'create',admin:'admin',vocab:'vocab'}[t];$('#v-'+id).hidden=false;updMarq();
+  if(t==='vocab')vocabRender();
   if(t==='admin')renderAdmin();
   if(t==='library')renderLib();if(t==='cards')renderCards();if(t==='errors'){EP=null;EN.rv=null;renderErrors()}if(t==='ranks')renderRanks();if(t==='wheel')renderWheel();if(t==='bag')renderBag();if(t==='set')renderSettings();if(t==='prize')renderPrize();if(t==='xps')renderXps();if(t==='dash')renderDash();if(t==='roster')renderRoster();if(t==='create'){renderCpPrompt();renderPrev()}if(t==='mark')renderMark();
   if(t==='asg'){AG.form=null;AG.open=null;AG.cur=null;AG.sub='list';renderAsg()}
@@ -4781,6 +4791,7 @@ function signIn(email){
 }
 function refreshLive(){
   if(!U)return;updMarq();
+  if(TAB==='vocab'){U=findUser(U.email)||U;showTab('vocab');return}
   if(TAB==='dash')renderDash();
   else if(TAB==='admin'&&AD.sub==='students')renderRoster();
   else if(TAB==='library'&&!NAV.ex&&!NAV.daily)renderLib();

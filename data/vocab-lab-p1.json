@@ -1,0 +1,3685 @@
+{
+  "schemaVersion": 1,
+  "lessonId": "cam17-t1-reading-p1",
+  "title": "Cambridge 17 / Test 1 / Reading Passage 1",
+  "terms": [
+    {
+      "id": "term-fea5cf6ef0a031360602f8f8",
+      "surface": "astonishing rate",
+      "canonical": "astonishing rate",
+      "type": "expression"
+    },
+    {
+      "id": "term-d759e5ec6eb705dd34840094",
+      "surface": "increasingly",
+      "canonical": "increasingly",
+      "type": "adverb"
+    },
+    {
+      "id": "term-c041144959bddeff52030351",
+      "surface": "congested",
+      "canonical": "congested",
+      "type": "adjective"
+    },
+    {
+      "id": "term-167f448f11f389abcfaa904a",
+      "surface": "expansion",
+      "canonical": "expansion",
+      "type": "noun"
+    },
+    {
+      "id": "term-944b7954488a15712a30af6b",
+      "surface": "overground railway",
+      "canonical": "overground railway",
+      "type": "expression"
+    },
+    {
+      "id": "term-3009be769fb8f956e8413ee9",
+      "surface": "network",
+      "canonical": "network",
+      "type": "noun"
+    },
+    {
+      "id": "term-d98927794af5b99e4dd51904",
+      "surface": "result in",
+      "canonical": "result in",
+      "type": "phrasal verb"
+    },
+    {
+      "id": "term-bf816809a4d8aa98ed09fe84",
+      "surface": "passenger",
+      "canonical": "passenger",
+      "type": "noun"
+    },
+    {
+      "id": "term-bd08022e8fb80701512cd13c",
+      "surface": "capital",
+      "canonical": "capital",
+      "type": "noun"
+    },
+    {
+      "id": "term-c4824ae8bb216f860ca4cd45",
+      "surface": "historic",
+      "canonical": "historic",
+      "type": "adjective"
+    },
+    {
+      "id": "term-9b232b0ca1e573c3c26be34f",
+      "surface": "form a ring",
+      "canonical": "form a ring",
+      "type": "expression"
+    },
+    {
+      "id": "term-5f91503c4d13866bc844acfb",
+      "surface": "consist of",
+      "canonical": "consist of",
+      "type": "verb phrase"
+    },
+    {
+      "id": "term-ba885834f5f84d9359509404",
+      "surface": "poorly built",
+      "canonical": "poorly built",
+      "type": "expression"
+    },
+    {
+      "id": "term-d6357df280f26a37dd39dd2f",
+      "surface": "overcrowded",
+      "canonical": "overcrowded",
+      "type": "adjective"
+    },
+    {
+      "id": "term-d9be3f7ab722e90292015099",
+      "surface": "slum",
+      "canonical": "slum",
+      "type": "noun"
+    },
+    {
+      "id": "term-47c8c2f8ab71d8cb3e77199d",
+      "surface": "horse-drawn",
+      "canonical": "horse-drawn",
+      "type": "adjective"
+    },
+    {
+      "id": "term-6dfa5ed997611337144a0c79",
+      "surface": "nightmare",
+      "canonical": "nightmare",
+      "type": "noun"
+    },
+    {
+      "id": "term-13bfabb07807921f6ce3a618",
+      "surface": "carriage",
+      "canonical": "carriage",
+      "type": "noun"
+    },
+    {
+      "id": "term-ecc62dd3e8533b5714f03663",
+      "surface": "numerous",
+      "canonical": "numerous",
+      "type": "adjective"
+    },
+    {
+      "id": "term-cd892494455f6fa019e5b1e0",
+      "surface": "scheme",
+      "canonical": "scheme",
+      "type": "noun"
+    },
+    {
+      "id": "term-12df7f0ee89f9d7f17fb8e88",
+      "surface": "propose",
+      "canonical": "propose",
+      "type": "verb"
+    },
+    {
+      "id": "term-fdf09cdfc26cccf610edccd7",
+      "surface": "resolve",
+      "canonical": "resolve",
+      "type": "verb"
+    },
+    {
+      "id": "term-6998ec8d781ca3a08ea2446d",
+      "surface": "succeed",
+      "canonical": "succeed",
+      "type": "verb"
+    },
+    {
+      "id": "term-383aaf318cf8497f389dda12",
+      "surface": "vocal advocate",
+      "canonical": "vocal advocate",
+      "type": "expression"
+    },
+    {
+      "id": "term-5da94256a72d9fbd13a4afa5",
+      "surface": "solicitor",
+      "canonical": "solicitor",
+      "type": "noun"
+    },
+    {
+      "id": "term-8311effebfde1c4f2bd50e57",
+      "surface": "social and economic advantages",
+      "canonical": "social and economic advantages",
+      "type": "expression"
+    },
+    {
+      "id": "term-639c61d6a7bc2ba3aab3383b",
+      "surface": "link together",
+      "canonical": "link together",
+      "type": "verb phrase"
+    },
+    {
+      "id": "term-5f8bc524d871939c3490c77e",
+      "surface": "clear slums",
+      "canonical": "clear slums",
+      "type": "expression"
+    },
+    {
+      "id": "term-2f07555d3e64c04d1b8e267c",
+      "surface": "relocate",
+      "canonical": "relocate",
+      "type": "verb"
+    },
+    {
+      "id": "term-386ec76980de4a12f455b9a7",
+      "surface": "inner-city",
+      "canonical": "inner-city",
+      "type": "adjective"
+    },
+    {
+      "id": "term-0ad8bcf888fb3429b15597c7",
+      "surface": "newly constructed",
+      "canonical": "newly constructed",
+      "type": "expression"
+    },
+    {
+      "id": "term-c47a58e12937ba7dd647290d",
+      "surface": "suburb",
+      "canonical": "suburb",
+      "type": "noun"
+    },
+    {
+      "id": "term-405abc33f5f3b06b881c7330",
+      "surface": "provide",
+      "canonical": "provide",
+      "type": "verb"
+    },
+    {
+      "id": "term-f0fd8ed01465d2aaae1a324f",
+      "surface": "gain support",
+      "canonical": "gain support",
+      "type": "expression"
+    },
+    {
+      "id": "term-6f8678a6662a613e9c8308dd",
+      "surface": "submit a plan",
+      "canonical": "submit a plan",
+      "type": "expression"
+    },
+    {
+      "id": "term-084e990a49ba65e622926853",
+      "surface": "reject",
+      "canonical": "reject",
+      "type": "verb"
+    },
+    {
+      "id": "term-71c816f43dde1b72d4b83127",
+      "surface": "coincide with",
+      "canonical": "coincide with",
+      "type": "verb phrase"
+    },
+    {
+      "id": "term-ecd1378bc9dc130008f00d58",
+      "surface": "proposal",
+      "canonical": "proposal",
+      "type": "noun"
+    },
+    {
+      "id": "term-dddc346175a6ce6a0d1920af",
+      "surface": "pass (a proposal)",
+      "canonical": "pass (a proposal)",
+      "type": "verb sense"
+    },
+    {
+      "id": "term-283128acef14943c127f7327",
+      "surface": "merge",
+      "canonical": "merge",
+      "type": "verb"
+    },
+    {
+      "id": "term-3a19589098bc0e3a2b373ffc",
+      "surface": "establish",
+      "canonical": "establish",
+      "type": "verb"
+    },
+    {
+      "id": "term-b252d4eb5acf5aeaef1ec528",
+      "surface": "construct",
+      "canonical": "construct",
+      "type": "verb"
+    },
+    {
+      "id": "term-30ce59dd9f0f9511284e25d7",
+      "surface": "raise funding",
+      "canonical": "raise funding",
+      "type": "expression"
+    },
+    {
+      "id": "term-909c272051bb6b905677de2b",
+      "surface": "radical",
+      "canonical": "radical",
+      "type": "adjective"
+    },
+    {
+      "id": "term-2a63303c36aa29ada47e1ed4",
+      "surface": "not least because of",
+      "canonical": "not least because of",
+      "type": "expression"
+    },
+    {
+      "id": "term-bfba7033571d606f3c2ff041",
+      "surface": "critical",
+      "canonical": "critical",
+      "type": "adjective"
+    },
+    {
+      "id": "term-842fcb5e60989a03d08ee07f",
+      "surface": "press",
+      "canonical": "press",
+      "type": "noun"
+    },
+    {
+      "id": "term-5ea7dc7fbe1aa8cca4759ce5",
+      "surface": "objector",
+      "canonical": "objector",
+      "type": "noun"
+    },
+    {
+      "id": "term-92a4753ceb578fa01c0b0a14",
+      "surface": "argue",
+      "canonical": "argue",
+      "type": "verb"
+    },
+    {
+      "id": "term-93bc5d02dc2a24b536534757",
+      "surface": "collapse",
+      "canonical": "collapse",
+      "type": "verb"
+    },
+    {
+      "id": "term-945c8f9d4fe6b4899a55b574",
+      "surface": "overhead",
+      "canonical": "overhead",
+      "type": "adverb"
+    },
+    {
+      "id": "term-50d22da6c0d4799bb16322e6",
+      "surface": "shake",
+      "canonical": "shake",
+      "type": "verb"
+    },
+    {
+      "id": "term-5743abddddfa08c1e3a99fde",
+      "surface": "poison",
+      "canonical": "poison",
+      "type": "verb"
+    },
+    {
+      "id": "term-06964dd2fac36383601ce972",
+      "surface": "emission",
+      "canonical": "emission",
+      "type": "noun"
+    },
+    {
+      "id": "term-1c61425b1ba94748e725edd6",
+      "surface": "persist",
+      "canonical": "persist",
+      "type": "verb"
+    },
+    {
+      "id": "term-e97166b54500da3a32eae48a",
+      "surface": "enable",
+      "canonical": "enable",
+      "type": "verb"
+    },
+    {
+      "id": "term-5c417c6c8127d2a31c8d9573",
+      "surface": "invest",
+      "canonical": "invest",
+      "type": "verb"
+    },
+    {
+      "id": "term-c8bf82c2cbf5a469c5584886",
+      "surface": "eventually",
+      "canonical": "eventually",
+      "type": "adverb"
+    },
+    {
+      "id": "term-8a84e406c08ac9594f472224",
+      "surface": "route",
+      "canonical": "route",
+      "type": "noun"
+    },
+    {
+      "id": "term-2f3ca61c7e8e993613994497",
+      "surface": "beneath",
+      "canonical": "beneath",
+      "type": "preposition"
+    },
+    {
+      "id": "term-78842af90e24eebf5a4818ee",
+      "surface": "minimise",
+      "canonical": "minimise",
+      "type": "verb"
+    },
+    {
+      "id": "term-23b18e504dd45960690a0466",
+      "surface": "expense",
+      "canonical": "expense",
+      "type": "noun"
+    },
+    {
+      "id": "term-f7ecefe858901f35e3a4a29e",
+      "surface": "demolish",
+      "canonical": "demolish",
+      "type": "verb"
+    },
+    {
+      "id": "term-a29e5260878579f02dea866e",
+      "surface": "originally scheduled",
+      "canonical": "originally scheduled",
+      "type": "expression"
+    },
+    {
+      "id": "term-7a01adea4b8a1084a7aebd7f",
+      "surface": "construction",
+      "canonical": "construction",
+      "type": "noun"
+    },
+    {
+      "id": "term-e1100453f88ac59922ea8c7d",
+      "surface": "street level",
+      "canonical": "street level",
+      "type": "noun phrase"
+    },
+    {
+      "id": "term-6cbdfcf83679e6943e4239a5",
+      "surface": "technique",
+      "canonical": "technique",
+      "type": "noun"
+    },
+    {
+      "id": "term-26e9482299ed2b44c8f48ad8",
+      "surface": "cut and cover",
+      "canonical": "cut and cover",
+      "type": "technical expression"
+    },
+    {
+      "id": "term-a69a13e0645e06f8cd19b3e6",
+      "surface": "trench",
+      "canonical": "trench",
+      "type": "noun"
+    },
+    {
+      "id": "term-c06a4f8f0647f5ab2252e145",
+      "surface": "temporarily",
+      "canonical": "temporarily",
+      "type": "adverb"
+    },
+    {
+      "id": "term-9be229f761256029b8bbef4a",
+      "surface": "hold up",
+      "canonical": "hold up",
+      "type": "phrasal verb"
+    },
+    {
+      "id": "term-709ae9c3178f4cc8ec046a0b",
+      "surface": "timber beam",
+      "canonical": "timber beam",
+      "type": "noun phrase"
+    },
+    {
+      "id": "term-70dbb292c9fadbf9b6602543",
+      "surface": "brick arch",
+      "canonical": "brick arch",
+      "type": "noun phrase"
+    },
+    {
+      "id": "term-dac1d7cfa95021764849fd10",
+      "surface": "layer",
+      "canonical": "layer",
+      "type": "noun"
+    },
+    {
+      "id": "term-cf44886e54f424ce136dc38e",
+      "surface": "rebuild",
+      "canonical": "rebuild",
+      "type": "verb"
+    },
+    {
+      "id": "term-9bf5a24e4aa779981ac41f1a",
+      "surface": "operation",
+      "canonical": "operation",
+      "type": "noun"
+    },
+    {
+      "id": "term-26f1de33979d065ba8d86789",
+      "surface": "extension",
+      "canonical": "extension",
+      "type": "noun"
+    },
+    {
+      "id": "term-1a0f9f8fb6834ba5909efd8b",
+      "surface": "authorise",
+      "canonical": "authorise",
+      "type": "verb"
+    },
+    {
+      "id": "term-11ca3229496067cdf59a522b",
+      "surface": "steam locomotive",
+      "canonical": "steam locomotive",
+      "type": "noun phrase"
+    },
+    {
+      "id": "term-8b4df85a07e71f5eaa57b506",
+      "surface": "boiler",
+      "canonical": "boiler",
+      "type": "noun"
+    },
+    {
+      "id": "term-0fee7196f6817d6f81e75cac",
+      "surface": "introduce",
+      "canonical": "introduce",
+      "type": "verb"
+    },
+    {
+      "id": "term-4108dce8d07e9c3649be6ec4",
+      "surface": "be fitted with",
+      "canonical": "be fitted with",
+      "type": "verb phrase"
+    },
+    {
+      "id": "term-33a0189af06aabaf31980641",
+      "surface": "condense",
+      "canonical": "condense",
+      "type": "verb"
+    },
+    {
+      "id": "term-1bbf708cf261914ac207dc6c",
+      "surface": "fumes",
+      "canonical": "fumes",
+      "type": "noun"
+    },
+    {
+      "id": "term-d1b9ffac5c4fbb8c16a0a048",
+      "surface": "ventilation shaft",
+      "canonical": "ventilation shaft",
+      "type": "noun phrase"
+    },
+    {
+      "id": "term-76a46512186eeecb0d4bf953",
+      "surface": "congestion",
+      "canonical": "congestion",
+      "type": "noun"
+    },
+    {
+      "id": "term-4666a3f66bc600ad9f11fa87",
+      "surface": "circuit",
+      "canonical": "circuit",
+      "type": "noun"
+    },
+    {
+      "id": "term-27747689baf9903c9aae69d8",
+      "surface": "alternative",
+      "canonical": "alternative",
+      "type": "noun"
+    },
+    {
+      "id": "term-77390a64edc5908a8e17501d",
+      "surface": "confined space",
+      "canonical": "confined space",
+      "type": "noun phrase"
+    },
+    {
+      "id": "term-20475dfea3a2deb72bb4bfaa",
+      "surface": "reliable",
+      "canonical": "reliable",
+      "type": "adjective"
+    },
+    {
+      "id": "term-cf2997b0dd37f5f6467dc963",
+      "surface": "electric motor",
+      "canonical": "electric motor",
+      "type": "noun phrase"
+    },
+    {
+      "id": "term-843da5eccc9325f0cd55daa8",
+      "surface": "means of",
+      "canonical": "means of",
+      "type": "noun phrase"
+    },
+    {
+      "id": "term-63e1d7b6955b62bc3495759c",
+      "surface": "transfer power",
+      "canonical": "transfer power",
+      "type": "expression"
+    },
+    {
+      "id": "term-9123dcbb0b42652b0e105956",
+      "surface": "generator",
+      "canonical": "generator",
+      "type": "noun"
+    },
+    {
+      "id": "term-af018d43e682d611668f7431",
+      "surface": "deep-level electric railway",
+      "canonical": "deep-level electric railway",
+      "type": "noun phrase"
+    },
+    {
+      "id": "term-fdbbb99d7b90b2b8d6029510",
+      "surface": "be made up of",
+      "canonical": "be made up of",
+      "type": "verb phrase"
+    },
+    {
+      "id": "term-5eda958e9ddee7721fb71e7a",
+      "surface": "narrow",
+      "canonical": "narrow",
+      "type": "adjective"
+    },
+    {
+      "id": "term-4e0bded182c90da63e05f292",
+      "surface": "power supply",
+      "canonical": "power supply",
+      "type": "noun phrase"
+    },
+    {
+      "id": "term-89f3a87c54ee58dcdb21e8a2",
+      "surface": "technical achievement",
+      "canonical": "technical achievement",
+      "type": "noun phrase"
+    },
+    {
+      "id": "term-cdfacc7fd2065364dba531cd",
+      "surface": "make a profit",
+      "canonical": "make a profit",
+      "type": "expression"
+    },
+    {
+      "id": "term-d067915e3b850dc8662d57aa",
+      "surface": "in place",
+      "canonical": "in place",
+      "type": "expression"
+    },
+    {
+      "id": "term-c1329b8fdd8b0b6510760cc6",
+      "surface": "soon afterwards",
+      "canonical": "soon afterwards",
+      "type": "expression"
+    }
+  ],
+  "senses": [
+    {
+      "id": "sense-bc0aa7072ccf80cda2816871",
+      "termId": "term-fea5cf6ef0a031360602f8f8",
+      "definition": "a surprisingly fast rate",
+      "meaningVi": "tốc độ đáng kinh ngạc"
+    },
+    {
+      "id": "sense-219d445bcdbc485e9d28488e",
+      "termId": "term-d759e5ec6eb705dd34840094",
+      "definition": "to a growing degree",
+      "meaningVi": "ngày càng"
+    },
+    {
+      "id": "sense-e89a4b0bd00866e4982969c7",
+      "termId": "term-c041144959bddeff52030351",
+      "definition": "crowded with traffic or people",
+      "meaningVi": "ùn tắc; quá đông đúc"
+    },
+    {
+      "id": "sense-072cc7ecf79926dc8c3b4035",
+      "termId": "term-167f448f11f389abcfaa904a",
+      "definition": "the act of becoming larger",
+      "meaningVi": "sự mở rộng"
+    },
+    {
+      "id": "sense-97e16630481da84aaa89c941",
+      "termId": "term-944b7954488a15712a30af6b",
+      "definition": "railway operating above ground",
+      "meaningVi": "đường sắt trên mặt đất"
+    },
+    {
+      "id": "sense-19e7303e091b6ad30d33099e",
+      "termId": "term-3009be769fb8f956e8413ee9",
+      "definition": "connected system of lines",
+      "meaningVi": "mạng lưới"
+    },
+    {
+      "id": "sense-bc680ec538cbb220ab2a466d",
+      "termId": "term-d98927794af5b99e4dd51904",
+      "definition": "cause a particular outcome",
+      "meaningVi": "dẫn đến"
+    },
+    {
+      "id": "sense-a62397cd8498372a644abfe4",
+      "termId": "term-bf816809a4d8aa98ed09fe84",
+      "definition": "person travelling in a vehicle",
+      "meaningVi": "hành khách"
+    },
+    {
+      "id": "sense-040d2f06cfb57501b2f21289",
+      "termId": "term-bd08022e8fb80701512cd13c",
+      "definition": "the main city of a country",
+      "meaningVi": "thủ đô"
+    },
+    {
+      "id": "sense-eb0be8fa046a33efdda7d995",
+      "termId": "term-c4824ae8bb216f860ca4cd45",
+      "definition": "important in history",
+      "meaningVi": "mang tính lịch sử"
+    },
+    {
+      "id": "sense-febc630a67fef6e9872d2ba6",
+      "termId": "term-9b232b0ca1e573c3c26be34f",
+      "definition": "make a circular arrangement",
+      "meaningVi": "tạo thành một vòng bao quanh"
+    },
+    {
+      "id": "sense-d20fea662a1034c83894d16e",
+      "termId": "term-5f91503c4d13866bc844acfb",
+      "definition": "be made up of",
+      "meaningVi": "bao gồm; được cấu thành từ"
+    },
+    {
+      "id": "sense-3eaf828d1dfa98a187fc8992",
+      "termId": "term-ba885834f5f84d9359509404",
+      "definition": "built to a low standard",
+      "meaningVi": "được xây dựng kém chất lượng"
+    },
+    {
+      "id": "sense-0565f5e877495423f1f8e0ea",
+      "termId": "term-d6357df280f26a37dd39dd2f",
+      "definition": "having too many people",
+      "meaningVi": "quá đông đúc"
+    },
+    {
+      "id": "sense-9713aaa7c9984f2a0e5b19b9",
+      "termId": "term-d9be3f7ab722e90292015099",
+      "definition": "very poor, crowded urban housing area",
+      "meaningVi": "khu ổ chuột"
+    },
+    {
+      "id": "sense-b0b8f112fe3686a19b5f7595",
+      "termId": "term-47c8c2f8ab71d8cb3e77199d",
+      "definition": "pulled by a horse",
+      "meaningVi": "do ngựa kéo"
+    },
+    {
+      "id": "sense-5cc1e31e90b4a98be6cb0447",
+      "termId": "term-6dfa5ed997611337144a0c79",
+      "definition": "extremely unpleasant experience",
+      "meaningVi": "cơn ác mộng; việc vô cùng khổ sở"
+    },
+    {
+      "id": "sense-7866d660a6098a5b1088424a",
+      "termId": "term-13bfabb07807921f6ce3a618",
+      "definition": "a horse-drawn vehicle or train compartment",
+      "meaningVi": "xe ngựa; toa xe"
+    },
+    {
+      "id": "sense-9482629201408c09033f5c37",
+      "termId": "term-ecc62dd3e8533b5714f03663",
+      "definition": "many",
+      "meaningVi": "nhiều; vô số"
+    },
+    {
+      "id": "sense-2467417662518f2b65f17a66",
+      "termId": "term-cd892494455f6fa019e5b1e0",
+      "definition": "organized plan or proposal",
+      "meaningVi": "kế hoạch; đề án"
+    },
+    {
+      "id": "sense-2ae0fa5c36a4e1d40ec501ff",
+      "termId": "term-12df7f0ee89f9d7f17fb8e88",
+      "definition": "put forward for consideration",
+      "meaningVi": "đề xuất"
+    },
+    {
+      "id": "sense-bba0a06e975354255a715274",
+      "termId": "term-fdf09cdfc26cccf610edccd7",
+      "definition": "find a solution to",
+      "meaningVi": "giải quyết"
+    },
+    {
+      "id": "sense-6ff6146fc5802fa1a7e9ebfc",
+      "termId": "term-6998ec8d781ca3a08ea2446d",
+      "definition": "achieve a desired result",
+      "meaningVi": "thành công"
+    },
+    {
+      "id": "sense-58b2376a8b0a1ccb3d997e4d",
+      "termId": "term-383aaf318cf8497f389dda12",
+      "definition": "person who actively speaks in favor",
+      "meaningVi": "người công khai, mạnh mẽ ủng hộ"
+    },
+    {
+      "id": "sense-27dd105458c68f03c45cc7a4",
+      "termId": "term-5da94256a72d9fbd13a4afa5",
+      "definition": "type of legal practitioner in England and Wales",
+      "meaningVi": "luật sư tư vấn (Anh)"
+    },
+    {
+      "id": "sense-5773df4e394a71bda9f5a149",
+      "termId": "term-8311effebfde1c4f2bd50e57",
+      "definition": "benefits to society and economy",
+      "meaningVi": "lợi ích xã hội và kinh tế"
+    },
+    {
+      "id": "sense-4eeaa167bcb7187c337891a2",
+      "termId": "term-639c61d6a7bc2ba3aab3383b",
+      "definition": "connect separate things",
+      "meaningVi": "kết nối lại với nhau"
+    },
+    {
+      "id": "sense-d25e72758cb00a430a2678dd",
+      "termId": "term-5f8bc524d871939c3490c77e",
+      "definition": "remove poor-quality housing",
+      "meaningVi": "giải tỏa khu ổ chuột"
+    },
+    {
+      "id": "sense-3d666ffd6243e5eae8122ec5",
+      "termId": "term-2f07555d3e64c04d1b8e267c",
+      "definition": "move to a new place",
+      "meaningVi": "di dời; chuyển đến nơi khác"
+    },
+    {
+      "id": "sense-aca45c8c33ce6d6b76305b9d",
+      "termId": "term-386ec76980de4a12f455b9a7",
+      "definition": "located near the city centre",
+      "meaningVi": "thuộc khu vực nội đô"
+    },
+    {
+      "id": "sense-1f0ba03ccd2713c05c437af7",
+      "termId": "term-0ad8bcf888fb3429b15597c7",
+      "definition": "recently built",
+      "meaningVi": "mới được xây dựng"
+    },
+    {
+      "id": "sense-671cec8bff9f6329a6dbfc5e",
+      "termId": "term-c47a58e12937ba7dd647290d",
+      "definition": "residential area outside city centre",
+      "meaningVi": "vùng ngoại ô"
+    },
+    {
+      "id": "sense-d6d03481b171a5f596024d5b",
+      "termId": "term-405abc33f5f3b06b881c7330",
+      "definition": "make available",
+      "meaningVi": "cung cấp"
+    },
+    {
+      "id": "sense-03936f62d7f90f8476e85cec",
+      "termId": "term-f0fd8ed01465d2aaae1a324f",
+      "definition": "attract approval or backing",
+      "meaningVi": "nhận được sự ủng hộ"
+    },
+    {
+      "id": "sense-7efabef9a0accea2e1cfc2c0",
+      "termId": "term-6f8678a6662a613e9c8308dd",
+      "definition": "present plan officially for approval",
+      "meaningVi": "trình; nộp một kế hoạch"
+    },
+    {
+      "id": "sense-3761adfe62a633a9b079f224",
+      "termId": "term-084e990a49ba65e622926853",
+      "definition": "refuse to approve or accept",
+      "meaningVi": "bác bỏ; từ chối"
+    },
+    {
+      "id": "sense-34cbfdc1ad4c82232245a368",
+      "termId": "term-71c816f43dde1b72d4b83127",
+      "definition": "happen at the same time as",
+      "meaningVi": "trùng thời điểm với"
+    },
+    {
+      "id": "sense-0a73406fb36bbdc0a962c882",
+      "termId": "term-ecd1378bc9dc130008f00d58",
+      "definition": "suggested plan",
+      "meaningVi": "đề xuất; dự án đề xuất"
+    },
+    {
+      "id": "sense-a8cfea44fc823bc8c3e05ed6",
+      "termId": "term-dddc346175a6ce6a0d1920af",
+      "definition": "officially approve",
+      "meaningVi": "thông qua một đề xuất"
+    },
+    {
+      "id": "sense-590d68f3f7f2ab429bf4f7ff",
+      "termId": "term-283128acef14943c127f7327",
+      "definition": "combine to form one entity",
+      "meaningVi": "sáp nhập; hợp nhất"
+    },
+    {
+      "id": "sense-1db6ea0e855230f852907071",
+      "termId": "term-3a19589098bc0e3a2b373ffc",
+      "definition": "set up formally",
+      "meaningVi": "thành lập; thiết lập"
+    },
+    {
+      "id": "sense-58da02c350f91fff6e6e34d5",
+      "termId": "term-b252d4eb5acf5aeaef1ec528",
+      "definition": "build something",
+      "meaningVi": "xây dựng"
+    },
+    {
+      "id": "sense-53c1926283a6c23d7721e7ac",
+      "termId": "term-30ce59dd9f0f9511284e25d7",
+      "definition": "obtain money for a project",
+      "meaningVi": "huy động vốn"
+    },
+    {
+      "id": "sense-0a29f0dee6be68f5dfd749c0",
+      "termId": "term-909c272051bb6b905677de2b",
+      "definition": "very new and different from conventional ideas",
+      "meaningVi": "mang tính đột phá; khác thường mạnh mẽ"
+    },
+    {
+      "id": "sense-fd149cea3dbdfc54c35e06fd",
+      "termId": "term-2a63303c36aa29ada47e1ed4",
+      "definition": "especially because of",
+      "meaningVi": "đặc biệt là do"
+    },
+    {
+      "id": "sense-19471529b466f86f173df25c",
+      "termId": "term-bfba7033571d606f3c2ff041",
+      "definition": "expressing disapproval",
+      "meaningVi": "mang tính chỉ trích (trong bài)"
+    },
+    {
+      "id": "sense-d939cc58fd4fed7d6ba7ab83",
+      "termId": "term-842fcb5e60989a03d08ee07f",
+      "definition": "newspapers and media collectively",
+      "meaningVi": "báo chí"
+    },
+    {
+      "id": "sense-29335f0b1ace74b04d15297e",
+      "termId": "term-5ea7dc7fbe1aa8cca4759ce5",
+      "definition": "person opposing a proposal",
+      "meaningVi": "người phản đối"
+    },
+    {
+      "id": "sense-3b3c80ace1d7237cd7336645",
+      "termId": "term-92a4753ceb578fa01c0b0a14",
+      "definition": "present reasons for a view",
+      "meaningVi": "lập luận; cho rằng"
+    },
+    {
+      "id": "sense-b3b6c1b85697b8c56ecd6a1e",
+      "termId": "term-93bc5d02dc2a24b536534757",
+      "definition": "fall down suddenly",
+      "meaningVi": "sụp đổ"
+    },
+    {
+      "id": "sense-846e89640f6cbd6630ab10fa",
+      "termId": "term-945c8f9d4fe6b4899a55b574",
+      "definition": "above something",
+      "meaningVi": "ở phía trên"
+    },
+    {
+      "id": "sense-7c4f28067a86947ac414ea27",
+      "termId": "term-50d22da6c0d4799bb16322e6",
+      "definition": "move or make move rapidly",
+      "meaningVi": "rung lắc"
+    },
+    {
+      "id": "sense-44a36d798902fda8ec730199",
+      "termId": "term-5743abddddfa08c1e3a99fde",
+      "definition": "harm by a toxic substance",
+      "meaningVi": "đầu độc"
+    },
+    {
+      "id": "sense-b9b6507069769c823a393841",
+      "termId": "term-06964dd2fac36383601ce972",
+      "definition": "substances released by engines",
+      "meaningVi": "khí/chất phát thải"
+    },
+    {
+      "id": "sense-d4297b764592a4250bc065bf",
+      "termId": "term-1c61425b1ba94748e725edd6",
+      "definition": "continue despite obstacles",
+      "meaningVi": "kiên trì; tiếp tục bất chấp khó khăn"
+    },
+    {
+      "id": "sense-83f09caaab41b9fc4710dd24",
+      "termId": "term-e97166b54500da3a32eae48a",
+      "definition": "make something possible",
+      "meaningVi": "cho phép; tạo điều kiện để"
+    },
+    {
+      "id": "sense-107a92a8c8ae4ed9e0e21991",
+      "termId": "term-5c417c6c8127d2a31c8d9573",
+      "definition": "put money into a project",
+      "meaningVi": "đầu tư"
+    },
+    {
+      "id": "sense-c8a032bd669de4c70e00f5b7",
+      "termId": "term-c8bf82c2cbf5a469c5584886",
+      "definition": "in the end after a period",
+      "meaningVi": "cuối cùng; sau một thời gian"
+    },
+    {
+      "id": "sense-68a92b316178a7ba875a347a",
+      "termId": "term-8a84e406c08ac9594f472224",
+      "definition": "path followed by transport",
+      "meaningVi": "tuyến đường; lộ trình"
+    },
+    {
+      "id": "sense-ca7812f339502f14f58a5cc7",
+      "termId": "term-2f3ca61c7e8e993613994497",
+      "definition": "underneath",
+      "meaningVi": "bên dưới"
+    },
+    {
+      "id": "sense-76ab40715a668211f31eca6c",
+      "termId": "term-78842af90e24eebf5a4818ee",
+      "definition": "reduce as far as possible",
+      "meaningVi": "giảm thiểu"
+    },
+    {
+      "id": "sense-f79cadd038f34b452e5ad8f5",
+      "termId": "term-23b18e504dd45960690a0466",
+      "definition": "cost incurred",
+      "meaningVi": "chi phí"
+    },
+    {
+      "id": "sense-e314cef30ca9cc92777bf0cd",
+      "termId": "term-f7ecefe858901f35e3a4a29e",
+      "definition": "destroy a building deliberately",
+      "meaningVi": "phá dỡ"
+    },
+    {
+      "id": "sense-1f802a62bd219cb98f97b548",
+      "termId": "term-a29e5260878579f02dea866e",
+      "definition": "initially planned for a time",
+      "meaningVi": "ban đầu được lên lịch/dự kiến"
+    },
+    {
+      "id": "sense-65e03dcbc59a0b0769b2c3d7",
+      "termId": "term-7a01adea4b8a1084a7aebd7f",
+      "definition": "process of building",
+      "meaningVi": "công trình/việc xây dựng"
+    },
+    {
+      "id": "sense-096561e3668afc16a1136ecc",
+      "termId": "term-e1100453f88ac59922ea8c7d",
+      "definition": "height of the road surface",
+      "meaningVi": "mức/mặt đường"
+    },
+    {
+      "id": "sense-5749d901734832afd6c460b6",
+      "termId": "term-6cbdfcf83679e6943e4239a5",
+      "definition": "method used to achieve something",
+      "meaningVi": "kỹ thuật; phương pháp"
+    },
+    {
+      "id": "sense-dc79a02de8ffff16f46462ec",
+      "termId": "term-26e9482299ed2b44c8f48ad8",
+      "definition": "tunnel building by digging trench and covering it",
+      "meaningVi": "phương pháp đào mở rồi lấp"
+    },
+    {
+      "id": "sense-52c3448f688e32aa1bd2bd43",
+      "termId": "term-a69a13e0645e06f8cd19b3e6",
+      "definition": "long narrow excavation in ground",
+      "meaningVi": "rãnh đào sâu và dài"
+    },
+    {
+      "id": "sense-94fd4a243ce8eef0fcd51b16",
+      "termId": "term-c06a4f8f0647f5ab2252e145",
+      "definition": "for a limited period",
+      "meaningVi": "tạm thời"
+    },
+    {
+      "id": "sense-333d3bad11e49ba7de7ab3d2",
+      "termId": "term-9be229f761256029b8bbef4a",
+      "definition": "support physically",
+      "meaningVi": "chống đỡ; giữ cho khỏi đổ (trong bài)"
+    },
+    {
+      "id": "sense-c2d007c35798620bcd0671fe",
+      "termId": "term-709ae9c3178f4cc8ec046a0b",
+      "definition": "long structural wooden support",
+      "meaningVi": "dầm gỗ"
+    },
+    {
+      "id": "sense-26ec251b0e3d685a3cf2bbd5",
+      "termId": "term-70dbb292c9fadbf9b6602543",
+      "definition": "curved structure made from bricks",
+      "meaningVi": "vòm gạch"
+    },
+    {
+      "id": "sense-a6c2e97af752282096bddefb",
+      "termId": "term-dac1d7cfa95021764849fd10",
+      "definition": "a thickness of material covering a surface",
+      "meaningVi": "lớp (vật liệu)"
+    },
+    {
+      "id": "sense-e7d2ee845dc352f184d68df2",
+      "termId": "term-cf44886e54f424ce136dc38e",
+      "definition": "build again",
+      "meaningVi": "xây dựng lại"
+    },
+    {
+      "id": "sense-7c3cf07cd44fc2e6b46a6d83",
+      "termId": "term-9bf5a24e4aa779981ac41f1a",
+      "definition": "functioning of a transport service",
+      "meaningVi": "sự vận hành, hoạt động"
+    },
+    {
+      "id": "sense-a2e3f5d77f9765742fc2ba1e",
+      "termId": "term-26f1de33979d065ba8d86789",
+      "definition": "addition to existing railway",
+      "meaningVi": "sự kéo dài/mở rộng tuyến"
+    },
+    {
+      "id": "sense-85d0a9e321cb71f1c2aa168a",
+      "termId": "term-1a0f9f8fb6834ba5909efd8b",
+      "definition": "give official permission",
+      "meaningVi": "cấp phép; phê chuẩn"
+    },
+    {
+      "id": "sense-10a3c19d3da3376f06c85142",
+      "termId": "term-11ca3229496067cdf59a522b",
+      "definition": "train engine powered by steam",
+      "meaningVi": "đầu máy hơi nước"
+    },
+    {
+      "id": "sense-cca21aed3e608f5b4ff5add2",
+      "termId": "term-8b4df85a07e71f5eaa57b506",
+      "definition": "equipment heating water into steam",
+      "meaningVi": "nồi hơi"
+    },
+    {
+      "id": "sense-6caa2a9de3ab752700c0f4e1",
+      "termId": "term-0fee7196f6817d6f81e75cac",
+      "definition": "bring something into use",
+      "meaningVi": "đưa vào sử dụng"
+    },
+    {
+      "id": "sense-dc30bf3d9b5aff02efd75d6e",
+      "termId": "term-4108dce8d07e9c3649be6ec4",
+      "definition": "have something installed",
+      "meaningVi": "được trang bị/lắp với"
+    },
+    {
+      "id": "sense-06c262095128f7725da31684",
+      "termId": "term-33a0189af06aabaf31980641",
+      "definition": "change from gas to liquid",
+      "meaningVi": "ngưng tụ (hơi thành lỏng)"
+    },
+    {
+      "id": "sense-e1769236bf9b92698c134c42",
+      "termId": "term-1bbf708cf261914ac207dc6c",
+      "definition": "strong harmful gases or vapours",
+      "meaningVi": "khói/khí độc hoặc khó chịu"
+    },
+    {
+      "id": "sense-f467e6751813ca1470b09334",
+      "termId": "term-d1b9ffac5c4fbb8c16a0a048",
+      "definition": "vertical passage for air circulation",
+      "meaningVi": "giếng/thông đạo thông gió"
+    },
+    {
+      "id": "sense-6e7e446589ed5f0d80e8a4a5",
+      "termId": "term-76a46512186eeecb0d4bf953",
+      "definition": "excessively heavy traffic",
+      "meaningVi": "tình trạng ùn tắc"
+    },
+    {
+      "id": "sense-bb8dfc87d36bf93edfc537dd",
+      "termId": "term-4666a3f66bc600ad9f11fa87",
+      "definition": "route forming a loop",
+      "meaningVi": "vòng tuyến khép kín"
+    },
+    {
+      "id": "sense-9be946e9caf16f0abc73d55d",
+      "termId": "term-27747689baf9903c9aae69d8",
+      "definition": "other possible option",
+      "meaningVi": "phương án thay thế"
+    },
+    {
+      "id": "sense-35bdd841a2a3d36cafc79bf0",
+      "termId": "term-77390a64edc5908a8e17501d",
+      "definition": "small enclosed area",
+      "meaningVi": "không gian chật hẹp, kín"
+    },
+    {
+      "id": "sense-43318f2677b3ab1e87f0c139",
+      "termId": "term-20475dfea3a2deb72bb4bfaa",
+      "definition": "dependable",
+      "meaningVi": "đáng tin cậy; hoạt động ổn định"
+    },
+    {
+      "id": "sense-2799f04cb6bb3d9d8e7419ba",
+      "termId": "term-cf2997b0dd37f5f6467dc963",
+      "definition": "motor powered by electricity",
+      "meaningVi": "động cơ điện"
+    },
+    {
+      "id": "sense-edd9de76d84d9d2159b628cd",
+      "termId": "term-843da5eccc9325f0cd55daa8",
+      "definition": "method or way of doing something",
+      "meaningVi": "phương tiện/cách thức để"
+    },
+    {
+      "id": "sense-70a108ce0b4e5b80ed405c93",
+      "termId": "term-63e1d7b6955b62bc3495759c",
+      "definition": "move energy from one device to another",
+      "meaningVi": "truyền tải năng lượng điện"
+    },
+    {
+      "id": "sense-d34dd630d6328faba29a8732",
+      "termId": "term-9123dcbb0b42652b0e105956",
+      "definition": "device producing electric power",
+      "meaningVi": "máy phát điện"
+    },
+    {
+      "id": "sense-e268013d4c8ff73e39502e09",
+      "termId": "term-af018d43e682d611668f7431",
+      "definition": "electric railway operating far below ground",
+      "meaningVi": "đường sắt điện ngầm sâu"
+    },
+    {
+      "id": "sense-fce02794dc77cc00b958f59e",
+      "termId": "term-fdbbb99d7b90b2b8d6029510",
+      "definition": "be composed of",
+      "meaningVi": "được cấu thành từ"
+    },
+    {
+      "id": "sense-a0faf1768124f5a1231dc30f",
+      "termId": "term-5eda958e9ddee7721fb71e7a",
+      "definition": "not wide",
+      "meaningVi": "hẹp"
+    },
+    {
+      "id": "sense-1a95bb111e4aea4c24356619",
+      "termId": "term-4e0bded182c90da63e05f292",
+      "definition": "supply of electric energy",
+      "meaningVi": "nguồn cấp điện"
+    },
+    {
+      "id": "sense-252384ca78958e91d88ad5e7",
+      "termId": "term-89f3a87c54ee58dcdb21e8a2",
+      "definition": "successful technological accomplishment",
+      "meaningVi": "thành tựu kỹ thuật"
+    },
+    {
+      "id": "sense-3ff11e040f69cd12c1d4e710",
+      "termId": "term-cdfacc7fd2065364dba531cd",
+      "definition": "earn more than is spent",
+      "meaningVi": "có lãi; tạo ra lợi nhuận"
+    },
+    {
+      "id": "sense-51dc82c9a17888e5dec61b34",
+      "termId": "term-d067915e3b850dc8662d57aa",
+      "definition": "established and functioning",
+      "meaningVi": "đã được thiết lập, hiện hữu"
+    },
+    {
+      "id": "sense-a22ca1f6cc64ff2c60741af7",
+      "termId": "term-c1329b8fdd8b0b6510760cc6",
+      "definition": "shortly after",
+      "meaningVi": "không lâu sau đó"
+    }
+  ],
+  "lesson_term_links": [
+    {
+      "id": "cam17-t1-reading-p1:sense-bc0aa7072ccf80cda2816871",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-fea5cf6ef0a031360602f8f8",
+      "senseId": "sense-bc0aa7072ccf80cda2816871",
+      "sourceId": "C17-T1-R1-001",
+      "sourceRow": 2,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "grow at an astonishing rate",
+      "paraphrase": "grow remarkably quickly",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-219d445bcdbc485e9d28488e",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-d759e5ec6eb705dd34840094",
+      "senseId": "sense-219d445bcdbc485e9d28488e",
+      "sourceId": "C17-T1-R1-002",
+      "sourceRow": 3,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "become increasingly congested",
+      "paraphrase": "more and more",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-e89a4b0bd00866e4982969c7",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-c041144959bddeff52030351",
+      "senseId": "sense-e89a4b0bd00866e4982969c7",
+      "sourceId": "C17-T1-R1-003",
+      "sourceRow": 4,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "become congested; traffic congestion",
+      "paraphrase": "overcrowded with traffic",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-072cc7ecf79926dc8c3b4035",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-167f448f11f389abcfaa904a",
+      "senseId": "sense-072cc7ecf79926dc8c3b4035",
+      "sourceId": "C17-T1-R1-004",
+      "sourceRow": 5,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "expansion of a network",
+      "paraphrase": "extension; growth",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-97e16630481da84aaa89c941",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-944b7954488a15712a30af6b",
+      "senseId": "sense-97e16630481da84aaa89c941",
+      "sourceId": "C17-T1-R1-005",
+      "sourceRow": 6,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "overground railway network",
+      "paraphrase": "surface railway",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-19e7303e091b6ad30d33099e",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-3009be769fb8f956e8413ee9",
+      "senseId": "sense-19e7303e091b6ad30d33099e",
+      "sourceId": "C17-T1-R1-006",
+      "sourceRow": 7,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "railway network; tube network",
+      "paraphrase": "interconnected system",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-bc680ec538cbb220ab2a466d",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-d98927794af5b99e4dd51904",
+      "senseId": "sense-bc680ec538cbb220ab2a466d",
+      "sourceId": "C17-T1-R1-007",
+      "sourceRow": 8,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "result in + noun/-ing",
+      "paraphrase": "lead to; cause",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-a62397cd8498372a644abfe4",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-bf816809a4d8aa98ed09fe84",
+      "senseId": "sense-a62397cd8498372a644abfe4",
+      "sourceId": "C17-T1-R1-008",
+      "sourceRow": 9,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "carry passengers",
+      "paraphrase": "traveller",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-040d2f06cfb57501b2f21289",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-bd08022e8fb80701512cd13c",
+      "senseId": "sense-040d2f06cfb57501b2f21289",
+      "sourceId": "C17-T1-R1-009",
+      "sourceRow": 10,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "arrive in the capital",
+      "paraphrase": "capital city",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-eb0be8fa046a33efdda7d995",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-c4824ae8bb216f860ca4cd45",
+      "senseId": "sense-eb0be8fa046a33efdda7d995",
+      "sourceId": "C17-T1-R1-011",
+      "sourceRow": 11,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "historic centre",
+      "paraphrase": "historically important",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-febc630a67fef6e9872d2ba6",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-9b232b0ca1e573c3c26be34f",
+      "senseId": "sense-febc630a67fef6e9872d2ba6",
+      "sourceId": "C17-T1-R1-012",
+      "sourceRow": 12,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "form a ring around",
+      "paraphrase": "encircle",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-d20fea662a1034c83894d16e",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-5f91503c4d13866bc844acfb",
+      "senseId": "sense-d20fea662a1034c83894d16e",
+      "sourceId": "C17-T1-R1-013",
+      "sourceRow": 13,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "consist of + noun",
+      "paraphrase": "be composed of",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-3eaf828d1dfa98a187fc8992",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-ba885834f5f84d9359509404",
+      "senseId": "sense-3eaf828d1dfa98a187fc8992",
+      "sourceId": "C17-T1-R1-014",
+      "sourceRow": 14,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "poorly built houses",
+      "paraphrase": "badly constructed",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-0565f5e877495423f1f8e0ea",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-d6357df280f26a37dd39dd2f",
+      "senseId": "sense-0565f5e877495423f1f8e0ea",
+      "sourceId": "C17-T1-R1-015",
+      "sourceRow": 15,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "overcrowded slums",
+      "paraphrase": "packed; overpopulated",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-9713aaa7c9984f2a0e5b19b9",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-d9be3f7ab722e90292015099",
+      "senseId": "sense-9713aaa7c9984f2a0e5b19b9",
+      "sourceId": "C17-T1-R1-016",
+      "sourceRow": 16,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "inner-city slums",
+      "paraphrase": "poor housing district",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-b0b8f112fe3686a19b5f7595",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-47c8c2f8ab71d8cb3e77199d",
+      "senseId": "sense-b0b8f112fe3686a19b5f7595",
+      "sourceId": "C17-T1-R1-017",
+      "sourceRow": 17,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "horse-drawn carriage; horse-drawn traffic",
+      "paraphrase": "pulled by horses",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-5cc1e31e90b4a98be6cb0447",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-6dfa5ed997611337144a0c79",
+      "senseId": "sense-5cc1e31e90b4a98be6cb0447",
+      "sourceId": "C17-T1-R1-018",
+      "sourceRow": 18,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "crossing the city became a nightmare",
+      "paraphrase": "terrible ordeal",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-7866d660a6098a5b1088424a",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-13bfabb07807921f6ce3a618",
+      "senseId": "sense-7866d660a6098a5b1088424a",
+      "sourceId": "C17-T1-R1-019",
+      "sourceRow": 19,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "horse-drawn carriage; train carriage",
+      "paraphrase": "coach",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-9482629201408c09033f5c37",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-ecc62dd3e8533b5714f03663",
+      "senseId": "sense-9482629201408c09033f5c37",
+      "sourceId": "C17-T1-R1-020",
+      "sourceRow": 20,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "numerous schemes",
+      "paraphrase": "many; a large number of",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-2467417662518f2b65f17a66",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-cd892494455f6fa019e5b1e0",
+      "senseId": "sense-2467417662518f2b65f17a66",
+      "sourceId": "C17-T1-R1-021",
+      "sourceRow": 21,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "propose a scheme; expensive scheme",
+      "paraphrase": "plan; project",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-2ae0fa5c36a4e1d40ec501ff",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-12df7f0ee89f9d7f17fb8e88",
+      "senseId": "sense-2ae0fa5c36a4e1d40ec501ff",
+      "sourceId": "C17-T1-R1-022",
+      "sourceRow": 22,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "propose a scheme; submit a proposal",
+      "paraphrase": "suggest; put forward",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-bba0a06e975354255a715274",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-fdf09cdfc26cccf610edccd7",
+      "senseId": "sense-bba0a06e975354255a715274",
+      "sourceId": "C17-T1-R1-023",
+      "sourceRow": 23,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "resolve a problem",
+      "paraphrase": "solve; address",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-6ff6146fc5802fa1a7e9ebfc",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-6998ec8d781ca3a08ea2446d",
+      "senseId": "sense-6ff6146fc5802fa1a7e9ebfc",
+      "sourceId": "C17-T1-R1-024",
+      "sourceRow": 24,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "few succeeded",
+      "paraphrase": "be successful",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-58b2376a8b0a1ccb3d997e4d",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-383aaf318cf8497f389dda12",
+      "senseId": "sense-58b2376a8b0a1ccb3d997e4d",
+      "sourceId": "C17-T1-R1-025",
+      "sourceRow": 25,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "vocal advocate for a solution",
+      "paraphrase": "outspoken supporter",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-27dd105458c68f03c45cc7a4",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-5da94256a72d9fbd13a4afa5",
+      "senseId": "sense-27dd105458c68f03c45cc7a4",
+      "sourceId": "C17-T1-R1-026",
+      "sourceRow": 26,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "advanced",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "work as a solicitor",
+      "paraphrase": "legal professional",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-5773df4e394a71bda9f5a149",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-8311effebfde1c4f2bd50e57",
+      "senseId": "sense-5773df4e394a71bda9f5a149",
+      "sourceId": "C17-T1-R1-027",
+      "sourceRow": 27,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "social and economic advantages",
+      "paraphrase": "social and financial benefits",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-4eeaa167bcb7187c337891a2",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-639c61d6a7bc2ba3aab3383b",
+      "senseId": "sense-4eeaa167bcb7187c337891a2",
+      "sourceId": "C17-T1-R1-028",
+      "sourceRow": 28,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "link stations together",
+      "paraphrase": "connect",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-d25e72758cb00a430a2678dd",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-5f8bc524d871939c3490c77e",
+      "senseId": "sense-d25e72758cb00a430a2678dd",
+      "sourceId": "C17-T1-R1-029",
+      "sourceRow": 29,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "clear London slums",
+      "paraphrase": "remove slum housing",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-3d666ffd6243e5eae8122ec5",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-2f07555d3e64c04d1b8e267c",
+      "senseId": "sense-3d666ffd6243e5eae8122ec5",
+      "sourceId": "C17-T1-R1-030",
+      "sourceRow": 30,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "relocate workers to suburbs",
+      "paraphrase": "move; resettle",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-aca45c8c33ce6d6b76305b9d",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-386ec76980de4a12f455b9a7",
+      "senseId": "sense-aca45c8c33ce6d6b76305b9d",
+      "sourceId": "C17-T1-R1-031",
+      "sourceRow": 31,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "inner-city slums",
+      "paraphrase": "central urban",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-1f0ba03ccd2713c05c437af7",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-0ad8bcf888fb3429b15597c7",
+      "senseId": "sense-1f0ba03ccd2713c05c437af7",
+      "sourceId": "C17-T1-R1-032",
+      "sourceRow": 32,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "newly constructed suburbs",
+      "paraphrase": "newly built",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-671cec8bff9f6329a6dbfc5e",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-c47a58e12937ba7dd647290d",
+      "senseId": "sense-671cec8bff9f6329a6dbfc5e",
+      "sourceId": "C17-T1-R1-033",
+      "sourceRow": 33,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "relocate to suburbs",
+      "paraphrase": "outlying residential area",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-d6d03481b171a5f596024d5b",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-405abc33f5f3b06b881c7330",
+      "senseId": "sense-d6d03481b171a5f596024d5b",
+      "sourceId": "C17-T1-R1-034",
+      "sourceRow": 34,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "provide cheap rail travel",
+      "paraphrase": "supply; offer",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-03936f62d7f90f8476e85cec",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-f0fd8ed01465d2aaae1a324f",
+      "senseId": "sense-03936f62d7f90f8476e85cec",
+      "sourceId": "C17-T1-R1-035",
+      "sourceRow": 35,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "gain support among businessmen",
+      "paraphrase": "win backing",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-7efabef9a0accea2e1cfc2c0",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-6f8678a6662a613e9c8308dd",
+      "senseId": "sense-7efabef9a0accea2e1cfc2c0",
+      "sourceId": "C17-T1-R1-036",
+      "sourceRow": 36,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "submit a plan to Parliament",
+      "paraphrase": "present a proposal",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-3761adfe62a633a9b079f224",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-084e990a49ba65e622926853",
+      "senseId": "sense-3761adfe62a633a9b079f224",
+      "sourceId": "C17-T1-R1-037",
+      "sourceRow": 37,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "plan was rejected",
+      "paraphrase": "turn down",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-34cbfdc1ad4c82232245a368",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-71c816f43dde1b72d4b83127",
+      "senseId": "sense-34cbfdc1ad4c82232245a368",
+      "sourceId": "C17-T1-R1-038",
+      "sourceRow": 38,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "coincide with a proposal",
+      "paraphrase": "occur simultaneously with",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-0a73406fb36bbdc0a962c882",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-ecd1378bc9dc130008f00d58",
+      "senseId": "sense-0a73406fb36bbdc0a962c882",
+      "sourceId": "C17-T1-R1-039",
+      "sourceRow": 39,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "a proposal for a line",
+      "paraphrase": "plan; suggestion",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-a8cfea44fc823bc8c3e05ed6",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-dddc346175a6ce6a0d1920af",
+      "senseId": "sense-a8cfea44fc823bc8c3e05ed6",
+      "sourceId": "C17-T1-R1-040",
+      "sourceRow": 40,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "Parliament passed the proposal",
+      "paraphrase": "approve; authorize",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-590d68f3f7f2ab429bf4f7ff",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-283128acef14943c127f7327",
+      "senseId": "sense-590d68f3f7f2ab429bf4f7ff",
+      "sourceId": "C17-T1-R1-041",
+      "sourceRow": 41,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "two groups merged",
+      "paraphrase": "combine; unite",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-1db6ea0e855230f852907071",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-3a19589098bc0e3a2b373ffc",
+      "senseId": "sense-1db6ea0e855230f852907071",
+      "sourceId": "C17-T1-R1-042",
+      "sourceRow": 42,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "establish a company",
+      "paraphrase": "found; set up",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-58da02c350f91fff6e6e34d5",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-b252d4eb5acf5aeaef1ec528",
+      "senseId": "sense-58da02c350f91fff6e6e34d5",
+      "sourceId": "C17-T1-R1-043",
+      "sourceRow": 43,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "construct an underground railway",
+      "paraphrase": "build",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-53c1926283a6c23d7721e7ac",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-30ce59dd9f0f9511284e25d7",
+      "senseId": "sense-53c1926283a6c23d7721e7ac",
+      "sourceId": "C17-T1-R1-044",
+      "sourceRow": 44,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "raise funding for a scheme",
+      "paraphrase": "secure financing",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-0a29f0dee6be68f5dfd749c0",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-909c272051bb6b905677de2b",
+      "senseId": "sense-0a29f0dee6be68f5dfd749c0",
+      "sourceId": "C17-T1-R1-045",
+      "sourceRow": 45,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "advanced",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "radical scheme",
+      "paraphrase": "far-reaching; unconventional",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-fd149cea3dbdfc54c35e06fd",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-2a63303c36aa29ada47e1ed4",
+      "senseId": "sense-fd149cea3dbdfc54c35e06fd",
+      "sourceId": "C17-T1-R1-046",
+      "sourceRow": 46,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "advanced",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "not least because of criticism",
+      "paraphrase": "particularly because of",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-19471529b466f86f173df25c",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-bfba7033571d606f3c2ff041",
+      "senseId": "sense-19471529b466f86f173df25c",
+      "sourceId": "C17-T1-R1-047",
+      "sourceRow": 47,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "critical articles in the press",
+      "paraphrase": "disapproving; negative",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-d939cc58fd4fed7d6ba7ab83",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-842fcb5e60989a03d08ee07f",
+      "senseId": "sense-d939cc58fd4fed7d6ba7ab83",
+      "sourceId": "C17-T1-R1-048",
+      "sourceRow": 48,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "articles printed by the press",
+      "paraphrase": "media",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-29335f0b1ace74b04d15297e",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-5ea7dc7fbe1aa8cca4759ce5",
+      "senseId": "sense-29335f0b1ace74b04d15297e",
+      "sourceId": "C17-T1-R1-049",
+      "sourceRow": 49,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "objectors argued",
+      "paraphrase": "opponent",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-3b3c80ace1d7237cd7336645",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-92a4753ceb578fa01c0b0a14",
+      "senseId": "sense-3b3c80ace1d7237cd7336645",
+      "sourceId": "C17-T1-R1-050",
+      "sourceRow": 50,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "objectors argued that",
+      "paraphrase": "claim; contend",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-b3b6c1b85697b8c56ecd6a1e",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-93bc5d02dc2a24b536534757",
+      "senseId": "sense-b3b6c1b85697b8c56ecd6a1e",
+      "sourceId": "C17-T1-R1-051",
+      "sourceRow": 51,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "tunnels would collapse",
+      "paraphrase": "fall in; cave in",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-846e89640f6cbd6630ab10fa",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-945c8f9d4fe6b4899a55b574",
+      "senseId": "sense-846e89640f6cbd6630ab10fa",
+      "sourceId": "C17-T1-R1-052",
+      "sourceRow": 52,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "traffic overhead",
+      "paraphrase": "above",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-7c4f28067a86947ac414ea27",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-50d22da6c0d4799bb16322e6",
+      "senseId": "sense-7c4f28067a86947ac414ea27",
+      "sourceId": "C17-T1-R1-053",
+      "sourceRow": 53,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "buildings would be shaken",
+      "paraphrase": "vibrate",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-44a36d798902fda8ec730199",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-5743abddddfa08c1e3a99fde",
+      "senseId": "sense-44a36d798902fda8ec730199",
+      "sourceId": "C17-T1-R1-054",
+      "sourceRow": 54,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "passengers would be poisoned",
+      "paraphrase": "expose to toxins",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-b9b6507069769c823a393841",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-06964dd2fac36383601ce972",
+      "senseId": "sense-b9b6507069769c823a393841",
+      "sourceId": "C17-T1-R1-055",
+      "sourceRow": 55,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "emissions from train engines",
+      "paraphrase": "exhaust; discharge",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-d4297b764592a4250bc065bf",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-1c61425b1ba94748e725edd6",
+      "senseId": "sense-d4297b764592a4250bc065bf",
+      "sourceId": "C17-T1-R1-056",
+      "sourceRow": 56,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "partners persisted",
+      "paraphrase": "persevere; continue",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-83f09caaab41b9fc4710dd24",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-e97166b54500da3a32eae48a",
+      "senseId": "sense-83f09caaab41b9fc4710dd24",
+      "sourceId": "C17-T1-R1-057",
+      "sourceRow": 57,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "enable them to run trains",
+      "paraphrase": "allow; make possible",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-107a92a8c8ae4ed9e0e21991",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-5c417c6c8127d2a31c8d9573",
+      "senseId": "sense-107a92a8c8ae4ed9e0e21991",
+      "sourceId": "C17-T1-R1-058",
+      "sourceRow": 58,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "invest in the scheme",
+      "paraphrase": "fund; finance",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-c8a032bd669de4c70e00f5b7",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-c8bf82c2cbf5a469c5584886",
+      "senseId": "sense-c8a032bd669de4c70e00f5b7",
+      "sourceId": "C17-T1-R1-059",
+      "sourceRow": 59,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "eventually money was raised",
+      "paraphrase": "ultimately",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-68a92b316178a7ba875a347a",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-8a84e406c08ac9594f472224",
+      "senseId": "sense-68a92b316178a7ba875a347a",
+      "sourceId": "C17-T1-R1-060",
+      "sourceRow": 60,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "chosen route; route ran beneath roads",
+      "paraphrase": "course; path",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-ca7812f339502f14f58a5cc7",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-2f3ca61c7e8e993613994497",
+      "senseId": "sense-ca7812f339502f14f58a5cc7",
+      "sourceId": "C17-T1-R1-061",
+      "sourceRow": 61,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "beneath main roads",
+      "paraphrase": "under",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-76ab40715a668211f31eca6c",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-78842af90e24eebf5a4818ee",
+      "senseId": "sense-76ab40715a668211f31eca6c",
+      "sourceId": "C17-T1-R1-062",
+      "sourceRow": 62,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "minimise expense",
+      "paraphrase": "reduce to a minimum",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-f79cadd038f34b452e5ad8f5",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-23b18e504dd45960690a0466",
+      "senseId": "sense-f79cadd038f34b452e5ad8f5",
+      "sourceId": "C17-T1-R1-063",
+      "sourceRow": 63,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "expense of demolishing buildings",
+      "paraphrase": "cost",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-e314cef30ca9cc92777bf0cd",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-f7ecefe858901f35e3a4a29e",
+      "senseId": "sense-e314cef30ca9cc92777bf0cd",
+      "sourceId": "C17-T1-R1-064",
+      "sourceRow": 64,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "demolishing buildings",
+      "paraphrase": "tear down",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-1f802a62bd219cb98f97b548",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-a29e5260878579f02dea866e",
+      "senseId": "sense-1f802a62bd219cb98f97b548",
+      "sourceId": "C17-T1-R1-065",
+      "sourceRow": 65,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "originally scheduled to be completed",
+      "paraphrase": "initially planned",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-65e03dcbc59a0b0769b2c3d7",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-7a01adea4b8a1084a7aebd7f",
+      "senseId": "sense-65e03dcbc59a0b0769b2c3d7",
+      "sourceId": "C17-T1-R1-066",
+      "sourceRow": 66,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "construction took three years",
+      "paraphrase": "building work",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-096561e3668afc16a1136ecc",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-e1100453f88ac59922ea8c7d",
+      "senseId": "sense-096561e3668afc16a1136ecc",
+      "sourceId": "C17-T1-R1-067",
+      "sourceRow": 67,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "just below street level",
+      "paraphrase": "road level",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-5749d901734832afd6c460b6",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-6cbdfcf83679e6943e4239a5",
+      "senseId": "sense-5749d901734832afd6c460b6",
+      "sourceId": "C17-T1-R1-068",
+      "sourceRow": 68,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "technique known as cut and cover",
+      "paraphrase": "method",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-dc79a02de8ffff16f46462ec",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-26e9482299ed2b44c8f48ad8",
+      "senseId": "sense-dc79a02de8ffff16f46462ec",
+      "sourceId": "C17-T1-R1-069",
+      "sourceRow": 69,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "advanced",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "cut and cover technique",
+      "paraphrase": "open-cut tunnelling",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-52c3448f688e32aa1bd2bd43",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-a69a13e0645e06f8cd19b3e6",
+      "senseId": "sense-52c3448f688e32aa1bd2bd43",
+      "sourceId": "C17-T1-R1-070",
+      "sourceRow": 70,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "advanced",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "dig a trench",
+      "paraphrase": "ditch; excavation",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-94fd4a243ce8eef0fcd51b16",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-c06a4f8f0647f5ab2252e145",
+      "senseId": "sense-94fd4a243ce8eef0fcd51b16",
+      "sourceId": "C17-T1-R1-071",
+      "sourceRow": 71,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "temporarily held up",
+      "paraphrase": "for a short time",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-333d3bad11e49ba7de7ab3d2",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-9be229f761256029b8bbef4a",
+      "senseId": "sense-333d3bad11e49ba7de7ab3d2",
+      "sourceId": "C17-T1-R1-072",
+      "sourceRow": 72,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "sides held up with beams",
+      "paraphrase": "support; prop up",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-c2d007c35798620bcd0671fe",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-709ae9c3178f4cc8ec046a0b",
+      "senseId": "sense-c2d007c35798620bcd0671fe",
+      "sourceId": "C17-T1-R1-073",
+      "sourceRow": 73,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "advanced",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "timber beams",
+      "paraphrase": "wooden supports",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-26ec251b0e3d685a3cf2bbd5",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-70dbb292c9fadbf9b6602543",
+      "senseId": "sense-26ec251b0e3d685a3cf2bbd5",
+      "sourceId": "C17-T1-R1-074",
+      "sourceRow": 74,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "advanced",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "add a brick arch",
+      "paraphrase": "masonry arch",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-a6c2e97af752282096bddefb",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-dac1d7cfa95021764849fd10",
+      "senseId": "sense-a6c2e97af752282096bddefb",
+      "sourceId": "C17-T1-R1-075",
+      "sourceRow": 75,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "layer of soil",
+      "paraphrase": "stratum; covering",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-e7d2ee845dc352f184d68df2",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-cf44886e54f424ce136dc38e",
+      "senseId": "sense-e7d2ee845dc352f184d68df2",
+      "sourceId": "C17-T1-R1-076",
+      "sourceRow": 76,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "road above rebuilt",
+      "paraphrase": "reconstruct",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-7c3cf07cd44fc2e6b46a6d83",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-9bf5a24e4aa779981ac41f1a",
+      "senseId": "sense-7c3cf07cd44fc2e6b46a6d83",
+      "sourceId": "C17-T1-R1-077",
+      "sourceRow": 77,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "begin operation; first year of operation",
+      "paraphrase": "service; functioning",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-a2e3f5d77f9765742fc2ba1e",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-26f1de33979d065ba8d86789",
+      "senseId": "sense-a2e3f5d77f9765742fc2ba1e",
+      "sourceId": "C17-T1-R1-078",
+      "sourceRow": 78,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "extension of line",
+      "paraphrase": "expansion; addition",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-85d0a9e321cb71f1c2aa168a",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-1a0f9f8fb6834ba5909efd8b",
+      "senseId": "sense-85d0a9e321cb71f1c2aa168a",
+      "sourceId": "C17-T1-R1-079",
+      "sourceRow": 79,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "extensions being authorised",
+      "paraphrase": "approve; permit",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-10a3c19d3da3376f06c85142",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-11ca3229496067cdf59a522b",
+      "senseId": "sense-10a3c19d3da3376f06c85142",
+      "sourceId": "C17-T1-R1-080",
+      "sourceRow": 80,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "advanced",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "steam locomotives",
+      "paraphrase": "steam-powered engine",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-cca21aed3e608f5b4ff5add2",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-8b4df85a07e71f5eaa57b506",
+      "senseId": "sense-cca21aed3e608f5b4ff5add2",
+      "sourceId": "C17-T1-R1-081",
+      "sourceRow": 81,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "advanced",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "firebricks in boilers",
+      "paraphrase": "steam generator vessel",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-6caa2a9de3ab752700c0f4e1",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-0fee7196f6817d6f81e75cac",
+      "senseId": "sense-6caa2a9de3ab752700c0f4e1",
+      "sourceId": "C17-T1-R1-082",
+      "sourceRow": 82,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "engines never introduced",
+      "paraphrase": "put into service",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-dc30bf3d9b5aff02efd75d6e",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-4108dce8d07e9c3649be6ec4",
+      "senseId": "sense-dc30bf3d9b5aff02efd75d6e",
+      "sourceId": "C17-T1-R1-083",
+      "sourceRow": 83,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "fitted with water tanks",
+      "paraphrase": "be equipped with",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-06c262095128f7725da31684",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-33a0189af06aabaf31980641",
+      "senseId": "sense-06c262095128f7725da31684",
+      "sourceId": "C17-T1-R1-084",
+      "sourceRow": 84,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "advanced",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "steam could be condensed",
+      "paraphrase": "turn into liquid",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-e1769236bf9b92698c134c42",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-1bbf708cf261914ac207dc6c",
+      "senseId": "sense-e1769236bf9b92698c134c42",
+      "sourceId": "C17-T1-R1-085",
+      "sourceRow": 85,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "smoke and fumes",
+      "paraphrase": "exhaust gases",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-f467e6751813ca1470b09334",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-d1b9ffac5c4fbb8c16a0a048",
+      "senseId": "sense-f467e6751813ca1470b09334",
+      "sourceId": "C17-T1-R1-086",
+      "sourceRow": 86,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "advanced",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "ventilation shafts added",
+      "paraphrase": "air shaft",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-6e7e446589ed5f0d80e8a4a5",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-76a46512186eeecb0d4bf953",
+      "senseId": "sense-6e7e446589ed5f0d80e8a4a5",
+      "sourceId": "C17-T1-R1-087",
+      "sourceRow": 87,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "congestion on streets",
+      "paraphrase": "traffic jams",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-bb8dfc87d36bf93edfc537dd",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-4666a3f66bc600ad9f11fa87",
+      "senseId": "sense-bb8dfc87d36bf93edfc537dd",
+      "sourceId": "C17-T1-R1-088",
+      "sourceRow": 88,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "form a circuit around",
+      "paraphrase": "loop",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-9be946e9caf16f0abc73d55d",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-27747689baf9903c9aae69d8",
+      "senseId": "sense-9be946e9caf16f0abc73d55d",
+      "sourceId": "C17-T1-R1-089",
+      "sourceRow": 89,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "only alternative",
+      "paraphrase": "other option",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-35bdd841a2a3d36cafc79bf0",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-77390a64edc5908a8e17501d",
+      "senseId": "sense-35bdd841a2a3d36cafc79bf0",
+      "sourceId": "C17-T1-R1-090",
+      "sourceRow": 90,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "in such a confined space",
+      "paraphrase": "enclosed restricted space",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-43318f2677b3ab1e87f0c139",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-20475dfea3a2deb72bb4bfaa",
+      "senseId": "sense-43318f2677b3ab1e87f0c139",
+      "sourceId": "C17-T1-R1-091",
+      "sourceRow": 91,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "reliable electric motor",
+      "paraphrase": "dependable",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-2799f04cb6bb3d9d8e7419ba",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-cf2997b0dd37f5f6467dc963",
+      "senseId": "sense-2799f04cb6bb3d9d8e7419ba",
+      "sourceId": "C17-T1-R1-092",
+      "sourceRow": 92,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "development of electric motor",
+      "paraphrase": "electrically powered motor",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-edd9de76d84d9d2159b628cd",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-843da5eccc9325f0cd55daa8",
+      "senseId": "sense-edd9de76d84d9d2159b628cd",
+      "sourceId": "C17-T1-R1-093",
+      "sourceRow": 93,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "a means of transferring power",
+      "paraphrase": "method of",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-70a108ce0b4e5b80ed405c93",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-63e1d7b6955b62bc3495759c",
+      "senseId": "sense-70a108ce0b4e5b80ed405c93",
+      "sourceId": "C17-T1-R1-094",
+      "sourceRow": 94,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "transferring power from generator",
+      "paraphrase": "transmit energy",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-d34dd630d6328faba29a8732",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-9123dcbb0b42652b0e105956",
+      "senseId": "sense-d34dd630d6328faba29a8732",
+      "sourceId": "C17-T1-R1-095",
+      "sourceRow": 95,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "advanced",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "power from the generator",
+      "paraphrase": "electricity producer",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-e268013d4c8ff73e39502e09",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-af018d43e682d611668f7431",
+      "senseId": "sense-e268013d4c8ff73e39502e09",
+      "sourceId": "C17-T1-R1-096",
+      "sourceRow": 96,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "advanced",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "deep-level electric railway",
+      "paraphrase": "deep underground electric line",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-fce02794dc77cc00b958f59e",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-fdbbb99d7b90b2b8d6029510",
+      "senseId": "sense-fce02794dc77cc00b958f59e",
+      "sourceId": "C17-T1-R1-097",
+      "sourceRow": 97,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "be made up of three carriages",
+      "paraphrase": "consist of; comprise",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-a0faf1768124f5a1231dc30f",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-5eda958e9ddee7721fb71e7a",
+      "senseId": "sense-a0faf1768124f5a1231dc30f",
+      "sourceId": "C17-T1-R1-098",
+      "sourceRow": 98,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "narrow carriages",
+      "paraphrase": "not wide",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-1a95bb111e4aea4c24356619",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-4e0bded182c90da63e05f292",
+      "senseId": "sense-1a95bb111e4aea4c24356619",
+      "sourceId": "C17-T1-R1-099",
+      "sourceRow": 99,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "unreliable power supply",
+      "paraphrase": "electricity provision",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-252384ca78958e91d88ad5e7",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-89f3a87c54ee58dcdb21e8a2",
+      "senseId": "sense-252384ca78958e91d88ad5e7",
+      "sourceId": "C17-T1-R1-100",
+      "sourceRow": 100,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "great technical achievement",
+      "paraphrase": "engineering accomplishment",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-3ff11e040f69cd12c1d4e710",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-cdfacc7fd2065364dba531cd",
+      "senseId": "sense-3ff11e040f69cd12c1d4e710",
+      "sourceId": "C17-T1-R1-101",
+      "sourceRow": 101,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "did not make a profit",
+      "paraphrase": "be profitable",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-51dc82c9a17888e5dec61b34",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-d067915e3b850dc8662d57aa",
+      "senseId": "sense-51dc82c9a17888e5dec61b34",
+      "sourceId": "C17-T1-R1-102",
+      "sourceRow": 102,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "core",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "system was in place",
+      "paraphrase": "established; operating",
+      "status": "approved"
+    },
+    {
+      "id": "cam17-t1-reading-p1:sense-a22ca1f6cc64ff2c60741af7",
+      "lessonId": "cam17-t1-reading-p1",
+      "termId": "term-c1329b8fdd8b0b6510760cc6",
+      "senseId": "sense-a22ca1f6cc64ff2c60741af7",
+      "sourceId": "C17-T1-R1-103",
+      "sourceRow": 103,
+      "sourceSheet": "Vocabulary Bank",
+      "priority": "supporting",
+      "section": null,
+      "originalReviewStatus": "Pending teacher review",
+      "existingTermId": null,
+      "importAction": "EXISTING",
+      "collocation": "soon afterwards extensions added",
+      "paraphrase": "shortly thereafter",
+      "status": "approved"
+    }
+  ],
+  "word_family_links": [
+    {
+      "termId": "term-fea5cf6ef0a031360602f8f8",
+      "suggestedForms": "astonish; astonishing; astonishment; astonishingly",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-001"
+    },
+    {
+      "termId": "term-d759e5ec6eb705dd34840094",
+      "suggestedForms": "increase; increasing; increasingly",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-002"
+    },
+    {
+      "termId": "term-c041144959bddeff52030351",
+      "suggestedForms": "congest; congestion; congested",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-003"
+    },
+    {
+      "termId": "term-167f448f11f389abcfaa904a",
+      "suggestedForms": "expand; expansion; expansive",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-004"
+    },
+    {
+      "termId": "term-944b7954488a15712a30af6b",
+      "suggestedForms": "ground; underground; overground",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-005"
+    },
+    {
+      "termId": "term-3009be769fb8f956e8413ee9",
+      "suggestedForms": "network; networking",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-006"
+    },
+    {
+      "termId": "term-d98927794af5b99e4dd51904",
+      "suggestedForms": "result; resultant",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-007"
+    },
+    {
+      "termId": "term-bf816809a4d8aa98ed09fe84",
+      "suggestedForms": "passenger",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-008"
+    },
+    {
+      "termId": "term-bd08022e8fb80701512cd13c",
+      "suggestedForms": "capital",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-009"
+    },
+    {
+      "termId": "term-c4824ae8bb216f860ca4cd45",
+      "suggestedForms": "history; historical; historic",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-011"
+    },
+    {
+      "termId": "term-9b232b0ca1e573c3c26be34f",
+      "suggestedForms": "form; formation",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-012"
+    },
+    {
+      "termId": "term-5f91503c4d13866bc844acfb",
+      "suggestedForms": "consist; constituent",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-013"
+    },
+    {
+      "termId": "term-ba885834f5f84d9359509404",
+      "suggestedForms": "poor; poorly",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-014"
+    },
+    {
+      "termId": "term-d6357df280f26a37dd39dd2f",
+      "suggestedForms": "crowd; crowded; overcrowd; overcrowding",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-015"
+    },
+    {
+      "termId": "term-d9be3f7ab722e90292015099",
+      "suggestedForms": "slum",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-016"
+    },
+    {
+      "termId": "term-47c8c2f8ab71d8cb3e77199d",
+      "suggestedForms": "draw; drawn",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-017"
+    },
+    {
+      "termId": "term-6dfa5ed997611337144a0c79",
+      "suggestedForms": "nightmare; nightmarish",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-018"
+    },
+    {
+      "termId": "term-13bfabb07807921f6ce3a618",
+      "suggestedForms": "carriage",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-019"
+    },
+    {
+      "termId": "term-ecc62dd3e8533b5714f03663",
+      "suggestedForms": "number; numerous",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-020"
+    },
+    {
+      "termId": "term-cd892494455f6fa019e5b1e0",
+      "suggestedForms": "scheme; schematic",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-021"
+    },
+    {
+      "termId": "term-12df7f0ee89f9d7f17fb8e88",
+      "suggestedForms": "propose; proposal; proposed",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-022"
+    },
+    {
+      "termId": "term-fdf09cdfc26cccf610edccd7",
+      "suggestedForms": "resolve; resolution",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-023"
+    },
+    {
+      "termId": "term-6998ec8d781ca3a08ea2446d",
+      "suggestedForms": "succeed; success; successful; successfully",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-024"
+    },
+    {
+      "termId": "term-383aaf318cf8497f389dda12",
+      "suggestedForms": "advocate; advocacy; vocal",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-025"
+    },
+    {
+      "termId": "term-5da94256a72d9fbd13a4afa5",
+      "suggestedForms": "solicitor",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-026"
+    },
+    {
+      "termId": "term-8311effebfde1c4f2bd50e57",
+      "suggestedForms": "society; social; economy; economic",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-027"
+    },
+    {
+      "termId": "term-639c61d6a7bc2ba3aab3383b",
+      "suggestedForms": "link; linkage",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-028"
+    },
+    {
+      "termId": "term-5f8bc524d871939c3490c77e",
+      "suggestedForms": "clear; clearance",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-029"
+    },
+    {
+      "termId": "term-2f07555d3e64c04d1b8e267c",
+      "suggestedForms": "locate; location; relocate; relocation",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-030"
+    },
+    {
+      "termId": "term-386ec76980de4a12f455b9a7",
+      "suggestedForms": "inner; city",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-031"
+    },
+    {
+      "termId": "term-0ad8bcf888fb3429b15597c7",
+      "suggestedForms": "construct; construction; constructed",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-032"
+    },
+    {
+      "termId": "term-c47a58e12937ba7dd647290d",
+      "suggestedForms": "suburb; suburban",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-033"
+    },
+    {
+      "termId": "term-405abc33f5f3b06b881c7330",
+      "suggestedForms": "provide; provision; provider",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-034"
+    },
+    {
+      "termId": "term-f0fd8ed01465d2aaae1a324f",
+      "suggestedForms": "support; supporter; supportive",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-035"
+    },
+    {
+      "termId": "term-6f8678a6662a613e9c8308dd",
+      "suggestedForms": "submit; submission",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-036"
+    },
+    {
+      "termId": "term-084e990a49ba65e622926853",
+      "suggestedForms": "reject; rejection",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-037"
+    },
+    {
+      "termId": "term-71c816f43dde1b72d4b83127",
+      "suggestedForms": "coincide; coincidence; coincidental",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-038"
+    },
+    {
+      "termId": "term-ecd1378bc9dc130008f00d58",
+      "suggestedForms": "propose; proposal",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-039"
+    },
+    {
+      "termId": "term-dddc346175a6ce6a0d1920af",
+      "suggestedForms": "pass; passage",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-040"
+    },
+    {
+      "termId": "term-283128acef14943c127f7327",
+      "suggestedForms": "merge; merger",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-041"
+    },
+    {
+      "termId": "term-3a19589098bc0e3a2b373ffc",
+      "suggestedForms": "establish; establishment",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-042"
+    },
+    {
+      "termId": "term-b252d4eb5acf5aeaef1ec528",
+      "suggestedForms": "construct; construction; constructive",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-043"
+    },
+    {
+      "termId": "term-30ce59dd9f0f9511284e25d7",
+      "suggestedForms": "fund; funding; fundraise",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-044"
+    },
+    {
+      "termId": "term-909c272051bb6b905677de2b",
+      "suggestedForms": "radical; radically",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-045"
+    },
+    {
+      "termId": "term-2a63303c36aa29ada47e1ed4",
+      "suggestedForms": "least",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-046"
+    },
+    {
+      "termId": "term-bfba7033571d606f3c2ff041",
+      "suggestedForms": "criticize; criticism; critical; critically",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-047"
+    },
+    {
+      "termId": "term-842fcb5e60989a03d08ee07f",
+      "suggestedForms": "press",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-048"
+    },
+    {
+      "termId": "term-5ea7dc7fbe1aa8cca4759ce5",
+      "suggestedForms": "object; objection; objector",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-049"
+    },
+    {
+      "termId": "term-92a4753ceb578fa01c0b0a14",
+      "suggestedForms": "argue; argument",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-050"
+    },
+    {
+      "termId": "term-93bc5d02dc2a24b536534757",
+      "suggestedForms": "collapse",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-051"
+    },
+    {
+      "termId": "term-945c8f9d4fe6b4899a55b574",
+      "suggestedForms": "overhead",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-052"
+    },
+    {
+      "termId": "term-50d22da6c0d4799bb16322e6",
+      "suggestedForms": "shake; shaken",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-053"
+    },
+    {
+      "termId": "term-5743abddddfa08c1e3a99fde",
+      "suggestedForms": "poison; poisonous; poisoning",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-054"
+    },
+    {
+      "termId": "term-06964dd2fac36383601ce972",
+      "suggestedForms": "emit; emission",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-055"
+    },
+    {
+      "termId": "term-1c61425b1ba94748e725edd6",
+      "suggestedForms": "persist; persistence; persistent",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-056"
+    },
+    {
+      "termId": "term-e97166b54500da3a32eae48a",
+      "suggestedForms": "enable; enabled",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-057"
+    },
+    {
+      "termId": "term-5c417c6c8127d2a31c8d9573",
+      "suggestedForms": "invest; investment; investor",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-058"
+    },
+    {
+      "termId": "term-c8bf82c2cbf5a469c5584886",
+      "suggestedForms": "eventual; eventually",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-059"
+    },
+    {
+      "termId": "term-8a84e406c08ac9594f472224",
+      "suggestedForms": "route",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-060"
+    },
+    {
+      "termId": "term-2f3ca61c7e8e993613994497",
+      "suggestedForms": "beneath",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-061"
+    },
+    {
+      "termId": "term-78842af90e24eebf5a4818ee",
+      "suggestedForms": "minimum; minimal; minimise; minimisation",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-062"
+    },
+    {
+      "termId": "term-23b18e504dd45960690a0466",
+      "suggestedForms": "expense; expensive",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-063"
+    },
+    {
+      "termId": "term-f7ecefe858901f35e3a4a29e",
+      "suggestedForms": "demolish; demolition",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-064"
+    },
+    {
+      "termId": "term-a29e5260878579f02dea866e",
+      "suggestedForms": "original; originally; schedule",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-065"
+    },
+    {
+      "termId": "term-7a01adea4b8a1084a7aebd7f",
+      "suggestedForms": "construct; construction; constructed",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-066"
+    },
+    {
+      "termId": "term-e1100453f88ac59922ea8c7d",
+      "suggestedForms": "level",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-067"
+    },
+    {
+      "termId": "term-6cbdfcf83679e6943e4239a5",
+      "suggestedForms": "technical; technique; technology",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-068"
+    },
+    {
+      "termId": "term-26e9482299ed2b44c8f48ad8",
+      "suggestedForms": "cut; cover",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-069"
+    },
+    {
+      "termId": "term-a69a13e0645e06f8cd19b3e6",
+      "suggestedForms": "trench",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-070"
+    },
+    {
+      "termId": "term-c06a4f8f0647f5ab2252e145",
+      "suggestedForms": "temporary; temporarily",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-071"
+    },
+    {
+      "termId": "term-9be229f761256029b8bbef4a",
+      "suggestedForms": "hold; support",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-072"
+    },
+    {
+      "termId": "term-709ae9c3178f4cc8ec046a0b",
+      "suggestedForms": "timber; beam",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-073"
+    },
+    {
+      "termId": "term-70dbb292c9fadbf9b6602543",
+      "suggestedForms": "brick; arch",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-074"
+    },
+    {
+      "termId": "term-dac1d7cfa95021764849fd10",
+      "suggestedForms": "layer",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-075"
+    },
+    {
+      "termId": "term-cf44886e54f424ce136dc38e",
+      "suggestedForms": "build; rebuild; rebuilt",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-076"
+    },
+    {
+      "termId": "term-9bf5a24e4aa779981ac41f1a",
+      "suggestedForms": "operate; operation; operational",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-077"
+    },
+    {
+      "termId": "term-26f1de33979d065ba8d86789",
+      "suggestedForms": "extend; extension; extensive",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-078"
+    },
+    {
+      "termId": "term-1a0f9f8fb6834ba5909efd8b",
+      "suggestedForms": "authorise; authorisation",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-079"
+    },
+    {
+      "termId": "term-11ca3229496067cdf59a522b",
+      "suggestedForms": "locomotive; steam",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-080"
+    },
+    {
+      "termId": "term-8b4df85a07e71f5eaa57b506",
+      "suggestedForms": "boil; boiler",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-081"
+    },
+    {
+      "termId": "term-0fee7196f6817d6f81e75cac",
+      "suggestedForms": "introduce; introduction",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-082"
+    },
+    {
+      "termId": "term-4108dce8d07e9c3649be6ec4",
+      "suggestedForms": "fit; fitted; fitting",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-083"
+    },
+    {
+      "termId": "term-33a0189af06aabaf31980641",
+      "suggestedForms": "condense; condensation; condenser",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-084"
+    },
+    {
+      "termId": "term-1bbf708cf261914ac207dc6c",
+      "suggestedForms": "fume; fumes",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-085"
+    },
+    {
+      "termId": "term-d1b9ffac5c4fbb8c16a0a048",
+      "suggestedForms": "ventilate; ventilation; ventilator",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-086"
+    },
+    {
+      "termId": "term-76a46512186eeecb0d4bf953",
+      "suggestedForms": "congest; congested; congestion",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-087"
+    },
+    {
+      "termId": "term-4666a3f66bc600ad9f11fa87",
+      "suggestedForms": "circuit; circular",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-088"
+    },
+    {
+      "termId": "term-27747689baf9903c9aae69d8",
+      "suggestedForms": "alternative; alternatively",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-089"
+    },
+    {
+      "termId": "term-77390a64edc5908a8e17501d",
+      "suggestedForms": "confine; confined; confinement",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-090"
+    },
+    {
+      "termId": "term-20475dfea3a2deb72bb4bfaa",
+      "suggestedForms": "rely; reliable; reliability; unreliable",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-091"
+    },
+    {
+      "termId": "term-cf2997b0dd37f5f6467dc963",
+      "suggestedForms": "electric; electrical; electricity",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-092"
+    },
+    {
+      "termId": "term-843da5eccc9325f0cd55daa8",
+      "suggestedForms": "means",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-093"
+    },
+    {
+      "termId": "term-63e1d7b6955b62bc3495759c",
+      "suggestedForms": "transfer; transmission",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-094"
+    },
+    {
+      "termId": "term-9123dcbb0b42652b0e105956",
+      "suggestedForms": "generate; generator; generation",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-095"
+    },
+    {
+      "termId": "term-af018d43e682d611668f7431",
+      "suggestedForms": "deep; depth; electric",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-096"
+    },
+    {
+      "termId": "term-fdbbb99d7b90b2b8d6029510",
+      "suggestedForms": "make up",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-097"
+    },
+    {
+      "termId": "term-5eda958e9ddee7721fb71e7a",
+      "suggestedForms": "narrow; narrowness",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-098"
+    },
+    {
+      "termId": "term-4e0bded182c90da63e05f292",
+      "suggestedForms": "power; supply",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-099"
+    },
+    {
+      "termId": "term-89f3a87c54ee58dcdb21e8a2",
+      "suggestedForms": "technical; technology; achieve; achievement",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-100"
+    },
+    {
+      "termId": "term-cdfacc7fd2065364dba531cd",
+      "suggestedForms": "profit; profitable; profitability",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-101"
+    },
+    {
+      "termId": "term-d067915e3b850dc8662d57aa",
+      "suggestedForms": "place",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-102"
+    },
+    {
+      "termId": "term-c1329b8fdd8b0b6510760cc6",
+      "suggestedForms": "afterwards",
+      "status": "suggested",
+      "evidence": "none",
+      "sourceId": "C17-T1-R1-103"
+    }
+  ]
+}
