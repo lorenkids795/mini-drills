@@ -1,0 +1,28 @@
+# CODEX — Phase 2 UX & Pedagogy Refinement (teacher-approved review)
+
+Repository lorenkids795/mini-drills. Work ONLY on feature/vocab-lab. Preserve Writing Module and existing Vocab Check, do not merge/deploy. This is a focused revision of the current Save the Coast and Town on the Move Phase 2 prototype, not a replacement/rewrite. Use only original SVG/CSS, no AI-created images, no unlicensed external artwork.
+
+## Teacher feedback: mission briefing
+Current screenshot: polished minimal coastline SVG, readable typography and a clear “Open the case file” CTA; KEEP the illustration and overall visual language. However the briefing still feels like a generic exercise container. Build atmosphere with concise original *case-specific* framing (“Coastal alert”, a concrete objective, evidence/problem, learner role), rather than long explanatory prose. Keep 1 main CTA. Make any extra context functional rather than decorative. Collapse/remove developer-only copy from learner surface: “Independent authored demo · not Cambridge P1”, technical “5 words · one connected investigation”, and duplicate storage copy. In the local sandbox, keep a small truthful demo/provenance notice in the preview utilities so content is not falsely attributed to Cambridge. Do not imply actual real-world pollution cases.
+
+## Investigate: pedagogy first
+Current Discover pre-displays the exact definition e.g. “create a risk of harm” above an easy multiple-choice meaning question. That gives away the answer. Replace this with guided *contextual inference*: show a short contextual sentence and a question BEFORE definition. A learner may request a progressively helpful clue; first wrong answer gives a useful, non-revealing contextual clue, not the answer. After completing, explain the target meaning/collocation and optionally show definition. For New-to-Me allow extra teaching support after the initial attempt, but distinguish guided completion from independent evidence; never penalize help. Preserve Strengthen/light-check differentiation without leaking internals.
+
+## Feedback/content QA
+- Rewrite difficult/odd clues (e.g. inevitable: “Look at what the continuing leak would make possible to avoid.”). Favor concise natural learner English; help reason through evidence without quoting the correct answer.
+- Audit all exercise prompts, options, clues and explanations in BOTH authored missions. Avoid giveaway distractors, duplicated meanings, vague generic explanations, accidental answer in question. Retain 1 defensible answer per multiple-choice.
+- For reconstruct “We must conduct research before we act,” replace generic “normal English word order” feedback with specific learning: “conduct research” is a verb–noun collocation; “before we act” is the time clause.
+- Feedback should teach vocabulary/grammar or context and preserve first-try independent vs hint/retry assisted statuses. Be transparent about exact-match limitations in typed recall; accept vetted alternatives only where valid and keep teacher-reviewed answer lists (do not let an LLM silently grade).
+- For Vocab Check Reality Check ‘succeed’ fix the answer pronoun “It hoped to achieve its goal” to “The team hoped to achieve its goal” in current practice source/builder consistently. Audit affected saved v1 compatibility as applicable; do not mutate live already-started questions.
+
+## Story-driven gameplay (must materially affect activity)
+Turn Investigate / Decode Evidence into actual narrative evidence: label an authentic mission artifact (sample note, research log, witness account, incident report) and give a *clear mission reason* for the chosen vocabulary action. Reconstructed sentence represents a scrambled research memo, not just generic “Arrange the team’s next step.” Vary interaction types in context; maintain 5-sentence cumulative Case File exactly, Word Morph 3 rounds and Final Report free recall. Do not add meaningless gamification chrome or change success criteria. Preserve approved story progression and personalization from saved Vocab Check status.
+
+## UI Cleanup
+- Remove/relocate to preview controls only: developer-facing provenance and QA labels, “Discover/Strengthen” internal learner badges if not educationally helpful, redundant status copy. If aid is needed, replace with learner-friendly instructions (“Use the clues”, “Check what this means”) without revealing internal algorithm.
+- Group sentence reconstruction actions: clickable word tiles, compact Undo/Clear secondary controls, one visually primary Check sentence action.
+- Only one primary CTA at a time; reduce empty whitespace and huge panels; use desktop/390px mobile, light/dark, reduced-motion, keyboard and focus. Keep visible error/save feedback when genuinely needed. Codex host's floating “Work with Codex” bar is NOT web UI; do not modify.
+- Do not remove verified bypass, auto resume, source separation, identity namespace, per-form evidence, honest independent/assisted outcomes, or future-proof snapshot versioning.
+
+## QA and handoff
+Implement tests for no pre-revealed Discover definition, clue not answer-echo, contextual story use, precise reconstruct feedback, content and accessibility. Regression tests for all Phase 1.1 + Phase 2 flows (Case File one cumulative paragraph, 3-round Word Morph, Final Report no word bank, real Check integration). Screenshots: Briefing, Discover unanswered/wrong/correct, Decode reconstruct, Word Morph, Final Report, Debrief, at desktop and 390px light/dark. Report what's changed and limitations. Commit/push only to feature/vocab-lab, not main; no deploy. Teacher has not yet reviewed screenshots of all Word Morph/Final Report screens: don't claim final UI sign-off.
