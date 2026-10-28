@@ -17,6 +17,7 @@ function data(){
   if(!loaded)loaded=Promise.all(['data/vocab-lab-p1.json','data/vocab-lab-practice.json','data/vocab-lab-practice-v1.json'].map(function(url){return fetch(url).then(function(r){if(!r.ok)throw Error('Cannot load vocabulary data.');return r.json()})})).catch(function(e){loaded=null;throw e});
   return loaded;
 }
+function unmount(){if(session&&session.stop)session.stop();if(session)clearTimeout(session.motionTimer);session=null}
 function mount(host,opt){
   if(!host)return;
   if(!C.allowed(opt.user,opt.enabled)){host.innerHTML='<p class="banner">Vocab Lab is coming soon.</p>';return}
@@ -77,6 +78,7 @@ function mount(host,opt){
   }
 
   s.draw=draw;
+  function missionArgs(){return {user:opt.user,demo:true,bank:s.bank,progress:C.copy(s.state),onContinueSorting:function(){if(s.state.batch.phase==='results'&&Object.keys(s.state.termProgress).length<s.bank.lesson_term_links.length)act('nextBatch');else draw(true)}}}
   function sync(){
     if(!s.pending||s.busy||!s.store)return;
     var pending=s.pending;s.busy=true;s.message='Saving…';draw();
@@ -91,10 +93,12 @@ function mount(host,opt){
     }).then(function(){s.busy=false;draw()});
   }
   function act(type,choice){
+    if(session!==s||(opt.isCurrent&&!opt.isCurrent()))return;
     if(type==='sync'){sync();return}
     if(!s.ready||s.busy||s.pending)return;
     if(type==='mission'&&root.MD_MISSION&&root.MD_MISSION.eligible(opt.user,opt.demo)){
-      root.MD_MISSION.open(s.host,{user:opt.user,demo:true,bank:s.bank,progress:C.copy(s.state),onContinueSorting:function(){if(s.state.batch.phase==='results'&&Object.keys(s.state.termProgress).length<s.bank.lesson_term_links.length)act('nextBatch');else draw(true)}});return;
+      var args=missionArgs();
+      if(opt.onMission)opt.onMission(args);else root.MD_MISSION.open(s.host,args);return;
     }
     var sorting=['know','unsure','new'].indexOf(type)>=0;
     if(sorting&&s.transition)return;
@@ -131,7 +135,7 @@ function mount(host,opt){
     var saved=null;try{saved=JSON.parse(root.localStorage.getItem(key)||'null')}catch(e){}
     if(saved&&saved.state&&saved.state.schemaVersion===1&&saved.state.email===s.email&&saved.state.lessonId===s.bank.lessonId){s.state=saved.state;s.pending=saved.pending||null}
     else s.state=C.begin(C.fresh(s.email,s.bank),s.bank);
-    if(s.demo){s.pending=null;s.ready=true;s.message='Saved';draw();return}
+    if(s.demo){s.pending=null;s.ready=true;s.message='Saved';draw();if(opt.onReady)opt.onReady(missionArgs());return}
     return Promise.resolve(opt.db||(root.claude&&root.claude.use('db'))).then(function(db){
       if(session!==s)return;
       if(!db)throw Error('Sign in again to load your account progress.');
@@ -150,5 +154,5 @@ function mount(host,opt){
     });
   }).catch(function(e){s.message=e.message;draw()});
 }
-root.MD_VOCAB={allowed:C.allowed,mount:mount,highlight:highlight};
+root.MD_VOCAB={allowed:C.allowed,mount:mount,unmount:unmount,highlight:highlight};
 })(this);

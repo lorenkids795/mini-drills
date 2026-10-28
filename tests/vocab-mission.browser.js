@@ -18,7 +18,8 @@ const server=http.createServer((req,res)=>{const f=path.resolve(root,'.'+decodeU
   await page.goto(base+'/vocab-mission-preview.html?mission='+m.id+'&profile=qa&theme='+theme);await page.locator('#vmStep').waitFor();return {page,context};
  }
  async function current(page,m){return C.current(await page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key(m)))}
- async function answer(page,q){if(q.options)await page.locator('[data-vm="answer"][data-choice]').nth(q.answer).click();else if(q.kind==='reconstruct'){let used=[];for(const word of q.answers[0].split(' ')){const index=q.tokens.findIndex((t,i)=>t===word&&!used.includes(i));used.push(index);await page.locator('[data-vm="token"][data-index="'+index+'"]').click()}await page.locator('[data-vm="answer"]').click()}else{await page.locator('#vmAnswer').fill(q.answers[0]);await page.locator('#vmAnswer').press('Enter')}}
+ async function answer(page,q){if(q.options)await page.locator('[data-vm="answer"][data-choice]').nth(q.answer).click();else if(q.kind==='reconstruct'){let used=[];for(const word of q.answers[0].split(' ')){const index=q.tokens.findIndex((t,i)=>t===word&&!used.includes(i));used.push(index);await page.locator('[data-vm="token"][data-index="'+index+'"]').click()}await page.locator('[data-vm="answer"]').click()}else{await page.locator('#vmAnswer').fill(q.answers[0]);await page.locator('#vmAnswer').press('Enter')}const m=missions.find(m=>q.id.startsWith(m.id+'@'));await page.waitForFunction(({key,id})=>JSON.parse(localStorage.getItem(key)).records[id]?.done,{key:key(m),id:q.id})}
+ async function next(page,m){const q=await current(page,m);await page.locator('[data-vm="next"]').click();await page.waitForFunction(({key,id})=>{const s=JSON.parse(localStorage.getItem(key));return s.plan.tasks[s.phase]?.[s.index]?.id!==id},{key:key(m),id:q.id})}
  try{
   for(const m of missions)for(const [chapter,state] of Object.entries(fixtures(m)))for(const width of [390,1280])for(const theme of ['light','dark']){
    const {page,context}=await load(m,state,width,theme);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
@@ -37,7 +38,7 @@ const server=http.createServer((req,res)=>{const f=path.resolve(root,'.'+decodeU
     assert.match(await page.locator('.vm-artifact').innerText(),/memo/);
     await page.locator('[data-vm="token"]').first().focus();assert.ok(await page.evaluate(()=>getComputedStyle(document.activeElement).outlineStyle!=='none'));
     const q=C.current(state),i=q.tokens.indexOf(q.answers[0].split(' ')[0]);await page.locator('[data-index="'+i+'"]').click();
-    assert.equal(await page.locator('[data-vm="answer"]').isEnabled(),true);
+    await page.waitForFunction(()=>!document.querySelector('[data-vm="answer"]').disabled);assert.equal(await page.locator('[data-vm="answer"]').isEnabled(),true);
     const primary=await page.locator('[data-vm="answer"]').evaluate(e=>({fg:getComputedStyle(e).color,bg:getComputedStyle(e).backgroundColor}));assert.ok(contrast(primary.fg,primary.bg)>=4.5);
    }
    assert.equal(await page.locator('.vm-head .vm-tag,.vm-profile').count(),0);
@@ -47,10 +48,10 @@ const server=http.createServer((req,res)=>{const f=path.resolve(root,'.'+decodeU
   logs.push('PASS '+metrics.length+' chapter/scenario/viewport/theme screenshots; no overflow, 44px controls, text contrast >=4.5:1, reduced motion/focus, live status, evidence-first discovery, contextual artifacts, one report paragraph, Final Report no word bank/answers, no Firebase SDK');
   {
    const m=missions[0],{page,context}=await load(m,null);await page.locator('[data-vm="begin"]').click();
-   for(let i=1;i<=5;i++){await page.locator('.vm-report').focus();await page.keyboard.press('Enter');assert.equal(await page.locator('.vm-report-paragraph').innerText(),m.terms.slice(0,i).map(t=>t.sentence).join(' '));assert.equal(await page.evaluate(()=>document.activeElement.className),'vm-report')}
+   for(let i=1;i<=5;i++){await page.locator('.vm-report').focus();await page.keyboard.press('Enter');const expected=m.terms.slice(0,i).map(t=>t.sentence).join(' ');await page.waitForFunction(text=>document.querySelector('.vm-report-paragraph').textContent===text,expected);assert.equal(await page.locator('.vm-report-paragraph').innerText(),expected);assert.equal(await page.evaluate(()=>document.activeElement.className),'vm-report')}
    assert.equal(await page.locator('[data-vm="full"]').isVisible(),false);await page.reload();await page.locator('.vm-report').waitFor();assert.equal(await page.locator('.vm-report-paragraph').innerText(),m.terms.map(t=>t.sentence).join(' '));
    await page.locator('.vm-report').click();let guard=0;while(await page.locator('[data-vm="next"]').count()||await page.locator('[data-vm="answer"]').count()){
-    if(guard++>70)throw Error('Mission did not finish');const q=await current(page,m);await answer(page,q);await page.locator('[data-vm="next"]').click();
+    if(guard++>70)throw Error('Mission did not finish');const q=await current(page,m);await answer(page,q);await next(page,m);
    }
    assert.equal(await page.locator('#vmStep').innerText(),'Debrief');assert.ok((await page.locator('.vm-evidence').first().innerText()).includes('Ready for Review'));
    await page.selectOption('#identity','b');await page.locator('[data-vm="begin"]').waitFor();assert.equal(await page.locator('#vmStep').innerText(),'Mission briefing');
@@ -59,7 +60,7 @@ const server=http.createServer((req,res)=>{const f=path.resolve(root,'.'+decodeU
    logs.push('PASS complete authored game, five one-at-a-time sentences with keyboard/focus, reload, account isolation, replay');await context.close();
   }
   {
-   const m=missions[1],{page,context}=await load(m,fixtures(m).investigate);let q=await current(page,m);await answer(page,q);await page.locator('[data-vm="next"]').click();q=await current(page,m);
+   const m=missions[1],{page,context}=await load(m,fixtures(m).investigate);let q=await current(page,m);await answer(page,q);await next(page,m);q=await current(page,m);
    await page.locator('[data-vm="answer"][data-choice]').nth((q.answer+1)%3).click();assert.equal(await page.locator('[data-vm="next"]').count(),0);assert.ok(!(await page.locator('.vm-feedback').innerText()).includes(q.options[q.answer]));
    await page.reload();await page.locator('.vm-feedback').waitFor();await answer(page,q);assert.ok((await page.locator('.vm-feedback').innerText()).includes('Completed with support'));
    let s=await page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key(m));assert.equal(s.records[q.id].independent,false);
@@ -68,7 +69,7 @@ const server=http.createServer((req,res)=>{const f=path.resolve(root,'.'+decodeU
   {
    for(const m of missions){const {page,context}=await load(m,fixtures(m).investigate);const q=await current(page,m);
     await page.locator('[data-vm="hint"]').focus();await page.keyboard.press('Enter');assert.equal(await page.locator('.vm-teaching').count(),0);
-    assert.equal(await page.locator('.vm-feedback p').innerText(),q.clue);await page.locator('[data-vm="hint"]').click();assert.equal(await page.locator('.vm-feedback p').innerText(),q.clue2);
+    assert.equal(await page.locator('.vm-feedback p').innerText(),q.clue);await page.locator('[data-vm="hint"]').click();await page.waitForFunction(text=>document.querySelector('.vm-feedback p').textContent===text,q.clue2);assert.equal(await page.locator('.vm-feedback p').innerText(),q.clue2);
     await page.locator('[data-vm="answer"][data-choice]').nth((q.answer+1)%3).click();await page.locator('[data-vm="support"]').click();assert.equal(await page.locator('.vm-teaching').innerText(),q.teaching);
     await page.reload();await page.locator('.vm-teaching').waitFor();await answer(page,q);assert.match(await page.locator('.vm-feedback').innerText(),/Completed with support/);
     const s=await page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key(m));assert.equal(s.records[q.id].independent,false);await context.close();
@@ -78,12 +79,12 @@ const server=http.createServer((req,res)=>{const f=path.resolve(root,'.'+decodeU
   {
    const m=missions[0],{page,context}=await load(m,null);
    await page.evaluate(()=>{const original=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k.startsWith('md-vocab-mission:'))throw Error('Quota test');return original.call(this,k,v)}});
-   await page.locator('[data-vm="begin"]').click();assert.match(await page.locator('.vm-save [role="status"]').innerText(),/Could not save/);
+   await page.locator('[data-vm="begin"]').click();await page.waitForFunction(()=>document.querySelector('.vm-save [role="status"]').textContent.includes('Could not save'));assert.match(await page.locator('.vm-save [role="status"]').innerText(),/Could not save/);
    assert.equal(await page.locator('#vmStep').innerText(),'Mission briefing');await page.reload();await page.locator('[data-vm="begin"]').waitFor();
    logs.push('PASS visible save-failure feedback and rollback without advancing unsaved mission');await context.close();
   }
   {
-   const m=missions[0],{page,context}=await load(m,fixtures(m).final);await page.locator('#vmAnswer').fill('unfinished draft');await page.reload();await page.locator('#vmAnswer').waitFor();assert.equal(await page.locator('#vmAnswer').inputValue(),'unfinished draft');
+   const m=missions[0],{page,context}=await load(m,fixtures(m).final);await page.locator('#vmAnswer').fill('unfinished draft');await page.waitForFunction(k=>{const s=JSON.parse(localStorage.getItem(k));return s.records[s.plan.tasks.final[0].id]?.text==='unfinished draft'},key(m));await page.reload();await page.locator('#vmAnswer').waitFor();assert.equal(await page.locator('#vmAnswer').inputValue(),'unfinished draft');
    const before=await page.evaluate(()=>localStorage.getItem('untouched-check'));await page.locator('[data-vm="sorting"]').click();await page.locator('[data-vl="know"]').waitFor();assert.equal(await page.evaluate(()=>localStorage.getItem('untouched-check')),before);
    logs.push('PASS typed-answer draft resume and Continue Sorting navigation');await context.close();
   }

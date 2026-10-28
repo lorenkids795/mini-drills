@@ -22,10 +22,10 @@ function open(host,opt){
   if(opt.sampleProfile&&mission.provenance==='approved_p1'){source={lessonId:bank.lessonId,email:identity,revision:0,termProgress:{}};mission.terms.forEach(function(t,i){source.termProgress[t.senseId]={status:['new','unsure','verified_for_current_task','self_reported_known','needs_practice'][i]}})}
   if(source&&(source.email!==identity||source.lessonId!==bank.lessonId))source=null;
   s.source=source;
-  var saved=null;try{saved=JSON.parse(localStorage.getItem(key)||'null')}catch(e){}
+  var store=root.MD_MISSION_STORE(key,root.localStorage,root.navigator&&root.navigator.locks),saved;try{saved=store.read()}catch(e){host.textContent='This mission could not be read. Saved data has not been overwritten.';return false}
   if(saved&&!C.resume(saved,identity,mission.id)){host.textContent='This saved mission could not be opened. It has not been overwritten.';return false}
   s.state=C.resume(saved,identity,mission.id)?saved:C.create(mission,source,identity,null,Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8));
-  function save(){try{localStorage.setItem(key,JSON.stringify(s.state));s.message='Saved in this browser';return true}catch(e){s.message='Could not save. Free browser storage before continuing.';return false}}
+  function save(before){s.conflictLoaded=false;return store.save(before,s.state).then(function(){s.message='Saved in this browser';return true},function(e){if(e.code==='mission-conflict'&&C.resume(e.remote,identity,mission.id)){s.state=e.remote;s.conflictLoaded=true;s.message=e.message}else s.message=e.code==='mission-conflict'?'Another tab replaced or removed this mission. Reload before continuing.':'Could not save. '+(e.message||'Free browser storage before continuing.');return false})}
   function render(focus){
    if(active!==s)return;
    var state=s.state,m=state.snapshot,q=C.current(state),r=q&&(state.records[q.id]||{tries:0,hinted:false,done:false,wrong:[],draft:[]}),chapters={briefing:'Mission briefing',case:'Case File',investigate:'Investigate',decode:'Decode Evidence',morph:'Decode Evidence · Word Morph',final:'Final Report',debrief:'Debrief'};
@@ -63,17 +63,22 @@ function open(host,opt){
   }
   s.render=render;
   function act(type,target){
-   if(active!==s||s.busy)return;s.busy=true;
+   var info=target?{value:target.value,attributes:{'data-index':target.getAttribute('data-index'),'data-choice':target.getAttribute('data-choice')},getAttribute:function(k){return this.attributes[k]}}:null;
+   s.queue=(s.queue||Promise.resolve()).then(function(){return perform(type,info)});return s.queue;
+  }
+  async function perform(type,target){
+   if(active!==s||(opt.isCurrent&&!opt.isCurrent()))return;s.busy=true;
    try{
     if(type==='sorting'){host.classList.remove('vm');if(opt.onContinueSorting)opt.onContinueSorting();else location.href='vocab-lab-preview.html';return}
-    if(type==='replay'){s.state=C.create(s.mission,s.source,s.identity,null,Date.now().toString(36));save();render(true);return}
+    if(type==='replay'){var previous=s.state;s.state=C.create(s.mission,s.source,s.identity,null,Date.now().toString(36));if(!await save(previous)&&!s.conflictLoaded)s.state=previous;render(true);return}
     var a={id:'local-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),at:Date.now()},q=C.current(s.state);
     var map={begin:'begin',sentence:'revealSentence',full:'fullReport',next:'next',hint:'hint',support:'support',reveal:'reveal'};
     if(type==='token'||type==='clearTokens'||type==='undoToken'){a.type='draft';a.index=Number(target&&target.getAttribute('data-index'));a.clear=type==='clearTokens';a.undo=type==='undoToken'}
     else if(type==='answer'){a.type='answer';a.value=q&&q.options?Number(target.getAttribute('data-choice')):(host.querySelector('#vmAnswer')||{}).value}
     else if(type==='text'){a.type='textDraft';a.value=target.value}
     else a.type=map[type];
-    var old=s.state;s.state=C.apply(old,a);if(!save()){s.state=old;render(false);return}
+    var old=s.state;s.state=C.apply(old,a);if(!await save(old)){if(!s.conflictLoaded)s.state=old;render(false);return}
+    if(active!==s||(opt.isCurrent&&!opt.isCurrent()))return;
     if(type==='text'){var status=host.querySelector('.vm-save [role="status"]');if(status)status.textContent=s.message==='Saved in this browser'?'':s.message;return}
     if((type==='sentence'||type==='full')&&s.state.phase==='case'){
       var para=host.querySelector('.vm-report-paragraph'),report=host.querySelector('.vm-report');
@@ -94,8 +99,8 @@ function open(host,opt){
    host.addEventListener('input',function(e){if(e.target.id==='vmAnswer'&&active&&active.host===host)active.act('text',e.target)});
    host._missionEvents=true;
   }
-  save();render(false);return true;
+  if(saved){render(false);return true}return save(null).then(function(){render(false);return true});
  }).catch(function(e){host.textContent=e.message;return false});
 }
-root.MD_MISSION={open:open,eligible:eligible};
+root.MD_MISSION={open:open,eligible:eligible,close:function(){active=null;opening++}};
 })(this);

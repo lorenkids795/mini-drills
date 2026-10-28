@@ -100,6 +100,7 @@ test('preview gate: anonymous/ordinary student/teacher hidden; tester/admin allo
 test('app integration preserves role tabs and LM student Coming soon / tester lesson access',()=>{
   const a=boot({hooks:'tabsFor:tabsFor,lmHTML:lmHTML,lmVisible:lmVisible'});
   a.W.MD_VOCAB={allowed:C.allowed,mount(){}};
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../vocab-lab-shell.js'),'utf8'),a.W);
   a.T.setU({email:'s@x.com',role:'student'});assert.ok(!a.T.tabsFor().some(t=>t[0]==='vocab'));
   const html=a.T.lmHTML();assert.ok(html.includes('Coming soon')&&!html.includes('data-act="lm-open"'));
   a.T.setU({email:'t@x.com',role:'student',tester:true});assert.ok(a.T.tabsFor().some(t=>t[0]==='vocab'));

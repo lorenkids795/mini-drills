@@ -1577,7 +1577,7 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
   </section>
 
   <section id="v-set" hidden></section>
-  <section id="v-vocab" class="vl" hidden></section>
+  <section id="v-vocab" class="vocab-shell" hidden></section>
   <section id="v-cards" hidden></section>
   <section id="v-errors" hidden></section>
   <section id="v-ranks" hidden></section>
@@ -1635,9 +1635,11 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
 <script src="vocab-lab-core.js"></script>
 <script src="vocab-mission-content.js"></script>
 <script src="vocab-mission-core.js"></script>
+<script src="vocab-mission-store.js"></script>
 <script src="vocab-mission.js"></script>
 <script src="vocab-lab-store.js"></script>
 <script src="vocab-lab.js"></script>
+<script src="vocab-lab-shell.js"></script>
 <script src="md-config.js"></script>
 <script src="md-backend.js"></script>
 <script src="md-chart.js"></script>
@@ -4768,10 +4770,11 @@ function sbInit(){sbSet(sbWide()?sbPref():false)}
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&SB.open&&!sbWide()&&document.body.classList.contains('nav-on')){e.preventDefault();e.stopImmediatePropagation();sbSet(false,true)}},true);
 function curDark(){var t=document.documentElement.getAttribute('data-theme');if(t)return t==='dark';return !!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)}
 // Admin: everything (Students and XP live inside Admin). Teacher: only their classes (see myCls). Student: unchanged.
-function vocabAllowed(){return !!(window.MD_VOCAB&&window.MD_VOCAB.allowed(U,(cfgGet('vocabLab')||{}).enabled===true))}
-function vocabRender(){var el=document.getElementById('v-vocab');if(el&&vocabAllowed())window.MD_VOCAB.mount(el,{user:U,db:dbh,demo:DEMO,enabled:(cfgGet('vocabLab')||{}).enabled===true})}
+function vocabAllowed(){return !!(window.MD_VOCAB_SHELL&&window.MD_VOCAB_SHELL.allowed(U))}
+function vocabRender(){var el=document.getElementById('v-vocab');if(el&&vocabAllowed())window.MD_VOCAB_SHELL.mount(el,{user:U,db:dbh,demo:DEMO,getUser:function(){return U},isCurrent:function(){return TAB==='vocab'&&vocabAllowed()}})}
 function tabsFor(){var tabs=U.adm?[['dash','Dashboard'],['asg','Classes'],['mark','Marking'],['library','Library'],['create','Create'],['prize','Prizes'],['admin','Admin']]:U.role==='teacher'?[['asg','Classes'],['mark','Marking'],['dash','Dashboard'],['library','Library']]:[['library','Home'],['cards','Flashcards'],['errors','Error Notebook'],['ranks','Leaderboard'],['wheel','Lucky Wheel'],['bag','Inventory'],['set','Settings']];if(vocabAllowed())tabs.push(['vocab','Vocab Lab']);return tabs}
 function showTab(t){
+  if(window.MD_VOCAB_SHELL)window.MD_VOCAB_SHELL.guard(U);
   $('#v-vocab').hidden=true;
   TAB=t;stopAudio();clearTimer();MK.open=false;recClearAll();
   if(t!=='admin'){AD.modal=null;var amr=document.getElementById('adModalRoot');if(amr)amr.innerHTML=''} // leaving Admin closes its confirm box
@@ -4779,6 +4782,7 @@ function showTab(t){
   if(!U){var lv=$('#v-login');lv.hidden=false;if(!DEMO&&lsGet('md-email')&&!window.MD_USER){lv.setAttribute('data-wait','');setTimeout(function(){lv.removeAttribute('data-wait')},10000)}else lv.removeAttribute('data-wait');$('#tabs').hidden=true;$('#who').hidden=true;$('#sbBtn').hidden=true;document.body.classList.remove('nav-on');document.body.classList.add('lg');sbInit();return}
   $('#v-login').removeAttribute('data-wait');document.body.classList.remove('lg');
   if(t!=='library'&&!tabsFor().some(function(x){return x[0]===t})){t=tabsFor()[0][0];TAB=t} // a tab this role does not have
+  if(t==='vocab')window.location.hash='vocab';else if(window.location.hash==='#vocab'&&window.history)window.history.replaceState(null,'',window.location.pathname+window.location.search);
   $('#tabs').hidden=tabsFor().length<2;document.body.classList.toggle('nav-on',!$('#tabs').hidden);$('#sbBtn').hidden=$('#tabs').hidden;sbSet(SB.open);/* keeps the open / closed state */$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28,true)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b>'+(U.adm||U.role==='student'?'':'<span class="rl"> · '+U.role+'</span>');
   $('#tabs').innerHTML=tabsFor().map(function(x){return '<button role="tab" data-act="tab" data-tab="'+x[0]+'" aria-selected="'+(x[0]===t)+'">'+x[1]+'</button>'}).join('');
   var id={library:'lib',cards:'cards',errors:'errors',ranks:'ranks',wheel:'wheel',bag:'bag',set:'set',prize:'prize',xps:'xps',dash:'dash',asg:'asg',mark:'mark',roster:'roster',create:'create',admin:'admin',vocab:'vocab'}[t];$('#v-'+id).hidden=false;updMarq();
@@ -4791,7 +4795,7 @@ function signIn(email){
   var u=findUser(email),m=$('#lgMsg');
   if(!u){m.textContent=(dbh&&!dbReady)?'Still loading the class list. Try again in a moment.':'This email is not on your class list.';return false}
   m.textContent='';U=u;RP=0;lsSet('md-email',u.email);AD.sub='users';AD.users=null;AD.loadErr='';AD.err='';AD.modal=null;AD.locked=false;AD.sheet=null;AD.shErr='';NAV={book:null,test:null,skill:null,ex:null};PANE='q';
-  showTab(tabsFor()[0][0]);return true;
+  showTab(window.location.hash==='#vocab'&&vocabAllowed()?'vocab':tabsFor()[0][0]);return true;
 }
 function refreshLive(){
   if(!U)return;updMarq();
