@@ -902,7 +902,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-10-24b';
+const API_VERSION = '2026-10-28a';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -988,6 +988,39 @@ async function adminClassDel(env, body) {
   let settings = 0;
   if (cid && (await fsGet(env, 'classes', cid))) { await fsDelete(env, 'classes', cid); settings = 1; }
   return json({ ok: true, cls, assignments, names, settings, remaining });
+}
+
+/* ---------- Leftover data of deleted students (Admin › Users › Clean up) ----------
+   An "orphan" = an email that owns attempts but has no roster row and is not staff / admin (deleted before Kick purged data,
+   or a roster row removed by hand). preview = list only (dry run); purge = ONE email per call (Workers sub-request limit),
+   re-checked on the server right before deleting, every collection of purgeStudent, for each spelling of the email found,
+   and an audit record. Idempotent: purging an email that has no data left does nothing. Never by name. */
+async function orphanScan(env) {
+  const roster = await fsList(env, 'roster'), keep = new Set();
+  roster.forEach((r) => { const e = normEmail(r.email || r.id); if (e) keep.add(e); });
+  Object.keys(await staffMap(env)).forEach((e) => keep.add(normEmail(e)));
+  teachers(env).forEach((e) => keep.add(e)); keep.add(adminEmail(env));
+  const att = await fsList(env, 'attempts'), by = {};
+  att.forEach((a) => { const raw = String(a.email || ''), e = normEmail(raw); if (!e || keep.has(e)) return;
+    const o = by[e] || (by[e] = { email: e, raw: [], attempts: 0, names: [], classes: [], last: 0 });
+    o.attempts++; if (raw && o.raw.indexOf(raw) < 0) o.raw.push(raw);
+    if (a.student && o.names.indexOf(a.student) < 0) o.names.push(String(a.student).slice(0, 80));
+    if (a.cls && o.classes.indexOf(a.cls) < 0) o.classes.push(String(a.cls).slice(0, 40));
+    o.last = Math.max(o.last, Number(a.ts) || 0); });
+  return { scanned: att.length, truncated: att.length >= 3000, orphans: Object.keys(by).sort().map((k) => by[k]) };
+}
+async function adminOrphans(env, body) {
+  const op = String(body.op || 'preview');
+  if (op === 'preview') { const r = await orphanScan(env); return json({ ok: true, scanned: r.scanned, truncated: r.truncated, orphans: r.orphans.map((o) => ({ email: o.email, attempts: o.attempts, names: o.names, classes: o.classes, last: o.last })) }); }
+  if (op !== 'purge') return fail('Unknown operation.');
+  const e = normEmail(body.email);
+  if (!emailOk(e)) return fail('Enter a valid email.');
+  const r = await orphanScan(env), o = r.orphans.filter((x) => x.email === e)[0];
+  if (!o) return fail('This email is not a leftover any more (it has a roster row, is staff, or has no data). Nothing was deleted.', 409);
+  const out = {};
+  for (const raw of o.raw.length ? o.raw : [e]) { const d = await purgeStudent(env, raw); Object.keys(d).forEach((k) => { out[k] = (out[k] || 0) + d[k]; }); }
+  try { await fsPut(env, 'audit', 'orphans_' + slug(e) + '_' + Date.now(), { kind: 'orphan-purge', email: e, deleted: JSON.stringify(out), ts: Date.now() }); } catch (x) { /* the purge itself is done; the audit row is best effort */ }
+  return json({ ok: true, email: e, deleted: out });
 }
 
 // Move a registered student to another class (the Sheet only matters before sign-up).
@@ -1993,6 +2026,7 @@ export async function onRequest(ctx) {
       if (route === 'admin/class') return await adminClass(env, body);
       if (route === 'admin/kick') return await adminKick(env, body);
       if (route === 'admin/classdel') return await adminClassDel(env, body);
+      if (route === 'admin/orphans') return await adminOrphans(env, body);
       if (route === 'admin/aitest') return await adminAiTest(env, body);
       if (route === 'admin/season') return await adminSeason(env, body);
       if (route === 'admin/tester') return await adminTester(env, body);

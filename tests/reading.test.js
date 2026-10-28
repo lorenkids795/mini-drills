@@ -44,14 +44,14 @@ const base = (B) => JSON.parse(B.T.EXAMPLE_R);
     assert.ok(h.includes('<ul class="rmsegs"><li><b>' + q1 + '</b>')); assert.ok(h.includes('</b> → <b>“'), 'fallback for the other pairs');
   });
   // ---- 3.2 excerpts ----
-  await t('Deep reading shows selected excerpts (paragraphs used by Stage 1) with a button for the full passage', () => {
+  await t('Deep reading shows only the paragraphs used by Stage 1 (no "Selected excerpts" box) with a compact link to the full passage', () => {
     const B = boot({ hooks: HOOKS }), o = base(B), r = B.T.parseReading(o), D = clone(r.data.rlesson);
     // make sure at least one paragraph is not used by Stage 1
     D.paras = D.paras.concat(['An extra closing paragraph that no question uses.', 'Another unused paragraph.']);
     B.T.renderRLesson({ id: 'r2', skill: 'reading', title: 't', kind: 'reading-ms', rl: D, qs: r.data.qs }, '', '', null);
     const L = B.T.rmExIdx(); assert.ok(L && L.length < D.paras.length); let h = B.T.rmPsgExHTML();
-    assert.ok(/<b>Selected excerpts<\/b>/.test(h) && /not the whole passage/.test(h)); assert.strictEqual((h.match(/class="rmp"/g) || []).length, L.length);
-    B.press({ act: 'rm-full' }); h = B.T.rmPsgExHTML(); assert.ok(/<b>Full passage<\/b>/.test(h)); assert.strictEqual((h.match(/class="rmp"/g) || []).length, D.paras.length);
+    assert.ok(!/Selected excerpts|not the whole passage|rmexh/.test(h) && /data-act="rm-full"[^>]*>Show full passage</.test(h)); assert.strictEqual((h.match(/class="rmp"/g) || []).length, L.length);
+    B.press({ act: 'rm-full' }); h = B.T.rmPsgExHTML(); assert.ok(/>Show only the paragraphs for these questions</.test(h)); assert.strictEqual((h.match(/class="rmp"/g) || []).length, D.paras.length);
   });
   // ---- 4 levels ----
   const lvEx = (B) => { const r = B.T.parseReading(base(B)), m = clone(r.data.rlesson), e = clone(m), hd = clone(m); e.title = 'EASY'; hd.title = 'HARD'; return { id: 'c_x', skill: 'reading', kind: 'reading-ms', title: 'x', rl: m, rlv: { easy: e, hard: hd }, qs: r.data.qs }; };
@@ -67,10 +67,10 @@ const base = (B) => JSON.parse(B.T.EXAMPLE_R);
     const ex = lvEx(B); delete ex.rlv.hard; const p = B.T.rlPick(ex); assert.strictEqual(p.lv, 'medium'); assert.strictEqual(p.D, ex.rl);
   });
   await t('teacher switches versions with Easy / Medium / Hard; student only sees a level pill', () => {
-    const B = boot({ hooks: HOOKS }), ex = lvEx(B); B.T.renderRLesson(ex, '', '', null); let h = B.T.rmToolsHTML();
+    const B = boot({ hooks: HOOKS }), ex = lvEx(B); B.T.renderRLesson(ex, '', '', null); assert.ok(!/data-act="rm-lv"/.test(B.T.rmToolsHTML()), 'inside the settings panel'); B.T.RM.fsOpen = true; let h = B.T.rmToolsHTML();
     assert.ok(/data-act="rm-lv" data-v="easy"/.test(h) && /data-act="rm-lv" data-v="hard"/.test(h)); B.T.setTLV('hard'); assert.strictEqual(B.T.rlPick(ex).D.title, 'HARD');
     const S = boot({ hooks: HOOKS, user: STU() }); S.T.setRoster([{ email: 's@x.com', name: 'S', cls: 'A', role: 'student', level: 'beginner' }]); S.T.renderRLesson(lvEx(S), '', '', null);
-    h = S.T.rmToolsHTML(); assert.ok(!/data-act="rm-lv"/.test(h) && /class="pill rmlvp"[^>]*>Easy</.test(h));
+    S.T.RM.fsOpen = true; h = S.T.rmToolsHTML(); assert.ok(!/data-act="rm-lv"/.test(h) && /class="pill rmlvp"[^>]*>Easy</.test(h));
   });
   await t('the finished attempt records the level that was played', () => { const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'); assert.ok(/readSec:RM\.t,level:RM\.lv,output:/.test(src)); });
   await t('teacher sets a student level in Class settings (saved on the roster row; student cannot)', () => {

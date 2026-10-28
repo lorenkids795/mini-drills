@@ -47,10 +47,9 @@ function lmMatch(f,e){if(!f)return false;if(e.status!=null&&f.status!==e.status)
 function lmItems(u){
   var L=[];
   (u.copy||[]).forEach(function(x){L.push({kind:'copy',x:x,pairs:[[x.en,x.vi]]})});
-  (u.claims||[]).forEach(function(x){var P=[[x.en,x.vi]];if(x.why)P.push([x.why.en,x.why.vi]);if(x.q)P.push([x.q.en,x.q.vi]);L.push({kind:'claim',x:x,pairs:P})});
+  (u.claims||[]).forEach(function(x){L.push({kind:'claim',x:x,pairs:x.why?[[x.en,x.vi],[x.why.en,x.why.vi]]:[[x.en,x.vi]]})});
   (u.controlled||[]).forEach(function(x){L.push({kind:'controlled',x:x,pairs:[[x.why&&x.why.en,x.why&&x.why.vi]]})});
-  (u.keyFeatures||[]).forEach(function(x){var P=[[x.reason&&x.reason.en,x.reason&&x.reason.vi]];if(x.self)P.push([x.self.en,x.self.vi]);L.push({kind:'keyFeature',x:x,pairs:P})});
-  (u.questions||[]).forEach(function(x){L.push({kind:'question',x:x,pairs:[[x.q&&x.q.en,x.q&&x.q.vi],[x.why&&x.why.en,x.why&&x.why.vi]]})});
+  (u.keyFeatures||[]).forEach(function(x){L.push({kind:'keyFeature',x:x,pairs:[[x.reason&&x.reason.en,x.reason&&x.reason.vi]]})});
   return L;
 }
 // full check -> {errors[], pending, approved, total, ctx}. release=true: any 'pending' is an error too.
@@ -85,7 +84,7 @@ function lmCheck(u,release){
       else if(!lmMatch(f,e))E.push(n+': fact '+B[k]+' now gives '+f.status+' / '+JSON.stringify(f.result)+', expected '+JSON.stringify(e)+'.');
       if((it.kind==='claim'||it.kind==='keyFeature')&&f.status!=='supported')E.push(n+': a model sentence / key feature can only use supported facts ('+B[k]+' is '+f.status+').')});
     // every placeholder resolves
-    var texts=[];if(it.kind==='question')texts=[x.q&&x.q.en,x.q&&x.q.vi,x.why&&x.why.en,x.why&&x.why.vi].concat((x.opts||[]).map(function(o){return o&&o.en}));else if(it.kind==='claim')texts=[x.en,x.vi].concat(x.q?[x.q.en,x.q.vi]:[]);else if(it.kind==='controlled')texts=[x.statement&&x.statement.en,x.why&&x.why.en,x.why&&x.why.vi];else if(it.kind==='keyFeature')texts=[x.reason&&x.reason.en,x.reason&&x.reason.vi].concat(x.self?[x.self.en,x.self.vi]:[]);else texts=[x.en,x.vi];
+    var texts=[];if(it.kind==='claim')texts=[x.en,x.vi];else if(it.kind==='controlled')texts=[x.statement&&x.statement.en,x.why&&x.why.en,x.why&&x.why.vi];else if(it.kind==='keyFeature')texts=[x.reason&&x.reason.en,x.reason&&x.reason.vi];else texts=[x.en,x.vi];
     texts.forEach(function(t){if(t==null)return;if(!chartBound&&lmPlaceholders(t).length)E.push(n+': general teaching copy cannot use chart placeholders.');
       else if(chartBound){var r=lmResolve(t,x,ctx);if(r.missing.length)E.push(n+': cannot fill '+r.missing.join(' ')+'.')}});
     // Learn redesign: "why" notes are bilingual teaching copy (no chart placeholders needed, but allowed); kf links must exist on the same chart
@@ -104,8 +103,6 @@ function lmCheck(u,release){
       else{var got=lmClassify(x,ctx,u);if(got.label!==x.label)E.push(n+': stored answer "'+x.label+'" but the chart gives "'+got.label+'" ('+got.why+').')}
       if(!x.statement||typeof x.statement.en!=='string')E.push(n+': needs an English statement.');
     }
-    // multiple-choice question: the stored answer is recomputed from the chart JSON or a verified fact (key), unless it is a reviewed teacher key
-    if(it.kind==='question'){var qe=lmQuestionCheck(x,ctx,u);qe.forEach(function(e){E.push(n+': '+e)})}
     // no answer leak: nothing before Independent may use a later chart
     if(PRE.indexOf(x.stage)>=0){
       if(chartBound&&later.indexOf(x.chart)>=0)E.push(n+': stage "'+x.stage+'" uses chart '+x.chart+', which must stay hidden until Independent.');
@@ -116,49 +113,17 @@ function lmCheck(u,release){
   if(release&&pending)E.push(pending+' item(s) still waiting for owner review (pending).');
   return {errors:E,pending:pending,approved:approved,total:pending+approved,ctx:ctx};
 }
-// question {opts:[{v,en}], answer, key}: key = {src:'unit'|'period'|'xs'|'series'|'not_series'} (read from the chart JSON),
-// {fact:bindKey, field:'label'|'resultLabel'|'r1Label'|...} (the right option is exactly that verified value) or {reviewed:true} (human salience key).
-// -> list of problems ([] = the stored answer is the only option the key accepts)
-function lmQuestionCheck(x,ctx,u){
-  var P=[],O=isArr(x.opts)?x.opts:[],fx=u.charts[x.chart],c=fx&&fx.chart,k=x.key||{};
-  if(O.length<2)return ['needs at least 2 options.'];
-  var vs=O.map(function(o){return o&&o.v});if(vs.some(function(v,i){return v==null||vs.indexOf(v)!==i}))P.push('options need distinct values "v".');
-  if(vs.indexOf(x.answer)<0)return P.concat(['answer "'+x.answer+'" is not one of the options.']);
-  if(!x.q||!x.q.en||!x.why||!x.why.en)P.push('needs a question and a "why".');
-  if(!c)return P;
-  var txt=function(o){var r=lmResolve(o.en,x,ctx);return r.text},S=c.series||[],xs=S[0]?CH.chXs(S[0]):[],ok;
-  var labels=S.map(function(s){return s.label});
-  if(k.src==='unit')ok=function(t){return !!c.unit&&t.indexOf(c.unit)>=0};
-  else if(k.src==='period')ok=function(t){return xs.length>1&&t.indexOf(String(xs[0]))>=0&&t.indexOf(String(xs[xs.length-1]))>=0&&(t.match(/\d{4}/g)||[]).length===2};
-  else if(k.src==='xs')ok=function(t){var y=(t.match(/\d{4}/g)||[]).map(Number);return y.length===xs.length&&xs.every(function(v){return y.indexOf(v)>=0})};
-  else if(k.src==='series')ok=function(t){return labels.every(function(l){return t.indexOf(l)>=0})};
-  else if(k.src==='not_series')ok=function(t){return labels.indexOf(t)<0};
-  else if(k.fact){var f=ctx.byId[(x.binds||{})[k.fact]];if(!f)return P.concat(['key fact "'+k.fact+'" is missing.']);if(f.status!=='supported')return P.concat(['key fact '+f.id+' is '+f.status+'.']);
-    var want=lmFields(f,c)[k.field];if(want==null)return P.concat(['key fact '+f.id+' has no "'+k.field+'".']);ok=function(t){return t===String(want)}}
-  else if(k.reviewed===true)return P; // salience / overview-vs-detail: a human answer key, approved by the owner like every other item
-  else return P.concat(['unknown key '+JSON.stringify(k)+'.']);
-  var good=O.filter(function(o){var t=txt(o);return t!=null&&ok(t)}).map(function(o){return o.v});
-  if(good.length!==1||good[0]!==x.answer)P.push('the chart accepts '+(good.length?'"'+good.join('", "')+'"':'no option')+', stored answer is "'+x.answer+'".');
-  return P;
-}
 // Controlled statement -> {label, why}. claim = {bind, value} (supported / contradicted) or {basis:'x_not_observed', series, x} / {basis:'no_fact_type', type}
 function lmClassify(x,ctx,u){
   var c=x.claim||{};
   if(c.basis==='x_not_observed'){var fx=u.charts[x.chart],s=fx&&CH.chSeries(fx.chart,c.series);if(!s)return {label:'?',why:'unknown series'};
     return CH.chXs(s).indexOf(c.x)<0?{label:'not_determinable',why:'x = '+c.x+' is not an observed point'}:{label:'?',why:'x = '+c.x+' IS observed'}}
-  // gap between two lines at the first and last years shown (both endpoint facts, same years): narrowed / widened / same
-  if(c.basis==='gap'){var fa=ctx.byId[(x.binds||{})[c.a]],fb=ctx.byId[(x.binds||{})[c.b]];
-    if(!fa||!fb||fa.type!=='endpoint'||fb.type!=='endpoint'||fa.status!=='supported'||fb.status!=='supported')return {label:'not_determinable',why:'needs two supported endpoint facts'};
-    var ea=fa.evidence,eb=fb.evidence;if(ea.x0!==eb.x0||ea.x1!==eb.x1)return {label:'not_determinable',why:'the two lines do not share their first / last year'};
-    if((ea.y0-eb.y0)*(ea.y1-eb.y1)<0)return {label:'not_determinable',why:'the lines changed places, so "the gap" is not one gap'};
-    var g0=Math.abs(ea.y0-eb.y0),g1=Math.abs(ea.y1-eb.y1),r=g1<g0?'narrowed':(g1>g0?'widened':'same');
-    return r===c.value?{label:'supported',why:'gap '+g0+' → '+g1+' = '+r}:{label:'contradicted',why:'gap '+g0+' → '+g1+' = '+r+', not '+c.value}}
   if(c.basis==='no_fact_type')return ctx.list.some(function(f){return f._chart===x.chart&&f.type===c.type})?{label:'?',why:'a "'+c.type+'" fact exists'}:{label:'not_determinable',why:'no "'+c.type+'" fact can exist'};
   var f=ctx.byId[(x.binds||{})[c.bind]];if(!f)return {label:'?',why:'no fact'};
   if(f.status!=='supported')return {label:'not_determinable',why:f.id+' is '+f.status+(f.reason?' ('+f.reason+')':'')};
   var v=c.path==='first'?(isArr(f.result)?f.result[0]:undefined):f.result;
   return JSON.stringify(v)===JSON.stringify(c.value)?{label:'supported',why:f.id+' = '+JSON.stringify(v)}:{label:'contradicted',why:f.id+' = '+JSON.stringify(v)+', not '+JSON.stringify(c.value)};
 }
-var API={lmFacts:lmFacts,lmFields:lmFields,lmPlaceholders:lmPlaceholders,lmResolve:lmResolve,lmMatch:lmMatch,lmCheck:lmCheck,lmClassify:lmClassify,lmItems:lmItems,lmQuestionCheck:lmQuestionCheck,LM_STAGES:STAGES,LM_PRE:PRE,LM_LENSES:LENSES};
+var API={lmFacts:lmFacts,lmFields:lmFields,lmPlaceholders:lmPlaceholders,lmResolve:lmResolve,lmMatch:lmMatch,lmCheck:lmCheck,lmClassify:lmClassify,lmItems:lmItems,LM_STAGES:STAGES,LM_PRE:PRE,LM_LENSES:LENSES};
 if(typeof module!=='undefined'&&module.exports)module.exports=API;else root.LMX=API;
 })(this);
