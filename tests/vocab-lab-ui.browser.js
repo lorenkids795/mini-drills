@@ -38,6 +38,12 @@ const server=http.createServer((req,res)=>{
    const text=await page.locator('#preview').innerText();
    for(const forbidden of ['This batch','C17-T1-R1-','Device-only sandbox','Firebase','Unsampled Know It','Personalized Missions'])assert.ok(!text.includes(forbidden),forbidden);
    assert.equal(await page.locator('#preview progress').count(),1);
+   if(screen.startsWith('check-')){
+    assert.equal(await page.locator('.vl-context-label').count(),0);
+    assert.equal(await page.locator('.vl-context').getAttribute('aria-label'),'Context sentence');
+    assert.equal(await page.locator('.vl-target').innerText(),'overcrowded');
+    const colour=await page.locator('.vl-target').evaluate(e=>({fg:getComputedStyle(e).color,bg:getComputedStyle(e.closest('.vl-context-panel')).backgroundColor}));assert.ok(contrast(colour.fg,colour.bg)>=4.5);
+   }
    const colours=await page.locator('.vl-passage,.vl-key-help,.vl-count,.vl-main .vl-btn:enabled,.vl-feedback').evaluateAll(els=>els.filter(e=>e.getClientRects().length).map(e=>{var p=e,bg;while(p){bg=getComputedStyle(p).backgroundColor;if(bg!=='rgba(0, 0, 0, 0)'&&bg!=='transparent')break;p=p.parentElement}return {text:e.textContent,fg:getComputedStyle(e).color,bg:bg||'rgb(255, 255, 255)'}}));
    colours.forEach(x=>assert.ok(contrast(x.fg,x.bg)>=4.5,x.text+' text contrast '+contrast(x.fg,x.bg)));
    const boundaries=await page.locator('.vl-bins .vl-btn:enabled,.vl-options .vl-btn:enabled').evaluateAll(els=>els.map(e=>({border:getComputedStyle(e).borderColor,bg:getComputedStyle(e).backgroundColor})));

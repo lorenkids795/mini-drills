@@ -3,6 +3,14 @@
 'use strict';
 var C=root.MD_VOCAB_CORE,session=null,loaded=null;
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(x){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]})}
+function highlight(text,target){
+  text=String(text==null?'':text);target=String(target||'').trim();
+  if(!target||/[()[\]{}|]/.test(target))return {html:esc(text),matches:0};
+  var re=new RegExp(target.split(/\s+/).map(function(x){return x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}).join('\\s+'),'gi'),m,last=0,html='',count=0;
+  function word(c){return /[A-Za-z0-9_\u00c0-\u024f\u1e00-\u1eff]/.test(c)}
+  while((m=re.exec(text))){if(word(text.charAt(m.index-1))||word(text.charAt(m.index+m[0].length)))continue;html+=esc(text.slice(last,m.index))+'<mark class="vl-target">'+esc(m[0])+'</mark>';last=m.index+m[0].length;count++}
+  return {html:html+esc(text.slice(last)),matches:count};
+}
 function icon(name){var paths={know:'<path d="m5 12 4 4L19 6"/>',unsure:'<path d="M9 8a3 3 0 0 1 6 0c0 2-3 2-3 5M12 17h.01"/><circle cx="12" cy="12" r="10"/>',new:'<path d="m12 3 2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4z"/>',undo:'<path d="M9 4 4 9l5 5M4 9h9a6 6 0 0 1 0 12"/>',arrow:'<path d="M4 12h16m-6-6 6 6-6 6"/>',done:'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',hint:'<path d="M9 18h6m-5 3h4M8 14a6 6 0 1 1 8 0l-1 2H9z"/>'};return '<svg class="vl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+(paths[name]||paths.done)+'</svg>'}
 function button(action,label,disabled,primary,extra,ico){return '<button type="button" class="btn vl-btn'+(primary?' pri':'')+'" data-vl="'+action+'"'+(disabled?' disabled':'')+(extra||'')+'>'+(ico?icon(ico):'')+'<span>'+esc(label)+'</span></button>'}
 function data(){
@@ -44,7 +52,8 @@ function mount(host,opt){
       h+='<p class="vl-support">'+(bins.know?'Let’s try a few of your Know It words in context.':'No Know It words this time. We’ll skip the check.')+'</p><div class="vl-ready-actions">'+button('startCheck',bins.know?'Start Reality Check':'View my results',locked,true,'',bins.know?'arrow':'done')+button('undo','Undo last choice',locked||!b.history.length,false,' aria-keyshortcuts="U"','undo')+'</div>';
     }else if(b.phase==='check'){
       id=b.checks[b.checkAt];q=s.practice[id];r=b.results[id]||{tries:0,hinted:false,wrong:[],done:false};
-      h+='<div class="vl-context-panel"><span class="vl-context-label">In context · <b>'+esc(s.terms[id].surface)+'</b></span><blockquote class="vl-context">'+esc(q.context)+'</blockquote></div><p class="vl-question">'+esc(q.prompt)+'</p><div class="vl-options">';
+      var marked=highlight(q.context,s.terms[id].surface);
+      h+='<div class="vl-context-panel"><blockquote class="vl-context" aria-label="Context sentence">'+marked.html+'</blockquote></div><p class="vl-question">'+(marked.matches?esc(q.prompt):'Which meaning of “'+esc(s.terms[id].surface)+'” fits this context?')+'</p><div class="vl-options">';
       q.options.forEach(function(option,i){var wrong=r.wrong.indexOf(i)>=0;h+=button('answer',option,locked||r.done||wrong,false,' data-choice="'+i+'"'+(wrong?' data-result="wrong"':'')).replace('<span>','<span class="vl-choice-letter" aria-hidden="true">'+String.fromCharCode(65+i)+'</span><span>').replace('</button>',(wrong?'<span class="vl-option-note">Try again</span>':'')+'</button>')});h+='</div>';
       if(r.done){var more=b.checkAt+1<b.checks.length||((verified+needs)>=2&&needs/(verified+needs)>=0.5&&b.checks.length<5&&bins.know>b.checks.length);h+='<div class="vl-feedback '+(r.status==='verified_for_current_task'?'vl-feedback-good':'')+'" role="status"><strong>'+icon(r.status==='verified_for_current_task'?'know':'hint')+(r.status==='verified_for_current_task'?'Correct in this context':'Needs practice')+'</strong><p>'+esc(q.explanation)+'</p>'+(r.status!=='verified_for_current_task'?'<small>A useful practice step. We’ll keep this word on your practice list.</small>':'')+'</div>'+button('next',more?'Next check':'See my results',locked,true,'','arrow')}
       else{
@@ -137,5 +146,5 @@ function mount(host,opt){
     });
   }).catch(function(e){s.message=e.message;draw()});
 }
-root.MD_VOCAB={allowed:C.allowed,mount:mount};
+root.MD_VOCAB={allowed:C.allowed,mount:mount,highlight:highlight};
 })(this);
