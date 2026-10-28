@@ -405,107 +405,15 @@ Cần thầy/cô tự xem bằng tài khoản **admin** (học sinh chưa thấy
 4. [ ] So với file `leaderboard (2).html` mở cạnh nhau: kích thước, bo góc, khoảng cách giống nhau (chế độ sáng và tối, 390px).
 
 ## Admin › Users › Kick (10/2026)
-Tự động (đã chạy): `node tests/admin-kick.test.js` → 36/36 (script thật của app, DOM giả, server giả) · `node --check` cho script inline, `functions/api/[[path]].js` và các file .js: đạt.
+Tự động (đã chạy): `node tests/admin-kick.test.js` → 25/25 (script thật của app, DOM giả, server giả) · `node --check` cho script inline, `functions/api/[[path]].js` và các file .js: đạt.
 Trên site thật (bắt buộc, theo thứ tự):
-1. [ ] Sau khi đưa bản mới lên, mở Admin › Users: dòng đầu phải ghi **"· app 2026-10-24c · server 2026-10-23d"**. Không thấy "app 2026-10-24c" = site vẫn chạy `index.html` cũ → đưa lại file, rồi tải lại trang bằng Ctrl+F5 (điện thoại: xóa dữ liệu trang / mở tab ẩn danh).
+1. [ ] Sau khi đưa bản mới lên, mở Admin › Users: dòng đầu phải ghi **"· app 2026-10-24b · server 2026-10-23d"**. Không thấy "app 2026-10-24b" = site vẫn chạy `index.html` cũ → đưa lại file, rồi tải lại trang bằng Ctrl+F5 (điện thoại: xóa dữ liệu trang / mở tab ẩn danh).
 2. [ ] Bấm **Kick** ở dòng 3667@gmail.com → hiện hộp "Kick this student?" có tên + email đúng. Cancel → hộp đóng, không đổi gì. Esc cũng đóng.
 3. [ ] Nếu hộp của app không hiện được trên máy này, sau ~0,2 giây trình duyệt tự hỏi bằng hộp của chính nó ("Kick this student?" + OK / Cancel): OK = Kick thật. Nếu không có cả hai: phải có thông báo "Something went wrong (ad-kick: …)". Chụp lại câu đó gửi cho Claude. Không có cả thông báo → mở Console (F12) và chụp dòng đỏ.
 4. [ ] Bấm lại Kick → **Kick** trong hộp: nút đổi "Kicking…", hộp đóng, dòng biến mất, toast "… was kicked." F5 → không quay lại.
 5. [ ] Làm như vậy với nghiatucayfai@gmail.com (QUANG KHANG). **Không** Kick nghiatucayfai75@gmail.com (Teacher), tester@gmail.com, lorenkids795@gmail.com (Admin).
 6. [ ] Lỗi: hộp vẫn mở và ghi lý do (hết hạn admin key → ô nhập mật khẩu admin; "Deploy the latest version…" = thiếu thư mục functions/).
-7. [ ] **Change password**: bấm ở một học sinh → hộp có ô mật khẩu (Generate / Copy / Save password), hoặc nếu hộp không hiện được thì trình duyệt hỏi bằng ô nhập có sẵn mật khẩu gợi ý → OK → thông báo hiện mật khẩu mới để chép; đăng nhập học sinh đó bằng mật khẩu mới được. Edit class, Add a tester account, Resume, Teachers, My account vẫn chạy. 390px và máy tính, sáng/tối.
-
-## Learning Materials — Learn mới (10/2026)
-Tự động (đã chạy): `node tests/lm-unit2-ui.test.js` → 34/34 · `chart-facts` 56/56 · `lm-meta` 18/18 · `admin-kick` 36/36 · `lm-check` 0 lỗi, 70 pending (`--release` báo lỗi đúng).
-Cần xem trên trình duyệt (tài khoản admin):
-1. [ ] Mở Unit 2: nút **English | Tiếng Việt**, mặc định Tiếng Việt; giải thích chỉ hiện 1 ngôn ngữ; câu IELTS mẫu luôn tiếng Anh.
-2. [ ] Learn: chỉ thẻ 1 hiện, bấm Tiếp tục mở dần tới thẻ 7. Máy tính: biểu đồ bên trái đứng yên khi cuộn; điện thoại 390px: biểu đồ ở trên, thẻ bên dưới, chữ và nút không bị tràn.
-3. [ ] Thẻ 3: bấm Trends → Museum A và B sáng, C mờ; Highest / Lowest → chỉ A; Highlights → chỉ C; bấm lại → bỏ chọn. Chip ✓ "Museum A: 60 → 90 (2000–2020)".
-4. [ ] Thẻ 4: tick rồi "Xem nhận xét" → mới hiện Chính/Phụ, "Bạn đã chọn". Thẻ 6: câu mẫu chỉ hiện sau "Xem câu mẫu".
-5. [ ] Đang ở Controlled đã chọn đáp án, hoặc Guided đã viết nháp → đổi ngôn ngữ → vẫn ở chỗ cũ, đáp án và nháp còn nguyên. Tải lại trang → ngôn ngữ được nhớ.
-6. [ ] Chế độ tối: biểu đồ mờ/sáng vẫn rõ, thẻ đang làm có viền xanh.
-7. [ ] Học sinh vẫn chỉ thấy "coming soon". Mở `tests/lm-review.html` để duyệt 70 mục.
-
-## Learning Materials — sửa sau review (10/2026)
-Tự động (đã chạy): `lm-unit2-ui` 51/51 · `chart-facts` 56/56 · `lm-meta` 18/18 · `admin-kick` 36/36 · `lm-check` 0 lỗi, 121 pending (`--release` báo lỗi đúng).
-Cần xem trên trình duyệt (admin):
-1. [ ] Learn: bấm Tiếp tục tới bước 7 mà **không** bấm "Xem câu mẫu" → ô Overview chỉ có lời nhắc + nút, không có câu mẫu.
-2. [ ] Bước 3–6 chưa làm → nút "Bỏ qua, tiếp tục" (màu phụ) + dòng gợi ý; làm rồi → "Tiếp tục".
-3. [ ] Bước 5: chọn Museum A / Museum C ở 2 ô đầu, Museum B ở ô cuối → "Kiểm tra câu" → báo đúng; chọn sai → "Chưa đúng" + Làm lại. Trên điện thoại 3 ô chọn không tràn.
-4. [ ] Tiếng Việt: thanh bước (Học · Luyện nhận biết · Viết có gợi ý · Tự viết · Xem lại & sửa), nút, phản hồi Controlled ("Chưa đúng. Đáp án: …"), Guided/Independent/Review và thông báo nháp đều tiếng Việt; câu IELTS vẫn tiếng Anh. Chuyển English → tất cả sang tiếng Anh, đáp án/nháp còn nguyên.
-5. [ ] Câu mẫu về Museum C có nhãn "Phụ · có thể bỏ qua".
-
-## Trang đăng nhập v2 (10/2026)
-Tự động (đã chạy): `node tests/sign-in.test.js` → 11/11 (4 trạng thái, link đổi vai trò, ô tên khóa tới khi chọn lớp, gọi `/api/login` / `/api/register` như cũ).
-Cần xem trên trình duyệt (đã đăng xuất):
-1. [ ] Máy tính: trái là khối tím có logo "Mini Drills" (Drills nền vàng), khẩu hiệu to có "mistakes away" nền vàng in nghiêng, sao nhấp nháy + sao băng; phải là form "Sign in". Không còn thanh đầu trang, không còn 2 nút Student/Teacher.
-2. [ ] Đăng nhập học sinh, "First time here?" (chọn lớp → mới chọn được tên; đổi lớp → tên chọn lại), "Sign in as teachers" → đăng nhập giáo viên → "Sign in as student". Giáo viên mới: "First time? Create your teacher password" vẫn có.
-3. [ ] Nhập sai mật khẩu → báo lỗi như cũ. Đăng nhập đúng → vào app, thanh đầu trang và menu hiện lại bình thường. Đăng xuất → về trang này.
-4. [ ] Nút tròn góc phải đổi sáng/tối. Dark mode: form chữ sáng, ô nhập rõ; khối tím đậm hơn.
-5. [ ] Điện thoại 390px: khối tím ở trên (khẩu hiệu nhỏ hơn logo), form bên dưới, không tràn ngang; iPhone không bị tai thỏ che.
-6. [ ] Trình duyệt tự điền email/mật khẩu được; tab Issues của Chrome không còn "form field has neither an id nor a name" cho form này.
-
-## Kick xóa dữ liệu · trạng thái lớp · xóa lớp · gỡ khung · quà tùy chỉnh (10/2026)
-Tự động (đã chạy): `server-purge` 8/8 · `admin-kick` 50/50 · các bộ khác như cũ.
-Trên site thật (cần deploy cả `functions/` — Users phải ghi "server 2026-10-24a", "app 2026-10-24d"):
-1. [ ] ⚠ Thử trước bằng **tài khoản tester phụ**, không bằng học sinh thật. Kick → hộp ghi "ALL their learning data are deleted for good". Sau đó: tài khoản không còn trong Users, Recent results/Leaderboard/Error Notebook của bạn đó trống; đăng ký lại cùng email = bắt đầu từ 0.
-2. [ ] Classes (admin): lớp có học sinh ở mục chính; lớp chỉ có trong Sheet ở mục "Pending"; một học sinh đăng ký vào lớp Pending → lớp tự thành Active.
-3. [ ] Class settings › Status: chọn Archived → Save → lớp xuống mục "Archived" (gập lại); chọn lại Active → về chỗ cũ. Giáo viên không thấy khối Status / Delete class.
-4. [ ] ⚠ Delete class (thử với một lớp thử nghiệm): gõ DELETE → "Kicking 1 of N…" → toast số học sinh và bài giao đã xóa; lớp biến mất (còn trong Sheet thì hiện lại ở Pending). Gõ sai → không xóa gì.
-5. [ ] Prizes › Rank frames: rank có khung → nút "Remove frame" cạnh Reset → xác nhận → avatar về vòng màu.
-6. [ ] Prizes › Add a prize: Type "Custom / Other…" → hiện ô "Custom prize"; thêm "Mini Drills T-shirt", tier Real-life, weight 100 → bảng có dòng "Custom: Mini Drills T-shirt", Chance tính lại. Gõ weight ở một dòng → cột Chance và "total weight" đổi ngay khi gõ.
-
-## Library · Admin · Leaderboard · Reading · Unit 2 v4 (10/2026)
-Tự động (đã chạy): `lm-unit2-ui` 37/37 · `reading` 12/12 · `misc` 6/6 · `admin-kick` 50/50 · `chart-facts` 56/56 · `lm-meta` 18/18 · `server-purge` 8/8 · `sign-in` 11/11 · `lm-check` 0 lỗi, 153 pending. Cần deploy `index.html`, `functions/`, `md-chart.js`, `lm-*.js`, `md-backend.js` (Users phải ghi "server 2026-10-24b").
-1. [ ] Học sinh: tab Library tên "Cambridge"; tài khoản chưa có sách nào có bài → dòng "No Cambridge books yet…".
-2. [ ] Admin › Users: không còn nút Edit class. Tìm tài khoản tester (kiểm đúng email; "tester@gmai.com" có thể gõ nhầm) → Add sample data 2 lần → Recent results có 5 bài + 1 Writing + 1 Speaking đã chấm, **không bị nhân đôi**. Học sinh thường không có nút này.
-3. [ ] Leaderboard: hero có sao nhấp nháy mềm, sao băng đầu tiên sau ~1 s; thẻ #2/#3 không lặp lại người #1. Windows tắt Animation effects → đứng yên.
-4. [ ] Create › Reading: Generate → ba dòng Easy / Medium / Hard có trạng thái; câu Completion và TFNG theo thứ tự bài đọc. Thêm bài.
-5. [ ] Class settings: chọn Level cho một học sinh (Beginner) → học sinh mở bài Reading thấy pill "Easy" và nội dung bản Easy; giáo viên đổi bản bằng Easy/Medium/Hard trên thanh trên cùng.
-6. [ ] Deep reading: khung bài ghi "Selected excerpts · … (not the whole passage)", nút xem cả bài và quay lại. Stage 3 sau Check: các cặp "… ≈ …".
-7. [ ] Learning Materials › Unit 2 (admin): nút ENG | VI; mọi stage biểu đồ trái, bài phải (máy tính), xếp dọc ở 390px; dưới biểu đồ "Biểu đồ luyện tập (số liệu giả định)".
-8. [ ] Learn: không có nút Bỏ qua; Tiếp tục mờ tới khi làm xong bước. Trends sáng cả 3 đường. Bước 5 "Overall"/"while" được tô; sai 2 lần → hiện đáp án.
-9. [ ] Bước 6: đoạn ngắn 2 câu + đoạn tô 3 màu kèm chú giải; dark mode đọc được.
-10. [ ] Controlled: YES / NO / NOT GIVEN; đúng 5/8 → nút sang Guided mờ; 6/8 → mở. Guided: 3 bài nhỏ, đạt 5/6 mới hiện ô viết. Independent: "Bí ý?" mở overview mẫu của biểu đồ bảo tàng.
-11. [ ] "Preview: auto-fill" (chỉ admin) bật → Controlled/Guided có sẵn đáp án đúng; ô viết vẫn trống; tắt lại được.
-
-## Learning Materials dạng cây (10/2026)
-Tự động (đã chạy): `lm-meta` 22/22, các bộ khác như cũ.
-1. [ ] Library › Learning Materials: 4 dòng Writing (mở sẵn) · Listening · Reading · Speaking (3 dòng sau mờ, có "Coming soon", bấm không được). Không có khung thẻ.
-2. [ ] Trong Writing: "IELTS Academic Task 1" và "IELTS Task 2" (đóng); bấm để mở/đóng, mũi tên xoay; đường kẻ dọc màu nhạt bên trái.
-3. [ ] Admin: mở Task 1 → "Unit 2: Overview (Time-series Line Charts)" + badge vàng nâu "Unpublished preview" → bấm mở bài. Task 2 → "No units yet".
-4. [ ] Học sinh/giáo viên: mở Task 1 → "No units yet" (bài chưa phát hành không hiện).
-5. [ ] Dark mode và 390px: màu đọc được, không tràn ngang; Tab bàn phím thấy viền focus.
-
-## Rà UI/UX toàn app (10/2026)
-Tự động (đã chạy): `ui-audit` 15/15, `contrast.js` 0 cặp lỗi, các bộ khác như cũ.
-1. [ ] Chế độ sáng: chữ xám (ghi chú, ngày giờ) đậm hơn một chút; viền ô nhập rõ hơn (xám đậm) ở Settings, Create, trang đăng nhập.
-2. [ ] Điện thoại: mọi nút bấm dễ (≥ 44px); bảng dữ liệu của bài Writing và bảng Classes ở Dashboard kéo ngang được, trang không tràn.
-3. [ ] Làm bài thường (Library): sau Submit answers, lựa chọn đúng có ✓, sai có ✗; ô điền sai có viền đứt.
-4. [ ] Listening/Reading trên điện thoại: chạm vào ô điền → thanh nút ở đáy không còn che ô và bàn phím; rời ô → thanh dính lại.
-5. [ ] Flashcard / popup từ vựng / Daily: nút phát âm là icon loa (không còn emoji 🔊). Classes: nút bánh răng trên ảnh bìa nhìn rõ cả với ảnh sáng.
-6. [ ] Windows tắt "Animation effects" (hoặc máy bật giảm chuyển động): không còn hiệu ứng chạy ở bất kỳ đâu.
-7. [ ] Dùng phím Tab đi qua trang: luôn thấy viền focus; ở danh sách lỗi AI và chế độ chọn từ Listening, Enter/Space chọn được.
-
-## Unit 2 — feedback bổ sung (10/2026)
-Tự động (đã chạy): `lm-unit2-ui` 41/41, `chart-facts` 56/56, `lm-check` 0 lỗi (152 pending), các bộ khác như cũ.
-1. [ ] Admin mở Unit 2: hàng trên cùng có "Learning Materials › Writing › IELTS Academic Task 1" bên trái, ENG | VI và "Preview: auto-fill" bên phải; không còn nút "‹ Learning Materials" và dòng "Unpublished preview · 152…". Bấm "Learning Materials" (breadcrumb hoặc tab trên) → về danh sách. Điện thoại 390px: hàng này xuống dòng gọn.
-2. [ ] Tiêu đề biểu đồ căn giữa, to và đậm hơn (Learn, Independent và cả bài Writing có biểu đồ trong Cambridge).
-3. [ ] Tên đường: Larkfield / Westmere / Corvale Museum (Chart A), Chatora / Pixlo / Notivo (Chart B), ở biểu đồ, câu hỏi, câu mẫu, Controlled, Guided.
-4. [ ] Không còn dòng "Practice chart (made-up data)." dưới biểu đồ; mở "Data table" → bảng gọn, số căn giữa, có dòng nhỏ "Biểu đồ luyện tập (số liệu giả định)" ở dưới; điện thoại không cuộn ngang nữa.
-5. [ ] Bước 2–3 của Learn: không còn chữ "Answer the questions…" / "Open all three lenses…" (rê chuột lên nút Continue mờ vẫn thấy gợi ý). Bước 6: không còn "You do not need all three parts…"; câu mẫu có "also" và "Notably,".
-6. [ ] Học sinh vẫn không thấy Unit 2.
-
-## Learning Materials — Unit 0: Data Reading & Selection (10/2026)
-Tự động (đã chạy): `lm-unit0` 23/23, `lm-check` 0 lỗi (Unit 0: 165 pending, Unit 2: 152 pending), các bộ khác như cũ. Cần deploy thêm file `lm-unit0.js`.
-1. [ ] Admin › Library › Learning Materials › Writing › IELTS Academic Task 1: có "Unit 0: Data Reading & Selection" (badge Unpublished preview) trên Unit 2. Học sinh/giáo viên không thấy.
-2. [ ] Learn: bước 1 có bảng kiểm 5 bước + một dòng "số liệu giả định"; Continue mờ tới khi trả lời + Kiểm tra; trả lời sai 2 lần thì hiện đáp án và đi tiếp được. Bước 3: bấm từng đường → đường đó sáng lên, hiện "80 → 48 (2005–2025)" và mô tả. Bước 5: Chính/Phụ chỉ hiện sau Kiểm tra.
-3. [ ] Controlled: 8 câu, nút YES / NO / NOT GIVEN và Đặc điểm chính / Chi tiết phụ; đúng 5/8 → không sang Guided được, 6/8 → được.
-4. [ ] Guided: 7 ô chọn (đúng ≥ 5 mới mở phần sau) → chọn đặc điểm + lý do → viết ≥ 2 nhận xét → "Put my observations together" → sửa bản tóm tắt → tick "I compared…" → sang Independent.
-5. [ ] Independent: biểu đồ Brennick lần đầu xuất hiện; mở "Need a reminder…" chỉ thấy phương pháp, không có số liệu hay đáp án. Thiếu ô nào thì "I am done" báo cần điền đủ.
-6. [ ] Review: bảng tham khảo (Car dẫn đầu 2016, Bicycle dẫn đầu 2024, Bus = Bicycle năm 2022), tự kiểm "Tôi đã nêu… / Tôi đã tránh…".
-7. [ ] Tải lại trang giữa chừng: quay lại đúng bước, đáp án và ghi chú còn. ENG | VI không làm mất gì. "Preview: auto-fill" (admin) bật → câu chấm được có sẵn đáp án; tắt → về như cũ.
-8. [ ] Điện thoại 390px + dark mode: biểu đồ trên, bài dưới; ô chọn Guided xếp 1 cột; không tràn ngang.
+7. [ ] Change password, Edit class, Add a tester account, Resume, Teachers, My account vẫn chạy. 390px và máy tính, sáng/tối.
 
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

@@ -338,6 +338,12 @@ body.lg .shell{margin-top:0}
 .luopts.luv{flex-direction:column}.luopts.luv .luopt{text-align:left}
 .luself{margin-left:6px}
 .luaf[aria-pressed="true"]{border-color:var(--warn);color:var(--warn)}
+/* Unit 2 P0: separate recognition / writing states, precheck feedback, admin preview note, first version in Review */
+.lustate{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 4px}.lustate .pill.ok{border-color:var(--good);color:var(--good)}
+.lupc{margin:4px 0 0;font-size:.9rem}.lupc.ok{color:var(--good)}.lupc.no{color:var(--bad)}
+.luadm{margin:0 0 8px;padding:8px 12px;border:1px dashed var(--warn);border-radius:10px;font-size:.86rem;color:var(--warn)}
+.lufirst{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;max-width:none}
+.lumod1{border-left:4px solid var(--accent);padding:2px 0 2px 12px;display:flex;flex-direction:column;gap:6px}
 /* Unit 0 (Data Reading & Selection): checklist, reference notes, Guided rows; everything else reuses the Unit 2 lesson classes */
 .u0ckh{margin:4px 0 0;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
 .u0ck{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}.u0ck li{line-height:1.5}.u0ck span{color:var(--muted)}
@@ -2171,6 +2177,37 @@ function luDrop(u,act){try{localStorage.removeItem(luKey(u,act))}catch(e){}}
 function luOld(u,act){var o=[];try{var pre='md-lm:'+u.lesson+':v',suf=':'+act,cur=luKey(u,act);for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf(pre)===0&&k.slice(-suf.length)===suf&&k!==cur)o.push(k)}}catch(e){}return o}
 // a UI text with %n / %t filled in (numbers only, no chart words)
 function luUf(u,id,n,tt){return luU(u,id).replace(/%n/g,String(n)).replace(/%t/g,String(tt))}
+// INPUT PRECHECK, never a pass: rejects obvious non-responses only (empty, a few letters like "dcd", strings that are not words,
+// a copy of the prompt or of a sample). A text that gets through is just "a practice attempt": nothing here measures quality,
+// so the screens say "Writing: not assessed". o = {min: words, common: everyday / chart words needed, extra: words that count, copies: texts it must not copy, any: allow Vietnamese}
+var LM_COMMON={};('the a an of to in on at and or but while whereas than by from for with was were is are be been had has have rose fell rise fall grew grow increased increase decreased decrease declined decline dropped remained stayed '+
+  'overall number figure figures highest lowest most least more less higher lower period year years between both all three two each also however notably trend trends up down steadily steady fluctuated changed same equal '+
+  'first last end start beginning became leading largest smallest it its this that there their users visitors journeys people use used').split(' ').forEach(function(w){LM_COMMON[w]=1});
+// at least one verb: a list of chart names and key words ("Larkfield Museum overall while") is not a sentence
+var LM_VERB={};('was were is are be been had has have rose rise rises fell fall falls grew grow grows increased increase increases decreased decrease decreases declined decline declines dropped drop remained remain stayed stay changed change '+
+  'fluctuated fluctuate became become overtook overtake reached reach peaked went go saw see showed show shows gained gain lost lose doubled halved levelled moved led lead took take').split(' ').forEach(function(w){LM_VERB[w]=1});
+function lmNorm(t,any){t=String(t||'').toLowerCase().replace(/[\u2018\u2019]/g,"'");return (any?t.replace(/[^a-z0-9\u00c0-\u1ef9' ]+/g,' '):t.replace(/[^a-z0-9' ]+/g,' ')).replace(/\s+/g,' ').trim()}
+function lmPrecheck(t,o){o=o||{};var n=lmNorm(t,o.any);if(!n)return 'empty';var W=n.split(' '),like=0,hit=0,verb=0,ex={};
+  (o.extra||[]).forEach(function(x){lmNorm(x).split(' ').forEach(function(w){if(w)ex[w]=1})});
+  W.forEach(function(w){var bare=w.replace(/'/g,''),num=/^\d+$/.test(bare),word=bare.length>=2&&(/[aeiouy]/.test(bare)||(o.any&&/[\u00c0-\u1ef9]/.test(bare)))||bare==='a'||bare==='i';
+    if(num||word)like++;if(LM_COMMON[bare]||ex[bare])hit++;if(LM_VERB[bare])verb++});
+  if(like<(o.min||1))return 'short';
+  if(like/W.length<0.7||hit<(o.common||0)||(o.verb&&!verb))return 'gibberish';
+  var cp=(o.copies||[]).map(function(c){return lmNorm(c,o.any)}).filter(Boolean);
+  if(cp.some(function(c){return c===n||(n.length>=15&&c.indexOf(n)>=0&&n.length>=c.length*0.6)||(c.length>=20&&n.indexOf(c)>=0&&n.length<c.length*1.3)}))return 'copied';
+  return ''}
+// Unit 2 rules: words of this unit's charts count as chart words; the prompt, the frames and the samples must not be copied
+function luWords(u,k){var c=u.charts[k].chart;return c.series.map(function(s){return s.label}).concat([c.unit||'',c.title||''])}
+function luCopies(u,stage){var M=luItems(u,'claims','learn','A'),L=[luParaText(u,luConcise(M)),luParaText(u,M.filter(function(x){return x.kind==='model'}))].concat(M.map(function(x){return luTxt(x,x.en)}));
+  ['copy.learn.frame','copy.indep.task','copy.guided.start','copy.gd.a.note'].forEach(function(id){var c=luC(u,id);if(c)L.push(String(c.en).replace(/\[line\]/g,''))});
+  if(stage==='guided'){var P=luGPieces(u);if(P.length>1)L.push(P.join(' '))}return L.filter(Boolean)}
+function luParaText(u,M){return M.map(function(x){return luTxt(x,x.en)}).join(' ')}
+function luPre(u,k,t,kind){var base={extra:luWords(u,k),verb:true};
+  if(kind==='overview'){base.min=8;base.common=3;base.copies=luCopies(u,k==='A'?'guided':'indep')}
+  else if(kind==='trend'){base.min=5;base.common=2;base.copies=luCopies(u,'guided')}
+  else {base.min=4;base.common=1;base.copies=luCopies(u,'guided')}
+  return lmPrecheck(t,base)}
+function luPcMsg(u,code){return code?luU(u,'ui.pc.'+code):luU(u,'ui.pc.ok')}
 function luDraftHTML(u,act){
   var h='',old=luOld(u,act);
   if(!luStoreOk())h+='<p class="luwarn" role="status">'+esc(luU(u,'ui.dr.blocked'))+'</p>';
@@ -2201,6 +2238,9 @@ function luChip(u,k){var f=LUC.ctx.byId[k.fact],c=u.charts[k.chart].chart;if(!f|
   else if(f.type==='highest-throughout')t=lab(f.result)+': '+luU(u,'ui.fact.top');
   else if(f.type==='lowest-throughout')t=lab(f.result)+': '+luU(u,'ui.fact.bottom');
   else if(f.type==='shape'&&f.result==='fluctuating')t=lab(f.series[0])+': '+luU(u,'ui.fact.fluctuating');
+  else if(f.type==='rank'&&isArr(f.result))t=lab(f.result[0])+': '+luU(u,'ui.fact.first')+' '+f.x;
+  else if(f.type==='tie')t=lab(f.series[0])+' = '+lab(f.series[1])+' ('+f.x+')';
+  else if(f.type==='rank-change'&&f.result==='detected'&&f.period)t=lab(f.series[0])+' / '+lab(f.series[1])+': '+f.period[0]+' → '+f.period[1];
   return t?'<span class="luchip" title="'+esc(luU(u,'ui.lbl.basis'))+'">✓ '+esc(t)+'</span>':''}
 function luTxtChip(u,t){return '<span class="luchip" title="'+esc(luU(u,'ui.lbl.basis'))+'">✓ '+esc(t)+'</span>'}
 function luImp(u,k){return '<span class="pill'+(k.importance==='main'?' acc':'')+'">'+esc(luU(u,k.importance==='main'?'ui.lbl.main':'ui.lbl.optional'))+'</span>'}
@@ -2259,7 +2299,7 @@ function luLearn(u){
   // 3: three lenses; Trends covers EVERY line (true observations), Highlights = what matters most (salience)
   var lens=LU_LENS.filter(function(L){return L[0]===LU.lens})[0],panel='';
   if(LU.lens==='trends'){
-    panel=['up','down','fluct'].map(function(cat){var L=S.filter(function(s){return luCat(s)===cat});if(!L.length)return '';
+    panel=luCopy(u,'copy.learn.overallVsSteady')+['up','down','fluct'].map(function(cat){var L=S.filter(function(s){return luCat(s)===cat});if(!L.length)return '';
       return '<div class="lutr"><b>'+esc(luU(u,'ui.tr.'+cat))+'</b><ul>'+L.map(function(s){return '<li>'+luTxtChip(u,luEvid(s))+(cat==='fluct'&&s.end?' <span class="muted">· '+esc(luU(u,s.end.result==='increase'?'ui.tr.overallUp':'ui.tr.overallDown'))+'</span>':'')+'</li>'}).join('')+'</ul></div>'}).join('')+
       M.filter(function(x){return x.kind==='faq'}).map(function(x){return '<details class="lufaq"><summary>'+esc(luL()==='vi'?luTxt(x,x.q.vi):luTxt(x,x.q.en))+'</summary>'+luPair(luTxt(x,x.en),luTxt(x,x.vi))+'</details>'}).join('');
   }else if(LU.lens==='highest'){
@@ -2323,6 +2363,11 @@ function luGScore(u){var L=luGItems(u),ok=0;L.forEach(function(x){if(LU.g[x.id]=
 function luGSent(u,x,v){var fr=function(id){var c=luC(u,id);return c?String(c.en):''};
   if(x.kind==='trend'){var e=x.s.end.evidence;return fr('copy.gd.f.trend').replace('[line]',x.s.label).replace('[verb]',v?String((luC(u,LU_VERB[v])||{}).en||''):'___').replace('[start]',e.x0).replace('[end]',e.x1)}
   if(x.kind==='top'||x.kind==='bottom')return fr(x.kind==='top'?'copy.gd.f.top':'copy.gd.f.bottom').replace('[line]',v?luLab(u,'A',v):'___');return ''}
+function luGPieces(u){return luGItems(u).filter(function(x){return x.kind!=='leave'&&LU.g[x.id]===x.a}).map(function(x){return luGSent(u,x,x.a)})}
+// the two separate states, side by side: objective recognition score, and writing (only ever "not assessed")
+function luGStateHTML(u,sc,d){var pass=LU.gpass;
+  return '<div class="lustate" role="status"><span class="pill'+(pass?' ok':'')+'">'+esc(luUf(u,'ui.st.recog',LU.gchk?sc.ok:0,sc.n))+' · '+esc(luU(u,pass?'ui.st.recogPass':'ui.st.recogNot'))+'</span>'+
+    '<span class="pill">'+esc(luU(u,d.sub?'ui.st.writing':'ui.st.writingNone'))+'</span></div>'}
 function luGuided(u){
   var d=luGet(u,'guided')||{},L=luGItems(u),sc=luGScore(u),chk=LU.gchk,K=luItems(u,'keyFeatures','learn','A'),S=luSeries(u,'A');
   var fb=function(x){if(!chk)return '';var ok=LU.g[x.id]===x.a;return '<div class="lufb" role="status"><b>'+esc(luU(u,ok?'ui.ctl.correct':'ui.ctl.wrong'))+'</b>'+(ok?'':' '+esc(luU(u,'ui.ctl.answer'))+' <span lang="en">'+esc(x.kind==='leave'?(K.filter(function(k){return k.id===x.a})[0]||{reason:{}}).reason.en:x.kind==='trend'?luGSent(u,x,x.a):luGSent(u,x,x.a))+'</span>')+'</div>'};
@@ -2340,12 +2385,24 @@ function luGuided(u){
     h+='<p class="lusc" role="status">'+esc(luUf(u,'ui.ctl.score',sc.ok,sc.n))+' '+esc(pass?luU(u,'ui.ctl.passed'):luUf(u,'ui.ctl.need',sc.need,sc.n))+'</p><div class="actions"><button type="button" class="btn" data-act="lu-gredo">'+esc(luU(u,'ui.btn.retry'))+'</button></div>'}
   else h+='<div class="actions"><button type="button" class="btn pri" data-act="lu-gchk">'+esc(luU(u,'ui.gd.check'))+'</button></div>';
   if(LU.gpass){
-    var pieces=L.filter(function(x){return x.kind!=='leave'&&LU.g[x.id]===x.a}).map(function(x){return luGSent(u,x,x.a)});
-    h+='<section class="lucard"><h4 class="luh">'+esc(luU(u,'ui.gd.h2'))+'</h4>'+luCopy(u,'copy.guided.start')+(pieces.length?'<p class="lulbl">'+esc(luU(u,'copy.gd.pieces'))+'</p><ul class="lupieces" lang="en">'+pieces.map(function(p){return '<li>'+luKw(p)+'</li>'}).join('')+'</ul>':'')+
-      '<label class="lbl" for="luG">'+esc(luU(u,'ui.lbl.yourOverview'))+'</label><textarea class="wbox" id="luG" rows="5" lang="en" spellcheck="true" placeholder="Overall, …">'+esc(d.t||'')+'</textarea>'+
-      luDraftHTML(u,'guided')+'<div class="actions"><button type="button" class="btn pri" data-act="lu-go" data-s="independent"'+(luUnlocked(u,'independent')?'':' disabled')+'>'+esc(luU(u,'ui.btn.independent'))+'</button></div></section>';
+    var pieces=luGPieces(u),W=d.w||{},R=LU.wres||{},fbk=function(k){return R[k]==null?'':'<p class="lufb lupc'+(R[k]?' no':' ok')+'" role="status">'+(R[k]?'✗ ':'✓ ')+esc(luPcMsg(u,R[k]))+'</p>'};
+    var box=function(k,rows){return '<label class="lbl" for="luW_'+k+'">'+esc(luU(u,'ui.gd.w.'+k))+'</label><p class="lunote">'+esc(luU(u,'ui.gd.w.'+k+'Hint'))+'</p><textarea class="wbox luw" id="luW_'+k+'" data-w="'+k+'" rows="'+rows+'" lang="en" spellcheck="true">'+esc(W[k]||'')+'</textarea>'+fbk(k)};
+    h+='<section class="lucard"><h4 class="luh">'+esc(luU(u,'ui.gd.w.h'))+'</h4>'+(pieces.length?'<p class="lulbl">'+esc(luU(u,'copy.gd.pieces'))+'</p><ul class="lupieces" lang="en">'+pieces.map(function(p){return '<li>'+luKw(p)+'</li>'}).join('')+'</ul>':'')+
+      box('trend',2)+box('high',2)+box('note',2)+'<div class="actions"><button type="button" class="btn" data-act="lu-wchk">'+esc(luU(u,'ui.gd.w.chk'))+'</button></div></section>';
+    if(d.wok){
+      h+='<section class="lucard"><h4 class="luh">'+esc(luU(u,'ui.gd.a.h'))+'</h4>'+luCopy(u,'copy.gd.a.note')+
+        '<label class="lbl" for="luG">'+esc(luU(u,'ui.lbl.yourOverview'))+'</label><textarea class="wbox" id="luG" rows="5" lang="en" spellcheck="true">'+esc(d.t||'')+'</textarea>'+
+        (LU.gres!=null?'<p class="lufb lupc'+(LU.gres?' no':' ok')+'" role="status">'+(LU.gres?'✗ ':'✓ ')+esc(luPcMsg(u,LU.gres))+'</p>':'')+
+        '<div class="actions"><button type="button" class="btn" data-act="lu-gsub">'+esc(luU(u,'ui.gd.a.sub'))+'</button></div></section>';
+    }
+    if(d.sub){var rv=d.rv||{};
+      h+='<section class="lucard"><h4 class="luh">'+esc(luU(u,'ui.gd.r.h'))+'</h4>'+luCopy(u,'ui.gd.r.note')+'<ul class="lukf pick">'+['1','2','3'].map(function(k){
+          return '<li><label><input type="checkbox" data-act="lu-grv" data-k="'+k+'"'+(rv[k]?' checked':'')+'> <span class="luself">'+esc(luU(u,'ui.gd.r.'+k))+'</span></label></li>'}).join('')+'</ul>'+
+        '<div class="actions"><button type="button" class="btn pri" data-act="lu-go" data-s="independent"'+(luUnlocked(u,'independent')?'':' disabled')+'>'+esc(luU(u,'ui.btn.contIndep'))+'</button></div></section>';
+    }
+    h+=luDraftHTML(u,'guided');
   }
-  return luLayout(u,'A',h);
+  return luLayout(u,'A',luGStateHTML(u,sc,d)+h);
 }
 function luIndependent(u){
   var d=luGet(u,'indep')||{},M=luItems(u,'claims','learn','A');
@@ -2354,15 +2411,22 @@ function luIndependent(u){
     '<p class="lucnt" id="luCnt" aria-live="polite">'+esc(luCnt(u,d.t))+'</p>'+
     // a hint that opens the CHART A sample only (never anything about this chart)
     '<details class="lufaq luhintA"'+(LU.ihint?' open':'')+'><summary data-act="lu-ihint">'+esc(luU(u,'ui.ind.hint'))+'</summary>'+luCopy(u,'copy.ind.hint.note')+luParaHTML(u,luConcise(M),false)+'</details>'+
+    (LU.ires?'<p class="lufb lupc no" role="status">✗ '+esc(luPcMsg(u,LU.ires))+'</p>':'')+
+    (U&&U.adm?luItems(u,'claims','review','B').filter(function(x){return x.kind==='paragraph'}).map(function(x){return '<details class="lufaq luadms"><summary>'+esc(luU(u,'ui.ind.adminSample'))+'</summary><p class="lusent" lang="en">'+esc(luTxt(x,x.en))+'</p></details>'}).join(''):'')+
     luDraftHTML(u,'indep')+'<div class="actions"><button type="button" class="btn pri" data-act="lu-rv">'+esc(luU(u,'ui.btn.done'))+'</button></div>');
 }
+function luFactChips(u,x){var seen={};return Object.keys(x.binds||{}).map(function(k){var id=x.binds[k];if(seen[id])return '';seen[id]=1;return luChip(u,{fact:id,chart:x.chart})}).join('')}
 function luReview(u){
-  var d=luGet(u,'indep')||{};
-  return luLayout(u,'B','<h4 class="luh">'+esc(luU(u,'ui.rv.h1'))+'</h4><label class="lbl sr" for="luI">'+esc(luU(u,'ui.lbl.yourOverview'))+'</label><textarea class="wbox" id="luI" rows="6" lang="en" spellcheck="true">'+esc(d.t||'')+'</textarea>'+
+  var d=luGet(u,'indep')||{},M=luItems(u,'claims','review','B'),PA=M.filter(function(x){return x.kind==='paragraph'}),MS=M.filter(function(x){return x.kind!=='paragraph'});
+  var extra=['ui.rv.avoidNums','ui.rv.chartLang'];
+  return luLayout(u,'B',(d.orig?'<h4 class="luh">'+esc(luU(u,'ui.rv.first'))+'</h4><div class="essay lufirst" lang="en">'+esc(d.orig)+'</div><p class="lunote">'+esc(luU(u,'ui.rv.revise'))+'</p>':'')+
+    '<h4 class="luh">'+esc(luU(u,'ui.rv.h1'))+'</h4><label class="lbl sr" for="luI">'+esc(luU(u,'ui.lbl.yourOverview'))+'</label><textarea class="wbox" id="luI" rows="6" lang="en" spellcheck="true">'+esc(d.t||'')+'</textarea>'+
     '<p class="lucnt" id="luCnt" aria-live="polite">'+esc(luCnt(u,d.t))+'</p>'+
     '<h4 class="luh">'+esc(luU(u,'ui.rv.h2'))+'</h4>'+luCopy(u,'copy.review.self')+'<ul class="lukf pick">'+luItems(u,'keyFeatures','review','B').map(function(x){var lab=x.self?(luL()==='vi'?luTxt(x,x.self.vi):luTxt(x,x.self.en)):(luL()==='vi'?x.reason.vi:x.reason.en);
-      return '<li><label><input type="checkbox" data-act="lu-self" data-id="'+esc(x.id)+'"'+(LU.self[x.id]?' checked':'')+'> '+luImp(u,x)+'<span class="luself">'+esc(lab)+'</span></label></li>'}).join('')+'</ul>'+
-    '<h4 class="luh">'+esc(luU(u,'ui.rv.h3'))+'</h4><ul class="lumod">'+luItems(u,'claims','review','B').map(function(x){return '<li>'+luModel(x)+'</li>'}).join('')+'</ul>'+
+      return '<li><label><input type="checkbox" data-act="lu-self" data-id="'+esc(x.id)+'"'+(LU.self[x.id]?' checked':'')+'> '+luImp(u,x)+'<span class="luself">'+esc(lab)+'</span></label></li>'}).join('')+
+      extra.map(function(id){return '<li><label><input type="checkbox" data-act="lu-self" data-id="'+id+'"'+(LU.self[id]?' checked':'')+'> <span class="luself">'+esc(luU(u,id))+'</span></label></li>'}).join('')+'</ul>'+
+    PA.map(function(x){return '<h4 class="luh">'+esc(luU(u,'ui.rv.oneOf'))+'</h4><div class="lumod1">'+luModel(x,'<div class="lurow">'+luFactChips(u,x)+'</div>')+'</div>'}).join('')+
+    '<h4 class="luh">'+esc(luU(u,'ui.rv.h3'))+'</h4><ul class="lumod">'+MS.map(function(x){return '<li>'+luModel(x,'<div class="lurow">'+luFactChips(u,x)+'</div>')+'</li>'}).join('')+'</ul>'+
     '<p class="lunote">'+esc(luU(u,'ui.done.free'))+'</p>'+luDraftHTML(u,'indep'));
 }
 var LU_FN={learn:luLearn,controlled:luControlled,guided:luGuided,independent:luIndependent,review:luReview};
@@ -2370,8 +2434,10 @@ var LU_FN={learn:luLearn,controlled:luControlled,guided:luGuided,independent:luI
 function luStageHTML(u,st){luCtx(u);if(LU.af)luAutoFill(u);return LU_FN[st](u)}
 // which stage can be opened: Learn read to the end → Controlled ≥ 70 % → Guided ≥ 70 % + an overview written → Independent; Review after "I'm done".
 // The admin preview opens every stage (to check the screens); students follow the order.
-function luUnlocked(u,st){if(U&&U.adm)return true;var gd=(luGet(u,'guided')||{}).t;
-  return st==='learn'||(st==='controlled'&&LU.ldone)||(st==='guided'&&LU.cpass)||(st==='independent'&&LU.gpass&&!!String(gd||'').trim())||(st==='review'&&!!(luGet(u,'indep')||{}).rv)}
+function luUnlocked(u,st){if(U&&U.adm)return true;var gd=luGet(u,'guided')||{};
+  return st==='learn'||(st==='controlled'&&LU.ldone)||(st==='guided'&&LU.cpass)||(st==='independent'&&luGuidedReady(u,gd))||(st==='review'&&!!(luGet(u,'indep')||{}).rv)}
+// practice progression only (never "writing passed"): objective recognition >= 70 % + an overview saved for practice that is a real attempt
+function luGuidedReady(u,gd){return !!(LU.gpass&&gd&&gd.sub&&!luPre(u,'A',gd.t,'overview'))}
 // admin preview helper (default off): fills the objectively checked answers with the right ones so Check / Next can be tried; free text is never filled, nothing is saved
 function luAutoFill(u){
   luExploreQs(u).forEach(function(q){if(!LU.xa[q.id])LU.xa[q.id]=q.a});
@@ -2387,7 +2453,7 @@ function luHTML(l,u){
   var bar='<nav class="lusteps" aria-label="'+esc(luU(u,'ui.st.nav'))+'">'+LU_ST.map(function(s,i){var lock=!luUnlocked(u,s[0]);return '<button type="button" class="lustep'+(LU.stage===s[0]?' on':'')+'" data-act="lu-go" data-s="'+s[0]+'"'+(LU.stage===s[0]?' aria-current="step"':'')+(lock?' disabled title="'+esc(luU(u,s[0]==='review'?'ui.st.locked':'ui.st.lockedPrev'))+'"':'')+'><span class="mono">'+(i+1)+'</span> '+esc(luU(u,'ui.st.'+s[0]))+'</button>'}).join('')+'</nav>';
   var lg='<div class="lulang"><div class="seg" role="group" aria-label="Explanation language / Ngôn ngữ giải thích"><button type="button" data-act="lu-lang" data-v="en" aria-pressed="'+(luL()==='en')+'" lang="en">ENG</button><button type="button" data-act="lu-lang" data-v="vi" aria-pressed="'+(luL()==='vi')+'" lang="vi">VI</button></div>'+
     (U&&U.adm?'<button type="button" class="btn sm luaf" data-act="lu-af" aria-pressed="'+!!LU.af+'" title="Admin preview only: fills the checkable answers with the right ones. Nothing is saved.">Preview: auto-fill '+(LU.af?'on':'off')+'</button>':'')+'</div>';
-  return '<div class="lutop">'+lmCrumbHTML(l)+lg+'</div><div class="lmshell lu"><h3>'+esc(l.title)+'</h3>'+bar+'<div class="lubody" id="luBody">'+luStageHTML(u,LU.stage)+'</div></div>';
+  return '<div class="lutop">'+lmCrumbHTML(l)+lg+'</div><div class="lmshell lu"><h3>'+esc(l.title)+'</h3>'+(U&&U.adm?'<p class="luadm" role="note">'+esc(luU(u,'ui.adm.preview'))+'</p>':'')+bar+'<div class="lubody" id="luBody">'+luStageHTML(u,LU.stage)+'</div></div>';
 }
 function luAct(a,t){
   var l=LMV&&lmLesson(LMV),u=l&&luUnit(l.id);if(!u)return false;luCtx(u);
@@ -2416,8 +2482,12 @@ function luAct(a,t){
   if(a==='lu-gredo'){LU.gchk=false;LU.g={};keep();return true}
   if(a==='lu-ihint'){LU.ihint=!LU.ihint;return true}
   if(a==='lu-self'){LU.self[t.dataset.id]=t.checked;return true}
-  if(a==='lu-rv'){var ta=$('#luI'),tx=ta?ta.value.trim():'';if(!tx){toast(luU(u,'ui.st.locked'));if(ta)ta.focus();return true}
-    luPut(u,'indep',{t:ta.value,rv:true});LU.stage='review';redraw(true);return true}
+  if(a==='lu-rv'){var ta=$('#luI'),tx=ta?ta.value:'',pc=luPre(u,'B',tx,'overview');if(pc){LU.ires=pc;toast(luPcMsg(u,pc));keep();var t2=$('#luI');if(t2&&t2.focus)t2.focus();return true}
+    LU.ires='';luPut(u,'indep',{t:tx,rv:true,orig:tx});LU.stage='review';redraw(true);return true}
+  if(a==='lu-wchk'){var gd=luGet(u,'guided')||{},W=gd.w||{},R={};['trend','high','note'].forEach(function(k){var v=String(W[k]||'');if(k==='trend'||v.trim())R[k]=luPre(u,'A',v,k==='trend'?'trend':'short')});
+    LU.wres=R;gd.wok=!R.trend&&!R.high&&!R.note;luPut(u,'guided',gd);keep();return true}
+  if(a==='lu-gsub'){var g2=luGet(u,'guided')||{},pc2=luPre(u,'A',g2.t,'overview');LU.gres=pc2;if(!pc2){g2.sub=true;luPut(u,'guided',g2)}keep();return true}
+  if(a==='lu-grv'){var g3=luGet(u,'guided')||{};g3.rv=g3.rv||{};g3.rv[t.dataset.k]=!!t.checked;luPut(u,'guided',g3);return true}
   if(a==='lu-clear'){var act=t.dataset.a==='guided'?'guided':'indep';if(!confirm(luU(u,'ui.dr.confirmClear')))return true;luDrop(u,act);if(act==='indep'){LU.self={};LU.stage='independent'}redraw();toast(luU(u,'ui.dr.cleared'));return true}
   if(a==='lu-old'){var ak=t.dataset.a==='guided'?'guided':'indep';if(!confirm(luU(u,'ui.dr.confirmOld')))return true;luOld(u,ak).forEach(function(k){try{localStorage.removeItem(k)}catch(e){}});redraw();return true}
   return false;
@@ -2427,8 +2497,10 @@ document.addEventListener('change',function(e){var t=e.target;if(!t||!t.classLis
   if(t.classList.contains('luslot')){LU.frame=LU.frame||[];LU.frame[+t.getAttribute('data-i')]=t.value}
   if(t.classList.contains('lugsel')&&!LU.gchk){LU.g[t.getAttribute('data-g')]=t.value}});
 // typing in the two writing boxes: save the draft (local only), update the soft sentence count; Guided text opens "Next"
-document.addEventListener('input',function(e){var t=e.target;if(!t||(t.id!=='luG'&&t.id!=='luI'))return;var l=LMV&&lmLesson(LMV),u=l&&luUnit(l.id);if(!u)return;
-  var act=t.id==='luG'?'guided':'indep',old=luGet(u,act)||{},ok=luPut(u,act,{t:t.value,rv:!!old.rv}),m=$('#luSv_'+act);if(m)m.textContent=luU(u,ok?'ui.dr.saved':'ui.dr.notSaved');
+document.addEventListener('input',function(e){var t=e.target,wk=t&&t.getAttribute&&t.getAttribute('data-w');if(!t||(t.id!=='luG'&&t.id!=='luI'&&!wk))return;var l=LMV&&lmLesson(LMV),u=l&&luUnit(l.id);if(!u)return;
+  // keep every other field of the draft (sentences, "saved for practice", review ticks, first version)
+  var act=t.id==='luI'?'indep':'guided',old=luGet(u,act)||{};if(wk){old.w=old.w||{};old.w[wk]=t.value}else old.t=t.value;
+  var ok=luPut(u,act,old),m=$('#luSv_'+act);if(m)m.textContent=luU(u,ok?'ui.dr.saved':'ui.dr.notSaved');
   var c=$('#luCnt');if(c&&act==='indep')c.textContent=luCnt(u,t.value);
   if(act==='guided'){var nb=document.querySelector('[data-act="lu-go"][data-s="independent"]');if(nb)nb.disabled=!luUnlocked(u,'independent')}});
 /* ---------- Learning Materials · Unit 0 lesson (Data Reading & Selection) ---------- */
@@ -2541,8 +2613,12 @@ var U0_V={monotonic_increase:'up',monotonic_decrease:'down'};
 function u0GItem(u,id){if(id.indexOf('t:')===0){var s=id.slice(2),sh=u0F(u,'A','shape',s),e=u0F(u,'A','endpoint',s),k=sh&&sh.status==='supported'?(U0_V[sh.result]||(sh.result==='fluctuating'&&e?(e.result==='increase'?'fup':(e.result==='decrease'?'fdown':'')):'')):'';
     return {id:id,trend:s,ans:k}}var x=u0Item(u,id);return x?{id:id,x:x,ans:x.answer}:null}
 function u0GScore(u){var ok=0;U0_G.forEach(function(id){var g=u0GItem(u,id);if(g&&g.ans&&U0S.g[id]===g.ans)ok++});return {ok:ok,n:U0_G.length,need:u0Need(U0_G.length)}}
-function u0GDone(){return !!(U0S.gpass&&String(U0S.gwhy||'').trim()&&u0ObsN()>=2&&String(U0S.gsum||'').trim()&&U0S.grev)}
-function u0ObsN(){return (U0S.obs||[]).filter(function(t){return String(t||'').trim()}).length}
+// same input precheck as Unit 2 (lmPrecheck): rejects non-responses only; notes are never assessed ("Your notes: not assessed")
+function u0Pre(t,kind,k){var u=window.MD_LM_U0,c=u.charts[k||'A'].chart,ex=c.series.map(function(s){return s.label}).concat([c.unit||'']),
+    cp=(u.claims||[]).filter(function(x){return x.kind==='note'}).map(function(x){return LUC&&LUC.ctx?luTxt(x,x.en):''}).filter(Boolean);
+  var O={obs:{min:3,common:1,verb:true},sum:{min:4,common:1,verb:true},why:{min:2,any:true},short:{min:1},note:{min:2}}[kind]||{min:1};O.extra=ex;if(kind!=='why')O.copies=cp;return lmPrecheck(t,O)}
+function u0GDone(){return !!(U0S.gpass&&!u0Pre(U0S.gwhy,'why')&&u0ObsN()>=2&&!u0Pre(U0S.gsum,'sum')&&U0S.grev)}
+function u0ObsN(){return (U0S.obs||[]).filter(function(t){return String(t||'').trim()&&!u0Pre(t,'obs')}).length}
 function u0Guided(u){
   var sc=u0GScore(u),chk=U0S.gchk,S=u0Ser(u,'A'),K=(u.keyFeatures||[]).filter(function(x){return x.chart==='A'&&x.stage==='learn'});
   var row=function(id){var g=u0GItem(u,id),me=U0S.g[id],ok=chk&&me===g.ans,lab,opts;
@@ -2565,7 +2641,7 @@ function u0Guided(u){
     if(String(U0S.gsum||'').trim()){
       h+='<section class="lucard"><h4 class="luh">'+esc(luU(u,'u0.g.h4'))+'</h4><p class="lunote">'+esc(luU(u,'u0.g.sumNote'))+'</p><label class="lbl sr" for="u0_gsum">'+esc(luU(u,'u0.g.h4'))+'</label><textarea class="wbox u0box" id="u0_gsum" data-u0="gsum" rows="5" lang="en" spellcheck="true">'+esc(U0S.gsum)+'</textarea></section>';
       h+='<section class="lucard"><h4 class="luh">'+esc(luU(u,'u0.g.h5'))+'</h4><p class="u0ckh">'+esc(luU(u,'u0.g.ref'))+'</p>'+u0NotesHTML(u,'A','learn')+
-        '<label class="u0rev"><input type="checkbox" data-act="u0-grev"'+(U0S.grev?' checked':'')+'> '+esc(luU(u,'u0.g.revised'))+'</label>'+
+        '<p class="lunote">'+esc(luU(u,'u0.g.state'))+'</p><label class="u0rev"><input type="checkbox" data-act="u0-grev"'+(U0S.grev?' checked':'')+'> '+esc(luU(u,'u0.g.revised'))+'</label>'+
         '<div class="actions"><button type="button" class="btn pri" data-act="u0-go" data-s="independent"'+(u0Unlocked(u,'independent')?'':' disabled')+'>'+esc(luU(u,'u0.btn.toIndep'))+'</button></div></section>';
     }
   }
@@ -2574,7 +2650,8 @@ function u0Guided(u){
 // ---- Independent: Chart B for the first time; the checklist on your own; the hint is the METHOD only (nothing about this chart)
 function u0Fields(u,lock){return U0_I.map(function(k){var lab=k==='main'?luU(u,'u0.i.main'):(k==='omit'?luU(u,'u0.i.omit'):luU(u,'u0.ck.'+k));
   return '<label class="lbl" for="u0_i_'+k+'">'+esc(lab)+'</label><textarea class="wbox u0box" id="u0_i_'+k+'" data-u0="i_'+k+'" rows="2" lang="en" spellcheck="true">'+esc((U0S.ind||{})[k]||'')+'</textarea>'}).join('')}
-function u0IndDone(){return U0_I.every(function(k){return String((U0S.ind||{})[k]||'').trim()})}
+function u0IndBad(){for(var i=0;i<U0_I.length;i++){var k=U0_I[i],c=u0Pre((U0S.ind||{})[k],k==='measure'||k==='time'||k==='leave'?'short':'note','B');if(c)return [k,c]}return null}
+function u0IndDone(){return !u0IndBad()}
 function u0Independent(u){
   return u0Layout(u,'B',luCopy(u,'u0.i.task')+u0Fields(u)+
     '<details class="lufaq"><summary>'+esc(luU(u,'u0.i.hint'))+'</summary>'+luCopy(u,'u0.i.hintText')+'</details>'+
@@ -2614,7 +2691,7 @@ function u0HTML(l,u){
   var bar='<nav class="lusteps" aria-label="'+esc(luU(u,'u0.st.nav'))+'">'+U0_ST.map(function(s,i){var lock=!u0Unlocked(u,s);return '<button type="button" class="lustep'+(U0S.stage===s?' on':'')+'" data-act="u0-go" data-s="'+s+'"'+(U0S.stage===s?' aria-current="step"':'')+(lock?' disabled title="'+esc(luU(u,s==='review'?'u0.st.lockedRv':'u0.st.lockedPrev'))+'"':'')+'><span class="mono">'+(i+1)+'</span> '+esc(luU(u,'u0.st.'+s))+'</button>'}).join('')+'</nav>';
   var lg='<div class="lulang"><div class="seg" role="group" aria-label="Explanation language / Ngôn ngữ giải thích"><button type="button" data-act="u0-lang" data-v="en" aria-pressed="'+(luL()==='en')+'" lang="en">ENG</button><button type="button" data-act="u0-lang" data-v="vi" aria-pressed="'+(luL()==='vi')+'" lang="vi">VI</button></div>'+
     (U&&U.adm?'<button type="button" class="btn sm luaf" data-act="u0-af" aria-pressed="'+!!U0S.af+'" title="Admin preview only: fills the checkable answers with the right ones. Nothing is saved.">Preview: auto-fill '+(U0S.af?'on':'off')+'</button>':'')+'</div>';
-  return '<div class="lutop">'+lmCrumbHTML(l)+lg+'</div><div class="lmshell lu u0"><h3>'+esc(l.title)+'</h3>'+bar+'<div class="lubody" id="u0Body">'+u0StageHTML(u,U0S.stage)+'</div>'+u0DraftHTML(u)+'</div>';
+  return '<div class="lutop">'+lmCrumbHTML(l)+lg+'</div><div class="lmshell lu u0"><h3>'+esc(l.title)+'</h3>'+(U&&U.adm?'<p class="luadm" role="note">'+esc(luU(u,'u0.adm.preview'))+'</p>':'')+bar+'<div class="lubody" id="u0Body">'+u0StageHTML(u,U0S.stage)+'</div>'+u0DraftHTML(u)+'</div>';
 }
 function u0Act(a,t){
   var l=LMV&&lmLesson(LMV),u=l&&u0Unit(l.id);if(!u)return false;luCtx(u);u0State(u);
@@ -2636,9 +2713,10 @@ function u0Act(a,t){
   if(a==='u0-gchk'){if(U0_G.every(function(id){return U0S.g[id]}))U0S.gchk=true;save();keep();return true}
   if(a==='u0-gredo'){U0S.gchk=false;U0S.g={};save();keep();return true}
   if(a==='u0-gsel'){U0S.gsel[t.dataset.id]=!!t.checked;save();return true}
-  if(a==='u0-gcomp'){if(u0ObsN()<2){toast(luU(u,'u0.g.needObs'));return true}U0S.gsum=(U0S.obs||[]).filter(function(x){return String(x||'').trim()}).map(function(x){return '- '+String(x).trim()}).join('\n');U0S.grev=false;save();keep();return true}
+  if(a==='u0-gcomp'){if(u0ObsN()<2){var bad=(U0S.obs||[]).map(function(x){return String(x||'').trim()?u0Pre(x,'obs'):''}).filter(Boolean)[0];toast(luU(u,'u0.g.needObs')+(bad?' '+luU(u,'u0.pc.'+bad):''));return true}
+    U0S.gsum=(U0S.obs||[]).filter(function(x){return String(x||'').trim()&&!u0Pre(x,'obs')}).map(function(x){return '- '+String(x).trim()}).join('\n');U0S.grev=false;save();keep();return true}
   if(a==='u0-grev'){U0S.grev=!!t.checked;save();var nb=document.querySelector('[data-act="u0-go"][data-s="independent"]');if(nb)nb.disabled=!u0Unlocked(u,'independent');return true}
-  if(a==='u0-idone'){if(!u0IndDone()){toast(luU(u,'u0.i.need'));return true}U0S.rv=true;U0S.stage='review';save();top();return true}
+  if(a==='u0-idone'){var ib=u0IndBad();if(ib){var lab=ib[0]==='main'?luU(u,'u0.i.main'):(ib[0]==='omit'?luU(u,'u0.i.omit'):luU(u,'u0.ck.'+ib[0]));toast(luU(u,'u0.pc.field')+' '+lab+'. '+luU(u,'u0.pc.'+ib[1]));var f=document.getElementById('u0_i_'+ib[0]);if(f&&f.focus)f.focus();return true}U0S.rv=true;U0S.stage='review';save();top();return true}
   if(a==='u0-self'){U0S.self[t.dataset.id]=!!t.checked;save();return true}
   if(a==='u0-rdone'){U0S.rdone=true;save();keep();return true}
   if(a==='u0-clear'){if(!confirm(luU(u,'u0.dr.confirmClear')))return true;luDrop(u,'state');U0S=null;u0State(u);keep();toast(luU(u,'u0.dr.cleared'));return true}

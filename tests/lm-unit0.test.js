@@ -126,6 +126,17 @@ t('"I am done" needs every checklist field; then Review shows the verified refer
   assert.ok(h.includes('không phải điểm')); assert.ok(h.includes('bicycles up'), 'answers stay editable');
   C.act('u0-rdone'); assert.ok(S.rdone);
 });
+t('P0 (Unit 0): "dcd", gibberish or a copied reference note never count as observations, summary or checklist answers; notes stay "not assessed"', () => {
+  const C = mk(STU), S = C.S(); S.ldone = S.cpass = S.gpass = true; S.stage = 'guided';
+  S.obs = ['dcd', 'asdf qwer zxcv', '']; C.act('u0-gcomp'); assert.ok(!S.gsum, 'no summary from non-responses');
+  S.obs = ['Coal fell at every point shown.', 'Coal was the largest and Solar the smallest source in every year shown.', ''];   C.act('u0-gcomp'); assert.ok(!S.gsum, 'a copied reference note does not count');
+  S.obs[1] = 'Wind rose steadily over the period.'; C.act('u0-gcomp'); assert.ok(/^- Coal fell/.test(S.gsum)); S.gwhy = 'dcd'; S.grev = true; assert.ok(/data-s="independent" disabled/.test(C.st('guided')), '"dcd" reason stays closed');
+  S.obs = ['Coal fell at every point shown.', 'Wind rose steadily over the period.', '']; C.act('u0-gcomp'); S.grev = true; S.gwhy = 'Vì chúng mô tả cả biểu đồ'; const h = C.st('guided');
+  assert.ok(!/data-s="independent" disabled/.test(h) && h.includes('chưa được đánh giá') && h.includes('>Tiếp tục luyện (ghi chú chưa được đánh giá)<'));
+  S.stage = 'independent'; S.ind = { measure: 'journeys', time: '2016-2024', trends: 'dcd', high: 'leader changed', leave: 'bus', main: 'bike, car', omit: 'exact year' }; C.act('u0-idone'); assert.notStrictEqual(S.stage, 'review');
+  S.ind.trends = 'bicycles rose, cars fell'; C.act('u0-idone'); assert.strictEqual(S.stage, 'review');
+});
+t('P0 (Unit 0): admin preview says so and never creates a student attempt', () => { const A = mk(); assert.ok(A.full().includes('class="luadm"')); A.act('u0-go', { s: 'review' }); assert.ok(!A.S().rv); assert.ok(!mk(STU).full().includes('luadm')); });
 t('students: stages open in order (titles explain why); admin opens every stage', () => {
   const C = mk(STU), h = C.full(); assert.ok(/data-s="controlled" disabled title="Hãy hoàn thành bước trước\."/.test(h) && /data-s="review" disabled title="Hãy làm xong phần Tự làm trước\."/.test(h));
   C.act('u0-go', { s: 'independent' }); assert.strictEqual(C.S().stage, 'learn');

@@ -168,27 +168,85 @@ t('Guided: three small exercises with answers from the facts (trend verb, highes
   assert.ok(h.includes('data-act="lu-gpick" data-id="kf.a.fluct"')); assert.ok(h.includes('You need 5 of 6 correct to continue.'));
   assert.ok(!h.includes('id="luG"'), 'writing box only after passing');
 });
-t('Guided: under 70 % stays closed (retry), 5 / 6 opens the pieces + writing box; Independent needs some text (student)', () => {
-  const w = open(boot({ user: STU })); const L1 = w.T.LU(); L1.ldone = true; L1.cpass = true; L1.stage = 'guided';
+// ---------- P0: recognition (objective) and writing (never "passed") are separate; non-responses never open Independent ----------
+const GOOD_OV = 'Overall, visitors to Larkfield Museum and Corvale Museum increased over the period, while the number for Westmere Museum fell. Larkfield Museum also had the most visitors in every year shown.';
+const toGuided = (w, pass) => { const L1 = w.T.LU(); L1.ldone = true; L1.cpass = true; L1.stage = 'guided'; if (pass) { Object.assign(L1.g, G_OK); act(w, 'lu-gchk'); } return L1; };
+const gd = (w) => w.T.luGet(w.MD_LM_U2, 'guided') || {};
+const setG = (w, o) => w.T.luPut(w.MD_LM_U2, 'guided', Object.assign(gd(w), o));
+const writeAll = (w, ov) => { setG(w, { w: { trend: 'Larkfield Museum and Corvale Museum rose overall, while Westmere Museum fell.', high: 'Larkfield Museum had the most visitors in every year.' } }); act(w, 'lu-wchk'); setG(w, { t: ov }); act(w, 'lu-gsub'); };
+t('Guided recognition: under 70 % stays closed (retry); 5 / 6 opens the writing steps; the two states are shown separately', () => {
+  const w = open(boot({ user: STU })), L1 = toGuided(w, false);
   Object.assign(L1.g, G_OK, { 't:museum-a': 'down', top: 'museum-b' }); act(w, 'lu-gchk'); let h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
-  assert.ok(h.includes('Đúng 4 / 6 câu') && !h.includes('id="luG"') && !L1.gpass); act(w, 'lu-gredo'); assert.deepStrictEqual(Object.keys(L1.g), []);
-  Object.assign(L1.g, G_OK, { top: 'museum-b' }); act(w, 'lu-gchk'); h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
-  assert.ok(L1.gpass && h.includes('id="luG"') && h.includes('<ul class="lupieces" lang="en"><li>Larkfield Museum increased between 2000 and 2020.</li>')); assert.ok(!h.includes('Westmere Museum had the most'), 'wrong piece not offered');
-  assert.ok(/data-s="independent" disabled/.test(h)); w.T.luPut(w.MD_LM_U2, 'guided', { t: 'Overall, A rose.' }); assert.ok(!/data-s="independent" disabled/.test(w.T.luStageHTML(w.MD_LM_U2, 'guided')));
-  act(w, 'lu-go', { s: 'independent' }); assert.strictEqual(L1.stage, 'independent');
+  assert.ok(h.includes('Đúng 4 / 6 câu') && !h.includes('id="luW_trend"') && !L1.gpass && h.includes('Luyện nhận biết: đúng 4 / 6 · chưa đạt') && h.includes('Bài viết: chưa có lần viết nào'));
+  act(w, 'lu-gredo'); Object.assign(L1.g, G_OK, { top: 'museum-b' }); act(w, 'lu-gchk'); h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
+  assert.ok(L1.gpass && h.includes('id="luW_trend"') && h.includes('id="luW_high"') && h.includes('id="luW_note"') && !h.includes('id="luG"'), 'sentences first, overview box later');
+  assert.ok(h.includes('<ul class="lupieces" lang="en"><li>Larkfield Museum increased between 2000 and 2020.</li>') && !h.includes('Westmere Museum had the most'));
+  assert.ok(h.includes('· đạt') && !/data-s="independent"/.test(h), 'no way forward yet');
+});
+['dcd', '   ', 'Overall', 'asdf qwer zxcv uiop hjkl bnmm tyui ghjk', 'Write a short overview of the chart below (about 2–3 sentences).', 'Larkfield Museum Westmere Museum Corvale Museum 2000 2020 overall while'].forEach((txt) =>
+  t('P0: "' + txt.slice(0, 30) + '" as the Guided overview never opens Independent and never counts as writing', () => {
+    const w = open(boot({ user: STU })); toGuided(w, true); setG(w, { wok: true, t: txt }); act(w, 'lu-gsub');
+    assert.ok(!gd(w).sub, 'not saved as an attempt'); const h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
+    assert.ok(/class="lufb lupc no"/.test(h) && !/data-s="independent"/.test(h)); act(w, 'lu-go', { s: 'independent' }); assert.strictEqual(w.T.LU().stage, 'guided');
+    setG(w, { sub: true }); assert.ok(!/data-s="independent"(?! disabled)[^>]*>/.test(w.T.luStageHTML(w.MD_LM_U2, 'guided')) || /data-s="independent" disabled/.test(w.T.luStageHTML(w.MD_LM_U2, 'guided')), 'a forged "saved" flag with a non-response stays closed');
+    act(w, 'lu-go', { s: 'independent' }); assert.strictEqual(w.T.LU().stage, 'guided');
+  }));
+t('P0: copying the Learn sample is refused ("write it in your own words")', () => {
+  const w = open(boot({ user: STU })); toGuided(w, true); const M = U2.claims.filter((x) => x.chart === 'A' && x.kind === 'model' && x.group !== 'highlights');
+  setG(w, { wok: true, t: M.map((x) => resolved(x, x.en)).join(' ') }); act(w, 'lu-gsub'); assert.ok(!gd(w).sub); assert.ok(w.T.luStageHTML(w.MD_LM_U2, 'guided').includes(W.esc(copyOf('ui.pc.copied').vi)));
+});
+t('P0: each sentence is prechecked; the trends sentence is needed, the others are optional', () => {
+  const w = open(boot({ user: STU })); toGuided(w, true); setG(w, { w: { trend: 'dcd' } }); act(w, 'lu-wchk'); let h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
+  assert.ok(!gd(w).wok && !h.includes('id="luG"') && h.includes(W.esc(copyOf('ui.pc.short').vi)));
+  setG(w, { w: { trend: 'Larkfield Museum and Corvale Museum rose overall, while Westmere Museum fell.', note: '' } }); act(w, 'lu-wchk'); h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
+  assert.ok(gd(w).wok && h.includes('id="luG"') && h.includes(W.esc(copyOf('ui.pc.ok').vi)));
+});
+t('P0: a real two-sentence overview is saved as a practice attempt: "not assessed", never "passed"; Independent opens as "continue practising"', () => {
+  const w = open(boot({ user: STU })); toGuided(w, true); writeAll(w, GOOD_OV); const h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
+  assert.ok(gd(w).sub && h.includes('Bài viết: chưa được đánh giá') && !/Bài viết: đạt|writing passed|mastered|bài viết.{0,20}(đạt|70)/i.test(h));
+  assert.ok(h.includes('>Tiếp tục luyện (bài viết chưa được đánh giá)<') && !/data-s="independent" disabled/.test(h) && h.includes('data-act="lu-grv"'));
+  act(w, 'lu-go', { s: 'independent' }); assert.strictEqual(w.T.LU().stage, 'independent');
+});
+t('P0: editing the saved overview into rubbish closes Independent again (one source of truth)', () => {
+  const w = open(boot({ user: STU })); toGuided(w, true); writeAll(w, GOOD_OV); setG(w, { t: 'dcd' }); assert.ok(/data-s="independent" disabled/.test(w.T.luStageHTML(w.MD_LM_U2, 'guided')));
+  act(w, 'lu-go', { s: 'independent' }); assert.strictEqual(w.T.LU().stage, 'guided');
+});
+t('P0: admin preview opens every stage but says so; it never makes a student attempt or a pass', () => {
+  const w = open(boot()); const h = w.T.luHTML(L, w.MD_LM_U2); assert.ok(h.includes('class="luadm"') && h.includes(W.esc(copyOf('ui.adm.preview').vi)));
+  act(w, 'lu-go', { s: 'independent' }); assert.strictEqual(w.T.LU().stage, 'independent'); assert.ok(!gd(w).sub, 'navigation is not completion');
+  act(w, 'lu-af'); w.T.luStageHTML(w.MD_LM_U2, 'guided'); assert.ok(!gd(w).t && !gd(w).sub, 'auto-fill never writes text or attempts');
+  assert.ok(!boot({ user: STU }).T.luHTML(L, U2).includes('luadm'));
+});
+t('P0: language switch keeps sentences, overview and the "saved for practice" state', () => {
+  const w = open(boot({ user: STU })); toGuided(w, true); writeAll(w, GOOD_OV); act(w, 'lu-lang', { v: 'en' }); const h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
+  assert.ok(gd(w).sub && h.includes('Writing: not assessed') && h.includes(W.esc(GOOD_OV)) && h.includes('Westmere Museum fell.'));
 });
 // ---------- Independent / Review ----------
-t('Independent: Chart B, a hint that opens only the Chart A sample; no B sample or feature', () => {
-  const h = T.luStageHTML(U2, 'independent'); assert.ok(h.includes('Chatora') && h.includes('id="luI"') && h.includes(W.esc(copyOf('ui.ind.hint').vi)));
+t('Independent: Chart B, a hint that opens only the Chart A sample; students see no B sample or feature', () => {
+  const S = boot({ user: STU }), h = S.T.luStageHTML(S.MD_LM_U2, 'independent'); assert.ok(h.includes('Chatora') && h.includes('id="luI"') && h.includes(W.esc(copyOf('ui.ind.hint').vi)));
   const hint = h.slice(h.indexOf('luhintA'), h.indexOf('</details>', h.indexOf('luhintA'))); assert.ok(hint.includes('Larkfield Museum') && !bWords.some((x) => hint.includes(x)));
   U2.claims.filter((x) => x.chart === 'B').forEach((x) => assert.ok(!h.includes(W.esc(resolved(x, x.en))), x.id));
 });
+t('Independent (admin preview): the reviewed sample is grammatical, chart-grounded, shown apart and never put into the box', () => {
+  const x = U2.claims.find((c) => c.id === 'b.model.para'), txt = resolved(x, x.en);
+  assert.strictEqual(txt, 'Overall, while the number of daily users of Pixlo and Notivo increased, the figure for Chatora declined. Chatora had the most users at the beginning of the period, but Pixlo overtook it to become the leading app by 2024.');
+  assert.ok(!/is showing|experience |daily user\b|steadily decline|most popular/i.test(JSON.stringify(U2)), 'no rough fixture text anywhere');
+  const h = T.luStageHTML(U2, 'independent'), box = h.slice(h.indexOf('id="luI"'), h.indexOf('</textarea>', h.indexOf('id="luI"')));
+  assert.ok(/<details class="lufaq luadms">[\s\S]*Overall, while the number of daily users of Pixlo/.test(h) && !box.includes('Pixlo'));
+});
+t('"I\'m done": empty, "dcd" or a fragment does nothing (with a reason); a real overview opens Review and keeps the first version', () => {
+  const w = open(boot({ user: STU })); ['  ', 'dcd', 'Overall, Pixlo grew.'].forEach((v) => { w.$ = () => ({ value: v, focus: () => {} }); act(w, 'lu-rv'); assert.notStrictEqual(w.T.LU().stage, 'review', v); });
+  const OV = 'Overall, Pixlo and Notivo gained users over the period, while Chatora lost users. Chatora had the most users at the start, but Pixlo had the most at the end.';
+  w.$ = () => ({ value: OV, focus: () => {} }); act(w, 'lu-rv'); assert.strictEqual(w.T.LU().stage, 'review'); assert.strictEqual(w.T.luGet(w.MD_LM_U2, 'indep').orig, OV);
+});
+t('Review: first version kept for comparison, editable revision, extra self-checks, one full sample "not the only answer" with why + checked facts', () => {
+  const w = open(boot({ user: STU })); w.T.luPut(w.MD_LM_U2, 'indep', { t: 'My revised text here', orig: 'My first text here', rv: true }); const h = w.T.luStageHTML(w.MD_LM_U2, 'review');
+  assert.ok(h.includes('<div class="essay lufirst" lang="en">My first text here</div>') && h.includes('My revised text here</textarea>'));
+  assert.ok(h.includes(W.esc(copyOf('ui.rv.avoidNums').vi)) && h.includes(W.esc(copyOf('ui.rv.chartLang').vi)) && h.includes(W.esc(copyOf('ui.rv.oneOf').vi)));
+  assert.ok(/class="lumod1"[\s\S]*Pixlo overtook it[\s\S]*luchip[\s\S]*Chatora \/ Pixlo: 2016 → 2024/.test(h)); U2.claims.filter((x) => x.chart === 'B').forEach((x) => assert.ok(x.why && x.why.en && x.why.vi, x.id + ' has why'));
+});
 t('free writing is never scored: "not graded automatically", no 150 words / minimum / band', () => {
   ['guided', 'independent', 'review'].forEach((st) => assert.ok(!/150|minimum|band/i.test(T.luStageHTML(U2, st)), st)); assert.ok(T.luStageHTML(U2, 'review').includes(W.esc(copyOf('ui.done.free').vi)));
-});
-t('"I\'m done" with an empty answer does nothing; with text it opens Review', () => {
-  const w = open(boot()); w.$ = () => ({ value: '  ', focus: () => {} }); act(w, 'lu-rv'); assert.notStrictEqual(w.T.LU().stage, 'review');
-  w.$ = () => ({ value: 'Overall, Pixlo grew.', focus: () => {} }); act(w, 'lu-rv'); assert.strictEqual(w.T.LU().stage, 'review');
 });
 // ---------- stage order (students) / admin ----------
 t('students: stages open in order (titles say why); admin preview opens every stage', () => {
