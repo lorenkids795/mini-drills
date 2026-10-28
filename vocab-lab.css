@@ -19,6 +19,7 @@
 @keyframes vl-card-out{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-8px)}}
 .vl .vl-btn{border-color:var(--vl-control)}
 .vl .vl-target{color:inherit;background:transparent;font-weight:750;text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:.18em;text-decoration-thickness:2px}
+.vl [data-vl="mission"]{margin-bottom:10px}
 .vl .vl-bins [data-selected="true"]{opacity:1;border-color:var(--accent);background:var(--vl-soft)}.vl-word h4:focus-visible{outline:2px solid var(--accent);outline-offset:8px;border-radius:4px}.vl-stats dd{order:-1}
 @keyframes vl-card-in{0%,40%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
 @media(max-width:640px){.vl{padding:18px 14px}.vl h2{font-size:1.5rem}.vl-passage{font-size:.68rem}.vl-progress{margin:16px 0 12px}.vl-main{padding:20px 16px;border-radius:18px}.vl-word{min-height:136px;margin:14px 0;padding:22px 12px}.vl-bins{gap:7px}.vl .vl-bins .vl-btn{font-size:.75rem;min-height:92px;padding:10px 3px;gap:6px}.vl .vl-bins kbd{display:none}.vl-key-help{font-size:.65rem}.vl-counts{gap:6px}.vl-count{font-size:.64rem;padding:4px 7px}.vl-count .vl-icon{width:12px;height:12px}.vl-context-panel{padding:14px;margin:14px 0 12px}.vl-context{font-size:1rem}.vl .vl-options .vl-btn{font-size:.8rem;padding:10px;gap:8px}.vl-option-note{font-size:.6rem;max-width:34px}.vl-feedback{font-size:.79rem;padding:11px 12px}.vl-stats{gap:6px}.vl-stats dt{font-size:.65rem}.vl .vl-phase-results>.vl-btn{width:100%}.vl-lead{font-size:1rem}.vl-quiet{font-size:.72rem}}

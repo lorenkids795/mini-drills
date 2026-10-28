@@ -63,6 +63,7 @@ function mount(host,opt){
     }else{
       h+='<div class="vl-complete-mark">'+icon('done')+'</div><p class="vl-lead">A little clearer, one batch at a time.</p>'+binStats()+'<div class="vl-check-summary"><h4>Your context check</h4><dl class="vl-stats">';
       [['Verified here',verified],['Needs practice',needs],['Not checked yet',untested]].forEach(function(x){h+='<div><dt>'+x[0]+'</dt><dd>'+x[1]+'</dd></div>'});h+='</dl></div>';
+      if(root.MD_MISSION&&root.MD_MISSION.eligible(opt.user,opt.demo))h+=button('mission','Start a local mission',locked,false,'','arrow');
       if(sorted<102)h+=button('nextBatch','Continue: Next '+Math.min(12,102-sorted)+' Words',locked,true,'','arrow');else h+='<p class="vl-support">All 102 words sorted. A great starting point for practice.</p>';
       h+='<p class="vl-quiet">Know It is your own estimate. One context check is a starting point, not mastery.</p><details class="vl-learning-note"><summary>What do these results mean?</summary><p>Verified here means correct first try, without a clue. Retries, clues and revealed answers stay on your practice list. Know It words we haven’t checked are still your own estimate. Other word forms need their own practice.</p></details>';
       h+='<details class="vl-revise"><summary>Revise a classification</summary><p>This starts a fresh check for the selected word. Earlier attempts stay in your history.</p><label for="vlRevise">Choose a sorted word</label><select id="vlRevise">';
@@ -92,6 +93,9 @@ function mount(host,opt){
   function act(type,choice){
     if(type==='sync'){sync();return}
     if(!s.ready||s.busy||s.pending)return;
+    if(type==='mission'&&root.MD_MISSION&&root.MD_MISSION.eligible(opt.user,opt.demo)){
+      root.MD_MISSION.open(s.host,{user:opt.user,demo:true,bank:s.bank,progress:C.copy(s.state),onContinueSorting:function(){if(s.state.batch.phase==='results'&&Object.keys(s.state.termProgress).length<s.bank.lesson_term_links.length)act('nextBatch');else draw(true)}});return;
+    }
     var sorting=['know','unsure','new'].indexOf(type)>=0;
     if(sorting&&s.transition)return;
     var op={type:type,id:'op-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,12)},before=s.state,after;
