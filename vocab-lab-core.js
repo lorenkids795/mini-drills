@@ -16,7 +16,7 @@ function candidates(s,practice){return s.batch.ids.filter(function(id){return s.
 function sample(s,practice){return candidates(s,practice).sort(function(a,b){return hash(s.batch.id+a)-hash(s.batch.id+b)}).slice(0,3)}
 function question(s,practice){var id=s.batch.checks[s.batch.checkAt];return id&&practice[id]||null}
 function checkRecord(s){var id=s.batch.checks[s.batch.checkAt];return s.batch.results[id]||(s.batch.results[id]={tries:0,hinted:false,wrong:[],done:false})}
-function settle(s,record,result){var id=s.batch.checks[s.batch.checkAt];record.done=true;record.status=result;s.termProgress[id].status=result;s.termProgress[id].evidence={taskId:id+':context-v1',batchId:s.batch.id,independent:result==='verified_for_current_task'};}
+function settle(s,record,result,task){var id=s.batch.checks[s.batch.checkAt];record.done=true;record.status=result;s.termProgress[id].status=result;s.termProgress[id].evidence={taskId:task.id,batchId:s.batch.id,independent:result==='verified_for_current_task'};}
 function apply(before,action,bank,practice){
   var s=copy(before),b=s.batch,id,p,r,q,all,failed;
   if(!b)begin(s,bank);b=s.batch;
@@ -35,12 +35,12 @@ function apply(before,action,bank,practice){
     if(b.phase!=='check')throw Error('No active check');
     q=question(s,practice);r=checkRecord(s);if(!q||r.done)throw Error('Check already finished');
     if(action.type==='hint'){r.hinted=true}
-    else if(action.type==='reveal'){r.hinted=true;settle(s,r,'needs_practice')}
+    else if(action.type==='reveal'){r.hinted=true;settle(s,r,'needs_practice',q)}
     else{
       if(typeof action.choice!=='number'||action.choice%1||action.choice<0||action.choice>=q.options.length||r.wrong.indexOf(action.choice)>=0)throw Error('Invalid answer');
       r.tries++;
-      if(action.choice===q.answer)settle(s,r,r.tries===1&&!r.hinted?'verified_for_current_task':'needs_practice');
-      else{r.wrong.push(action.choice);if(r.tries>=2)settle(s,r,'needs_practice')}
+      if(action.choice===q.answer)settle(s,r,r.tries===1&&!r.hinted?'verified_for_current_task':'needs_practice',q);
+      else{r.wrong.push(action.choice);if(r.tries>=2)settle(s,r,'needs_practice',q)}
     }
     s.attempts.push({id:action.id,senseId:b.checks[b.checkAt],taskId:q.id,type:action.type,choice:action.type==='answer'?action.choice:null,independent:r.done&&r.status==='verified_for_current_task',batchId:b.id});
   }else if(action.type==='next'){

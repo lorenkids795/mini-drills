@@ -12,13 +12,16 @@ test('approved bank: 102 P1, pending P2 isolated, no Royal Commission, slum supp
   assert.ok(pending.entries.every(e=>e.link.status==='pending_review'));
   assert.ok(bank.lesson_term_links.every(l=>l.status==='approved'&&l.lessonId==='cam17-t1-reading-p1'));
   assert.ok(!bank.terms.some(t=>t.canonical==='royal commission'));
+  assert.deepEqual(bank.lesson_term_links.reduce((out,l)=>{out[l.priority]=(out[l.priority]||0)+1;return out},{}),{core:69,supporting:20,advanced:13});
   const slum=bank.terms.find(t=>t.canonical==='slum');assert.equal(bank.lesson_term_links.find(l=>l.termId===slum.id).priority,'supporting');
   assert.equal(new Set(bank.terms.map(t=>t.id)).size,102);assert.equal(new Set(bank.senses.map(t=>t.id)).size,102);
 });
 test('all questions have a unique sense, source, fresh context, clue and contextual key',()=>{
   assert.equal(items.length,102);items.forEach(q=>{
     assert.equal(bank.lesson_term_links.find(l=>l.senseId===q.senseId).sourceId,q.sourceId);
-    assert.equal(q.options[q.answer],q.explanation);assert.equal(new Set(q.options).size,3);
+    assert.ok(!q.options.includes(q.explanation));assert.equal(new Set(q.options).size,3);
+    assert.equal(q.editorialStatus,'reviewed_pending_teacher');assert.equal(q.editorialRevision,2);
+    assert.ok(q.reviewNote&&q.teacherFlag&&q.explanation.split(/\s+/).length>=10);
     assert.ok(q.context&&!q.context.includes(q.explanation)&&q.clue&&q.validation==='source-sense-aligned-v1');
   });
 });
@@ -43,6 +46,7 @@ test('first try independently verified; wrong retry, hint and reveal need practi
     s=mode==='reveal'?act(s,'reveal'):act(s,'answer',{choice:q.answer});
     assert.equal(s.termProgress[id].status,mode==='first'?'verified_for_current_task':'needs_practice');
     assert.equal(s.termProgress[id].evidence.independent,mode==='first');
+    assert.equal(s.termProgress[id].evidence.taskId,q.id);
     assert.deepEqual(s.termProgress[id].formEvidence,{});
     assert.ok(!JSON.stringify(s).includes('mastered'));
   });
@@ -51,6 +55,13 @@ test('first mistake has no completion/reveal; second mistake settles for relearn
   let s=act(sorted(),'startCheck'),id=s.batch.checks[0],q=practice[id],wrong=[0,1,2].filter(i=>i!==q.answer);
   s=act(s,'answer',{choice:wrong[0]});assert.equal(s.batch.results[id].done,false);assert.equal(s.termProgress[id].status,'self_reported_known');
   assert.throws(()=>act(s,'next'));s=act(s,'answer',{choice:wrong[1]});assert.equal(s.termProgress[id].status,'needs_practice');
+});
+test('evidence uses the actual versioned question instead of a hardcoded v1 ID',()=>{
+  let s=act(sorted(),'startCheck'),id=s.batch.checks[0];s=act(s,'answer',{choice:practice[id].answer});
+  assert.equal(s.termProgress[id].evidence.taskId,practice[id].id);assert.ok(practice[id].id.endsWith(':context-v2'));
+  const old=Object.fromEntries(require('../data/vocab-lab-practice-v1.json').map(q=>[q.senseId,q]));
+  let b=act(sorted(),'startCheck');b=C.apply(b,{type:'answer',id:'legacy',choice:old[id].answer},bank,old);
+  assert.equal(b.termProgress[id].evidence.taskId,old[id].id);
 });
 test('high error rate adapts to 5 checks, low error rate stays 3; unsampled stays self-reported',()=>{
   [false,true].forEach(fail=>{
