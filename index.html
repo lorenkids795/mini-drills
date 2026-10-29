@@ -136,6 +136,14 @@ body.lg .shell{margin-top:0}
 .rmexh{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin:0 0 10px;padding:6px 10px;border-radius:8px;background:var(--hl-soft);font-size:.88rem}
 .rmsegs{margin:0 0 4px;padding-left:1.1em}.rmsegs li{margin:2px 0}
 .rmlv{margin:0}.rmlv button{padding:.25rem .6rem;font-size:.8rem}.rmlvp{font-size:.75rem}
+.rdrv{border:1px solid var(--line-strong);border-radius:12px;padding:14px 16px;margin:0 0 16px;background:var(--surface);display:flex;flex-direction:column;gap:10px}
+.rdrvhd{display:flex;align-items:center;gap:10px;justify-content:space-between}.rdrvhd h3{margin:0;font-size:1.05rem}.rdrv h4{margin:0 0 6px;font-size:.95rem}
+.rdflow{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:0;font-size:.82rem}.rdflow li{padding:3px 10px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.rdflow li.ok{color:var(--good);border-color:var(--good)}.rdflow li.cur{color:var(--ink);border-color:var(--accent);font-weight:700}
+.rdiss ul,.rdauto ul,.rddiff,.rddiag ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:.9rem;line-height:1.5}.rdiss li .btn{margin-left:6px}
+.rdpartlab{font-weight:700;color:var(--accent)}.rdack{margin-top:6px;font-size:.9rem}.rdauto summary,.rddiag summary{cursor:pointer;font-size:.88rem;color:var(--muted)}
+.rdprop{border-left:4px solid var(--accent);padding:6px 0 6px 12px}.rdfb textarea{width:100%;min-height:72px}.rdfbrow{flex-wrap:wrap;gap:8px}.rdfbrow select{min-width:190px}
+.rdappr{flex-wrap:wrap;align-items:center}.rdder{border-top:1px solid var(--line);padding-top:10px}.rdder .rdlv .btn{margin-left:6px}
 .rdlvs{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}.rdlv.ok b{color:var(--good)}.rdlv.err b{color:var(--bad)}.rdpts{color:var(--muted);font-size:.86rem}.rdpt.ok{color:var(--good)}.rdpt.err{color:var(--bad);font-weight:700}.rdpt.busy{color:var(--ink);font-weight:700}.rdperr{display:block;font-size:.86rem;margin-top:2px}.cgarc{margin-top:22px}.cgarc>summary{cursor:pointer;font-weight:700;margin-bottom:10px}
 .csdanger{border-color:var(--bad)!important}
 .lgtheme{position:absolute;top:calc(16px + env(safe-area-inset-top,0px));right:16px;z-index:2;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer}
@@ -1523,6 +1531,25 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
 .adm-add .ck{display:flex;gap:6px;align-items:center;font-size:.9rem;padding-bottom:.55rem}
 .adt td{vertical-align:middle}
 .adt .acts{display:flex;flex-wrap:wrap;gap:6px}
+/* Admin › Users / Teachers: toolbar, balanced table, ⋯ menu, form card (namespaced .adt / .adtool / .adform / .admenu) */
+.adtool{display:flex;flex-wrap:wrap;align-items:end;gap:12px;margin:0 0 14px}.adtool .field{margin:0}.adtool .adq{flex:1 1 260px;max-width:420px}.adtool select{min-width:150px}
+.adcount{margin-left:auto;padding-bottom:10px;font-size:.88rem;color:var(--muted);white-space:nowrap}
+.adtbl{width:100%;border-collapse:collapse}.adtbl th{text-align:left;font-size:.74rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700;padding:10px 12px;border-bottom:1px solid var(--line)}
+.adtbl td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle;line-height:1.4}.adtbl tbody tr:last-child td{border-bottom:0}
+.adtbl .c-nm{min-width:150px}.adtbl .c-em{font-size:.84rem;overflow-wrap:anywhere;min-width:180px}.adtbl .c-sm{width:1%;white-space:nowrap}.adtbl .c-ac{width:1%;text-align:right;white-space:nowrap}
+.admt{width:40px;height:40px;min-height:40px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;color:var(--muted)}.admt:hover,.admt[aria-expanded="true"]{color:var(--ink);background:var(--line)}
+.adprot{font-size:.84rem}
+.admenu{position:fixed;z-index:80;min-width:190px;padding:6px;background:var(--elev);border:1px solid var(--line-strong);border-radius:12px;box-shadow:var(--elev-shadow,0 10px 28px rgba(15,20,40,.16));display:flex;flex-direction:column}
+.admi{font:inherit;text-align:left;padding:10px 12px;min-height:40px;border:0;background:none;color:var(--ink);border-radius:8px;cursor:pointer}.admi:hover,.admi:focus-visible{background:var(--line);outline:none}.admi:focus-visible{box-shadow:0 0 0 2px var(--accent)}
+.admi.bad{color:var(--bad);font-weight:700}
+.adform{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:0 0 18px}.adform h3{margin:0 0 12px;font-size:1rem}
+.adform-g{display:grid;grid-template-columns:minmax(150px,1fr) minmax(200px,1.3fr) minmax(240px,1.3fr) auto;gap:12px;align-items:end}.adform-g .field{margin:0;min-width:0}.adform-g input{width:100%}
+.adform-t{grid-template-columns:minmax(130px,1fr) minmax(180px,1.3fr) minmax(100px,.7fr) minmax(220px,1.3fr) auto;margin:10px 0 0}
+.adpwf>label{display:block}.adpw{display:flex;gap:8px;margin-top:4px}.adpw input{flex:1 1 auto;min-width:0}.adpw .btn{flex:none}
+.adform-n{margin:10px 0 0;font-size:.86rem;color:var(--muted)}
+.adsec{margin-top:22px;display:flex;flex-direction:column;gap:4px}
+@media (max-width:900px){.adform-g,.adform-t{grid-template-columns:1fr 1fr}.adform-go{grid-column:1/-1;justify-self:start}}
+@media (max-width:560px){.adform-g,.adform-t{grid-template-columns:1fr}.adcount{margin-left:0;padding-bottom:0}.adtool .adq{max-width:none}}
 .adt small{display:block;color:var(--muted);font-size:.78rem}
 @media (max-width:640px){
   .adt table{min-width:0}
@@ -1532,6 +1559,8 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
   .adt td[data-l]::before{content:attr(data-l);display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
   .adt td[data-l="Email"]{overflow-wrap:anywhere}
   .adt .acts{margin-top:4px}.adt .acts .btn{flex:1 1 auto;min-height:38px}
+  .adt tr{position:relative;padding-right:56px}.adt td.c-ac{position:absolute;top:8px;right:8px;width:auto;padding:0}.adt td.c-ac::before{display:none}
+  .adtbl td{border-bottom:0;padding:3px 0}.adtbl .c-sm{width:auto}.adtbl .c-nm,.adtbl .c-em{min-width:0}
 }
 /* ---------- UI/UX baseline (CLAUDE.md 5b): tap targets, hover/focus, reduced motion ---------- */
 .btn{min-height:40px;cursor:pointer}.btn.sm{min-height:34px}.iconbtn{min-height:34px;cursor:pointer}
@@ -4549,15 +4578,16 @@ function renderSlotMap(){
 function cpWarnUpdate(){var w=$('#cpWarn');if(w)w.innerHTML=cpWarnHTML();renderAddTop()}
 // the ONLY Add / Replace button lives at the top of "Pick a free slot" (#cpAddTop); previews no longer draw one, so it cannot be pressed twice
 function addBarHTML(){return ''}
-function cpValid(){return !!(CP.last&&!CP.last.errs.length&&parsed)&&!(CP.skill==='reading'&&RD.busy)}
+function cpOk(){return !!(CP.last&&!CP.last.errs.length&&parsed)}
+function cpValid(){return cpOk()&&!(CP.skill==='reading'&&(RD.busy||RV.busy||(RD.job&&!rdApproved())))}
 function renderAddTop(){var box=$('#cpAddTop');if(!box)return;box.innerHTML=cpAddBarHTML();
   if(EDIT&&cpValid()){var b=$('#cpAddTop [data-act="add-ex"]');if(b){b.textContent='Save changes';b.insertAdjacentHTML('afterend',' <button class="btn" data-act="ex-cancel" type="button">Cancel edit</button>')}}}
 function cpAddBarHTML(){
   var o=cpSlotInfo(),ok=o.ok&&cpValid();
-  if(!cpValid()){o.label=CP.skill==='reading'&&RD.busy?'Wait until every part is written':CP.last&&CP.last.errs.length?'Fix the lesson before adding':(CP.slot?o.label+' · generate a lesson first':'')}
+  if(!cpValid()){o.label=CP.skill==='reading'&&(RD.busy||RV.busy)?'Wait until every part is written':CP.skill==='reading'&&RD.job&&cpOk()&&!rdApproved()?'Approve Medium first (Review Medium)':CP.last&&CP.last.errs.length?'Fix the lesson before adding':(CP.slot?o.label+' · generate a lesson first':'')}
   return '<div class="cpaddbar" id="cpAddBar">'+(o.label?'<small class="muted">→ '+esc(o.label)+'</small>':'')+'<button class="btn pri" data-act="add-ex" type="button"'+(ok?'':' disabled')+'>'+esc(CP.adding?'Adding…':o.btn)+'</button></div>'+(CP.msg?'<p class="okmsg cpok" role="status">'+esc(CP.msg)+'</p>':'');
 }
-function cpWideSync(){var v=cpValid(),cr=$('#cpCreate'),on=!!(CP.wide&&v);if(cr)cr.classList.toggle('cpwide',on);
+function cpWideSync(){var v=cpOk(),cr=$('#cpCreate'),on=!!(CP.wide&&v);if(cr)cr.classList.toggle('cpwide',on);
   var w=$('#cpWide');if(w){w.hidden=!v;w.textContent=on?'Show editor':'Hide editor';w.setAttribute('aria-pressed',String(on))}var g=$('#cpGoAdd');if(g)g.hidden=!on}
 // CP.raw = the JSON text of the exercise (written by Auto-create; there is no hand-pasted JSON box any more)
 function checkJSON(txt){if(txt!=null)CP.raw=txt;var r=parseAI(CP.raw||'');if(r.data&&r.data.skill==='listening'&&!r.data.audio&&CP.aud)r.data.audio=CP.aud.url;parsed=r.data||null;CP.last=r;CP.pvSt=0;renderPrev()}
@@ -4567,6 +4597,7 @@ function renderPrev(){
   if(!r)box.innerHTML='';
   else if(r.errs.length)box.innerHTML='<div class="cperr" role="alert"><b>Invalid format: fix '+r.errs.length+' issue'+(r.errs.length>1?'s':'')+' before adding.</b><ul class="errs">'+r.errs.map(function(e){return '<li>'+esc(e)+'</li>'}).join('')+'</ul></div>';
   else box.innerHTML=CP.view==='stu'?'<p class="okmsg">Format OK. This is how students will see it.</p>'+(r.data.kind==='reading-ms'?cpLvHTML():'')+pvHTML(r.data):previewHTML(r.data);
+  if(CP.skill==='reading'&&RD.job&&rdMedDone(RD.job)&&box.insertAdjacentHTML)box.insertAdjacentHTML('afterbegin',rdRvHTML());
   if(r&&!r.errs.length&&CP.view==='stu'&&r.data.kind==='reading-ms')rmPreview(r.data);
   var fr=$('#createPrev .pvframe');if(fr)fr.classList.add('cpanim');
   renderAddTop();cpWideSync();
@@ -4786,23 +4817,30 @@ var RD_PARTS=['deep','vocab','output'],RD_PNAME={deep:'Deep reading',vocab:'Pron
   RD_STOP={quota:1,nokey:1,http400:1,http403:1,http429:1,relay:1,blocked:1};
 // finished parts survive a reload (this device only, localStorage md-rdjob): same passage = the job comes back, a part that was
 // being written when the page closed shows as failed, so "Retry failed part" carries on. Never saved to the Library.
-function rdJobSave(){var J=RD.job;try{if(!J)localStorage.removeItem('md-rdjob');else localStorage.setItem('md-rdjob',JSON.stringify({run:J.run,tx:J.tx,pt:J.pt}))}catch(e){}}
+function rdJobSave(){var J=RD.job;try{if(!J)localStorage.removeItem('md-rdjob');else localStorage.setItem('md-rdjob',JSON.stringify({run:J.run,runs:J.runs,tx:J.tx,pt:J.pt,hist:(J.hist||[]).slice(-5),appr:J.appr||null,der:J.der||{},ackLeft:J.ackLeft||''}))}catch(e){}}
 function rdJobLoad(){var o=null;try{o=JSON.parse(localStorage.getItem('md-rdjob')||'null')}catch(e){}
   if(!o||!o.pt||!o.run||String(o.tx||'')!==String(RD.tx||'').trim())return null;
   RD_ORDER.forEach(function(l){RD_PARTS.forEach(function(k){var x=o.pt[l]&&o.pt[l][k];if(!x){o.pt[l]=o.pt[l]||{};o.pt[l][k]={st:'wait',n:0};return}
     if(x.st==='busy'||x.st==='wait'){x.st='err';x.n=2;x.code='stopped';x.msg='Not written: the page was closed or reloaded.'}})});
-  o.skip={};o.stop='';return o}
+  o.skip={};o.stop='';o.runs=o.runs||{};o.hist=o.hist||[];o.der=o.der||{};o.prop=null;return o}
 function rdJobRestore(){if(RD.job||RD.busy)return;var J=rdJobLoad();if(!J)return;RD.job=J;RD.lv={};RD.tried=true;
   RD_ORDER.forEach(function(l){if(RD_PARTS.every(function(k){return J.pt[l][k].st==='ok'}))rdLevelDone(J,l)});rdJobEnd()}
 function rdRid(){var c='abcdefghijklmnopqrstuvwxyz0123456789',r='';for(var i=0;i<20;i++)r+=c.charAt(Math.floor(Math.random()*36));return r}
-function rdJobNew(tx){var pt={};RD_ORDER.forEach(function(l){pt[l]={};RD_PARTS.forEach(function(k){pt[l][k]={st:'wait',n:0}})});return {run:rdRid(),tx:tx,pt:pt,skip:{},stop:''}}
+function rdJobNew(tx){var pt={};RD_ORDER.forEach(function(l){pt[l]={};RD_PARTS.forEach(function(k){pt[l][k]={st:l==='medium'?'wait':'idle',n:0}})});return {run:rdRid(),runs:{},tx:tx,pt:pt,skip:{},stop:'',hist:[],appr:null,der:{},prop:null,ackLeft:''}}
+// Medium signature: changes whenever Medium changes (a revision, Undo); approval and Easy / Hard are tied to it
+function rdMedSig(J){var s=JSON.stringify(RD_PARTS.map(function(k){return J.pt.medium[k].out||null})),h=0;for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0}return 'm'+(h>>>0).toString(36)+s.length}
+// Medium is "in" when every part came back; a part can still fail the lesson check (code 'check'): Review Medium then offers Fix with AI
+function rdMedDone(J){return !!J&&RD_PARTS.every(function(k){var x=J.pt.medium[k];return !!x.out&&(x.st==='ok'||(x.st==='err'&&x.code==='check'))})}
+function rdApproved(){var J=RD.job;return !!(J&&J.appr&&rdMedDone(J)&&J.appr.sig===rdMedSig(J))}
+// a derived version made from an older Medium = outdated (never used by Add until made again or kept on purpose)
+function rdOutdated(l){var J=RD.job,x=RD.lv&&RD.lv[l];return !!(J&&x&&x.st==='ok'&&x.sig!==rdMedSig(J))}
 function rdSteps(){var a=[];RD_ORDER.forEach(function(l){RD_PARTS.forEach(function(k){a.push([l,k])})});return a}
-function rdLevels(){var o={},n=0;['easy','hard'].forEach(function(l){var x=RD.lv&&RD.lv[l];if(x&&x.st==='ok'&&x.rl){o[l]=x.rl;n++}});return n?o:null}
+function rdLevels(){var o={},n=0;['easy','hard'].forEach(function(l){var x=RD.lv&&RD.lv[l];if(x&&x.st==='ok'&&x.rl&&!rdOutdated(l)){o[l]=x.rl;n++}});return n?o:null}
 function rdFails(){var J=RD.job,f=[];if(J)rdSteps().forEach(function(q){if(J.pt[q[0]][q[1]].st==='err')f.push(q)});return f}
 function rdImpHTML(){var I=RD.imp;if(!I)return '';
   return '<p class="lbl" style="margin-top:10px">Versions in the file</p><ul class="rdlvs">'+RD_ORDER.map(function(l){var x=I[l];var st=!x?'wait':x==='ok'?'ok':'err';
     return '<li class="rdlv '+st+'"><b>'+({ok:'✓',err:'✗',wait:'·'})[st]+' '+RLV_NAME[l]+'</b> '+(st==='ok'?'<span class="rdpts">checked</span>':st==='wait'?'<span class="rdpts">not in the file'+(l==='medium'?'':' (students of this level get Medium)')+'</span>':'<span class="alerr rdperr">'+esc(x)+'</span>')+'</li>'}).join('')+'</ul>'}
-function rdLvHTML(){var J=RD.job;if(!J)return rdImpHTML();var ic={ok:'✓',err:'✗',busy:'…',wait:'○'};
+function rdLvHTML(){var J=RD.job;if(!J)return rdImpHTML();var ic={ok:'✓',err:'✗',busy:'…',wait:'○',idle:'–'};
   var row=function(l){var P=J.pt[l],st=RD_PARTS.every(function(k){return P[k].st==='ok'})?'ok':RD_PARTS.some(function(k){return P[k].st==='err'})?'err':RD_PARTS.some(function(k){return P[k].st==='busy'})?'busy':'wait';
     return '<li class="rdlv '+st+'"><b>'+ic[st]+' '+RLV_NAME[l]+'</b> <span class="rdpts">'+RD_PARTS.map(function(k){var x=P[k];return '<span class="rdpt '+x.st+'">'+ic[x.st]+' '+RD_PNAME[k]+'</span>'}).join(' · ')+'</span>'+
       RD_PARTS.filter(function(k){return P[k].st==='err'}).map(function(k){return '<span class="alerr rdperr">'+RLV_NAME[l]+' · '+RD_PNAME[k]+': '+esc(P[k].msg||'Failed.')+'</span>'}).join('')+'</li>'};
@@ -4814,7 +4852,7 @@ function rdLvDraw(){var b=$('#rdLv');if(b)b.innerHTML=rdLvHTML()}
 // which part a check problem of the assembled lesson belongs to (parseReading / rmParseDeep messages)
 function rdBlame(m){m=String(m||'');
   if(/pairs|Phrase \d|paraphrase|pdist|cloze|summary has|word bank|wprompt/i.test(m))return 'output';
-  if(/"words"|Word \d|Guess the meaning|Pronoun|prons|\{\{/i.test(m))return 'vocab';
+  if(/"words"|Word \d|Guess the meaning|Vocabulary|Pronoun|prons|\{\{/i.test(m))return 'vocab';
   return 'deep'}
 // demo: the sample lesson cut into the same 3 parts (deep also carries the sample's own paragraphs)
 function rdDemoPart(k){var o=JSON.parse(EXAMPLE_R),r={};({deep:['deep','paras','title'],vocab:['title','prons','words'],output:['pairs','pdist','cloze','wprompt','wguide']})[k].forEach(function(f){if(o[f]!==undefined)r[f]=o[f]});return r}
@@ -4823,7 +4861,8 @@ function rdPart(J,l,k,done){
   var ok=function(d){if(!d||!d.out||typeof d.out!=='object'){no({message:'The server sent no lesson part.',code:'empty'});return}x.st='ok';x.out=d.out;x.model=d.model||'';x.msg='';x.code='';done()};
   var no=function(e){x.code=(e&&e.code)||'';x.msg=String((e&&e.message)||'Something went wrong.').replace(/\s*Press (Try again|Retry failed part)\.?/g,'');x.st=RD_AUTO[x.code]&&x.n<2?'wait':'err';done()};
   if(DEMO){setTimeout(function(){try{ok({out:rdDemoPart(k),model:'demo'})}catch(err){no(err)}},300);return}
-  var body={title:RD.title||'',passage:J.tx,level:l,part:k,run:J.run,tzo:new Date().getTimezoneOffset()};
+  var body={title:RD.title||'',passage:J.tx,level:l,part:k,run:(J.runs&&J.runs[l])||J.run,tzo:new Date().getTimezoneOffset()};
+  if(l!=='medium'&&J.pt.medium[k].out)body.base=J.pt.medium[k].out;
   if(k==='output'){var v=J.pt[l].vocab.out;body.words=(v&&isArr(v.words)?v.words:[]).map(function(w){return w&&typeof w.w==='string'?w.w:''}).filter(Boolean).slice(0,6)}
   staffApi('ai/reading',body).then(ok,no);
 }
@@ -4831,8 +4870,9 @@ function rdPart(J,l,k,done){
 function rdLevelDone(J,l){
   var o={};RD_PARTS.forEach(function(k){Object.assign(o,J.pt[l][k].out||{})});if(RD.title)o.title=RD.title;
   var errs=[];
-  if(l==='medium'){rdApply(JSON.stringify(o,null,2),DEMO?'':J.tx);errs=CP.last&&CP.last.errs?CP.last.errs:['The lesson could not be checked.']}
-  else{var r=parseReading(rdBuild(o,DEMO?rdBuildDemoTx():J.tx));errs=r.errs||[];RD.lv=RD.lv||{};if(errs.length)delete RD.lv[l];else RD.lv[l]={st:'ok',rl:r.data.rlesson}}
+  if(l==='medium'){rdApply(JSON.stringify(o,null,2),DEMO?'':J.tx);errs=CP.last&&CP.last.errs?CP.last.errs:['The lesson could not be checked.'];
+    if(!errs.length)RD_PARTS.forEach(function(k){var y=J.pt.medium[k];if(y.code==='check'){y.st='ok';y.code='';y.msg=''}})} // a fix that passes clears the old check failure
+  else{var r=parseReading(rdBuild(o,DEMO?rdBuildDemoTx():J.tx));errs=r.errs||[];RD.lv=RD.lv||{};if(errs.length)delete RD.lv[l];else RD.lv[l]={st:'ok',rl:r.data.rlesson,sig:(J.der&&J.der[l])||rdMedSig(J)}}
   if(!errs.length)return;
   var by={};errs.forEach(function(m){var k=rdBlame(m);(by[k]=by[k]||[]).push(String(m).replace(/\s*Press Try again\.?/g,''))});
   Object.keys(by).forEach(function(k){var y=J.pt[l][k];y.code='check';y.msg=by[k].slice(0,3).join(' ')+(by[k].length>3?' (and '+(by[k].length-3)+' more)':'');y.st=y.n<2?'wait':'err'});
@@ -4855,14 +4895,107 @@ function rdRun(){
 }
 function rdJobEnd(){
   var J=RD.job;RD.busy=false;clearTimeout(RD.slowT);
-  var f=rdFails().map(function(q){return RLV_NAME[q[0]]+' · '+RD_PNAME[q[1]]}),med=RD_PARTS.every(function(k){return J.pt.medium[k].st==='ok'})&&cpValid();
-  var got=RD_ORDER.filter(function(l){return l==='medium'?med:!!(RD.lv&&RD.lv[l]&&RD.lv[l].st==='ok')}).map(function(l){return RLV_NAME[l]});
-  if(med&&!f.length){RD.bad=false;RD.msg='Done: '+got.join(', ')+'. Check the preview, pick a slot, then press Add.'}
+  var f=rdFails().map(function(q){return RLV_NAME[q[0]]+' · '+RD_PNAME[q[1]]}),med=rdMedDone(J)&&cpOk();
+  var got=RD_ORDER.filter(function(l){return l==='medium'?med:!!(RD.lv&&RD.lv[l]&&RD.lv[l].st==='ok'&&!rdOutdated(l))}).map(function(l){return RLV_NAME[l]});
+  if(med&&!rdApproved()){RD.bad=!!f.length;RD.msg='Medium draft ready. Review it next to the preview (Review Medium), then press Approve Medium.'+(f.length?' Not finished: '+f.join(', ')+'.':'')}
+  else if(med&&!f.length){RD.bad=false;RD.msg='Ready: '+got.join(', ')+'. Check the preview, pick a slot, then press Add.'}
   else if(med){RD.bad=true;RD.msg='Ready: '+got.join(', ')+'. Not finished: '+f.join(', ')+'. Press Retry failed part, or add now (students of a missing version get Medium).'}
   else{RD.bad=true;RD.msg=(f.length?'Not finished: '+f.join(', ')+'. ':'')+'Medium is needed before you can add the lesson. Finished parts are kept: press Retry failed part.'}
-  rdStatus();rdLvDraw();
+  rdStatus();rdLvDraw();rdRvDraw();
   var pv=$('#createPrev');if(med&&pv&&pv.scrollIntoView)pv.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
 }
+/* Review Medium: Medium draft → fix issues → Approve Medium → Easy / Hard (from the approved Medium) → Add.
+   Proposals from the AI (teacher feedback or "Fix with AI") are checked with the same rules first and only replace Medium when the teacher accepts.
+   J.hist = older Medium versions (Undo), J.appr = {sig, ts} (approved Medium), J.der[l] = Medium signature a derived version was made from. */
+var RV={fb:'',scope:'all',busy:'',err:''};
+function rdIssues(){var r=CP.last,W=parsed&&isArr(parsed.rwarn)?parsed.rwarn:[],errs=r&&r.errs?r.errs:[];
+  var left=W.filter(function(w){return /(was|were) left out:/.test(w)&&!/extra heading/.test(w)}),auto=W.filter(function(w){return left.indexOf(w)<0});
+  return {errs:errs,left:left,auto:auto}}
+function rdMedOuts(J){var o={};RD_PARTS.forEach(function(k){o[k]=J.pt.medium[k].out});return o}
+function rdCheckOuts(J,outs){var o={};RD_PARTS.forEach(function(k){Object.assign(o,outs[k]||{})});if(RD.title)o.title=RD.title;
+  if(DEMO)return parseReading(o.paras?o:rdBuild(o,rdBuildDemoTx()));return parseReading(rdBuild(o,J.tx))}
+// a short list of what changed ("Completion 2 · answer: "a b c" → "a b""), at most 12 lines
+function rdDiff(a,b){var out=[],walk=function(x,y,p){if(out.length>=12)return;
+    if(x&&y&&typeof x==='object'&&typeof y==='object'){var ks={};Object.keys(x).concat(Object.keys(y)).forEach(function(k){ks[k]=1});Object.keys(ks).forEach(function(k){walk(x[k],y[k],p.concat([k]))});return}
+    if(JSON.stringify(x)===JSON.stringify(y))return;
+    var lab=p.filter(function(s){return !/^(deep|exercises|items)$/.test(s)}).map(function(s){return /^\d+$/.test(s)?String(+s+1):s}).join(' · ');
+    var sh=function(v){v=v===undefined?'(none)':typeof v==='string'?'“'+v+'”':JSON.stringify(v);return v.length>90?v.slice(0,87)+'…':v};
+    out.push(lab+': '+sh(x)+' → '+sh(y))};
+  walk(a,b,[]);return out}
+function rdRvFlowHTML(J){var ok=rdApproved(),der=RD_ORDER.filter(function(l){return l!=='medium'&&RD.lv&&RD.lv[l]&&!rdOutdated(l)}).length,I=rdIssues(),fix=!I.errs.length&&(!I.left.length||J.ackLeft===rdMedSig(J));
+  var S=[['Medium draft',rdMedDone(J)],['Fix issues',fix],['Approve Medium',ok],['Easy / Hard',ok&&der===2],['Add',false]],cur=-1;S.forEach(function(s,i){if(cur<0&&!s[1])cur=i});
+  return '<ol class="rdflow">'+S.map(function(s,i){return '<li class="'+(s[1]?'ok':i===cur?'cur':'')+'"'+(i===cur?' aria-current="step"':'')+'>'+(s[1]?'✓ ':'')+esc(s[0])+'</li>'}).join('')+'</ol>'}
+function rdRvHTML(){var J=RD.job;if(!J||!rdMedDone(J))return '';
+  var I=rdIssues(),sig=rdMedSig(J),ok=rdApproved(),bl=I.errs.length>0,lo=I.left.length>0&&J.ackLeft!==sig,busy=!!(RD.busy||RV.busy),P=J.prop;
+  var st=ok?['ok','Approved']:(bl||lo)?['bad','Draft']:['pend','Needs review'];
+  var h='<section class="rdrv" id="rdRv" aria-labelledby="rdRvH"><div class="rdrvhd"><h3 id="rdRvH">Review Medium</h3><span class="pill '+st[0]+'">'+st[1]+'</span></div>'+rdRvFlowHTML(J);
+  // issues: blocking problems and items left out (each with Fix with AI); automatic fixes only listed
+  var iss=I.errs.map(function(m){return {m:m,b:1}}).concat(I.left.map(function(m){return {m:m,b:0}}));
+  if(iss.length){h+='<div class="rdiss"><h4>'+(bl?'Problems to fix before approving':'Items left out of the lesson')+'</h4><ul>'+iss.map(function(x,i){
+      return '<li><span class="rdpartlab">'+esc(RD_PNAME[rdBlame(x.m)])+'</span> '+esc(String(x.m).replace(/\s*Press (Try again|Retry failed part)\.?/g,''))+' <button type="button" class="btn sm" data-act="rd-fix" data-i="'+i+'"'+(busy||P?' disabled':'')+'>Fix with AI</button></li>'}).join('')+'</ul>'+
+    (iss.length>1?'<button type="button" class="btn sm" data-act="rd-fixall"'+(busy||P?' disabled':'')+'>Fix all '+iss.length+' with AI</button>':'')+
+    (!bl&&I.left.length?'<label class="ck rdack"><input type="checkbox" id="rdAck"'+(J.ackLeft===sig?' checked':'')+'> Keep the lesson without the '+(I.left.length>1?I.left.length+' items':'item')+' left out</label>':'')+'</div>'}
+  if(I.auto.length)h+='<details class="rdauto"><summary>Fixed automatically ('+I.auto.length+')</summary><ul>'+I.auto.map(function(m){return '<li>'+esc(m)+'</li>'}).join('')+'</ul></details>';
+  // an AI proposal waiting for the teacher
+  if(P){var pc=P.check||{errs:[]},nd=P.diff||[];
+    h+='<div class="rdprop" role="region" aria-label="AI proposal"><h4>AI proposal · '+esc(P.parts.map(function(k){return RD_PNAME[k]}).join(', '))+'</h4>'+
+      (P.fails&&P.fails.length?'<p class="alerr">'+esc(P.fails.join(' '))+'</p>':'')+
+      (nd.length?'<ul class="rddiff">'+nd.map(function(d){return '<li>'+esc(d)+'</li>'}).join('')+'</ul>':'<p class="saved">The AI made no changes.</p>')+
+      (P.fixed&&P.fixed.length?'<p class="okmsg">Fixed: '+esc(P.fixed.join(' · '))+'</p>':'')+(P.still&&P.still.length?'<p class="alerr">Still a problem: '+esc(P.still.join(' · '))+'</p>':'')+
+      (pc.errs.length?'<p class="alerr">This version does not pass the check: '+esc(pc.errs.slice(0,3).join(' '))+'</p>':'')+
+      '<div class="actions"><button type="button" class="btn pri" data-act="rd-pacc"'+(pc.errs.length||!nd.length?' disabled':'')+'>Accept revision</button><button type="button" class="btn" data-act="rd-prej">Reject</button></div></div>'}
+  else{h+='<div class="rdfb"><label class="lbl" for="rdFb">What should AI change?</label><textarea id="rdFb" rows="3" placeholder="e.g. Make Question 2 clearer and keep the answer within two words. (English or Vietnamese)">'+esc(RV.fb)+'</textarea>'+
+      '<div class="row rdfbrow"><label class="sr" for="rdScope">Part to change</label><select id="rdScope">'+[['all','Whole Medium lesson']].concat(RD_PARTS.map(function(k){return [k,RD_PNAME[k]]})).map(function(o){return '<option value="'+o[0]+'"'+(RV.scope===o[0]?' selected':'')+'>'+esc(o[1])+'</option>'}).join('')+'</select>'+
+      '<button type="button" class="btn" data-act="rd-fb"'+(busy||!RV.fb.trim()?' disabled':'')+'>Apply feedback with AI</button></div></div>'}
+  if(RV.busy)h+='<p class="saved" role="status">'+esc(RV.busy)+'</p>';else if(RV.err)h+='<p class="alerr" role="alert">'+esc(RV.err)+'</p>';
+  h+='<div class="actions rdappr">'+(J.hist&&J.hist.length?'<button type="button" class="btn" data-act="rd-undo"'+(busy||P?' disabled':'')+'>Undo · restore previous version</button>':'')+
+    (ok?'<span class="okmsg">Medium approved.</span>':'<button type="button" class="btn pri" data-act="rd-appr"'+(busy||P||bl||lo?' disabled':'')+'>Approve Medium</button>')+'</div>'+
+    (!ok&&(bl||lo)?'<p class="saved">'+(bl?'Fix the problems above first.':'Fix the items left out, or tick “Keep the lesson without…”.')+'</p>':'');
+  // Easy / Hard, only from the approved Medium
+  h+='<div class="rdder"><h4>Easy and Hard</h4>'+(ok?'':'<p class="saved">Approve Medium first: Easy and Hard are made from the approved Medium.</p>')+'<ul class="rdlvs">'+['easy','hard'].map(function(l){
+      var pt=J.pt[l],x=RD.lv&&RD.lv[l],any=function(s){return RD_PARTS.some(function(k){return pt[k].st===s})},s,btn='';
+      if(any('busy')||(any('wait')&&RD.busy))s='Writing…';else if(x&&x.st==='ok'&&rdOutdated(l))s='Outdated: Medium changed after this version was made';else if(x&&x.st==='ok')s='Ready';
+      else if(any('err'))s='Failed: '+RD_PARTS.filter(function(k){return pt[k].st==='err'}).map(function(k){return RD_PNAME[k]+' ('+(pt[k].code||'error')+')'}).join(', ');else s='Not made yet (students of this level get Medium)';
+      if(ok&&!busy){if(x&&x.st==='ok'&&rdOutdated(l))btn='<button type="button" class="btn sm" data-act="rd-der" data-v="'+l+'">Generate again</button><button type="button" class="btn sm" data-act="rd-keep" data-v="'+l+'">Keep this version</button>';
+        else if(any('err'))btn='<button type="button" class="btn sm" data-act="rd-retry">Retry failed part</button>';else if(!(x&&x.st==='ok'))btn='<button type="button" class="btn sm" data-act="rd-der" data-v="'+l+'">Generate '+RLV_NAME[l]+'</button>'}
+      return '<li class="rdlv"><b>'+RLV_NAME[l]+'</b> <span class="rdpts">'+esc(s)+'</span> '+btn+'</li>'}).join('')+'</ul>'+
+    (ok&&!busy&&['easy','hard'].every(function(l){return !(RD.lv&&RD.lv[l]&&RD.lv[l].st==='ok')&&!RD_PARTS.some(function(k){return J.pt[l][k].st==='err'})})?'<button type="button" class="btn sm" data-act="rd-der" data-v="both">Generate Easy and Hard</button>':'')+'</div>';
+  var dg=rdSteps().filter(function(q){var x=J.pt[q[0]][q[1]];return x.msg||x.model});
+  if(dg.length)h+='<details class="rddiag"><summary>Technical details</summary><ul>'+dg.map(function(q){var x=J.pt[q[0]][q[1]];return '<li>'+RLV_NAME[q[0]]+' · '+RD_PNAME[q[1]]+': '+esc(x.st)+(x.code?' · code '+esc(x.code):'')+(x.model?' · '+esc(x.model):'')+(x.msg?' · '+esc(x.msg):'')+'</li>'}).join('')+'</ul></details>';
+  return h+'</section>'}
+function rdRvDraw(){var p=$('#rdRv');if(p)p.outerHTML=rdRvHTML();else if(RD.job&&rdMedDone(RD.job))renderPrev()}
+// revise some Medium parts (teacher feedback or check problems), one request per part; the result is a proposal, never applied by itself
+function rdRevise(parts,fb,issues){var J=RD.job;if(!J||RD.busy||RV.busy||J.prop)return;
+  var outs={},fails=[],i=0,before=rdMedOuts(J),oldW=rdIssues();
+  var next=function(){if(RD.job!==J)return;if(i>=parts.length)return fin();var k=parts[i++];RV.busy='Revising '+RD_PNAME[k]+(parts.length>1?' ('+i+' of '+parts.length+')':'')+'… Stay on this page.';RV.err='';rdRvDraw();
+    var iss=(issues||[]).filter(function(m){return rdBlame(m)===k});
+    var ok=function(d){if(d&&d.out&&typeof d.out==='object')outs[k]=d.out;else fails.push(RD_PNAME[k]+': no answer.');next()};
+    var no=function(e){fails.push(RD_PNAME[k]+': '+((e&&e.message)||'failed'));next()};
+    if(DEMO){setTimeout(function(){ok({out:JSON.parse(JSON.stringify(J.pt.medium[k].out))})},300);return}
+    staffApi('ai/reading',{op:'revise',part:k,level:'medium',passage:J.tx,title:RD.title||'',current:J.pt.medium[k].out,feedback:fb||'',issues:iss,tzo:new Date().getTimezoneOffset()}).then(ok,no)};
+  var fin=function(){RV.busy='';var got=Object.keys(outs);if(!got.length){RV.err='The AI could not revise it. '+fails.join(' ')+' Nothing was changed: try again.';rdRvDraw();return}
+    var cand={};RD_PARTS.forEach(function(k){cand[k]=outs[k]||before[k]});var chk=rdCheckOuts(J,cand),nw=chk.data&&isArr(chk.data.rwarn)?chk.data.rwarn:[];
+    var asked=(issues||[]),fixed=asked.filter(function(m){return chk.errs.indexOf(m)<0&&nw.indexOf(m)<0}),still=asked.filter(function(m){return fixed.indexOf(m)<0});
+    J.prop={parts:got,outs:outs,fb:fb||'',fails:fails,check:{errs:chk.errs||[]},diff:rdDiff(before,cand),fixed:fixed,still:still};rdRvDraw()};
+  next()}
+function rdRvAct(a,t){var J=RD.job;if(!J)return false;
+  if(a==='rd-fb'){var ta=$('#rdFb');if(ta)RV.fb=ta.value;if(!RV.fb.trim())return true;rdRevise(RV.scope==='all'?RD_PARTS.slice():[RV.scope],RV.fb.trim(),[]);return true}
+  if(a==='rd-fix'||a==='rd-fixall'){var I=rdIssues(),L=I.errs.concat(I.left),pick=a==='rd-fix'?[L[+t.dataset.i]].filter(Boolean):L;if(!pick.length)return true;
+    var ps=[];pick.forEach(function(m){var k=rdBlame(m);if(ps.indexOf(k)<0)ps.push(k)});
+    rdRevise(RD_PARTS.filter(function(k){return ps.indexOf(k)>=0}),'Fix the listed problems with the smallest change. Keep every other item as it is.',pick);return true}
+  if(a==='rd-pacc'){var P=J.prop;if(!P||(P.check&&P.check.errs.length))return true;J.hist=(J.hist||[]).concat([{outs:rdMedOuts(J),ts:Date.now()}]).slice(-5);
+    P.parts.forEach(function(k){J.pt.medium[k].out=P.outs[k]});J.prop=null;rdLevelDone(J,'medium');rdJobSave();rdStatus();rdRvDraw();toast('Revision accepted. Medium needs approval again.');return true}
+  if(a==='rd-prej'){J.prop=null;rdRvDraw();return true}
+  if(a==='rd-undo'){var hs=J.hist||[];if(!hs.length||J.prop)return true;var last=hs.pop();RD_PARTS.forEach(function(k){if(last.outs[k])J.pt.medium[k].out=last.outs[k]});rdLevelDone(J,'medium');rdJobSave();rdStatus();rdRvDraw();toast('Previous Medium version restored.');return true}
+  if(a==='rd-appr'){var I2=rdIssues();if(RD.busy||J.prop||I2.errs.length||(I2.left.length&&J.ackLeft!==rdMedSig(J)))return true;J.appr={sig:rdMedSig(J),ts:Date.now()};rdJobSave();rdStatus();rdRvDraw();toast('Medium approved. Generate Easy and Hard next, or add the lesson.');return true}
+  if(a==='rd-der'){if(!rdApproved()||RD.busy)return true;var ls=t.dataset.v==='both'?['easy','hard']:[t.dataset.v];
+    ls.forEach(function(l){if(!J.pt[l])return;J.der[l]=J.appr.sig;J.runs[l]=rdRid();RD_PARTS.forEach(function(k){J.pt[l][k]={st:'wait',n:0}});if(RD.lv)delete RD.lv[l]});
+    J.skip={};J.stop='';rdJobSave();rdRun();return true}
+  if(a==='rd-keep'){var l2=t.dataset.v;if(RD.lv&&RD.lv[l2]&&rdApproved()){RD.lv[l2].sig=rdMedSig(J);J.der[l2]=RD.lv[l2].sig;rdJobSave();rdStatus();rdRvDraw()}return true}
+  return false}
+document.addEventListener('input',function(e){var t=e.target;if(t&&t.id==='rdFb'){RV.fb=t.value;var b=document.querySelector('[data-act="rd-fb"]');if(b)b.disabled=!!(RD.busy||RV.busy)||!t.value.trim()}});
+document.addEventListener('change',function(e){var t=e.target;if(!t)return;if(t.id==='rdScope')RV.scope=t.value;
+  if(t.id==='rdAck'&&RD.job){RD.job.ackLeft=t.checked?rdMedSig(RD.job):'';rdJobSave();rdStatus();rdRvDraw()}});
 function rdRetry(){var J=RD.job;if(!J||RD.busy)return;var f=rdFails();if(!f.length)return;
   f.forEach(function(q){var x=J.pt[q[0]][q[1]];x.st='wait';x.n=0});J.skip={};J.stop='';rdRun()}
 // Upload JSON file / paste JSON (no AI call, nothing saved): one lesson (= Medium) or {medium, easy, hard}. Every version goes through
@@ -4901,7 +5034,7 @@ function rdGen(){
   if(wordCount(tx)<80){RD.bad=true;RD.msg='Paste the whole passage first (at least 80 words).';rdStatus();return}
   if(rdParas(tx).length<2){RD.bad=true;RD.msg='Leave a blank line between the paragraphs of the passage.';rdStatus();return}
   // a new run: the old preview, versions and errors go away (they belong to the previous attempt)
-  RD.job=rdJobNew(tx);RD.lv={};RD.imp=null;RD.tried=true;rdJobSave();CP.raw='';CP.last=null;parsed=null;CP.msg='';renderPrev();
+  RD.job=rdJobNew(tx);RD.lv={};RD.imp=null;RD.tried=true;RV.err='';RV.busy='';rdJobSave();CP.raw='';CP.last=null;parsed=null;CP.msg='';renderPrev();
   rdRun();
 }
 // demo: the sample lesson's own passage (its paragraphs, without the {{…}} marks)
@@ -5187,6 +5320,7 @@ document.addEventListener('click',function(e){
   if(a==='cp-slot'){CP.slot=+t.dataset.p;CP.msg='';renderSlotMap();cpWarnUpdate();var sb=$('#cpSlots [data-p="'+CP.slot+'"]');if(sb){try{sb.focus({preventScroll:true})}catch(x){}}return}
   if(a==='rd-gen')return rdGen();
   if(a==='rd-retry'){rdRetry();return true}
+  if(rdRvAct(a,t))return true; // Review Medium: rd-fb, rd-fix, rd-fixall, rd-pacc, rd-prej, rd-undo, rd-appr, rd-der, rd-keep
   if(a==='rd-copy')return rdCopy();
   if(a==='rd-check'){if(RD.busy)return true;var rj=$('#rdJson');RD.json=rj?rj.value:'';rdSave();if(!String(RD.json).trim()){RD.msg='Paste the JSON first.';RD.bad=true;rdStatus();return}rdImport(RD.json);var pv2=$('#createPrev');if(pv2&&pv2.scrollIntoView)pv2.scrollIntoView({block:'start'});return}
   if(a==='rd-file'){if(RD.busy)return true;var rf=$('#rdFile');if(rf){rf.value='';rf.click()}return true}
@@ -5225,13 +5359,13 @@ document.addEventListener('change',function(e){
   if(d.m){MK[d.m]=e.target.value;renderMark()}
   if(d.pk){AS.pk=AS.pk||{};AS.pk[d.pk]=e.target.value;if(d.pk==='book'){AS.pk.test='all'}renderAsg()}
   if(d.hw!==undefined){HWSEL[d.hw]=e.target.value;renderDash()}
-  if(d.adf){AD[d.adf]=e.target.value;var al=$('#adList');if(al)al.innerHTML=adListHTML()}
+  if(d.adf){AD[d.adf]=e.target.value;adListDraw()}
   if(d.gk){idsForKey(d.gk).forEach(function(i){AS.sel[i]=e.target.checked?1:0});$$('[data-ck]').forEach(function(c){c.checked=!!AS.sel[c.dataset.ck]});syncTree()}
   if(d.ck){AS.sel[d.ck]=e.target.checked?1:0;syncTree()}
 });
 document.addEventListener('input',function(e){
   if(e.target.id==='aRange'){var a=$('#aud');if(a)a.currentTime=+e.target.value}
-  if(e.target.id==='adQ'){AD.q=e.target.value;var al=$('#adList');if(al)al.innerHTML=adListHTML()}
+  if(e.target.id==='adQ'){AD.q=e.target.value;adListDraw()}
   if(e.target.dataset&&e.target.dataset.crit!==undefined){MK.wgt=true;updBand()}
   if(e.target.id==='fDd'){var nmI=$('#fNm'),dp=e.target.value.split('-');if(nmI&&dp.length===3)nmI.placeholder=asgName({due:new Date(+dp[0],+dp[1]-1,+dp[2]).getTime()})}
   if(e.target.id==='csColor'||e.target.id==='csName'){var pc=$('#csPrev');if(pc){var cc=$('#csColor').value;pc.querySelector('.covl').style.background=cc;pc.querySelector('.cn').textContent=$('#csName').value}}
@@ -6491,7 +6625,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-10-29c'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-10-29e'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(audAct(a,t))return true;
@@ -7050,6 +7184,7 @@ function parseReading(o){
       if(!str(x.en))bad(n+'missing "en" (English meaning).');
       return true;
     }).slice(0,6);
+    if(dropW.length&&W.length>=3)warn.push('Vocabulary: "'+dropW.join('", "')+'" '+(dropW.length>1?'were':'was')+' left out: not in the passage word for word.');
     if(W.length<3)bad('Guess the meaning needs at least 3 words from the passage'+(dropW.length?' ("'+dropW.join('", "')+'" '+(dropW.length>1?'are':'is')+' not in the passage)':'')+'. Press Try again.');
   }
   var Q=o.pairs,dropQ=[];
@@ -7066,6 +7201,7 @@ function parseReading(o){
       return true;
     });
     if(Q.length>6){warn.push('Paraphrases: '+Q.length+' items; only the first 6 are used.');Q=Q.slice(0,6)}
+    if(dropQ.length&&Q.length>=2)warn.push('Paraphrases: "'+dropQ.join('", "')+'" '+(dropQ.length>1?'were':'was')+' left out: not in the passage word for word.');
     if(Q.length<2)bad('The paraphrase stage needs at least 2 phrases copied from the passage'+(dropQ.length?' ("'+dropQ.join('", "')+'" '+(dropQ.length>1?'are':'is')+' not in the passage word for word)':'')+'. Press Try again.');
   }
   if(!str(o.pdist))bad('Missing "pdist" (the extra paraphrase).');
@@ -7782,7 +7918,7 @@ function adAiTestRun(){
     function(e){AT.busy=false;AT.res=null;AT.err=(e&&e.message)||'Something went wrong. Try again.';renderAdmin()});
 }
 function renderAdmin(){
-  var el=$('#v-admin');if(!U||!U.adm){el.innerHTML='';return}
+  adMenuClose(false);var el=$('#v-admin');if(!U||!U.adm){el.innerHTML='';return}
   var subs=[['guide','Guide'],['users','Users'],['teachers','Teachers'],['students','Students'],['sheet','Google Sheet'],['xp','XP'],['season','Season'],['aitest','AI test'],['me','My account']];
   var needList=AD.sub==='users'||AD.sub==='teachers';
   if(needList&&!AD.locked&&!AD.users&&!AD.loadErr)adLoad();
@@ -7850,10 +7986,11 @@ function adOpts(list,cur){return list.map(function(o){return '<option value="'+e
 function adUsersHTML(){
   var st=adListState();if(st)return st;
   var seen={},classes=[];AD.users.forEach(function(u){if(u.cls&&!seen[u.cls]){seen[u.cls]=1;classes.push(u.cls)}});classes.sort();
-  return '<div class="form-row" style="padding-block:0 14px"><label class="field" for="adQ">Search<input id="adQ" type="search" value="'+esc(AD.q)+'" placeholder="Name or email" autocomplete="off"></label>'+
+  return '<div class="adtool"><label class="field adq" for="adQ">Search<input id="adQ" type="search" value="'+esc(AD.q)+'" placeholder="Name or email" autocomplete="off"></label>'+
     '<label class="field" for="adRole">Role<select id="adRole" data-adf="role">'+adOpts([['all','Everyone'],['student','Students'],['teacher','Teachers']],AD.role)+'</select></label>'+
-    '<label class="field" for="adCls">Class<select id="adCls" data-adf="cls">'+adOpts([['all','All classes']].concat(classes.map(function(c){return [c,classTitle(c)]})),AD.cls)+'</select></label></div>'+
-    adTesterAddHTML()+'<div id="adList">'+adListHTML()+'</div>'+adOrphansHTML();
+    '<label class="field" for="adCls">Class<select id="adCls" data-adf="cls">'+adOpts([['all','All classes']].concat(classes.map(function(c){return [c,classTitle(c)]})),AD.cls)+'</select></label>'+
+    '<span class="adcount" id="adCount" role="status">'+esc(adCountText())+'</span></div>'+
+    '<div id="adList">'+adListHTML()+'</div><div class="adsec">'+adTesterAddHTML()+adOrphansHTML()+'</div>';
 }
 // Admin › Users: create a shadow tester account (a student login that is not in the Google Sheet and is hidden from class lists)
 // made-up history for a tester (same list as seedTester on the server)
@@ -7872,10 +8009,49 @@ function adOrphansHTML(){var O=AD.orph;
   return h+'</details>'}
 function adTesterAddHTML(){
   return '<details class="adm-tadd"><summary>Add a tester account</summary><p class="sub">A student account for testing: it can do homework, earn XP and see the student screens (with the Demo helper on every exercise), but it is hidden from Classes, Students, Dashboard and the Leaderboard, and it is not in the Google Sheet. A few sample results are added at once. Type the password here, never in the code.</p>'+
-    '<div class="adm-add"><label class="field" for="adTsName">Name<input id="adTsName" value="Tester" maxlength="80" autocomplete="off"></label><label class="field" for="adTsEm">Email<input id="adTsEm" type="email" autocomplete="off" spellcheck="false" placeholder="tester@gmail.com"></label>'+
-    '<label class="field" for="adTsCls">Class<input id="adTsCls" value="Test" maxlength="40" autocomplete="off"></label><label class="field" for="adTsPw">Password<input id="adTsPw" type="text" autocomplete="off" spellcheck="false" placeholder="At least 6 characters"></label>'+
-    '<button class="btn sm" type="button" data-act="ad-gen" data-for="adTsPw">Generate</button><button class="btn pri" type="button" data-act="ad-tester-create">Create tester</button></div></details>';
+    '<div class="adform adform-g adform-t"><label class="field" for="adTsName">Name<input id="adTsName" value="Tester" maxlength="80" autocomplete="off"></label><label class="field" for="adTsEm">Email<input id="adTsEm" type="email" autocomplete="off" spellcheck="false" placeholder="tester@gmail.com"></label>'+
+    '<label class="field" for="adTsCls">Class<input id="adTsCls" value="Test" maxlength="40" autocomplete="off"></label><div class="field adpwf"><label for="adTsPw">Password</label><div class="adpw"><input id="adTsPw" type="text" autocomplete="off" spellcheck="false" placeholder="At least 6 characters"><button class="btn" type="button" data-act="ad-gen" data-for="adTsPw">Generate</button></div></div>'+
+    '<button class="btn pri adform-go" type="button" data-act="ad-tester-create">Create tester</button></div></details>';
 }
+// "6 accounts" (the filtered number; "6 of 9 accounts" while a filter is on)
+function adCountText(){if(!AD.users)return '';var n=adFiltered().length,t=AD.users.length;return (n===t?t:n+' of '+t)+' account'+(t===1?'':'s')}
+function adListDraw(){var al=$('#adList');if(al)al.innerHTML=adListHTML();var ac=$('#adCount');if(ac)ac.textContent=adCountText();adMenuClose(false)}
+// ---------- one ⋯ menu per row (Users and Teachers). The menu lives in <body> (#adMenu, position fixed) so the table's scroll box never cuts it.
+// Its items are the same buttons as before (data-act ad-pw / ad-kick / ad-trm / ad-tseed / ad-on / ad-sub + data-email), handled by adAct as before.
+var ADM=null,ICO_DOTS='<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="19" cy="12" r="1.9"/></svg>';
+function adMenuItems(u,ctx){var I=[];if(!u)return I;
+  if(u.role==='admin')return ctx==='users'?[['ad-sub','My account',0,'me']]:[];
+  if(u.status==='moved')return I;
+  I.push(['ad-pw','Change password']);
+  if(ctx==='users'&&u.role==='student'&&u.tester)I.push(['ad-tseed','Add sample data']);
+  if(ctx==='users'&&(u.status==='paused'||u.status==='kicked'))I.push(['ad-on','Resume']);
+  if(ctx==='teachers'){if(u.status!=='paused')I.push(['ad-trm','Remove',1])}
+  else if(u.status!=='kicked')I.push(['ad-kick','Kick',1]);
+  return I}
+function adMenuBtn(u,ctx){if(!adMenuItems(u,ctx).length)return '<span class="muted adprot">'+(u.role==='admin'?'Protected':'—')+'</span>';
+  return '<button type="button" class="iconbtn admt" data-act="ad-menu" data-ctx="'+ctx+'" data-email="'+esc(u.email)+'" aria-haspopup="menu" aria-expanded="false" aria-label="Actions for '+esc(u.name||u.email)+'">'+ICO_DOTS+'</button>'}
+function adMenuClose(focus){if(!ADM)return;var m=document.getElementById('adMenu');if(m){if(m.remove)m.remove();else if(m.parentNode)m.parentNode.removeChild(m)}
+  if(ADM.btn){ADM.btn.setAttribute('aria-expanded','false');if(focus&&ADM.btn.focus)ADM.btn.focus()}ADM=null}
+function adMenuOpen(btn){var em=btn.dataset.email,ctx=btn.dataset.ctx||'users',u=(AD.users||[]).filter(function(x){return x.email===em})[0],I=adMenuItems(u,ctx);
+  adMenuClose(false);if(!I.length)return;
+  var m=document.createElement('div');m.id='adMenu';m.className='admenu';m.setAttribute('role','menu');m.setAttribute('aria-label','Actions for '+((u&&u.name)||em));
+  m.innerHTML=I.map(function(x){return '<button type="button" role="menuitem" class="admi'+(x[2]?' bad':'')+'" data-act="'+x[0]+'" data-email="'+esc(em)+'"'+(x[3]?' data-v="'+x[3]+'"':'')+'>'+esc(x[1])+'</button>'}).join('');
+  document.body.appendChild(m);ADM={btn:btn,email:em};btn.setAttribute('aria-expanded','true');
+  var r=btn.getBoundingClientRect(),w=m.offsetWidth||200,h=m.offsetHeight||(I.length*44+12),W=window.innerWidth||1280,H=window.innerHeight||800;
+  var left=Math.max(8,Math.min(r.right-w,W-w-8)),top=r.bottom+4;if(top+h>H-8)top=Math.max(8,r.top-h-4);
+  m.style.left=left+'px';m.style.top=top+'px';var f=m.querySelector('.admi');if(f&&f.focus)f.focus()}
+// closes on: choosing an item (after its handler ran), a click outside, Esc (focus back on ⋯), Tab, scrolling, resizing
+document.addEventListener('click',function(e){if(!ADM)return;var t=e.target;
+  if(t&&t.closest&&t.closest('[data-act="ad-menu"]'))return;
+  if(t&&t.closest&&t.closest('#adMenu')){setTimeout(function(){adMenuClose(false)},0);return}
+  adMenuClose(false)},true);
+document.addEventListener('keydown',function(e){if(!ADM)return;var m=document.getElementById('adMenu');if(!m)return;
+  var B=[].slice.call(m.querySelectorAll('.admi')),i=B.indexOf(document.activeElement);
+  if(e.key==='Escape'){e.preventDefault();e.stopPropagation();adMenuClose(true)}
+  else if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();var n=B.length;if(n)B[(i+(e.key==='ArrowDown'?1:n-1)+n)%n].focus()}
+  else if(e.key==='Home'||e.key==='End'){e.preventDefault();if(B.length)B[e.key==='Home'?0:B.length-1].focus()}
+  else if(e.key==='Tab')adMenuClose(false)},true);
+window.addEventListener('scroll',function(){if(ADM)adMenuClose(false)},true);window.addEventListener('resize',function(){if(ADM)adMenuClose(false)});
 function adFiltered(){
   var q=AD.q.trim().toLowerCase();
   return AD.users.filter(function(u){
@@ -7890,34 +8066,30 @@ function adRoleHTML(u){return u.role==='admin'?'<span class="pill acc">Admin</sp
 function adListHTML(){
   if(!AD.users)return '';
   var L=adFiltered();if(!L.length)return '<p class="saved">No one matches.</p>';
-  // server version: tells the admin whether the latest functions/ folder is deployed
-  var vr=' · app '+APP_VERSION+(DEMO?'':AD.ver?' · server '+esc(AD.ver):''),old=!DEMO&&!AD.ver?'<p class="banner" role="note">This site still runs an older server. Push the <b>functions/</b> folder to GitHub and wait for Cloudflare to finish deploying, otherwise Kick and Change password may not work.</p>':'';
-  return old+'<p class="saved" style="margin:0 0 8px">'+L.length+' of '+AD.users.length+' accounts'+vr+'</p><div class="scroll adt"><table><thead><tr><th>Name</th><th>Email</th><th>Class</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody>'+L.map(function(u){
-    var e=esc(u.email),acts='';
-    if(u.role==='admin')acts='<button class="btn sm" type="button" data-act="ad-sub" data-v="me">My account</button>';
-    else if(u.status!=='moved')acts='<button class="btn sm" type="button" data-act="ad-pw" data-email="'+e+'">Change password</button>'+
-      (u.role==='student'?''+(u.tester?'<button class="btn sm" type="button" data-act="ad-tseed" data-email="'+e+'" title="Adds a few made-up results and XP so the student screens have something to show">Add sample data</button>':'')+'':'')+
-      ((u.status==='paused'||u.status==='kicked')?'<button class="btn sm" type="button" data-act="ad-on" data-email="'+e+'">Resume</button>':'')+
-      (u.status!=='kicked'?'<button class="btn sm bad" type="button" data-act="ad-kick" data-email="'+e+'">Kick</button>':'');
-    return '<tr><td data-l="Name"><b>'+esc(u.name||'—')+'</b>'+(u.src==='env'&&u.role==='teacher'?'<small>Listed in Cloudflare (TEACHERS)</small>':'')+'</td>'+
-      '<td data-l="Email" class="mono" style="font-size:.82rem">'+e+'</td>'+
-      '<td data-l="Class">'+(u.cls?esc(classTitle(u.cls))+(u.course?'<small>'+esc(u.course)+'</small>':''):'—')+'</td>'+
-      '<td data-l="Role">'+adRoleHTML(u)+'</td><td data-l="Status">'+adStatusHTML(u)+'</td>'+
-      '<td data-l="Actions"><div class="acts">'+acts+'</div></td></tr>'}).join('')+'</tbody></table></div>';
+  // the version numbers moved to Admin › My account (Diagnostics); the warning about an old server stays
+  var old=!DEMO&&!AD.ver?'<p class="banner" role="note">This site still runs an older server. Push the <b>functions/</b> folder to GitHub and wait for Cloudflare to finish deploying, otherwise Kick and Change password may not work.</p>':'';
+  return old+'<div class="scroll adt"><table class="adtbl"><thead><tr><th class="c-nm">Name</th><th class="c-em">Email</th><th class="c-sm">Class</th><th class="c-sm">Role</th><th class="c-sm">Status</th><th class="c-ac"><span class="sr">Actions</span></th></tr></thead><tbody>'+L.map(function(u){
+    var e=esc(u.email);
+    return '<tr><td data-l="Name" class="c-nm"><b>'+esc(u.name||'—')+'</b>'+(u.src==='env'&&u.role==='teacher'?'<small>Listed in Cloudflare (TEACHERS)</small>':'')+'</td>'+
+      '<td data-l="Email" class="c-em mono">'+e+'</td>'+
+      '<td data-l="Class" class="c-sm">'+(u.cls?esc(classTitle(u.cls))+(u.course?'<small>'+esc(u.course)+'</small>':''):'—')+'</td>'+
+      '<td data-l="Role" class="c-sm">'+adRoleHTML(u)+'</td><td data-l="Status" class="c-sm">'+adStatusHTML(u)+'</td>'+
+      '<td data-l="Actions" class="c-ac">'+adMenuBtn(u,'users')+'</td></tr>'}).join('')+'</tbody></table></div>';
 }
 function adTeachersHTML(){
-  var h='<div class="adm-add"><label class="field" for="adTcName">Name<input id="adTcName" type="text" maxlength="80" autocomplete="off"></label>'+
+  var h='<section class="adform" aria-labelledby="adTcH"><h3 id="adTcH">Add a teacher</h3><div class="adform-g">'+
+    '<label class="field" for="adTcName">Name<input id="adTcName" type="text" maxlength="80" autocomplete="off"></label>'+
     '<label class="field" for="adTcEmail">Email<input id="adTcEmail" type="email" maxlength="160" autocomplete="off" placeholder="teacher@example.com"></label>'+
-    '<label class="field" for="adTcPw">Password<input id="adTcPw" type="text" autocomplete="off" spellcheck="false" placeholder="At least 6 characters"></label>'+
-    '<button class="btn sm" type="button" data-act="ad-gen" data-for="adTcPw">Generate</button><button class="btn pri" type="button" data-act="ad-teacher-add">Add teacher</button></div>'+
-    '<p class="saved" style="margin:-8px 0 16px">Give the email and password to the teacher. They use “Teacher sign in” on the sign-in page. Teachers cannot create their own password.</p>';
+    '<div class="field adpwf"><label for="adTcPw">Password</label><div class="adpw"><input id="adTcPw" type="text" autocomplete="off" spellcheck="false" placeholder="At least 6 characters"><button class="btn" type="button" data-act="ad-gen" data-for="adTcPw">Generate</button></div></div>'+
+    '<button class="btn pri adform-go" type="button" data-act="ad-teacher-add">Add teacher</button></div>'+
+    '<p class="adform-n">Give the email and password to the teacher. They use “Teacher sign in”; teachers cannot create their own password.</p></section>';
   var st=adListState();if(st)return h+st;
   var T=AD.users.filter(function(u){return u.role!=='student'});
-  return h+'<div class="scroll adt"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody>'+T.map(function(u){
+  return h+'<div class="scroll adt"><table class="adtbl"><thead><tr><th class="c-nm">Name</th><th class="c-em">Email</th><th class="c-sm">Role</th><th class="c-sm">Status</th><th class="c-ac"><span class="sr">Actions</span></th></tr></thead><tbody>'+T.map(function(u){
     var e=esc(u.email);
-    return '<tr><td data-l="Name"><b>'+esc(u.name||'—')+'</b>'+(u.src==='env'&&u.role==='teacher'?'<small>Listed in Cloudflare (TEACHERS)</small>':'')+'</td>'+
-      '<td data-l="Email" class="mono" style="font-size:.82rem">'+e+'</td><td data-l="Role">'+adRoleHTML(u)+'</td><td data-l="Status">'+adStatusHTML(u)+'</td>'+
-      '<td data-l="Actions"><div class="acts">'+(u.role==='admin'?'<span class="muted">—</span>':'<button class="btn sm" type="button" data-act="ad-pw" data-email="'+e+'">Change password</button>'+(u.status==='paused'?'':'<button class="btn sm bad" type="button" data-act="ad-trm" data-email="'+e+'">Remove</button>'))+'</div></td></tr>'}).join('')+'</tbody></table></div>';
+    return '<tr><td data-l="Name" class="c-nm"><b>'+esc(u.name||'—')+'</b>'+(u.src==='env'&&u.role==='teacher'?'<small>Listed in Cloudflare (TEACHERS)</small>':'')+'</td>'+
+      '<td data-l="Email" class="c-em mono">'+e+'</td><td data-l="Role" class="c-sm">'+adRoleHTML(u)+'</td><td data-l="Status" class="c-sm">'+adStatusHTML(u)+'</td>'+
+      '<td data-l="Actions" class="c-ac">'+adMenuBtn(u,'teachers')+'</td></tr>'}).join('')+'</tbody></table></div>';
 }
 /* Admin › Season: show the season, preview the reset, start a new one (POST /api/admin/season). */
 var SEA={prev:null,err:'',busy:false};
@@ -7954,7 +8126,8 @@ function adSeasonStart(){
   renderAdmin();var si=$('#seaId');if(si)si.focus();
 }
 function adMeHTML(){
-  return '<div class="sec" style="max-width:720px"><h3>Change my password</h3><p class="sub">Signed in as <b>'+esc(U.email)+'</b>. After this, sign in with the new password. ADMIN_PASSWORD on Cloudflare is only used for the very first sign-in.</p>'+
+  return '<div class="sec" style="max-width:720px"><h3>Diagnostics</h3><p class="sub mono" id="adVer">app '+esc(APP_VERSION)+(DEMO?' · demo':' · server '+esc(AD.ver||'unknown (older server or list not loaded yet)'))+'</p></div>'+
+    '<div class="sec" style="max-width:720px"><h3>Change my password</h3><p class="sub">Signed in as <b>'+esc(U.email)+'</b>. After this, sign in with the new password. ADMIN_PASSWORD on Cloudflare is only used for the very first sign-in.</p>'+
     '<div class="form-row" style="padding-block:8px"><label class="field" for="pwOld">Current password<input type="password" id="pwOld" autocomplete="current-password"></label>'+
     '<label class="field" for="pwNew">New password<input type="password" id="pwNew" autocomplete="new-password" placeholder="At least 6 characters"></label>'+
     '<label class="field" for="pwNew2">New password again<input type="password" id="pwNew2" autocomplete="new-password"></label></div>'+
@@ -7982,6 +8155,7 @@ function adModalCheck(){var m0=AD.modal;setTimeout(function(){if(!m0||AD.modal!=
 function adAct(a,t){
   if(a.indexOf('ad-')!==0)return false;
   var who=t.dataset.email||'',u=adUser(who),nm=u.name||who;
+  if(a==='ad-menu'){if(ADM&&ADM.btn===t)adMenuClose(true);else adMenuOpen(t);return true}
   if(a==='ad-sub'){if(AD.sub==='aitest'){var atx=$('#atText'),atk=$('#atTask');if(atx)AT.text=atx.value;if(atk)AT.task=atk.value}AD.sub=t.dataset.v;AD.err='';renderAdmin();return true}
   if(a==='ad-aitest'){adAiTestRun();return true}
   if(a==='ad-sea-prev'){SEA.busy=true;SEA.err='';renderAdmin();adminApi('admin/season',{op:'preview'}).then(function(d){SEA.busy=false;SEA.prev=d;renderAdmin()},function(e){SEA.busy=false;SEA.err=e.message;renderAdmin()});return true}

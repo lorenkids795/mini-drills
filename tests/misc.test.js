@@ -29,7 +29,7 @@ const SRV = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 
   await t('Admin › Users: no "Edit class" button any more (other buttons stay)', () => {
     const B = boot({ hooks: 'get AD(){return AD},renderAdmin:renderAdmin' }); const AD = B.T.AD; AD.sub = 'users'; AD.locked = false; AD.ver = 'x';
     AD.users = [{ email: 'k@x.com', name: 'K', role: 'student', cls: '17h', status: 'active', hasPassword: true }]; B.T.showTab('admin'); const v = B.el('v-admin').innerHTML;
-    assert.ok(!v.includes('data-act="ad-cls"') && !/Edit class/.test(v)); assert.ok(v.includes('data-act="ad-pw"') && v.includes('data-act="ad-kick"'));
+    assert.ok(!v.includes('data-act="ad-cls"') && !/Edit class/.test(v)); assert.ok(v.includes('data-act="ad-menu"'), 'actions are in the ⋯ menu (Change password, Kick: tests/admin-kick.test.js)');
   });
   // server seedTester with a fake Firestore
   const seedBoot = (DB) => {

@@ -7,7 +7,7 @@ const { boot, ROOT } = require('./app-harness.js');
 let pass = 0, fail = 0; const out = [];
 async function t(name, fn) { try { await fn(); pass++; out.push('PASS ' + name); } catch (e) { fail++; out.push('FAIL ' + name + ' -> ' + e.message); } }
 const HOOKS = 'get RD(){return RD},get CP(){return CP},rdGen:rdGen,rdRetry:rdRetry,rdLvHTML:rdLvHTML,rdLevels:rdLevels,cpValid:cpValid,cpAddBarHTML:cpAddBarHTML,' +
-  'EXAMPLE_R:EXAMPLE_R,rdBuildDemoTx:rdBuildDemoTx,parseReading:parseReading,rdApply:rdApply,get parsed(){return parsed},rdBlame:rdBlame,rdJobRestore:rdJobRestore';
+  'EXAMPLE_R:EXAMPLE_R,rdBuildDemoTx:rdBuildDemoTx,parseReading:parseReading,rdApply:rdApply,get parsed(){return parsed},rdBlame:rdBlame,rdJobRestore:rdJobRestore,rdRvAct:rdRvAct,rdApproved:rdApproved,rdRvHTML:rdRvHTML,rdIssues:rdIssues,cpOk:cpOk,rdOutdated:rdOutdated,rdMedSig:rdMedSig,get RV(){return RV}';
 const PARTS = { deep: ['deep'], vocab: ['title', 'prons', 'words'], output: ['pairs', 'pdist', 'cloze', 'wprompt', 'wguide'] };
 const clone = (o) => JSON.parse(JSON.stringify(o));
 
@@ -24,7 +24,13 @@ function app(answer) {
   };
   return { B, seen, ex, good };
 }
-const run = async (A) => { A.B.T.rdGen(); for (let i = 0; i < 40 && A.B.T.RD.busy; i++) await A.B.flush(); assert.ok(!A.B.T.RD.busy, 'job still running'); };
+const settle = async (A) => { for (let i = 0; i < 60 && (A.B.T.RD.busy || A.B.T.RV.busy); i++) await A.B.flush(); assert.ok(!A.B.T.RD.busy && !A.B.T.RV.busy, 'job still running'); };
+const act = (A, a, ds) => A.B.T.rdRvAct(a, { dataset: ds || {}, checked: true });
+// the whole teacher flow: Generate (Medium only) → Approve Medium → Generate Easy and Hard. medOnly: stop after Medium.
+const run = async (A, medOnly) => { A.B.T.rdGen(); await settle(A); if (medOnly || !A.B.T.cpOk() || !A.B.T.RD.job) return;
+  const J = A.B.T.RD.job, I = A.B.T.rdIssues(); if (I.errs.length) return; if (I.left.length) J.ackLeft = sigOf(A); // = ticking "Keep the lesson without…"
+  act(A, 'rd-appr'); act(A, 'rd-der', { v: 'both' }); await settle(A); };
+const sigOf = (A) => A.B.T.rdMedSig(A.B.T.RD.job);
 const st = (A, l, k) => A.B.T.RD.job.pt[l][k].st;
 
 // server: real aiReadingPart with a fake Gemini
@@ -84,11 +90,12 @@ const LONG = (() => { const w = 'Laughter is one of the oldest signals humans sh
   await t('app: Generate = 9 real requests in order (Medium, Easy, Hard x 3 parts); passage unchanged in every version; Add on at the end', async () => {
     const A = app(); await run(A);
     assert.deepStrictEqual(A.seen.map((b) => b.level + ':' + b.part), ['medium:deep', 'medium:vocab', 'medium:output', 'easy:deep', 'easy:vocab', 'easy:output', 'hard:deep', 'hard:vocab', 'hard:output']);
-    assert.ok(A.seen.every((b) => b.passage === A.B.T.RD.tx && b.run === A.seen[0].run), 'same passage + run id for every part');
+    assert.ok(A.seen.every((b) => b.passage === A.B.T.RD.tx), 'same passage for every part'); ['medium', 'easy', 'hard'].forEach((l) => { const R = A.seen.filter((b) => b.level === l); assert.ok(R.every((b) => b.run === R[0].run), l + ': one run id'); });
+    assert.ok(A.seen.filter((b) => b.level !== 'medium').every((b) => b.base && typeof b.base === 'object'), 'Easy / Hard are written from the approved Medium part');
     const tx = A.B.T.RD.tx.split(/\n\s*\n/), strip = (x) => x.replace(/\{\{|\}\}/g, '');
     const lv = A.B.T.rdLevels(); assert.ok(lv && lv.easy && lv.hard);
     [A.B.T.parsed.rlesson, lv.easy, lv.hard].forEach((rl) => assert.strictEqual(JSON.stringify(rl.paras.map(strip)), JSON.stringify(tx)));
-    assert.ok(A.B.T.cpValid()); assert.ok(/Done: Medium, Easy, Hard/.test(A.B.T.RD.msg)); assert.ok(!/Retry failed part/.test(A.B.T.rdLvHTML()));
+    assert.ok(A.B.T.cpValid()); assert.ok(/Ready: Medium, Easy, Hard/.test(A.B.T.RD.msg)); assert.ok(!/Retry failed part/.test(A.B.T.rdLvHTML()));
     assert.ok(A.seen.find((b) => b.part === 'output').words.length >= 3, 'vocab words are passed to the output part');
   });
   await t('app: Add stays off while parts are being written', async () => {
@@ -106,7 +113,7 @@ const LONG = (() => { const w = 'Laughter is one of the oldest signals humans sh
     assert.ok(/Not finished: Easy · Paraphrases \+ Output/.test(A.B.T.RD.msg));
     const before = A.seen.length; cut = false; A.B.T.rdRetry(); for (let i = 0; i < 20 && A.B.T.RD.busy; i++) await A.B.flush();
     assert.deepStrictEqual(A.seen.slice(before).map((b) => b.level + ':' + b.part), ['easy:output']);
-    assert.ok(A.B.T.rdLevels().easy && /Done: Medium, Easy, Hard/.test(A.B.T.RD.msg));
+    assert.ok(A.B.T.rdLevels().easy && /Ready: Medium, Easy, Hard/.test(A.B.T.RD.msg));
   });
   await t('app: invalid "pairs" (0 / 1 / 7 items) — nothing broken is used; exact item-level message; 7 → first 6 with a note', async () => {
     for (const n of [0, 1]) {
@@ -139,7 +146,7 @@ const LONG = (() => { const w = 'Laughter is one of the oldest signals humans sh
     assert.ok(R.B.T.cpValid(), 'Medium back in the preview'); assert.ok(R.B.T.rdLevels().easy && !R.B.T.rdLevels().hard); assert.strictEqual(R.seen.length, 0, 'no AI call on reload');
     cut = false; R.B.T.rdRetry(); for (let i = 0; i < 20 && R.B.T.RD.busy; i++) await R.B.flush();
     assert.deepStrictEqual(R.seen.map((b) => b.level + ':' + b.part), ['hard:vocab', 'hard:output']); assert.ok(R.B.T.rdLevels().hard);
-    assert.strictEqual(R.seen[0].run, JSON.parse(saved).run, 'same run: the daily limit is not counted again');
+    assert.strictEqual(R.seen[0].run, JSON.parse(saved).runs.hard, 'same run: the daily limit is not counted again');
     const X = app(); X.B.W.localStorage.setItem('md-rdjob', saved); X.B.T.RD.tx = 'another passage'; X.B.T.rdJobRestore(); assert.ok(!X.B.T.RD.job, 'a different passage never gets old parts');
   });
   await t('relay: a passing relay failure (timeout / busy / HTML error) is retried by itself; only a setup problem stops the job', async () => {

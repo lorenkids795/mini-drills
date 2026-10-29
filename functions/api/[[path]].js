@@ -898,7 +898,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-10-29c';
+const API_VERSION = '2026-10-29d';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -1906,7 +1906,15 @@ async function aiReadingPart(env, em, body, passage, title, P) {
   await bump(env, rKey, 86400);
   await env.MD_KV.put(lKey, 'pending:' + Date.now(), { expirationTtl: 600 });
   const hint = part === 'output' && Array.isArray(body.words) ? body.words.filter((w) => typeof w === 'string' && w.trim()).slice(0, 6).map((w) => w.trim().slice(0, 40)) : [];
-  const full = def.prompt + '\n' + READING_LEVELS[level] + '\n' + (title ? 'TITLE: ' + title + '\n\n' : '') +
+  let baseTxt = '';
+  if (level !== 'medium' && body.base && typeof body.base === 'object') {
+    const bj = JSON.stringify(body.base);
+    if (bj.length > 40000) { await env.MD_KV.delete(lKey); return fail('The approved Medium part is too big to send (40,000 characters at most).', 413); }
+    baseTxt = 'APPROVED MEDIUM VERSION OF THIS PART (the teacher checked and approved it):\n' + bj + '\n' +
+      'Write the ' + level.toUpperCase() + ' version FROM it: keep the same exercise types, the same paragraphs and the same learning goals; ' +
+      'change the wording, the number of items and the difficulty only as the VERSION note says. Every answer must still be correct and come from the passage.\n\n';
+  }
+  const full = def.prompt + '\n' + READING_LEVELS[level] + '\n' + baseTxt + (title ? 'TITLE: ' + title + '\n\n' : '') +
     (hint.length ? 'Words of this lesson (reuse them in the cloze when you can): ' + hint.join(', ') + '.\n\n' : '') +
     'The passage has ' + P.length + ' paragraphs ([P1] to [P' + P.length + ']). Use only these paragraph ids and numbers.\n\nPASSAGE:\n' + P.map((t, i) => '[P' + (i + 1) + '] ' + t).join('\n\n');
   let g;
@@ -1927,11 +1935,59 @@ async function aiReadingPart(env, em, body, passage, title, P) {
     console.log('[ai] reading part shape', level, part, bad.join(' | '));
     return json({ error: bad.join(' ') + ' Press Retry failed part.', code: 'shape', problems: bad }, 502);
   }
+  return json({ part, level, out: partOut(part, o, title), model: g.model, paras: P.length });
+}
+// only the fields of that part go back to the app
+function partOut(part, o, title) {
   const res = {};
-  def.keys.forEach((k) => { if (o[k] !== undefined) res[k] = o[k]; });
+  R_PARTS[part].keys.forEach((k) => { if (o[k] !== undefined) res[k] = o[k]; });
   if (part === 'deep') res.deep = { passage_id: o.deep.passage_id, entities: o.deep.entities, exercises: o.deep.exercises }; // no notes, no ordering
   if (part === 'vocab' && title) res.title = title;
-  return json({ part, level, out: res, model: g.model, paras: P.length });
+  return res;
+}
+// Teacher review (Create › Reading › Review Medium): { op:'revise', part, current, feedback?, issues?[] } -> the same part, revised.
+// The AI gets the current part JSON + the passage + the teacher's words and/or the exact check problems, and must change only what is asked.
+// Nothing is saved: the app shows the proposal, checks it again and the teacher accepts or rejects it. 60 revisions a day (ailv:), apart from the 30 lesson runs.
+async function aiReadingRevise(env, em, body, passage, title, P) {
+  const part = body.part, def = R_PARTS[part];
+  if (!def) return fail('Unknown part of the lesson.');
+  const cur = body.current;
+  if (!cur || typeof cur !== 'object' || Array.isArray(cur)) return fail('There is nothing to revise yet.');
+  const cj = JSON.stringify(cur);
+  if (cj.length > 40000) return fail('This part is too big to revise (40,000 characters at most).', 413);
+  const fb = String(body.feedback || '').replace(/\r\n?/g, '\n').trim().slice(0, 2000);
+  const iss = (Array.isArray(body.issues) ? body.issues : []).filter((s) => typeof s === 'string' && s.trim()).slice(0, 12).map((s) => s.trim().slice(0, 400));
+  if (!fb && !iss.length) return fail('Write what the AI should change first.');
+  const day = dayOf(body.tzo).day, qKey = 'ailv:' + em + ':' + day;
+  if ((await count(env, qKey)) >= 60) return json({ error: "You have used today's 60 AI revisions. Try again tomorrow.", code: 'quota' }, 429);
+  const lKey = 'ailk:' + em + ':rev:' + part, lock = String((await env.MD_KV.get(lKey)) || '');
+  if (/^pending/.test(lock) && Date.now() - Number(lock.split(':')[1] || 0) < 360000) return json({ error: 'This part is already being revised. Wait for it to finish.', code: 'dup' }, 409);
+  await bump(env, qKey, 172800);
+  await env.MD_KV.put(lKey, 'pending:' + Date.now(), { expirationTtl: 600 });
+  const full = def.prompt + '\n' + READING_LEVELS.medium + '\n' +
+    'REVISION TASK: below is the CURRENT version of this part (JSON). Change ONLY what the teacher asks for and what the listed problems need. ' +
+    'Keep every other item exactly as it is (same order, same wording, same answers). Make the smallest change that works: a fixed answer must still be correct, ' +
+    'still answer its question, and still be copied word for word from the passage within the word limit (never just cut a right answer into a wrong one). ' +
+    'The teacher may write in Vietnamese or English; the lesson stays in English. Return the WHOLE part in the shape above.\n' +
+    (fb ? 'TEACHER REQUEST:\n' + fb + '\n' : '') + (iss.length ? 'PROBLEMS FOUND BY THE APP\'S CHECK:\n' + iss.map((s) => '- ' + s).join('\n') + '\n' : '') +
+    'CURRENT:\n' + cj + '\n\n' + (title ? 'TITLE: ' + title + '\n\n' : '') +
+    'The passage has ' + P.length + ' paragraphs ([P1] to [P' + P.length + ']). Use only these paragraph ids and numbers.\n\nPASSAGE:\n' + P.map((t, i) => '[P' + (i + 1) + '] ' + t).join('\n\n');
+  let g;
+  try {
+    g = await askGemini(env, full, def.schema, '', AI_TIMEOUT);
+  } catch (e) {
+    await env.MD_KV.delete(lKey);
+    const c = e.code || 'server';
+    console.log('[ai] reading revise failed', part, c, String(e.detail || e.message || '').slice(0, 300));
+    const why = AI_WHY_READ[c] || AI_WHY[c] || AI_WHY[c.replace(/\d+$/, (n) => n[0] + 'xx')] || 'Try again.';
+    const det = /^relay/.test(c) ? String(e.detail || '').replace(/key=[^&\s]+/gi, 'key=…').slice(0, 160) : '';
+    return json({ error: 'The AI could not revise this part (code: ' + c + '). ' + why + (det ? ' Details: ' + det : ''), code: c }, 502);
+  }
+  await env.MD_KV.delete(lKey);
+  const o = g.out && typeof g.out === 'object' ? g.out : {};
+  const bad = partProblems(part, o, P.length);
+  if (bad.length) return json({ error: 'The AI revision is incomplete: ' + bad.join(' ') + ' Try again.', code: 'shape', problems: bad }, 502);
+  return json({ part, out: partOut(part, o, title), model: g.model });
 }
 // Copy prompt (Create › Reading › Advanced): one file with the 3 versions { "medium": lesson, "easy": lesson, "hard": lesson }, for Upload JSON file
 function readingPrompt3() {
@@ -1952,6 +2008,7 @@ async function aiReading(env, request, body) {
   if (words < 80) return fail('Paste the whole passage first (at least 80 words).');
   if (passage.length > 12000) return fail('The passage is too long (12,000 characters at most).');
   if (P.length < 2) return fail('Leave a blank line between the paragraphs of the passage (at least 2 paragraphs).');
+  if (body.op === 'revise') return aiReadingRevise(env, em, body, passage, title, P);
   if (R_PARTS[body.part]) return aiReadingPart(env, em, body, passage, title, P);
   const qKey = 'ail:' + em + ':' + dayOf(body.tzo).day;
   if ((await count(env, qKey)) >= 30) return fail('You have used today\'s 30 AI lesson runs. Try again tomorrow.', 429);

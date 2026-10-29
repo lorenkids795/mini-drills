@@ -560,5 +560,15 @@ Deploy `index.html`, `md-backend.js`, `functions/` (Users phải ghi "app 2026-1
 4. [ ] Giáo viên mới: Admin › Teachers › Add teacher (hoặc Users › Change password) → giáo viên đăng nhập được.
 5. [ ] Create › Reading › Generate với bài dài: nếu một phần báo relay, dòng lỗi có "(code: relay_busy)" + "Details: …" và phần đó được tự gửi lại; nếu vẫn lỗi → Retry failed part. Chụp lại dòng Details nếu còn lỗi.
 
+## Admin Users / Teachers + Review Medium (10/2026)
+Deploy `index.html` + `functions/` (Admin › My account › Diagnostics phải ghi "app 2026-10-29e · server 2026-10-29d").
+1. [ ] Admin › Users: thanh Search · Role · Class · "N accounts" (đổi khi lọc); mỗi dòng một ⋯. Admin: chỉ "My account". Giáo viên / học sinh: Change password, Kick (đỏ). Tester: thêm Add sample data. Kick vẫn hỏi xác nhận rồi mới xóa. Không còn chữ "app … · server …" ở trang này.
+2. [ ] Menu ⋯: bấm ngoài / Esc đóng; mũi tên lên xuống chọn mục; dòng cuối bảng thì menu lật lên, không bị cắt; điện thoại ⋯ ở góc phải mỗi thẻ.
+3. [ ] Admin › Teachers: thẻ "Add a teacher" (Generate nằm cạnh ô Password) → Add teacher chạy như cũ; mỗi giáo viên một ⋯ (Change password, Remove đỏ); dòng Admin ghi "Protected".
+4. [ ] Create › Reading › Generate: chỉ tạo Medium; bảng **Review Medium** ở đầu preview (vẫn thấy khi Hide editor); Add mờ "Approve Medium first".
+5. [ ] Gõ góp ý (vd. "Make Question 2 clearer and keep the answer within two words") → Apply feedback with AI → thấy danh sách thay đổi → Accept (preview đổi) hoặc Reject (không đổi); Undo trở lại bản trước.
+6. [ ] Mục "Completion … was left out: … more than 2 words" → Fix with AI → "Fixed: …" → Accept → mục trở lại; nếu AI không sửa được: "Still a problem", Accept mờ.
+7. [ ] Approve Medium → Generate Easy / Hard (riêng hoặc cả hai) → Ready; sửa Medium sau đó → Easy/Hard "Outdated" + phải duyệt lại; Generate again hoặc Keep this version → Add → bài trong Library có đúng các bản đã duyệt.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

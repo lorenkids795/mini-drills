@@ -11,7 +11,7 @@ const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const a0 = html.indexOf("<script>\n(function(){"), b0 = html.indexOf('</script>', a0);
 let SRC = html.slice(a0 + 8, b0);
 const END = SRC.lastIndexOf('})();');
-SRC = SRC.slice(0, END) + ';window.__T={get AD(){return AD},setU:function(u){U=u},renderAdmin:renderAdmin,showTab:showTab,get AG(){return AG},setRoster:function(r){rosterDocs=r},renderAsg:renderAsg,renderPrize:renderPrize,prizeList:prizeList,imgMap:imgMap,setRFV:function(v){RFV=v},clsStatus:clsStatus,classListAll:classListAll,setLocalImg:function(k,v){localImg[k]=v}};\n' + SRC.slice(END);
+SRC = SRC.slice(0, END) + ';window.__T={get AD(){return AD},get ADM(){return ADM},setU:function(u){U=u},renderAdmin:renderAdmin,showTab:showTab,get AG(){return AG},setRoster:function(r){rosterDocs=r},renderAsg:renderAsg,renderPrize:renderPrize,prizeList:prizeList,imgMap:imgMap,setRFV:function(v){RFV=v},clsStatus:clsStatus,classListAll:classListAll,setLocalImg:function(k,v){localImg[k]=v}};\n' + SRC.slice(END);
 
 const STATIC_IDS = new Set((html.slice(0, a0).match(/id="([\w-]+)"/g) || []).map((m) => m.slice(4, -1)));
 const USERS = () => [
@@ -72,10 +72,27 @@ function boot(opt) {
 const kicks = (B) => B.W.calls.filter((c) => /\/api\/admin\/kick$/.test(c.url));
 
 (async () => {
-  await t('Users list renders a Kick button for each non-admin account (data-email escaped)', () => {
+  await t('Users: one ⋯ menu per row (no exposed action buttons); each menu holds only the actions of that account; admin has My account only, never Kick', () => {
     const B = boot(); const v = B.view();
-    assert.strictEqual((v.match(/data-act="ad-kick"/g) || []).length, 4); assert.ok(v.includes('data-act="ad-kick" data-email="3667@gmail.com"'));
-    assert.ok(!/data-act="ad-kick" data-email="lorenkids795/.test(v), 'admin must have no Kick');
+    assert.strictEqual((v.match(/data-act="ad-kick"/g) || []).length, 0, 'no inline Kick'); assert.strictEqual((v.match(/data-act="ad-menu"/g) || []).length, B.AD.users.length);
+    assert.ok(/aria-haspopup="menu" aria-expanded="false" aria-label="Actions for /.test(v));
+    const menu = (em) => { B.press({ act: 'ad-menu', email: em, ctx: 'users' }); return B.el('adMenu').innerHTML; };
+    let m = menu('3667@gmail.com'); assert.ok(m.includes('data-act="ad-pw" data-email="3667@gmail.com"') && m.includes('class="admi bad" data-act="ad-kick" data-email="3667@gmail.com"') && /role="menuitem"/.test(m));
+    m = menu('lorenkids795@gmail.com'); assert.ok(m.includes('data-act="ad-sub"') && m.includes('>My account<') && !m.includes('ad-kick') && !m.includes('ad-pw'), 'admin: My account only');
+    B.key('Escape'); assert.strictEqual(B.T.ADM, null, 'Esc closes');
+  });
+  await t('Users: choosing Kick in the menu runs the same confirm + POST /api/admin/kick as before', async () => {
+    const B = boot({ visible: true }); B.press({ act: 'ad-menu', email: '3667@gmail.com', ctx: 'users' }); B.press({ act: 'ad-kick', email: '3667@gmail.com' });
+    assert.ok(/Kick this student\?/.test(B.modal())); B.press({ act: 'ad-ok' }); await B.flush();
+    assert.strictEqual(B.W.calls.filter((c) => /admin\/kick$/.test(c.url)).length, 1);
+  });
+  await t('Teachers: form card (Generate next to Password), ⋯ menu with Change password + Remove; the admin row is "Protected" with no menu', () => {
+    const B = boot(); B.AD.sub = 'teachers'; B.T.renderAdmin(); const v = B.view();
+    assert.ok(/class="adform"[\s\S]*<div class="adpw"><input id="adTcPw"[^>]*><button class="btn" type="button" data-act="ad-gen" data-for="adTcPw">Generate<\/button>/.test(v) && v.includes('data-act="ad-teacher-add"'));
+    assert.ok(!/data-act="ad-trm"/.test(v) && !/data-act="ad-pw"/.test(v), 'no inline buttons'); assert.ok(/class="muted adprot">Protected</.test(v));
+    assert.ok(!/data-act="ad-menu" data-ctx="teachers" data-email="lorenkids795/.test(v), 'no menu for the admin');
+    const T1 = B.AD.users.filter((u) => u.role === 'teacher')[0]; B.press({ act: 'ad-menu', email: T1.email, ctx: 'teachers' }); const m = B.el('adMenu').innerHTML;
+    assert.ok(m.includes('data-act="ad-pw"') && m.includes('class="admi bad" data-act="ad-trm"') && !m.includes('ad-kick'));
   });
   await t('Kick opens the confirm box with the right name and email', () => {
     const B = boot(); B.press({ act: 'ad-kick', email: '3667@gmail.com' });
@@ -227,6 +244,7 @@ const kicks = (B) => B.W.calls.filter((c) => /\/api\/admin\/kick$/.test(c.url));
   await t('Edit class opens its box', () => { const B = boot(); B.press({ act: 'ad-cls', email: 'nghiatucayfai@gmail.com' }); assert.ok(B.AD.modal && /Edit class/.test(B.AD.modal.title)); });
   await t('Resume sends admin/active', async () => { const B = boot(); B.AD.users[4].status = 'paused'; B.W.calls.length = 0; B.press({ act: 'ad-on', email: 'nghiatucayfai@gmail.com' }); await B.flush(); assert.ok(B.W.calls.some((c) => /admin\/active$/.test(c.url))); });
   await t('Teachers and My account tabs render', () => { const B = boot(); B.press({ act: 'ad-sub', v: 'teachers' }); assert.ok(B.view().length > 100); B.press({ act: 'ad-sub', v: 'me' }); assert.ok(B.view().length > 100); });
-  await t('Users shows the app version next to the server version', () => { const B = boot(); assert.ok(/ · app \d{4}-\d\d-\d\d\w? · server 2026-10-23d/.test(B.view())); });
+  await t('versions are not on the Users page any more; Admin › My account › Diagnostics shows app + server', () => { const B = boot(); assert.ok(!/ · app \d{4}/.test(B.view()) && !/server 2026-10-23d/.test(B.view()) && /\d+ accounts/.test(B.view()));
+    B.AD.sub = 'me'; B.T.renderAdmin(); assert.ok(/id="adVer">app \d{4}-\d\d-\d\d\w? · server 2026-10-23d/.test(B.view())); });
   out.forEach((l) => console.log(l)); console.log('---- ' + pass + '/' + (pass + fail) + ' passed'); process.exit(fail ? 1 : 0);
 })();
