@@ -1,0 +1,33 @@
+/* Curated planning only. No runtime generation, DOM, account IO or mastery writes. */
+(function(root){
+'use strict';
+var VERSION=1,STATUSES=['new','unsure','self_reported_known','verified_for_current_task','needs_practice'];
+function copy(v){return JSON.parse(JSON.stringify(v))}
+function index(bank){var out={};bank.lesson_term_links.forEach(function(l){if(l.status==='approved'&&l.lessonId===bank.lessonId)out[l.senseId]=l});return out}
+function published(pack){return pack.publication==='published'&&pack.review&&pack.review.status==='APPROVED'&&pack.review.approvedBy&&pack.review.approvedAt&&pack.review.approvedVersion===pack.version}
+function route(p){return p.status==='verified_for_current_task'?'context_only':p.status==='new'?'discover':p.status==='unsure'||p.status==='needs_practice'?'strengthen':'light_check'}
+function validate(pack,bank){
+ var errors=[],approved=index(bank),ids={},tasks={};function check(q,label){if(!q||!q.prompt||!q.clue||!q.why){errors.push(label+': incomplete task');return}if(q.options){if(q.options.length<3||new Set(q.options).size!==q.options.length||!Number.isInteger(q.answer)||q.answer<0||q.answer>=q.options.length)errors.push(label+': invalid choices');if(q.clue.toLowerCase().indexOf(String(q.options[q.answer]).toLowerCase())>=0)errors.push(label+': revealing clue')}else if(!q.answers||!q.answers.length||q.answers.some(function(a){return !String(a).trim()}))errors.push(label+': missing recall variants');if(q.kind==='reconstruct'&&(!q.tokens||!q.answers||q.tokens.slice().sort().join('|')!==q.answers[0].split(' ').sort().join('|')))errors.push(label+': token/answer mismatch')}
+ if(!pack.id||!Number.isInteger(pack.version)||!pack.theme||!pack.title||!pack.briefing||!pack.review||!pack.rights||pack.rights.origin!=='original_offline_authored')errors.push('incomplete pack metadata');
+ if(!Array.isArray(pack.terms)||pack.terms.length<4||pack.terms.length>7)errors.push('pack needs 4–7 target senses');
+ (pack.terms||[]).forEach(function(t){var link=approved[t.senseId];if(!link||link.sourceId!==t.sourceId||pack.lessonId!==bank.lessonId)errors.push('unapproved/mismatched source: '+t.senseId);if(ids[t.senseId])errors.push('duplicate sense: '+t.senseId);ids[t.senseId]=true;if(!t.sentence||!t.definition)errors.push('missing sentence/definition');['investigate','decode','final'].forEach(function(k){check(t[k],t.senseId+':'+k);tasks[t.senseId+':'+k]=true})});
+ (pack.context||[]).forEach(function(c){if(!approved[c.senseId]||approved[c.senseId].sourceId!==c.sourceId||!c.sentence)errors.push('invalid context provenance')});
+ (pack.morph||[]).forEach(function(f){if(!ids[f.senseId]||!f.form||!f.attestationRef||!f.partOfSpeech||!f.definition)errors.push('unattested form');['discover','transform','recall','extra'].forEach(function(k){check(f[k],'form:'+f.form+':'+k)})});
+ if(pack.publication==='published'&&!published(pack))errors.push('publication lacks version-bound human approval');return {valid:!errors.length,errors:errors,targetSenseIds:Object.keys(ids),taskCount:Object.keys(tasks).length};
+}
+function candidates(bank,catalog,source,identity,opt){
+ opt=opt||{};if(!source||source.email!==identity||source.lessonId!==bank.lessonId||!source.termProgress)return [];
+ var approved=index(bank),used=opt.excludeSenseIds||[];return catalog.filter(function(p){return validate(p,bank).valid&&(published(p)||opt.editorialQA===true)}).map(function(p){
+  var eligible=p.terms.filter(function(t){var e=source.termProgress[t.senseId];return approved[t.senseId]&&e&&STATUSES.indexOf(e.status)>=0&&used.indexOf(t.senseId)<0}),targets=eligible.filter(function(t){return route(source.termProgress[t.senseId])!=='context_only'}),score=targets.reduce(function(n,t){var s=source.termProgress[t.senseId].status;return n+(s==='needs_practice'?5:s==='new'?4:s==='unsure'?3:2)},0);
+  return {packId:p.id,contentVersion:p.version,title:p.title,theme:p.theme,editorialStatus:p.review.status,publication:p.publication,eligibleSenseIds:eligible.map(function(t){return t.senseId}),targetSenseIds:targets.map(function(t){return t.senseId}),verifiedContextSenseIds:eligible.filter(function(t){return route(source.termProgress[t.senseId])==='context_only'}).map(function(t){return t.senseId}),score:score};
+ }).filter(function(p){return p.targetSenseIds.length>0}).sort(function(a,b){return b.score-a.score||a.packId.localeCompare(b.packId)});
+}
+function snapshot(bank,pack,source,identity,opt){
+ opt=opt||{};var offered=candidates(bank,[pack],source,identity,opt)[0];if(!offered)throw Error('No mission for these words yet.');
+ var evidence={},routes={},forms={};offered.eligibleSenseIds.forEach(function(id){evidence[id]=copy(source.termProgress[id]);routes[id]=route(evidence[id])});
+ (opt.formEvidence||[]).forEach(function(f){if(f.identity===identity&&f.lessonId===bank.lessonId&&f.senseId&&f.form&&f.independent===true&&f.taskId&&f.contentVersion&&f.at>0){var key=f.senseId+'::'+f.form;forms[key]=copy(f)}});
+ return {planVersion:VERSION,packId:pack.id,contentVersion:pack.version,sourceLesson:bank.lessonId,sourceRevision:source.revision,identity:identity,selectedSenseIds:offered.targetSenseIds,contextSenseIds:pack.terms.filter(function(t){return offered.targetSenseIds.indexOf(t.senseId)<0}).map(function(t){return t.senseId}).concat((pack.context||[]).map(function(c){return c.senseId})),eligibleSenseIds:offered.eligibleSenseIds,eligibilityEvidence:evidence,routes:routes,formEvidence:forms,editorialQA:opt.editorialQA===true&&!published(pack),contentSnapshot:copy(pack)};
+}
+function coverage(bank,catalog){var publishedIds={},candidateIds={},contextIds={};catalog.forEach(function(p){if(!validate(p,bank).valid)return;p.terms.forEach(function(t){candidateIds[t.senseId]=true;if(published(p))publishedIds[t.senseId]=true});(p.context||[]).forEach(function(c){contextIds[c.senseId]=true})});return {denominator:bank.lesson_term_links.length,published:Object.keys(publishedIds).length,candidate:Object.keys(candidateIds).length,contextOnly:Object.keys(contextIds).filter(function(id){return !candidateIds[id]}).length,rows:bank.lesson_term_links.map(function(l){return {senseId:l.senseId,sourceId:l.sourceId,status:publishedIds[l.senseId]?'PUBLISHED':candidateIds[l.senseId]?'TEACHER_REVIEW':contextIds[l.senseId]?'CONTEXT_ONLY':'DEFERRED'}})} }
+var api={VERSION:VERSION,copy:copy,published:published,route:route,validate:validate,candidates:candidates,snapshot:snapshot,coverage:coverage};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.MD_MISSION_PLANNER=api;
+})(this);

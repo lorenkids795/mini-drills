@@ -1,0 +1,1548 @@
+{
+  "schemaVersion": 1,
+  "lessonId": "cam17-t1-reading-p1",
+  "denominator": 102,
+  "published": 0,
+  "candidate": 0,
+  "contextOnly": 0,
+  "ambiguous": 4,
+  "deferred": 98,
+  "readiness": "BLOCKED",
+  "reviewStatus": "TEACHER_REVIEW",
+  "mainAudit": {
+    "observedMain": "9536e3a022308b906975e3cbce292cf7699c8518",
+    "policy": "No merge. Latest main has divergent Writing/backend/rules; retain feature source and reconcile only under a later approved merge."
+  },
+  "rows": [
+    {
+      "senseId": "sense-bc0aa7072ccf80cda2816871",
+      "sourceId": "C17-T1-R1-001",
+      "status": "DEFERRED",
+      "term": "astonishing rate",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-bc0aa7072ccf80cda2816871",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-219d445bcdbc485e9d28488e",
+      "sourceId": "C17-T1-R1-002",
+      "status": "DEFERRED",
+      "term": "increasingly",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-219d445bcdbc485e9d28488e",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-e89a4b0bd00866e4982969c7",
+      "sourceId": "C17-T1-R1-003",
+      "status": "DEFERRED",
+      "term": "congested",
+      "plannedPack": "p1-station-access",
+      "disposition": "DEFERRED",
+      "reason": "Pilot tasks require teacher editorial approval.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-e89a4b0bd00866e4982969c7",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-072cc7ecf79926dc8c3b4035",
+      "sourceId": "C17-T1-R1-004",
+      "status": "DEFERRED",
+      "term": "expansion",
+      "plannedPack": "p1-station-access",
+      "disposition": "DEFERRED",
+      "reason": "Narrative context only; no independent task coverage claimed.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-072cc7ecf79926dc8c3b4035",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-97e16630481da84aaa89c941",
+      "sourceId": "C17-T1-R1-005",
+      "status": "DEFERRED",
+      "term": "overground railway",
+      "plannedPack": "p1-station-access",
+      "disposition": "DEFERRED",
+      "reason": "Narrative context only; no independent task coverage claimed.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-97e16630481da84aaa89c941",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-19e7303e091b6ad30d33099e",
+      "sourceId": "C17-T1-R1-006",
+      "status": "DEFERRED",
+      "term": "network",
+      "plannedPack": "p1-station-access",
+      "disposition": "DEFERRED",
+      "reason": "Pilot tasks require teacher editorial approval.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-19e7303e091b6ad30d33099e",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-bc680ec538cbb220ab2a466d",
+      "sourceId": "C17-T1-R1-007",
+      "status": "DEFERRED",
+      "term": "result in",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-bc680ec538cbb220ab2a466d",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-a62397cd8498372a644abfe4",
+      "sourceId": "C17-T1-R1-008",
+      "status": "DEFERRED",
+      "term": "passenger",
+      "plannedPack": "p1-station-access",
+      "disposition": "DEFERRED",
+      "reason": "Pilot tasks require teacher editorial approval.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-a62397cd8498372a644abfe4",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-040d2f06cfb57501b2f21289",
+      "sourceId": "C17-T1-R1-009",
+      "status": "DEFERRED",
+      "term": "capital",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-040d2f06cfb57501b2f21289",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-eb0be8fa046a33efdda7d995",
+      "sourceId": "C17-T1-R1-011",
+      "status": "DEFERRED",
+      "term": "historic",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-eb0be8fa046a33efdda7d995",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-febc630a67fef6e9872d2ba6",
+      "sourceId": "C17-T1-R1-012",
+      "status": "DEFERRED",
+      "term": "form a ring",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-febc630a67fef6e9872d2ba6",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-d20fea662a1034c83894d16e",
+      "sourceId": "C17-T1-R1-013",
+      "status": "DEFERRED",
+      "term": "consist of",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-d20fea662a1034c83894d16e",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-3eaf828d1dfa98a187fc8992",
+      "sourceId": "C17-T1-R1-014",
+      "status": "DEFERRED",
+      "term": "poorly built",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-3eaf828d1dfa98a187fc8992",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-0565f5e877495423f1f8e0ea",
+      "sourceId": "C17-T1-R1-015",
+      "status": "DEFERRED",
+      "term": "overcrowded",
+      "plannedPack": "p1-community-room",
+      "disposition": "DEFERRED",
+      "reason": "Pilot tasks require teacher editorial approval.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-0565f5e877495423f1f8e0ea",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-9713aaa7c9984f2a0e5b19b9",
+      "sourceId": "C17-T1-R1-016",
+      "status": "DEFERRED",
+      "term": "slum",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-9713aaa7c9984f2a0e5b19b9",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-b0b8f112fe3686a19b5f7595",
+      "sourceId": "C17-T1-R1-017",
+      "status": "DEFERRED",
+      "term": "horse-drawn",
+      "plannedPack": null,
+      "disposition": "AMBIGUOUS",
+      "reason": "Historical housing term needs sensitivity and source-context review.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-b0b8f112fe3686a19b5f7595",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-5cc1e31e90b4a98be6cb0447",
+      "sourceId": "C17-T1-R1-018",
+      "status": "DEFERRED",
+      "term": "nightmare",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-5cc1e31e90b4a98be6cb0447",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-7866d660a6098a5b1088424a",
+      "sourceId": "C17-T1-R1-019",
+      "status": "DEFERRED",
+      "term": "carriage",
+      "plannedPack": null,
+      "disposition": "AMBIGUOUS",
+      "reason": "Bank sense spans horse-drawn vehicle/train compartment; select the passage-specific interpretation before authoring.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-7866d660a6098a5b1088424a",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-9482629201408c09033f5c37",
+      "sourceId": "C17-T1-R1-020",
+      "status": "DEFERRED",
+      "term": "numerous",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-9482629201408c09033f5c37",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-2467417662518f2b65f17a66",
+      "sourceId": "C17-T1-R1-021",
+      "status": "DEFERRED",
+      "term": "scheme",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-2467417662518f2b65f17a66",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-2ae0fa5c36a4e1d40ec501ff",
+      "sourceId": "C17-T1-R1-022",
+      "status": "DEFERRED",
+      "term": "propose",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-2ae0fa5c36a4e1d40ec501ff",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-bba0a06e975354255a715274",
+      "sourceId": "C17-T1-R1-023",
+      "status": "DEFERRED",
+      "term": "resolve",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-bba0a06e975354255a715274",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-6ff6146fc5802fa1a7e9ebfc",
+      "sourceId": "C17-T1-R1-024",
+      "status": "DEFERRED",
+      "term": "succeed",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-6ff6146fc5802fa1a7e9ebfc",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-58b2376a8b0a1ccb3d997e4d",
+      "sourceId": "C17-T1-R1-025",
+      "status": "DEFERRED",
+      "term": "vocal advocate",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-58b2376a8b0a1ccb3d997e4d",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-27dd105458c68f03c45cc7a4",
+      "sourceId": "C17-T1-R1-026",
+      "status": "DEFERRED",
+      "term": "solicitor",
+      "plannedPack": null,
+      "disposition": "AMBIGUOUS",
+      "reason": "Regional legal profession requires precise usage and teacher review.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-27dd105458c68f03c45cc7a4",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-5773df4e394a71bda9f5a149",
+      "sourceId": "C17-T1-R1-027",
+      "status": "DEFERRED",
+      "term": "social and economic advantages",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-5773df4e394a71bda9f5a149",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-4eeaa167bcb7187c337891a2",
+      "sourceId": "C17-T1-R1-028",
+      "status": "DEFERRED",
+      "term": "link together",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-4eeaa167bcb7187c337891a2",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-d25e72758cb00a430a2678dd",
+      "sourceId": "C17-T1-R1-029",
+      "status": "DEFERRED",
+      "term": "clear slums",
+      "plannedPack": null,
+      "disposition": "AMBIGUOUS",
+      "reason": "Historical clearance language needs ethics/context review; do not frame displacement as an unqualified benefit.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-d25e72758cb00a430a2678dd",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-3d666ffd6243e5eae8122ec5",
+      "sourceId": "C17-T1-R1-030",
+      "status": "DEFERRED",
+      "term": "relocate",
+      "plannedPack": "p1-community-room",
+      "disposition": "DEFERRED",
+      "reason": "Pilot tasks require teacher editorial approval.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-3d666ffd6243e5eae8122ec5",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-aca45c8c33ce6d6b76305b9d",
+      "sourceId": "C17-T1-R1-031",
+      "status": "DEFERRED",
+      "term": "inner-city",
+      "plannedPack": "p1-community-room",
+      "disposition": "DEFERRED",
+      "reason": "Narrative context only; no independent task coverage claimed.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-aca45c8c33ce6d6b76305b9d",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-1f0ba03ccd2713c05c437af7",
+      "sourceId": "C17-T1-R1-032",
+      "status": "DEFERRED",
+      "term": "newly constructed",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-1f0ba03ccd2713c05c437af7",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-671cec8bff9f6329a6dbfc5e",
+      "sourceId": "C17-T1-R1-033",
+      "status": "DEFERRED",
+      "term": "suburb",
+      "plannedPack": "p1-community-room",
+      "disposition": "DEFERRED",
+      "reason": "Pilot tasks require teacher editorial approval.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-671cec8bff9f6329a6dbfc5e",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-d6d03481b171a5f596024d5b",
+      "sourceId": "C17-T1-R1-034",
+      "status": "DEFERRED",
+      "term": "provide",
+      "plannedPack": "p1-community-room",
+      "disposition": "DEFERRED",
+      "reason": "Pilot tasks require teacher editorial approval.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-d6d03481b171a5f596024d5b",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-03936f62d7f90f8476e85cec",
+      "sourceId": "C17-T1-R1-035",
+      "status": "DEFERRED",
+      "term": "gain support",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-03936f62d7f90f8476e85cec",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-7efabef9a0accea2e1cfc2c0",
+      "sourceId": "C17-T1-R1-036",
+      "status": "DEFERRED",
+      "term": "submit a plan",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-7efabef9a0accea2e1cfc2c0",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-3761adfe62a633a9b079f224",
+      "sourceId": "C17-T1-R1-037",
+      "status": "DEFERRED",
+      "term": "reject",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-3761adfe62a633a9b079f224",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-34cbfdc1ad4c82232245a368",
+      "sourceId": "C17-T1-R1-038",
+      "status": "DEFERRED",
+      "term": "coincide with",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-34cbfdc1ad4c82232245a368",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-0a73406fb36bbdc0a962c882",
+      "sourceId": "C17-T1-R1-039",
+      "status": "DEFERRED",
+      "term": "proposal",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-0a73406fb36bbdc0a962c882",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-a8cfea44fc823bc8c3e05ed6",
+      "sourceId": "C17-T1-R1-040",
+      "status": "DEFERRED",
+      "term": "pass (a proposal)",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-a8cfea44fc823bc8c3e05ed6",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-590d68f3f7f2ab429bf4f7ff",
+      "sourceId": "C17-T1-R1-041",
+      "status": "DEFERRED",
+      "term": "merge",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-590d68f3f7f2ab429bf4f7ff",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-1db6ea0e855230f852907071",
+      "sourceId": "C17-T1-R1-042",
+      "status": "DEFERRED",
+      "term": "establish",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-1db6ea0e855230f852907071",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-58da02c350f91fff6e6e34d5",
+      "sourceId": "C17-T1-R1-043",
+      "status": "DEFERRED",
+      "term": "construct",
+      "plannedPack": "p1-community-room",
+      "disposition": "DEFERRED",
+      "reason": "Pilot tasks require teacher editorial approval.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-58da02c350f91fff6e6e34d5",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-53c1926283a6c23d7721e7ac",
+      "sourceId": "C17-T1-R1-044",
+      "status": "DEFERRED",
+      "term": "raise funding",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-53c1926283a6c23d7721e7ac",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-0a29f0dee6be68f5dfd749c0",
+      "sourceId": "C17-T1-R1-045",
+      "status": "DEFERRED",
+      "term": "radical",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-0a29f0dee6be68f5dfd749c0",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-fd149cea3dbdfc54c35e06fd",
+      "sourceId": "C17-T1-R1-046",
+      "status": "DEFERRED",
+      "term": "not least because of",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-fd149cea3dbdfc54c35e06fd",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-19471529b466f86f173df25c",
+      "sourceId": "C17-T1-R1-047",
+      "status": "DEFERRED",
+      "term": "critical",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-19471529b466f86f173df25c",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-d939cc58fd4fed7d6ba7ab83",
+      "sourceId": "C17-T1-R1-048",
+      "status": "DEFERRED",
+      "term": "press",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-d939cc58fd4fed7d6ba7ab83",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-29335f0b1ace74b04d15297e",
+      "sourceId": "C17-T1-R1-049",
+      "status": "DEFERRED",
+      "term": "objector",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-29335f0b1ace74b04d15297e",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-3b3c80ace1d7237cd7336645",
+      "sourceId": "C17-T1-R1-050",
+      "status": "DEFERRED",
+      "term": "argue",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-3b3c80ace1d7237cd7336645",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-b3b6c1b85697b8c56ecd6a1e",
+      "sourceId": "C17-T1-R1-051",
+      "status": "DEFERRED",
+      "term": "collapse",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-b3b6c1b85697b8c56ecd6a1e",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-846e89640f6cbd6630ab10fa",
+      "sourceId": "C17-T1-R1-052",
+      "status": "DEFERRED",
+      "term": "overhead",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-846e89640f6cbd6630ab10fa",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-7c4f28067a86947ac414ea27",
+      "sourceId": "C17-T1-R1-053",
+      "status": "DEFERRED",
+      "term": "shake",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-7c4f28067a86947ac414ea27",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-44a36d798902fda8ec730199",
+      "sourceId": "C17-T1-R1-054",
+      "status": "DEFERRED",
+      "term": "poison",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-44a36d798902fda8ec730199",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-b9b6507069769c823a393841",
+      "sourceId": "C17-T1-R1-055",
+      "status": "DEFERRED",
+      "term": "emission",
+      "plannedPack": "p1-power-exhibit",
+      "disposition": "DEFERRED",
+      "reason": "Pilot tasks require teacher editorial approval.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-b9b6507069769c823a393841",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-d4297b764592a4250bc065bf",
+      "sourceId": "C17-T1-R1-056",
+      "status": "DEFERRED",
+      "term": "persist",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-d4297b764592a4250bc065bf",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-83f09caaab41b9fc4710dd24",
+      "sourceId": "C17-T1-R1-057",
+      "status": "DEFERRED",
+      "term": "enable",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-83f09caaab41b9fc4710dd24",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-107a92a8c8ae4ed9e0e21991",
+      "sourceId": "C17-T1-R1-058",
+      "status": "DEFERRED",
+      "term": "invest",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-107a92a8c8ae4ed9e0e21991",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-c8a032bd669de4c70e00f5b7",
+      "sourceId": "C17-T1-R1-059",
+      "status": "DEFERRED",
+      "term": "eventually",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-c8a032bd669de4c70e00f5b7",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-68a92b316178a7ba875a347a",
+      "sourceId": "C17-T1-R1-060",
+      "status": "DEFERRED",
+      "term": "route",
+      "plannedPack": "p1-station-access",
+      "disposition": "DEFERRED",
+      "reason": "Pilot tasks require teacher editorial approval.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-68a92b316178a7ba875a347a",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-ca7812f339502f14f58a5cc7",
+      "sourceId": "C17-T1-R1-061",
+      "status": "DEFERRED",
+      "term": "beneath",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-ca7812f339502f14f58a5cc7",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-76ab40715a668211f31eca6c",
+      "sourceId": "C17-T1-R1-062",
+      "status": "DEFERRED",
+      "term": "minimise",
+      "plannedPack": "p1-power-exhibit",
+      "disposition": "DEFERRED",
+      "reason": "Pilot tasks require teacher editorial approval.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-76ab40715a668211f31eca6c",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-f79cadd038f34b452e5ad8f5",
+      "sourceId": "C17-T1-R1-063",
+      "status": "DEFERRED",
+      "term": "expense",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-f79cadd038f34b452e5ad8f5",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-e314cef30ca9cc92777bf0cd",
+      "sourceId": "C17-T1-R1-064",
+      "status": "DEFERRED",
+      "term": "demolish",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-e314cef30ca9cc92777bf0cd",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-1f802a62bd219cb98f97b548",
+      "sourceId": "C17-T1-R1-065",
+      "status": "DEFERRED",
+      "term": "originally scheduled",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-1f802a62bd219cb98f97b548",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-65e03dcbc59a0b0769b2c3d7",
+      "sourceId": "C17-T1-R1-066",
+      "status": "DEFERRED",
+      "term": "construction",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-65e03dcbc59a0b0769b2c3d7",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-096561e3668afc16a1136ecc",
+      "sourceId": "C17-T1-R1-067",
+      "status": "DEFERRED",
+      "term": "street level",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-096561e3668afc16a1136ecc",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-5749d901734832afd6c460b6",
+      "sourceId": "C17-T1-R1-068",
+      "status": "DEFERRED",
+      "term": "technique",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-5749d901734832afd6c460b6",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-dc79a02de8ffff16f46462ec",
+      "sourceId": "C17-T1-R1-069",
+      "status": "DEFERRED",
+      "term": "cut and cover",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-dc79a02de8ffff16f46462ec",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-52c3448f688e32aa1bd2bd43",
+      "sourceId": "C17-T1-R1-070",
+      "status": "DEFERRED",
+      "term": "trench",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-52c3448f688e32aa1bd2bd43",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-94fd4a243ce8eef0fcd51b16",
+      "sourceId": "C17-T1-R1-071",
+      "status": "DEFERRED",
+      "term": "temporarily",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-94fd4a243ce8eef0fcd51b16",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-333d3bad11e49ba7de7ab3d2",
+      "sourceId": "C17-T1-R1-072",
+      "status": "DEFERRED",
+      "term": "hold up",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-333d3bad11e49ba7de7ab3d2",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-c2d007c35798620bcd0671fe",
+      "sourceId": "C17-T1-R1-073",
+      "status": "DEFERRED",
+      "term": "timber beam",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-c2d007c35798620bcd0671fe",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-26ec251b0e3d685a3cf2bbd5",
+      "sourceId": "C17-T1-R1-074",
+      "status": "DEFERRED",
+      "term": "brick arch",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-26ec251b0e3d685a3cf2bbd5",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-a6c2e97af752282096bddefb",
+      "sourceId": "C17-T1-R1-075",
+      "status": "DEFERRED",
+      "term": "layer",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-a6c2e97af752282096bddefb",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-e7d2ee845dc352f184d68df2",
+      "sourceId": "C17-T1-R1-076",
+      "status": "DEFERRED",
+      "term": "rebuild",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-e7d2ee845dc352f184d68df2",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-7c3cf07cd44fc2e6b46a6d83",
+      "sourceId": "C17-T1-R1-077",
+      "status": "DEFERRED",
+      "term": "operation",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-7c3cf07cd44fc2e6b46a6d83",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-a2e3f5d77f9765742fc2ba1e",
+      "sourceId": "C17-T1-R1-078",
+      "status": "DEFERRED",
+      "term": "extension",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-a2e3f5d77f9765742fc2ba1e",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-85d0a9e321cb71f1c2aa168a",
+      "sourceId": "C17-T1-R1-079",
+      "status": "DEFERRED",
+      "term": "authorise",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-85d0a9e321cb71f1c2aa168a",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-10a3c19d3da3376f06c85142",
+      "sourceId": "C17-T1-R1-080",
+      "status": "DEFERRED",
+      "term": "steam locomotive",
+      "plannedPack": "p1-power-exhibit",
+      "disposition": "DEFERRED",
+      "reason": "Narrative context only; no independent task coverage claimed.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-10a3c19d3da3376f06c85142",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-cca21aed3e608f5b4ff5add2",
+      "sourceId": "C17-T1-R1-081",
+      "status": "DEFERRED",
+      "term": "boiler",
+      "plannedPack": "p1-power-exhibit",
+      "disposition": "DEFERRED",
+      "reason": "Narrative context only; no independent task coverage claimed.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-cca21aed3e608f5b4ff5add2",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-6caa2a9de3ab752700c0f4e1",
+      "sourceId": "C17-T1-R1-082",
+      "status": "DEFERRED",
+      "term": "introduce",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-6caa2a9de3ab752700c0f4e1",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-dc30bf3d9b5aff02efd75d6e",
+      "sourceId": "C17-T1-R1-083",
+      "status": "DEFERRED",
+      "term": "be fitted with",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-dc30bf3d9b5aff02efd75d6e",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-06c262095128f7725da31684",
+      "sourceId": "C17-T1-R1-084",
+      "status": "DEFERRED",
+      "term": "condense",
+      "plannedPack": "p1-power-exhibit",
+      "disposition": "DEFERRED",
+      "reason": "Pilot tasks require teacher editorial approval.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-06c262095128f7725da31684",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-e1769236bf9b92698c134c42",
+      "sourceId": "C17-T1-R1-085",
+      "status": "DEFERRED",
+      "term": "fumes",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-e1769236bf9b92698c134c42",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-f467e6751813ca1470b09334",
+      "sourceId": "C17-T1-R1-086",
+      "status": "DEFERRED",
+      "term": "ventilation shaft",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-f467e6751813ca1470b09334",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-6e7e446589ed5f0d80e8a4a5",
+      "sourceId": "C17-T1-R1-087",
+      "status": "DEFERRED",
+      "term": "congestion",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-6e7e446589ed5f0d80e8a4a5",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-bb8dfc87d36bf93edfc537dd",
+      "sourceId": "C17-T1-R1-088",
+      "status": "DEFERRED",
+      "term": "circuit",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-bb8dfc87d36bf93edfc537dd",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-9be946e9caf16f0abc73d55d",
+      "sourceId": "C17-T1-R1-089",
+      "status": "DEFERRED",
+      "term": "alternative",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-9be946e9caf16f0abc73d55d",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-35bdd841a2a3d36cafc79bf0",
+      "sourceId": "C17-T1-R1-090",
+      "status": "DEFERRED",
+      "term": "confined space",
+      "plannedPack": "p1-station-access",
+      "disposition": "DEFERRED",
+      "reason": "Pilot tasks require teacher editorial approval.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-35bdd841a2a3d36cafc79bf0",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-43318f2677b3ab1e87f0c139",
+      "sourceId": "C17-T1-R1-091",
+      "status": "DEFERRED",
+      "term": "reliable",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-43318f2677b3ab1e87f0c139",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-2799f04cb6bb3d9d8e7419ba",
+      "sourceId": "C17-T1-R1-092",
+      "status": "DEFERRED",
+      "term": "electric motor",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-2799f04cb6bb3d9d8e7419ba",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-edd9de76d84d9d2159b628cd",
+      "sourceId": "C17-T1-R1-093",
+      "status": "DEFERRED",
+      "term": "means of",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-edd9de76d84d9d2159b628cd",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-70a108ce0b4e5b80ed405c93",
+      "sourceId": "C17-T1-R1-094",
+      "status": "DEFERRED",
+      "term": "transfer power",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-70a108ce0b4e5b80ed405c93",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-d34dd630d6328faba29a8732",
+      "sourceId": "C17-T1-R1-095",
+      "status": "DEFERRED",
+      "term": "generator",
+      "plannedPack": "p1-power-exhibit",
+      "disposition": "DEFERRED",
+      "reason": "Pilot tasks require teacher editorial approval.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-d34dd630d6328faba29a8732",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-e268013d4c8ff73e39502e09",
+      "sourceId": "C17-T1-R1-096",
+      "status": "DEFERRED",
+      "term": "deep-level electric railway",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-e268013d4c8ff73e39502e09",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-fce02794dc77cc00b958f59e",
+      "sourceId": "C17-T1-R1-097",
+      "status": "DEFERRED",
+      "term": "be made up of",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-fce02794dc77cc00b958f59e",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-a0faf1768124f5a1231dc30f",
+      "sourceId": "C17-T1-R1-098",
+      "status": "DEFERRED",
+      "term": "narrow",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-a0faf1768124f5a1231dc30f",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-1a95bb111e4aea4c24356619",
+      "sourceId": "C17-T1-R1-099",
+      "status": "DEFERRED",
+      "term": "power supply",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-1a95bb111e4aea4c24356619",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-252384ca78958e91d88ad5e7",
+      "sourceId": "C17-T1-R1-100",
+      "status": "DEFERRED",
+      "term": "technical achievement",
+      "plannedPack": "p1-power-exhibit",
+      "disposition": "DEFERRED",
+      "reason": "Pilot tasks require teacher editorial approval.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-252384ca78958e91d88ad5e7",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-3ff11e040f69cd12c1d4e710",
+      "sourceId": "C17-T1-R1-101",
+      "status": "DEFERRED",
+      "term": "make a profit",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-3ff11e040f69cd12c1d4e710",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-51dc82c9a17888e5dec61b34",
+      "sourceId": "C17-T1-R1-102",
+      "status": "DEFERRED",
+      "term": "in place",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-51dc82c9a17888e5dec61b34",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    },
+    {
+      "senseId": "sense-a22ca1f6cc64ff2c60741af7",
+      "sourceId": "C17-T1-R1-103",
+      "status": "DEFERRED",
+      "term": "soon afterwards",
+      "plannedPack": null,
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "alternateRoute": {
+        "kind": "existing_vocab_check_review",
+        "senseId": "sense-a22ca1f6cc64ff2c60741af7",
+        "automaticSpacedSchedule": false,
+        "newMissionContentPublished": false
+      }
+    }
+  ]
+}
