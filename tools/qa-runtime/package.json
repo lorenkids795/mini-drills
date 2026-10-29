@@ -1,0 +1,7 @@
+{
+  "name": "mini-drills-vocab-qa-runtime",
+  "private": true,
+  "version": "1.0.0",
+  "engines": { "node": ">=22" },
+  "devDependencies": { "playwright": "1.62.1" }
+}

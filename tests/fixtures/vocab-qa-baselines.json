@@ -1,0 +1,59 @@
+{
+  "formatVersion": 1,
+  "reviewedSourceCommit": "05a79710470a966fa31a211ce7375198bc489d51",
+  "playwrightVersion": "1.62.1",
+  "protectedFiles": {
+    "index.html": "ebb1514fa7f7817635d3db737ce189e1691a1c742933ad008b2df2a09481cc3f",
+    "lm-content.js": "22dd5ce2644d09e3592ef89fdec8aa055aa0140dfe21ea190273a084334554f3",
+    "lm-unit0.js": "1d6226a2138c99a7772823177c8844948f10f3ff7c4b1819d7fd87e3c134b4c6",
+    "lm-unit2.js": "baa76f3f2efe59410446ea0828044460a70a31413ce99221d4ed66f4725f1f78",
+    "vocab-lab-store.js": "7bdbdfbffdcea350d7cfda6abba37fef3dc08ee8b5b4ef357ca43df0815cb79a",
+    "firestore.rules": "24aecbc515253efb4d442c19110db3675d6cf88c25997a8c1c9d48757a1abf82",
+    "md-config.js": "70338be529194ca499c98cfa657b58555d74425bfd13c0ee7f45c5fc75a28f43",
+    "md-backend.js": "f9f5f3aafbf0017f684ed00811607c96d27cb5bf015e9b2de6a3498e6992516b",
+    "data/vocab-lab-p1.json": "a2b6ade01d3b79ec64ca0985e51a285f1bde8294fbcd408d738c4bbaf476632b",
+    "data/vocab-lab-practice.json": "e8ec28867f4bc7280c99bb1a291546f70d6be811c69f2bd5ebc25626acfc859e",
+    "data/vocab-lab-practice-v1.json": "50c0769c4db161e3b58aa7d636dd3deac8aaa4357476c7ed91bd0a2b7f91e207",
+    "editorial/vocab-lab-p2.pending.json": "321504a390d11aa58b1e6c9f3087b6cf97a585722452716f170c9b5bc77b7b0a",
+    "vocab-mission-content.js": "dafa902173a277763292fce3ec35f0cdda0f8305818c2e0e3c6891a386967094",
+    "preview-ui/network-guard.js": "791b732203d6dbc60c8b3125c51b4fe8e26342859be9a9d2c4ade5aaec1c105d",
+    "tools/build-vocab-ui-preview.cjs": "78ff7495c0891aeb1b0fd29ffb0a2f2630a1c90fb2dd868e159593a08321bb1e"
+  },
+  "visualSources": {
+    "preview-ui/preview.css": "70ec4db1b19130c1ce1b1f9b6ad6a0376b9cc4972d43716463d65791955b4fb2",
+    "preview-ui/index.html": "3b234a1f71a6a0439fd1289c9ad66b71e30dfef706cf2203f643121b114fac8e",
+    "vocab-lab.css": "3ce51ae536a96975b403d13a01dd9e39172256aa18d65ae64511fa980bc9171d",
+    "vocab-mission.css": "9630b868c94cf1293750beb782b30aef405d0383fb220dae5e33e0d4ba1f32ec"
+  },
+  "nestedTree": "baedf8603515f9285f76a9ac8fb51d4060833119",
+  "visualContract": {
+    "widths": [
+      390,
+      768,
+      1280
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "containerMaxWidth": 1180,
+    "desktopSidebar": 208,
+    "sidebarGap": 28,
+    "brandDesktopPx": 32,
+    "brandMobilePx": 24,
+    "categoryIconPx": 40,
+    "sidebarItems": 1
+  },
+  "approvalPolicy": "No update command. Review rendered differences and scope before an explicitly authorized baseline change.",
+  "minimumNodeTests": 68,
+  "requiredVocabTests": [
+    "tests/vocab-batch.test.js",
+    "tests/vocab-highlight.test.js",
+    "tests/vocab-lab.test.js",
+    "tests/vocab-mission-store.test.js",
+    "tests/vocab-mission.test.js",
+    "tests/vocab-qa-runner.test.js",
+    "tests/vocab-reality.test.js",
+    "tests/vocab-ui-preview.test.js"
+  ]
+}
