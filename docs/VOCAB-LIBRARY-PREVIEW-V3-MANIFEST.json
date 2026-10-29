@@ -1,0 +1,105 @@
+{
+  "version": 3,
+  "task": "Vocab Lab inside Library; latest internal-only Coast addendum",
+  "baseline": "255e6be61178b376fc701eb7ef05b994c2291ff7",
+  "branch": "feature/vocab-lab",
+  "zip": "ui-only-static-v3.zip",
+  "zipBytes": 95900,
+  "zipSha256": "0989e9c2a77d8a3392253d3c2c6221e266627578fcdc4b3564c84a4c6e3d4f41",
+  "fileCount": 17,
+  "changedFromV2": [
+    "index.html",
+    "manifest.json",
+    "preview.css",
+    "preview.js",
+    "vocab-lab.css"
+  ],
+  "files": [
+    {
+      "path": "_headers",
+      "bytes": 434,
+      "sha256": "48ebb8f5673e24022cc83ec7271f5854bac1604840515fc55a3e662aefbcf79c"
+    },
+    {
+      "path": "data/vocab-lab-p1.json",
+      "bytes": 121625,
+      "sha256": "cd2b9e9f331207082aed4e6c73066746ecfaf84416eb4e09294c19534c44e489"
+    },
+    {
+      "path": "data/vocab-lab-practice-v1.json",
+      "bytes": 72495,
+      "sha256": "50c0769c4db161e3b58aa7d636dd3deac8aaa4357476c7ed91bd0a2b7f91e207"
+    },
+    {
+      "path": "data/vocab-lab-practice.json",
+      "bytes": 103309,
+      "sha256": "391a782fdbc5f7c397f9489f61ae1fb86bcf51d88596fa4011724a4d2c05912a"
+    },
+    {
+      "path": "index.html",
+      "bytes": 3519,
+      "sha256": "3b234a1f71a6a0439fd1289c9ad66b71e30dfef706cf2203f643121b114fac8e"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 2556,
+      "sha256": "dd1c53dbca42ade505d1debe6a34d2773acb7af9d1a9e2314145a79f1ae652ba"
+    },
+    {
+      "path": "network-guard.js",
+      "bytes": 1158,
+      "sha256": "791b732203d6dbc60c8b3125c51b4fe8e26342859be9a9d2c4ade5aaec1c105d"
+    },
+    {
+      "path": "preview.css",
+      "bytes": 10939,
+      "sha256": "70ec4db1b19130c1ce1b1f9b6ad6a0376b9cc4972d43716463d65791955b4fb2"
+    },
+    {
+      "path": "preview.js",
+      "bytes": 8160,
+      "sha256": "8c083529b6a70851d80a85c44ac0faf76aa77d9b03fd0425f327a55dc13bb2d2"
+    },
+    {
+      "path": "vocab-lab-core.js",
+      "bytes": 5134,
+      "sha256": "bd682d38d6e357efc26b952af2585497e03a56740522d820ec4984c7d60ba63d"
+    },
+    {
+      "path": "vocab-lab.css",
+      "bytes": 12835,
+      "sha256": "0da195b0df3f26075fc479e3451917842a0e4eaf8075b010812691787d348233"
+    },
+    {
+      "path": "vocab-lab.js",
+      "bytes": 15395,
+      "sha256": "3bb084ddbecd02a54f295643dd79dcb9e913ea3da31036c73361fc045885c018"
+    },
+    {
+      "path": "vocab-mission-content.js",
+      "bytes": 22016,
+      "sha256": "dafa902173a277763292fce3ec35f0cdda0f8305818c2e0e3c6891a386967094"
+    },
+    {
+      "path": "vocab-mission-core.js",
+      "bytes": 7918,
+      "sha256": "1339f95fce172456ff7b1a5938999878c0e2a7fee2112c5f1f4cce08fedbfa1b"
+    },
+    {
+      "path": "vocab-mission-store.js",
+      "bytes": 925,
+      "sha256": "5fcfbd2cc21e21b6cc87e6321411641c3b11478e0a25c7af5f1515a2cf645b3a"
+    },
+    {
+      "path": "vocab-mission.css",
+      "bytes": 6263,
+      "sha256": "9630b868c94cf1293750beb782b30aef405d0383fb220dae5e33e0d4ba1f32ec"
+    },
+    {
+      "path": "vocab-mission.js",
+      "bytes": 15970,
+      "sha256": "7f53f40dc41fc95ee4ba7c6fff88b865fd6e415675e36e94f438e13af60827cf"
+    }
+  ],
+  "deployed": false
+}

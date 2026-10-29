@@ -1574,10 +1574,10 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
   <section id="v-lib" hidden>
     <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
     <div id="libBody"></div>
+    <section id="v-vocab" class="vocab-shell" hidden></section>
   </section>
 
   <section id="v-set" hidden></section>
-  <section id="v-vocab" class="vocab-shell" hidden></section>
   <section id="v-cards" hidden></section>
   <section id="v-errors" hidden></section>
   <section id="v-ranks" hidden></section>
@@ -2664,6 +2664,11 @@ document.addEventListener('input',function(e){var t=e.target,k=t&&t.getAttribute
   if(k==='gwhy'||k==='gsum')U0S[k]=t.value;else if(/^obs\d$/.test(k)){U0S.obs=U0S.obs||['','',''];U0S.obs[+k.slice(3)]=t.value}else if(k.indexOf('i_')===0){U0S.ind=U0S.ind||{};U0S.ind[k.slice(2)]=t.value}
   u0Save(u);var nb=document.querySelector('[data-act="u0-go"][data-s="independent"]');if(nb)nb.disabled=!u0Unlocked(u,'independent')});
 function renderLib(){
+  $('#v-vocab').hidden=true;
+  if(VOCAB_VIEW&&vocabAllowed()&&LIBT==='lm'){
+    $('#crumbs').innerHTML='';$('#libBody').innerHTML='<div class="sechead"><div><h2>Library</h2><span class="meta">Learning Materials</span></div></div>'+libTabsHTML();$('#v-vocab').hidden=false;vocabRender();return;
+  }
+  VOCAB_VIEW=false;
   stopAudio();clearTimer();WL.on=false;setLock(false);crumbs();
   if(!NAV.ex&&!NAV.daily){recClearAll();REC_EX=null} // left the exercise: drop its recorders (microphone off)
   if(NAV.daily)return renderDailyTask();
@@ -2673,7 +2678,7 @@ function renderLib(){
   if(stu)h+=dailyHTML()+homeworkHTML();
   if(stu)h+='<div class="sechead" style="margin-top:26px"><h2>Library</h2></div>'+libTabsHTML();
   else h+='<div class="sechead"><div><h2>Library</h2><span class="meta">'+(LIBT==='lm'?'Learning Materials':'Cambridge IELTS books')+'</span></div></div>'+libTabsHTML();
-  if(LIBT==='lm'){h+=lmHTML();if(stu)h+=recentHTML();$('#libBody').innerHTML=h;return}
+  if(LIBT==='lm'){h+=vocabMaterialsHTML();if(stu)h+=recentHTML();$('#libBody').innerHTML=h;return}
   if(stu&&!BOOKS.some(function(b){return allIdsBook(b.id).length}))h+='<p class="lmempty"><b>No Cambridge books yet.</b><span>Books appear here when your teacher adds exercises to them.</span></p>';
   else if(stu)h+='<div class="tiles">'+BOOKS.filter(function(b){return allIdsBook(b.id).length}).map(function(b){
     var ids=allIdsBook(b.id),pr=prog(ids,dm);
@@ -4770,10 +4775,18 @@ function sbInit(){sbSet(sbWide()?sbPref():false)}
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&SB.open&&!sbWide()&&document.body.classList.contains('nav-on')){e.preventDefault();e.stopImmediatePropagation();sbSet(false,true)}},true);
 function curDark(){var t=document.documentElement.getAttribute('data-theme');if(t)return t==='dark';return !!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)}
 // Admin: everything (Students and XP live inside Admin). Teacher: only their classes (see myCls). Student: unchanged.
+var VOCAB_VIEW=false,VOCAB_LIST_OPEN=false;
+function vocabCategoryHTML(){var on=vocabAllowed();return '<section class="lmmod lm-vocabulary'+(on?'':' dis')+'" aria-label="Vocabulary"><button type="button" class="lmhd"'+(on?' data-act="vocab-toggle" aria-expanded="'+VOCAB_LIST_OPEN+'" aria-controls="vocabDestinations"':' disabled')+'><span class="lmic" aria-hidden="true">'+lmIco('reading')+'</span><span class="lmnm">Vocabulary</span>'+(on?'<span class="lmchev">'+LM_CH+'</span>':'<span class="lmsoon">Coming soon</span>')+'</button>'+(on&&VOCAB_LIST_OPEN?'<div class="lmtw" id="vocabDestinations"><button type="button" class="lmu" data-act="vocab-open" data-view="check"><span>Vocab Check</span><span class="lmarr">'+LM_AR+'</span></button><button type="button" class="lmu" data-act="vocab-open" data-view="missions"><span>Personalized Missions</span><span class="lmarr">'+LM_AR+'</span></button></div>':'')+'</section>'}
+function vocabMaterialsHTML(){var h=lmHTML();return LMV?h:h.replace(/<\/div>$/,vocabCategoryHTML()+'</div>')}
+function vocabOpen(view){if(!vocabAllowed())return false;VOCAB_VIEW=true;LIBT='lm';LMV=null;NAV={book:null,test:null,skill:null,ex:null};XED=null;showTab('library');window.MD_VOCAB_SHELL.navigate(view||'check');return true}
+function vocabBack(){VOCAB_VIEW=false;LIBT='lm';LMV=null;if(window.history)window.history.replaceState(null,'',window.location.pathname+window.location.search+'#library/learning-materials');renderLib();var b=document.querySelector('[data-act="vocab-toggle"]');if(b)b.focus({preventScroll:true})}
+function vocabInitialTab(){var h=window.location.hash||'';if(h==='#vocab'||h.indexOf('#library/vocab')===0){LIBT='lm';return 'vocab'}if(h.indexOf('#library/learning-materials')===0){LIBT='lm';return 'library'}return tabsFor()[0][0]}
 function vocabAllowed(){return !!(window.MD_VOCAB_SHELL&&window.MD_VOCAB_SHELL.allowed(U))}
-function vocabRender(){var el=document.getElementById('v-vocab');if(el&&vocabAllowed())window.MD_VOCAB_SHELL.mount(el,{user:U,db:dbh,demo:DEMO,getUser:function(){return U},isCurrent:function(){return TAB==='vocab'&&vocabAllowed()}})}
-function tabsFor(){var tabs=U.adm?[['dash','Dashboard'],['asg','Classes'],['mark','Marking'],['library','Library'],['create','Create'],['prize','Prizes'],['admin','Admin']]:U.role==='teacher'?[['asg','Classes'],['mark','Marking'],['dash','Dashboard'],['library','Library']]:[['library','Home'],['cards','Flashcards'],['errors','Error Notebook'],['ranks','Leaderboard'],['wheel','Lucky Wheel'],['bag','Inventory'],['set','Settings']];if(vocabAllowed())tabs.push(['vocab','Vocab Lab']);return tabs}
+function vocabRender(){var el=document.getElementById('v-vocab');if(el&&vocabAllowed())window.MD_VOCAB_SHELL.mount(el,{user:U,db:dbh,demo:DEMO,getUser:function(){return U},isCurrent:function(){return TAB==='library'&&VOCAB_VIEW&&LIBT==='lm'&&vocabAllowed()},onLibraryBack:vocabBack,onView:function(){if(window.history)window.history.replaceState(null,'',window.location.pathname+window.location.search+'#library/vocab')}})}
+function tabsFor(){var tabs=U.adm?[['dash','Dashboard'],['asg','Classes'],['mark','Marking'],['library','Library'],['create','Create'],['prize','Prizes'],['admin','Admin']]:U.role==='teacher'?[['asg','Classes'],['mark','Marking'],['dash','Dashboard'],['library','Library']]:[['library','Home'],['cards','Flashcards'],['errors','Error Notebook'],['ranks','Leaderboard'],['wheel','Lucky Wheel'],['bag','Inventory'],['set','Settings']];return tabs}
 function showTab(t){
+  if(t==='vocab'){VOCAB_VIEW=vocabAllowed();if(VOCAB_VIEW){LIBT='lm';LMV=null;NAV={book:null,test:null,skill:null,ex:null}}t='library'}
+  if(t!=='library')VOCAB_VIEW=false;
   if(window.MD_VOCAB_SHELL)window.MD_VOCAB_SHELL.guard(U);
   $('#v-vocab').hidden=true;
   TAB=t;stopAudio();clearTimer();MK.open=false;recClearAll();
@@ -4782,11 +4795,10 @@ function showTab(t){
   if(!U){var lv=$('#v-login');lv.hidden=false;if(!DEMO&&lsGet('md-email')&&!window.MD_USER){lv.setAttribute('data-wait','');setTimeout(function(){lv.removeAttribute('data-wait')},10000)}else lv.removeAttribute('data-wait');$('#tabs').hidden=true;$('#who').hidden=true;$('#sbBtn').hidden=true;document.body.classList.remove('nav-on');document.body.classList.add('lg');sbInit();return}
   $('#v-login').removeAttribute('data-wait');document.body.classList.remove('lg');
   if(t!=='library'&&!tabsFor().some(function(x){return x[0]===t})){t=tabsFor()[0][0];TAB=t} // a tab this role does not have
-  if(t==='vocab')window.location.hash='vocab';else if(window.location.hash==='#vocab'&&window.history)window.history.replaceState(null,'',window.location.pathname+window.location.search);
+  if(!VOCAB_VIEW&&(window.location.hash==='#vocab'||window.location.hash.indexOf('#library/vocab')===0)&&window.history)window.history.replaceState(null,'',window.location.pathname+window.location.search);
   $('#tabs').hidden=tabsFor().length<2;document.body.classList.toggle('nav-on',!$('#tabs').hidden);$('#sbBtn').hidden=$('#tabs').hidden;sbSet(SB.open);/* keeps the open / closed state */$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28,true)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b>'+(U.adm||U.role==='student'?'':'<span class="rl"> · '+U.role+'</span>');
   $('#tabs').innerHTML=tabsFor().map(function(x){return '<button role="tab" data-act="tab" data-tab="'+x[0]+'" aria-selected="'+(x[0]===t)+'">'+x[1]+'</button>'}).join('');
   var id={library:'lib',cards:'cards',errors:'errors',ranks:'ranks',wheel:'wheel',bag:'bag',set:'set',prize:'prize',xps:'xps',dash:'dash',asg:'asg',mark:'mark',roster:'roster',create:'create',admin:'admin',vocab:'vocab'}[t];$('#v-'+id).hidden=false;updMarq();
-  if(t==='vocab')vocabRender();
   if(t==='admin')renderAdmin();
   if(t==='library')renderLib();if(t==='cards')renderCards();if(t==='errors'){EP=null;EN.rv=null;renderErrors()}if(t==='ranks')renderRanks();if(t==='wheel')renderWheel();if(t==='bag')renderBag();if(t==='set')renderSettings();if(t==='prize')renderPrize();if(t==='xps')renderXps();if(t==='dash')renderDash();if(t==='roster')renderRoster();if(t==='create'){renderCpPrompt();renderPrev()}if(t==='mark')renderMark();
   if(t==='asg'){AG.form=null;AG.open=null;AG.cur=null;AG.sub='list';renderAsg()}
@@ -4795,11 +4807,11 @@ function signIn(email){
   var u=findUser(email),m=$('#lgMsg');
   if(!u){m.textContent=(dbh&&!dbReady)?'Still loading the class list. Try again in a moment.':'This email is not on your class list.';return false}
   m.textContent='';U=u;RP=0;lsSet('md-email',u.email);AD.sub='users';AD.users=null;AD.loadErr='';AD.err='';AD.modal=null;AD.locked=false;AD.sheet=null;AD.shErr='';NAV={book:null,test:null,skill:null,ex:null};PANE='q';
-  showTab(window.location.hash==='#vocab'&&vocabAllowed()?'vocab':tabsFor()[0][0]);return true;
+  showTab(vocabInitialTab());return true;
 }
 function refreshLive(){
   if(!U)return;updMarq();
-  if(TAB==='vocab'){U=findUser(U.email)||U;showTab('vocab');return}
+  if(TAB==='library'&&VOCAB_VIEW){U=findUser(U.email)||U;showTab('library');return}
   if(TAB==='dash')renderDash();
   else if(TAB==='admin'&&AD.sub==='students')renderRoster();
   else if(TAB==='library'&&!NAV.ex&&!NAV.daily)renderLib();
@@ -4830,7 +4842,7 @@ document.addEventListener('click',function(e){
   if((a==='tab'||a==='nav'||a==='next'||a==='lx'||a==='daily')&&recUnsaved()&&!confirm(REC_LEAVE))return;
   // an error inside a handler must never look like "the button does nothing": show it, keep it in the Console
   try{if(extAct(a,t))return}catch(err){actFail(a,err);return}
-  if(a==='tab'){if(SB.open&&!sbWide())sbSet(false,!!t.closest('#sideNav'));NAV.daily=null;DY=null;if(CV&&CV.where==='daily')CV=null;return showTab(t.dataset.tab)}
+  if(a==='tab'){VOCAB_VIEW=false;if(SB.open&&!sbWide())sbSet(false,!!t.closest('#sideNav'));NAV.daily=null;DY=null;if(CV&&CV.where==='daily')CV=null;return showTab(t.dataset.tab)}
   if(a==='nav'){XED=null;var nb=t.dataset.book||null,nt=t.dataset.test||null,ns=t.dataset.skill||null,ne=t.dataset.ex||null;LIBX={book:nb,test:nt,skill:ns};NAV={book:ne?nb:null,test:ne?nt:null,skill:ne?ns:null,ex:ne};PANE='q';return showTab('library')}
   if(a==='next'){NAV.ex=t.dataset.ex;PANE='q';renderLib();window.scrollTo&&window.scrollTo(0,0);return}
   if(a==='pane'){PANE=t.dataset.pane;var p=$('#player');if(p)p.setAttribute('data-pane',PANE);$$('.ptabs button').forEach(function(b){b.setAttribute('aria-selected',b.dataset.pane===PANE)});return}
@@ -6198,7 +6210,9 @@ function extAct(a,t){
   if(adAct(a,t))return true;
   if(enAct(a,t))return true;
   if(mkAct(a,t))return true;
-  if(a==='lib-tab'){LIBT=t.dataset.v==='lm'?'lm':'cam';LMV=null;try{lsSet('md-libt',LIBT)}catch(e){}renderLib();return true}
+  if(a==='vocab-toggle'){if(vocabAllowed()){VOCAB_LIST_OPEN=!VOCAB_LIST_OPEN;renderLib();var vb=document.querySelector('[data-act="vocab-toggle"]');if(vb)vb.focus({preventScroll:true})}return true}
+  if(a==='vocab-open'){vocabOpen(t.dataset.view);return true}
+  if(a==='lib-tab'){VOCAB_VIEW=false;if(window.location.hash.indexOf('#library/vocab')===0&&window.history)window.history.replaceState(null,'',window.location.pathname+window.location.search+(t.dataset.v==='lm'?'#library/learning-materials':'#library'));LIBT=t.dataset.v==='lm'?'lm':'cam';LMV=null;try{lsSet('md-libt',LIBT)}catch(e){}renderLib();return true}
   if(a==='lm-open'){var lo=lmLesson(t.dataset.id);LMV=lmVisible(lo)?lo.id:null;renderLib();return true}
   if(a==='lm-back'){LMV=null;renderLib();return true}
   if(a==='lm-tg'){var lk=t.dataset.k;LMO[lk]=!LMO[lk];renderLib();var nb=document.querySelector('[data-act="lm-tg"][data-k="'+lk+'"]');if(nb)nb.focus({preventScroll:true});return true}

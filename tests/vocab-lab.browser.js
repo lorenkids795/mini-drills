@@ -48,7 +48,7 @@ const server=http.createServer((req,res)=>{
     // Root application: demo config is substituted only in this browser, never saved to md-config.js.
     await page.route('**/md-config.js',r=>r.fulfill({contentType:'application/javascript',body:'window.MD_CONFIG={demo:true,teachers:[],api:"/api"};'}));
     await page.goto(base+'/index.html');await page.locator('[data-act="demo"][data-email="admin@demo.vn"]').click();
-    await page.locator('#sbBtn').click();await page.locator('[data-tab="vocab"]').click();await page.locator('#v-vocab [data-vl="know"]').waitFor();
+    await page.locator('#sbBtn').click();await page.locator('[data-tab="library"]').click();await page.locator('[data-act="lib-tab"][data-v="lm"]').click();await page.locator('[data-act="vocab-toggle"]').click();await page.locator('[data-act="vocab-open"][data-view="check"]').click();await page.locator('#v-vocab [data-vl="know"]').waitFor();
     assert.ok(await page.locator('#v-vocab').isVisible());assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
     await page.screenshot({path:path.join(out,'app-mobile-light.png'),fullPage:true,animations:'disabled'});
     await page.evaluate(()=>document.documentElement.setAttribute('data-theme','dark'));await page.screenshot({path:path.join(out,'app-mobile-dark.png'),fullPage:true,animations:'disabled'});

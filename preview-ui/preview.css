@@ -77,3 +77,33 @@ html.sb-lock,body.sb-lock{overflow:hidden}
 .sbbtn,.sbx{min-width:44px;min-height:44px}.tabs button{min-height:44px}#themeBtn{min-height:44px;min-width:44px}.fixture-choice{display:flex;align-items:center;gap:6px}.fixture-choice select{min-height:44px;max-width:112px;border:0;background:transparent;color:var(--ink);padding:4px;font-weight:600}.fixture-choice option{color:var(--ink);background:var(--surface)}.fixture-label{font-size:.75rem}.preview-location{font-size:.75rem;color:var(--muted);margin:0 0 12px}.preview-note{margin-top:28px;font-size:.82rem;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}.preview-note summary{min-height:44px;cursor:pointer;align-content:center}.preview-note label{display:flex;align-items:center;gap:8px;min-height:44px}.preview-note input{width:20px;height:20px}.preview-note p{max-width:720px}.vl,.vm{padding:0!important;max-width:none!important}.sbbg{border:0;border-radius:0;padding:0;cursor:default}.sbhead span{font-size:inherit}
 @media(max-width:640px){.fixture-label{display:none}.fixture-choice select{max-width:100px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Source Library tree; static demo includes no Writing content. */
+.libtabs{margin:6px 0 18px}
+.lmwrap{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.lmwrap>*{max-width:100%}.lmsk,.lmshell,.lmempty{width:100%}
+/* Learning Materials tree (skill › task group › unit): no cards; each skill sets --c */
+.lmtree{gap:0;align-items:stretch}
+.lmmod{--c:var(--lm-w);margin-bottom:6px}.lm-listening{--c:var(--lm-l)}.lm-reading{--c:var(--lm-r)}.lm-speaking{--c:var(--lm-s)}
+.lmtree button{font:inherit;color:var(--ink);background:none;border:0;cursor:pointer;text-align:left}
+.lmtree button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.lmhd{width:100%;display:flex;align-items:center;gap:14px;padding:14px 4px;border-radius:12px}
+.lmic{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:12px;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent)}
+.lmnm{font-size:1.06rem;font-weight:700;letter-spacing:-.01em}
+.lmchev{margin-left:auto;color:var(--muted);display:grid;transition:transform .2s}
+.lmhd[aria-expanded="true"] .lmchev,.lmth[aria-expanded="true"] .lmchev{transform:rotate(90deg);color:var(--c)}
+.lmsoon{margin-left:auto;font-size:.75rem;font-weight:600;color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent);border-radius:999px;padding:4px 11px}
+.lmmod.dis{opacity:.65}.lmtree .lmhd:disabled{cursor:default}
+.lmtw{margin:0 0 8px 19px;padding-left:22px;border-left:2px solid color-mix(in srgb,var(--c) 30%,var(--line))}
+.lmth{width:100%;display:flex;align-items:center;gap:10px;padding:11px 8px;font-size:.94rem;font-weight:600;border-radius:10px;min-height:44px}
+.lmuw{margin-left:10px;padding-left:12px;border-left:1px solid var(--line)}
+.lmtree .lmu{width:100%;display:flex;align-items:center;gap:14px;padding:11px 8px;border-radius:10px;font-size:.88rem;font-weight:400;min-height:44px}
+.lmth:hover,.lmtree .lmu:hover{background:color-mix(in srgb,var(--c) 7%,transparent)}
+.lmbd{margin-left:auto;flex:none;font-size:.75rem;font-weight:500;color:var(--lm-amber);border:1px solid var(--lm-amber);border-radius:999px;padding:2px 10px}
+.lmarr{flex:none;color:var(--muted);display:grid;margin-left:auto}.lmbd+.lmarr{margin-left:4px}
+.lmno{margin:0;padding:10px 8px;font-size:.82rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.lmchev{transition:none}}
+@media (max-width:640px){.lmtw{padding-left:14px}.lmtree .lmu{flex-wrap:wrap;row-gap:4px}}.sechead .meta{font-size:.88rem;color:var(--muted)}
+:root{--lm-w:#4f5bd5;--lm-l:#0f9d8a;--lm-r:#b5651a;--lm-s:#d6458f}:root[data-theme="dark"]{--lm-w:#8b95ff;--lm-l:#4fd1bd;--lm-r:#f0a35a;--lm-s:#f07ab5}.lm-vocabulary{--c:var(--accent)}.library-back,.subtabs button,.vocab-mission-choices button{min-height:44px}.vocab-mission-choices{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}.library-back,.vocab-mission-choices button{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+
+.sechead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}.sechead h2{font-size:1.3rem}.sechead .meta{font-size:.88rem;color:var(--muted)}.subtabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:10px 0 22px}.subtabs button{border:0;background:transparent;padding:.6rem 1rem;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px}.subtabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}

@@ -91,7 +91,7 @@ const server=http.createServer((req,res)=>{const f=path.resolve(root,'.'+decodeU
   {
    const context=await browser.newContext({viewport:{width:1280,height:900}}),page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));const live=[];page.on('request',r=>{if(/firestore|identitytoolkit|firebaseio/.test(r.url()))live.push(r.url())});
    await page.route('**/md-config.js',r=>r.fulfill({contentType:'application/javascript',body:'window.MD_CONFIG={demo:true,teachers:[],api:"/api"}'}));
-   await page.goto(base+'/index.html');await page.locator('[data-act="demo"][data-email="admin@demo.vn"]').click();await page.locator('[data-tab="vocab"]').click();
+   await page.goto(base+'/index.html');await page.locator('[data-act="demo"][data-email="admin@demo.vn"]').click();await page.locator('[data-tab="library"]').click();await page.locator('[data-act="lib-tab"][data-v="lm"]').click();await page.locator('[data-act="vocab-toggle"]').click();await page.locator('[data-act="vocab-open"][data-view="check"]').click();
    for(let i=0;i<12;i++)await page.locator('[data-vl="new"]:enabled').click();await page.locator('[data-vl="startCheck"]').click();
    const checkKey='md-vocab-lab:v1:admin%40demo.vn:cam17-t1-reading-p1',before=await page.evaluate(k=>localStorage.getItem(k),checkKey);
    await page.locator('[data-vl="mission"]').click();await page.locator('[data-vm="begin"]').waitFor();assert.equal(await page.locator('.vm-head h2').innerText(),'Town on the Move');
