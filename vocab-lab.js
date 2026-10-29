@@ -24,6 +24,7 @@ function mount(host,opt){
   if(session&&session.email===opt.user.email&&session.demo===!!opt.demo){session.host=host;session.draw();return}
   if(session&&session.stop)session.stop();
   var s={host:host,email:opt.user.email,demo:!!opt.demo,state:null,pending:null,busy:false,ready:false,message:'Loading lesson…',stop:null,transition:false,previousWord:null},key='md-vocab-lab:v1:'+encodeURIComponent(s.email)+':cam17-t1-reading-p1';session=s;
+  var preferenceKey='md-vocab-batch-size:v1:'+(s.demo?'demo:':'account:')+encodeURIComponent(s.email);s.preference=20;try{if(root.localStorage.getItem(preferenceKey)==='12')s.preference=12}catch(e){}
   function local(value){try{if(value)root.localStorage.setItem(key,JSON.stringify(value));else root.localStorage.removeItem(key);return true}catch(e){s.message='Device storage is unavailable. Enable storage before sorting.';return false}}
   function cache(){return local({state:s.state,pending:s.pending})}
   // Pin already-attempted questions to their original content when resuming a batch.
@@ -34,6 +35,8 @@ function mount(host,opt){
   }
   function draw(focus){
     if(session!==s)return;
+    var settings=s.host.querySelector('.vl-batch-settings'),settingsOpen=settings&&settings.open;
+    var sizeFocused=document.activeElement&&document.activeElement.id==='vlBatchSize';
     focus=focus||s.host.contains(document.activeElement);
     var h='<header class="vl-head"><div class="vl-title"><h2 id="vlTitle">Vocab Check</h2><span class="vl-passage">Cambridge 17 · Test 1<br>Reading Passage 1</span></div></header>';
     function utility(){return '<footer class="vl-utility"><p class="vl-sync" role="status" aria-live="polite">'+esc(s.message)+'</p>'+(s.pending&&!s.busy?button('sync','Retry sync',false,true):'')+'</footer>'}
@@ -42,7 +45,13 @@ function mount(host,opt){
     var state=s.state,b=state.batch,locked=s.busy||!!s.pending,id=C.current(state),q,r,sorted=Object.keys(state.termProgress).length,bins={know:0,unsure:0,new:0},verified=0,needs=0,untested=0;
     b.ids.forEach(function(k){var p=state.termProgress[k];if(p){bins[p.classification]++;if(p.classification==='know'){if(b.results[k]&&b.results[k].done){if(b.results[k].status==='verified_for_current_task')verified++;else needs++}else untested++}}});
     function binStats(){return '<div class="vl-counts" aria-label="Batch sorting counts">'+[['know','Know It'],['unsure','Not Sure'],['new','New to Me']].map(function(x){return '<span class="vl-count vl-'+x[0]+'">'+icon(x[0])+'<span>'+x[1]+'</span><b>'+bins[x[0]]+'</b></span>'}).join('')+'</div>'}
-    h+='<div class="vl-progress"><span>'+(b.phase==='sort'?'Word '+(b.history.length+1)+' of '+b.ids.length:'Batch '+state.batchNumber)+'</span><span><b>'+sorted+'</b> / 102 sorted</span><progress max="102" value="'+sorted+'" aria-label="Words classified in this lesson"></progress></div>';
+    var batchSorted=b.ids.filter(function(k){return !!state.termProgress[k]}).length,configurable=b.configurable===true&&b.phase==='sort'&&!b.history.length;
+    if(!configurable)h+='<details class="vl-batch-settings"'+(settingsOpen?' open':'')+'><summary>Current batch · '+b.ids.length+' words · Next batch settings</summary>';
+    h+='<div class="vl-batch-choice"><label for="vlBatchSize">'+(configurable?'Check length':'Next batch')+'</label><select id="vlBatchSize" aria-describedby="vlBatchNote"'+(locked?' disabled':'')+'><option value="20"'+(s.preference===20?' selected':'')+'>Standard · 20 words</option><option value="12"'+(s.preference===12?' selected':'')+'>Quick · 12 words</option></select><p id="vlBatchNote">'+(configurable?'Choose before sorting your first word.':'Current batch: '+b.ids.length+' words · fixed. Your choice applies to the next batch.')+'</p></div>';
+    if(!configurable)h+='</details>';
+    h+='<div class="vl-progress"><strong class="vl-batch-position">'+(b.phase==='sort'?'Word '+(batchSorted+1)+' of '+b.ids.length:batchSorted+' of '+b.ids.length+' words sorted')+'</strong><span>Batch '+state.batchNumber+'</span><progress max="'+b.ids.length+'" value="'+batchSorted+'" aria-label="Words classified in this batch"></progress></div>';
+    var lessonProgress='<details class="vl-lesson-progress"><summary>Lesson progress</summary><p><b>'+sorted+'</b> / '+s.bank.lesson_term_links.length+' sorted</p></details>';
+    if(s.paused){s.host.innerHTML=h+'<section class="vl-main"><h3>Your progress is saved</h3><p>Come back whenever you are ready.</p>'+button('resume','Resume Vocab Check',false,true)+'</section>'+lessonProgress+utility();return}
     h+='<section class="vl-main vl-phase-'+b.phase+'" aria-labelledby="vlStep"><div class="vl-stepbar"><h3 id="vlStep" tabindex="-1">'+({sort:'Word sorting',ready:'Batch sorted',check:'Reality Check',results:'Batch complete'}[b.phase])+'</h3>'+(b.phase==='check'?'<span class="vl-check-progress">Check '+(b.checkAt+1)+' of '+b.checks.length+'</span>':'')+'</div>';
     if(b.phase==='sort'){
       h+='<p class="vl-instruction">How well do you know this word?</p><div class="vl-word'+(s.transition?' vl-card-transition':'')+'">'+(s.previousWord?'<div class="vl-leaving" aria-hidden="true">'+esc(s.previousWord)+'</div>':'')+'<h4>'+esc(s.terms[id].surface)+'</h4><span class="vl-card-caption">Choose before seeing the meaning</span></div>';
@@ -65,15 +74,17 @@ function mount(host,opt){
       h+='<div class="vl-complete-mark">'+icon('done')+'</div><p class="vl-lead">A little clearer, one batch at a time.</p>'+binStats()+'<div class="vl-check-summary"><h4>Your context check</h4><dl class="vl-stats">';
       [['Verified here',verified],['Needs practice',needs],['Not checked yet',untested]].forEach(function(x){h+='<div><dt>'+x[0]+'</dt><dd>'+x[1]+'</dd></div>'});h+='</dl></div>';
       if(root.MD_MISSION&&root.MD_MISSION.eligible(opt.user,opt.demo))h+=button('mission','Start a local mission',locked,false,'','arrow');
-      if(sorted<102)h+=button('nextBatch','Continue: Next '+Math.min(12,102-sorted)+' Words',locked,true,'','arrow');else h+='<p class="vl-support">All 102 words sorted. A great starting point for practice.</p>';
+      if(sorted<102)h+=button('nextBatch','Continue: Next '+Math.min(s.preference,s.bank.lesson_term_links.length-sorted)+' Words',locked,true,'','arrow');else h+='<p class="vl-support">All 102 words sorted. A great starting point for practice.</p>';
+      h+=button('finish','Finish for now',locked,false);
       h+='<p class="vl-quiet">Know It is your own estimate. One context check is a starting point, not mastery.</p><details class="vl-learning-note"><summary>What do these results mean?</summary><p>Verified here means correct first try, without a clue. Retries, clues and revealed answers stay on your practice list. Know It words we haven’t checked are still your own estimate. Other word forms need their own practice.</p></details>';
       h+='<details class="vl-revise"><summary>Revise a classification</summary><p>This starts a fresh check for the selected word. Earlier attempts stay in your history.</p><label for="vlRevise">Choose a sorted word</label><select id="vlRevise">';
       s.bank.lesson_term_links.forEach(function(l){if(state.termProgress[l.senseId])h+='<option value="'+esc(l.senseId)+'">'+esc(s.terms[l.senseId].surface)+'</option>'});
       h+='</select>'+button('revise','Reclassify selected word',locked||!sorted)+'</details>';
     }
-    h+='</section>'+utility();
+    h+='</section>'+lessonProgress+utility();
     s.host.innerHTML=h;
-    if(focus){var target=s.host.querySelector('.vl-word h4')||s.host.querySelector('#vlStep');if(target){target.setAttribute('tabindex','-1');target.focus({preventScroll:true})}}
+    if(sizeFocused){var select=s.host.querySelector('#vlBatchSize');if(select)select.focus({preventScroll:true})}
+    else if(focus){var target=s.host.querySelector('.vl-word h4')||s.host.querySelector('#vlStep');if(target){target.setAttribute('tabindex','-1');target.focus({preventScroll:true})}}
     if(focus&&b.phase==='check'&&(r.tries||r.hinted||r.done)){var feedback=s.host.querySelector('.vl-feedback');if(feedback)feedback.scrollIntoView({block:'nearest',behavior:'auto'})}
   }
 
@@ -87,7 +98,7 @@ function mount(host,opt){
       s.pending=null;s.message='Saved to your account.';cache();
     },function(e){
       if(e.code==='vocab-conflict'){
-        s.state=e.remote||C.fresh(s.email,s.bank);if(!s.state.batch)C.begin(s.state,s.bank);
+        s.state=e.remote||C.fresh(s.email,s.bank);if(!s.state.batch)C.begin(s.state,s.bank,null,s.preference);
         s.pending=null;s.message=e.message;cache();
       }else{s.message='Not synced. Your draft is safe on this device. Check your connection, then retry.';cache()}
     }).then(function(){s.busy=false;draw()});
@@ -95,7 +106,9 @@ function mount(host,opt){
   function act(type,choice){
     if(session!==s||(opt.isCurrent&&!opt.isCurrent()))return;
     if(type==='sync'){sync();return}
+    if(type==='resume'){s.paused=false;draw(true);return}
     if(!s.ready||s.busy||s.pending)return;
+    if(type==='finish'){if(s.state.batch.phase!=='results')return;if(opt.onFinish)opt.onFinish();else{s.paused=true;draw(true)}return}
     if(type==='mission'&&root.MD_MISSION&&root.MD_MISSION.eligible(opt.user,opt.demo)){
       var args=missionArgs();
       if(opt.onMission)opt.onMission(args);else root.MD_MISSION.open(s.host,args);return;
@@ -105,6 +118,7 @@ function mount(host,opt){
     var op={type:type,id:'op-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,12)},before=s.state,after;
     if(['know','unsure','new'].indexOf(type)>=0){op.type='sort';op.bin=type}
     if(type==='answer')op.choice=choice;
+    if(type==='nextBatch'||type==='configureBatch')op.batchSize=s.preference;
     if(type==='revise')op.senseId=s.host.querySelector('#vlRevise').value;
     try{after=C.apply(before,op,s.bank,s.practice)}catch(e){s.message=e.message;draw();return}
     clearTimeout(s.motionTimer);s.previousWord=null;s.transition=false;
@@ -117,10 +131,12 @@ function mount(host,opt){
     s.message=s.demo?'Saved':'Saving…';draw(true);
     if(!s.demo)sync();
   }
+  s.setPreference=function(value){if(!s.ready||s.busy||s.pending)return;try{value=C.batchSize(value);root.localStorage.setItem(preferenceKey,String(value))}catch(e){s.message='Could not save your check length. Enable browser storage.';draw();return}s.preference=value;if(s.state.batch.configurable===true&&s.state.batch.phase==='sort'&&!s.state.batch.history.length)act('configureBatch');else draw()};
   host.onclick=null;
   // One delegated listener per host, reading the current session only.
   if(!host._vocabEvents){
     host.addEventListener('click',function(e){var t=e.target.closest('[data-vl]');if(t&&session&&session.host===host){var action=t.getAttribute('data-vl');if(e.detail>1&&['know','unsure','new'].indexOf(action)>=0)return;session.act(action,Number(t.getAttribute('data-choice')))}});
+    host.addEventListener('change',function(e){if(e.target.id==='vlBatchSize'&&session&&session.host===host)session.setPreference(Number(e.target.value))});
     host.addEventListener('keydown',function(e){if(!session||session.host!==host||e.repeat||e.ctrlKey||e.metaKey||e.altKey||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;var a={'1':'know','2':'unsure','3':'new',u:'undo',U:'undo'}[e.key];if(a&&session.state&&['sort','ready'].indexOf(session.state.batch.phase)>=0){e.preventDefault();session.act(a)}});
     host._vocabEvents=true;
   }
@@ -134,7 +150,7 @@ function mount(host,opt){
     values[2].forEach(function(p){s.legacyPractice[p.senseId]=p});
     var saved=null;try{saved=JSON.parse(root.localStorage.getItem(key)||'null')}catch(e){}
     if(saved&&saved.state&&saved.state.schemaVersion===1&&saved.state.email===s.email&&saved.state.lessonId===s.bank.lessonId){s.state=saved.state;s.pending=saved.pending||null}
-    else s.state=C.begin(C.fresh(s.email,s.bank),s.bank);
+    else s.state=C.begin(C.fresh(s.email,s.bank),s.bank,null,s.preference);
     if(s.demo){s.pending=null;s.ready=true;s.message='Saved';draw();if(opt.onReady)opt.onReady(missionArgs());return}
     return Promise.resolve(opt.db||(root.claude&&root.claude.use('db'))).then(function(db){
       if(session!==s)return;
@@ -146,9 +162,9 @@ function mount(host,opt){
         if(session!==s)return;
         if(s.pending){
           if(remote&&remote.lastOperation===s.pending.op.id){s.state=remote;s.pending=null;s.message='Saved to your account.'}
-          else if((remote?remote.revision:0)!==s.pending.before.revision){s.state=remote||C.begin(C.fresh(s.email,s.bank),s.bank);s.pending=null;s.message='Another session updated this lesson. Latest progress loaded; retry your last action.'}
+          else if((remote?remote.revision:0)!==s.pending.before.revision){s.state=remote||C.begin(C.fresh(s.email,s.bank),s.bank,null,s.preference);s.pending=null;s.message='Another session updated this lesson. Latest progress loaded; retry your last action.'}
           else{s.message='Unsynced draft restored. Retry sync to continue.'}
-        }else{s.state=remote||C.begin(C.fresh(s.email,s.bank),s.bank);s.message=remote?'Saved to your account.':'Account connected. Your choices save automatically.'}
+        }else{s.state=remote||C.begin(C.fresh(s.email,s.bank),s.bank,null,s.preference);s.message=remote?'Saved to your account.':'Account connected. Your choices save automatically.'}
         s.ready=true;cache();draw();
       },function(){s.ready=false;s.message='Could not load your progress. Check your connection, then reload or ask your teacher for help.';draw()});
     });

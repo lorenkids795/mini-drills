@@ -56,7 +56,7 @@ const server=http.createServer((req,res)=>{const f=path.resolve(root,'.'+decodeU
    assert.equal(await page.locator('#vmStep').innerText(),'Debrief');assert.ok((await page.locator('.vm-evidence').first().innerText()).includes('Ready for Review'));
    await page.selectOption('#identity','b');await page.locator('[data-vm="begin"]').waitFor();assert.equal(await page.locator('#vmStep').innerText(),'Mission briefing');
    await page.selectOption('#identity','a');await page.locator('#vmStep').waitFor();assert.equal(await page.locator('#vmStep').innerText(),'Debrief');
-   await page.locator('[data-vm="replay"]').click();assert.equal(await page.locator('#vmStep').innerText(),'Mission briefing');
+   await page.locator('[data-vm="replay"]').click();await page.locator('[data-vm="begin"]').waitFor();assert.equal(await page.locator('#vmStep').innerText(),'Mission briefing');
    logs.push('PASS complete authored game, five one-at-a-time sentences with keyboard/focus, reload, account isolation, replay');await context.close();
   }
   {
@@ -92,13 +92,13 @@ const server=http.createServer((req,res)=>{const f=path.resolve(root,'.'+decodeU
    const context=await browser.newContext({viewport:{width:1280,height:900}}),page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));const live=[];page.on('request',r=>{if(/firestore|identitytoolkit|firebaseio/.test(r.url()))live.push(r.url())});
    await page.route('**/md-config.js',r=>r.fulfill({contentType:'application/javascript',body:'window.MD_CONFIG={demo:true,teachers:[],api:"/api"}'}));
    await page.goto(base+'/index.html');await page.locator('[data-act="demo"][data-email="admin@demo.vn"]').click();await page.locator('[data-tab="library"]').click();await page.locator('[data-act="lib-tab"][data-v="lm"]').click();await page.locator('[data-act="vocab-toggle"]').click();await page.locator('[data-act="vocab-open"][data-view="check"]').click();
-   for(let i=0;i<12;i++)await page.locator('[data-vl="new"]:enabled').click();await page.locator('[data-vl="startCheck"]').click();
+   for(let i=0;i<20;i++)await page.locator('[data-vl="new"]:enabled').click();await page.locator('[data-vl="startCheck"]').click();
    const checkKey='md-vocab-lab:v1:admin%40demo.vn:cam17-t1-reading-p1',before=await page.evaluate(k=>localStorage.getItem(k),checkKey);
    await page.locator('[data-vl="mission"]').click();await page.locator('[data-vm="begin"]').waitFor();assert.equal(await page.locator('.vm-head h2').innerText(),'Town on the Move');
    await page.locator('[data-vm="begin"]').click();await page.locator('.vm-report').click();assert.equal(await page.evaluate(k=>localStorage.getItem(k),checkKey),before);
-   await page.locator('[data-vm="sorting"]').click();await page.locator('[data-vl="know"]:enabled').waitFor();assert.ok((await page.locator('.vl-progress').innerText()).includes('12 / 102'));
+   await page.locator('[data-vm="sorting"]').click();await page.locator('[data-vl="know"]:enabled').waitFor();assert.ok((await page.locator('.vl-lesson-progress').textContent()).includes('20 / 102'));
    assert.equal(await page.evaluate(()=>MD_MISSION.eligible({adm:true},false)),false);assert.equal(await page.evaluate(()=>MD_MISSION.eligible(null,true)),false);assert.deepEqual(live,[]);
-   logs.push('PASS real root-app demo integration from a completed 12-word batch, read-only Check input, Continue Sorting, no real APIs; real-mode/anonymous mission gating');await context.close();
+   logs.push('PASS real root-app demo integration from a completed 20-word batch, read-only Check input, Continue Sorting, no real APIs; real-mode/anonymous mission gating');await context.close();
   }
   assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'metrics.json'),JSON.stringify(metrics,null,2));fs.writeFileSync(path.join(out,'browser-results.txt'),logs.join('\n')+'\n');console.log(logs.join('\n'));
  }finally{await browser.close();server.close()}

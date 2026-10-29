@@ -31,3 +31,8 @@
 
 /* Vocabulary is a Learning Materials category; these rules do not alter Writing. */
 .lm-vocabulary{--c:var(--accent)}#v-lib>#v-vocab{max-width:none;padding:0;margin-top:14px}.vocab-library-back{min-height:44px;display:inline-flex;align-items:center}.vocab-shell .vocab-location{margin:6px 0 14px}.vocab-shell .vocab-preview-bar{margin-top:22px}.vocab-shell .vocab-preview-bar summary{min-height:44px;cursor:pointer}.vocab-mission-choices{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}.vocab-mission-choices .btn{min-height:44px}
+
+/* Standard / Quick choice; lesson totals stay secondary to the current batch. */
+.vl-batch-choice{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:14px 0 0;font-size:.78rem}.vl-batch-choice label{font-weight:650}.vl .vl-batch-choice select{min-height:44px;max-width:100%;padding:8px 10px;color:var(--ink);background:var(--surface);border:1px solid var(--vl-control);border-radius:9px;font:inherit}.vl-batch-choice p{flex-basis:100%;font-size:.72rem;color:var(--muted)}.vl-batch-position{font-size:1rem;color:var(--ink)}.vl-lesson-progress{margin:-6px 0 12px;color:var(--muted);font-size:.75rem}.vl-lesson-progress summary{min-height:44px;display:list-item;align-content:center;cursor:pointer}.vl-lesson-progress p{padding-bottom:8px}.vl [data-vl="finish"]{margin-top:10px}
+
+.vl .vl-batch-choice select{width:auto;flex:1;min-width:0}.vl-batch-settings{margin-top:8px;font-size:.75rem;color:var(--muted)}.vl-batch-settings summary{min-height:44px;align-content:center;cursor:pointer}.vl-batch-settings .vl-batch-choice{margin-top:0}.vl-lesson-progress{margin:12px 0 0}.vl-batch-settings summary:focus-visible{outline:3px solid var(--accent);outline-offset:3px}

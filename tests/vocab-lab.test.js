@@ -4,7 +4,7 @@ const C=require('../vocab-lab-core'),store=require('../vocab-lab-store'),{boot}=
 const bank=require('../data/vocab-lab-p1.json'),items=require('../data/vocab-lab-practice.json'),pending=require('../editorial/vocab-lab-p2.pending.json');
 const practice=Object.fromEntries(items.map(q=>[q.senseId,q]));
 let serial=0;
-const fresh=()=>C.begin(C.fresh('a@example.com',bank),bank);
+const fresh=()=>C.begin(C.fresh('a@example.com',bank),bank,null,12);
 const act=(s,type,extra={})=>C.apply(s,{type,id:'op-test-'+(++serial),...extra},bank,practice);
 const sorted=(bin='know',n=12)=>{let s=fresh();for(let i=0;i<n;i++)s=act(s,'sort',{bin});return s};
 test('succeed current key matches editorial builder source; immutable v1 retains its original key',()=>{
@@ -39,7 +39,7 @@ test('partial batch classify, undo, JSON reload and resume without repeats',()=>
   const id=C.current(s);s=JSON.parse(JSON.stringify(s));assert.equal(C.current(s),id);
   while(s.batch.phase==='sort')s=act(s,'sort',{bin:'new'});
   assert.equal(s.batch.phase,'ready');s=act(s,'startCheck');assert.equal(s.batch.phase,'results');
-  const old=s.batch.ids;s=act(s,'nextBatch');assert.equal(s.batch.ids.length,12);assert.ok(s.batch.ids.every(id=>!old.includes(id)));
+  const old=s.batch.ids;s=act(s,'nextBatch',{batchSize:12});assert.equal(s.batch.ids.length,12);assert.ok(s.batch.ids.every(id=>!old.includes(id)));
 });
 test('Reality Check handles zero, fewer than 3, and many Know It items',()=>{
   assert.equal(C.sample(sorted('new'),practice).length,0);
@@ -87,7 +87,7 @@ test('all 102 terms can be completed across nine batches with final short batch'
   let s=fresh(),lengths=[];
   do{
     lengths.push(s.batch.ids.length);while(s.batch.phase==='sort')s=act(s,'sort',{bin:'unsure'});
-    s=act(s,'startCheck');if(Object.keys(s.termProgress).length<102)s=act(s,'nextBatch');else break;
+    s=act(s,'startCheck');if(Object.keys(s.termProgress).length<102)s=act(s,'nextBatch',{batchSize:12});else break;
   }while(true);
   assert.deepEqual(lengths,[12,12,12,12,12,12,12,12,6]);assert.equal(C.summary(s).unsure,102);
 });

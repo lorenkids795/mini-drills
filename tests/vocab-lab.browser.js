@@ -28,7 +28,7 @@ const server=http.createServer((req,res)=>{
     assert.ok(await page.locator('[data-vl="know"]').evaluate(el=>el.getBoundingClientRect().height>=44));
     await page.screenshot({path:path.join(out,'mobile-dark.png'),fullPage:true});
     await page.locator('#theme').click();await page.screenshot({path:path.join(out,'mobile-light.png'),fullPage:true});
-    for(let i=1;i<12;i++)await page.locator('[data-vl="know"]').click();
+    for(let i=1;i<20;i++)await page.locator('[data-vl="know"]').click();
     await page.locator('[data-vl="startCheck"]').click();
     const firstQ=await page.locator('.vl-context').innerText();
     const bank=require('../data/vocab-lab-practice.json'),q=bank.find(q=>q.context===firstQ),wrong=(q.answer+1)%3;

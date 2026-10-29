@@ -23,7 +23,7 @@ function mount(host,opt){
  }
  host.querySelector('[data-vocab-library-back]').addEventListener('click',function(){if(current()&&s.opt.onLibraryBack)s.opt.onLibraryBack()});
 
- root.MD_VOCAB.mount(check,{user:opt.user,db:opt.db,demo:opt.demo,isCurrent:function(){return current()&&s.view==='check'},onMission:function(args){openMission(args)},onReady:function(args){s.latestArgs=args;if(wantMission||s.view==='missions'&&localMission){wantMission=false;openMission()}}});
+ root.MD_VOCAB.mount(check,{user:opt.user,db:opt.db,demo:opt.demo,isCurrent:function(){return current()&&s.view==='check'},onFinish:function(){if(current()&&s.opt.onLibraryBack)s.opt.onLibraryBack()},onMission:function(args){openMission(args)},onReady:function(args){s.latestArgs=args;if(wantMission||s.view==='missions'&&localMission){wantMission=false;openMission()}}});
  s.show();return true;
 }
 root.MD_VOCAB_SHELL={allowed:allowed,mount:mount,guard:guard,close:close,navigate:function(view){if(active)active.navigate(view)}};

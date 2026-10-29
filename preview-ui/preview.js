@@ -17,7 +17,7 @@ function start(){
  user={email:'ui-tester-'+document.getElementById('identity').value+'@local.invalid',name:'Fixture tester',role:'student',tester:true};
  var saved=null;try{saved=JSON.parse(localStorage.getItem(key())||'null')}catch(e){}
  libraryTab=saved&&saved.libraryTab==='lm'?'lm':'cambridge';view='library';show(saved&&['check','missions','town'].indexOf(saved.view)>=0?saved.view:'library');var identity=user.email;
- root.MD_VOCAB.mount(check,{user:user,demo:true,isCurrent:function(){return user.email===identity&&view==='check'},onMission:function(args){runMission('town',args)},onReady:function(args){returnToSorting=args.onContinueSorting;if(saved&&['town','missions'].indexOf(saved.view)>=0)runMission('town')}});
+ root.MD_VOCAB.mount(check,{user:user,demo:true,isCurrent:function(){return user.email===identity&&view==='check'},onFinish:function(){libraryTab='lm';show('library')},onMission:function(args){runMission('town',args)},onReady:function(args){returnToSorting=args.onContinueSorting;if(saved&&['town','missions'].indexOf(saved.view)>=0)runMission('town')}});
 }
 var LM_ICO={writing:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/>',listening:'<path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/>',
   reading:'<path d="M2 4h6a4 4 0 014 4v13a3 3 0 00-3-3H2z"/><path d="M22 4h-6a4 4 0 00-4 4v13a3 3 0 013-3h7z"/>',speaking:'<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10a7 7 0 01-14 0M12 17v5"/>'};

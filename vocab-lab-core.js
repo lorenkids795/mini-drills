@@ -5,9 +5,11 @@ function copy(x){return JSON.parse(JSON.stringify(x))}
 function hash(s){var h=7,i;for(i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return h}
 function allowed(user,enabled){return !!(user&&(user.adm===true||user.tester===true||(enabled===true&&user.role==='student')))}
 function fresh(email,bank){return {schemaVersion:1,email:email,lessonId:bank.lessonId,revision:0,termProgress:{},attempts:[],batch:null,batchNumber:0}}
-function begin(s,bank,ids){
+function batchSize(value){if(value==null)return 20;if(value!==12&&value!==20)throw Error('Choose Standard 20 or Quick 12.');return value}
+function begin(s,bank,ids,size){
+  size=ids?ids.length:batchSize(size);
   s.batchNumber++;
-  s.batch={id:'batch-'+s.batchNumber,ids:ids||bank.lesson_term_links.filter(function(l){return !s.termProgress[l.senseId]}).slice(0,12).map(function(l){return l.senseId}),history:[],phase:'sort',checks:[],checkAt:0,results:{}};
+  s.batch={id:'batch-'+s.batchNumber,size:size,configurable:!ids,ids:ids||bank.lesson_term_links.filter(function(l){return !s.termProgress[l.senseId]}).slice(0,size).map(function(l){return l.senseId}),history:[],phase:'sort',checks:[],checkAt:0,results:{}};
   if(!s.batch.ids.length)s.batch.phase='results';
   return s;
 }
@@ -20,11 +22,14 @@ function settle(s,record,result,task){var id=s.batch.checks[s.batch.checkAt];rec
 function apply(before,action,bank,practice){
   var s=copy(before),b=s.batch,id,p,r,q,all,failed;
   if(!b)begin(s,bank);b=s.batch;
-  if(action.type==='sort'){
+  if(action.type==='configureBatch'){
+    if(b.configurable!==true||b.phase!=='sort'||b.history.length)throw Error('This batch is fixed; change the next batch instead.');
+    b.size=batchSize(action.batchSize);b.ids=bank.lesson_term_links.filter(function(l){return !s.termProgress[l.senseId]}).slice(0,b.size).map(function(l){return l.senseId});
+  }else if(action.type==='sort'){
     if(b.phase!=='sort'||['know','unsure','new'].indexOf(action.bin)<0)throw Error('Invalid classification');
     id=current(s);if(!id)throw Error('No unsorted item');
     s.termProgress[id]={classification:action.bin,status:action.bin==='know'?'self_reported_known':action.bin==='unsure'?'unsure':'new',formEvidence:{}};
-    b.history.push(id);if(!current(s))b.phase='ready';
+    b.configurable=false;b.history.push(id);if(!current(s))b.phase='ready';
   }else if(action.type==='undo'){
     if(['sort','ready'].indexOf(b.phase)<0||!b.history.length)throw Error('Nothing to undo');
     id=b.history.pop();delete s.termProgress[id];b.phase='sort';
@@ -51,7 +56,7 @@ function apply(before,action,bank,practice){
     }
     b.checkAt++;if(b.checkAt>=b.checks.length)b.phase='results';
   }else if(action.type==='nextBatch'){
-    if(b.phase!=='results')throw Error('Finish the Reality Check first');begin(s,bank);
+    if(b.phase!=='results')throw Error('Finish the Reality Check first');begin(s,bank,null,batchSize(action.batchSize));
   }else if(action.type==='revise'){
     if(b.phase!=='results'||!s.termProgress[action.senseId])throw Error('Cannot revise this item');
     id=action.senseId;delete s.termProgress[id];begin(s,bank,[id]);
@@ -60,6 +65,6 @@ function apply(before,action,bank,practice){
 }
 function summary(s){var out={self_reported_known:0,verified_for_current_task:0,needs_practice:0,unsure:0,new:0,unsampled:0};
   Object.keys(s.termProgress).forEach(function(k){var p=s.termProgress[k];out[p.status]++;if(p.classification==='know'&&!p.evidence)out.unsampled++});return out}
-var api={copy:copy,allowed:allowed,fresh:fresh,begin:begin,current:current,sample:sample,question:question,apply:apply,summary:summary};
+var api={copy:copy,allowed:allowed,fresh:fresh,batchSize:batchSize,begin:begin,current:current,sample:sample,question:question,apply:apply,summary:summary};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.MD_VOCAB_CORE=api;
 })(this);

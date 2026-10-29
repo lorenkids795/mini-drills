@@ -8,8 +8,8 @@ const key='md-vocab-lab:v1:sandbox-a%40local.invalid:cam17-t1-reading-p1';let se
 function contrast(a,b){function lum(s){const v=s.match(/[\d.]+/g).slice(0,3).map(Number).map(x=>{x/=255;return x<=.04045?x/12.92:((x+.055)/1.055)**2.4});return v[0]*.2126+v[1]*.7152+v[2]*.0722}const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
 const action=(s,type,extra={},practice=P)=>C.apply(s,{type,id:'qa-'+(++serial),...extra},bank,practice);
 function fixtures(){
- let s=C.begin(C.fresh('sandbox-a@local.invalid',bank),bank);
- for(let i=0;i<12;i++)s=action(s,'sort',{bin:'new'});s=action(s,'startCheck');s=action(s,'nextBatch');
+ let s=C.begin(C.fresh('sandbox-a@local.invalid',bank),bank,null,12);
+ for(let i=0;i<12;i++)s=action(s,'sort',{bin:'new'});s=action(s,'startCheck');s=action(s,'nextBatch',{batchSize:12});
  const sorting=C.copy(s);for(let i=0;i<12;i++)s=action(s,'sort',{bin:i<9?'know':i===9?'unsure':'new'});
  const ready=C.copy(s);s=action(s,'startCheck');s=action(s,'answer',{choice:C.question(s,P).answer});s=action(s,'next');
  const checking=C.copy(s),q=C.question(s,P),wrong=action(s,'answer',{choice:(q.answer+1)%3}),correct=action(s,'answer',{choice:q.answer});
@@ -67,7 +67,7 @@ const server=http.createServer((req,res)=>{
   }
   logs.push('PASS 36 state/theme/viewport checks: 390/768/1280, no overflow, 44px targets, text contrast >=4.5:1, control boundaries >=3:1, sorting/undo above fold, first-error hint visible and neutral, quiet reveal');
   {
-   const s=C.begin(C.fresh('sandbox-a@local.invalid',bank),bank),{page,context}=await load(s,390,'light','no-preference');
+   const s=C.begin(C.fresh('sandbox-a@local.invalid',bank),bank,null,12),{page,context}=await load(s,390,'light','no-preference');
    await page.locator('[data-vl="know"]').dblclick({force:true});await page.waitForFunction(k=>JSON.parse(localStorage.getItem(k)).state.revision===1,key);
    assert.equal(await page.evaluate(k=>Object.keys(JSON.parse(localStorage.getItem(k)).state.termProgress).length,key),1);
    await page.reload();await page.locator('[data-vl="know"]:enabled').waitFor();
@@ -77,19 +77,19 @@ const server=http.createServer((req,res)=>{
    await page.keyboard.press('2');await page.locator('[data-vl="know"]:enabled').waitFor();
    assert.equal(await page.evaluate(()=>document.activeElement.tagName),'H4');
    await page.selectOption('#sandboxUser','b');await page.locator('[data-vl="know"]:enabled').waitFor();
-   assert.ok((await page.locator('.vl-progress').innerText()).includes('0 / 102'));
+   assert.ok((await page.locator('.vl-lesson-progress').textContent()).includes('0 / 102'));
    logs.push('PASS double click records once; reload during transition; keyboard sort/undo and retained word focus; separate accounts');await context.close();
   }
   {
-   const {page,context}=await load(C.begin(C.fresh('sandbox-a@local.invalid',bank),bank));
+   const {page,context}=await load(C.begin(C.fresh('sandbox-a@local.invalid',bank),bank,null,12));
    await page.locator('[data-vl="know"]').click();assert.equal(await page.locator('.vl-word h4').evaluate(e=>getComputedStyle(e).animationName),'none');
    logs.push('PASS prefers-reduced-motion disables card animation');await context.close();
   }
   {
-   let s=C.begin(C.fresh('sandbox-a@local.invalid',bank),bank);for(let i=0;i<12;i++)s=action(s,'sort',{bin:'new'});
+   let s=C.begin(C.fresh('sandbox-a@local.invalid',bank),bank,null,12);for(let i=0;i<12;i++)s=action(s,'sort',{bin:'new'});
    const {page,context}=await load(s);assert.ok((await page.locator('.vl-support').innerText()).includes('skip'));
    await page.locator('[data-vl="startCheck"]').click();assert.equal(await page.locator('#vlStep').innerText(),'Batch complete');
-   await page.locator('[data-vl="nextBatch"]').click();assert.equal(await page.locator('.vl-progress b').innerText(),'12');
+   await page.locator('[data-vl="nextBatch"]').click();assert.equal(await page.locator('.vl-lesson-progress b').textContent(),'12');
    logs.push('PASS zero Known: transparent skip to results and next batch');await context.close();
   }
   {
