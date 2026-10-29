@@ -214,7 +214,8 @@ t('P0: editing the saved overview into rubbish closes Independent again (one sou
 t('P0: admin preview opens every stage but says so; it never makes a student attempt or a pass', () => {
   const w = open(boot()); const h = w.T.luHTML(L, w.MD_LM_U2); assert.ok(h.includes('class="luadm"') && h.includes(W.esc(copyOf('ui.adm.preview').vi)));
   act(w, 'lu-go', { s: 'independent' }); assert.strictEqual(w.T.LU().stage, 'independent'); assert.ok(!gd(w).sub, 'navigation is not completion');
-  act(w, 'lu-af'); w.T.luStageHTML(w.MD_LM_U2, 'guided'); assert.ok(!gd(w).t && !gd(w).sub, 'auto-fill never writes text or attempts');
+  act(w, 'lu-af'); w.T.luStageHTML(w.MD_LM_U2, 'guided'); assert.ok(gd(w).t && !gd(w).sub, 'the Demo helper fills a sample (in memory) but never saves it for practice');
+  act(w, 'lu-af'); assert.ok(!gd(w).t, 'switched off: the real (empty) draft is back');
   assert.ok(!boot({ user: STU }).T.luHTML(L, U2).includes('luadm'));
 });
 t('P0: language switch keeps sentences, overview and the "saved for practice" state', () => {
@@ -255,11 +256,28 @@ t('students: stages open in order (titles say why); admin preview opens every st
   const a = open(boot()); h = a.T.luHTML(L, a.MD_LM_U2); assert.ok(!/class="lustep[^"]*" data-act="lu-go" data-s="\w+" disabled/.test(h)); act(a, 'lu-go', { s: 'guided' }); assert.strictEqual(a.T.LU().stage, 'guided');
 });
 t('admin "Preview: auto-fill" is off by default, admin only, fills checkable answers only and saves nothing', () => {
-  const w = open(boot()); assert.strictEqual(w.T.LU().af, false); assert.ok(w.T.luHTML(L, w.MD_LM_U2).includes('Preview: auto-fill off'));
+  const w = open(boot()); assert.strictEqual(w.T.LU().af, false); assert.ok(w.T.luHTML(L, w.MD_LM_U2).includes('>Demo helper<') && w.T.luHTML(L, w.MD_LM_U2).includes('>Fill correct answers<'));
   const before = w.localStorage.length; act(w, 'lu-af'); w.T.luStageHTML(w.MD_LM_U2, 'controlled'); w.T.luStageHTML(w.MD_LM_U2, 'guided');
   const L1 = w.T.LU(); assert.strictEqual(L1.pick['c.a.1'], 'supported'); assert.strictEqual(L1.g['t:museum-c'], 'fup'); assert.strictEqual(w.localStorage.length, before, 'nothing written');
-  assert.ok(!w.T.luStageHTML(w.MD_LM_U2, 'guided').includes('id="luG"') || true); assert.strictEqual(w.T.luGet(w.MD_LM_U2, 'guided'), null);
+  const g = w.T.luGet(w.MD_LM_U2, 'guided'); assert.ok(g && /Larkfield Museum and Corvale Museum grew more popular/.test(g.t) && g.w.trend && g.w.high && g.w.note && !g.sub, 'every Guided box has a fact-checked sample');
+  assert.ok(w.T.luHTML(L, w.MD_LM_U2).includes('>Undo demo answers<'));
   const st = open(boot({ user: STU })); assert.ok(!st.T.luHTML(L, st.MD_LM_U2).includes('lu-af')); act(st, 'lu-af'); assert.strictEqual(st.T.LU().af, false);
+});
+t('Demo helper for a shadow tester: visible, opens every stage, fills every answer and writing box; Check/Continue use them; nothing saved; ordinary student never', () => {
+  const TST = { name: 'Tess', email: 'tess@x.com', role: 'student' };
+  const w = open(boot({ user: TST })); w.testerEm = () => ({ 'tess@x.com': 1 }); // roster.tester === true (set by staff)
+  let h = w.T.luHTML(L, w.MD_LM_U2); assert.ok(h.includes('>Fill correct answers<'), 'tester sees the Demo helper');
+  const before = w.localStorage.length; act(w, 'lu-af'); h = w.T.luHTML(L, w.MD_LM_U2);
+  assert.ok(!/data-s="\w+" disabled/.test(h), 'every stage open while it is on');
+  ['learn', 'controlled', 'guided', 'independent', 'review'].forEach((st) => { act(w, 'lu-go', { s: st }); assert.strictEqual(w.T.LU().stage, st); });
+  act(w, 'lu-go', { s: 'controlled' }); w.T.luStageHTML(w.MD_LM_U2, 'controlled'); act(w, 'lu-chk'); w.T.luStageHTML(w.MD_LM_U2, 'controlled'); assert.ok(w.T.LU().cpass, 'Check uses the filled answers');
+  act(w, 'lu-go', { s: 'guided' }); w.T.luStageHTML(w.MD_LM_U2, 'guided'); act(w, 'lu-wchk'); act(w, 'lu-gsub');
+  assert.ok(w.T.luGet(w.MD_LM_U2, 'guided').sub, 'the sample passes the minimum check when the tester presses Save');
+  act(w, 'lu-go', { s: 'independent' }); w.T.luStageHTML(w.MD_LM_U2, 'independent'); const it = w.T.luGet(w.MD_LM_U2, 'indep').t; assert.ok(/Pixlo/.test(it) && !/Larkfield/.test(it), 'Chart B sample for Independent');
+  act(w, 'lu-rv'); w.T.luStageHTML(w.MD_LM_U2, 'review'); const r = w.T.luGet(w.MD_LM_U2, 'indep'); assert.ok(r.rv && r.t !== r.orig && /^Overall/.test(r.t), 'Review gets a better revision');
+  assert.strictEqual(w.localStorage.length, before, 'nothing saved');
+  act(w, 'lu-lang', { v: 'en' }); assert.ok(w.T.luHTML(L, w.MD_LM_U2).includes('>Undo demo answers<'), 'language switch keeps it (only the ENG / VI choice is remembered)'); act(w, 'lu-af'); assert.ok(!w.T.luGet(w.MD_LM_U2, 'guided') && !w.T.LU().af);
+  const st = open(boot({ user: STU })); assert.ok(!st.T.luHTML(L, st.MD_LM_U2).includes('Demo helper'));
 });
 // ---------- language ----------
 t('language switch keeps stage, answers, Learn steps and drafts; IELTS sentences stay English', () => {
@@ -296,7 +314,7 @@ t('changed chart data: lesson refuses to show', () => { const w = boot({ mutate:
 t('feedback 10/2026: header = breadcrumb (way back) + ENG | VI + admin auto-fill on the right; no separate back button, no duplicate "Unpublished preview" line', () => {
   const h = T.luHTML(L, U2), top = h.slice(0, h.indexOf('<div class="lmshell lu">'));
   assert.ok(/^<div class="lutop"><nav class="lmcrumb" aria-label="Breadcrumb"><button type="button" class="linkish" data-act="lm-back">Learning Materials<\/button>/.test(h));
-  assert.ok(top.includes('>Writing<') && top.includes('>IELTS Academic Task 1<') && top.includes('data-act="lu-lang"') && top.includes('data-act="lu-af"'));
+  assert.ok(top.includes('>Writing<') && top.includes('>Task 1<') && top.includes('data-act="lu-lang"') && top.includes('data-act="lu-af"'));
   assert.ok(!h.includes('still waiting for review') && !h.includes('‹ Learning Materials') && !h.includes('lmpath'));
   const s = boot({ user: STU }); s.T.setLMV(LID); assert.ok(!s.T.lmHTML().includes('lusteps'), 'students still cannot open it');
   assert.ok(!boot({ user: STU }).T.luHTML(L, U2).includes('lu-af'), 'auto-fill admin only');

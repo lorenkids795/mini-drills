@@ -38,12 +38,12 @@ t('student forced into the lesson (state set directly) still gets the list', () 
 t('admin list shows Unit 2 marked as preview', () => { ctx.U = ADM; api.setLMV(null); api.open('m:ielts-academic-task1'); const h = api.lmHTML(); assert.ok(h.includes('data-act="lm-open"') && h.includes('Unit 2') && h.includes('Unpublished preview')); });
 t('admin opens the shell: no fake practice', () => { ctx.U = ADM; api.setLMV('lm-writing-ac-t1-u2'); const h = api.lmHTML(); assert.ok(h.includes('lmshell') && h.includes('no content yet')); assert.ok(!/Check answers|Submit|textarea/.test(h)); });
 t('unknown lesson id falls back to the list', () => { ctx.U = ADM; api.setLMV('nope'); assert.ok(!api.lmHTML().includes('lmshell')); });
-t('published lessons are visible to students', () => { ctx.U = STU; assert.strictEqual(api.lmVisible({ status: 'published' }), true); });
+t('Coming soon: an ordinary student sees no lesson of any skill, even a published one; teacher keeps published lessons', () => { ctx.U = STU; ['writing', 'listening', 'reading', 'speaking'].forEach((k) => assert.strictEqual(api.lmVisible({ status: 'published', skill: k }), false)); ctx.U = TEA; assert.strictEqual(api.lmVisible({ status: 'published', skill: 'listening' }), true); });
 t('tabs: Cambridge IELTS + Learning Materials', () => { const h = api.libTabsHTML(); assert.ok(h.includes('>Cambridge<') && h.includes('Learning Materials') && (h.match(/role="tab"/g) || []).length === 2); });
 t('tree: 4 skills in order; Writing open by default with 2 task groups (closed); skills without groups are disabled "Coming soon"', () => {
   ctx.U = ADM; api.setLMV(null); api.close('m:ielts-academic-task1'); const h = api.lmHTML(); const n = (re) => (h.match(re) || []).length;
   assert.deepStrictEqual((h.match(/class="lmnm">(\w+)</g) || []).map((x) => x.slice(13, -1)), ['Writing', 'Listening', 'Reading', 'Speaking']);
-  assert.ok(/data-k="s:writing" aria-expanded="true"/.test(h)); assert.strictEqual(n(/class="lmth"/g), 2); assert.ok(h.includes('>IELTS Task 2<') && /data-k="m:ielts-task2" aria-expanded="false"/.test(h));
+  assert.ok(/data-k="s:writing" aria-expanded="true"/.test(h)); assert.strictEqual(n(/class="lmth"/g), 2); assert.ok(h.includes('>Task 2<') && h.includes('>Task 1<') && /data-k="m:ielts-task2" aria-expanded="false"/.test(h));
   assert.strictEqual(n(/class="lmhd" disabled/g), 3); assert.strictEqual(n(/>Coming soon</g), 3); assert.ok(!h.includes('lm-open'), 'groups closed');
 });
 t('tree: open Task 1 shows the unit row (title, amber preview badge, chevron); empty Task 2 says "No units yet"', () => {

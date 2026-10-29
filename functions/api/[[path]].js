@@ -902,7 +902,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-10-28a';
+const API_VERSION = '2026-10-29b';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -1667,11 +1667,12 @@ async function aiTranscribe(env, request, body) {
 // [P1], [P2]… and only names words / phrases in them; the app builds the lesson text from the teacher's own passage
 // (rdBuild in index.html) and checks everything with parseReading. Paragraphs = blocks separated by a blank line (same split as the app).
 const readingParas = (t) => String(t || '').replace(/\r\n?/g, '\n').split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean);
-const RPROMPT =
+const R_HEAD =
   'You are an expert IELTS Reading teacher and a strict JSON formatter. I will give you an IELTS-style reading passage. ' +
   'Its paragraphs are numbered [P1], [P2], [P3]… (when you get a passage without numbers: paragraphs are separated by a blank line, number them from P1 yourself). ' +
   'Build a 4-stage reading lesson: 1. Deep reading, 2. Pronouns, 3. Vocabulary, 4. Output. Language level: IELTS Band 6-7.5. ' +
-  'Output ONLY one JSON object, no markdown fences, no text outside the JSON.\n\n' +
+  'Output ONLY one JSON object, no markdown fences, no text outside the JSON.\n\n';
+const R_GEN =
   'General rules:\n' +
   '- Do NOT copy or rewrite the passage: the app already has it. Only name words and phrases that are in it.\n' +
   '- Every answer must be traceable to the passage. Never invent facts.\n' +
@@ -1680,11 +1681,14 @@ const RPROMPT =
   '- ORDER: list the completion items and the TRUE/FALSE/NOT GIVEN items in the order their answers appear in the passage (P1 first, then P2…); a NOT GIVEN statement may go anywhere. Matching exercises do not follow this rule.\n' +
   '- "paragraph_id" (in "deep") is a string: "P1", "P2"… "p" (in prons, words, pairs) is the paragraph NUMBER: 1 = [P1], 2 = [P2]… ' +
   'Every "w", "ph" and completion "answer" must be copied from THAT paragraph character for character ' +
-  '(same spelling, same word form: "obligations" is not "obligation"; never join words from two sentences).\n\n' +
-  'Stage 1, "deep":\n' +
+  '(same spelling, same word form: "obligations" is not "obligation"; never join words from two sentences).\n\n';
+const R_DEEP_H =
+  'Stage 1, "deep":\n';
+const R_DEEP_NOTES =
   '- "passage_id": a slug of the title. "paragraphs": for each paragraph {"id": "P1", "main_idea", "key_sentences": [{"text": copied from the passage, "fact_type": "date" | "person" | "event" | "definition" | "opinion", "related_entities": [names]}]}. ' +
   '"entities": the people, groups, places and things of the passage, each {"name": exactly as written in the passage, "attributes": [short facts]}. "timeline": [{"year", "event", "paragraph_id"}] (empty list when there are no dates). ' +
-  '"vocab_targets": [{"word", "paragraph_id", "meaning"}]. Use these notes to build the exercises.\n' +
+  '"vocab_targets": [{"word", "paragraph_id", "meaning"}]. Use these notes to build the exercises.\n';
+const R_DEEP_EX =
   '- "exercises.completion": {"type": "summary" | "form" | "table", "instructions": "Complete the summary below. Choose NO MORE THAN TWO WORDS from the passage for each answer.", ' +
   '"items": 3 to 5 items {"id": "C1", "prompt_with_blank": a sentence with ONE blank written ______, "answer": 1 or 2 words (never more than 3) copied EXACTLY from that paragraph, "paragraph_id"}}.\n' +
   '- "exercises.true_false_not_given": {"instructions": "Do the following statements agree with the information given in the passage? Write TRUE, FALSE, or NOT GIVEN.", ' +
@@ -1697,15 +1701,18 @@ const RPROMPT =
   'A heading is a short IELTS-style noun phrase that states the main idea of the paragraph; never copy a sentence from the passage.\n' +
   '- "exercises.matching_information": {"instructions": "Match each entity or piece of information to the correct paragraph or related entity.", ' +
   '"items": 3 to 5 items {"id": "MI1", "prompt", "answer": a paragraph id such as "P4", OR the exact "name" of one of the entities}}. ' +
-  'Prefer matching an entity with an event, or an entity with a paragraph, so it does not repeat Matching headings.\n\n' +
-  'Stages 2 to 4:\n' +
+  'Prefer matching an entity with an event, or an entity with a paragraph, so it does not repeat Matching headings.\n\n';
+const R_S24_H =
+  'Stages 2 to 4:\n';
+const R_PW =
   '- "prons": 4 to 6 pronouns or reference phrases (it, they, their, this policy, this trend, such…) that the reader must understand to follow the argument, ' +
   'in the order they appear in the passage: {"w": the exact words as written, "p": paragraph number, "opts": 4 options, "a": index (from 0) of the right option, "why": one short explanation}. ' +
   'Choose each w only once per paragraph. The right answer and the 3 distractors must all be phrases taken from the passage.\n' +
   '- "words" (Guess the meaning): 3 to 6 important words a student MUST understand to follow the main ideas: academic or common words at level B1-C1, preferably in topic sentences or sentences with a main idea ' +
   '(you may take them from "vocab_targets"). NEVER choose technical terms, proper names, numbers, very easy words (A1-A2) or words that appear only in a minor example. ' +
   'Each: {"w": the word exactly as written, "p": its paragraph number, "pos": "n" | "v" | "adj" | "adv", "opts": 4 short meanings in easy English (distractors that fit the sentence), "a": index of the right meaning, ' +
-  '"en": English definition, "syn": 1 or 2 simple synonyms, comma-separated (e.g. "rich, wealthy"), "vi": Vietnamese meaning, "fam": word family, e.g. "congest (v), congested (adj), congestion (n)", "col": 2 common collocations, "ex": a new example sentence}.\n' +
+  '"en": English definition, "syn": 1 or 2 simple synonyms, comma-separated (e.g. "rich, wealthy"), "vi": Vietnamese meaning, "fam": word family, e.g. "congest (v), congested (adj), congestion (n)", "col": 2 common collocations, "ex": a new example sentence}.\n';
+const R_OUT =
   '- "pairs": 4 to 6 key phrases of 2 to 6 words copied exactly from one sentence of the passage, each {"ph": the phrase, "p": its paragraph number, "par": a simpler paraphrase (as an exam question would say it), "why": one short sentence on how the two match, ' +
   '"segs": the match split into 1 to 3 meaningful pairs [{"q": words copied from "par", "t": the words of "ph" they match, copied exactly, "note": optional few words on the difference}] ' +
   '(e.g. "tailored to promote those cultural activities" → "geared toward such pursuits" gives [{"q":"geared toward","t":"tailored to"},{"q":"such pursuits","t":"those cultural activities"}]); ' +
@@ -1716,7 +1723,8 @@ const RPROMPT =
   '- "wprompt": ONE open question about the topic that a student can answer in 1 or 2 sentences, e.g. "Should your city spend more on cycling lanes?" ' +
   'If it has a difficult word, put a simple synonym right after it with a slash, e.g. "Should affluent / rich countries pay more?"\n' +
   '- "wguide": 2 or 3 short guiding questions that help the student plan the answer (e.g. "Who would benefit?", "What could go wrong?").\n' +
-  '- "title": a short title (keep the given title if there is one).\n\n' +
+  '- "title": a short title (keep the given title if there is one).\n\n';
+const R_SHAPE =
   'Shape: {"title":"…","deep":{"passage_id":"…","paragraphs":[{"id":"P1","main_idea":"…","key_sentences":[{"text":"…","fact_type":"event","related_entities":["…"]}]}],' +
   '"entities":[{"name":"…","attributes":["…"]}],"timeline":[],"vocab_targets":[{"word":"…","paragraph_id":"P1","meaning":"…"}],' +
   '"exercises":{"completion":{"type":"summary","instructions":"…","items":[{"id":"C1","prompt_with_blank":"… ______ …","answer":"…","paragraph_id":"P3"}]},' +
@@ -1726,6 +1734,42 @@ const RPROMPT =
   '"prons":[{"w":"…","p":1,"opts":["…","…","…","…"],"a":0,"why":"…"}],' +
   '"words":[{"w":"…","p":1,"pos":"n","opts":["…","…","…","…"],"a":0,"en":"…","syn":"…","vi":"…","fam":"…","col":"…","ex":"…"}],' +
   '"pairs":[{"ph":"…","p":1,"par":"…","why":"…","segs":[{"q":"…","t":"…","note":"…"}]}],"pdist":"…","cloze":{"text":"… {{1}} … {{2}} …","answers":["…","…"],"extra":"…"},"wprompt":"…","wguide":["…","…"]}\n';
+// the whole lesson in one answer (Copy prompt for another AI chat, and old clients)
+const RPROMPT = R_HEAD + R_GEN + R_DEEP_H + R_DEEP_NOTES + R_DEEP_EX + R_S24_H + R_PW + R_OUT + R_SHAPE;
+// The app writes a lesson in 3 smaller parts per version (deep / vocab / output), so one answer is never cut off (MAX_TOKENS = code too_long):
+// the one big answer had paragraph notes with copied key sentences for every paragraph, then all 4 stages, and long passages ran out of room
+// near the end ("pairs" came back short or empty, or the answer was cut off). The deep part asks only for what the app uses (entities + exercises).
+const R_PART = 'This request is ONE PART of the lesson. Write ONLY the fields of the shape below: the other parts are written in separate requests.\n\n';
+const R_DEEP_LITE =
+  '- "passage_id": a slug of the title. "entities": the people, groups, places and things of the passage, each {"name": exactly as written in the passage, "attributes": [at most 2 very short facts]}. ' +
+  'Do NOT write paragraph notes, key sentences, a timeline or vocabulary notes: they are not needed.\n';
+const R_PARTS = {
+  deep: {
+    name: 'Deep reading',
+    prompt: R_HEAD + R_PART + R_GEN + R_DEEP_H + R_DEEP_LITE + R_DEEP_EX +
+      'Shape: {"deep":{"passage_id":"…","entities":[{"name":"…","attributes":["…"]}],' +
+      '"exercises":{"completion":{"type":"summary","instructions":"…","items":[{"id":"C1","prompt_with_blank":"… ______ …","answer":"…","paragraph_id":"P3"}]},' +
+      '"true_false_not_given":{"instructions":"…","items":[{"id":"TFNG1","statement":"…","answer":"TRUE","paragraph_id":"P2"}]},' +
+      '"matching_headings":{"instructions":"…","heading_options":["…"],"items":[{"id":"MH1","paragraph_id":"P2","answer_heading":"…","difficulty":"easy"}]},' +
+      '"matching_information":{"instructions":"…","items":[{"id":"MI1","prompt":"…","answer":"P4"}]}}}}\n',
+    keys: ['deep'],
+  },
+  vocab: {
+    name: 'Pronouns and vocabulary',
+    prompt: R_HEAD + R_PART + R_GEN + 'Stages 2 and 3 (pronouns, vocabulary):\n' + R_PW +
+      '- "title": a short title (keep the given title if there is one).\n\n' +
+      'Shape: {"title":"…","prons":[{"w":"…","p":1,"opts":["…","…","…","…"],"a":0,"why":"…"}],' +
+      '"words":[{"w":"…","p":1,"pos":"n","opts":["…","…","…","…"],"a":0,"en":"…","syn":"…","vi":"…","fam":"…","col":"…","ex":"…"}]}\n',
+    keys: ['title', 'prons', 'words'],
+  },
+  output: {
+    name: 'Paraphrases and output',
+    // R_OUT minus its last line (title is written in the vocab part)
+    prompt: R_HEAD + R_PART + R_GEN + 'Stages 3 and 4 (paraphrases, summary, writing):\n' + R_OUT.replace(/- "title": a short title \(keep the given title if there is one\)\.\n\n$/, '\n') +
+      'Shape: {"pairs":[{"ph":"…","p":1,"par":"…","why":"…","segs":[{"q":"…","t":"…","note":"…"}]}],"pdist":"…","cloze":{"text":"… {{1}} … {{2}} …","answers":["…","…"],"extra":"…"},"wprompt":"…","wguide":["…","…"]}\n',
+    keys: ['pairs', 'pdist', 'cloze', 'wprompt', 'wguide'],
+  },
+};
 const R_STR = { type: 'STRING' }, R_INT = { type: 'INTEGER' }, R_LIST = { type: 'ARRAY', items: { type: 'STRING' } };
 const R_NSTR = { type: 'STRING', nullable: true };
 const R_ITEMS = (props, req) => ({ type: 'OBJECT', properties: { instructions: R_STR, items: { type: 'ARRAY', items: { type: 'OBJECT', properties: props, required: req } } }, required: ['instructions', 'items'] });
@@ -1768,6 +1812,31 @@ const RSCHEMA = {
   },
   required: ['title', 'deep', 'prons', 'words', 'pairs', 'pdist', 'cloze', 'wprompt'],
 };
+const RP = RSCHEMA.properties;
+R_PARTS.deep.schema = { type: 'OBJECT', properties: { deep: { type: 'OBJECT', properties: { passage_id: R_STR, entities: RP.deep.properties.entities, exercises: RP.deep.properties.exercises }, required: ['passage_id', 'entities', 'exercises'] } }, required: ['deep'] };
+R_PARTS.vocab.schema = { type: 'OBJECT', properties: { title: R_STR, prons: RP.prons, words: RP.words }, required: ['title', 'prons', 'words'] };
+R_PARTS.output.schema = { type: 'OBJECT', properties: { pairs: RP.pairs, pdist: R_STR, cloze: RP.cloze, wprompt: R_STR, wguide: R_LIST }, required: ['pairs', 'pdist', 'cloze', 'wprompt'] };
+// Checks of one part. A problem = the part is written again (the app retries only that part); never filled with made-up items.
+// "pairs" = the paraphrase items: 2 to 6 of them (each phrase is 2 to 6 words long, a different rule).
+function partProblems(part, o, N) {
+  const isA = Array.isArray, str = (x) => typeof x === 'string' && x.trim() !== '';
+  if (part === 'deep') return o.deep && typeof o.deep === 'object' ? deepProblems(o, N) : ['"deep" is missing.'];
+  const out = [];
+  if (part === 'vocab') {
+    if (!isA(o.prons) || !o.prons.length) out.push('"prons" (pronouns) is missing or empty.');
+    if (!isA(o.words)) out.push('"words" is missing.');
+    else if (o.words.length < 3) out.push('"words" has ' + o.words.length + ' word' + (o.words.length === 1 ? '' : 's') + '; it needs 3 to 6.');
+    return out;
+  }
+  if (!isA(o.pairs)) out.push('"pairs" is missing.');
+  else {
+    if (o.pairs.length < 2) out.push('"pairs" has ' + o.pairs.length + ' paraphrase item' + (o.pairs.length === 1 ? '' : 's') + '; it needs 2 to 6.');
+    o.pairs.forEach((x, i) => { if (!x || !str(x.ph) || !str(x.par)) out.push('Paraphrase item ' + (i + 1) + ' needs "ph" and "par".'); });
+  }
+  if (!o.cloze || typeof o.cloze !== 'object' || !str(o.cloze.text) || !isA(o.cloze.answers) || !o.cloze.answers.length) out.push('"cloze" (the summary with blanks) is missing or has no answers.');
+  if (!str(o.wprompt)) out.push('"wprompt" (the writing question) is missing.');
+  return out;
+}
 // Problems the app cannot repair (it repairs or leaves out the other items: parseReading / rmParseDeep in index.html).
 // Matching headings: exactly 3 paragraphs (easy, medium, hard) that exist, answers in the list, 2-3 extra headings.
 function deepProblems(o, N) {
@@ -1808,16 +1877,75 @@ const READING_LEVELS = {
   hard: 'VERSION: HARD (Advanced students, about IELTS Band 7-8). This overrides the language level above. Statements paraphrase the passage more and need inference from two sentences; ' +
     'completion answers may be 2 words; TRUE/FALSE/NOT GIVEN: 5 or 6 items with at least two NOT GIVEN; distractors are close and plausible; words are B2-C1; pairs use less obvious paraphrases; the cloze has 7 or 8 blanks; wprompt asks for an opinion with a reason.',
 };
+const AI_WHY_READ = {
+  too_long: 'The AI answer was cut off before it finished. The passage is fine: press Retry failed part.',
+  parse: 'The AI answer was not complete JSON. Press Retry failed part.',
+  empty: 'The AI returned an empty answer. Press Retry failed part.',
+};
+// One part of one version: { part: 'deep'|'vocab'|'output', level, run, words? }. The daily limit counts 1 per version of a run
+// (as before: Medium, Easy, Hard = 3 of the 30), at most 8 requests per version (3 parts + retries), one request per part at a time.
+async function aiReadingPart(env, em, body, passage, title, P) {
+  const part = body.part, def = R_PARTS[part];
+  const level = READING_LEVELS[body.level] ? body.level : 'medium';
+  const run = String(body.run || '');
+  if (!/^[A-Za-z0-9]{8,40}$/.test(run)) return fail('Start again with Generate (missing run id).');
+  const day = dayOf(body.tzo).day, qKey = 'ail:' + em + ':' + day, rKey = 'ailr:' + em + ':' + run + ':' + level;
+  const used = await count(env, rKey);
+  if (used >= 8) return json({ error: 'This version has used its AI requests (8). Press Generate to start again.', code: 'runcap' }, 429);
+  if (!used) {
+    if ((await count(env, qKey)) >= 30) return json({ error: 'You have used today\'s 30 AI lesson runs. Try again tomorrow.', code: 'quota' }, 429);
+    await bump(env, qKey, 172800);
+  }
+  const lKey = 'ailk:' + em + ':' + run + ':' + level + ':' + part, lock = String((await env.MD_KV.get(lKey)) || '');
+  if (/^pending/.test(lock) && Date.now() - Number(lock.split(':')[1] || 0) < 360000) return json({ error: 'This part is already being written. Wait for it to finish.', code: 'dup' }, 409);
+  await bump(env, rKey, 86400);
+  await env.MD_KV.put(lKey, 'pending:' + Date.now(), { expirationTtl: 600 });
+  const hint = part === 'output' && Array.isArray(body.words) ? body.words.filter((w) => typeof w === 'string' && w.trim()).slice(0, 6).map((w) => w.trim().slice(0, 40)) : [];
+  const full = def.prompt + '\n' + READING_LEVELS[level] + '\n' + (title ? 'TITLE: ' + title + '\n\n' : '') +
+    (hint.length ? 'Words of this lesson (reuse them in the cloze when you can): ' + hint.join(', ') + '.\n\n' : '') +
+    'The passage has ' + P.length + ' paragraphs ([P1] to [P' + P.length + ']). Use only these paragraph ids and numbers.\n\nPASSAGE:\n' + P.map((t, i) => '[P' + (i + 1) + '] ' + t).join('\n\n');
+  let g;
+  try {
+    g = await askGemini(env, full, def.schema, '', AI_TIMEOUT);
+  } catch (e) {
+    await env.MD_KV.delete(lKey);
+    const c = e.code || 'server';
+    console.log('[ai] reading part failed', level, part, c, String(e.detail || e.message || '').slice(0, 300));
+    return json({ error: 'The AI could not write this part (code: ' + c + '). ' + (AI_WHY_READ[c] || AI_WHY[c] || AI_WHY[c.replace(/\d+$/, (n) => n[0] + 'xx')] || 'Press Retry failed part.'), code: c }, 502);
+  }
+  await env.MD_KV.delete(lKey);
+  const o = g.out && typeof g.out === 'object' ? g.out : {};
+  const bad = partProblems(part, o, P.length);
+  if (bad.length) {
+    console.log('[ai] reading part shape', level, part, bad.join(' | '));
+    return json({ error: bad.join(' ') + ' Press Retry failed part.', code: 'shape', problems: bad }, 502);
+  }
+  const res = {};
+  def.keys.forEach((k) => { if (o[k] !== undefined) res[k] = o[k]; });
+  if (part === 'deep') res.deep = { passage_id: o.deep.passage_id, entities: o.deep.entities, exercises: o.deep.exercises }; // no notes, no ordering
+  if (part === 'vocab' && title) res.title = title;
+  return json({ part, level, out: res, model: g.model, paras: P.length });
+}
+// Copy prompt (Create › Reading › Advanced): one file with the 3 versions { "medium": lesson, "easy": lesson, "hard": lesson }, for Upload JSON file
+function readingPrompt3() {
+  return RPROMPT + '\nTHREE VERSIONS: write this lesson THREE times for the same passage, once for each version below. ' +
+    'Every version follows all the rules and the shape above, has all its fields, and uses the same paragraph numbers.\n' +
+    ['medium', 'easy', 'hard'].map((l) => '- "' + l + '": ' + READING_LEVELS[l]).join('\n') +
+    '\nOutput ONLY one JSON object: {"medium": {…the whole lesson…}, "easy": {…}, "hard": {…}}. No markdown fences, no text outside the JSON. ' +
+    'Do not write the passage itself. The passage comes after this line (paragraphs separated by a blank line).\n\nPASSAGE:\n';
+}
 async function aiReading(env, request, body) {
   const em = await staffEmail(env, request);
   if (!em) return staffLocked();
   if (body.op === 'prompt') return json({ prompt: RPROMPT });
+  if (body.op === 'prompt3') return json({ prompt: readingPrompt3() });
   if (!aiReady(env)) return json({ error: AI_WHY.nokey, code: 'nokey' }, 502);
   const passage = String(body.passage || '').replace(/\r\n?/g, '\n').trim(), title = String(body.title || '').replace(/\s+/g, ' ').trim().slice(0, 120);
   const words = passage.split(/\s+/).filter(Boolean).length, P = readingParas(passage);
   if (words < 80) return fail('Paste the whole passage first (at least 80 words).');
   if (passage.length > 12000) return fail('The passage is too long (12,000 characters at most).');
   if (P.length < 2) return fail('Leave a blank line between the paragraphs of the passage (at least 2 paragraphs).');
+  if (R_PARTS[body.part]) return aiReadingPart(env, em, body, passage, title, P);
   const qKey = 'ail:' + em + ':' + dayOf(body.tzo).day;
   if ((await count(env, qKey)) >= 30) return fail('You have used today\'s 30 AI lesson runs. Try again tomorrow.', 429);
   await bump(env, qKey, 172800);

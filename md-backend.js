@@ -72,7 +72,7 @@
     var sBtn = h('button', { type: 'submit', 'class': 'lgbtn', text: 'Sign in' });
     var formIn = h('form', {}, [field('Email', sEmail), field('Password', sPass), sBtn]);
     var toReg = h('button', { type: 'button', 'class': 'lgalt', text: 'First time here? Create your password' });
-    var toTeach = h('button', { type: 'button', 'class': 'lglink', text: 'Sign in as teachers' });
+    var toTeach = h('button', { type: 'button', 'class': 'lglink', text: 'Teacher sign in' });
 
     /* student: first time */
     var rClass = h('select', { id: 'rClass', name: 'rClass', required: 'required' });

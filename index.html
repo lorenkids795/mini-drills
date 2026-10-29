@@ -136,7 +136,7 @@ body.lg .shell{margin-top:0}
 .rmexh{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin:0 0 10px;padding:6px 10px;border-radius:8px;background:var(--hl-soft);font-size:.88rem}
 .rmsegs{margin:0 0 4px;padding-left:1.1em}.rmsegs li{margin:2px 0}
 .rmlv{margin:0}.rmlv button{padding:.25rem .6rem;font-size:.8rem}.rmlvp{font-size:.75rem}
-.rdlvs{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}.rdlv.ok b{color:var(--good)}.rdlv.err b{color:var(--bad)}.cgarc{margin-top:22px}.cgarc>summary{cursor:pointer;font-weight:700;margin-bottom:10px}
+.rdlvs{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}.rdlv.ok b{color:var(--good)}.rdlv.err b{color:var(--bad)}.rdpts{color:var(--muted);font-size:.86rem}.rdpt.ok{color:var(--good)}.rdpt.err{color:var(--bad);font-weight:700}.rdpt.busy{color:var(--ink);font-weight:700}.rdperr{display:block;font-size:.86rem;margin-top:2px}.cgarc{margin-top:22px}.cgarc>summary{cursor:pointer;font-weight:700;margin-bottom:10px}
 .csdanger{border-color:var(--bad)!important}
 .lgtheme{position:absolute;top:calc(16px + env(safe-area-inset-top,0px));right:16px;z-index:2;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer}
 .lgtheme:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -157,8 +157,8 @@ body.lg .shell{margin-top:0}
 .lgart h2 mark{background:#ffe928;color:#161a2e;padding:.04em .32em .04em .14em;border-radius:6px;font-style:italic;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 @media (prefers-reduced-motion:reduce){.lgart>.lgshoot{display:none}.lgart::after{animation:none}}
 .lgform{display:flex;align-items:center;justify-content:center;padding:32px 20px}
-.lgform .login{width:100%;max-width:400px;margin:0;gap:0}
-.lgform .login h1{margin:0 0 24px;font-size:34px;font-weight:800;letter-spacing:-.02em}
+.lgform .login{width:100%;max-width:440px;margin:0;gap:0}
+.lgform .login h1{margin:0 0 6px;font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1.15}.lgsub{margin:0 0 24px;font-size:15px;line-height:1.5;color:var(--muted)}.lgform .login .msg:empty{display:none}
 /* even spacing between every field and button of the form, whatever classes the buttons have (old and new md-backend.js) */
 .lgform .login form{gap:16px}.lgform .login form>button{margin-top:8px}.lgform .login form>button+button{margin-top:0}
 .lgform .field{display:block;margin:0;font-size:13px;font-weight:700;color:var(--muted);text-transform:none;letter-spacing:0}
@@ -545,7 +545,7 @@ td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:now
 .cptp{min-height:44px;padding:10px 16px;font:inherit;font-size:14px;font-weight:500;border:1px solid var(--line-2);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer}
 .cptp.on,.cpsb.on{border-color:var(--accent);background:var(--hl-soft);color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent);font-weight:600}
 .cplab{display:block;font-size:.72rem;font-weight:600;letter-spacing:.06em;color:var(--muted);margin:14px 0 6px}
-.cpsl{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.cpsl{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
 .cpsb{border:1.5px solid var(--line);border-radius:14px;padding:12px;background:var(--surface);color:var(--ink);text-align:left;font:inherit;cursor:pointer;min-width:0}
 .cpsb.on{border-width:2px}
 .cpsb b{display:block;font-size:.78rem;color:var(--accent)}
@@ -612,7 +612,7 @@ button.lsstep{background:none;font:inherit;font-size:.8rem;cursor:pointer}button
 .band{font-family:var(--mono);font-size:1.7rem;font-weight:500;line-height:1}
 .subtext{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;line-height:1.65;max-height:300px;overflow:auto;margin:8px 0 14px;font-size:.92rem}
 .recent li.fb{color:var(--muted);font-size:.82rem;margin-top:-4px}
-.pill{font-size:.78rem;border-radius:99px;padding:.1rem .6rem;border:1px solid var(--line);white-space:nowrap}
+.pill{display:inline-flex;align-items:center;vertical-align:middle;line-height:1.35;font-size:.78rem;border-radius:99px;padding:.1rem .6rem;border:1px solid var(--line);white-space:nowrap}.pill.role{border-color:var(--line-strong);color:var(--ink)}
 .pill.pend{border-color:var(--warn);color:var(--warn)}
 .pill.ok{border-color:var(--good);color:var(--good)}
 .note-foot{margin-top:28px;font-size:.82rem;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
@@ -1584,6 +1584,7 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
     <div class="lgform">
     <div class="login">
       <h1>Sign in</h1>
+      <p class="lgsub">Sign in to continue your learning journey.</p>
       <form id="loginForm">
         <label class="field" for="lgEmail">Email<input id="lgEmail" type="email" autocomplete="email" placeholder="you@example.com" required></label>
         <button class="btn pri" type="submit">Continue</button>
@@ -2137,7 +2138,9 @@ function lmData(){var d=window.MD_LM;return d&&d.lessons?d:{skills:[],modules:[]
 // Writing in Learning Materials is still being built: ordinary students see it as "Coming soon" and cannot open it; the hidden tester
 // accounts (roster.tester === true, set by staff only, rules: roster is teacher-written) use it as before; teachers and admin unchanged.
 function lmTester(){return !!(U&&U.role==='student'&&typeof testerEm==='function'&&testerEm()[String(U.email||'').toLowerCase()])}
-function lmSkillLocked(sk){return sk==='writing'&&!!U&&U.role==='student'&&!lmTester()}
+function lmSkillLocked(sk){return !!U&&U.role==='student'&&!lmTester()} // all 4 skills: "Coming soon" for ordinary students
+// Demo helper of Learning Materials lessons: shadow testers and the admin only (never ordinary students, never teachers)
+function lmDemoOk(){return !!(U&&(U.adm||lmTester()))}
 function lmVisible(l){return !!(l&&!lmSkillLocked(l.skill)&&(l.status==='published'||(U&&U.adm)||(lmTester()&&l.skill==='writing')))}
 function lmLesson(id){return lmData().lessons.filter(function(l){return l.id===id})[0]||null}
 // tree rows that are open ('s:<skill>' / 'm:<module>'), this session only; default = Writing open, its task groups closed
@@ -2169,7 +2172,7 @@ function lmHTML(){
   return '<div class="lmwrap lmtree">'+h+'</div>';
 }
 // a lesson with content (lm-unit2.js) -> the 5 stages (luHTML); otherwise an honest empty shell
-// "Learning Materials › Writing › IELTS Academic Task 1": the first part is the way back to the list (keyboard / phone)
+// "Learning Materials › Writing › Task 1": the first part is the way back to the list (keyboard / phone)
 function lmCrumbHTML(l){var D=lmData(),m=D.modules.filter(function(x){return x.id===l.module})[0],sk=D.skills.filter(function(x){return x.id===l.skill})[0];
   return '<nav class="lmcrumb" aria-label="Breadcrumb"><button type="button" class="linkish" data-act="lm-back">Learning Materials</button>'+(sk?'<span aria-hidden="true">›</span><span>'+esc(sk.title)+'</span>':'')+(m?'<span aria-hidden="true">›</span><span>'+esc(m.title)+'</span>':'')+'</nav>'}
 function lmLessonHTML(l){
@@ -2207,8 +2210,10 @@ function luChart(u,k){var fx=u.charts[k];return fx?'<div class="luchart">'+chart
 // ---- local drafts ----
 function luKey(u,act){return 'md-lm:'+u.lesson+':v'+u.version+':'+act}
 function luStoreOk(){try{var k='md-lm-probe';localStorage.setItem(k,'1');localStorage.removeItem(k);return true}catch(e){return false}}
-function luGet(u,act){try{var v=localStorage.getItem(luKey(u,act));return v?JSON.parse(v):null}catch(e){return null}}
-function luPut(u,act,o){try{o.ts=Date.now();localStorage.setItem(luKey(u,act),JSON.stringify(o));return true}catch(e){return false}}
+var LU_SNAP=null,LU_AFD=null,LMY=0; // Unit 2 Demo helper on: {lesson, d:{guided, indep}} = the drafts, in memory only; switched off = dropped
+function luAfd(u,act){return LU_AFD&&LU_AFD.lesson===u.lesson&&(act==='guided'||act==='indep')}
+function luGet(u,act){if(luAfd(u,act))return LU_AFD.d[act]?JSON.parse(JSON.stringify(LU_AFD.d[act])):null;try{var v=localStorage.getItem(luKey(u,act));return v?JSON.parse(v):null}catch(e){return null}}
+function luPut(u,act,o){if(luAfd(u,act)){LU_AFD.d[act]=JSON.parse(JSON.stringify(o));return true}try{o.ts=Date.now();localStorage.setItem(luKey(u,act),JSON.stringify(o));return true}catch(e){return false}}
 function luDrop(u,act){try{localStorage.removeItem(luKey(u,act))}catch(e){}}
 // drafts of this activity saved for ANOTHER content version (cannot be restored; the student may discard them)
 function luOld(u,act){var o=[];try{var pre='md-lm:'+u.lesson+':v',suf=':'+act,cur=luKey(u,act);for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf(pre)===0&&k.slice(-suf.length)===suf&&k!==cur)o.push(k)}}catch(e){}return o}
@@ -2473,7 +2478,7 @@ var LU_FN={learn:luLearn,controlled:luControlled,guided:luGuided,independent:luI
 function luStageHTML(u,st){luCtx(u);if(LU.af)luAutoFill(u);return LU_FN[st](u)}
 // which stage can be opened: Learn read to the end → Controlled ≥ 70 % → Guided ≥ 70 % + an overview written → Independent; Review after "I'm done".
 // The admin preview opens every stage (to check the screens); students follow the order.
-function luUnlocked(u,st){if(U&&U.adm)return true;var gd=luGet(u,'guided')||{};
+function luUnlocked(u,st){if(U&&U.adm||LU.af&&lmDemoOk())return true;var gd=luGet(u,'guided')||{};
   return st==='learn'||(st==='controlled'&&LU.ldone)||(st==='guided'&&LU.cpass)||(st==='independent'&&luGuidedReady(u,gd))||(st==='review'&&!!(luGet(u,'indep')||{}).rv)}
 // practice progression only (never "writing passed"): objective recognition >= 70 % + an overview saved for practice that is a real attempt
 function luGuidedReady(u,gd){return !!(LU.gpass&&gd&&gd.sub&&!luPre(u,'A',gd.t,'overview'))}
@@ -2484,14 +2489,22 @@ function luAutoFill(u){
   var K=luFrameKey(u);if(K&&!(LU.frame||[]).some(Boolean))LU.frame=[K.up[0],K.up[1],K.down];
   luItems(u,'controlled','controlled','A').forEach(function(x){if(!LU.pick[x.id])LU.pick[x.id]=x.type==='ovd'?x.answer:x.label});
   luGItems(u).forEach(function(x){if(!LU.g[x.id])LU.g[x.id]=x.a});
+  LU.lensSeen=LU.lensSeen||{};LU_LENS.forEach(function(L){LU.lensSeen[L[0]]=true});
+  if(!LU_AFD)return;var G=LU_AFD.d.guided=LU_AFD.d.guided||{},W=G.w=G.w||{},I=LU_AFD.d.indep=LU_AFD.d.indep||{},em=function(v){return !String(v||'').trim()};
+  ['trend','high','note'].forEach(function(k){if(em(W[k]))W[k]=u0Sample(u,'g:'+k)});
+  if(em(G.t))G.t=u0Sample(u,'g:ov');
+  if(em(I.t))I.t=u0Sample(u,'i:ov');
+  if(I.rv&&I.t===I.orig)I.t=u0Sample(u,'r:ov')||I.t; // Review: a visibly better revision of the first version
 }
+// the Demo helper button of both units (same words, same place)
+function lmDemoBtn(on,act){return lmDemoOk()?'<span class="ludemo"><span class="lulbl">Demo helper</span><button type="button" class="btn sm luaf" data-act="'+act+'" aria-pressed="'+!!on+'" title="Tester and admin only: fills every answer with the right one and every writing box with a sample. Nothing is saved or submitted.">'+(on?'Undo demo answers':'Fill correct answers')+'</button></span>':''}
 function luHTML(l,u){
   var c=luCtx(u),bad=c.errs.filter(function(e){return !/pending/.test(e)}),rv=!!(luGet(u,'indep')||{}).rv;
   if(bad.length)return '<div class="lutop">'+lmCrumbHTML(l)+'</div><div class="lmshell"><h3>'+esc(l.title)+'</h3><p class="luwarn" role="alert">This lesson cannot be shown: its content check failed ('+bad.length+' problem'+(bad.length>1?'s':'')+').</p>'+(U&&U.adm?'<ul class="saved">'+bad.slice(0,8).map(function(e){return '<li>'+esc(e)+'</li>'}).join('')+'</ul>':'')+'</div>';
   if(!luUnlocked(u,LU.stage))LU.stage='learn';
   var bar='<nav class="lusteps" aria-label="'+esc(luU(u,'ui.st.nav'))+'">'+LU_ST.map(function(s,i){var lock=!luUnlocked(u,s[0]);return '<button type="button" class="lustep'+(LU.stage===s[0]?' on':'')+'" data-act="lu-go" data-s="'+s[0]+'"'+(LU.stage===s[0]?' aria-current="step"':'')+(lock?' disabled title="'+esc(luU(u,s[0]==='review'?'ui.st.locked':'ui.st.lockedPrev'))+'"':'')+'><span class="mono">'+(i+1)+'</span> '+esc(luU(u,'ui.st.'+s[0]))+'</button>'}).join('')+'</nav>';
   var lg='<div class="lulang"><div class="seg" role="group" aria-label="Explanation language / Ngôn ngữ giải thích"><button type="button" data-act="lu-lang" data-v="en" aria-pressed="'+(luL()==='en')+'" lang="en">ENG</button><button type="button" data-act="lu-lang" data-v="vi" aria-pressed="'+(luL()==='vi')+'" lang="vi">VI</button></div>'+
-    (U&&U.adm?'<button type="button" class="btn sm luaf" data-act="lu-af" aria-pressed="'+!!LU.af+'" title="Admin preview only: fills the checkable answers with the right ones. Nothing is saved.">Preview: auto-fill '+(LU.af?'on':'off')+'</button>':'')+'</div>';
+    lmDemoBtn(LU.af,'lu-af')+'</div>';
   return '<div class="lutop">'+lmCrumbHTML(l)+lg+'</div><div class="lmshell lu"><h3>'+esc(l.title)+'</h3>'+(U&&U.adm?'<p class="luadm" role="note">'+esc(luU(u,'ui.adm.preview'))+'</p>':'')+bar+'<div class="lubody" id="luBody">'+luStageHTML(u,LU.stage)+'</div></div>';
 }
 function luAct(a,t){
@@ -2500,7 +2513,10 @@ function luAct(a,t){
   var keep=function(){var y=window.scrollY||0;renderLib();if(window.scrollTo)window.scrollTo(0,y)}; // redraw without moving the page
   // language: only the words change; stage, answers, Learn steps and drafts (localStorage) stay as they are
   if(a==='lu-lang'){LU.lang=t.dataset.v==='en'?'en':'vi';try{localStorage.setItem('md-lm-lang',LU.lang)}catch(e){}keep();return true}
-  if(a==='lu-af'){if(!(U&&U.adm))return true;LU.af=!LU.af;keep();return true}
+  if(a==='lu-af'){if(!lmDemoOk())return true;
+    if(!LU.af){LU_SNAP=JSON.stringify(LU);var dg=luGet(u,'guided'),di=luGet(u,'indep');LU_AFD={lesson:u.lesson,d:{guided:dg||{},indep:di||{}}};LU.af=true}
+    else{var lg0=LU.lang;try{LU=JSON.parse(LU_SNAP)}catch(e){}LU.af=false;LU.lang=lg0;LU_AFD=null;LU_SNAP=null} // back to before: real drafts and answers
+    keep();return true}
   if(a==='lu-lnext'){if(!luLearnDone(LU.lstep))return true;LU.lstep=Math.min(7,LU.lstep+1);if(LU.lstep===7)LU.ldone=true;keep();var nc=document.getElementById('luS'+LU.lstep);if(nc&&nc.scrollIntoView)nc.scrollIntoView({block:'nearest'});return true}
   if(a==='lu-xq'){if(!LU.xchk){LU.xa[t.dataset.q]=t.dataset.v;keep()}return true}
   if(a==='lu-xchk'){if(luExploreQs(u).every(function(q){return LU.xa[q.id]}))LU.xchk=true;keep();return true}
@@ -2521,7 +2537,7 @@ function luAct(a,t){
   if(a==='lu-gredo'){LU.gchk=false;LU.g={};keep();return true}
   if(a==='lu-ihint'){LU.ihint=!LU.ihint;return true}
   if(a==='lu-self'){LU.self[t.dataset.id]=t.checked;return true}
-  if(a==='lu-rv'){var ta=$('#luI'),tx=ta?ta.value:'',pc=luPre(u,'B',tx,'overview');if(pc){LU.ires=pc;toast(luPcMsg(u,pc));keep();var t2=$('#luI');if(t2&&t2.focus)t2.focus();return true}
+  if(a==='lu-rv'){var ta=$('#luI'),tx=ta?ta.value:((luGet(u,'indep')||{}).t||''),pc=luPre(u,'B',tx,'overview');if(pc){LU.ires=pc;toast(luPcMsg(u,pc));keep();var t2=$('#luI');if(t2&&t2.focus)t2.focus();return true}
     LU.ires='';luPut(u,'indep',{t:tx,rv:true,orig:tx});LU.stage='review';redraw(true);return true}
   if(a==='lu-wchk'){var gd=luGet(u,'guided')||{},W=gd.w||{},R={};['trend','high','note'].forEach(function(k){var v=String(W[k]||'');if(k==='trend'||v.trim())R[k]=luPre(u,'A',v,k==='trend'?'trend':'short')});
     LU.wres=R;gd.wok=!R.trend&&!R.high&&!R.note;luPut(u,'guided',gd);keep();return true}
@@ -2731,7 +2747,7 @@ function u0Review(u){
 }
 var U0_FN={learn:u0Learn,controlled:u0Controlled,guided:u0Guided,independent:u0Independent,review:u0Review};
 // students follow the order; the admin preview opens every stage
-function u0Unlocked(u,st){if(U&&U.adm)return true;return st==='learn'||(st==='controlled'&&U0S.ldone)||(st==='guided'&&U0S.cpass)||(st==='independent'&&u0GDone())||(st==='review'&&U0S.rv)}
+function u0Unlocked(u,st){if(U&&U.adm||U0S&&U0S.af&&lmDemoOk())return true;return st==='learn'||(st==='controlled'&&U0S.ldone)||(st==='guided'&&U0S.cpass)||(st==='independent'&&u0GDone())||(st==='review'&&U0S.rv)}
 // admin preview helper (default off, admin only): fills the objective answers with the right ones; writing boxes stay empty; nothing is saved
 function u0Sample(u,key){var x=(u.claims||[]).filter(function(y){return y.kind==='sample'&&y.for===key})[0];return x?luTxt(x,x.en):''}
 function u0AfSet(obj,k,path,v){if(!v||String(obj[k]||'').trim())return;obj[k]=v;U0S._af=U0S._af||{};U0S._af[path]=v}
@@ -2769,7 +2785,7 @@ function u0HTML(l,u){
   if(!u0Unlocked(u,U0S.stage))U0S.stage='learn';
   var bar='<nav class="lusteps" aria-label="'+esc(luU(u,'u0.st.nav'))+'">'+U0_ST.map(function(s,i){var lock=!u0Unlocked(u,s);return '<button type="button" class="lustep'+(U0S.stage===s?' on':'')+'" data-act="u0-go" data-s="'+s+'"'+(U0S.stage===s?' aria-current="step"':'')+(lock?' disabled title="'+esc(luU(u,s==='review'?'u0.st.lockedRv':'u0.st.lockedPrev'))+'"':'')+'><span class="mono">'+(i+1)+'</span> '+esc(luU(u,'u0.st.'+s))+'</button>'}).join('')+'</nav>';
   var lg='<div class="lulang"><div class="seg" role="group" aria-label="Explanation language / Ngôn ngữ giải thích"><button type="button" data-act="u0-lang" data-v="en" aria-pressed="'+(luL()==='en')+'" lang="en">ENG</button><button type="button" data-act="u0-lang" data-v="vi" aria-pressed="'+(luL()==='vi')+'" lang="vi">VI</button></div>'+
-    (U&&U.adm?'<button type="button" class="btn sm luaf" data-act="u0-af" aria-pressed="'+!!U0S.af+'" title="Admin preview only: fills the checkable answers with the right ones. Nothing is saved.">Preview: auto-fill '+(U0S.af?'on':'off')+'</button>':'')+'</div>';
+    lmDemoBtn(U0S.af,'u0-af')+'</div>';
   return '<div class="lutop">'+lmCrumbHTML(l)+lg+'</div><div class="lmshell lu u0"><h3>'+esc(l.title)+'</h3>'+(U&&U.adm?'<p class="luadm" role="note">'+esc(luU(u,'u0.adm.preview'))+'</p>':'')+bar+'<div class="lubody" id="u0Body">'+u0StageHTML(u,U0S.stage)+'</div>'+u0DraftHTML(u)+'</div>';
 }
 function u0Act(a,t){
@@ -2777,7 +2793,7 @@ function u0Act(a,t){
   var keep=function(){var y=window.scrollY||0;renderLib();if(window.scrollTo)window.scrollTo(0,y)},save=function(){u0Save(u)},top=function(){renderLib();var b=$('.lusteps');if(b&&b.scrollIntoView)b.scrollIntoView({block:'start'})};
   var ids=function(){return String(t.dataset.ids||'').split(',').filter(Boolean)};
   if(a==='u0-lang'){LU.lang=t.dataset.v==='en'?'en':'vi';try{localStorage.setItem('md-lm-lang',LU.lang)}catch(e){}keep();return true}
-  if(a==='u0-af'){if(!(U&&U.adm))return true;if(!U0S.af){U0_SNAP=JSON.stringify(U0S);U0S.af=true;U0S._af={}}else{U0S=u0AfOff();U0_SNAP=null}keep();return true}
+  if(a==='u0-af'){if(!lmDemoOk())return true;if(!U0S.af){U0_SNAP=JSON.stringify(U0S);U0S.af=true;U0S._af={}}else{U0S=u0AfOff();U0_SNAP=null}keep();return true}
   if(a==='u0-ans'){var x=u0Item(u,t.dataset.id);if(!x||U0S.chk[x.id]||(x.stage==='controlled'&&U0S.cchk))return true;U0S.a[x.id]=t.dataset.v;save();keep();return true}
   if(a==='u0-lchk'){ids().forEach(function(id){var x=u0Item(u,id);if(!x||U0S.a[id]==null||U0S.chk[id])return;U0S.chk[id]=true;if(!u0Ok(x))U0S.tries[id]=(U0S.tries[id]||0)+1});save();keep();return true}
   if(a==='u0-lretry'){ids().forEach(function(id){var x=u0Item(u,id);if(x&&U0S.chk[id]&&!u0Done(x)){U0S.chk[id]=false;delete U0S.a[id]}});save();keep();return true}
@@ -2820,6 +2836,7 @@ function renderLib(){
   if(NAV.daily)return renderDailyTask();
   if(NAV.ex)return renderPlayer();
   if(XED)return renderEditor();
+  if(LIBT==='lm'&&LMV){var lcur=lmLesson(LMV);if(lcur&&lmVisible(lcur)){$('#libBody').innerHTML='<div class="lmfocus">'+lmLessonHTML(lcur)+'</div>';return}LMV=null}
   var dm=doneMap(U.email),h='',stu=U.role==='student';
   if(stu)h+=dailyHTML()+homeworkHTML();
   if(stu)h+='<div class="sechead" style="margin-top:26px"><h2>Library</h2></div>'+libTabsHTML();
@@ -3078,7 +3095,7 @@ function staffApi(path,body){
     return staffChk(d);
   });
 }
-function staffChk(d){if(!d._ok)throw new Error(d.error||'Something went wrong. Try again.');return d}
+function staffChk(d){if(!d._ok){var er=new Error(d.error||'Something went wrong. Try again.');er.code=d.code||'';er.status=d._status;throw er}return d}
 var STFQ=null; // the waiting callbacks of the password box
 function staffUnlock(onOk,onNo){
   STFQ={ok:onOk,no:onNo};var old=$('#stfModal');if(old)old.remove();
@@ -3677,10 +3694,10 @@ function selOpts(vals,cur,all){return '<option value="all">'+all+'</option>'+val
 // Dashboard. Overview = ring + weekly line, classes table, hardest exercises, homework. Students = table + details.
 // Mistakes = 3 top cards, question types as a heat grid, hardest exercises. A teacher only sees their own classes (clsOk).
 var DRC=['#2f6fd6','#12896f','#c2410c','#7c3aed','#be185d','#0e7490'];
-function dRing(p,cls){return '<span class="dring'+(cls?' '+cls:'')+'" style="--p:'+p+'"><b>'+p+'%</b></span>'}
-function dCard(t,s,b){return '<div class="dcard">'+(t?'<h3>'+t+'</h3>':'')+(s?'<p class="dsub">'+s+'</p>':'')+'<div class="dbd">'+b+'</div></div>'}
+function dRing(p,cls){return p==null?'<span class="dring'+(cls?' '+cls:'')+'" style="--p:0" aria-label="No attempts yet"><b>–</b></span>':'<span class="dring'+(cls?' '+cls:'')+'" style="--p:'+p+'"><b>'+p+'%</b></span>'}
+function dCard(t,s,b){return '<div class="dcard">'+(t?'<h3>'+t+'</h3>':'')+(s?'<p class="dsub">'+s+'</p>':'')+(b?'<div class="dbd">'+b+'</div>':'')+'</div>'} // empty body = just the heading (no blank box)
 function dBar(l,v,c,x){return '<div class="dhb"><span>'+esc(l)+'</span><span class="dtr"><i style="width:'+v+'%;background:'+c+'"></i></span><b>'+(x||v+'%')+'</b></div>'}
-function dRank(list){return list.length?list.map(function(x,i){return '<div class="drk"><em>'+(i+1)+'</em><span>'+esc(x.label)+'</span><b>'+x.wrong+'%</b></div>'}).join(''):'<p class="saved">Not enough data yet.</p>'}
+function dRank(list){return list.map(function(x,i){return '<div class="drk"><em>'+(i+1)+'</em><span>'+esc(x.label)+'</span><b>'+x.wrong+'%</b></div>'}).join('')}
 function dAv(name){return '<span class="dav" aria-hidden="true" style="background:'+DRC[hashOf(String(name||''))%DRC.length]+'">'+esc(initials(name||'?'))+'</span>'}
 function dScore(p){return '<span class="dpl '+(p<75?'w':'g')+'">'+p+'%</span>'}
 function dDots(n,t){var f=t?Math.round(Math.min(n,t)/t*6):0,s='<span class="ddots" aria-hidden="true">';for(var i=0;i<6;i++)s+='<i'+(i<f?' class="f"':'')+'></i>';return s+'</span>'}
@@ -3696,7 +3713,7 @@ function dLine(wks,wm){
     s+='<polygon class="ar" points="'+X(pts[0].j)+','+Y(lo)+' '+pl+' '+X(pts[pts.length-1].j)+','+Y(lo)+'"/><polyline class="ln" points="'+pl+'"/>'}
   pts.forEach(function(q){s+='<circle class="pt" cx="'+X(q.j)+'" cy="'+Y(q.p)+'" r="4"/><text class="v" x="'+X(q.j)+'" y="'+(Y(q.p)-10)+'" text-anchor="middle">'+q.p+'</text>'});
   wks.forEach(function(k,j){var d=fromISO(k);s+='<text x="'+X(j)+'" y="'+(H-6)+'" text-anchor="middle">'+d.getDate()+'/'+(d.getMonth()+1)+'</text>'});
-  return s+'</svg>'+(pts.length?'':'<p class="saved">No scores in the last 8 weeks.</p>');
+  return s+'</svg>'; // no points = an empty chart, no sentence
 }
 function renderDash(){
   var SS=students().filter(function(s){return clsOk(s.cls)});
@@ -3728,16 +3745,16 @@ function renderDash(){
    '<label class="field" for="fStu">Student<select id="fStu" data-f="stu">'+selOpts(studs,F.stu,'All')+'</select></label>'+
    '<label class="field" for="fMonth">Month<select id="fMonth" data-f="month">'+selOpts(months,F.month,'All')+'</select></label>'+
    '<label class="field" for="fYear">Year<select id="fYear" data-f="year">'+selOpts(years,F.year,'All')+'</select></label>'+
-   '<label class="ck" for="fSample"><input type="checkbox" id="fSample" data-f="sample"'+(F.sample?' checked':'')+'> Sample data</label></div>';
+   '</div>';
   h+='<div class="subtabs" role="tablist">'+[['overview','Overview'],['hw','Homework'],['students','Students'],['mistakes','Mistakes']].map(function(t){return '<button role="tab" data-act="dtab" data-t="'+t[0]+'" aria-selected="'+(F.tab===t[0])+'">'+t[1]+'</button>'}).join('')+'</div>';
   if(F.tab==='overview'){
     var avg=tt?Math.round(tp/tt*100):0,wks=[],cur=thisWk(),i,wm={};
     for(i=7;i>=0;i--){var k=shiftWk(cur,-i);wks.push(k);wm[k]={n:0,sc:0,tot:0}}
     A.forEach(function(x){var k=iso(weekStartDate(new Date(x.ts))),o=wm[k];if(o){o.n++;o.sc+=x.score;o.tot+=x.total}});
-    h+='<div class="dcard dhero"><div><span class="dsub" style="margin:0 0 8px">Average score</span>'+dRing(avg,'xl')+'<div class="dchips"><span class="dpl">'+A.length+' attempt'+(A.length===1?'':'s')+'</span><span class="dpl">'+S.length+' student'+(S.length===1?'':'s')+' active</span></div></div>'+
-      '<div><h3>Average score per week</h3><p class="dsub">Share of questions answered correctly.</p>'+dLine(wks,wm)+'</div></div>';
+    h+='<div class="dcard dhero"><div>'+dRing(A.length?avg:null,'xl')+'<div class="dchips"><span class="dpl">'+A.length+' attempt'+(A.length===1?'':'s')+'</span><span class="dpl">'+S.length+' student'+(S.length===1?'':'s')+' active</span></div></div>'+
+      '<div><h3>Average score per week</h3>'+dLine(wks,wm)+'</div></div>';
     var ct=Object.keys(byCls).sort();
-    var tbl=ct.length?'<div class="dscr"><table class="dtbl dtc"><thead><tr><th>Class</th><th>Attempts</th><th>Avg score</th></tr></thead><tbody>'+ct.map(function(c){var b=byCls[c],p=Math.round(b.sc/b.tot*100);return '<tr><td><b>'+esc(classTitle(c))+'</b></td><td class="mono">'+b.n+'</td><td>'+dScore(p)+'</td></tr>'}).join('')+'</tbody></table></div>':'<p class="saved">No results match these filters.</p>';
+    var tbl=ct.length?'<div class="dscr"><table class="dtbl dtc"><thead><tr><th>Class</th><th>Attempts</th><th>Avg score</th></tr></thead><tbody>'+ct.map(function(c){var b=byCls[c],p=Math.round(b.sc/b.tot*100);return '<tr><td><b>'+esc(classTitle(c))+'</b></td><td class="mono">'+b.n+'</td><td>'+dScore(p)+'</td></tr>'}).join('')+'</tbody></table></div>':'';
     h+='<div class="dg2">'+dCard('Classes','Across the filtered attempts.',tbl)+dCard('Hardest exercises','Share of answers that were wrong.',dRank(hardEx.slice(0,5)))+'</div>';
     var clo=uniq(SS.filter(inF).map(function(x){return [x.cls,x.cls]}));
     var hw=clo.length?clo.map(function(c){
@@ -3746,7 +3763,7 @@ function renderDash(){
       var d=hwRows(a),n=d.rows.length||1,ok=d.rows.filter(function(r){return r.all}).length,no=d.rows.filter(function(r){return r.over&&!r.all}).length,wip=d.rows.length-ok-no;
       return '<div class="dhw"><span><b>'+esc(classTitle(c[0]))+'</b> · '+esc(asgName(a))+'</span><span class="muted"><i class="dt" style="background:var(--good)"></i>'+ok+' done<i class="dt" style="background:var(--bad)"></i>'+no+' missed<i class="dt" style="background:var(--accent)"></i>'+wip+' in progress</span></div>'+
         '<div class="dseg"><i style="width:'+ok/n*100+'%;background:var(--good)"></i><i style="width:'+no/n*100+'%;background:var(--bad)"></i><i style="width:'+wip/n*100+'%;background:var(--accent)"></i></div>';
-    }).join(''):'<p class="saved">No classes yet.</p>';
+    }).join(''):'';
     h+=dCard('Homework, current or latest per class','Open the Homework tab to see who did what.',hw);
   }else if(F.tab==='hw'){
     var cl2=uniq(SS.filter(inF).map(function(x){return [x.cls,x.cls]}));
@@ -4291,14 +4308,22 @@ function modalHTML(a){
   h+='<label class="lbl" for="mkFb">Written note (optional)</label><textarea class="wbox" id="mkFb" style="min-height:80px">'+esc(g?g.feedback||'':'')+'</textarea><div class="actions"><button class="btn pri" data-act="save-grade" type="button">'+(g?'Update grade':'Save grade')+'</button><span class="saved" id="mkMsg" aria-live="polite"></span></div></div></div>';
   return h;
 }
+// Marking filter: tester submissions (account email with roster.tester === true, or results the server seeded for a tester)
+// are only listed under Class = Tester, never under All or a normal class, whatever class label they carry. Matched by email, never by name.
+var MK_TST='__tester';
+function mkIsTester(a,TE){return !!(a&&(a.seeded===true||TE[String(a.email||'').toLowerCase()]))}
+function mkList(all,cls,TE){return cls===MK_TST?all.filter(function(a){return mkIsTester(a,TE)}):all.filter(function(a){return !mkIsTester(a,TE)&&(cls==='all'||a.cls===cls)})}
 function renderMark(){
-  var all=subsAll().filter(function(a){return clsOk(a.cls)}),classes=uniq(all.map(function(a){return [a.cls,a.cls]}));
-  var L=all.filter(function(a){return MK.cls==='all'||a.cls===MK.cls});
-  var h=myClsNote()+'<div class="filters"><label class="field" for="mCls">Class<select id="mCls" data-m="cls">'+selOpts(classes,MK.cls,'All')+'</select></label><span class="saved" style="padding-bottom:.6rem">'+L.length+' submitted · '+L.filter(function(a){return gradeOf(a)}).length+' marked</span></div>';
+  var TE=testerEm(),all=subsAll().filter(function(a){return clsOk(a.cls)}),real=all.filter(function(a){return !mkIsTester(a,TE)}),classes=uniq(real.map(function(a){return [a.cls,a.cls]}));
+  var hasT=Object.keys(TE).length>0||all.length>real.length;
+  if(MK.cls!=='all'&&!(MK.cls===MK_TST&&hasT)&&!classes.some(function(c){return c[0]===MK.cls}))MK.cls='all';
+  var L=mkList(all,MK.cls,TE);
+  var opts=selOpts(classes,MK.cls,'All')+(hasT?'<option value="'+MK_TST+'"'+(MK.cls===MK_TST?' selected':'')+'>Tester</option>':'');
+  var h=myClsNote()+'<div class="filters"><label class="field" for="mCls">Class<select id="mCls" data-m="cls">'+opts+'</select></label><span class="saved" style="padding-bottom:.6rem">'+L.length+' submitted · '+L.filter(function(a){return gradeOf(a)}).length+' marked</span></div>';
   h+=L.length?'<div class="mtiles">'+L.map(function(a){
     var e=exOf(a.ex),g=gradeOf(a);
     return '<button class="mtile" data-act="msel" data-id="'+esc(a.id)+'" type="button"><span class="av">'+esc(initials(a.student))+'</span><span><b>'+esc(a.student)+'</b><small>'+esc(a.cls)+'</small></span><span class="mt">'+esc(e?e.title:a.ex)+'<small>'+(e?SNAME[e.skill]:'')+' · '+fmtD(a.ts)+'</small></span><span class="mst">'+(g?'<span class="pill ok">'+gLabel(g)+'</span>'+(safeImg(g.sticker)?'<img class="stk-s" src="'+esc(safeImg(g.sticker))+'" alt="">':''):'<span class="pill">Done</span>')+'</span></button>';
-  }).join('')+'</div>':'<div class="scroll"><div class="empty">No submissions yet.</div></div>';
+  }).join('')+'</div>':'<div class="scroll"><div class="empty">'+(MK.cls===MK_TST?'No tester submissions.':'No submissions yet.')+'</div></div>';
   var a=MK.open?L.filter(function(x){return x.id===MK.sel})[0]:null;
   if(MK.open&&!a&&!subsAll().some(function(x){return x.id===MK.sel})){MK.open=false;MK.sel=null;toast('That submission is no longer available: the student was removed.')}
   if(a)h+=modalHTML(a);
@@ -4516,7 +4541,7 @@ function renderSlotMap(){
   var b=$('#cBook');if(b&&b.value!==CP.book)b.value=CP.book;
   var tb=$('#cpTests');if(tb)tb.innerHTML=TESTS.map(function(t){var on=CP.test===t;return '<button type="button" class="cptp'+(on?' on':'')+'" data-act="cp-test" data-t="'+t+'" aria-pressed="'+on+'">'+TNAME[t]+'</button>'}).join('');
   var box=$('#cpSlots');if(!box)return;
-  var S=slotsOf(CP.book,CP.test,CP.skill),pf=CP_PF[CP.skill]||'Part',h='<span class="cplab">'+esc(TNAME[CP.test].toUpperCase()+' · '+SNAME[CP.skill].toUpperCase())+'</span><div class="cpsl">';
+  var S=slotsOf(CP.book,CP.test,CP.skill),pf=CP_PF[CP.skill]||'Part',h='<div class="cpsl">';
   for(var i=1;i<S.length;i++){var id=S[i],on=CP.slot===i,tt=id?String(exOf(id).title||''):'';
     h+='<button type="button" class="cpsb'+(id?' f':'')+(on?' on':'')+'" data-act="cp-slot" data-p="'+i+'" aria-pressed="'+on+'" aria-label="'+esc(pf+' '+i+': '+(id?'Taken: '+tt:'empty'))+'"><b>'+esc(pf+' '+i)+'</b><span>'+(id?esc(tt):'+ Add here')+'</span></button>'}
   box.innerHTML=h+'</div><div id="cpWarn" aria-live="polite">'+cpWarnHTML()+'</div>';
@@ -4525,13 +4550,13 @@ function renderSlotMap(){
 function cpWarnUpdate(){var w=$('#cpWarn');if(w)w.innerHTML=cpWarnHTML();renderAddTop()}
 // the ONLY Add / Replace button lives at the top of "Pick a free slot" (#cpAddTop); previews no longer draw one, so it cannot be pressed twice
 function addBarHTML(){return ''}
-function cpValid(){return !!(CP.last&&!CP.last.errs.length&&parsed)}
+function cpValid(){return !!(CP.last&&!CP.last.errs.length&&parsed)&&!(CP.skill==='reading'&&RD.busy)}
 function renderAddTop(){var box=$('#cpAddTop');if(!box)return;box.innerHTML=cpAddBarHTML();
   if(EDIT&&cpValid()){var b=$('#cpAddTop [data-act="add-ex"]');if(b){b.textContent='Save changes';b.insertAdjacentHTML('afterend',' <button class="btn" data-act="ex-cancel" type="button">Cancel edit</button>')}}}
 function cpAddBarHTML(){
   var o=cpSlotInfo(),ok=o.ok&&cpValid();
-  if(!cpValid()){o.label=CP.last&&CP.last.errs.length?'Fix the lesson before adding':(CP.slot?o.label+' · generate a lesson first':'Select a slot, then generate a lesson')}
-  return '<div class="cpaddbar" id="cpAddBar"><small class="muted">→ '+esc(o.label)+'</small><button class="btn pri" data-act="add-ex" type="button"'+(ok?'':' disabled')+'>'+esc(CP.adding?'Adding…':o.btn)+'</button></div>'+(CP.msg?'<p class="okmsg cpok" role="status">'+esc(CP.msg)+'</p>':'');
+  if(!cpValid()){o.label=CP.skill==='reading'&&RD.busy?'Wait until every part is written':CP.last&&CP.last.errs.length?'Fix the lesson before adding':(CP.slot?o.label+' · generate a lesson first':'')}
+  return '<div class="cpaddbar" id="cpAddBar">'+(o.label?'<small class="muted">→ '+esc(o.label)+'</small>':'')+'<button class="btn pri" data-act="add-ex" type="button"'+(ok?'':' disabled')+'>'+esc(CP.adding?'Adding…':o.btn)+'</button></div>'+(CP.msg?'<p class="okmsg cpok" role="status">'+esc(CP.msg)+'</p>':'');
 }
 function cpWideSync(){var v=cpValid(),cr=$('#cpCreate'),on=!!(CP.wide&&v);if(cr)cr.classList.toggle('cpwide',on);
   var w=$('#cpWide');if(w){w.hidden=!v;w.textContent=on?'Show editor':'Hide editor';w.setAttribute('aria-pressed',String(on))}var g=$('#cpGoAdd');if(g)g.hidden=!on}
@@ -4663,22 +4688,24 @@ function rdCountHTML(){
 }
 function renderRdBox(){
   var b=$('#rdBox');if(!b)return;b.hidden=CP.skill!=='reading';if(b.hidden)return;
-  if(!$('#rdTx'))b.innerHTML='<h3>Auto-create a reading lesson (AI)</h3><p>4 stages: Deep reading, Pronouns, Vocabulary, Output. Paste the passage, press Generate, check the preview, then Add.</p>'+
+  if(!$('#rdTx'))b.innerHTML='<h3>Auto-create a reading lesson (AI)</h3>'+
     '<label class="lbl" for="rdTx">1. Passage</label><textarea id="rdTx" spellcheck="false" placeholder="Paste the reading passage. Leave a blank line between paragraphs.">'+esc(RD.tx||'')+'</textarea>'+
-    '<div class="wmeta" id="rdCnt"></div><p class="saved" style="margin:2px 0 10px">Keep the wording exactly as in the book: the AI only marks words in it, it never rewrites it.</p>'+
-    '<label class="lbl" for="rdTitle">2. Title (optional, the AI can name it)</label><input class="linkin" id="rdTitle" maxlength="120" autocomplete="off" value="'+esc(RD.title||'')+'"><p class="saved" style="margin:4px 0 10px">Choose Book and Test in the box below.</p>'+
-    '<p class="lbl">3. Generate</p><div class="row" style="margin-top:0"><button class="btn pri" type="button" data-act="rd-gen" id="rdGo">Generate reading lesson</button><span class="saved" id="rdMsg" aria-live="polite"></span></div><div id="rdLv">'+rdLvHTML()+'</div><p class="saved" style="margin:4px 0 0">Makes 3 versions (Medium, Easy, Hard): 3 AI runs of your 30 a day.</p>'+
-    '<details class="alq"><summary>Advanced: copy the prompt / paste JSON</summary><p class="saved">To make the lesson in another AI chat: copy the prompt, add the passage after it, then paste the JSON answer here.</p>'+
-    '<div class="row" style="margin-top:4px"><button class="btn sm" type="button" data-act="rd-copy">Copy prompt</button><span class="saved" id="rdCopyMsg" aria-live="polite"></span></div>'+
+    '<div class="wmeta" id="rdCnt"></div>'+
+    '<label class="lbl" for="rdTitle">2. Title (optional)</label><input class="linkin" id="rdTitle" maxlength="120" autocomplete="off" value="'+esc(RD.title||'')+'">'+
+    '<p class="lbl">3. Generate</p><div class="row" style="margin-top:0"><button class="btn pri" type="button" data-act="rd-gen" id="rdGo">Generate reading lesson</button><span class="saved" id="rdMsg" aria-live="polite"></span></div><div id="rdLv">'+rdLvHTML()+'</div>'+
+    '<details class="alq"><summary>Advanced: make the lesson in another AI chat</summary><p class="saved">1. Paste the passage in step 1. 2. Copy the prompt, paste it in the AI chat and add the passage after it. 3. Save the answer as a .json file and upload it, or paste it below. Nothing is saved until you press Add.</p>'+
+    '<div class="row" style="margin-top:4px"><button class="btn sm" type="button" data-act="rd-copy">Copy prompt (3 versions)</button><button class="btn sm" type="button" data-act="rd-file">Upload JSON file</button><input type="file" id="rdFile" accept=".json,application/json,text/plain" hidden aria-label="Lesson JSON file"><span class="saved" id="rdCopyMsg" aria-live="polite"></span></div>'+
     '<textarea id="rdJson" spellcheck="false" aria-label="Lesson JSON" placeholder="{&quot;title&quot;: &quot;…&quot;, &quot;sums&quot;: […], &quot;prons&quot;: […], …}">'+esc(RD.json||'')+'</textarea>'+
     '<div class="row"><button class="btn sm" type="button" data-act="rd-check">Check JSON</button></div></details>';
-  rdStatus();
+  rdStatus();if(!RD.job&&!RD.imp&&!CP.last)rdJobRestore();
 }
 function rdStatus(){
   var m=$('#rdMsg'),g=$('#rdGo'),c=$('#rdCnt');
   if(c)c.innerHTML=rdCountHTML();
   if(m){m.textContent=RD.msg||'';m.className='saved'+(RD.bad?' alerr':'')}
-  if(g){g.disabled=!!RD.busy;g.textContent=RD.busy?'Generating…':(RD.bad&&RD.tried?'Try again':'Generate reading lesson')}
+  if(g){g.disabled=!!RD.busy;g.textContent=RD.busy?'Generating…':(RD.job?'Generate again (all parts)':'Generate reading lesson')}
+  ['#rdTx','#rdTitle'].forEach(function(q){var x=$(q);if(x)x.readOnly=!!RD.busy}); // the parts must all come from the same passage
+  renderAddTop();cpWideSync();
 }
 /* The AI never copies the passage back (long texts always came back slightly changed). The lesson text is built here from
    the teacher's own passage (rdBuild): paragraphs = blocks separated by a blank line (same split as the server, readingParas),
@@ -4750,52 +4777,148 @@ function rdApply(txt,passage){
   }
   checkJSON(txt);
 }
-// RD.lv = {easy:{st:'busy'|'ok'|'err', rl, msg}, hard:{…}}: the extra versions of the lesson now in the preview (not saved in md-rd)
+// Generate = 3 versions (Medium, Easy, Hard) x 3 parts (Deep reading / Pronouns + Vocabulary / Paraphrases + Output) = 9 smaller AI requests,
+// one at a time (RD.job). One big answer for a long passage was cut off (code too_long) or ran out of room at the end ("pairs" came back short).
+// A part that fails (cut off, not JSON, broke a rule, Gemini busy) is sent once more by itself; then the job stops on it and
+// "Retry failed part" sends only the failed parts again. Finished parts are kept (in this page only). Add stays off while parts are written.
+// RD.lv = {easy:{st:'ok', rl}, hard:{…}}: the extra versions that passed every check (Medium = the lesson in the preview)
+var RD_PARTS=['deep','vocab','output'],RD_PNAME={deep:'Deep reading',vocab:'Pronouns + Vocabulary',output:'Paraphrases + Output'},RD_ORDER=['medium','easy','hard'],
+  RD_AUTO={too_long:1,parse:1,empty:1,shape:1,check:1,network:1,http500:1,http502:1,http503:1,http504:1},
+  RD_STOP={quota:1,nokey:1,http400:1,http403:1,http429:1,relay:1,blocked:1};
+// finished parts survive a reload (this device only, localStorage md-rdjob): same passage = the job comes back, a part that was
+// being written when the page closed shows as failed, so "Retry failed part" carries on. Never saved to the Library.
+function rdJobSave(){var J=RD.job;try{if(!J)localStorage.removeItem('md-rdjob');else localStorage.setItem('md-rdjob',JSON.stringify({run:J.run,tx:J.tx,pt:J.pt}))}catch(e){}}
+function rdJobLoad(){var o=null;try{o=JSON.parse(localStorage.getItem('md-rdjob')||'null')}catch(e){}
+  if(!o||!o.pt||!o.run||String(o.tx||'')!==String(RD.tx||'').trim())return null;
+  RD_ORDER.forEach(function(l){RD_PARTS.forEach(function(k){var x=o.pt[l]&&o.pt[l][k];if(!x){o.pt[l]=o.pt[l]||{};o.pt[l][k]={st:'wait',n:0};return}
+    if(x.st==='busy'||x.st==='wait'){x.st='err';x.n=2;x.code='stopped';x.msg='Not written: the page was closed or reloaded.'}})});
+  o.skip={};o.stop='';return o}
+function rdJobRestore(){if(RD.job||RD.busy)return;var J=rdJobLoad();if(!J)return;RD.job=J;RD.lv={};RD.tried=true;
+  RD_ORDER.forEach(function(l){if(RD_PARTS.every(function(k){return J.pt[l][k].st==='ok'}))rdLevelDone(J,l)});rdJobEnd()}
+function rdRid(){var c='abcdefghijklmnopqrstuvwxyz0123456789',r='';for(var i=0;i<20;i++)r+=c.charAt(Math.floor(Math.random()*36));return r}
+function rdJobNew(tx){var pt={};RD_ORDER.forEach(function(l){pt[l]={};RD_PARTS.forEach(function(k){pt[l][k]={st:'wait',n:0}})});return {run:rdRid(),tx:tx,pt:pt,skip:{},stop:''}}
+function rdSteps(){var a=[];RD_ORDER.forEach(function(l){RD_PARTS.forEach(function(k){a.push([l,k])})});return a}
 function rdLevels(){var o={},n=0;['easy','hard'].forEach(function(l){var x=RD.lv&&RD.lv[l];if(x&&x.st==='ok'&&x.rl){o[l]=x.rl;n++}});return n?o:null}
-function rdLvHTML(){if(!RD.lv)return '';var row=function(l){var x=l==='medium'?{st:'ok'}:(RD.lv[l]||{st:'wait'}),ic={ok:'✓',err:'✗',busy:'…',wait:'·'}[x.st];
-  return '<li class="rdlv '+x.st+'"><b>'+ic+' '+RLV_NAME[l]+'</b>'+(x.st==='busy'?' <span class="muted">writing…</span>':x.st==='err'?' <span class="alerr">'+esc(x.msg||'Failed.')+'</span> <button type="button" class="btn sm" data-act="rd-lv" data-v="'+l+'">Try again</button>':'')+'</li>'};
-  return '<p class="lbl" style="margin-top:10px">Versions</p><ul class="rdlvs">'+RLV.map(row).join('')+'</ul><p class="saved" style="margin:4px 0 0">Beginner students get Easy, Intermediate Medium, Advanced Hard (set the level in Classes › Class settings). A missing version falls back to Medium.</p>'}
+function rdFails(){var J=RD.job,f=[];if(J)rdSteps().forEach(function(q){if(J.pt[q[0]][q[1]].st==='err')f.push(q)});return f}
+function rdImpHTML(){var I=RD.imp;if(!I)return '';
+  return '<p class="lbl" style="margin-top:10px">Versions in the file</p><ul class="rdlvs">'+RD_ORDER.map(function(l){var x=I[l];var st=!x?'wait':x==='ok'?'ok':'err';
+    return '<li class="rdlv '+st+'"><b>'+({ok:'✓',err:'✗',wait:'·'})[st]+' '+RLV_NAME[l]+'</b> '+(st==='ok'?'<span class="rdpts">checked</span>':st==='wait'?'<span class="rdpts">not in the file'+(l==='medium'?'':' (students of this level get Medium)')+'</span>':'<span class="alerr rdperr">'+esc(x)+'</span>')+'</li>'}).join('')+'</ul>'}
+function rdLvHTML(){var J=RD.job;if(!J)return rdImpHTML();var ic={ok:'✓',err:'✗',busy:'…',wait:'·'};
+  var row=function(l){var P=J.pt[l],st=RD_PARTS.every(function(k){return P[k].st==='ok'})?'ok':RD_PARTS.some(function(k){return P[k].st==='err'})?'err':RD_PARTS.some(function(k){return P[k].st==='busy'})?'busy':'wait';
+    return '<li class="rdlv '+st+'"><b>'+ic[st]+' '+RLV_NAME[l]+'</b> <span class="rdpts">'+RD_PARTS.map(function(k){var x=P[k];return '<span class="rdpt '+x.st+'">'+ic[x.st]+' '+RD_PNAME[k]+'</span>'}).join(' · ')+'</span>'+
+      RD_PARTS.filter(function(k){return P[k].st==='err'}).map(function(k){return '<span class="alerr rdperr">'+RLV_NAME[l]+' · '+RD_PNAME[k]+': '+esc(P[k].msg||'Failed.')+'</span>'}).join('')+'</li>'};
+  var f=rdFails();
+  return '<p class="lbl" style="margin-top:10px">Versions</p><ul class="rdlvs">'+RD_ORDER.map(row).join('')+'</ul>'+
+    (f.length&&!RD.busy?'<div class="row" style="margin-top:8px"><button type="button" class="btn sm pri" data-act="rd-retry">Retry failed part'+(f.length>1?'s ('+f.length+')':'')+'</button></div>':'')+
+    '<p class="saved" style="margin:4px 0 0">Beginner students get Easy, Intermediate Medium, Advanced Hard (set the level in Classes › Class settings). A missing version falls back to Medium.</p>'}
 function rdLvDraw(){var b=$('#rdLv');if(b)b.innerHTML=rdLvHTML()}
-// one extra version: same passage, same checks (rdBuild + parseReading)
-function rdGenLevel(l,tx,done){
-  RD.lv[l]={st:'busy'};rdLvDraw();
-  var fin=function(o){var r=parseReading(rdBuild(o,tx));if(r.errs&&r.errs.length)RD.lv[l]={st:'err',msg:'The AI version has problems ('+r.errs[0]+')'};else RD.lv[l]={st:'ok',rl:r.data.rlesson};rdLvDraw();if(done)done()};
-  var no=function(e){RD.lv[l]={st:'err',msg:(e&&e.message)||'Something went wrong.'};rdLvDraw();if(done)done()};
-  if(DEMO){setTimeout(function(){try{fin(JSON.parse(EXAMPLE_R))}catch(e){no(e)}},600);return}
-  staffApi('ai/reading',{title:RD.title||'',passage:tx,level:l,tzo:new Date().getTimezoneOffset()}).then(function(d){fin(d.lesson||{})},no);
+// which part a check problem of the assembled lesson belongs to (parseReading / rmParseDeep messages)
+function rdBlame(m){m=String(m||'');
+  if(/pairs|Phrase \d|paraphrase|pdist|cloze|summary has|word bank|wprompt/i.test(m))return 'output';
+  if(/"words"|Word \d|Guess the meaning|Pronoun|prons|\{\{/i.test(m))return 'vocab';
+  return 'deep'}
+// demo: the sample lesson cut into the same 3 parts (deep also carries the sample's own paragraphs)
+function rdDemoPart(k){var o=JSON.parse(EXAMPLE_R),r={};({deep:['deep','paras','title'],vocab:['title','prons','words'],output:['pairs','pdist','cloze','wprompt','wguide']})[k].forEach(function(f){if(o[f]!==undefined)r[f]=o[f]});return r}
+function rdPart(J,l,k,done){
+  var x=J.pt[l][k];x.st='busy';x.n++;
+  var ok=function(d){if(!d||!d.out||typeof d.out!=='object'){no({message:'The server sent no lesson part.',code:'empty'});return}x.st='ok';x.out=d.out;x.model=d.model||'';x.msg='';x.code='';done()};
+  var no=function(e){x.code=(e&&e.code)||'';x.msg=String((e&&e.message)||'Something went wrong.').replace(/\s*Press (Try again|Retry failed part)\.?/g,'');x.st=RD_AUTO[x.code]&&x.n<2?'wait':'err';done()};
+  if(DEMO){setTimeout(function(){try{ok({out:rdDemoPart(k),model:'demo'})}catch(err){no(err)}},300);return}
+  var body={title:RD.title||'',passage:J.tx,level:l,part:k,run:J.run,tzo:new Date().getTimezoneOffset()};
+  if(k==='output'){var v=J.pt[l].vocab.out;body.words=(v&&isArr(v.words)?v.words:[]).map(function(w){return w&&typeof w.w==='string'?w.w:''}).filter(Boolean).slice(0,6)}
+  staffApi('ai/reading',body).then(ok,no);
 }
+// all 3 parts of a version are in: join them and run the same checks as a pasted lesson (rdBuild + parseReading)
+function rdLevelDone(J,l){
+  var o={};RD_PARTS.forEach(function(k){Object.assign(o,J.pt[l][k].out||{})});if(RD.title)o.title=RD.title;
+  var errs=[];
+  if(l==='medium'){rdApply(JSON.stringify(o,null,2),DEMO?'':J.tx);errs=CP.last&&CP.last.errs?CP.last.errs:['The lesson could not be checked.']}
+  else{var r=parseReading(rdBuild(o,DEMO?rdBuildDemoTx():J.tx));errs=r.errs||[];RD.lv=RD.lv||{};if(errs.length)delete RD.lv[l];else RD.lv[l]={st:'ok',rl:r.data.rlesson}}
+  if(!errs.length)return;
+  var by={};errs.forEach(function(m){var k=rdBlame(m);(by[k]=by[k]||[]).push(String(m).replace(/\s*Press Try again\.?/g,''))});
+  Object.keys(by).forEach(function(k){var y=J.pt[l][k];y.code='check';y.msg=by[k].slice(0,3).join(' ')+(by[k].length>3?' (and '+(by[k].length-3)+' more)':'');y.st=y.n<2?'wait':'err'});
+}
+function rdRun(){
+  var J=RD.job;if(!J)return;var S=rdSteps(),i=-1;
+  if(!J.stop)for(var q=0;q<S.length;q++){if(J.pt[S[q][0]][S[q][1]].st==='wait'&&!J.skip[S[q][0]]){i=q;break}}
+  if(i<0)return rdJobEnd();
+  var l=S[i][0],k=S[i][1],x=J.pt[l][k];
+  RD.busy=true;RD.bad=false;RD.msg='Writing '+RLV_NAME[l]+' · '+RD_PNAME[k]+' ('+(i+1)+' of '+S.length+')'+(x.n?', try '+(x.n+1):'')+'… Stay on this page.';rdStatus();rdLvDraw();
+  clearTimeout(RD.slowT);RD.slowT=setTimeout(function(){if(RD.busy&&RD.job===J&&x.st==='busy'){RD.msg+=' Still writing: a part can take a few minutes (the limit is 5).';rdStatus()}},40000);
+  rdPart(J,l,k,function(){
+    clearTimeout(RD.slowT);if(RD.job!==J)return; // a new Generate replaced this job
+    rdJobSave();
+    if(x.st==='ok'&&RD_PARTS.every(function(kk){return J.pt[l][kk].st==='ok'}))rdLevelDone(J,l);
+    if(x.st==='err'&&RD_STOP[x.code])J.stop=x.code; // a problem every request would have (quota, key, region): stop here
+    if(RD_PARTS.some(function(kk){return J.pt[l][kk].st==='err'})){if(l==='medium')J.skip={medium:1,easy:1,hard:1};else J.skip[l]=1}
+    rdRun();
+  });
+}
+function rdJobEnd(){
+  var J=RD.job;RD.busy=false;clearTimeout(RD.slowT);
+  var f=rdFails().map(function(q){return RLV_NAME[q[0]]+' · '+RD_PNAME[q[1]]}),med=RD_PARTS.every(function(k){return J.pt.medium[k].st==='ok'})&&cpValid();
+  var got=RD_ORDER.filter(function(l){return l==='medium'?med:!!(RD.lv&&RD.lv[l]&&RD.lv[l].st==='ok')}).map(function(l){return RLV_NAME[l]});
+  if(med&&!f.length){RD.bad=false;RD.msg='Done: '+got.join(', ')+'. Check the preview, pick a slot, then press Add.'}
+  else if(med){RD.bad=true;RD.msg='Ready: '+got.join(', ')+'. Not finished: '+f.join(', ')+'. Press Retry failed part, or add now (students of a missing version get Medium).'}
+  else{RD.bad=true;RD.msg=(f.length?'Not finished: '+f.join(', ')+'. ':'')+'Medium is needed before you can add the lesson. Finished parts are kept: press Retry failed part.'}
+  rdStatus();rdLvDraw();
+  var pv=$('#createPrev');if(med&&pv&&pv.scrollIntoView)pv.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+}
+function rdRetry(){var J=RD.job;if(!J||RD.busy)return;var f=rdFails();if(!f.length)return;
+  f.forEach(function(q){var x=J.pt[q[0]][q[1]];x.st='wait';x.n=0});J.skip={};J.stop='';rdRun()}
+// Upload JSON file / paste JSON (no AI call, nothing saved): one lesson (= Medium) or {medium, easy, hard}. Every version goes through
+// the same checks as an AI lesson (rdBuild + parseReading); a version with problems is never used and is listed with its problems.
+// The lesson text always comes from the passage in step 1 (or from "paras" in the JSON when step 1 is empty); all versions must have the same text.
+function rdImport(txt){
+  RD.job=null;rdJobSave();RD.lv={};RD.imp=null;var tx=String(RD.tx||'').trim(),pas=tx&&wordCount(tx)>=80?tx:'';
+  var o=null;try{o=JSON.parse(String(txt||'').trim().replace(/^```(?:json)?/i,'').replace(/```$/,'').trim())}catch(e){}
+  var multi=o&&typeof o==='object'&&!isArr(o)&&!o.paras&&!o.deep&&!o.sums&&['medium','easy','hard'].some(function(l){return o[l]&&typeof o[l]==='object'});
+  if(!multi){rdApply(txt,pas);var r0=CP.last;RD.imp={medium:r0&&!r0.errs.length?'ok':(r0&&r0.errs[0])||'This is not valid JSON.'};
+    RD.bad=!!(r0&&r0.errs.length)||!r0;RD.msg=RD.bad?'The lesson has problems (listed in the preview). Nothing was saved.':'Checked: Medium only. Pick a slot, then press Add.';rdStatus();rdLvDraw();return}
+  var I={},M=o.medium;
+  if(!M||typeof M!=='object'||isArr(M)){CP.raw=String(txt||'');CP.last={errs:['The file has no "medium" version. Medium is needed (it is what students without a level get).']};parsed=null;renderPrev();I.medium='missing'}
+  else{if(RD.title&&!M.title)M.title=RD.title;rdApply(JSON.stringify(M),pas);I.medium=CP.last&&!CP.last.errs.length?'ok':(CP.last&&CP.last.errs.length?CP.last.errs.length+' problem'+(CP.last.errs.length>1?'s':'')+' (see the preview): '+CP.last.errs[0]:'not valid')}
+  var base=I.medium==='ok'&&parsed&&parsed.rlesson?parsed.rlesson.paras.map(function(p){return p.replace(/\{\{|\}\}/g,'')}):null;
+  ['easy','hard'].forEach(function(l){var x=o[l];if(!x)return;
+    if(typeof x!=='object'||isArr(x)){I[l]='not a lesson object';return}
+    if(!pas&&!isArr(x.paras)){I[l]='Paste the passage in step 1 first: the lesson text is built from it.';return}
+    var r=parseReading(pas?rdBuild(x,pas):x);
+    if(r.errs&&r.errs.length){I[l]=r.errs.length+' problem'+(r.errs.length>1?'s':'')+': '+r.errs.slice(0,3).join(' ');return}
+    var same=r.data.rlesson.paras.map(function(p){return p.replace(/\{\{|\}\}/g,'')});
+    if(base&&JSON.stringify(same)!==JSON.stringify(base)){I[l]='its passage text is different from the Medium version.';return}
+    RD.lv[l]={st:'ok',rl:r.data.rlesson};I[l]='ok'});
+  RD.imp=I;var got=RD_ORDER.filter(function(l){return I[l]==='ok'}).map(function(l){return RLV_NAME[l]});
+  RD.bad=I.medium!=='ok'||RD_ORDER.some(function(l){return I[l]&&I[l]!=='ok'});
+  RD.msg=I.medium!=='ok'?'Medium has problems, so the lesson cannot be added. Nothing was saved.':(RD.bad?'Checked: '+got.join(', ')+'. A version with problems is not used (students of that level get Medium). Pick a slot, then press Add.':'Checked: '+got.join(', ')+'. Pick a slot, then press Add.');
+  rdStatus();rdLvDraw();renderPrev();
+}
+// file -> the JSON box -> the same check as Check JSON (a file never saves anything by itself)
+document.addEventListener('change',function(e){var f=e.target;if(!f||f.id!=='rdFile'||!f.files||!f.files[0])return;var file=f.files[0],m=$('#rdCopyMsg');
+  if(file.size>1024*1024){if(m)m.textContent='This file is too big (1 MB at most). A lesson file is usually under 200 KB.';return}
+  var rd=new FileReader();rd.onload=function(){var txt=String(rd.result||'');RD.json=txt;var ta=$('#rdJson');if(ta)ta.value=txt;rdSave();if(m)m.textContent='Read “'+file.name+'”.';rdImport(txt)};
+  rd.onerror=function(){if(m)m.textContent='The file could not be read. Try again.'};rd.readAsText(file)});
 function rdGen(){
   if(RD.busy)return;var tx=String(RD.tx||'').trim();
   if(wordCount(tx)<80){RD.bad=true;RD.msg='Paste the whole passage first (at least 80 words).';rdStatus();return}
   if(rdParas(tx).length<2){RD.bad=true;RD.msg='Leave a blank line between the paragraphs of the passage.';rdStatus();return}
-  RD.lv=null;rdLvDraw();RD.busy=true;RD.bad=false;RD.tried=true;RD.msg='Writing the lesson… usually 20 to 60 seconds. Stay on this page.';rdStatus();
-  clearTimeout(RD.slowT);RD.slowT=setTimeout(function(){if(RD.busy){RD.msg='Still writing… long passages can take a few minutes (the limit is 5 minutes). Stay on this page.';rdStatus()}},40000);
-  var fin=function(o,model,demo){
-    clearTimeout(RD.slowT);
-    RD.busy=false;if(RD.title)o.title=RD.title;rdApply(JSON.stringify(o,null,2),demo?'':tx);
-    var r=CP.last;
-    if(r&&r.errs&&r.errs.length){RD.bad=true;RD.msg='The AI lesson has a few problems (listed in the preview). Press Try again.'}
-    else{RD.bad=false;RD.msg='Medium done'+(model?' ('+model+')':'')+'. Writing the Easy and Hard versions next…';RD.lv={};var ptx=demo?rdBuildDemoTx():tx;rdGenLevel('easy',ptx,function(){rdGenLevel('hard',ptx,function(){RD.msg='Done: '+RLV.filter(function(l){return l==='medium'||(RD.lv[l]&&RD.lv[l].st==='ok')}).map(function(l){return RLV_NAME[l]}).join(', ')+'. Check the preview, pick a slot, then press Add.';rdStatus()})})}
-    rdStatus();var pv=$('#createPrev');if(pv&&pv.scrollIntoView)pv.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
-  };
-  var no=function(e){clearTimeout(RD.slowT);RD.busy=false;RD.bad=true;RD.msg=(e&&e.message)||'Something went wrong. Try again.';rdStatus()};
-  if(DEMO){setTimeout(function(){try{fin(JSON.parse(EXAMPLE_R),'demo: the sample lesson, the live site uses Gemini on your passage',true)}catch(e){no(e)}},1200);return}
-  staffApi('ai/reading',{title:RD.title||'',passage:tx,tzo:new Date().getTimezoneOffset()}).then(function(d){fin(d.lesson||{},d.model)},no);
+  // a new run: the old preview, versions and errors go away (they belong to the previous attempt)
+  RD.job=rdJobNew(tx);RD.lv={};RD.imp=null;RD.tried=true;rdJobSave();CP.raw='';CP.last=null;parsed=null;CP.msg='';renderPrev();
+  rdRun();
 }
 // demo: the sample lesson's own passage (its paragraphs, without the {{…}} marks)
 function rdBuildDemoTx(){try{return JSON.parse(EXAMPLE_R).paras.map(function(t){return t.replace(/\{\{|\}\}/g,'')}).join('\n\n')}catch(e){return ''}}
 function rdCopy(){
   var m=$('#rdCopyMsg'),say=function(t){if(m)m.textContent=t};
-  var put=function(p){RD.prompt=p;try{navigator.clipboard.writeText(p).then(function(){say('Copied. Paste it into the AI chat, then add the passage.')},function(){rdShowPrompt(p)})}catch(x){rdShowPrompt(p)}};
+  var put=function(p){RD.prompt=p;try{navigator.clipboard.writeText(p).then(function(){say('Copied. Paste it into the AI chat, add the passage after it, then save the answer as a .json file.')},function(){rdShowPrompt(p)})}catch(x){rdShowPrompt(p)}};
   if(RD.prompt)return put(RD.prompt);
   if(DEMO){say('The prompt comes from the live server (demo mode).');return}
   say('Loading the prompt…');
-  staffApi('ai/reading',{op:'prompt'}).then(function(d){put(String(d.prompt||''))},function(e){say(e.message)});
+  staffApi('ai/reading',{op:'prompt3'}).then(function(d){if(d.prompt)return put(String(d.prompt));return staffApi('ai/reading',{op:'prompt'}).then(function(d2){put(String(d2.prompt||''))})},function(e){say(e.message)});
 }
 function rdShowPrompt(p){var m=$('#rdCopyMsg');if(m)m.innerHTML='Copy failed. Select the text below and copy it by hand.<textarea readonly class="rdpr" aria-label="Prompt">'+esc(p)+'</textarea>'}
 document.addEventListener('input',function(e){
   var id=e.target&&e.target.id;
-  if(id==='rdTx'){RD.tx=e.target.value;if(RD.lv){RD.lv=null;rdLvDraw()}rdSave();var c=$('#rdCnt');if(c)c.innerHTML=rdCountHTML()}
+  if(id==='rdTx'){RD.tx=e.target.value;if(RD.lv||RD.job||RD.imp){RD.lv=null;RD.job=null;RD.imp=null;rdJobSave();rdLvDraw()}rdSave();var c=$('#rdCnt');if(c)c.innerHTML=rdCountHTML()}
   if(id==='rdTitle'){RD.title=e.target.value;rdSave();cpWarnUpdate()}
   if(id==='wsJson'){WSD.json=e.target.value;lsSet('md-ws',WSD.json)}
   if(id==='rdJson'){RD.json=e.target.value;rdSave()}
@@ -5064,9 +5187,10 @@ document.addEventListener('click',function(e){
   if(a==='cp-test'){CP.test=t.dataset.t;CP.slot=null;CP.msg='';cpBtSave();renderSlotMap();cpWarnUpdate();return}
   if(a==='cp-slot'){CP.slot=+t.dataset.p;CP.msg='';renderSlotMap();cpWarnUpdate();var sb=$('#cpSlots [data-p="'+CP.slot+'"]');if(sb){try{sb.focus({preventScroll:true})}catch(x){}}return}
   if(a==='rd-gen')return rdGen();
-  if(a==='rd-lv'){var lvv=t.dataset.v;if(RD.lv&&(lvv==='easy'||lvv==='hard')&&!(RD.lv[lvv]&&RD.lv[lvv].st==='busy'))rdGenLevel(lvv,DEMO?rdBuildDemoTx():String(RD.tx||'').trim());return true}
+  if(a==='rd-retry'){rdRetry();return true}
   if(a==='rd-copy')return rdCopy();
-  if(a==='rd-check'){var rj=$('#rdJson');RD.json=rj?rj.value:'';RD.lv=null;rdLvDraw();rdSave();if(!String(RD.json).trim()){RD.msg='Paste the JSON first.';RD.bad=true;rdStatus();return}rdApply(RD.json,String(RD.tx||'').trim()&&wordCount(RD.tx)>=80?String(RD.tx).trim():'');var pv2=$('#createPrev');if(pv2&&pv2.scrollIntoView)pv2.scrollIntoView({block:'start'});return}
+  if(a==='rd-check'){if(RD.busy)return true;var rj=$('#rdJson');RD.json=rj?rj.value:'';rdSave();if(!String(RD.json).trim()){RD.msg='Paste the JSON first.';RD.bad=true;rdStatus();return}rdImport(RD.json);var pv2=$('#createPrev');if(pv2&&pv2.scrollIntoView)pv2.scrollIntoView({block:'start'});return}
+  if(a==='rd-file'){if(RD.busy)return true;var rf=$('#rdFile');if(rf){rf.value='';rf.click()}return true}
   if(a==='al-gen')return alGen();
   if(a==='al-trn')return alTranscribe();
   if(a==='cp-wide'){CP.wide=!CP.wide;cpWideSync();var wb=$('#cpWide');if(wb){try{wb.focus({preventScroll:true})}catch(x){}}return}
@@ -6368,7 +6492,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-10-28b'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-10-29b'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(audAct(a,t))return true;
@@ -6376,8 +6500,8 @@ function extAct(a,t){
   if(enAct(a,t))return true;
   if(mkAct(a,t))return true;
   if(a==='lib-tab'){LIBT=t.dataset.v==='lm'?'lm':'cam';LMV=null;try{lsSet('md-libt',LIBT)}catch(e){}renderLib();return true}
-  if(a==='lm-open'){var lo=lmLesson(t.dataset.id);LMV=lmVisible(lo)?lo.id:null;renderLib();return true}
-  if(a==='lm-back'){LMV=null;renderLib();return true}
+  if(a==='lm-open'){var lo=lmLesson(t.dataset.id);LMV=lmVisible(lo)?lo.id:null;if(LMV)LMY=window.scrollY||0;renderLib();if(LMV&&window.scrollTo)window.scrollTo(0,0);return true} // the lesson view starts at the top
+  if(a==='lm-back'){var by=LMV?LMY:0;LMV=null;renderLib();if(window.scrollTo)window.scrollTo(0,by);return true} // back to where the list was
   if(a==='lm-tg'){var lk=t.dataset.k;LMO[lk]=!LMO[lk];renderLib();var nb=document.querySelector('[data-act="lm-tg"][data-k="'+lk+'"]');if(nb)nb.focus({preventScroll:true});return true}
   if(a.indexOf('lu-')===0&&luAct(a,t))return true;
   if(a.indexOf('u0-')===0&&u0Act(a,t))return true;
@@ -6930,7 +7054,8 @@ function parseReading(o){
     if(W.length<3)bad('Guess the meaning needs at least 3 words from the passage'+(dropW.length?' ("'+dropW.join('", "')+'" '+(dropW.length>1?'are':'is')+' not in the passage)':'')+'. Press Try again.');
   }
   var Q=o.pairs,dropQ=[];
-  if(!isArr(Q)||Q.length<2)bad('"pairs" must have 2 to 6 phrases.');
+  if(!isArr(Q))bad('Paraphrases: "pairs" is missing (it needs 2 to 6 items).');
+  else if(Q.length<2)bad('Paraphrases: "pairs" has '+Q.length+' item'+(Q.length===1?'':'s')+'; it needs 2 to 6.');
   else{
     Q=Q.map(function(x){return x&&typeof x==='object'?Object.assign({},x):x}).filter(function(x,i){var n='Phrase '+(i+1)+': ';
       if(!x||!str(x.ph)||!str(x.par)){bad(n+'needs "ph" and "par".');return false}
@@ -6940,7 +7065,8 @@ function parseReading(o){
         .map(function(g){return {q:String(g.q).trim(),t:String(g.t).trim(),note:str(g.note)?String(g.note).trim():''}}).slice(0,4);
       if(sg.length&&x.segs.length<sg.length)warn.push('Phrase "'+x.ph+'": '+(sg.length-x.segs.length)+' word pair(s) left out (not found in the two phrases).');
       return true;
-    }).slice(0,6);
+    });
+    if(Q.length>6){warn.push('Paraphrases: '+Q.length+' items; only the first 6 are used.');Q=Q.slice(0,6)}
     if(Q.length<2)bad('The paraphrase stage needs at least 2 phrases copied from the passage'+(dropQ.length?' ("'+dropQ.join('", "')+'" '+(dropQ.length>1?'are':'is')+' not in the passage word for word)':'')+'. Press Try again.');
   }
   if(!str(o.pdist))bad('Missing "pdist" (the extra paraphrase).');
@@ -7760,7 +7886,8 @@ function adFiltered(){
     return !q||(u.name+' '+u.email).toLowerCase().indexOf(q)>=0});
 }
 function adStatusHTML(u){return u.status==='kicked'?'<span class="pill bad">Removed</span>':u.status==='paused'?'<span class="pill bad">Paused</span>':u.status==='moved'?'<span class="pill pend">Email changed</span>':!u.hasPassword?'<span class="pill">No password yet</span>':'<span class="pill ok">Active</span>'}
-function adRoleHTML(u){if(u.role==='admin')return '<span class="pill acc">Admin</span>';if(u.role==='teacher')return 'Teacher';return u.tester?'<span class="pill tst">Tester</span>':'Student'}
+// one badge for every role (same size, border, radius); only the colour differs: Admin accent, Tester amber, Teacher / Student neutral
+function adRoleHTML(u){return u.role==='admin'?'<span class="pill acc">Admin</span>':u.role==='teacher'?'<span class="pill role">Teacher</span>':u.tester?'<span class="pill tst">Tester</span>':'<span class="pill role">Student</span>'}
 function adListHTML(){
   if(!AD.users)return '';
   var L=adFiltered();if(!L.length)return '<p class="saved">No one matches.</p>';

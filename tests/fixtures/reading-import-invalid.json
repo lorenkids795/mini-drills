@@ -1,0 +1,624 @@
+{
+  "medium": {
+    "title": "Cycling in the City",
+    "paras": [
+      "Over the past two decades, many cities have tried to reduce traffic congestion by encouraging residents to cycle. {{This policy}} has proved popular, although it requires a significant investment in infrastructure.",
+      "Copenhagen is often cited as a model. Its network of protected lanes allows cyclists to travel safely across the city, and as a result around half of all commuters now choose {{it}} over driving.",
+      "Critics, however, argue that the approach cannot be copied everywhere. Cities with steep hills or extreme weather face obstacles that {{their}} flatter, milder counterparts do not, and this limits the benefits.",
+      "Nevertheless, experts suggest that electric bikes may overcome these barriers. {{They}} reduce the effort needed to climb hills, which makes cycling realistic for older people. If {{this trend}} continues, cycling could become a mainstream form of transport."
+    ],
+    "deep": {
+      "passage_id": "cycling-in-the-city",
+      "paragraphs": [
+        {
+          "id": "P1",
+          "main_idea": "Cities promote cycling, but it costs money"
+        },
+        {
+          "id": "P2",
+          "main_idea": "Copenhagen as a model"
+        },
+        {
+          "id": "P3",
+          "main_idea": "Hills and weather limit the idea"
+        },
+        {
+          "id": "P4",
+          "main_idea": "Electric bikes as a solution"
+        }
+      ],
+      "entities": [
+        {
+          "name": "Copenhagen",
+          "attributes": [
+            "protected lanes",
+            "half of commuters cycle"
+          ]
+        },
+        {
+          "name": "Critics",
+          "attributes": [
+            "say it cannot be copied everywhere"
+          ]
+        },
+        {
+          "name": "experts",
+          "attributes": [
+            "suggest electric bikes"
+          ]
+        }
+      ],
+      "timeline": [],
+      "vocab_targets": [
+        {
+          "word": "congestion",
+          "paragraph_id": "P1",
+          "meaning": "too much traffic"
+        }
+      ],
+      "exercises": {
+        "completion": {
+          "type": "summary",
+          "instructions": "Complete the summary below. Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+          "items": [
+            {
+              "id": "C1",
+              "prompt_with_blank": "Copenhagen has a network of ______ lanes that keep cyclists safe.",
+              "answer": "protected",
+              "paragraph_id": "P2"
+            },
+            {
+              "id": "C2",
+              "prompt_with_blank": "About ______ of all commuters there now cycle instead of driving.",
+              "answer": "half",
+              "paragraph_id": "P2"
+            },
+            {
+              "id": "C3",
+              "prompt_with_blank": "Electric bikes cut the ______ needed to climb hills.",
+              "answer": "effort",
+              "paragraph_id": "P4"
+            }
+          ]
+        },
+        "true_false_not_given": {
+          "instructions": "Do the following statements agree with the information given in the passage? Write TRUE, FALSE, or NOT GIVEN.",
+          "items": [
+            {
+              "id": "TFNG1",
+              "statement": "Encouraging people to cycle costs cities a lot of money.",
+              "answer": "TRUE",
+              "paragraph_id": "P1"
+            },
+            {
+              "id": "TFNG2",
+              "statement": "Critics believe every city can copy the Copenhagen approach.",
+              "answer": "FALSE",
+              "paragraph_id": "P3"
+            },
+            {
+              "id": "TFNG3",
+              "statement": "Copenhagen opened its first cycle lane in the 1970s.",
+              "answer": "NOT GIVEN",
+              "paragraph_id": null
+            }
+          ]
+        },
+        "matching_headings": {
+          "instructions": "Choose the correct heading for each paragraph from the list below.",
+          "heading_options": [
+            "A popular policy with a price",
+            "The rising cost of public transport",
+            "A city that others try to follow",
+            "Natural limits to a good idea",
+            "Why drivers oppose new lanes"
+          ],
+          "items": [
+            {
+              "id": "MH1",
+              "paragraph_id": "P2",
+              "answer_heading": "A city that others try to follow",
+              "difficulty": "easy"
+            },
+            {
+              "id": "MH2",
+              "paragraph_id": "P1",
+              "answer_heading": "A popular policy with a price",
+              "difficulty": "medium"
+            },
+            {
+              "id": "MH3",
+              "paragraph_id": "P3",
+              "answer_heading": "Natural limits to a good idea",
+              "difficulty": "hard"
+            }
+          ]
+        },
+        "matching_information": {
+          "instructions": "Match each statement with the correct person or group, or with the correct paragraph.",
+          "items": [
+            {
+              "id": "MI1",
+              "prompt": "say the approach will not work in every place",
+              "answer": "Critics"
+            },
+            {
+              "id": "MI2",
+              "prompt": "think a new kind of bike could solve a problem",
+              "answer": "experts"
+            },
+            {
+              "id": "MI3",
+              "prompt": "a mention of a group of people who could start cycling",
+              "answer": "P4"
+            }
+          ]
+        }
+      }
+    },
+    "prons": [
+      {
+        "w": "This policy",
+        "p": 0,
+        "opts": [
+          "Encouraging residents to cycle",
+          "Reducing traffic congestion",
+          "Investing in infrastructure",
+          "Building new roads"
+        ],
+        "a": 0,
+        "why": "It names the idea of the previous sentence: encouraging residents to cycle."
+      },
+      {
+        "w": "it",
+        "p": 1,
+        "opts": [
+          "Copenhagen",
+          "Cycling",
+          "The network of lanes",
+          "Driving"
+        ],
+        "a": 1,
+        "why": "Commuters choose cycling over driving."
+      },
+      {
+        "w": "their",
+        "p": 2,
+        "opts": [
+          "Critics",
+          "Obstacles",
+          "Cities with steep hills or extreme weather",
+          "Flatter, milder cities"
+        ],
+        "a": 2,
+        "why": "Flatter, milder cities are the counterparts of those with steep hills or extreme weather."
+      },
+      {
+        "w": "They",
+        "p": 3,
+        "opts": [
+          "Experts",
+          "Electric bikes",
+          "Barriers",
+          "Older people"
+        ],
+        "a": 1,
+        "why": "The previous sentence is about electric bikes."
+      },
+      {
+        "w": "this trend",
+        "p": 3,
+        "opts": [
+          "Older people cycling more",
+          "Experts making suggestions",
+          "Electric bikes making cycling realistic",
+          "Hills becoming flatter"
+        ],
+        "a": 2,
+        "why": "The trend is the growing use of electric bikes that make cycling realistic."
+      }
+    ],
+    "words": [
+      {
+        "w": "congestion",
+        "p": 0,
+        "pos": "n",
+        "opts": [
+          "a situation where roads are too crowded",
+          "a feeling of being very tired",
+          "a plan for building new roads",
+          "the money cities collect from drivers"
+        ],
+        "a": 0,
+        "en": "the state of being overcrowded, especially with traffic",
+        "syn": "traffic jams, overcrowding",
+        "vi": "sự tắc nghẽn",
+        "fam": "congest (v), congested (adj), congestion (n)",
+        "col": "traffic congestion, ease congestion",
+        "ex": "The new tram line should reduce congestion in the city centre."
+      },
+      {
+        "w": "counterparts",
+        "p": 2,
+        "pos": "n",
+        "opts": [
+          "people who disagree with others",
+          "people or things with a similar role elsewhere",
+          "things that are cheaper to build",
+          "groups that are much older"
+        ],
+        "a": 1,
+        "en": "a person or thing that has the same role in a different place or group",
+        "syn": "equivalents, peers",
+        "vi": "đối tác tương ứng, người/vật tương đương",
+        "fam": "counterpart (n)",
+        "col": "a foreign counterpart, a female counterpart",
+        "ex": "The minister met her French counterpart in Paris."
+      },
+      {
+        "w": "mainstream",
+        "p": 3,
+        "pos": "adj",
+        "opts": [
+          "limited to a small group",
+          "expensive and rare",
+          "accepted by most people",
+          "invented very recently"
+        ],
+        "a": 2,
+        "en": "accepted by most people; normal and common",
+        "syn": "common, normal",
+        "vi": "chủ đạo, phổ biến",
+        "fam": "mainstream (adj, n)",
+        "col": "mainstream media, go mainstream",
+        "ex": "Vegan food has gone mainstream in recent years."
+      }
+    ],
+    "pairs": [
+      {
+        "ph": "significant investment",
+        "p": 0,
+        "par": "a large amount of spending",
+        "why": "\"significant\" = large, \"investment\" = spending money."
+      },
+      {
+        "ph": "often cited as a model",
+        "p": 1,
+        "par": "frequently used as an example to follow"
+      },
+      {
+        "ph": "cannot be copied everywhere",
+        "p": 2,
+        "par": "will not work in every place",
+        "why": "If a plan cannot be copied, it will not work elsewhere."
+      },
+      {
+        "ph": "overcome these barriers",
+        "p": 3,
+        "par": "get past these difficulties"
+      }
+    ],
+    "pdist": "has been ignored by most experts",
+    "cloze": {
+      "text": "Many cities encourage cycling to reduce traffic {{1}}, but this needs heavy {{2}}. Copenhagen shows the idea can work, because its {{3}} lanes make cycling safe. Critics say places with {{4}} hills or harsh weather cannot copy it, yet {{5}} bikes may remove that obstacle and help cycling become {{6}} transport.",
+      "bank": [
+        "congestion",
+        "investment",
+        "protected",
+        "steep",
+        "electric",
+        "mainstream",
+        "regional"
+      ]
+    },
+    "wprompt": "Should your city spend more on cycling lanes?",
+    "wguide": [
+      "Who would use the new lanes?",
+      "What problems could they cause?",
+      "Is there a cheaper way to cut traffic?"
+    ]
+  },
+  "easy": {
+    "title": "Cycling in the City",
+    "paras": [
+      "Over the past two decades, many cities have tried to reduce traffic congestion by encouraging residents to cycle. {{This policy}} has proved popular, although it requires a significant investment in infrastructure.",
+      "Copenhagen is often cited as a model. Its network of protected lanes allows cyclists to travel safely across the city, and as a result around half of all commuters now choose {{it}} over driving.",
+      "Critics, however, argue that the approach cannot be copied everywhere. Cities with steep hills or extreme weather face obstacles that {{their}} flatter, milder counterparts do not, and this limits the benefits.",
+      "Nevertheless, experts suggest that electric bikes may overcome these barriers. {{They}} reduce the effort needed to climb hills, which makes cycling realistic for older people. If {{this trend}} continues, cycling could become a mainstream form of transport."
+    ],
+    "deep": {
+      "passage_id": "cycling-in-the-city",
+      "paragraphs": [
+        {
+          "id": "P1",
+          "main_idea": "Cities promote cycling, but it costs money"
+        },
+        {
+          "id": "P2",
+          "main_idea": "Copenhagen as a model"
+        },
+        {
+          "id": "P3",
+          "main_idea": "Hills and weather limit the idea"
+        },
+        {
+          "id": "P4",
+          "main_idea": "Electric bikes as a solution"
+        }
+      ],
+      "entities": [
+        {
+          "name": "Copenhagen",
+          "attributes": [
+            "protected lanes",
+            "half of commuters cycle"
+          ]
+        },
+        {
+          "name": "Critics",
+          "attributes": [
+            "say it cannot be copied everywhere"
+          ]
+        },
+        {
+          "name": "experts",
+          "attributes": [
+            "suggest electric bikes"
+          ]
+        }
+      ],
+      "timeline": [],
+      "vocab_targets": [
+        {
+          "word": "congestion",
+          "paragraph_id": "P1",
+          "meaning": "too much traffic"
+        }
+      ],
+      "exercises": {
+        "completion": {
+          "type": "summary",
+          "instructions": "Complete the summary below. Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+          "items": [
+            {
+              "id": "C1",
+              "prompt_with_blank": "Copenhagen has a network of ______ lanes that keep cyclists safe.",
+              "answer": "protected",
+              "paragraph_id": "P2"
+            },
+            {
+              "id": "C2",
+              "prompt_with_blank": "About ______ of all commuters there now cycle instead of driving.",
+              "answer": "half",
+              "paragraph_id": "P2"
+            },
+            {
+              "id": "C3",
+              "prompt_with_blank": "Electric bikes cut the ______ needed to climb hills.",
+              "answer": "effort",
+              "paragraph_id": "P4"
+            }
+          ]
+        },
+        "true_false_not_given": {
+          "instructions": "Do the following statements agree with the information given in the passage? Write TRUE, FALSE, or NOT GIVEN.",
+          "items": [
+            {
+              "id": "TFNG1",
+              "statement": "Encouraging people to cycle costs cities a lot of money.",
+              "answer": "TRUE",
+              "paragraph_id": "P1"
+            },
+            {
+              "id": "TFNG2",
+              "statement": "Critics believe every city can copy the Copenhagen approach.",
+              "answer": "FALSE",
+              "paragraph_id": "P3"
+            },
+            {
+              "id": "TFNG3",
+              "statement": "Copenhagen opened its first cycle lane in the 1970s.",
+              "answer": "NOT GIVEN",
+              "paragraph_id": null
+            }
+          ]
+        },
+        "matching_headings": {
+          "instructions": "Choose the correct heading for each paragraph from the list below.",
+          "heading_options": [
+            "A popular policy with a price",
+            "The rising cost of public transport",
+            "A city that others try to follow",
+            "Natural limits to a good idea",
+            "Why drivers oppose new lanes"
+          ],
+          "items": [
+            {
+              "id": "MH1",
+              "paragraph_id": "P2",
+              "answer_heading": "A city that others try to follow",
+              "difficulty": "easy"
+            },
+            {
+              "id": "MH2",
+              "paragraph_id": "P1",
+              "answer_heading": "A popular policy with a price",
+              "difficulty": "medium"
+            },
+            {
+              "id": "MH3",
+              "paragraph_id": "P3",
+              "answer_heading": "Natural limits to a good idea",
+              "difficulty": "hard"
+            }
+          ]
+        },
+        "matching_information": {
+          "instructions": "Match each statement with the correct person or group, or with the correct paragraph.",
+          "items": [
+            {
+              "id": "MI1",
+              "prompt": "say the approach will not work in every place",
+              "answer": "Critics"
+            },
+            {
+              "id": "MI2",
+              "prompt": "think a new kind of bike could solve a problem",
+              "answer": "experts"
+            },
+            {
+              "id": "MI3",
+              "prompt": "a mention of a group of people who could start cycling",
+              "answer": "P4"
+            }
+          ]
+        }
+      }
+    },
+    "prons": [
+      {
+        "w": "This policy",
+        "p": 0,
+        "opts": [
+          "Encouraging residents to cycle",
+          "Reducing traffic congestion",
+          "Investing in infrastructure",
+          "Building new roads"
+        ],
+        "a": 0,
+        "why": "It names the idea of the previous sentence: encouraging residents to cycle."
+      },
+      {
+        "w": "it",
+        "p": 1,
+        "opts": [
+          "Copenhagen",
+          "Cycling",
+          "The network of lanes",
+          "Driving"
+        ],
+        "a": 1,
+        "why": "Commuters choose cycling over driving."
+      },
+      {
+        "w": "their",
+        "p": 2,
+        "opts": [
+          "Critics",
+          "Obstacles",
+          "Cities with steep hills or extreme weather",
+          "Flatter, milder cities"
+        ],
+        "a": 2,
+        "why": "Flatter, milder cities are the counterparts of those with steep hills or extreme weather."
+      },
+      {
+        "w": "They",
+        "p": 3,
+        "opts": [
+          "Experts",
+          "Electric bikes",
+          "Barriers",
+          "Older people"
+        ],
+        "a": 1,
+        "why": "The previous sentence is about electric bikes."
+      },
+      {
+        "w": "this trend",
+        "p": 3,
+        "opts": [
+          "Older people cycling more",
+          "Experts making suggestions",
+          "Electric bikes making cycling realistic",
+          "Hills becoming flatter"
+        ],
+        "a": 2,
+        "why": "The trend is the growing use of electric bikes that make cycling realistic."
+      }
+    ],
+    "words": [
+      {
+        "w": "congestion",
+        "p": 0,
+        "pos": "n",
+        "opts": [
+          "a situation where roads are too crowded",
+          "a feeling of being very tired",
+          "a plan for building new roads",
+          "the money cities collect from drivers"
+        ],
+        "a": 0,
+        "en": "the state of being overcrowded, especially with traffic",
+        "syn": "traffic jams, overcrowding",
+        "vi": "sự tắc nghẽn",
+        "fam": "congest (v), congested (adj), congestion (n)",
+        "col": "traffic congestion, ease congestion",
+        "ex": "The new tram line should reduce congestion in the city centre."
+      },
+      {
+        "w": "counterparts",
+        "p": 2,
+        "pos": "n",
+        "opts": [
+          "people who disagree with others",
+          "people or things with a similar role elsewhere",
+          "things that are cheaper to build",
+          "groups that are much older"
+        ],
+        "a": 1,
+        "en": "a person or thing that has the same role in a different place or group",
+        "syn": "equivalents, peers",
+        "vi": "đối tác tương ứng, người/vật tương đương",
+        "fam": "counterpart (n)",
+        "col": "a foreign counterpart, a female counterpart",
+        "ex": "The minister met her French counterpart in Paris."
+      },
+      {
+        "w": "mainstream",
+        "p": 3,
+        "pos": "adj",
+        "opts": [
+          "limited to a small group",
+          "expensive and rare",
+          "accepted by most people",
+          "invented very recently"
+        ],
+        "a": 2,
+        "en": "accepted by most people; normal and common",
+        "syn": "common, normal",
+        "vi": "chủ đạo, phổ biến",
+        "fam": "mainstream (adj, n)",
+        "col": "mainstream media, go mainstream",
+        "ex": "Vegan food has gone mainstream in recent years."
+      }
+    ],
+    "pairs": [
+      {
+        "ph": "significant investment",
+        "p": 0,
+        "par": "a large amount of spending",
+        "why": "\"significant\" = large, \"investment\" = spending money."
+      }
+    ],
+    "pdist": "has been ignored by most experts",
+    "cloze": {
+      "text": "Many cities encourage cycling to reduce traffic {{1}}, but this needs heavy {{2}}. Copenhagen shows the idea can work, because its {{3}} lanes make cycling safe. Critics say places with {{4}} hills or harsh weather cannot copy it, yet {{5}} bikes may remove that obstacle and help cycling become {{6}} transport.",
+      "bank": [
+        "congestion",
+        "investment",
+        "protected",
+        "steep",
+        "electric",
+        "mainstream",
+        "regional"
+      ]
+    },
+    "wprompt": "Should your city spend more on cycling lanes?",
+    "wguide": [
+      "Who would use the new lanes?",
+      "What problems could they cause?",
+      "Is there a cheaper way to cut traffic?"
+    ]
+  }
+}

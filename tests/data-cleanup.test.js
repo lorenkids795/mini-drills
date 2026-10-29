@@ -65,9 +65,25 @@ const world = () => ({
   await t('one rule for staff views: live = roster student (by email), not removed from a class; testers are live', async () => {
     const B = mkT(), L = B.T.liveEmails(); assert.deepStrictEqual(Object.keys(L).sort(), ['live@x.com', 'tester@x.com']);
   });
-  await t('Marking: deleted and removed students\' submissions are gone (cards, counts, class filter); the tester\'s stays', async () => {
-    const B = mkT(); B.T.showTab('mark'); const h = B.el('v-mark').innerHTML;
-    assert.ok(h.includes('data-id="s1"') && h.includes('data-id="s3"') && !h.includes('data-id="s2"') && !h.includes('data-id="s4"')); assert.ok(/2 submitted/.test(h) && !/<option[^>]*>OLD</.test(h));
+  await t('Marking: deleted and removed students\' submissions are gone (cards, counts, class filter); the tester\'s is only under Tester', async () => {
+    const B = mkT(); B.T.showTab('mark'); let h = B.el('v-mark').innerHTML;
+    assert.ok(h.includes('data-id="s1"') && !h.includes('data-id="s3"') && !h.includes('data-id="s2"') && !h.includes('data-id="s4"')); assert.ok(/1 submitted/.test(h) && !/<option[^>]*>OLD</.test(h));
+    assert.ok(/<option value="__tester">Tester<\/option>/.test(h) && !/<option value="Test"/.test(h), 'Tester option, no class option made from the tester');
+    B.T.MK.cls = '__tester'; B.T.renderMark(); h = B.el('v-mark').innerHTML;
+    assert.ok(h.includes('data-id="s3"') && !h.includes('data-id="s1"') && /1 submitted · 0 marked/.test(h));
+  });
+  await t('Marking filter: All / Tester / a class by email + tester flag (not the name), seeded results, stale class labels, counts = cards', async () => {
+    const B = mkT(), sub = (id, em, cls, x) => Object.assign(att(id, em, cls, 'submission'), x || {});
+    // the tester's old result carries a real class label; a real student is called "TESTER"; a seeded result of the tester
+    B.T.setRoster([{ email: 'live@x.com', name: 'TESTER', cls: '67PM', role: 'student' }, { email: 'Tester@X.com', name: 'Tess', cls: '67PM', role: 'student', tester: true }]);
+    B.T.setClasses([]);
+    B.T.setAtt([sub('r1', 'live@x.com', '67PM', { student: 'TESTER' }), sub('t1', 'tester@x.com', '67PM', { grade: { overall: 6, max: 9 } }), sub('t2', 'tester@x.com', 'Old', { seeded: true })]);
+    const view = (c) => { B.T.MK.cls = c; B.T.renderMark(); const h = B.el('v-mark').innerHTML; return { h, ids: (h.match(/data-id="(\w+)"/g) || []).map((m) => m.slice(9, -1)).sort().join(','), cnt: (/(\d+) submitted · (\d+) marked/.exec(h) || []).slice(1).join('/') }; };
+    let v = view('all'); assert.strictEqual(v.ids, 'r1'); assert.strictEqual(v.cnt, '1/0');
+    v = view('67PM'); assert.strictEqual(v.ids, 'r1'); assert.strictEqual(v.cnt, '1/0');
+    v = view('__tester'); assert.strictEqual(v.ids, 't1,t2'); assert.strictEqual(v.cnt, '2/1');
+    B.T.setAtt([sub('t1', 'tester@x.com', '67PM')]); v = view('all'); assert.ok(/No submissions yet/.test(v.h) && v.cnt === '0/0' && v.ids === '');
+    B.T.setRoster([{ email: 'live@x.com', name: 'TESTER', cls: '67PM', role: 'student' }]); v = view('__tester'); assert.ok(!/__tester/.test(v.h) && B.T.MK.cls === 'all', 'no testers: no Tester option, back to All');
   });
   await t('Marking: an open submission whose student was removed closes with a message (no broken modal)', async () => {
     const B = mkT(); B.T.showTab('mark'); B.T.MK.sel = 's2'; B.T.MK.open = true; B.T.renderMark(); assert.ok(!B.T.MK.open && /no longer available/.test(B.toast()));
@@ -75,6 +91,21 @@ const world = () => ({
   await t('Dashboard: attempts, averages, classes and charts only from live students (tester still left out); nothing left -> no fake numbers', async () => {
     const B = mkT(); B.T.showTab('dash'); let h = B.el('v-dash').innerHTML; assert.ok(!/>OLD</.test(h), 'deleted class gone'); assert.ok(h.includes('67PM'));
     const C = boot({ hooks: HOOKS }); C.T.setRoster([]); C.T.setAtt([att('x1', 'gone@x.com', 'OLD')]); C.T.showTab('dash'); h = C.el('v-dash').innerHTML; assert.ok(!/>OLD</.test(h) && !h.includes('gone@x.com') && !/Cherry/.test(h));
+  });
+  await t('Dashboard clean-up: no Sample data switch, no extra labels, no empty-state sentences; no attempts = "–" (not a measured 0%)', async () => {
+    const C = boot({ hooks: HOOKS }); C.T.setRoster([]); C.T.setAtt([]); C.T.showTab('dash'); let h = C.el('v-dash').innerHTML;
+    assert.ok(!/Sample data|fSample/.test(h) && !/>Average score</.test(h) && !/Share of questions answered correctly/.test(h));
+    assert.ok(!/No scores in the last 8 weeks|No results match these filters|Not enough data yet|No classes yet/.test(h), 'no empty-state sentences');
+    assert.ok(/<b>–<\/b>/.test(h) && !/<b>0%<\/b>/.test(h) && /0 attempts/.test(h)); assert.ok(/Average score per week/.test(h) && />Classes</.test(h) && />Hardest exercises</.test(h) && /Homework, current or latest per class/.test(h));
+    assert.ok(/id="fCourse"|data-f="course"/.test(h) && /data-f="cls"/.test(h), 'filters kept');
+    const B = mkT(); B.T.showTab('dash'); h = B.el('v-dash').innerHTML; assert.ok(/<b>\d+%<\/b>/.test(h) && h.includes('67PM'), 'real data still shown');
+  });
+  await t('Create: no "TEST 1 · READING" caption, no "Select a slot…" hint, none of the Reading helper sentences', async () => {
+    const B = boot({ hooks: HOOKS + ',renderSlotMap:renderSlotMap,cpAddBarHTML:cpAddBarHTML,get CP(){return CP},renderRdBox:renderRdBox' }); B.T.CP.skill = 'reading'; B.T.CP.slot = null;
+    assert.ok(!/Select a slot, then generate a lesson/.test(B.T.cpAddBarHTML()) && /data-act="add-ex"/.test(B.T.cpAddBarHTML()));
+    const src = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
+    ['4 stages: Deep reading, Pronouns, Vocabulary, Output. Paste the passage', 'Keep the wording exactly as in the book', '(optional, the AI can name it)', 'Choose Book and Test in the box below.', 'Makes 3 versions (Medium, Easy, Hard)', "TNAME[CP.test].toUpperCase()+' · '"].forEach((x) => assert.ok(!src.includes(x), x));
+    assert.ok(src.includes('2. Title (optional)') && src.includes('data-act="rd-gen"') && src.includes('id="rdJson"'), 'controls kept');
   });
   await t('Admin › Users: "Clean up data of deleted students" previews first, deletes one email after a confirm', async () => {
     const B = boot({ hooks: 'get AD(){return AD}' }); const AD = B.T.AD; AD.sub = 'users'; AD.locked = false; AD.ver = 'x'; AD.users = []; B.T.showTab('admin');

@@ -17,6 +17,18 @@ t('ordinary student: Writing is shown, dimmed, disabled, "Coming soon"; no unit,
   assert.ok(!h.includes('data-k="s:writing"') && !h.includes('Unit 0') && !h.includes('Unit 2') && !h.includes('data-act="lm-open"'));
   assert.strictEqual(B.T.lmTester(), false);
 });
+t('ordinary student: exactly 4 rows (Writing, Listening, Reading, Speaking), each "Coming soon", no arrow, no nested list', () => {
+  const B = mk(STU), h = B.T.lmHTML();
+  assert.strictEqual((h.match(/<section class="lmmod /g) || []).length, 4); assert.strictEqual((h.match(/class="lmsoon">Coming soon</g) || []).length, 4);
+  assert.ok(!h.includes('lmchev') && !h.includes('lmtw') && !h.includes('Task 1') && !h.includes('Task 2') && !h.includes('Unpublished preview') && !h.includes('data-act="lm-tg"'));
+});
+t('focused lesson view: an open unit fills the page (no Today, homework, Library tabs, Recent results); Back brings the list and Home back', () => {
+  const B = mk(TES); B.T.showTab('library'); B.press({ act: 'lm-open', id: U0 }); let h = B.el('libBody').innerHTML;
+  assert.ok(h.includes('class="lmfocus"') && h.includes('lusteps') && h.includes('data-act="lm-back"'));
+  assert.ok(!h.includes('role="tab"') && !/Recent results|class="hw|class="dlist|Daily practice/.test(h), 'nothing else from Home');
+  assert.strictEqual((h.match(/class="lusteps"/g) || []).length, 1, 'one lesson only');
+  B.press({ act: 'lm-back' }); h = B.el('libBody').innerHTML; assert.ok(!h.includes('lmfocus') && h.includes('lmtree') && h.includes('role="tab"'));
+});
 t('ordinary student cannot open a Writing unit by any route (action, state, even a published one)', () => {
   const B = mk(STU); B.press({ act: 'lm-open', id: U0 }); assert.strictEqual(B.T.LMV, null);
   B.T.setLMV(U2); const h = B.T.lmHTML(); assert.ok(!h.includes('lusteps') && B.T.LMV === null, 'forced state is dropped');

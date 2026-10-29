@@ -239,6 +239,35 @@ var U2={
       en:'Overall, while the number of daily users of {y.label} and {z.label} increased, the figure for {x.label} declined. {f.r1Label} had the most users at the beginning of the period, but {l.r1Label} overtook it to become the leading app by {l.x}.',
       vi:'Overview mẫu: {y.label} và {z.label} tăng còn {x.label} giảm; {f.r1Label} dẫn đầu lúc đầu nhưng {l.r1Label} vượt lên dẫn đầu vào năm {l.x}.',
       why:{en:'Two sentences: the overall directions, then the change of leader. No exact numbers, no guessed year for when the lines met.',vi:'Hai câu: hướng chung, rồi việc đổi vị trí dẫn đầu. Không nêu số cụ thể, không đoán năm hai đường gặp nhau.'}}
+    // Demo helper samples (tester / admin preview only, never shown to students): one per writing box, worded differently from the models above
+    ,{id:'u2.s.g.trend',chart:'A',stage:'guided',kind:'sample',for:'g:trend',review:'pending',
+      binds:{a:A+'endpoint:museum-a',b:A+'endpoint:museum-b',c:A+'endpoint:museum-c'},
+      expect:{a:{status:'supported',result:'increase'},b:{status:'supported',result:'decrease'},c:{status:'supported',result:'increase'}},
+      en:'{a.label} and {c.label} attracted more visitors over the period, whereas {b.label} attracted fewer.',
+      vi:'{a.label} và {c.label} có nhiều khách hơn qua cả giai đoạn, còn {b.label} có ít khách hơn.',why:{en:'Demo sample: the direction of each line, no numbers.',vi:'Câu mẫu demo: hướng của từng đường, không nêu số.'}}
+    ,{id:'u2.s.g.high',chart:'A',stage:'guided',kind:'sample',for:'g:high',review:'pending',
+      binds:{h:A+'highest-throughout:museum-a+museum-b+museum-c'},expect:{h:{status:'supported',result:'museum-a'}},
+      en:'{h.resultLabel} remained the most visited museum throughout the period.',
+      vi:'{h.resultLabel} luôn là bảo tàng có nhiều khách nhất trong suốt giai đoạn.',why:{en:'Demo sample: the highest line, true in every year shown.',vi:'Câu mẫu demo: đường cao nhất, đúng ở mọi năm được cho.'}}
+    ,{id:'u2.s.g.note',chart:'A',stage:'guided',kind:'sample',for:'g:note',review:'pending',
+      binds:{c:A+'shape:museum-c'},expect:{c:{status:'supported',result:'fluctuating'}},
+      en:'The figure for {c.label} went up and down along the way.',
+      vi:'Số khách của {c.label} lên xuống trong suốt giai đoạn.',why:{en:'Demo sample: one extra detail about the shape of a line.',vi:'Câu mẫu demo: một chi tiết thêm về hình dạng của một đường.'}}
+    ,{id:'u2.s.g.ov',chart:'A',stage:'guided',kind:'sample',for:'g:ov',review:'pending',
+      binds:{a:A+'endpoint:museum-a',b:A+'endpoint:museum-b',c:A+'endpoint:museum-c',h:A+'highest-throughout:museum-a+museum-b+museum-c'},
+      expect:{a:{status:'supported',result:'increase'},b:{status:'supported',result:'decrease'},c:{status:'supported',result:'increase'},h:{status:'supported',result:'museum-a'}},
+      en:'In general, {a.label} and {c.label} grew more popular over the period, whereas {b.label} lost visitors. {h.resultLabel} attracted the largest number of visitors in every year shown.',
+      vi:'Nhìn chung, {a.label} và {c.label} đông khách hơn, còn {b.label} vắng khách hơn. {h.resultLabel} có nhiều khách nhất ở mọi năm được cho.',why:{en:'Demo sample: directions first, then the highest line.',vi:'Câu mẫu demo: hướng chung trước, rồi đường cao nhất.'}}
+    ,{id:'u2.s.i.ov',chart:'B',stage:'independent',kind:'sample',for:'i:ov',review:'pending',
+      binds:{x:B+'endpoint:app-x',y:B+'endpoint:app-y',z:B+'endpoint:app-z',f:B+'rank:app-x+app-y+app-z@2016',l:B+'rank:app-x+app-y+app-z@2024'},
+      expect:{x:{status:'supported',result:'decrease'},y:{status:'supported',result:'increase'},z:{status:'supported',result:'increase'},f:{status:'supported',result:['app-x','app-y','app-z']},l:{status:'supported',result:['app-y','app-x','app-z']}},
+      en:'{y.label} and {z.label} gained daily users over the period, whereas {x.label} lost users. {f.r1Label} led at the start, but {l.r1Label} had the most users by {l.x}.',
+      vi:'{y.label} và {z.label} có thêm người dùng, còn {x.label} mất người dùng. {f.r1Label} dẫn đầu lúc đầu, nhưng {l.r1Label} có nhiều người dùng nhất vào năm {l.x}.',why:{en:'Demo sample of a first attempt: directions, then the change of leader.',vi:'Câu mẫu demo cho lần viết đầu: hướng chung, rồi việc đổi vị trí dẫn đầu.'}}
+    ,{id:'u2.s.r.ov',chart:'B',stage:'review',kind:'sample',for:'r:ov',review:'pending',
+      binds:{x:B+'endpoint:app-x',y:B+'endpoint:app-y',z:B+'endpoint:app-z',f:B+'rank:app-x+app-y+app-z@2016',l:B+'rank:app-x+app-y+app-z@2024'},
+      expect:{x:{status:'supported',result:'decrease'},y:{status:'supported',result:'increase'},z:{status:'supported',result:'increase'},f:{status:'supported',result:['app-x','app-y','app-z']},l:{status:'supported',result:['app-y','app-x','app-z']}},
+      en:'Overall, the number of daily users of {y.label} and {z.label} rose, while the figure for {x.label} fell. Although {f.r1Label} had the most users at first, {l.r1Label} had overtaken it by {l.x}.',
+      vi:'Nhìn chung, {y.label} và {z.label} tăng người dùng, còn {x.label} giảm. Dù {f.r1Label} có nhiều người dùng nhất lúc đầu, {l.r1Label} đã vượt lên vào năm {l.x}.',why:{en:'Demo sample of a revision: "Overall" and a linker make it read as one overview.',vi:'Câu mẫu demo cho bản sửa: "Overall" và từ nối giúp đoạn đọc liền mạch.'}}
   ],
   // Controlled practice (Chart A only). label is recomputed from the chart by lm-check.
   controlled:[

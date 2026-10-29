@@ -536,5 +536,21 @@ Tự động (đã chạy): `data-cleanup` 12/12, `reading` 12/12, các bộ kh�
 5. [ ] Student View Preview: Easy / Medium / Hard trên preview đổi đúng nội dung (bản chưa tạo thì nút mờ); đổi nhiều lần, cả khi đã ẩn editor; Add xong bài lưu không bị ảnh hưởng.
 6. [ ] Bài Reading (học sinh + preview): không còn khung "Selected excerpts"; có link "Show full passage". Header 1 hàng: ← + tên bài + "Cam … · Test … · Reading" | "Step 1/4 · Deep reading" | đồng hồ ⏸ | bánh răng (mức độ, cỡ chữ, Demo helper chỉ với giáo viên/tester); thanh tiến độ tăng khi qua bước. Điện thoại: header xuống dòng gọn, không đè nhau; bàn phím mở/đóng được (Esc).
 
+## Reading AI theo từng phần · Marking tester · Learning Materials · dọn giao diện (10/2026)
+Tự động (đã chạy): `reading-gen` 12/12, `reading` 12/12, `data-cleanup` 15/15, `lm-access` 9/9, `lm-unit0` 27/27, `lm-unit2-ui` 56/56, `lm-meta` 23/23, các bộ khác như cũ. Deploy `index.html`, `functions/`, `lm-content.js`, `lm-unit2.js`, `md-backend.js` (Users phải ghi "app 2026-10-29a · server 2026-10-29a").
+1. [ ] Create › Reading: dán bài ~930 từ / 7 đoạn → Generate: dòng tiến độ đổi qua "(1 of 9)"… "(9 of 9)"; mỗi bản có 3 phần ✓; nút Add mờ tới khi xong; xong → preview Easy / Medium / Hard; bài đọc giống hệt bài dán.
+2. [ ] Nếu một phần báo ✗: chỉ có nút "Retry failed part" → bấm → chỉ phần đó chạy lại; các phần ✓ giữ nguyên. Không còn câu "Try a shorter essay".
+3. [ ] Advanced › paste JSON → Check JSON: preview + Add như cũ, không gọi AI.
+4. [ ] Marking: Class = All không có bài của tester; chọn "Tester" → chỉ bài tester (chấm được như thường); số submitted/marked khớp số thẻ ở mọi lựa chọn; tải lại trang vẫn đúng.
+5. [ ] Học sinh thường: Library › Learning Materials = 4 dòng Writing / Listening / Reading / Speaking, đều "Coming soon", không mũi tên, không Task 1/2.
+6. [ ] Tester: Writing › Task 1 / Task 2 › Unit 0, Unit 2 mở được; trang chỉ còn bài đó (không Daily, Homework, Recent results); "Learning Materials" ở breadcrumb quay lại đúng chỗ.
+7. [ ] Tester trong bài: "Demo helper · Fill correct answers" → mọi stage mở, câu chọn + ô viết được điền (ENG và VI); Check / Continue chạy; "Undo demo answers" → trở lại như trước; không có bài nộp / XP mới.
+8. [ ] Dashboard: không còn ô Sample data, chữ "Average score", "Share of questions…", 4 câu báo trống; lọc ra rỗng → vòng tròn "–", không vỡ bố cục (máy tính, điện thoại, tối).
+9. [ ] Đăng nhập: form gọn ở giữa, có phụ đề; không còn khoảng hở lớn dưới nút Sign in; "Teacher sign in" mở form giáo viên như cũ; điện thoại không tràn ngang.
+10. [ ] Admin › Teachers: Admin và Teacher cùng kiểu badge; mọi "Active" giống nhau, thẳng hàng (sáng / tối / điện thoại).
+11. [ ] Create › Reading › Advanced: dán bài đọc ở bước 1 → "Copy prompt (3 versions)" → dán vào Claude/ChatGPT + bài đọc → lưu câu trả lời thành `.json` → "Upload JSON file" → danh sách "Versions in the file" ✓ Medium / Easy / Hard → preview đổi được 3 bản → chọn slot → Add → mở lại Library: bài ở đúng Cam … · Test … · Passage, đủ 3 bản.
+12. [ ] Thử `tests/fixtures/reading-import-invalid.json`: Easy báo "pairs has 1 item", Hard "not in the file"; slot đã có bài → Add hỏi, Cancel → bài cũ còn nguyên.
+13. [ ] Đang Generate thì tải lại trang (F5): các phần ✓ còn, phần dở thành ✗ → "Retry failed part" chạy tiếp, không tạo lại phần đã xong. Deploy phải ghi "app 2026-10-29b · server 2026-10-29b".
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

@@ -44,14 +44,14 @@ const flush = async () => { for (let i = 0; i < 20; i++) await new Promise((r) =
 (async () => {
   await t('UI is inserted before #loginForm in the .login box', () => { const B = boot(); assert.ok(B.root); assert.strictEqual(B.card.children.indexOf(B.root), 0); });
   await t('no Student / Teacher tab buttons', () => { const B = boot(); let tabs = 0; walk(B.root, (e) => { if (e.tagName === 'BUTTON' && /^(Student|Teacher)$/.test(e.textContent)) tabs++; }); assert.strictEqual(tabs, 0); });
-  await t('state 1 (default): Email, Password, Sign in, First time…, link Sign in as teachers', () => {
-    const B = boot(); assert.deepStrictEqual(B.shown(), ['form:Email|Password', 'P', 'lgalt:First time here? Create your password', 'lglink:Sign in as teachers']);
+  await t('state 1 (default): Email, Password, Sign in, First time…, link Teacher sign in', () => {
+    const B = boot(); assert.deepStrictEqual(B.shown(), ['form:Email|Password', 'P', 'lgalt:First time here? Create your password', 'lglink:Teacher sign in']);
     assert.strictEqual(B.byId('sPass').attrs.placeholder, ''); assert.strictEqual(B.byId('sEmail').attrs.placeholder, 'you@example.com');
   });
   await t('state 3 (teacher): Email, Password, Sign in, link Sign in as student (+ first-time teacher link)', () => {
-    const B = boot(); B.btn('Sign in as teachers').onclick();
+    const B = boot(); B.btn('Teacher sign in').onclick();
     assert.deepStrictEqual(B.shown(), ['form:Email|Password', 'P', 'lglink:Sign in as student', 'lglink:First time? Create your teacher password']);
-    B.btn('Sign in as student').onclick(); assert.strictEqual(B.shown()[0], 'form:Email|Password'); assert.ok(B.shown().includes('lglink:Sign in as teachers'));
+    B.btn('Sign in as student').onclick(); assert.strictEqual(B.shown()[0], 'form:Email|Password'); assert.ok(B.shown().includes('lglink:Teacher sign in'));
   });
   await t('state 2 (first time): Class, Your name, Your email, Choose a password, Create my password, I already have a password', () => {
     const B = boot(); B.btn('First time here? Create your password').onclick();
@@ -85,7 +85,7 @@ const flush = async () => { for (let i = 0; i < 20; i++) await new Promise((r) =
     const k = B.calls.filter((c) => c.url === '/api/register'); assert.strictEqual(k.length, 1); assert.deepStrictEqual(JSON.parse(k[0].opt.body), { nameId: 'n1', email: 'a@b.c', password: 'secret1' });
   });
   await t('teacher first time still has the setup key form', () => {
-    const B = boot(); B.btn('Sign in as teachers').onclick(); B.btn('First time? Create your teacher password').onclick();
+    const B = boot(); B.btn('Teacher sign in').onclick(); B.btn('First time? Create your teacher password').onclick();
     assert.deepStrictEqual(B.shown(), ['form:Email|Choose a password|Setup key', 'P', 'lgalt:I already have a password', 'lglink:Sign in as student']);
   });
   await t('every input and select has an id and a name (autofill)', () => { const B = boot(); walk(B.root, (e) => { if (e.tagName === 'INPUT' || e.tagName === 'SELECT') { assert.ok(e.id, 'id'); assert.strictEqual(e.attrs.name, e.id); } }); });

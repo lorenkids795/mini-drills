@@ -81,7 +81,7 @@ const base = (B) => JSON.parse(B.T.EXAMPLE_R);
   });
   await t('Create: Easy / Hard versions made with the lesson are kept apart (rdLevels) and restored as rlv', () => {
     const B = boot({ hooks: HOOKS }), r = B.T.parseReading(base(B)); B.T.RD.lv = { easy: { st: 'ok', rl: { title: 'E' } }, hard: { st: 'err', msg: 'x' } };
-    assert.deepStrictEqual(JSON.parse(JSON.stringify(B.T.rdLevels())), { easy: { title: 'E' } }); assert.ok(/data-act="rd-lv" data-v="hard">Try again/.test(B.T.rdLvHTML()));
+    assert.deepStrictEqual(JSON.parse(JSON.stringify(B.T.rdLevels())), { easy: { title: 'E' } }); // a failed version is never used (retry of failed parts: tests/reading-gen.test.js)
     B.T.setCustom([{ id: 'zz', docId: 'zz', bookId: 'cam14', testId: 't1', skill: 'reading', title: 'Z', rlesson: r.data.rlesson, rlevels: { easy: r.data.rlesson, hard: r.data.rlesson }, qs: r.data.qs }]); B.T.rebuildCustom();
     const c = B.T.customMap.c_zz; assert.ok(c && c.rlv && c.rlv.easy && c.rlv.hard && c.rl);
   });
@@ -89,7 +89,7 @@ const base = (B) => JSON.parse(B.T.EXAMPLE_R);
   await t('server: ORDER rule, segs in prompt + schema, 3 level notes, level passed to the prompt', () => {
     assert.ok(/ORDER: list the completion items and the TRUE\/FALSE\/NOT GIVEN items in the order/.test(SRV)); assert.ok(/Matching exercises do not follow this rule/.test(SRV));
     assert.ok(/"segs": the match split into 1 to 3 meaningful pairs/.test(SRV) && /segs: \{ type: 'ARRAY'/.test(SRV));
-    assert.ok(/easy: 'VERSION: EASY/.test(SRV) && /medium: 'VERSION: MEDIUM/.test(SRV) && /hard: 'VERSION: HARD/.test(SRV)); assert.ok(/RPROMPT \+ '\\n' \+ READING_LEVELS\[level\]/.test(SRV));
+    assert.ok(/easy: 'VERSION: EASY/.test(SRV) && /medium: 'VERSION: MEDIUM/.test(SRV) && /hard: 'VERSION: HARD/.test(SRV)); assert.ok(/RPROMPT \+ '\\n' \+ READING_LEVELS\[level\]/.test(SRV) && /def\.prompt \+ '\\n' \+ READING_LEVELS\[level\]/.test(SRV));
   });
   out.forEach((l) => console.log(l)); console.log('---- ' + pass + '/' + (pass + fail) + ' passed'); process.exit(fail ? 1 : 0);
 })();

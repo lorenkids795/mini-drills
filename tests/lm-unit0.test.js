@@ -160,7 +160,7 @@ t('students: stages open in order (titles explain why); admin opens every stage'
   const A = mk(); A.act('u0-go', { s: 'review' }); assert.strictEqual(A.S().stage, 'review');
 });
 t('admin auto-fill: admin only; fills objective answers AND every writing box from the right chart; nothing saved; off keeps genuine typing and removes only the samples', () => {
-  const C = mk(); assert.ok(C.full().includes('Preview: auto-fill off')); const before = JSON.stringify(C.T.luGet(C.u, 'state'));
+  const C = mk(); assert.ok(C.full().includes('>Fill correct answers<')); const before = JSON.stringify(C.T.luGet(C.u, 'state'));
   C.S().gwhy = 'My own reason typed before'; C.act('u0-af'); const S = C.S(); S.gpass = true; S.ochk = true; S.rv = true;
   ['learn', 'controlled', 'guided', 'independent', 'review'].forEach((st) => C.st(st));
   assert.strictEqual(S.a['c0.y1'], 'supported'); assert.strictEqual(S.g['t:src-solar'], 'fup'); assert.strictEqual(S.gwhy, 'My own reason typed before', 'existing text kept');
@@ -171,7 +171,8 @@ t('admin auto-fill: admin only; fills objective answers AND every writing box fr
   assert.strictEqual(JSON.stringify(C.T.luGet(C.u, 'state')), before, 'nothing written while auto-fill is on');
   S.ind.high = 'Typed by the admin during preview.'; C.act('u0-af'); const R = C.S();
   assert.ok(!R.af && R.ind.high === 'Typed by the admin during preview.' && !R.ind.trends && R.gwhy === 'My own reason typed before' && !(R.fobs || {})['kf0.a.coal'], 'samples removed, genuine text kept');
-  const St = mk(STU); assert.ok(!St.full().includes('u0-af')); St.act('u0-af'); assert.ok(!St.S().af && !St.S().ind.trends);
+  const St = mk(STU); assert.ok(St.full().includes('u0-af'), 'a shadow tester has the Demo helper'); St.act('u0-af'); assert.ok(St.S().af);
+  St.T.setRoster([{ email: STU.email, name: STU.name, cls: STU.cls, role: 'student' }]); assert.ok(!St.full().includes('u0-af'), 'ordinary student: no lesson, no Demo helper'); St.act('u0-af');
 });
 t('progress: stage, answers and notes restored for the same version; an older version is shown as such and only discarded on request', () => {
   const C = mk(STU); learnAll(C); C.S().fobs = { 'kf0.a.coal': 'note here' }; C.act('u0-line', { id: 'src-wind' }); const saved = C.T.luGet(C.u, 'state'); assert.ok(saved && saved.s.ldone && saved.s.ls === 7);
