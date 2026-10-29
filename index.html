@@ -158,7 +158,7 @@ body.lg .shell{margin-top:0}
 @media (prefers-reduced-motion:reduce){.lgart>.lgshoot{display:none}.lgart::after{animation:none}}
 .lgform{display:flex;align-items:center;justify-content:center;padding:32px 20px}
 .lgform .login{width:100%;max-width:440px;margin:0;gap:0}
-.lgform .login h1{margin:0 0 6px;font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1.15}.lgsub{margin:0 0 24px;font-size:15px;line-height:1.5;color:var(--muted)}.lgform .login .msg:empty{display:none}
+.lgform .login h1{margin:0 0 24px;font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1.15}.lgform .login .msg:empty{display:none}
 /* even spacing between every field and button of the form, whatever classes the buttons have (old and new md-backend.js) */
 .lgform .login form{gap:16px}.lgform .login form>button{margin-top:8px}.lgform .login form>button+button{margin-top:0}
 .lgform .field{display:block;margin:0;font-size:13px;font-weight:700;color:var(--muted);text-transform:none;letter-spacing:0}
@@ -1584,7 +1584,6 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
     <div class="lgform">
     <div class="login">
       <h1>Sign in</h1>
-      <p class="lgsub">Sign in to continue your learning journey.</p>
       <form id="loginForm">
         <label class="field" for="lgEmail">Email<input id="lgEmail" type="email" autocomplete="email" placeholder="you@example.com" required></label>
         <button class="btn pri" type="submit">Continue</button>
@@ -4783,7 +4782,7 @@ function rdApply(txt,passage){
 // "Retry failed part" sends only the failed parts again. Finished parts are kept (in this page only). Add stays off while parts are written.
 // RD.lv = {easy:{st:'ok', rl}, hard:{…}}: the extra versions that passed every check (Medium = the lesson in the preview)
 var RD_PARTS=['deep','vocab','output'],RD_PNAME={deep:'Deep reading',vocab:'Pronouns + Vocabulary',output:'Paraphrases + Output'},RD_ORDER=['medium','easy','hard'],
-  RD_AUTO={too_long:1,parse:1,empty:1,shape:1,check:1,network:1,http500:1,http502:1,http503:1,http504:1},
+  RD_AUTO={too_long:1,parse:1,empty:1,shape:1,check:1,network:1,http500:1,http502:1,http503:1,http504:1,relay_busy:1},
   RD_STOP={quota:1,nokey:1,http400:1,http403:1,http429:1,relay:1,blocked:1};
 // finished parts survive a reload (this device only, localStorage md-rdjob): same passage = the job comes back, a part that was
 // being written when the page closed shows as failed, so "Retry failed part" carries on. Never saved to the Library.
@@ -4803,7 +4802,7 @@ function rdFails(){var J=RD.job,f=[];if(J)rdSteps().forEach(function(q){if(J.pt[
 function rdImpHTML(){var I=RD.imp;if(!I)return '';
   return '<p class="lbl" style="margin-top:10px">Versions in the file</p><ul class="rdlvs">'+RD_ORDER.map(function(l){var x=I[l];var st=!x?'wait':x==='ok'?'ok':'err';
     return '<li class="rdlv '+st+'"><b>'+({ok:'✓',err:'✗',wait:'·'})[st]+' '+RLV_NAME[l]+'</b> '+(st==='ok'?'<span class="rdpts">checked</span>':st==='wait'?'<span class="rdpts">not in the file'+(l==='medium'?'':' (students of this level get Medium)')+'</span>':'<span class="alerr rdperr">'+esc(x)+'</span>')+'</li>'}).join('')+'</ul>'}
-function rdLvHTML(){var J=RD.job;if(!J)return rdImpHTML();var ic={ok:'✓',err:'✗',busy:'…',wait:'·'};
+function rdLvHTML(){var J=RD.job;if(!J)return rdImpHTML();var ic={ok:'✓',err:'✗',busy:'…',wait:'○'};
   var row=function(l){var P=J.pt[l],st=RD_PARTS.every(function(k){return P[k].st==='ok'})?'ok':RD_PARTS.some(function(k){return P[k].st==='err'})?'err':RD_PARTS.some(function(k){return P[k].st==='busy'})?'busy':'wait';
     return '<li class="rdlv '+st+'"><b>'+ic[st]+' '+RLV_NAME[l]+'</b> <span class="rdpts">'+RD_PARTS.map(function(k){var x=P[k];return '<span class="rdpt '+x.st+'">'+ic[x.st]+' '+RD_PNAME[k]+'</span>'}).join(' · ')+'</span>'+
       RD_PARTS.filter(function(k){return P[k].st==='err'}).map(function(k){return '<span class="alerr rdperr">'+RLV_NAME[l]+' · '+RD_PNAME[k]+': '+esc(P[k].msg||'Failed.')+'</span>'}).join('')+'</li>'};
@@ -6492,7 +6491,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-10-29b'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-10-29c'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(audAct(a,t))return true;
@@ -7911,7 +7910,7 @@ function adTeachersHTML(){
     '<label class="field" for="adTcEmail">Email<input id="adTcEmail" type="email" maxlength="160" autocomplete="off" placeholder="teacher@example.com"></label>'+
     '<label class="field" for="adTcPw">Password<input id="adTcPw" type="text" autocomplete="off" spellcheck="false" placeholder="At least 6 characters"></label>'+
     '<button class="btn sm" type="button" data-act="ad-gen" data-for="adTcPw">Generate</button><button class="btn pri" type="button" data-act="ad-teacher-add">Add teacher</button></div>'+
-    '<p class="saved" style="margin:-8px 0 16px">Give the email and password to the teacher. They sign in on the Teacher tab of the sign-in page.</p>';
+    '<p class="saved" style="margin:-8px 0 16px">Give the email and password to the teacher. They use “Teacher sign in” on the sign-in page. Teachers cannot create their own password.</p>';
   var st=adListState();if(st)return h+st;
   var T=AD.users.filter(function(u){return u.role!=='student'});
   return h+'<div class="scroll adt"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody>'+T.map(function(u){

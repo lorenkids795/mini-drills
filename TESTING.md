@@ -552,5 +552,13 @@ Tự động (đã chạy): `reading-gen` 12/12, `reading` 12/12, `data-cleanup`
 12. [ ] Thử `tests/fixtures/reading-import-invalid.json`: Easy báo "pairs has 1 item", Hard "not in the file"; slot đã có bài → Add hỏi, Cancel → bài cũ còn nguyên.
 13. [ ] Đang Generate thì tải lại trang (F5): các phần ✓ còn, phần dở thành ✗ → "Retry failed part" chạy tiếp, không tạo lại phần đã xong. Deploy phải ghi "app 2026-10-29b · server 2026-10-29b".
 
+## Đăng nhập giáo viên + lỗi relay (10/2026)
+Deploy `index.html`, `md-backend.js`, `functions/` (Users phải ghi "app 2026-10-29c · server 2026-10-29c").
+1. [ ] Trang đăng nhập: không còn "Sign in to continue your learning journey."; khoảng cách gọn.
+2. [ ] Teacher sign in: chỉ Email, Password, Sign in, "Sign in as student"; không còn "First time? Create your teacher password". Giáo viên đã có mật khẩu đăng nhập được.
+3. [ ] Học sinh: "First time here? Create your password" vẫn chạy (chọn lớp → tên → email → mật khẩu).
+4. [ ] Giáo viên mới: Admin › Teachers › Add teacher (hoặc Users › Change password) → giáo viên đăng nhập được.
+5. [ ] Create › Reading › Generate với bài dài: nếu một phần báo relay, dòng lỗi có "(code: relay_busy)" + "Details: …" và phần đó được tự gửi lại; nếu vẫn lỗi → Retry failed part. Chụp lại dòng Details nếu còn lỗi.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

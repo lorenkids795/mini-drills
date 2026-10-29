@@ -142,6 +142,17 @@ const LONG = (() => { const w = 'Laughter is one of the oldest signals humans sh
     assert.strictEqual(R.seen[0].run, JSON.parse(saved).run, 'same run: the daily limit is not counted again');
     const X = app(); X.B.W.localStorage.setItem('md-rdjob', saved); X.B.T.RD.tx = 'another passage'; X.B.T.rdJobRestore(); assert.ok(!X.B.T.RD.job, 'a different passage never gets old parts');
   });
+  await t('relay: a passing relay failure (timeout / busy / HTML error) is retried by itself; only a setup problem stops the job', async () => {
+    const S = server(() => ({ text: '{}' })), rc = (st, tx) => { const ctx = vm.createContext({}); vm.runInContext(SRC.slice(SRC.indexOf('function relayCode'), SRC.indexOf('async function geminiOnce')) + ';this.f=relayCode;', ctx); return ctx.f(st, tx); };
+    assert.strictEqual(rc(200, 'Exception: Timeout: https://generativelanguage.googleapis.com'), 'relay_busy'); assert.strictEqual(rc(200, 'Service invoked too many times for one day: urlfetch.'), 'relay_busy');
+    assert.strictEqual(rc(500, '<html>Error</html>'), 'relay_busy'); assert.strictEqual(rc(200, 'wrong or missing secret (RELAY_SECRET…)'), 'relay'); assert.strictEqual(rc(404, '<html>not found</html>'), 'relay');
+    assert.ok(S.T.R_PARTS);
+    let n = 0; const A = app((part, level) => (part === 'vocab' && level === 'medium' && !n++ ? { status: 502, body: { error: 'The AI could not write this part (code: relay_busy).', code: 'relay_busy' } } : null));
+    await run(A); assert.strictEqual(A.seen.filter((b) => b.level === 'medium' && b.part === 'vocab').length, 2, 'retried once'); assert.ok(A.B.T.cpValid() && !A.B.T.RD.job.stop);
+    const Z = app((part) => (part === 'vocab' ? { status: 502, body: { error: 'relay setup', code: 'relay' } } : null));
+    await run(Z); assert.strictEqual(Z.B.T.RD.job.stop, 'relay'); assert.strictEqual(Z.seen.filter((b) => b.part === 'vocab').length, 1, 'a setup problem is not repeated');
+    assert.ok(!/· ·/.test(Z.B.T.rdLvHTML()) && /○ Paraphrases/.test(Z.B.T.rdLvHTML()), 'waiting parts show ○');
+  });
   await t('assembled-lesson problems are sent back to the right part', () => {
     const A = app(); const b = A.B.T.rdBlame;
     assert.strictEqual(b('Paraphrases: "pairs" has 1 item; it needs 2 to 6.'), 'output'); assert.strictEqual(b('The summary has 6 blanks but only 5 answers.'), 'output');

@@ -48,9 +48,9 @@ const flush = async () => { for (let i = 0; i < 20; i++) await new Promise((r) =
     const B = boot(); assert.deepStrictEqual(B.shown(), ['form:Email|Password', 'P', 'lgalt:First time here? Create your password', 'lglink:Teacher sign in']);
     assert.strictEqual(B.byId('sPass').attrs.placeholder, ''); assert.strictEqual(B.byId('sEmail').attrs.placeholder, 'you@example.com');
   });
-  await t('state 3 (teacher): Email, Password, Sign in, link Sign in as student (+ first-time teacher link)', () => {
+  await t('state 3 (teacher): Email, Password, Sign in, link Sign in as student; no teacher first-time link', () => {
     const B = boot(); B.btn('Teacher sign in').onclick();
-    assert.deepStrictEqual(B.shown(), ['form:Email|Password', 'P', 'lglink:Sign in as student', 'lglink:First time? Create your teacher password']);
+    assert.deepStrictEqual(B.shown(), ['form:Email|Password', 'P', 'lglink:Sign in as student']);
     B.btn('Sign in as student').onclick(); assert.strictEqual(B.shown()[0], 'form:Email|Password'); assert.ok(B.shown().includes('lglink:Teacher sign in'));
   });
   await t('state 2 (first time): Class, Your name, Your email, Choose a password, Create my password, I already have a password', () => {
@@ -84,9 +84,16 @@ const flush = async () => { for (let i = 0; i < 20; i++) await new Promise((r) =
     B.root.children.filter((c) => c.tagName === 'FORM')[1].onsubmit({ preventDefault() {} }); await flush();
     const k = B.calls.filter((c) => c.url === '/api/register'); assert.strictEqual(k.length, 1); assert.deepStrictEqual(JSON.parse(k[0].opt.body), { nameId: 'n1', email: 'a@b.c', password: 'secret1' });
   });
-  await t('teacher first time still has the setup key form', () => {
-    const B = boot(); B.btn('Teacher sign in').onclick(); B.btn('First time? Create your teacher password').onclick();
-    assert.deepStrictEqual(B.shown(), ['form:Email|Choose a password|Setup key', 'P', 'lgalt:I already have a password', 'lglink:Sign in as student']);
+  await t('no teacher self sign-up anywhere: no setup key field, no "Create your teacher password"; no subtitle; student first time still there', () => {
+    const src = require('fs').readFileSync(require('path').join(__dirname, '..', 'md-backend.js'), 'utf8'), html = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
+    assert.ok(!/setupKey|Setup key|Create your teacher password|Create teacher password/.test(src));
+    assert.ok(!/Sign in to continue your learning journey/.test(html + src));
+    const B = boot(); assert.ok(B.shown().includes('lgalt:First time here? Create your password'));
+  });
+  await t('server: a teacher email (TEACHERS or added by the admin) cannot create its own password, even with the old setup key', () => {
+    const S = require('fs').readFileSync(require('path').join(__dirname, '..', 'functions', 'api', '[[path]].js'), 'utf8');
+    assert.ok(/if \(teachers\(env\)\.indexOf\(email\) >= 0 \|\| \(await staffMap\(env\)\)\[email\]\) \{\s*return fail\('Teacher accounts are set up by the admin/.test(S));
+    assert.ok(!/body\.setupKey|ADMIN_SETUP_KEY\)\.length/.test(S), 'the setup-key route is gone');
   });
   await t('every input and select has an id and a name (autofill)', () => { const B = boot(); walk(B.root, (e) => { if (e.tagName === 'INPUT' || e.tagName === 'SELECT') { assert.ok(e.id, 'id'); assert.strictEqual(e.attrs.name, e.id); } }); });
   await t('index.html: brand panel, slogan, theme button, body.lg', () => {

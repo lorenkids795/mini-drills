@@ -1,6 +1,6 @@
 // Mini Drills auth API (Cloudflare Pages Function, served at /api/*).
 // Everyone signs in with email + password. Students pick class + name the first time;
-// teachers create their password once with a setup key. Teachers reset forgotten student passwords.
+// teacher passwords are set by the admin (Admin › Teachers / Users). Teachers reset forgotten student passwords.
 // After a successful login it returns a Firebase custom token, so Firestore rules keep working.
 //
 // Pages -> Settings -> Variables and Secrets:
@@ -8,7 +8,7 @@
 //   FIREBASE_CLIENT_EMAIL  secret  from the service account JSON (client_email)
 //   FIREBASE_PRIVATE_KEY   secret  from the service account JSON (private_key)
 //   TEACHERS               text    comma list, e.g. lorenkids795@gmail.com (old way to add teachers, still works)
-//   ADMIN_SETUP_KEY        secret  any long phrase only the teacher knows (first-time teacher password)
+//   ADMIN_SETUP_KEY        no longer used (10/2026: teachers cannot create their own password); can be deleted
 //   ADMIN_EMAIL            text    the one admin account (a teacher who also manages users)
 //   ADMIN_PASSWORD         secret  the admin's first password (used once, when acct:<ADMIN_EMAIL> does not exist yet)
 //   GEMINI_KEY             secret  Google AI Studio key, for /api/ai/correct (AI Writing correction)
@@ -632,14 +632,10 @@ async function register(env, body, ip) {
   const off = await offState(env, email);
   if (off && off !== 'kicked') return fail(OFF_MSG[off], 403); // a kicked student may register again
 
-  if (teachers(env).indexOf(email) >= 0) {
-    const key = String(body.setupKey || '');
-    if ((await bump(env, 'setup:' + ip, 3600)) > 10) return fail('Too many tries. Try again later.', 429);
-    if (!env.ADMIN_SETUP_KEY || String(env.ADMIN_SETUP_KEY).length < 8 || !timingEq(key, String(env.ADMIN_SETUP_KEY))) {
-      return fail('Wrong teacher setup key.', 403);
-    }
-    await savePassword(env, email, pw);
-    return json({ token: await customToken(env, email, { role: 'teacher', name: 'Teacher' }), user: { email, name: 'Teacher', role: 'teacher' }, staffKey: await newStaffKey(env, email) });
+  // Teacher accounts are set up by the admin only (Admin › Teachers / Users › Change password). A teacher email can never
+  // create its own password here (the old ADMIN_SETUP_KEY route is gone) and never falls through to a student sign-up.
+  if (teachers(env).indexOf(email) >= 0 || (await staffMap(env))[email]) {
+    return fail('Teacher accounts are set up by the admin. Ask the admin for your password, then use Teacher sign in.', 403);
   }
 
   let name = '';
@@ -902,7 +898,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-10-29b';
+const API_VERSION = '2026-10-29c';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -1382,6 +1378,15 @@ function genConfig(model, schema, thinking) {
   }
   return gc;
 }
+// 'relay' = the relay is set up wrong (wrong secret, no key, wrong /exec link, not shared with "Anyone"): every request fails, stop.
+// 'relay_busy' = the relay was reached but this call failed (Apps Script timeout, quota, Google busy, an HTML error page): try again.
+function relayCode(status, text) {
+  const t = String(text || '');
+  if (/secret|GEMINI_KEY is not set/i.test(t)) return 'relay';
+  if (status === 401 || status === 403 || status === 404) return 'relay';
+  if (/^\s*</.test(t) && /sign in|accounts\.google|not found|unable to open/i.test(t)) return 'relay'; // login / missing page = not shared for "Anyone"
+  return 'relay_busy';
+}
 async function geminiOnce(env, model, prompt, schema, thinking, ms) {
   const gc = genConfig(model, schema, thinking);
   const ctl = new AbortController();
@@ -1402,8 +1407,8 @@ async function geminiOnce(env, model, prompt, schema, thinking, ms) {
       const txt = await r.text().catch(() => '');
       let j = null;
       try { j = JSON.parse(txt); } catch (e) { /* not JSON = wrong URL or the script is not shared with "Anyone" */ }
-      if (!r.ok || !j) throw new AiError('relay', 'HTTP ' + r.status + ' ' + txt.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').slice(0, 200));
-      if (j.relayError) throw new AiError('relay', String(j.relayError).slice(0, 300));
+      if (!r.ok || !j) throw new AiError(relayCode(r.status, txt), 'HTTP ' + r.status + ' ' + txt.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').slice(0, 200));
+      if (j.relayError) throw new AiError(relayCode(200, j.relayError), String(j.relayError).slice(0, 300));
       if (Number(j.status) !== 200) throw new AiError('http' + Number(j.status || 0), String(j.body || '').slice(0, 400));
       try { d = JSON.parse(j.body); } catch (e) { d = null; }
     } else {
@@ -1458,10 +1463,10 @@ async function askGemini(env, prompt, schema, shape, maxMs) {
     // Next model when this one is busy, over its free quota, unknown, or answered badly.
     // Stop at once for problems every model would have: wrong key (403), blocked location / bad key (400), timeout, safety, relay.
     const c = last.code || '', det = last.detail || '';
-    const next = /^http(404|429|500|502|503|504)$/.test(c) || ['network', 'empty', 'parse', 'too_long'].indexOf(c) >= 0 ||
+    const next = /^http(404|429|500|502|503|504)$/.test(c) || ['network', 'empty', 'parse', 'too_long', 'relay_busy'].indexOf(c) >= 0 ||
       (c === 'http400' && !/location|api[ _]?key/i.test(det));
     if (!next) throw last;
-    if (/^http(429|5)/.test(c)) await new Promise((res) => setTimeout(res, 800));
+    if (/^http(429|5)/.test(c) || c === 'relay_busy') await new Promise((res) => setTimeout(res, 800));
   }
   throw last;
 }
@@ -1911,7 +1916,9 @@ async function aiReadingPart(env, em, body, passage, title, P) {
     await env.MD_KV.delete(lKey);
     const c = e.code || 'server';
     console.log('[ai] reading part failed', level, part, c, String(e.detail || e.message || '').slice(0, 300));
-    return json({ error: 'The AI could not write this part (code: ' + c + '). ' + (AI_WHY_READ[c] || AI_WHY[c] || AI_WHY[c.replace(/\d+$/, (n) => n[0] + 'xx')] || 'Press Retry failed part.'), code: c }, 502);
+    const why = AI_WHY_READ[c] || AI_WHY[c] || AI_WHY[c.replace(/\d+$/, (n) => n[0] + 'xx')] || 'Press Retry failed part.';
+    const det = /^relay/.test(c) ? String(e.detail || '').replace(/key=[^&\s]+/gi, 'key=…').slice(0, 160) : '';
+    return json({ error: 'The AI could not write this part (code: ' + c + '). ' + why + (det ? ' Details: ' + det : ''), code: c }, 502);
   }
   await env.MD_KV.delete(lKey);
   const o = g.out && typeof g.out === 'object' ? g.out : {};
@@ -2075,6 +2082,7 @@ const AI_WHY = {
   timeout: 'Gemini did not answer within 5 minutes. Try again in a few minutes.',
   network: 'The server could not reach Gemini. Try again.',
   http400: 'Gemini rejected the request: a wrong GEMINI_KEY, a model that does not support these settings, or "User location is not supported" (Cloudflare runs in a blocked region: set up the Apps Script relay, README 3e).',
+  relay_busy: 'The Apps Script relay was reached but this call failed (it timed out or is busy). Nothing is wrong with the setup: try again in a minute.',
   relay: 'The Apps Script relay failed: check GEMINI_PROXY_URL (the /exec link), GEMINI_PROXY_SECRET = RELAY_SECRET in the script, and that the web app is deployed for "Anyone".',
   http403: 'The key is not allowed: check GEMINI_KEY (Google AI Studio) and that the Gemini API is enabled.',
   http404: 'Model not found or not available to this key: check GEMINI_MODELS (default gemini-3.8-flash, gemini-3.6-flash, gemini-3.5-flash-lite).',
