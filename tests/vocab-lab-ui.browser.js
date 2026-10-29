@@ -82,7 +82,7 @@ const server=http.createServer((req,res)=>{
   }
   {
    const {page,context}=await load(C.begin(C.fresh('sandbox-a@local.invalid',bank),bank,null,12));
-   await page.locator('[data-vl="know"]').click();assert.equal(await page.locator('.vl-word h4').evaluate(e=>getComputedStyle(e).animationName),'none');
+   await page.locator('[data-vl="know"]').click();assert.equal(await page.evaluate(()=>getComputedStyle(document.querySelector('.vl-word h4')).animationName),'none');
    logs.push('PASS prefers-reduced-motion disables card animation');await context.close();
   }
   {

@@ -36,3 +36,6 @@
 .vl-batch-choice{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:14px 0 0;font-size:.78rem}.vl-batch-choice label{font-weight:650}.vl .vl-batch-choice select{min-height:44px;max-width:100%;padding:8px 10px;color:var(--ink);background:var(--surface);border:1px solid var(--vl-control);border-radius:9px;font:inherit}.vl-batch-choice p{flex-basis:100%;font-size:.72rem;color:var(--muted)}.vl-batch-position{font-size:1rem;color:var(--ink)}.vl-lesson-progress{margin:-6px 0 12px;color:var(--muted);font-size:.75rem}.vl-lesson-progress summary{min-height:44px;display:list-item;align-content:center;cursor:pointer}.vl-lesson-progress p{padding-bottom:8px}.vl [data-vl="finish"]{margin-top:10px}
 
 .vl .vl-batch-choice select{width:auto;flex:1;min-width:0}.vl-batch-settings{margin-top:8px;font-size:.75rem;color:var(--muted)}.vl-batch-settings summary{min-height:44px;align-content:center;cursor:pointer}.vl-batch-settings .vl-batch-choice{margin-top:0}.vl-lesson-progress{margin:12px 0 0}.vl-batch-settings summary:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* Reserve the retry note before feedback, so answer text never rewraps on a wrong choice. */
+.vl-option-note{width:3.4rem;min-width:3.4rem}.vl-option-note:empty{visibility:hidden}

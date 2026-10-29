@@ -33,6 +33,15 @@ function mount(host,opt){
     state.attempts.forEach(function(a){if(a.batchId===state.batch.id&&s.legacyPractice[a.senseId]&&a.taskId===s.legacyPractice[a.senseId].id)p[a.senseId]=Object.assign({},s.legacyPractice[a.senseId],{clue:s.currentPractice[a.senseId].clue,explanation:s.currentPractice[a.senseId].explanation})});
     return p;
   }
+  // Updating feedback must not replace or move the options under a resting pointer.
+  function updateCheck(html,key){
+    var main=s.host.querySelector('.vl-phase-check');if(!key||s.renderedQuestion!==key||!main)return false;
+    var next=document.createElement('div');next.innerHTML=html;var buttons=next.querySelectorAll('.vl-options [data-vl="answer"]'),old=main.querySelectorAll('.vl-options [data-vl="answer"]');if(buttons.length!==old.length)return false;
+    for(var i=0;i<old.length;i++){old[i].disabled=buttons[i].disabled;['data-result','data-vl-revision'].forEach(function(name){var value=buttons[i].getAttribute(name);if(value===null)old[i].removeAttribute(name);else old[i].setAttribute(name,value)});old[i].querySelector('.vl-option-note').textContent=buttons[i].querySelector('.vl-option-note').textContent}
+    main.querySelector('.vl-check-tail').innerHTML=next.querySelector('.vl-check-tail').innerHTML;
+    s.host.querySelector('.vl-utility').innerHTML=next.querySelector('.vl-utility').innerHTML;
+    var select=s.host.querySelector('#vlBatchSize'),replacement=next.querySelector('#vlBatchSize');select.disabled=replacement.disabled;select.value=replacement.value;return true;
+  }
   function draw(focus){
     if(session!==s)return;
     var settings=s.host.querySelector('.vl-batch-settings'),settingsOpen=settings&&settings.open;
@@ -62,14 +71,15 @@ function mount(host,opt){
       h+='<p class="vl-support">'+(bins.know?'Let’s try a few of your Know It words in context.':'No Know It words this time. We’ll skip the check.')+'</p><div class="vl-ready-actions">'+button('startCheck',bins.know?'Start Reality Check':'View my results',locked,true,'',bins.know?'arrow':'done')+button('undo','Undo last choice',locked||!b.history.length,false,' aria-keyshortcuts="U"','undo')+'</div>';
     }else if(b.phase==='check'){
       id=b.checks[b.checkAt];q=s.practice[id];r=b.results[id]||{tries:0,hinted:false,wrong:[],done:false};
-      var marked=highlight(q.context,s.terms[id].surface);
+      var marked=highlight(q.context,s.terms[id].surface),checkScope=' data-vl-batch="'+esc(b.id)+'" data-vl-sense="'+esc(id)+'" data-vl-revision="'+state.revision+'"';
       h+='<div class="vl-context-panel"><blockquote class="vl-context" aria-label="Context sentence">'+marked.html+'</blockquote></div><p class="vl-question">'+(marked.matches?esc(q.prompt):'Which meaning of “'+esc(s.terms[id].surface)+'” fits this context?')+'</p><div class="vl-options">';
-      q.options.forEach(function(option,i){var wrong=r.wrong.indexOf(i)>=0;h+=button('answer',option,locked||r.done||wrong,false,' data-choice="'+i+'"'+(wrong?' data-result="wrong"':'')).replace('<span>','<span class="vl-choice-letter" aria-hidden="true">'+String.fromCharCode(65+i)+'</span><span>').replace('</button>',(wrong?'<span class="vl-option-note">Try again</span>':'')+'</button>')});h+='</div>';
-      if(r.done){var more=b.checkAt+1<b.checks.length||((verified+needs)>=2&&needs/(verified+needs)>=0.5&&b.checks.length<5&&bins.know>b.checks.length);h+='<div class="vl-feedback '+(r.status==='verified_for_current_task'?'vl-feedback-good':'')+'" role="status"><strong>'+icon(r.status==='verified_for_current_task'?'know':'hint')+(r.status==='verified_for_current_task'?'Correct in this context':'Needs practice')+'</strong><p>'+esc(q.explanation)+'</p>'+(r.status!=='verified_for_current_task'?'<small>A useful practice step. We’ll keep this word on your practice list.</small>':'')+'</div>'+button('next',more?'Next check':'See my results',locked,true,'','arrow')}
+      q.options.forEach(function(option,i){var wrong=r.wrong.indexOf(i)>=0;h+=button('answer',option,locked||r.done||wrong,false,checkScope+' data-choice="'+i+'"'+(wrong?' data-result="wrong"':'')).replace('<span>','<span class="vl-choice-letter" aria-hidden="true">'+String.fromCharCode(65+i)+'</span><span>').replace('</button>','<span class="vl-option-note" aria-hidden="true">'+(wrong?'Try again':'')+'</span>'+'</button>')});h+='</div><div class="vl-check-tail">';
+      if(r.done){var more=b.checkAt+1<b.checks.length||((verified+needs)>=2&&needs/(verified+needs)>=0.5&&b.checks.length<5&&bins.know>b.checks.length);h+='<div class="vl-feedback '+(r.status==='verified_for_current_task'?'vl-feedback-good':'')+'" role="status"><strong>'+icon(r.status==='verified_for_current_task'?'know':'hint')+(r.status==='verified_for_current_task'?'Correct in this context':'Needs practice')+'</strong><p>'+esc(q.explanation)+'</p>'+(r.status!=='verified_for_current_task'?'<small>A useful practice step. We’ll keep this word on your practice list.</small>':'')+'</div>'+button('next',more?'Next check':'See my results',locked,true,checkScope,'arrow')}
       else{
         if(r.tries||r.hinted)h+='<div class="vl-feedback" role="status"><strong>'+icon('hint')+(r.tries?'Not quite — try again':'A small clue')+'</strong><p>'+esc(q.clue)+'</p></div>';
-        h+='<div class="vl-check-tools">'+button('hint','Get a clue',locked||r.hinted,false,'','hint')+'<details class="vl-reveal"><summary>Stuck?</summary><p>Seeing the explanation marks this word for practice.</p>'+button('reveal','Show explanation',locked)+'</details></div>';
+        h+='<div class="vl-check-tools">'+button('hint','Get a clue',locked||r.hinted,false,checkScope,'hint')+'<details class="vl-reveal"><summary>Stuck?</summary><p>Seeing the explanation marks this word for practice.</p>'+button('reveal','Show explanation',locked,false,checkScope)+'</details></div>';
       }
+      h+='</div>';
     }else{
       h+='<div class="vl-complete-mark">'+icon('done')+'</div><p class="vl-lead">A little clearer, one batch at a time.</p>'+binStats()+'<div class="vl-check-summary"><h4>Your context check</h4><dl class="vl-stats">';
       [['Verified here',verified],['Needs practice',needs],['Not checked yet',untested]].forEach(function(x){h+='<div><dt>'+x[0]+'</dt><dd>'+x[1]+'</dd></div>'});h+='</dl></div>';
@@ -82,10 +92,10 @@ function mount(host,opt){
       h+='</select>'+button('revise','Reclassify selected word',locked||!sorted)+'</details>';
     }
     h+='</section>'+lessonProgress+utility();
+    var questionKey=b.phase==='check'?b.id+':'+id+':'+q.id:null;if(updateCheck(h,questionKey))return;s.renderedQuestion=questionKey;
     s.host.innerHTML=h;
     if(sizeFocused){var select=s.host.querySelector('#vlBatchSize');if(select)select.focus({preventScroll:true})}
     else if(focus){var target=s.host.querySelector('.vl-word h4')||s.host.querySelector('#vlStep');if(target){target.setAttribute('tabindex','-1');target.focus({preventScroll:true})}}
-    if(focus&&b.phase==='check'&&(r.tries||r.hinted||r.done)){var feedback=s.host.querySelector('.vl-feedback');if(feedback)feedback.scrollIntoView({block:'nearest',behavior:'auto'})}
   }
 
   s.draw=draw;
@@ -121,6 +131,7 @@ function mount(host,opt){
     if(type==='nextBatch'||type==='configureBatch')op.batchSize=s.preference;
     if(type==='revise')op.senseId=s.host.querySelector('#vlRevise').value;
     try{after=C.apply(before,op,s.bank,s.practice)}catch(e){s.message=e.message;draw();return}
+    if(after.revision===before.revision)return;
     clearTimeout(s.motionTimer);s.previousWord=null;s.transition=false;
     if(sorting&&after.batch.phase==='sort'){
       s.previousWord=s.terms[C.current(before)].surface;s.lastBin=op.bin;s.transition=true;
@@ -135,9 +146,17 @@ function mount(host,opt){
   host.onclick=null;
   // One delegated listener per host, reading the current session only.
   if(!host._vocabEvents){
-    host.addEventListener('click',function(e){var t=e.target.closest('[data-vl]');if(t&&session&&session.host===host){var action=t.getAttribute('data-vl');if(e.detail>1&&['know','unsure','new'].indexOf(action)>=0)return;session.act(action,Number(t.getAttribute('data-choice')))}});
+    function activation(e){var t=e.target.closest('[data-vl]');if(t&&session&&session.host===host)t._mdVocabActivation={revision:t.getAttribute('data-vl-revision')}}
+    host.addEventListener('pointerdown',activation);
+    host.addEventListener('click',function(e){
+      var t=e.target.closest('[data-vl]');if(!t||!session||session.host!==host||!host.contains(t)||t.disabled||e._mdVocabHandled)return;
+      var action=t.getAttribute('data-vl'),check=['answer','hint','reveal','next'].indexOf(action)>=0,intent=t._mdVocabActivation;delete t._mdVocabActivation;
+      if(e.detail>1&&(check||['know','unsure','new'].indexOf(action)>=0))return;
+      if(check){var state=session.state,b=state&&state.batch;if(!b||b.phase!=='check'||t.getAttribute('data-vl-batch')!==b.id||t.getAttribute('data-vl-sense')!==b.checks[b.checkAt]||Number(t.getAttribute('data-vl-revision'))!==state.revision)return;if(intent&&intent.revision!==t.getAttribute('data-vl-revision'))return}
+      e._mdVocabHandled=true;session.act(action,Number(t.getAttribute('data-choice')));
+    });
     host.addEventListener('change',function(e){if(e.target.id==='vlBatchSize'&&session&&session.host===host)session.setPreference(Number(e.target.value))});
-    host.addEventListener('keydown',function(e){if(!session||session.host!==host||e.repeat||e.ctrlKey||e.metaKey||e.altKey||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;var a={'1':'know','2':'unsure','3':'new',u:'undo',U:'undo'}[e.key];if(a&&session.state&&['sort','ready'].indexOf(session.state.batch.phase)>=0){e.preventDefault();session.act(a)}});
+    host.addEventListener('keydown',function(e){if(e.repeat){if(e.target.closest('[data-vl]')&&(e.key==='Enter'||e.key===' '))e.preventDefault();return}if(e.key==='Enter'||e.key===' ')activation(e);if(!session||session.host!==host||e.ctrlKey||e.metaKey||e.altKey||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;var a={'1':'know','2':'unsure','3':'new',u:'undo',U:'undo'}[e.key];if(a&&session.state&&['sort','ready'].indexOf(session.state.batch.phase)>=0){e.preventDefault();session.act(a)}});
     host._vocabEvents=true;
   }
   s.act=act;draw();

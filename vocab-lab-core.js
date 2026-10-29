@@ -20,6 +20,7 @@ function question(s,practice){var id=s.batch.checks[s.batch.checkAt];return id&&
 function checkRecord(s){var id=s.batch.checks[s.batch.checkAt];return s.batch.results[id]||(s.batch.results[id]={tries:0,hinted:false,wrong:[],done:false})}
 function settle(s,record,result,task){var id=s.batch.checks[s.batch.checkAt];record.done=true;record.status=result;s.termProgress[id].status=result;s.termProgress[id].evidence={taskId:task.id,batchId:s.batch.id,independent:result==='verified_for_current_task'};}
 function apply(before,action,bank,practice){
+  if(action.id&&['answer','hint','reveal'].indexOf(action.type)>=0){var prior=before.attempts.filter(function(a){return a.id===action.id})[0];if(prior){if(prior.type!==action.type||prior.choice!==(action.type==='answer'?action.choice:null))throw Error('This attempt ID was already used.');return copy(before)}}
   var s=copy(before),b=s.batch,id,p,r,q,all,failed;
   if(!b)begin(s,bank);b=s.batch;
   if(action.type==='configureBatch'){
