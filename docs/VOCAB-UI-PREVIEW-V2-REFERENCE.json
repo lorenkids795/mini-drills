@@ -1,0 +1,46 @@
+{
+  "zip": "mini-drills (6).zip",
+  "zipSha256": "37b7beafe71d7635a0e8b5da8a5b760c36e60872fa7bd765faa0b5560ed6f72e",
+  "entry": "mini-drills/index.html",
+  "entrySha256": "be4cf2ce7a8d652554ae16bd10717e30d0d1cbddb5f1338cb98b3936c92f94c5",
+  "gitBlob": "ef18f81cb01a91ed9b458b7158de62e09273bd03",
+  "matchesOriginMain": "3ea771389edf53750ddd1d79445e78afd199a4d1",
+  "featureIndexBlob": "6cbf8d3d44966608a34be22a0385574ee9c67eff",
+  "selectors": [
+    ".app",
+    ".top",
+    ".brand",
+    ".right",
+    ".shell",
+    ".side",
+    ".tabs",
+    ".mainc",
+    ".sbbtn",
+    ".sbx",
+    ".sbbg",
+    "body.nav-on",
+    "body.sb-wide",
+    "body.sb-open",
+    "body.sb-lock"
+  ],
+  "metrics": {
+    "maxWidth": 1180,
+    "bodyPaddingInline": 16,
+    "appPaddingTop": 20,
+    "topPaddingBottom": 12,
+    "desktopSidebar": 208,
+    "desktopSidebarGap": 28,
+    "wideBreakpoint": 1024,
+    "drawerWidth": "min(280px,84vw)",
+    "brandDesktopRem": 2,
+    "brandMobileRem": 1.5
+  },
+  "previewExceptions": [
+    "no production auth/status/sign-out",
+    "only three functional nav items",
+    "fixture identity and compact details",
+    "44px target floor replaces 40/42px source controls",
+    "local/system font fallback; no font download"
+  ],
+  "teacherScreenshotProvided": false
+}
