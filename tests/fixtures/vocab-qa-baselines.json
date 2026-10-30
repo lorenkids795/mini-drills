@@ -45,7 +45,7 @@
     "sidebarItems": 1
   },
   "approvalPolicy": "No update command. Review rendered differences and scope before an explicitly authorized baseline change.",
-  "minimumNodeTests": 68,
+  "minimumNodeTests": 87,
   "requiredVocabTests": [
     "tests/vocab-batch.test.js",
     "tests/vocab-highlight.test.js",
@@ -54,7 +54,9 @@
     "tests/vocab-mission.test.js",
     "tests/vocab-qa-runner.test.js",
     "tests/vocab-reality.test.js",
-    "tests/vocab-ui-preview.test.js"
+    "tests/vocab-ui-preview.test.js",
+    "tests/vocab-mission-planner.test.js",
+    "tests/vocab-mission-engine.test.js"
   ],
   "phase25Rationale": "Root index byte-equivalent to milestone A after stripping four Vocab script imports. Builder adds exactly four static JS files (17→21); CSP/network guard/cloud transforms unchanged. Static index changes imports and accurate candidate text only. Styles/fonts/layout unchanged; 390/768/1280 light/dark screenshots are still mandatory. Human content/UX approval remains TEACHER_REVIEW."
 }

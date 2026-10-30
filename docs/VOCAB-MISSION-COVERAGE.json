@@ -26,7 +26,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-bc0aa7072ccf80cda2816871",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "discourse-mini-review",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -41,7 +43,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-219d445bcdbc485e9d28488e",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "discourse-mini-review",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -56,7 +60,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-e89a4b0bd00866e4982969c7",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -71,7 +77,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-072cc7ecf79926dc8c3b4035",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -86,7 +94,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-97e16630481da84aaa89c941",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -101,7 +111,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-19e7303e091b6ad30d33099e",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -116,7 +128,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-bc680ec538cbb220ab2a466d",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "discourse-mini-review",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -131,7 +145,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-a62397cd8498372a644abfe4",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -146,7 +162,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-040d2f06cfb57501b2f21289",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "town-access-history",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -161,7 +179,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-eb0be8fa046a33efdda7d995",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "town-access-history",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -176,7 +196,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-febc630a67fef6e9872d2ba6",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "town-access-history",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -191,7 +213,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-d20fea662a1034c83894d16e",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "town-access-history",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -206,7 +230,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-3eaf828d1dfa98a187fc8992",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "public-response",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -221,7 +247,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-0565f5e877495423f1f8e0ea",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -236,7 +264,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-9713aaa7c9984f2a0e5b19b9",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "sensitive-terms",
+        "futureStatus": "TEACHER_REVIEW"
       }
     },
     {
@@ -251,7 +281,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-b0b8f112fe3686a19b5f7595",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "town-access-history",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -266,7 +298,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-5cc1e31e90b4a98be6cb0447",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "town-access-history",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -281,7 +315,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-7866d660a6098a5b1088424a",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "sensitive-terms",
+        "futureStatus": "TEACHER_REVIEW"
       }
     },
     {
@@ -296,7 +332,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-9482629201408c09033f5c37",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "town-access-history",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -311,7 +349,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-2467417662518f2b65f17a66",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "proposal-desk",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -326,7 +366,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-2ae0fa5c36a4e1d40ec501ff",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "proposal-desk",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -341,7 +383,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-bba0a06e975354255a715274",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "proposal-desk",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -356,7 +400,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-6ff6146fc5802fa1a7e9ebfc",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "proposal-desk",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -371,7 +417,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-58b2376a8b0a1ccb3d997e4d",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "proposal-desk",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -386,7 +434,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-27dd105458c68f03c45cc7a4",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "sensitive-terms",
+        "futureStatus": "TEACHER_REVIEW"
       }
     },
     {
@@ -401,7 +451,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-5773df4e394a71bda9f5a149",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "proposal-desk",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -416,7 +468,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-4eeaa167bcb7187c337891a2",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "proposal-desk",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -431,7 +485,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-d25e72758cb00a430a2678dd",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "sensitive-terms",
+        "futureStatus": "TEACHER_REVIEW"
       }
     },
     {
@@ -446,7 +502,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-3d666ffd6243e5eae8122ec5",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -461,7 +519,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-aca45c8c33ce6d6b76305b9d",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -476,7 +536,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-1f0ba03ccd2713c05c437af7",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "planning-board",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -491,7 +553,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-671cec8bff9f6329a6dbfc5e",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -506,7 +570,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-d6d03481b171a5f596024d5b",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -521,7 +587,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-03936f62d7f90f8476e85cec",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "planning-board",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -536,7 +604,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-7efabef9a0accea2e1cfc2c0",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "planning-board",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -551,7 +621,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-3761adfe62a633a9b079f224",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "planning-board",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -566,7 +638,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-34cbfdc1ad4c82232245a368",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "planning-board",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -581,7 +655,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-0a73406fb36bbdc0a962c882",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "planning-board",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -596,7 +672,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-a8cfea44fc823bc8c3e05ed6",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "planning-board",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -611,7 +689,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-590d68f3f7f2ab429bf4f7ff",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "project-office",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -626,7 +706,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-1db6ea0e855230f852907071",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "project-office",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -641,7 +723,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-58da02c350f91fff6e6e34d5",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -656,7 +740,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-53c1926283a6c23d7721e7ac",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "project-office",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -671,7 +757,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-0a29f0dee6be68f5dfd749c0",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "project-office",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -686,7 +774,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-fd149cea3dbdfc54c35e06fd",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "project-office",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -701,7 +791,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-19471529b466f86f173df25c",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "project-office",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -716,7 +808,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-d939cc58fd4fed7d6ba7ab83",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "public-response",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -731,7 +825,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-29335f0b1ace74b04d15297e",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "public-response",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -746,7 +842,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-3b3c80ace1d7237cd7336645",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "public-response",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -761,7 +859,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-b3b6c1b85697b8c56ecd6a1e",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "public-response",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -776,7 +876,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-846e89640f6cbd6630ab10fa",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "public-response",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -791,7 +893,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-7c4f28067a86947ac414ea27",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "public-response",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -806,7 +910,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-44a36d798902fda8ec730199",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "air-and-investment",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -821,7 +927,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-b9b6507069769c823a393841",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -836,7 +944,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-d4297b764592a4250bc065bf",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "air-and-investment",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -851,7 +961,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-83f09caaab41b9fc4710dd24",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "air-and-investment",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -866,7 +978,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-107a92a8c8ae4ed9e0e21991",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "air-and-investment",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -881,7 +995,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-c8a032bd669de4c70e00f5b7",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "air-and-investment",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -896,7 +1012,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-68a92b316178a7ba875a347a",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -911,7 +1029,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-ca7812f339502f14f58a5cc7",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "air-and-investment",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -926,7 +1046,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-76ab40715a668211f31eca6c",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -941,7 +1063,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-f79cadd038f34b452e5ad8f5",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "air-and-investment",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -956,7 +1080,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-e314cef30ca9cc92777bf0cd",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "works-sequence",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -971,7 +1097,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-1f802a62bd219cb98f97b548",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "works-sequence",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -986,7 +1114,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-65e03dcbc59a0b0769b2c3d7",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "works-sequence",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1001,7 +1131,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-096561e3668afc16a1136ecc",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "works-sequence",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1016,7 +1148,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-5749d901734832afd6c460b6",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "works-sequence",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1031,7 +1165,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-dc79a02de8ffff16f46462ec",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "works-sequence",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1046,7 +1182,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-52c3448f688e32aa1bd2bd43",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "works-sequence",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1061,7 +1199,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-94fd4a243ce8eef0fcd51b16",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "archive-model",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1076,7 +1216,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-333d3bad11e49ba7de7ab3d2",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "archive-model",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1091,7 +1233,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-c2d007c35798620bcd0671fe",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "archive-model",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1106,7 +1250,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-26ec251b0e3d685a3cf2bbd5",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "archive-model",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1121,7 +1267,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-a6c2e97af752282096bddefb",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "archive-model",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1136,7 +1284,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-e7d2ee845dc352f184d68df2",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "archive-model",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1151,7 +1301,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-7c3cf07cd44fc2e6b46a6d83",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "archive-model",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1166,7 +1318,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-a2e3f5d77f9765742fc2ba1e",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "extension-approval",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1181,7 +1335,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-85d0a9e321cb71f1c2aa168a",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "extension-approval",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1196,7 +1352,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-10a3c19d3da3376f06c85142",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -1211,7 +1369,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-cca21aed3e608f5b4ff5add2",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -1226,7 +1386,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-6caa2a9de3ab752700c0f4e1",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "extension-approval",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1241,7 +1403,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-dc30bf3d9b5aff02efd75d6e",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "extension-approval",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1256,7 +1420,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-06c262095128f7725da31684",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -1271,7 +1437,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-e1769236bf9b92698c134c42",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "extension-approval",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1286,7 +1454,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-f467e6751813ca1470b09334",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "extension-approval",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1301,7 +1471,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-6e7e446589ed5f0d80e8a4a5",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "extension-approval",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1316,7 +1488,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-bb8dfc87d36bf93edfc537dd",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "electric-diagram",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1331,7 +1505,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-9be946e9caf16f0abc73d55d",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -1346,7 +1522,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-35bdd841a2a3d36cafc79bf0",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "electric-diagram",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1361,7 +1539,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-43318f2677b3ab1e87f0c139",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "electric-diagram",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1376,7 +1556,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-2799f04cb6bb3d9d8e7419ba",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "electric-diagram",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1391,7 +1573,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-edd9de76d84d9d2159b628cd",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "electric-diagram",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1406,7 +1590,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-70a108ce0b4e5b80ed405c93",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "electric-diagram",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1421,7 +1607,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-d34dd630d6328faba29a8732",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -1436,7 +1624,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-e268013d4c8ff73e39502e09",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "railway-outcome",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1451,7 +1641,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-fce02794dc77cc00b958f59e",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "railway-outcome",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1466,7 +1658,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-a0faf1768124f5a1231dc30f",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "railway-outcome",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1481,7 +1675,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-1a95bb111e4aea4c24356619",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": null,
+        "futureStatus": null
       }
     },
     {
@@ -1496,7 +1692,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-252384ca78958e91d88ad5e7",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "railway-outcome",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1511,7 +1709,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-3ff11e040f69cd12c1d4e710",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "railway-outcome",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1526,7 +1726,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-51dc82c9a17888e5dec61b34",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "railway-outcome",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     },
     {
@@ -1541,7 +1743,9 @@
         "kind": "existing_vocab_check_review",
         "senseId": "sense-a22ca1f6cc64ff2c60741af7",
         "automaticSpacedSchedule": false,
-        "newMissionContentPublished": false
+        "newMissionContentPublished": false,
+        "futureGroupId": "discourse-mini-review",
+        "futureStatus": "NOT_IMPLEMENTED"
       }
     }
   ]

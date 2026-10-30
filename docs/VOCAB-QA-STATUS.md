@@ -2,23 +2,23 @@
 
 **BLOCKED** · QA PASS · round 3/3 · full
 
-- Timestamp (Asia/Saigon): 2026-10-29 23:54:47 GMT+7
-- UTC: 2026-10-29T16:54:47.264Z
-- Branch/SHA: `feature/vocab-lab` / `05a79710470a966fa31a211ce7375198bc489d51`
-- Working source fingerprint: `241e6f08cc39e25ae855d826c08e1f8550a6b062193f9aeec4fd0078cebfeeb2` (dirty working tree)
-- Command: `node tools/vocab-qa-runner.cjs --session autonomous-qa-20261029 --round 3 --changes-file qa-artifacts/autonomous-qa-20261029/changes-round-3.json`
-- Session: `autonomous-qa-20261029`
+- Timestamp (Asia/Saigon): 2026-10-30 13:47:50 GMT+7
+- UTC: 2026-10-30T06:47:50.912Z
+- Branch/SHA: `feature/vocab-lab` / `a884a1fffe7926f78fa73ff1a158045b8a43b3e1`
+- Working source fingerprint: `93405f7e25f19c508831d84c3b8bbc397629685282a2e2ef05d5f9167817ee17` (dirty working tree)
+- Command: `node tools/vocab-qa-runner.cjs --session phase25-final --round 3 --changes-file qa-artifacts/phase25-final/round3-changes.json`
+- Session: `phase25-final`
 - Environment: Node v24.22.1, win32/x64, Playwright 1.62.1, browser msedge
-- Tests: 72 Node tests + 244 core assertions; 0 failed commands
-- Artifact directory: `qa-artifacts/autonomous-qa-20261029/round-3-full` (304 screenshots)
-- Static manifest: `dfd8aaf1b4c141054369b88f4fd39d5c6bc0de67d16568dde9599ddbf7cadb0c`
+- Tests: 87 Node tests + 244 core assertions; 0 failed commands
+- Artifact directory: `qa-artifacts/phase25-final/round-3-full` (430 screenshots)
+- Static manifest: `e5e3a526dcba0eb7cbc3981b3259661e618399ad12581dd084b4bddbf37a30aa`
 
 ## Coverage
 
 | Feature | Status | Mandatory | Evidence / limitation |
 | --- | --- | --- | --- |
 | dependencies | PASS | yes | Pinned Playwright and installed browser; missing browser fails preflight. |
-| artifact-safety | PASS | yes | Exact 17-file allowlist, byte manifest, CSP, no Firebase/backend/external URLs. |
+| artifact-safety | PASS | yes | Exact 21-file allowlist, byte manifest, CSP, no Firebase/backend/external URLs. |
 | writing-scope | PASS | yes | Normalized protected hashes + nested tree; app/Writing/auth/data untouched. |
 | source-provenance | PASS | yes | Exact repository, branch/SHA and working-source fingerprint unchanged throughout the run. |
 | visual-baseline | PASS | yes | Committed style/markup hashes, explicit geometry/type metrics, screenshots; no automatic baseline updates. |
@@ -29,8 +29,9 @@
 | check-flow | PASS | yes | New 20/12, legacy12, undo/save/reload, A/B, pause, one wrong/duplicate input. |
 | mission-prototype | PASS | yes | Actual classified eligible/empty flow, Case/Investigate/Decode/Morph/Final/Debrief/Sorting; Coast internal fixture only. |
 | library-permissions | PASS | yes | Library LM, no standalone nav, ordinary students blocked, mocked admin/tester/UID account paths; UI privilege is not a rules bypass. |
-| full-102-personalized-missions | NOT_IMPLEMENTED | yes | Only a five-sense authored linked prototype exists. No approved mission generation for all 102 terms; this prevents release readiness. |
-| curriculum-editorial | TEACHER_REVIEW | no | IELTS sense/context quality and pending teaching content need teacher approval; automation is not the authority. |
+| full-102-personalized-missions | NOT_IMPLEMENTED | yes | 0/102 published targets; 15 candidate targets; 5 context-only senses. Missing approved full-bank routes prevent readiness. |
+| curated-engine | PASS | yes | Three candidates, actual classifications, identity/version persistence and independent forms; QA content is not publication. |
+| curriculum-editorial | TEACHER_REVIEW | yes | IELTS sense/context quality and pending teaching content need teacher approval; automation is not the authority. |
 | human-visual-ux | TEACHER_REVIEW | no | Teacher reviews screenshots/aesthetics; screenshot automation is not aesthetic approval. |
 | staging-auth-security | TEACHER_REVIEW | no | Mocks/static contracts only. Firebase emulator/staging auth/rules required before production; no live credentials/student data used. |
 | latest-main-reconciliation | NOT_TESTED | no | Offline run does not fetch/merge main. Writing baseline compatibility is checked; latest main divergence must be reconciled before a future approved merge. |
@@ -63,6 +64,7 @@
 | accessibility | PASS | logs/accessibility.txt |
 | mission | PASS | logs/mission.txt |
 | shell | PASS | logs/shell.txt |
+| engine | PASS | logs/engine.txt |
 | network-verify | PASS | PASS |
 | source-provenance | PASS | PASS |
 | final-artifact-verify | PASS | PASS |
@@ -70,7 +72,7 @@
 ## Failures and open issues
 
 - No reproducible test failures in this run.
-- full-102-personalized-missions: NOT_IMPLEMENTED — Only a five-sense authored linked prototype exists. No approved mission generation for all 102 terms; this prevents release readiness.
+- full-102-personalized-missions: NOT_IMPLEMENTED — 0/102 published targets; 15 candidate targets; 5 context-only senses. Missing approved full-bank routes prevent readiness.
 - curriculum-editorial: TEACHER_REVIEW — IELTS sense/context quality and pending teaching content need teacher approval; automation is not the authority.
 - human-visual-ux: TEACHER_REVIEW — Teacher reviews screenshots/aesthetics; screenshot automation is not aesthetic approval.
 - staging-auth-security: TEACHER_REVIEW — Mocks/static contracts only. Firebase emulator/staging auth/rules required before production; no live credentials/student data used.
@@ -78,8 +80,8 @@
 
 ## Changes in this round
 
-- A page.route handler could bypass the context.route transport guard via continue(). Adversarial fake-route probe reproduced unsafeContinuation=1 without any actual network.; files: tools/vocab-qa-preload.cjs, tests/vocab-qa-runner.test.js, docs/VOCAB-QA-PROTOCOL.md; reproduction: node ../qa-network-probe.cjs qa-artifacts/autonomous-qa-20261029/page-route-after.json; expected unsafeContinuation=0, aborts=1, violation reported. Existing before probe is page-route-before.json.
-- Preserve the original failure cause for nonzero subprocess exits; count-accounting rejection is specifically for exit-zero false greens.; files: tools/vocab-qa-runner.cjs; reproduction: Unit test fake exit-zero command with no counts must FAIL accounting; genuine nonzero failure retains its command/log diagnosis.
+- Adversarial review found that selecting a future approved pack while the editorial-QA toggle was enabled could pass recent QA-only form evidence into its published plan. Current shipped catalog has no published packs, but the publication boundary must be safe before future approval.; files: vocab-mission-planner.js, vocab-mission-library.js, tests/vocab-mission-engine.test.js, tests/fixtures/vocab-qa-baselines.json; reproduction: A cloned human-approved fixture plus recent QA form evidence must retain Morph; only publication-matched evidence may skip it. Require explicit evidence namespace and gather the effective pack namespace; raise minimum test accounting to 87. Shipped drafts remain unapproved.
+- Round 2 retained two old harness assumptions: internal Town return showed Check results without starting the next batch, and legacy Coast gameplay polled task buttons before the queued case transition rendered.; files: tests/vocab-ui-preview.browser.js, tests/vocab-mission.browser.js; reproduction: Isolation line 41 Continue Sorting and mission line 56 Case→Investigate. Internal return now follows actual Check navigation/nextBatch; both legacy helpers wait for the committed next task AND rendered prompt, including token draft saves. All legacy scenarios/assertions remain.
 
 ## Next action
 
