@@ -1,7 +1,7 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const REQUIRED_REGRESSIONS=['admin-kick','chart-facts','lm-meta','lm-unit0','lm-unit2-ui','misc','reading','server-purge','sign-in','ui-audit'];
-const BROWSERS=[['reality','vocab-reality'],['batch','vocab-batch'],['isolation','vocab-ui-preview'],['visual','vocab-ui-fidelity'],['check','vocab-lab'],['accessibility','vocab-lab-ui'],['mission','vocab-mission'],['shell','vocab-shell'],['engine','vocab-mission-engine']];
+const BROWSERS=[['reality','vocab-reality'],['batch','vocab-batch'],['isolation','vocab-ui-preview'],['visual','vocab-ui-fidelity'],['check','vocab-lab'],['accessibility','vocab-lab-ui'],['mission','vocab-mission'],['shell','vocab-shell'],['engine','vocab-mission-engine'],['editorial','vocab-editorial']];
 const hash=s=>crypto.createHash('sha256').update(s).digest('hex');
 const repositoryAllowed=remote=>/github\.com[:/]lorenkids795\/mini-drills(?:\.git)?$/.test(remote);
 function sourceFingerprint(root,files){return hash([...new Set(files)].filter(p=>p&&!p.startsWith('mini-drills/')&&!/^docs\/VOCAB-QA-STATUS\.(md|json)$/.test(p)&&fs.existsSync(path.join(root,p))).sort().map(p=>p+':'+hash(fs.readFileSync(path.join(root,p)))).join('\n'))}
@@ -14,7 +14,7 @@ function groupFailures(steps){const groups=new Map();for(const step of steps.fil
 function suitePlan(root,opt){const unit=fs.readdirSync(path.join(root,'tests')).filter(n=>/^vocab-.*\.test\.js$/.test(n)).sort().map(n=>'tests/'+n);const plan=[{id:'unit',args:['--test',...unit]},...REQUIRED_REGRESSIONS.map(n=>({id:'regression-'+n,args:['tests/'+n+'.test.js']})),{id:'writing-content',args:['tests/lm-check.js']},...BROWSERS.map(([id,n])=>({id,args:['tests/'+n+'.browser.js'],browser:true}))];return opt.mode==='focused'?plan.filter(s=>s.id===opt.suite):plan}
 function coverage(steps,checks,mode){const c=require('../vocab-mission-planner').coverage(require('../data/vocab-lab-p1.json'),require('../vocab-mission-packs').packs);const pass=ids=>ids.every(id=>steps.some(s=>s.id===id&&s.status==='PASS'))?'PASS':ids.some(id=>steps.some(s=>s.id===id&&s.status==='FAIL'))?'FAIL':'NOT_TESTED';return [
  {id:'dependencies',status:checks.dependencies,mandatory:true,detail:'Pinned Playwright and installed browser; missing browser fails preflight.'},
- {id:'artifact-safety',status:checks.artifact,mandatory:true,detail:'Exact 21-file allowlist, byte manifest, CSP, no Firebase/backend/external URLs.'},
+ {id:'artifact-safety',status:checks.artifact,mandatory:true,detail:'Exact 26-file allowlist, byte manifest, CSP, no Firebase/backend/external URLs.'},
  {id:'writing-scope',status:checks.scope,mandatory:true,detail:'Normalized protected hashes + nested tree; app/Writing/auth/data untouched.'},
  {id:'source-provenance',status:checks.provenance||'NOT_TESTED',mandatory:true,detail:'Exact repository, branch/SHA and working-source fingerprint unchanged throughout the run.'},
  {id:'visual-baseline',status:checks.visual==='PASS'?pass(['visual','accessibility']):checks.visual,mandatory:true,detail:'Committed style/markup hashes, explicit geometry/type metrics, screenshots; no automatic baseline updates.'},
@@ -27,9 +27,11 @@ function coverage(steps,checks,mode){const c=require('../vocab-mission-planner')
  {id:'library-permissions',status:pass(['shell']),mandatory:true,detail:'Library LM, no standalone nav, ordinary students blocked, mocked admin/tester/UID account paths; UI privilege is not a rules bypass.'},
  {id:'full-102-personalized-missions',status:'NOT_IMPLEMENTED',mandatory:true,detail:''+c.published+'/'+c.denominator+' published targets; '+c.candidate+' candidate targets; '+c.contextOnly+' context-only senses. Missing approved full-bank routes prevent readiness.'},
  {id:'curated-engine',status:pass(['engine','unit']),mandatory:true,detail:'Three candidates, actual classifications, identity/version persistence and independent forms; QA content is not publication.'},
+ {id:'editorial-workbench',status:pass(['editorial','unit']),mandatory:true,detail:'Local exact-version review, edits, audit, migration, role gates and draft rehearsal; no live AI/publication.'},
+ {id:'draft-102-routes',status:pass(['unit','editorial']),mandatory:true,detail:'102 independently assessable DRAFT senses: 15 pilot + 87 new routes, 4 explicit editorial blockers; 0 human-approved shipped, 0 published.'},
  {id:'curriculum-editorial',status:'TEACHER_REVIEW',mandatory:true,detail:'IELTS sense/context quality and pending teaching content need teacher approval; automation is not the authority.'},
  {id:'human-visual-ux',status:'TEACHER_REVIEW',mandatory:false,detail:'Teacher reviews screenshots/aesthetics; screenshot automation is not aesthetic approval.'},
- {id:'staging-auth-security',status:'TEACHER_REVIEW',mandatory:false,detail:'Mocks/static contracts only. Firebase emulator/staging auth/rules required before production; no live credentials/student data used.'},
+ {id:'staging-auth-security',status:'TEACHER_REVIEW',mandatory:true,detail:'Mocks/static contracts only. Firebase emulator/staging auth/rules required before production; no live credentials/student data used.'},
  {id:'latest-main-reconciliation',status:'NOT_TESTED',mandatory:false,detail:'Offline run does not fetch/merge main. Writing baseline compatibility is checked; latest main divergence must be reconciled before a future approved merge.'}
  ]}
 function writeAtomic(file,data){fs.mkdirSync(path.dirname(file),{recursive:true});const tmp=file+'.tmp';fs.writeFileSync(tmp,data);try{fs.renameSync(tmp,file)}catch(e){if(!['EPERM','EEXIST'].includes(e.code)||!fs.existsSync(file))throw e;fs.copyFileSync(tmp,file);fs.unlinkSync(tmp)}}

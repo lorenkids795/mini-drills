@@ -3,7 +3,7 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const ROOT=path.resolve(__dirname,'..'),DIST=path.join(ROOT,'preview-ui-dist');
 const CSP="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'none'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; frame-ancestors 'none'; worker-src 'none'";
-const COPY=['vocab-editorial-core.js','vocab-editorial.js','vocab-editorial.css','vocab-mission-planner.js','vocab-mission-packs.js','vocab-mission-engine.js','vocab-mission-library.js','vocab-lab-core.js','vocab-lab.css','vocab-mission-content.js','vocab-mission-core.js','vocab-mission-store.js','vocab-mission.css','data/vocab-lab-p1.json','data/vocab-lab-practice.json','data/vocab-lab-practice-v1.json'];
+const COPY=['vocab-routes.js','vocab-retrieval.js','vocab-editorial-core.js','vocab-editorial.js','vocab-editorial.css','vocab-mission-planner.js','vocab-mission-packs.js','vocab-mission-engine.js','vocab-mission-library.js','vocab-lab-core.js','vocab-lab.css','vocab-mission-content.js','vocab-mission-core.js','vocab-mission-store.js','vocab-mission.css','data/vocab-lab-p1.json','data/vocab-lab-practice.json','data/vocab-lab-practice-v1.json'];
 const ENTRY=['index.html','preview.css','preview.js','network-guard.js'];
 const PATHS=[...COPY,...ENTRY,'vocab-lab.js','vocab-mission.js','_headers','manifest.json'].sort();
 const hash=s=>crypto.createHash('sha256').update(s).digest('hex');
