@@ -4,6 +4,20 @@ Branch: `feature/vocab-lab`, repository `lorenkids795/mini-drills`. Base `742e95
 
 **Release readiness: BLOCKED. No merge or deployment.** Technical test results are distinct from teacher approval. No real student data or production backend is used.
 
+## Latest verification — browser recovery (2026-10-30)
+
+This section supersedes the earlier closeout's browser-QA blocker. Starting from pushed f08aa267a56a97783cad31fd53ae7d7c3ae3007b, the separately requested recovery session phase26-browser-recovery passed its first full round. Command: node tools/vocab-qa-runner.cjs --session phase26-browser-recovery --round 1.
+
+- Playwright 1.62.1 and playwright-core were already bundled locally; copied both into ignored tools/qa-runtime/node_modules. The runner now resolves the private runtime without NODE_PATH. Edge launches successfully. No production service or dependency source changes.
+- 105 Node tests, 244 regression assertions, Writing validator, all 10 browser suites PASS. Zero failed report steps; source fingerprint and network isolation PASS. 437 screenshot artifacts. See generated QA status for tested source SHA/fingerprint (the source includes the new browser test before its final commit).
+- Added end-to-end Reject, rejected filter, version/review audit and reload checks to all six viewport/theme cases. Existing approval, Request Fix, edit invalidation, manual revision, decision-required, empty state, identity isolation and production denial checks PASS.
+- All 87 new routes were mounted and completed in a browser using an authorized local teacher fixture; all 87 student mount attempts were denied; the complete localStorage snapshot remained unchanged. This verifies reviewer rehearsal and absence of unintended learner writes, NOT student progress persistence.
+- Local editorial reload and reviewer A/B isolation are verified. Server-authenticated staging persistence/security are NOT_IMPLEMENTED/NOT_TESTED: only fixture/demo identities exist in this workbench. No staging backend was supplied or enabled. Ordinary students and non-demo production mode stay blocked.
+- No new app defect was reproduced. Runtime app code, approved bank, Writing, auth/backend and existing student data remain unchanged.
+- Verified 26-file static preview ZIP: mini-drills-vocab-ui-phase26-v7-qa-verified.zip, delivered in this chat outputs for manual UI review. It contains demo identities only; approvals are local simulations. No deployment performed.
+
+Release remains BLOCKED: 102 draft senses await human review (four flagged decisions); 0 published; secure staging review persistence/auth and learner assignment/save-resume for the 87 new routes remain absent. The next implementation needs an isolated staging backend and a reviewed learner assignment/version model; do not treat local review approval as publication permission.
+
 ## What is implemented
 
 Teacher Review is inside the existing Library → Learning Materials → Vocabulary. One card shows the original context, bank definition, source/sense, priority, choices/key, hint, feedback, typed variants and available family forms. Filters support pending/questionable/approved/rejected/all and text search across source/sense/theme/forms/priority. Local teacher/admin and explicitly authorized editorial testers are supported; an ordinary tester is not a reviewer. UI-only uses separate demo reviewer A/B fixtures. Real non-demo production review storage is disabled.
