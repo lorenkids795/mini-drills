@@ -1,23 +1,21 @@
 (function(root){
 'use strict';
-var check=document.getElementById('checkHost'),mission=document.getElementById('missionHost'),view='library',libraryTab='cambridge',user,opening=0,returnToSorting=null;
+var check=document.getElementById('checkHost'),mission=document.getElementById('missionHost'),view='library',libraryTab='cambridge',user,opening=0,returnToSorting=null,latestArgs=null,selectedPlan=null;
 function key(){return 'md-ui-preview-view:'+user.email}
-function remember(){try{localStorage.setItem(key(),JSON.stringify({view:view,libraryTab:libraryTab,sample:false}))}catch(e){}}
+function remember(){try{localStorage.setItem(key(),JSON.stringify({view:view,libraryTab:libraryTab,sample:false,plan:selectedPlan}))}catch(e){}}
 function current(){return user&&['ui-tester-a@local.invalid','ui-tester-b@local.invalid'].indexOf(user.email)>=0}
 function renderLibrary(){
  document.querySelectorAll('[data-library-tab]').forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.libraryTab===libraryTab))});document.getElementById('cambridgePane').hidden=libraryTab!=='cambridge';document.getElementById('materialsPane').hidden=libraryTab!=='lm';
 }
-function show(next){view=next;document.getElementById('libraryPane').hidden=next!=='library';document.getElementById('vocabPane').hidden=next==='library';check.hidden=next!=='check';mission.hidden=next!=='town';document.getElementById('missionChoices').hidden=next!=='missions';document.getElementById('location').textContent='Library / Learning Materials / Vocab Lab / '+({check:'Vocab Check',missions:'Personalized Missions',town:'Town on the Move'}[next]||'');renderLibrary();if(!sbWide()&&document.body.classList.contains('sb-open'))sbSet(false,true);remember()}
-function runMission(next,args){
- var identity=user.email,request=++opening;show(next);
- return root.MD_MISSION.open(mission,{user:user,demo:true,missionId:'p1-town-on-the-move',bank:args&&args.bank,progress:args&&args.progress,sampleProfile:false,isCurrent:function(){return current()&&user.email===identity&&view===next},onContinueSorting:function(){if(user.email!==identity)return;show('check');if(args)args.onContinueSorting();else if(returnToSorting)returnToSorting()}}).then(function(){if(request!==opening)return});
-}
+function show(next){view=next;document.getElementById('libraryPane').hidden=next!=='library';document.getElementById('vocabPane').hidden=next==='library';check.hidden=next!=='check';mission.hidden=next!=='town';document.getElementById('missionChoices').hidden=next!=='missions';document.getElementById('location').textContent='Library / Learning Materials / Vocab Lab / '+({check:'Vocab Check',missions:'Personalized Missions',town:'Mission review'}[next]||'');renderLibrary();if(!sbWide()&&document.body.classList.contains('sb-open'))sbSet(false,true);remember()}
+function choose(args){latestArgs=args||latestArgs;if(!latestArgs)return;show('missions');root.MD_MISSION_LIBRARY.mount(document.getElementById('missionChoices'),{user:user,demo:true,bank:latestArgs.bank,progress:latestArgs.progress,isCurrent:current,onLaunch:runMission,onContinueSorting:function(){show('check');returnToSorting()}})}
+function runMission(plan){selectedPlan=plan;var identity=user.email;show('town');return root.MD_MISSION.open(mission,{user:user,demo:true,planSnapshot:plan,bank:latestArgs.bank,isCurrent:function(){return current()&&user.email===identity&&view==='town'},onContinueSorting:function(){show('check');returnToSorting()}})}
 function start(){
- opening++;returnToSorting=null;root.MD_MISSION.close();root.MD_VOCAB.unmount();check.innerHTML='';mission.innerHTML='';
+ opening++;returnToSorting=null,latestArgs=null,selectedPlan=null;root.MD_MISSION.close();root.MD_VOCAB.unmount();check.innerHTML='';mission.innerHTML='';
  user={email:'ui-tester-'+document.getElementById('identity').value+'@local.invalid',name:'Fixture tester',role:'student',tester:true};
  var saved=null;try{saved=JSON.parse(localStorage.getItem(key())||'null')}catch(e){}
  libraryTab=saved&&saved.libraryTab==='lm'?'lm':'cambridge';view='library';show(saved&&['check','missions','town'].indexOf(saved.view)>=0?saved.view:'library');var identity=user.email;
- root.MD_VOCAB.mount(check,{user:user,demo:true,isCurrent:function(){return user.email===identity&&view==='check'},onFinish:function(){libraryTab='lm';show('library')},onMission:function(args){runMission('town',args)},onReady:function(args){returnToSorting=args.onContinueSorting;if(saved&&['town','missions'].indexOf(saved.view)>=0)runMission('town')}});
+ root.MD_VOCAB.mount(check,{user:user,demo:true,isCurrent:function(){return user.email===identity&&view==='check'},onFinish:function(){libraryTab='lm';show('library')},onMission:function(args){choose(args)},onReady:function(args){latestArgs=args;returnToSorting=args.onContinueSorting;if(saved&&saved.view==='town'&&saved.plan)runMission(saved.plan);else if(saved&&['town','missions'].indexOf(saved.view)>=0)choose()}});
 }
 var LM_ICO={writing:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/>',listening:'<path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/>',
   reading:'<path d="M2 4h6a4 4 0 014 4v13a3 3 0 00-3-3H2z"/><path d="M22 4h-6a4 4 0 00-4 4v13a3 3 0 013-3h7z"/>',speaking:'<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10a7 7 0 01-14 0M12 17v5"/>'};
@@ -27,7 +25,7 @@ document.getElementById('materialsPane').innerHTML=['Writing','Listening','Readi
 document.getElementById('vocabToggle').addEventListener('click',function(){var open=this.getAttribute('aria-expanded')!=='true';this.setAttribute('aria-expanded',String(open));document.getElementById('vocabDestinations').hidden=!open});
 document.querySelector('[data-view="library"]').addEventListener('click',function(){opening++;show('library')});
 document.querySelectorAll('[data-library-tab]').forEach(function(b){b.addEventListener('click',function(){libraryTab=b.dataset.libraryTab;show('library')})});
-document.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',function(){var next=b.dataset.open;libraryTab='lm';if(next==='missions')runMission('town');else{opening++;show(next)}})});
+document.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',function(){var next=b.dataset.open;libraryTab='lm';if(next==='missions')choose();else{opening++;show(next)}})});
 document.getElementById('libraryBack').addEventListener('click',function(){libraryTab='lm';show('library')});
 document.getElementById('identity').addEventListener('change',function(){try{localStorage.setItem('md-ui-preview-identity',this.value)}catch(e){}start()});
 document.getElementById('themeBtn').addEventListener('click',function(){setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark')});

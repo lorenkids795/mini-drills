@@ -1,0 +1,29 @@
+[
+  {
+    "id": "cambridge-congestion",
+    "form": "congestion",
+    "partOfSpeech": "noun",
+    "url": "https://dictionary.cambridge.org/dictionary/english/congestion",
+    "checked": "2026-10-30",
+    "senseScope": "traffic difficulty caused by crowding",
+    "note": "Lexeme/POS attestation only. Original mission examples remain TEACHER_REVIEW; dictionary text/examples are not copied."
+  },
+  {
+    "id": "cambridge-construction",
+    "form": "construction",
+    "partOfSpeech": "noun",
+    "url": "https://dictionary.cambridge.org/dictionary/english/construction",
+    "checked": "2026-10-30",
+    "senseScope": "process of building",
+    "note": "Lexeme/POS attestation only. Original mission examples remain TEACHER_REVIEW; dictionary text/examples are not copied."
+  },
+  {
+    "id": "cambridge-condensation",
+    "form": "condensation",
+    "partOfSpeech": "noun",
+    "url": "https://dictionary.cambridge.org/dictionary/english/condensation",
+    "checked": "2026-10-30",
+    "senseScope": "gas-to-liquid process",
+    "note": "Lexeme/POS attestation only. Original mission examples remain TEACHER_REVIEW; dictionary text/examples are not copied."
+  }
+]

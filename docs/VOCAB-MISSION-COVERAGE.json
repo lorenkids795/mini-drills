@@ -3,10 +3,10 @@
   "lessonId": "cam17-t1-reading-p1",
   "denominator": 102,
   "published": 0,
-  "candidate": 0,
-  "contextOnly": 0,
+  "candidate": 15,
+  "contextOnly": 5,
   "ambiguous": 4,
-  "deferred": 98,
+  "deferred": 78,
   "readiness": "BLOCKED",
   "reviewStatus": "TEACHER_REVIEW",
   "mainAudit": {
@@ -47,10 +47,10 @@
     {
       "senseId": "sense-e89a4b0bd00866e4982969c7",
       "sourceId": "C17-T1-R1-003",
-      "status": "DEFERRED",
+      "status": "TEACHER_REVIEW",
       "term": "congested",
       "plannedPack": "p1-station-access",
-      "disposition": "DEFERRED",
+      "disposition": "CANDIDATE_TARGET",
       "reason": "Pilot tasks require teacher editorial approval.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
@@ -62,10 +62,10 @@
     {
       "senseId": "sense-072cc7ecf79926dc8c3b4035",
       "sourceId": "C17-T1-R1-004",
-      "status": "DEFERRED",
+      "status": "CONTEXT_ONLY",
       "term": "expansion",
       "plannedPack": "p1-station-access",
-      "disposition": "DEFERRED",
+      "disposition": "CONTEXT_ONLY",
       "reason": "Narrative context only; no independent task coverage claimed.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
@@ -77,10 +77,10 @@
     {
       "senseId": "sense-97e16630481da84aaa89c941",
       "sourceId": "C17-T1-R1-005",
-      "status": "DEFERRED",
+      "status": "CONTEXT_ONLY",
       "term": "overground railway",
       "plannedPack": "p1-station-access",
-      "disposition": "DEFERRED",
+      "disposition": "CONTEXT_ONLY",
       "reason": "Narrative context only; no independent task coverage claimed.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
@@ -92,10 +92,10 @@
     {
       "senseId": "sense-19e7303e091b6ad30d33099e",
       "sourceId": "C17-T1-R1-006",
-      "status": "DEFERRED",
+      "status": "TEACHER_REVIEW",
       "term": "network",
       "plannedPack": "p1-station-access",
-      "disposition": "DEFERRED",
+      "disposition": "CANDIDATE_TARGET",
       "reason": "Pilot tasks require teacher editorial approval.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
@@ -122,10 +122,10 @@
     {
       "senseId": "sense-a62397cd8498372a644abfe4",
       "sourceId": "C17-T1-R1-008",
-      "status": "DEFERRED",
+      "status": "TEACHER_REVIEW",
       "term": "passenger",
       "plannedPack": "p1-station-access",
-      "disposition": "DEFERRED",
+      "disposition": "CANDIDATE_TARGET",
       "reason": "Pilot tasks require teacher editorial approval.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
@@ -212,10 +212,10 @@
     {
       "senseId": "sense-0565f5e877495423f1f8e0ea",
       "sourceId": "C17-T1-R1-015",
-      "status": "DEFERRED",
+      "status": "TEACHER_REVIEW",
       "term": "overcrowded",
       "plannedPack": "p1-community-room",
-      "disposition": "DEFERRED",
+      "disposition": "CANDIDATE_TARGET",
       "reason": "Pilot tasks require teacher editorial approval.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
@@ -230,8 +230,8 @@
       "status": "DEFERRED",
       "term": "slum",
       "plannedPack": null,
-      "disposition": "DEFERRED",
-      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "disposition": "AMBIGUOUS",
+      "reason": "Historical housing term needs sensitivity and source-context review.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
         "senseId": "sense-9713aaa7c9984f2a0e5b19b9",
@@ -245,8 +245,8 @@
       "status": "DEFERRED",
       "term": "horse-drawn",
       "plannedPack": null,
-      "disposition": "AMBIGUOUS",
-      "reason": "Historical housing term needs sensitivity and source-context review.",
+      "disposition": "DEFERRED",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
         "senseId": "sense-b0b8f112fe3686a19b5f7595",
@@ -437,10 +437,10 @@
     {
       "senseId": "sense-3d666ffd6243e5eae8122ec5",
       "sourceId": "C17-T1-R1-030",
-      "status": "DEFERRED",
+      "status": "TEACHER_REVIEW",
       "term": "relocate",
       "plannedPack": "p1-community-room",
-      "disposition": "DEFERRED",
+      "disposition": "CANDIDATE_TARGET",
       "reason": "Pilot tasks require teacher editorial approval.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
@@ -452,10 +452,10 @@
     {
       "senseId": "sense-aca45c8c33ce6d6b76305b9d",
       "sourceId": "C17-T1-R1-031",
-      "status": "DEFERRED",
+      "status": "CONTEXT_ONLY",
       "term": "inner-city",
       "plannedPack": "p1-community-room",
-      "disposition": "DEFERRED",
+      "disposition": "CONTEXT_ONLY",
       "reason": "Narrative context only; no independent task coverage claimed.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
@@ -482,10 +482,10 @@
     {
       "senseId": "sense-671cec8bff9f6329a6dbfc5e",
       "sourceId": "C17-T1-R1-033",
-      "status": "DEFERRED",
+      "status": "TEACHER_REVIEW",
       "term": "suburb",
       "plannedPack": "p1-community-room",
-      "disposition": "DEFERRED",
+      "disposition": "CANDIDATE_TARGET",
       "reason": "Pilot tasks require teacher editorial approval.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
@@ -497,10 +497,10 @@
     {
       "senseId": "sense-d6d03481b171a5f596024d5b",
       "sourceId": "C17-T1-R1-034",
-      "status": "DEFERRED",
+      "status": "TEACHER_REVIEW",
       "term": "provide",
       "plannedPack": "p1-community-room",
-      "disposition": "DEFERRED",
+      "disposition": "CANDIDATE_TARGET",
       "reason": "Pilot tasks require teacher editorial approval.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
@@ -632,10 +632,10 @@
     {
       "senseId": "sense-58da02c350f91fff6e6e34d5",
       "sourceId": "C17-T1-R1-043",
-      "status": "DEFERRED",
+      "status": "TEACHER_REVIEW",
       "term": "construct",
       "plannedPack": "p1-community-room",
-      "disposition": "DEFERRED",
+      "disposition": "CANDIDATE_TARGET",
       "reason": "Pilot tasks require teacher editorial approval.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
@@ -812,10 +812,10 @@
     {
       "senseId": "sense-b9b6507069769c823a393841",
       "sourceId": "C17-T1-R1-055",
-      "status": "DEFERRED",
+      "status": "TEACHER_REVIEW",
       "term": "emission",
       "plannedPack": "p1-power-exhibit",
-      "disposition": "DEFERRED",
+      "disposition": "CANDIDATE_TARGET",
       "reason": "Pilot tasks require teacher editorial approval.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
@@ -887,10 +887,10 @@
     {
       "senseId": "sense-68a92b316178a7ba875a347a",
       "sourceId": "C17-T1-R1-060",
-      "status": "DEFERRED",
+      "status": "TEACHER_REVIEW",
       "term": "route",
       "plannedPack": "p1-station-access",
-      "disposition": "DEFERRED",
+      "disposition": "CANDIDATE_TARGET",
       "reason": "Pilot tasks require teacher editorial approval.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
@@ -917,10 +917,10 @@
     {
       "senseId": "sense-76ab40715a668211f31eca6c",
       "sourceId": "C17-T1-R1-062",
-      "status": "DEFERRED",
+      "status": "TEACHER_REVIEW",
       "term": "minimise",
       "plannedPack": "p1-power-exhibit",
-      "disposition": "DEFERRED",
+      "disposition": "CANDIDATE_TARGET",
       "reason": "Pilot tasks require teacher editorial approval.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
@@ -1187,10 +1187,10 @@
     {
       "senseId": "sense-10a3c19d3da3376f06c85142",
       "sourceId": "C17-T1-R1-080",
-      "status": "DEFERRED",
+      "status": "CONTEXT_ONLY",
       "term": "steam locomotive",
       "plannedPack": "p1-power-exhibit",
-      "disposition": "DEFERRED",
+      "disposition": "CONTEXT_ONLY",
       "reason": "Narrative context only; no independent task coverage claimed.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
@@ -1202,10 +1202,10 @@
     {
       "senseId": "sense-cca21aed3e608f5b4ff5add2",
       "sourceId": "C17-T1-R1-081",
-      "status": "DEFERRED",
+      "status": "CONTEXT_ONLY",
       "term": "boiler",
       "plannedPack": "p1-power-exhibit",
-      "disposition": "DEFERRED",
+      "disposition": "CONTEXT_ONLY",
       "reason": "Narrative context only; no independent task coverage claimed.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
@@ -1247,10 +1247,10 @@
     {
       "senseId": "sense-06c262095128f7725da31684",
       "sourceId": "C17-T1-R1-084",
-      "status": "DEFERRED",
+      "status": "TEACHER_REVIEW",
       "term": "condense",
       "plannedPack": "p1-power-exhibit",
-      "disposition": "DEFERRED",
+      "disposition": "CANDIDATE_TARGET",
       "reason": "Pilot tasks require teacher editorial approval.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
@@ -1322,11 +1322,11 @@
     {
       "senseId": "sense-9be946e9caf16f0abc73d55d",
       "sourceId": "C17-T1-R1-089",
-      "status": "DEFERRED",
+      "status": "TEACHER_REVIEW",
       "term": "alternative",
-      "plannedPack": null,
-      "disposition": "DEFERRED",
-      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "plannedPack": "p1-station-access",
+      "disposition": "CANDIDATE_TARGET",
+      "reason": "Pilot tasks require teacher editorial approval.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
         "senseId": "sense-9be946e9caf16f0abc73d55d",
@@ -1339,9 +1339,9 @@
       "sourceId": "C17-T1-R1-090",
       "status": "DEFERRED",
       "term": "confined space",
-      "plannedPack": "p1-station-access",
+      "plannedPack": null,
       "disposition": "DEFERRED",
-      "reason": "Pilot tasks require teacher editorial approval.",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
         "senseId": "sense-35bdd841a2a3d36cafc79bf0",
@@ -1412,10 +1412,10 @@
     {
       "senseId": "sense-d34dd630d6328faba29a8732",
       "sourceId": "C17-T1-R1-095",
-      "status": "DEFERRED",
+      "status": "TEACHER_REVIEW",
       "term": "generator",
       "plannedPack": "p1-power-exhibit",
-      "disposition": "DEFERRED",
+      "disposition": "CANDIDATE_TARGET",
       "reason": "Pilot tasks require teacher editorial approval.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
@@ -1472,11 +1472,11 @@
     {
       "senseId": "sense-1a95bb111e4aea4c24356619",
       "sourceId": "C17-T1-R1-099",
-      "status": "DEFERRED",
+      "status": "TEACHER_REVIEW",
       "term": "power supply",
-      "plannedPack": null,
-      "disposition": "DEFERRED",
-      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
+      "plannedPack": "p1-power-exhibit",
+      "disposition": "CANDIDATE_TARGET",
+      "reason": "Pilot tasks require teacher editorial approval.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
         "senseId": "sense-1a95bb111e4aea4c24356619",
@@ -1489,9 +1489,9 @@
       "sourceId": "C17-T1-R1-100",
       "status": "DEFERRED",
       "term": "technical achievement",
-      "plannedPack": "p1-power-exhibit",
+      "plannedPack": null,
       "disposition": "DEFERRED",
-      "reason": "Pilot tasks require teacher editorial approval.",
+      "reason": "No authored mission task yet. Preserve sense; queue contextual micro-review or a coherent future curated pack.",
       "alternateRoute": {
         "kind": "existing_vocab_check_review",
         "senseId": "sense-252384ca78958e91d88ad5e7",

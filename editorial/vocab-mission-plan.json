@@ -3,10 +3,10 @@
   "milestone": "A",
   "publicationPolicy": "Version-bound human approval is required; offline drafts never auto-publish.",
   "pilots": [
-    {"id":"p1-station-access","title":"Station Access Audit","theme":"An access team compares a transport junction and route choices","sources":[3,6,8,60,90],"contextSources":[4,5]},
+    {"id":"p1-station-access","title":"Station Access Audit","theme":"An access team compares a transport junction and route choices","sources":[3,6,8,60,89],"contextSources":[4,5]},
     {"id":"p1-community-room","title":"A New Home for Evening Classes","theme":"A community class chooses a suitable larger site","sources":[15,30,33,34,43],"contextSources":[31]},
-    {"id":"p1-power-exhibit","title":"The Power Exhibit Review","theme":"Museum editors check a fictional model-engine exhibit","sources":[55,62,84,95,100],"contextSources":[80,81]}
+    {"id":"p1-power-exhibit","title":"The Power Exhibit Review","theme":"Museum editors check a fictional model-engine exhibit","sources":[55,62,84,95,99],"contextSources":[80,81]}
   ],
-  "ambiguousSources": {"17":"Historical housing term needs sensitivity and source-context review.","29":"Historical clearance language needs ethics/context review; do not frame displacement as an unqualified benefit.","26":"Regional legal profession requires precise usage and teacher review.","19":"Bank sense spans horse-drawn vehicle/train compartment; select the passage-specific interpretation before authoring."},
+  "ambiguousSources": {"16":"Historical housing term needs sensitivity and source-context review.","29":"Historical clearance language needs ethics/context review; do not frame displacement as an unqualified benefit.","26":"Regional legal profession requires precise usage and teacher review.","19":"Bank sense spans horse-drawn vehicle/train compartment; select the passage-specific interpretation before authoring."},
   "mainAudit": {"observedMain":"9536e3a022308b906975e3cbce292cf7699c8518","policy":"No merge. Latest main has divergent Writing/backend/rules; retain feature source and reconcile only under a later approved merge."}
 }

@@ -3,7 +3,7 @@
   "reviewedSourceCommit": "05a79710470a966fa31a211ce7375198bc489d51",
   "playwrightVersion": "1.62.1",
   "protectedFiles": {
-    "index.html": "ebb1514fa7f7817635d3db737ce189e1691a1c742933ad008b2df2a09481cc3f",
+    "index.html": "53810ca521c31f62d517a10a0d0174547a6d464c29b33eb80dda0a41f3a16b20",
     "lm-content.js": "22dd5ce2644d09e3592ef89fdec8aa055aa0140dfe21ea190273a084334554f3",
     "lm-unit0.js": "1d6226a2138c99a7772823177c8844948f10f3ff7c4b1819d7fd87e3c134b4c6",
     "lm-unit2.js": "baa76f3f2efe59410446ea0828044460a70a31413ce99221d4ed66f4725f1f78",
@@ -17,11 +17,11 @@
     "editorial/vocab-lab-p2.pending.json": "321504a390d11aa58b1e6c9f3087b6cf97a585722452716f170c9b5bc77b7b0a",
     "vocab-mission-content.js": "dafa902173a277763292fce3ec35f0cdda0f8305818c2e0e3c6891a386967094",
     "preview-ui/network-guard.js": "791b732203d6dbc60c8b3125c51b4fe8e26342859be9a9d2c4ade5aaec1c105d",
-    "tools/build-vocab-ui-preview.cjs": "78ff7495c0891aeb1b0fd29ffb0a2f2630a1c90fb2dd868e159593a08321bb1e"
+    "tools/build-vocab-ui-preview.cjs": "036b570500ff3dc616aeb44990c950fa404d1a2614b027e48d57222dd517090c"
   },
   "visualSources": {
     "preview-ui/preview.css": "70ec4db1b19130c1ce1b1f9b6ad6a0376b9cc4972d43716463d65791955b4fb2",
-    "preview-ui/index.html": "3b234a1f71a6a0439fd1289c9ad66b71e30dfef706cf2203f643121b114fac8e",
+    "preview-ui/index.html": "bba8f913dd5d0e7e7d5141e9ea4b1f677cb8e5e0dbf09f9099ffc51b45e437be",
     "vocab-lab.css": "3ce51ae536a96975b403d13a01dd9e39172256aa18d65ae64511fa980bc9171d",
     "vocab-mission.css": "9630b868c94cf1293750beb782b30aef405d0383fb220dae5e33e0d4ba1f32ec"
   },
@@ -55,5 +55,6 @@
     "tests/vocab-qa-runner.test.js",
     "tests/vocab-reality.test.js",
     "tests/vocab-ui-preview.test.js"
-  ]
+  ],
+  "phase25Rationale": "Root index byte-equivalent to milestone A after stripping four Vocab script imports. Builder adds exactly four static JS files (17→21); CSP/network guard/cloud transforms unchanged. Static index changes imports and accurate candidate text only. Styles/fonts/layout unchanged; 390/768/1280 light/dark screenshots are still mandatory. Human content/UX approval remains TEACHER_REVIEW."
 }

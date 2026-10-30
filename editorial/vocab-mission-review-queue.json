@@ -1,0 +1,201 @@
+[
+  {
+    "packId": "p1-station-access",
+    "version": 1,
+    "status": "TEACHER_REVIEW",
+    "requiredReview": {
+      "grammar": "TEACHER_REVIEW",
+      "sourceSense": "TEACHER_REVIEW",
+      "collocations": "TEACHER_REVIEW",
+      "uniqueKey": "TEACHER_REVIEW",
+      "distractors": "TEACHER_REVIEW",
+      "hints": "TEACHER_REVIEW",
+      "recallVariants": "TEACHER_REVIEW",
+      "morph": "TEACHER_REVIEW",
+      "narrative": "TEACHER_REVIEW",
+      "rights": "TEACHER_REVIEW"
+    },
+    "sourceSenseIds": [
+      "sense-e89a4b0bd00866e4982969c7",
+      "sense-19e7303e091b6ad30d33099e",
+      "sense-a62397cd8498372a644abfe4",
+      "sense-68a92b316178a7ba875a347a",
+      "sense-9be946e9caf16f0abc73d55d"
+    ],
+    "acceptedVariants": [
+      {
+        "senseId": "sense-e89a4b0bd00866e4982969c7",
+        "answers": [
+          "congested"
+        ],
+        "policy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap."
+      },
+      {
+        "senseId": "sense-19e7303e091b6ad30d33099e",
+        "answers": [
+          "network"
+        ],
+        "policy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap."
+      },
+      {
+        "senseId": "sense-a62397cd8498372a644abfe4",
+        "answers": [
+          "passenger"
+        ],
+        "policy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap."
+      },
+      {
+        "senseId": "sense-68a92b316178a7ba875a347a",
+        "answers": [
+          "route"
+        ],
+        "policy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap."
+      },
+      {
+        "senseId": "sense-9be946e9caf16f0abc73d55d",
+        "answers": [
+          "alternative"
+        ],
+        "policy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap."
+      }
+    ],
+    "concerns": [
+      "Offline AI-assisted text is a candidate, not teacher-approved content.",
+      "Check narrative coherence when only 1\u20132 senses are active targets; other terms remain context only.",
+      "Check legitimate alternatives to fixed answer lists."
+    ]
+  },
+  {
+    "packId": "p1-community-room",
+    "version": 1,
+    "status": "TEACHER_REVIEW",
+    "requiredReview": {
+      "grammar": "TEACHER_REVIEW",
+      "sourceSense": "TEACHER_REVIEW",
+      "collocations": "TEACHER_REVIEW",
+      "uniqueKey": "TEACHER_REVIEW",
+      "distractors": "TEACHER_REVIEW",
+      "hints": "TEACHER_REVIEW",
+      "recallVariants": "TEACHER_REVIEW",
+      "morph": "TEACHER_REVIEW",
+      "narrative": "TEACHER_REVIEW",
+      "rights": "TEACHER_REVIEW"
+    },
+    "sourceSenseIds": [
+      "sense-0565f5e877495423f1f8e0ea",
+      "sense-3d666ffd6243e5eae8122ec5",
+      "sense-671cec8bff9f6329a6dbfc5e",
+      "sense-d6d03481b171a5f596024d5b",
+      "sense-58da02c350f91fff6e6e34d5"
+    ],
+    "acceptedVariants": [
+      {
+        "senseId": "sense-0565f5e877495423f1f8e0ea",
+        "answers": [
+          "overcrowded"
+        ],
+        "policy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap."
+      },
+      {
+        "senseId": "sense-3d666ffd6243e5eae8122ec5",
+        "answers": [
+          "relocate"
+        ],
+        "policy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap."
+      },
+      {
+        "senseId": "sense-671cec8bff9f6329a6dbfc5e",
+        "answers": [
+          "suburb"
+        ],
+        "policy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap."
+      },
+      {
+        "senseId": "sense-d6d03481b171a5f596024d5b",
+        "answers": [
+          "provide"
+        ],
+        "policy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap."
+      },
+      {
+        "senseId": "sense-58da02c350f91fff6e6e34d5",
+        "answers": [
+          "construct"
+        ],
+        "policy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap."
+      }
+    ],
+    "concerns": [
+      "Offline AI-assisted text is a candidate, not teacher-approved content.",
+      "Check narrative coherence when only 1\u20132 senses are active targets; other terms remain context only.",
+      "Check legitimate alternatives to fixed answer lists."
+    ]
+  },
+  {
+    "packId": "p1-power-exhibit",
+    "version": 1,
+    "status": "TEACHER_REVIEW",
+    "requiredReview": {
+      "grammar": "TEACHER_REVIEW",
+      "sourceSense": "TEACHER_REVIEW",
+      "collocations": "TEACHER_REVIEW",
+      "uniqueKey": "TEACHER_REVIEW",
+      "distractors": "TEACHER_REVIEW",
+      "hints": "TEACHER_REVIEW",
+      "recallVariants": "TEACHER_REVIEW",
+      "morph": "TEACHER_REVIEW",
+      "narrative": "TEACHER_REVIEW",
+      "rights": "TEACHER_REVIEW"
+    },
+    "sourceSenseIds": [
+      "sense-b9b6507069769c823a393841",
+      "sense-76ab40715a668211f31eca6c",
+      "sense-06c262095128f7725da31684",
+      "sense-d34dd630d6328faba29a8732",
+      "sense-1a95bb111e4aea4c24356619"
+    ],
+    "acceptedVariants": [
+      {
+        "senseId": "sense-b9b6507069769c823a393841",
+        "answers": [
+          "emission"
+        ],
+        "policy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap."
+      },
+      {
+        "senseId": "sense-76ab40715a668211f31eca6c",
+        "answers": [
+          "minimise",
+          "minimize"
+        ],
+        "policy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap."
+      },
+      {
+        "senseId": "sense-06c262095128f7725da31684",
+        "answers": [
+          "condense"
+        ],
+        "policy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap."
+      },
+      {
+        "senseId": "sense-d34dd630d6328faba29a8732",
+        "answers": [
+          "generator"
+        ],
+        "policy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap."
+      },
+      {
+        "senseId": "sense-1a95bb111e4aea4c24356619",
+        "answers": [
+          "power supply"
+        ],
+        "policy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap."
+      }
+    ],
+    "concerns": [
+      "Offline AI-assisted text is a candidate, not teacher-approved content.",
+      "Check narrative coherence when only 1\u20132 senses are active targets; other terms remain context only.",
+      "Check legitimate alternatives to fixed answer lists."
+    ]
+  }
+]
