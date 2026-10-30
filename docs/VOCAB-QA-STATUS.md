@@ -1,17 +1,17 @@
 # Vocab QA status
 
-**BLOCKED** · QA PASS · round 1/3 · full
+**BLOCKED** · QA PASS · round 2/3 · full
 
-- Timestamp (Asia/Saigon): 2026-10-30 17:56:15 GMT+7
-- UTC: 2026-10-30T10:56:15.327Z
-- Branch/SHA: `feature/vocab-lab` / `f08aa267a56a97783cad31fd53ae7d7c3ae3007b`
-- Working source fingerprint: `2fca20fe28e3d93fcf6a2e2a5ceea8df308362f9b52e5c0e3bb3f9ce818292b7` (dirty working tree)
-- Command: `node tools/vocab-qa-runner.cjs --session phase26-browser-recovery --round 1`
-- Session: `phase26-browser-recovery`
+- Timestamp (Asia/Saigon): 2026-10-30 20:27:01 GMT+7
+- UTC: 2026-10-30T13:27:01.829Z
+- Branch/SHA: `feature/vocab-lab` / `b286c3d71dc7718578fff3a03318a1b43e7b65fd`
+- Working source fingerprint: `4f3ad3f7565730353d48676118ff173e6c096cca0d54386f85714024ce60dd77` (dirty working tree)
+- Command: `node tools/vocab-qa-runner.cjs --session teacher-review-ux --round 2 --changes-file qa-artifacts/teacher-review-ux/round2-changes.json`
+- Session: `teacher-review-ux`
 - Environment: Node v24.22.1, win32/x64, Playwright 1.62.1, browser msedge
 - Tests: 105 Node tests + 244 core assertions; 0 failed commands
-- Artifact directory: `qa-artifacts/phase26-browser-recovery/round-1-full` (437 screenshots)
-- Static manifest: `baaea8097dce421e107dd2e1a961908b1f08e1538b339cc820817a7858d15397`
+- Artifact directory: `qa-artifacts/teacher-review-ux/round-2-full` (437 screenshots)
+- Static manifest: `33afa61e799e7ae60699ea6ecb0b8eed605a8dbc28f5e8afc392c5369744b3d9`
 
 ## Coverage
 
@@ -83,7 +83,7 @@
 
 ## Changes in this round
 
-- Initial QA run; no automatic code/content edits.
+- Confirmed outside-control discard cleared in-memory draft but left stale note in DOM; clean outside clicks also cleared edit buffer. Only guard dirty state and rerender after confirmed discard.; files: vocab-editorial.js, tests/vocab-editorial.browser.js; reproduction: Focused outside-repro failed: expected empty note after discard, actual Unsaved outside navigation note. Added cancel/confirm and clean outside-control assertions to all six browser cases.
 
 ## Next action
 
