@@ -2,7 +2,7 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path'),vm=require('node:vm'),B=require('../tools/build-vocab-ui-preview.cjs');
 const temp=()=>fs.mkdtempSync(path.join(os.tmpdir(),'md-ui-preview-test-'));
 test('reproducible allowlist build; every output byte matches the manifest and audited inputs',()=>{
- const a=temp(),b=temp();B.build(a);B.build(b);assert.equal(B.PATHS.length,21);for(const p of B.PATHS)assert.ok(fs.readFileSync(path.join(a,p)).equals(fs.readFileSync(path.join(b,p))));assert.equal(B.verify(a).files.length,20);
+ const a=temp(),b=temp();B.build(a);B.build(b);assert.equal(B.PATHS.length,24);for(const p of B.PATHS)assert.ok(fs.readFileSync(path.join(a,p)).equals(fs.readFileSync(path.join(b,p))));assert.equal(B.verify(a).files.length,23);
 });
 test('unknown backend/config/Functions files or directories fail both verification and rebuild',()=>{
  for(const file of ['md-config.js','md-backend.js','functions/api.js','unexpected.txt']){const a=temp();B.build(a);fs.mkdirSync(path.dirname(path.join(a,file)),{recursive:true});fs.writeFileSync(path.join(a,file),'unsafe');assert.throws(()=>B.verify(a),/Unexpected|allowlist/);assert.throws(()=>B.build(a),/Unexpected/)}

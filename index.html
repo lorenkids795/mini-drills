@@ -8,7 +8,7 @@
 <!-- Android / Web App Manifest -->
 <link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="vocab-lab.css">
-<link rel="stylesheet" href="vocab-mission.css">
+<link rel="stylesheet" href="vocab-mission.css"><link rel="stylesheet" href="vocab-editorial.css">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Mini Drills">
 <style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}#who[hidden]~#logoutBtn{display:none}
@@ -1636,7 +1636,7 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
 <script src="vocab-mission-content.js"></script>
 <script src="vocab-mission-core.js"></script>
 <script src="vocab-mission-store.js"></script>
-<script src="vocab-mission-planner.js"></script><script src="vocab-mission-packs.js"></script><script src="vocab-mission-engine.js"></script><script src="vocab-mission-library.js"></script><script src="vocab-mission.js"></script>
+<script src="vocab-mission-planner.js"></script><script src="vocab-mission-packs.js"></script><script src="vocab-mission-engine.js"></script><script src="vocab-mission-library.js"></script><script src="vocab-editorial-core.js"></script><script src="vocab-editorial.js"></script><script src="vocab-mission.js"></script>
 <script src="vocab-lab-store.js"></script>
 <script src="vocab-lab.js"></script>
 <script src="vocab-lab-shell.js"></script>
@@ -4776,12 +4776,13 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&SB.open&&!s
 function curDark(){var t=document.documentElement.getAttribute('data-theme');if(t)return t==='dark';return !!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)}
 // Admin: everything (Students and XP live inside Admin). Teacher: only their classes (see myCls). Student: unchanged.
 var VOCAB_VIEW=false,VOCAB_LIST_OPEN=false;
-function vocabCategoryHTML(){var on=vocabAllowed();return '<section class="lmmod lm-vocabulary'+(on?'':' dis')+'" aria-label="Vocabulary"><button type="button" class="lmhd"'+(on?' data-act="vocab-toggle" aria-expanded="'+VOCAB_LIST_OPEN+'" aria-controls="vocabDestinations"':' disabled')+'><span class="lmic" aria-hidden="true">'+lmIco('reading')+'</span><span class="lmnm">Vocabulary</span>'+(on?'<span class="lmchev">'+LM_CH+'</span>':'<span class="lmsoon">Coming soon</span>')+'</button>'+(on&&VOCAB_LIST_OPEN?'<div class="lmtw" id="vocabDestinations"><button type="button" class="lmu" data-act="vocab-open" data-view="check"><span>Vocab Check</span><span class="lmarr">'+LM_AR+'</span></button><button type="button" class="lmu" data-act="vocab-open" data-view="missions"><span>Personalized Missions</span><span class="lmarr">'+LM_AR+'</span></button></div>':'')+'</section>'}
+function vocabReviewAllowed(){return !!(window.MD_VOCAB_SHELL&&window.MD_VOCAB_SHELL.reviewer&&window.MD_VOCAB_SHELL.reviewer(U))}
+function vocabCategoryHTML(){var player=!!(window.MD_VOCAB_SHELL&&window.MD_VOCAB_SHELL.allowed(U)),on=player||vocabReviewAllowed();return '<section class="lmmod lm-vocabulary'+(on?'':' dis')+'" aria-label="Vocabulary"><button type="button" class="lmhd"'+(on?' data-act="vocab-toggle" aria-expanded="'+VOCAB_LIST_OPEN+'" aria-controls="vocabDestinations"':' disabled')+'><span class="lmic" aria-hidden="true">'+lmIco('reading')+'</span><span class="lmnm">Vocabulary</span>'+(on?'<span class="lmchev">'+LM_CH+'</span>':'<span class="lmsoon">Coming soon</span>')+'</button>'+(on&&VOCAB_LIST_OPEN?'<div class="lmtw" id="vocabDestinations">'+(player?'<button type="button" class="lmu" data-act="vocab-open" data-view="check"><span>Vocab Check</span><span class="lmarr">'+LM_AR+'</span></button><button type="button" class="lmu" data-act="vocab-open" data-view="missions"><span>Personalized Missions</span><span class="lmarr">'+LM_AR+'</span></button>':'')+(vocabReviewAllowed()?'<button type="button" class="lmu" data-act="vocab-open" data-view="review"><span>Teacher Review</span><span class="lmarr">'+LM_AR+'</span></button>':'')+'</div>':'')+'</section>'}
 function vocabMaterialsHTML(){var h=lmHTML();return LMV?h:h.replace(/<\/div>$/,vocabCategoryHTML()+'</div>')}
-function vocabOpen(view){if(!vocabAllowed())return false;VOCAB_VIEW=true;LIBT='lm';LMV=null;NAV={book:null,test:null,skill:null,ex:null};XED=null;showTab('library');window.MD_VOCAB_SHELL.navigate(view||'check');return true}
+function vocabOpen(view){if(view==='review'?!vocabReviewAllowed():!(window.MD_VOCAB_SHELL&&window.MD_VOCAB_SHELL.allowed(U)))return false;VOCAB_VIEW=true;LIBT='lm';LMV=null;NAV={book:null,test:null,skill:null,ex:null};XED=null;showTab('library');window.MD_VOCAB_SHELL.navigate(view||'check');return true}
 function vocabBack(){VOCAB_VIEW=false;LIBT='lm';LMV=null;if(window.history)window.history.replaceState(null,'',window.location.pathname+window.location.search+'#library/learning-materials');renderLib();var b=document.querySelector('[data-act="vocab-toggle"]');if(b)b.focus({preventScroll:true})}
 function vocabInitialTab(){var h=window.location.hash||'';if(h==='#vocab'||h.indexOf('#library/vocab')===0){LIBT='lm';return 'vocab'}if(h.indexOf('#library/learning-materials')===0){LIBT='lm';return 'library'}return tabsFor()[0][0]}
-function vocabAllowed(){return !!(window.MD_VOCAB_SHELL&&window.MD_VOCAB_SHELL.allowed(U))}
+function vocabAllowed(){return !!(window.MD_VOCAB_SHELL&&(window.MD_VOCAB_SHELL.allowed(U)||vocabReviewAllowed()))}
 function vocabRender(){var el=document.getElementById('v-vocab');if(el&&vocabAllowed())window.MD_VOCAB_SHELL.mount(el,{user:U,db:dbh,demo:DEMO,getUser:function(){return U},isCurrent:function(){return TAB==='library'&&VOCAB_VIEW&&LIBT==='lm'&&vocabAllowed()},onLibraryBack:vocabBack,onView:function(){if(window.history)window.history.replaceState(null,'',window.location.pathname+window.location.search+'#library/vocab')}})}
 function tabsFor(){var tabs=U.adm?[['dash','Dashboard'],['asg','Classes'],['mark','Marking'],['library','Library'],['create','Create'],['prize','Prizes'],['admin','Admin']]:U.role==='teacher'?[['asg','Classes'],['mark','Marking'],['dash','Dashboard'],['library','Library']]:[['library','Home'],['cards','Flashcards'],['errors','Error Notebook'],['ranks','Leaderboard'],['wheel','Lucky Wheel'],['bag','Inventory'],['set','Settings']];return tabs}
 function showTab(t){
