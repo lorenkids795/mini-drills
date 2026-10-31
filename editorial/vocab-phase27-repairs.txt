@@ -1,0 +1,102 @@
+1|a steady rate over several years|a sudden fall in the weekly total|A small charity received ten donations on Monday and over a thousand by Friday. Donations were arriving at an ___.
+2|to an unchanged degree|to a declining degree|At first only one class used the app; by June almost all did. It was becoming ___ popular.
+3|Traffic has been diverted to a different junction.|Traffic is flowing freely through the junction.|Cars filled every lane outside the arena and could barely move. The roads were ___.
+4|the renovation of existing rooms|the replacement of an old building|The firm added a new wing and doubled its floor space. Its ___ created room for fifty more staff.
+5|railway running through a shallow tunnel|railway running deep beneath a city|From her window, Leena watched trains on tracks above the street. Her flat overlooked an ___.
+6|A single path that ends at the station.|Several separate paths with no junctions.|Trails joined at dozens of crossing points throughout the forest. Together they formed a ___.
+7|follow a particular outcome|prevent a particular outcome|If the only bridge closes, drivers must travel an extra twenty kilometres. A closure would ___ much longer journeys.
+8|A member of staff operating the service.|A member of staff servicing the vehicle.|The driver checked the ticket of each ___ before letting them take a seat on the coach.
+9|the country's largest industrial city|the city with the country's oldest port|Parliament and the national government are based in the country's ___, although a larger city lies on the coast.
+11|built in an old-fashioned style|described in a recent history book|The first peace agreement was signed in that room. The museum preserves it as a ___ site.
+12|make a line across the centre|make two rows beside one another|For the game, everyone will stand around the flag at equal distances and ___, with nobody in the middle.
+13|be packed separately from|be placed beside|The parcel will ___ a camera, a charger and two batteries; nothing else will be inside.
+14|built using inexpensive materials|built in an outdated style|The new cupboards fell apart because their joints were loose. Despite being expensive, they were ___.
+15|The space has more seats than people.|The space is busy but has room for everyone.|Visitors could hardly turn around and queues blocked the aisles. The exhibition hall was ___.
+16|a district of inexpensive but adequate housing|a district containing only empty buildings|In a historical account, families shared unsafe, overcrowded urban housing. The writer labelled the district a ___; discuss the limits of this label.
+17|used to transport horses|guided by a rider walking alongside|Before engines reached the farm, horses pulled the loaded carts. Every cart in the old photograph is ___.
+18|a brief inconvenience during a trip|a frightening dream remembered after a trip|Her luggage vanished, the hotel had no room and her return flight was cancelled. She described the holiday as a ___.
+19|a vehicle running on rails in this display|a cart intended only for carrying goods|Two people climbed into the wheeled vehicle and the coachman guided the horse forward. The ___ rolled down the lane.
+20|several but relatively few|limited to one small group|Hundreds of residents wrote in, and more letters arrived each day. The objections were ___.
+21|a record of work already completed|a set of individual travel bookings|The council published a coordinated set of measures for safer school journeys. Residents were invited to discuss the ___.
+22|give final permission for|put into practice immediately|No decision has been made. At tomorrow's meeting, Maya will ___ adding a weekend service for the others to consider.
+23|delay dealing with|identify without settling|The two bookings overlap. Changing the start time should ___ the conflict so that both groups can use the hall.
+24|make an attempt without reaching the goal|change the goal after beginning|The team has trained for months and hopes to ___ in qualifying for the final.
+25|someone who publicly campaigns against the plan|someone who privately supports the plan but stays silent|At every public meeting, Arun speaks in favour of keeping the library open. He has become a ___ for the campaign.
+26|a professional whose main role is surveying buildings|a professional whose main role is auditing accounts|In this England-and-Wales scenario, Priya needs professional legal advice on a property contract. She makes an appointment with a ___.
+27|benefits limited to the physical appearance of streets|changes that affect costs but not community life|The new market offers meeting places and creates local jobs. The report examines these ___ rather than just its appearance.
+28|keep neighbouring places separate|replace one location with another|The two buildings currently have separate entrances. A corridor would ___ their reception areas.
+29|repair the existing homes while residents remain|move residents while leaving the old buildings intact|The historical plan proposed to ___ by removing the district's poor-quality housing. It gave no account of where residents would live afterwards.
+30|Change the times while keeping the same venue.|Change the teachers while keeping the same venue.|The old office lease expires in June. The company will ___ its staff to the building across town.
+31|located on the outer edge of the suburbs|located in a town beyond the urban area|The clinic serves a dense neighbourhood close to the central shopping district. It is an ___ clinic.
+32|recently repaired after years of use|recently acquired but built long ago|The builders finished the school last month. The pupils are moving into a ___ building.
+33|A mainly commercial district in the city centre.|A rural settlement well beyond the urban area.|Most homes in the district lie outside the city centre, and residents commute in each morning. It is a residential ___.
+34|Charge the organisers for preparing their own site.|Reserve the space for a different group.|The venue already has chairs, but the school will ___ tables for the workshop so nobody needs to bring one.
+35|receive more criticism|receive publicity without attracting backing|After the team explained how the scheme would help residents, more people agreed to back it. The proposal began to ___.
+36|keep a design for private discussion only|withdraw a design from official consideration|The board cannot assess an idea it has not received. The architect must ___ for formal review by Friday.
+37|ask for changes without making a final decision|accept subject to minor conditions|The application lacks the required information. The panel may ___ it rather than grant permission.
+38|happen shortly after|happen shortly before|Both events are booked for the same afternoon. The school fair will ___ the town festival.
+39|a report of completed construction|a binding instruction already in force|The designer has suggested a roof for the courtyard, but nobody has voted on it. Her ___ will be discussed next week.
+40|postpone the decision until another meeting|refer the proposal for further consultation|A new motion is ready for a final vote. If enough members support it, the council will ___ the motion today.
+41|work together while remaining separate|divide one organisation into smaller units|The clubs will stop operating separately and become one organisation. They have decided to ___.
+42|take over an institution that already exists|provide short-term help to an existing institution|No training centre exists in the area. The charity intends to ___ one with its own staff and governing board.
+43|Repair an existing room without enlarging it.|Convert an existing room to a different use.|There is currently no shelter at the stop. The team will ___ one from the approved drawings.
+44|allocate money already available|estimate how much a project will cost|The charity has a repair plan but no money to pay for it. It will seek donations to ___.
+45|a limited adjustment to the existing approach|a return to the established design|The designer discarded the usual layout and started from entirely different principles. Her proposal was ___.
+46|despite the particular drawback of|solely because of one reason|The later bus is welcome for several reasons, ___ the help it gives staff finishing evening shifts.
+47|identifying the most important feature|describing the changes without judging them|The reviewer listed several faults and said the changes were poorly planned. Her response was ___ of the proposal.
+48|the publicity staff of the organiser alone|the audience attending the opening|Reporters from newspapers and broadcasters arrived before the doors opened. A desk had been reserved for the ___.
+49|a person formally supporting the plan|a person assessing the plan without taking a position|At the hearing, one resident explained her opposition to the proposed closure. She spoke as an ___.
+50|report a view without supporting it|quote a position they do not defend|The researchers use survey findings to ___ that the service should stay open later.
+51|settle slightly while remaining standing|be taken apart during planned repairs|Cracks spread after a support gave way. Engineers feared the roof would ___.
+52|at the same height as the visitors|alongside the entrance at ground level|The hikers looked up as an aircraft passed ___.
+53|move steadily in a single direction|bend once and remain in that position|Each time a lorry passed, the loose window would ___ back and forth in its frame.
+54|displace animals without a toxic effect|reduce visibility in the water without a toxic effect|The spill contains a substance harmful to living tissue. It could ___ fish in the stream.
+55|A substance supplied to the engine as fuel.|A substance retained inside the engine as lubricant.|The monitor detected an ___ of nitrogen oxides from the engine while it was running.
+56|return only after a problem has ended|be prevented before first appearing|Staff have tried several repairs, yet the fault will not go away. They fear it may ___ for another week.
+57|require someone to do something|encourage someone without removing a barrier|The new lift will ___ people who cannot use the stairs to reach the upper floor.
+58|borrow money without committing it to the project|save money without putting it to productive use|The cooperative expects the new machinery to improve production. It will ___ part of its savings in the project.
+59|at the very beginning|at repeated intervals without a conclusion|The talks lasted six hours. The two sides ___ reached an agreement just before midnight.
+60|The stopping times of the service.|The total distance travelled in a year.|The road by the river is closed, so the bus must follow a different ___ through the town.
+61|directly above|beside at the same height|The upper floor contains the entrance hall. The storage room is on the floor directly ___ it.
+62|Keep the current level of waste unchanged.|Move the waste elsewhere without reducing it.|The organiser checked every stage of the schedule to ___ unnecessary waiting time.
+63|the income generated|the savings achieved|The repairs cost more than expected. The additional ___ had to be covered from the reserve fund.
+64|repair the structure without removing it|move the structure intact to another site|The warehouse is unsafe and cannot be repaired. The council plans to ___ it before the site is reused.
+65|assigned a date only after the postponement|planned for the current revised date|The invitation first gave March as the date; a later notice moved it to July. The event was ___ for March.
+66|the design of a proposed structure|the repair of a completed structure|Workers are still putting up the walls and roof. Visitors cannot enter during ___.
+67|the height of the building's upper floor|the height of a room below the road|There are no steps between the pavement and the front doors. The entrance is at ___.
+68|the result of an action|the material used in an action|Two artists use the same clay but shape it differently. Each has developed a different ___ for making the bowls.
+69|boring underground without opening a trench at the surface|building a tunnel through an existing natural cave|Workers opened a trench, built the tunnel inside it and restored the surface above. The museum calls this method ___.
+70|a broad shallow depression formed naturally|a narrow raised ridge along the ground|The archaeologists dug a long, narrow ___ to examine the buried wall.
+71|for an indefinite period with no reopening planned|at regular intervals as part of normal operation|The gallery is closed for repairs but will reopen on Monday. It is only ___ unavailable.
+72|move the roof to a different position|cover the roof to keep out rain|Without these posts, the canopy would fall. The posts ___ the canopy.
+73|a long structural support made of steel|a curved structural support made of brick|The roof rests on a long wooden support running across the room. The carpenter inspected the ___ for damage.
+74|a straight lintel made from the same masonry units|a curved opening supported by a wooden frame|The entrance is spanned by bricks arranged in a load-bearing curve. The drawing shows a ___.
+75|a mixture of materials with no distinct thicknesses|an empty gap separating two materials|The builders spread sand over the stone, creating a thin ___ before adding the paving slabs.
+76|repair minor damage without building again|build a different structure on a new site|The storm destroyed most of the pavilion. Using the surviving foundations, the club plans to ___ it.
+77|the maintenance of a service not currently running|the planning of a service not yet opened|The service has passed its final checks and can now carry passengers. It is ready to begin ___.
+78|a replacement of the existing railway without added length|an upgrade to the existing stations only|The tracks will continue beyond the present terminus to two new stations. Work on the railway ___ starts next year.
+79|recommend an action without giving permission|record an action that has already occurred|The team must wait for official permission. Only the board can ___ the work to begin.
+80|a train engine driven by an electric motor|a train engine driven by a diesel engine|The restored engine uses heated water vapour to move its wheels. It is a ___.
+81|equipment that stores water without heating it|equipment that turns a wheel using steam|Water is heated into steam inside the engine's ___.
+82|test an idea without putting it into service|replace a new service with the old system|Customers cannot book online yet. Next month, the library will ___ an online booking service.
+83|have an existing component taken out|be inspected without any equipment being added|The vehicle has no warning sensor at present. Before the trial, it must ___ one.
+84|A liquid changing into a gas.|A solid changing into a liquid.|Warm vapour touches the cold pane and droplets begin to appear. The vapour can ___ on the glass.
+85|small solid fragments from damaged metal|drops of oil collected beneath an engine|Strong, harmful gases escaped near the exhaust. The inspector reported ___ in the room.
+86|a vertical passage for carrying service cables|a horizontal passage for moving passengers|The tunnel needs air from the surface. A vertical ___ provides a passage for circulation.
+87|the absence of a bus service|the temporary closure of a road for repairs|Buses crawled along streets packed with cars. Traffic ___ made every journey take longer.
+88|a route finishing at a different point|a route interrupted before it returns to the start|The marked walk returns to the gate without retracing the same path. It forms a ___.
+89|The only option that may be used.|An option known to be quicker in every case.|The lift is unavailable, but the ramp offers an ___ for anyone who cannot use the stairs.
+90|an open area with very little shelter|a large enclosed hall with ample room|The inspection chamber has little room and is enclosed on all sides. The report describes it as a ___.
+91|usually convenient but often failing|occasionally successful but unpredictable|The service works as promised every day, so passengers can depend on it. It is ___.
+92|a device converting movement into electricity|a device storing electricity without producing movement|Electricity makes the model's wheel turn. The wheel is driven by an ___.
+93|a reason for doing something|the outcome of doing something|With the road closed, the boat offers a ___ reaching the island.
+94|store energy in one component|convert movement into a measurement|The belt connects the drive unit to the wheel so that it can ___ between them.
+95|A device that stores electricity for later use.|A device that uses electricity to produce movement.|During the power cut, a portable ___ produced electricity for the emergency lights.
+96|an electrically powered line in a shallow surface cutting|a steam-powered line far beneath the streets|The trains run on electricity in tunnels far below the streets. The system is a ___.
+97|be assembled beside|be replaced by|The exhibition has three sections and no others. It will ___ those three sections.
+98|short in length|low in height|Two people cannot walk side by side between these close walls. The corridor is ___.
+99|The electricity consumed by one component.|The electrical capacity printed on a device.|No electricity was reaching the equipment. The technicians restored the ___ before restarting it.
+100|an ambitious technical proposal not yet completed|an established technology reused without a new accomplishment|The team solved a difficult engineering problem and produced a working system. The result was a major ___.
+101|earn exactly enough to cover costs|earn income that does not cover costs|Sales brought in more than the business spent. For the first time, it was able to ___.
+102|agreed in principle but not yet operating|withdrawn after a period of use|Staff are already using the new booking arrangements. The system is now ___.
+103|at a much later stage|before the earlier event|The doors opened at nine, and the first class began ten minutes later. The class started ___.

@@ -1,17 +1,17 @@
 # Vocab QA status
 
-**BLOCKED** · QA PASS · round 2/3 · full
+**BLOCKED** · QA PASS · round 3/3 · full
 
-- Timestamp (Asia/Saigon): 2026-10-30 20:27:01 GMT+7
-- UTC: 2026-10-30T13:27:01.829Z
-- Branch/SHA: `feature/vocab-lab` / `b286c3d71dc7718578fff3a03318a1b43e7b65fd`
-- Working source fingerprint: `4f3ad3f7565730353d48676118ff173e6c096cca0d54386f85714024ce60dd77` (dirty working tree)
-- Command: `node tools/vocab-qa-runner.cjs --session teacher-review-ux --round 2 --changes-file qa-artifacts/teacher-review-ux/round2-changes.json`
-- Session: `teacher-review-ux`
+- Timestamp (Asia/Saigon): 2026-10-31 10:03:35 GMT+7
+- UTC: 2026-10-31T03:03:35.023Z
+- Branch/SHA: `feature/vocab-lab` / `8ca2aebbb5f7c0f332fdde1507b81bdb3b9c00d1`
+- Working source fingerprint: `ea332d93bd6a679f16f3b8226df3386feae06ae011653d521efc89cb866768da` (dirty working tree)
+- Command: `node tools/vocab-qa-runner.cjs --session phase27-content-audit --round 3 --changes-file qa-artifacts/phase27-content-audit/round3-changes.json`
+- Session: `phase27-content-audit`
 - Environment: Node v24.22.1, win32/x64, Playwright 1.62.1, browser msedge
-- Tests: 105 Node tests + 244 core assertions; 0 failed commands
-- Artifact directory: `qa-artifacts/teacher-review-ux/round-2-full` (437 screenshots)
-- Static manifest: `33afa61e799e7ae60699ea6ecb0b8eed605a8dbc28f5e8afc392c5369744b3d9`
+- Tests: 110 Node tests + 244 core assertions; 0 failed commands
+- Artifact directory: `qa-artifacts/phase27-content-audit/round-3-full` (443 screenshots)
+- Static manifest: `a969910c864542372ae416d498d0ca316acc4a9af77c4ad810aeef9c1970d906`
 
 ## Coverage
 
@@ -83,7 +83,7 @@
 
 ## Changes in this round
 
-- Confirmed outside-control discard cleared in-memory draft but left stale note in DOM; clean outside clicks also cleared edit buffer. Only guard dirty state and rerender after confirmed discard.; files: vocab-editorial.js, tests/vocab-editorial.browser.js; reproduction: Focused outside-repro failed: expected empty note after discard, actual Unsaved outside navigation note. Added cancel/confirm and clean outside-control assertions to all six browser cases.
+- Environment interruption: requested 30-second wait returned after 2306 seconds; Mission was marked FAIL with empty log during the gap. Tool session 32259 subsequently disappeared; no QA runner process or completed round-2 report remains. Round 2 is INCOMPLETE, not PASS.; files: ; reproduction: Preserve round-2 artifacts. Run focused Mission and final round 3 while requesting Windows SYSTEM_REQUIRED only for the command lifetime; do not alter app code, tests or 480-second suite timeout.
 
 ## Next action
 

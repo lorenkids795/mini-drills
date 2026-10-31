@@ -4,6 +4,7 @@
 var phases=['briefing','case','investigate','decode','morph','final','debrief'];
 function copy(x){return JSON.parse(JSON.stringify(x))}
 function normal(x){return String(x||'').toLowerCase().replace(/[’‘]/g,"'").replace(/[.,!?;:]/g,'').replace(/\s+/g,' ').trim()}
+function normalStrict(x){return String(x||'').normalize('NFKC').toLowerCase().replace(/[’‘]/g,"'").replace(/\s+/g,' ').trim()}
 function route(p){if(!p)return null;if(p.status==='verified_for_current_task')return 'bypass';if(p.status==='needs_practice'||p.status==='unsure')return 'strengthen';if(p.status==='new')return 'discover';return 'light_check'}
 function formKey(q){return q.senseId+'::'+q.form}
 function task(m,t,phase,q,round){var o=copy(q);o.id=m.id+'@'+m.version+':'+phase+':'+t.senseId+(round?':'+round:'');o.senseId=t.senseId;o.term=t.term;o.phase=phase;return o}
@@ -40,7 +41,7 @@ function apply(before,a){var s=copy(before),q=current(s),r;if(a.id&&s.lastOperat
   else if(a.type==='reveal'){r.hinted=true;settle(s,q,r,false)}
   else{
    var given=a.value,correct;if(q.options){if(typeof given!=='number'||given%1||given<0||given>=q.options.length||r.wrong.indexOf(given)>=0)throw Error('Choose an available option');correct=given===q.answer}
-   else{if(q.kind==='reconstruct')given=r.draft.map(function(i){return q.tokens[i]}).join(' ');if(!normal(given))throw Error('Write an answer first.');correct=q.answers.some(function(x){return normal(x)===normal(given)})}
+   else{if(q.kind==='reconstruct')given=r.draft.map(function(i){return q.tokens[i]}).join(' ');if(!normal(given))throw Error('Write an answer first.');correct=q.answers.some(function(x){var norm=q.strictVariants?normalStrict:normal;return norm(x)===norm(given)})}
    r.tries++;if(correct)settle(s,q,r,true);else{r.wrong.push(given);if(r.tries>=2)settle(s,q,r,false)}
   }
   s.attempts.push({id:s.runId+':'+(s.attempts.length+1),taskId:q.id,contentVersion:s.contentVersion,senseId:q.senseId,form:q.form||null,round:q.round||null,action:a.type,answer:a.type==='answer'?(q.kind==='reconstruct'?r.draft.map(function(i){return q.tokens[i]}).join(' '):a.value):null,tries:r.tries,independent:!!r.independent,assisted:r.hinted||!!q.guided||r.tries>1,at:a.at||0});
