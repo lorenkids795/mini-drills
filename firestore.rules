@@ -3,9 +3,11 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // Logins come from the /api Worker, which signs a Firebase custom token with
-    // claims: em = email, role = "student" | "teacher".
+    // claims: em = email, role = "student" | "teacher" | "assistant".
+    // A Homework Assistant ("assistant") gets NOTHING here: no read, no write. Everything it may see (its own classes only)
+    // comes from the /api/hwa/* routes, which check the classes the admin gave on every call.
     function signedIn() {
-      return request.auth != null && request.auth.token.em is string;
+      return request.auth != null && request.auth.token.em is string && request.auth.token.get('role', '') != 'assistant';
     }
     function me() {
       return request.auth.token.em.lower();

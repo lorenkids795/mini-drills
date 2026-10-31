@@ -14,19 +14,20 @@ const stu = (em) => { const B = boot({ hooks: HOOKS, user: { name: 'Lan', email:
 const tea = () => { const B = boot({ hooks: HOOKS }); B.T.setRoster(ROSTER); return B; };
 
 (async () => {
-  await t('form: Basics (type, name, dates) → content → footer "Save assignment"; Mini Drills shows the exercise picker; External shows link / source / instructions instead', () => {
+  await t('form: Assignment details → Exercises from Library + External tasks (both addable, no type switch) → footer "Save assignment"', () => {
     const B = tea(); B.T.openForm('7h30'); B.T.AG.cur = '7h30'; let h = B.T.formHTML();
-    assert.ok(/aria-label="Assignment type"/.test(h) && /data-v="mini" aria-pressed="true"/.test(h) && h.includes('>Exercises<') && h.includes('class="pk"') && h.includes('>Save assignment<') && !h.includes('id="fLink"'));
-    assert.ok(h.includes('Nothing selected yet') && !/0 selected/.test(h), 'one empty message, no "0 selected"');
-    B.press({ act: 'asg-type', v: 'external' }); h = B.T.formHTML();
-    assert.ok(/data-v="external" aria-pressed="true"/.test(h) && h.includes('id="fLink"') && h.includes('id="fNote"') && h.includes('id="fSrc"') && !h.includes('class="pk"') && /screenshot/.test(h));
+    assert.ok(!/aria-label="Assignment type"|data-act="asg-type"/.test(h), 'no either / or switch');
+    assert.ok(h.includes('>Assignment details<') && h.includes('>Exercises from Library<') && h.includes('>External tasks<') && h.includes('class="pk"') && h.includes('data-act="ax-add"') && h.includes('>Save assignment<') && !h.includes('id="fXl0"'));
+    assert.ok(h.includes('>Nothing added yet<'), 'one empty summary in the footer');
+    B.T.renderAsg(); B.press({ act: 'ax-add' }); h = B.T.formHTML();
+    assert.ok(h.includes('id="fXl0"') && h.includes('id="fXs0"') && h.includes('id="fXn0"') && h.includes('class="pk"') && /screenshot/.test(h), 'the external task is added next to the picker, not instead of it');
   });
-  await t('save External: link required (http/https only); saved record = type external, ex [], link, note, source', () => {
-    const B = tea(); B.T.AG.cur = '7h30'; B.T.openForm('7h30'); B.T.AG.form.type = 'external'; B.T.renderAsg();
-    B.el('fSd').value = '2026-11-01'; B.el('fDd').value = '2026-11-08'; B.el('fDt').value = '22:00'; B.el('fNm').value = 'Form 1'; B.el('fLink').value = 'javascript:alert(1)'; B.el('fNote').value = 'Take a screenshot.'; B.el('fSrc').value = 'Google Form';
-    B.T.saveAsg(); assert.ok(/starting with https/.test(B.el('asgMsg').textContent) && !B.T.localAsg.length, 'unsafe link refused');
-    B.el('fLink').value = 'https://forms.example.com/x'; B.T.saveAsg(); const r = B.T.localAsg[0];
-    assert.ok(r && r.type === 'external' && r.link === 'https://forms.example.com/x' && r.note === 'Take a screenshot.' && r.src === 'Google Form' && r.ex.length === 0 && r.cls === '7h30');
+  await t('save External only: link required (http/https only); saved record = ext [{x1, link, note, source}], ex [], type external', () => {
+    const B = tea(); B.T.AG.cur = '7h30'; B.T.openForm('7h30'); B.T.renderAsg(); B.press({ act: 'ax-add' });
+    B.el('fSd').value = '2026-11-01'; B.el('fDd').value = '2026-11-08'; B.el('fDt').value = '22:00'; B.el('fNm').value = 'Form 1'; B.el('fXl0').value = 'javascript:alert(1)'; B.el('fXn0').value = 'Take a screenshot.'; B.el('fXs0').value = 'Google Form';
+    B.T.saveAsg(); assert.ok(/External task 1: paste the full link, starting with https/.test(B.el('asgMsg').textContent) && !B.T.localAsg.length, 'unsafe link refused');
+    B.el('fXl0').value = 'https://forms.example.com/x'; B.T.saveAsg(); const r = B.T.localAsg[0];
+    assert.ok(r && r.type === 'external' && r.ext.length === 1 && r.ext[0].id === 'x1' && r.ext[0].link === 'https://forms.example.com/x' && r.ext[0].note === 'Take a screenshot.' && r.ext[0].src === 'Google Form' && r.ex.length === 0 && r.cls === '7h30' && r.link === 'https://forms.example.com/x');
   });
   await t('old assignments (no type) still work as Mini Drills; a saved Mini Drills one gets type mini', () => {
     const B = tea(); B.T.setAsg([{ id: 'o1', cls: '7h30', start: now - DAY, due: now + DAY, ex: ['l1'] }]); const a = B.T.allAsgs().find((x) => x.id === 'o1');

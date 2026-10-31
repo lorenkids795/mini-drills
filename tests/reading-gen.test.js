@@ -109,7 +109,7 @@ const LONG = (() => { const w = 'Laughter is one of the oldest signals humans sh
     assert.strictEqual(A.seen.filter((b) => b.level === 'easy' && b.part === 'output').length, 2, 'one automatic retry');
     assert.strictEqual(st(A, 'easy', 'output'), 'err'); assert.strictEqual(st(A, 'easy', 'deep'), 'ok'); assert.strictEqual(st(A, 'hard', 'output'), 'ok', 'Hard still written');
     assert.ok(A.B.T.cpValid(), 'Medium is ready: Add works (Easy falls back to Medium)'); assert.ok(!A.B.T.rdLevels().easy);
-    const h = A.B.T.rdLvHTML(); assert.ok(/data-act="rd-retry"/.test(h) && /Easy · Paraphrases \+ Output: .*cut off/.test(h) && !/shorter/i.test(h));
+    const h = A.B.T.rdRvHTML(); assert.ok(!/Easy/.test(A.B.T.rdLvHTML()), 'version status only in the workflow panel'); assert.ok(/data-act="rd-retry"/.test(h) && /Easy · Paraphrases \+ Output: .*cut off/.test(h) && !/shorter/i.test(h));
     assert.ok(/Not finished: Easy · Paraphrases \+ Output/.test(A.B.T.RD.msg));
     const before = A.seen.length; cut = false; A.B.T.rdRetry(); for (let i = 0; i < 20 && A.B.T.RD.busy; i++) await A.B.flush();
     assert.deepStrictEqual(A.seen.slice(before).map((b) => b.level + ':' + b.part), ['easy:output']);
@@ -121,7 +121,7 @@ const LONG = (() => { const w = 'Laughter is one of the oldest signals humans sh
       await run(A);
       assert.strictEqual(st(A, 'medium', 'output'), 'err'); assert.strictEqual(st(A, 'medium', 'deep'), 'ok');
       assert.ok(!A.B.T.cpValid(), 'Add off'); assert.ok(A.seen.every((b) => b.level === 'medium'), 'Easy / Hard wait for Medium');
-      assert.ok(new RegExp('Medium · Paraphrases \\+ Output: Paraphrases: &quot;pairs&quot; has ' + n + ' item').test(A.B.T.rdLvHTML()), A.B.T.rdLvHTML());
+      assert.ok(new RegExp('Paraphrases \\+ Output</span> Paraphrases: &quot;pairs&quot; has ' + n + ' item').test(A.B.T.rdLvHTML() + A.B.T.rdRvHTML()), A.B.T.rdLvHTML() + A.B.T.rdRvHTML());
     }
     const A = app((part, level, k, g) => { if (part !== 'output') return null; while (g.pairs.length < 7) g.pairs.push(clone(g.pairs[0])); return { status: 200, body: { out: g } }; });
     await run(A); assert.ok(A.B.T.cpValid()); assert.strictEqual(A.B.T.parsed.rlesson.pairs.length, 6); assert.ok(A.B.T.parsed.rwarn.some((w) => /only the first 6/.test(w)));

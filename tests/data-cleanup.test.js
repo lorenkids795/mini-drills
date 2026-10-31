@@ -150,7 +150,7 @@ const world = () => ({
     assert.ok(!/class="rmprog"/.test(h) && !/Selected excerpts|lsbar/.test(h) && !h.includes('id="dmBar"'), 'no long bar under the title; demo only inside the settings panel');
     // Option A: two cards + dock built from the real questions of this step
     const ids = h.match(/data-rmq="[a-z]\d+"/g) || [], qn = h.match(/class="rmqn[^"]*" data-act="rm-qn" data-q="[a-z]\d+"/g) || [];
-    assert.ok(/<section class="rmpsg"[^>]*><div class="rmph"><h3>Reading passage<\/h3>/.test(h) && /<section class="rmqs"[^>]*><div class="rmph"><h3>Questions 1–\d+<\/h3>/.test(h));
+    assert.ok(/<section class="rmpsg"[^>]*><h3 class="sr">Reading passage<\/h3>/.test(h) && /<section class="rmqs"[^>]*><div class="rmph"><h3>Questions 1–\d+<\/h3>/.test(h));
     assert.ok(qn.length > 0 && qn.length === ids.length, 'one navigator button per real question (' + qn.length + ' / ' + ids.length + ')');
     assert.ok(new RegExp('<b id="rmDCnt">0 / ' + qn.length + ' answered</b>').test(h) && /<span class="rmrng">Q1–\d+<\/span>/.test(h) && /data-act="rm-check"/.test(h));
     B.T.RM.k[0] = 'protected'; assert.ok(/1 \/ \d+ answered/.test(B.T.rmDockHTML('')) && /class="rmqn a" data-act="rm-qn" data-q="k0"/.test(B.T.rmDockHTML('')), 'answered state from the real answers');

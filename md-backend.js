@@ -210,7 +210,7 @@
             var em = String(t.claims.em || '').toLowerCase();
             if (!em) { fb.auth().signOut(); return; }
             try { localStorage.setItem('md-email', em); } catch (e) {}
-            window.MD_USER = { name: t.claims.nm || '', email: em, role: t.claims.role === 'teacher' ? 'teacher' : 'student', adm: t.claims.adm === true };
+            window.MD_USER = { name: t.claims.nm || '', email: em, role: t.claims.role === 'teacher' || t.claims.role === 'assistant' ? t.claims.role : 'student', /* Homework Assistant keeps its own role (never the student UI) */ adm: t.claims.adm === true };
             var rf = document.getElementById('mdReset');
             if (rf && window.MD_USER.adm) rf.hidden = true;
             resolveDb(fb.firestore());

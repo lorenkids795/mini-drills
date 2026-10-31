@@ -662,28 +662,44 @@ async function hwaStudents(env, classes) {
   const rows = (await fsList(env, 'roster')).filter((r) => r.role !== 'teacher' && r.tester !== true && classes.indexOf(r.cls) >= 0 && !removed[normEmail(r.email || r.id)]);
   return Promise.all(rows.map(async (r) => { const em = normEmail(r.email || r.id); return { em, key: await hwaKey(em), name: r.name || '', cls: r.cls }; }));
 }
+// external tasks of an assignment: ext[{id, link, src, note}]; an old type 'external' record = one task 'x1' (link / src / note at the top level)
+function hwaExt(a) {
+  const L = Array.isArray(a.ext) ? a.ext : (a.type === 'external' ? [{ id: 'x1', link: a.link, src: a.src, note: a.note }] : []);
+  const seen = {};
+  return L.map((x, i) => { x = x || {}; let id = /^x\d{1,3}$/.test(String(x.id || '')) && !seen[x.id] ? String(x.id) : 'x' + (i + 1); seen[id] = 1;
+    return { id, link: String(x.link || ''), src: String(x.src || ''), note: String(x.note || '') }; });
+}
+// screenshots of one hwdone record by task id (old records: "shot" = task x1)
+function hwaShots(hw) {
+  const o = {};
+  const ok = (x) => !!(x && (x.url || Number(x.ts)));
+  if (hw && ok(hw.shot)) o.x1 = hw.shot;
+  if (hw && hw.shots && typeof hw.shots === 'object') Object.keys(hw.shots).forEach((k) => { if (ok(hw.shots[k])) o[k] = hw.shots[k]; });
+  return o;
+}
 function hwaNormAsg(a) {
   const x = Object.assign({}, a);
   if (x.start == null && x.weekStart) { const s = new Date(x.weekStart + 'T00:00:00'); x.start = s.getTime(); x.due = s.getTime() + 6 * 864e5 + 22 * 3600e3; }
   if (!Array.isArray(x.ex)) x.ex = [];
+  x.ext = hwaExt(x);
   return x;
 }
 const PASS_DAYS = { day: 1, week: 7 };
-// status of one student for one assignment (same rules as the app): extension = late pass; Mini Drills = every exercise of the
-// assignment has an attempt since the send date; external = the screenshot in hwdone. done | late | missing | pending (+ at)
+// status of one student for one assignment (same rules as the app): extension = late pass. The assignment is submitted only when
+// EVERY part is: each Library exercise has an attempt since the send date AND each external task has its screenshot in hwdone
+// (a screenshot = submitted, never "correct"). done | late | missing | pending | none (+ at = when the last part came in)
 function hwaStatus(a, atts, hw, pass, now) {
   const due = a.due + (pass && PASS_DAYS[pass.kind] ? PASS_DAYS[pass.kind] * 864e5 : 0);
-  let at = 0;
-  if (a.type === 'external') { at = hw && hw.shot && Number(hw.shot.ts) ? Number(hw.shot.ts) : 0; }
-  else {
-    const ex = a.ex || [];
-    if (!ex.length) return { st: 'none', due };
-    for (const id of ex) {
-      const ts = atts.filter((t) => t.ex === id && t.ts >= a.start).map((t) => t.ts).sort((x, y) => x - y)[0];
-      if (!ts) { at = 0; break; }
-      at = Math.max(at, ts);
-    }
+  const ex = a.ex || [], X = Array.isArray(a.ext) ? a.ext : hwaExt(a), sh = hwaShots(hw);
+  if (!ex.length && !X.length) return { st: 'none', due };
+  let at = 0, ok = true;
+  for (const id of ex) {
+    const ts = atts.filter((t) => t.ex === id && t.ts >= a.start).map((t) => t.ts).sort((x, y) => x - y)[0];
+    if (!ts) { ok = false; break; }
+    at = Math.max(at, ts);
   }
+  if (ok) for (const x of X) { const t = sh[x.id] && Number(sh[x.id].ts); if (!t) { ok = false; break; } at = Math.max(at, t); }
+  if (!ok) at = 0;
   if (at) return { st: at <= due ? 'done' : 'late', at, due, ext: !!pass };
   return { st: now > due ? 'missing' : 'pending', due, ext: !!pass };
 }
@@ -707,7 +723,8 @@ async function hwaData(env, request, body) {
     const m = {};
     stu.filter((s) => s.cls === a.cls).forEach((s) => {
       const r = a.start > now ? { st: 'upcoming', due: a.due } : hwaStatus(a, atts[s.em] || [], hw[s.em], ps[s.em], now);
-      if (a.type === 'external' && hw[s.em] && hw[s.em].shot && /^\/api\/image\/[A-Za-z0-9_-]{22}$/.test(String(hw[s.em].shot.url || ''))) r.shot = String(hw[s.em].shot.url);
+      const sh = hwaShots(hw[s.em]), us = a.ext.map((x) => sh[x.id] && String(sh[x.id].url || '')).filter((u) => /^\/api\/image\/[A-Za-z0-9_-]{22}$/.test(u || ''));
+      if (us.length) { r.shots = us; r.shot = us[0]; }
       m[s.key] = r;
     });
     status[a.id] = m;
@@ -717,7 +734,7 @@ async function hwaData(env, request, body) {
   return json({
     me: { name: sc.name }, classes: sc.classes, now, from,
     students: stu.map((s) => ({ key: s.key, name: s.name, cls: s.cls })),
-    assignments: asg.map((a) => ({ id: a.id, cls: a.cls, name: a.name || '', start: a.start, due: a.due, type: a.type === 'external' ? 'external' : 'mini', ex: a.ex, link: a.link || '', src: a.src || '', note: a.note || '' })),
+    assignments: asg.map((a) => ({ id: a.id, cls: a.cls, name: a.name || '', start: a.start, due: a.due, type: a.ext.length ? (a.ex.length ? 'mixed' : 'external') : 'mini', ex: a.ex, ext: a.ext, link: a.link || '', src: a.src || '', note: a.note || '' })),
     status, notes,
   });
 }
@@ -740,15 +757,22 @@ async function hwaAsg(env, request, body) {
   const start = Number(r.start), due = Number(r.due);
   if (!(start > 0 && due > start)) return fail('The deadline must be after the send date.');
   const rec = { cls, name: String(r.name || '').trim().slice(0, 80), start, due, ts: Date.now(), by: sc.who.em };
-  if (r.type === 'external') {
-    const link = String(r.link || '').trim();
-    if (!/^https?:\/\/[^\s<>"']+$/i.test(link)) return fail('Paste the full link, starting with https://');
-    Object.assign(rec, { type: 'external', ex: [], link: link.slice(0, 500), src: String(r.src || '').trim().slice(0, 40), note: String(r.note || '').trim().slice(0, 600) });
-  } else {
-    const ex = (Array.isArray(r.ex) ? r.ex : []).map((x) => String(x || '')).filter((x) => /^[A-Za-z0-9_-]{1,60}$/.test(x)).slice(0, 40);
-    if (!ex.length) return fail('Tick at least one exercise.');
-    Object.assign(rec, { type: 'mini', ex });
+  // one assignment = Library exercises (ex) and / or external tasks (ext[{id, link, src, note}]); old clients send type 'external' + link
+  const ex = (Array.isArray(r.ex) ? r.ex : []).map((x) => String(x || '')).filter((x) => /^[A-Za-z0-9_-]{1,60}$/.test(x)).slice(0, 40);
+  const extIn = Array.isArray(r.ext) ? r.ext : (r.type === 'external' ? [{ id: 'x1', link: r.link, src: r.src, note: r.note }] : []);
+  if (extIn.length > 10) return fail('At most 10 external tasks in one assignment.');
+  const ext = [], used = {};
+  for (let i = 0; i < extIn.length; i++) {
+    const x = extIn[i] || {}, link = String(x.link || '').trim();
+    if (!/^https?:\/\/[^\s<>"']+$/i.test(link)) return fail('External task ' + (i + 1) + ': paste the full link, starting with https://');
+    let xid = /^x\d{1,3}$/.test(String(x.id || '')) ? String(x.id) : 'x' + (i + 1);
+    while (used[xid]) xid = 'x' + (Number(xid.slice(1)) + 1);
+    used[xid] = 1;
+    ext.push({ id: xid, link: link.slice(0, 500), src: String(x.src || '').trim().slice(0, 40), note: String(x.note || '').trim().slice(0, 600) });
   }
+  if (!ex.length && !ext.length) return fail('Add at least one exercise from the Library or one external task.');
+  Object.assign(rec, { type: ext.length ? (ex.length ? 'mixed' : 'external') : 'mini', ex, ext });
+  if (ext.length) Object.assign(rec, { link: ext[0].link, src: ext[0].src, note: ext[0].note });
   const nid = id || slug(cls) + '_' + Date.now();
   await fsPut(env, 'assignments', nid, rec);
   return json({ ok: true, id: nid });
@@ -1098,7 +1122,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-10-30b';
+const API_VERSION = '2026-10-31a';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);

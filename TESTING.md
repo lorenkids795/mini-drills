@@ -588,5 +588,25 @@ Deploy `index.html` + `functions/` (Admin › My account › Diagnostics: "app 2
 6. [ ] Students to watch: mở một bạn → đổi Follow-up + lưu ghi chú → Refresh vẫn còn.
 7. [ ] Admin bỏ tick một lớp (Classes → Save classes) → trợ lý bấm Refresh: lớp đó biến mất ngay. Pause → trợ lý bị đăng xuất trong 10 phút; Remove → không đăng nhập được.
 
+## Sửa lỗi trợ lý / Create Reading / bài Reading (10/2026)
+Deploy `index.html` + `md-backend.js` + **dán lại `firestore.rules`** vào Firebase Console (Diagnostics: "app 2026-10-31a").
+1. [ ] Trợ lý đăng nhập bằng Teacher sign in → màn hình "Homework & Student Progress", không thấy Home/Flashcards/Leaderboard của học sinh. Chưa được giao lớp → "No classes yet".
+2. [ ] Học sinh, giáo viên, admin, tester đăng nhập vẫn vào đúng màn hình cũ.
+3. [ ] Admin › Users: ô Class của Cherry / Tester là "—"; bộ lọc Class vẫn lọc được.
+4. [ ] Create › Reading › Generate → khi Medium chưa duyệt bấm Student View Preview: thấy bài đọc + câu hỏi làm được; bấm lại Summary View: không mất gì.
+5. [ ] Approve Medium → panel chỉ còn một nút "Generate Easy & Hard", ô góp ý gập vào "Edit approved Medium"; xong Easy/Hard → Preview level Easy/Medium/Hard đổi nội dung bài.
+6. [ ] Hide editor: panel gọn (trạng thái + một nút), preview rộng.
+7. [ ] Bài Reading (học sinh và preview): không còn tiêu đề "Reading passage" to; List of Headings không bị bóp hẹp; câu hỏi không bọc từng khung; ô chọn/ô điền vẫn rõ; thử sáng/tối, 390px.
+
+## Bài giao kết hợp Library + bài ngoài (10/2026)
+Deploy `index.html` + `functions/` (Diagnostics: "app 2026-10-31b · server 2026-10-31a").
+1. [ ] Classes › Create assignment: không còn nút "Mini Drills | External link"; có 2 mục Exercises from Library và External tasks. Lưu được: chỉ bài Library; chỉ link; Library + 1 link; nhiều bài + nhiều link. Không thêm gì → báo lỗi, không mất chữ đã gõ.
+2. [ ] Lọc Skill = Listening → "Select all N shown" chỉ chọn bài Listening; bài Reading đã chọn vẫn còn. "Remove all selected" hỏi lại trước khi xóa.
+3. [ ] Sửa một bài kết hợp: xóa 1 link, thêm 1 link, bỏ 1 bài → Save: phần còn lại giữ nguyên.
+4. [ ] Học sinh: một thẻ, 2 mục; làm bài Library như cũ; mỗi link có nút upload riêng. Chỉ upload ảnh → chưa "All done"; chỉ làm Library + I'm done → "Library exercises done ✓ Upload…"; đủ cả hai → "All done ✓".
+5. [ ] Giáo viên mở bài: bảng có cột bài + cột Link (✓ mở ảnh) + Complete. Bài External cũ và bài Library cũ vẫn hiện, sửa, lưu được.
+6. [ ] Trợ lý: tạo bài kết hợp cho lớp của mình; Missing homework chỉ tính "đã nộp" khi đủ mọi phần.
+7. [ ] 390px và dark mode: form không tràn ngang, chân form (Cancel / Save) luôn thấy, không có khung cuộn lồng.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

@@ -568,9 +568,15 @@ td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:now
 .cpslhd{display:flex;align-items:center;justify-content:space-between;gap:8px 16px;flex-wrap:wrap}.cpslhd h3{margin:0}#cpAddTop .cpaddbar{margin-top:0}#cpAddTop .cpok{margin:6px 0 0}
 .cpvhd{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.cpvhd h3{margin:0}.cpvact{display:flex;gap:6px;flex-wrap:wrap}
 .create.cpwide{grid-template-columns:minmax(0,1fr)}.create.cpwide>#cpEditor{display:none}
+.rdrv .rdnote{margin:8px 0 0;color:var(--muted);font-size:.9rem;line-height:1.6}.rdrv .rdnote.warn{color:var(--warn)}
+.rdrv .rdmain{margin-top:10px}.rdrv.cmp{padding-bottom:10px}.rdrv.cmp .rdflow{margin-bottom:4px}
+.rdvers{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.rdv{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;padding:6px 0;border-bottom:1px solid var(--line);font-size:.92rem}.rdv:last-child{border-bottom:0}
+.rdv b{min-width:5.5em}.rdv .rdperr{flex-basis:100%}.rdv.ok span{color:var(--good)}.rdv.err span{color:var(--bad)}.rdv.old span{color:var(--warn)}.rdv.busy span,.rdv.none span{color:var(--muted)}
+.rdfbd{margin-top:12px}.rdfbd>summary{cursor:pointer;font-weight:600;min-height:44px;display:flex;align-items:center}.rdundo{margin-top:8px}
 .cplv{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;margin:8px 0}.cplv .seg{margin:0}.cplv .seg button[aria-pressed="true"]{background:var(--nav);color:var(--nav-ink)}
 .rmhd2{display:flex;align-items:center;justify-content:space-between;gap:8px 14px;flex-wrap:wrap;width:100%}
-.rmhl{display:flex;align-items:center;gap:8px;min-width:0;flex:1 1 220px}.rmht{min-width:0}.rmht h2{margin:0;font-size:1.15rem;line-height:1.3;overflow-wrap:anywhere}.rmht p{margin:0;font-size:.84rem;color:var(--muted)}
+.rmhd2>.rmhl{display:flex;align-items:center;gap:8px;min-width:0;flex:1 1 220px}.rmht{min-width:0}.rmht h2{margin:0;font-size:1.15rem;line-height:1.3;overflow-wrap:anywhere}.rmht p{margin:0;font-size:.84rem;color:var(--muted)}
 .rmback{flex:none;width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--line-2);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer}
 .rmstepsel{height:44px;padding:0 34px 0 14px;border:1px solid var(--line-2);border-radius:12px;background:var(--surface) var(--sel-arrow) no-repeat right 12px center;-webkit-appearance:none;appearance:none;color:var(--ink);font:inherit;font-size:.9rem;font-weight:600;max-width:100%}
 .rmgear{display:grid;place-items:center}
@@ -663,7 +669,13 @@ button.lsstep{background:none;font:inherit;font-size:.8rem;cursor:pointer}button
 .afgrid{display:grid;grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr));gap:12px}.afgrid .field{margin:0;min-width:0}.afgrid input,.afgrid textarea{width:100%}
 .afext{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}.afext .afnm:last-child{grid-column:1/-1}.afhelp{margin:0;font-size:.88rem}
 .aftype{align-self:flex-start}
-.afsec .pk{margin:0}.afsec .pklist{max-height:300px;padding:8px 14px;border-radius:10px;scrollbar-width:thin}.afsec .pklist .tl{display:flex;gap:8px;align-items:center;min-height:36px}
+.afc{border-top:1px solid var(--line);padding-top:16px}.afch{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px}.afch .btn{margin-left:auto}.afcn{font-size:.85rem}
+.pksum{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}.pksum .chips:empty{display:none}.pkclr{font-size:.85rem;min-height:36px}
+.pkbulk{display:flex;flex-wrap:wrap;gap:6px;align-self:end}.pkg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0 16px}
+.afxt{display:flex;flex-direction:column;gap:8px;padding:4px 0 4px 14px;border-left:3px solid var(--line-strong)}.afxth{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.affoot{position:sticky;bottom:0;z-index:3;background:var(--surface);margin:0 -20px -18px;padding:12px 20px;border-radius:0 0 14px 14px}
+.hwsh{margin:14px 0 4px;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}.hwprog{margin:6px 0 0;font-size:.88rem}.hwtask+.hwtask{border-top:1px solid var(--line);margin-top:8px;padding-top:6px}
+.afsec .pk{margin:0}.afsec .pklist{max-height:none;overflow:visible;border:0;background:none;padding:0}.afsec .pklist .tl{display:flex;gap:8px;align-items:center;min-height:36px}
 .affoot{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:14px}.affoot .afbtns{margin-left:auto;display:flex;gap:8px}
 @media (max-width:820px){.afgrid{grid-template-columns:1fr 1fr}.afgrid .afnm{grid-column:1/-1}}
 @media (max-width:480px){.afgrid,.afext{grid-template-columns:1fr}.affoot .afbtns{margin-left:0;width:100%}.affoot .afbtns .btn{flex:1}}
@@ -1282,7 +1294,15 @@ mark.wch.act,mark.wch:focus-visible{outline:2px solid var(--accent);outline-offs
   .spmx .nr{grid-template-columns:minmax(0,1fr)}.spmx .skc{width:100%}}
 .pzt .pzh td{background:var(--bg);font-size:.84rem}.pzt .pzw{width:80px;height:34px;box-sizing:border-box;border:1px solid var(--line-2);border-radius:8px;padding:0 6px;background:var(--surface);color:var(--ink);font-family:var(--mono)}
 .pill.tst{background:#f3e3c2;color:#6b4710;border-color:#d9b46f}
-.rmgrp{border:1px solid var(--line);border-radius:14px;padding:4px 14px 14px;margin:0 0 14px;background:var(--surface)}
+.rmgrp{padding:2px 0 18px;margin:0 0 6px}.rmgrp+.rmgrp{border-top:1px solid var(--line);padding-top:6px}
+/* calm reading workspace: one frame per pane (passage | questions), groups split by a thin line, questions are plain rows; form controls keep their borders */
+.pane.rm{border-color:transparent}
+.rm #rmBody .lsc{border:0;border-radius:0;background:none;padding:6px 0 10px;margin:0 0 10px}
+.rm #rmBody .lsc.rmhrow{padding:4px 0}
+.rmhlb{background:var(--bg);border-radius:10px;padding:10px 14px;margin:8px 0 12px}.rmhlb .rmlbl{margin:0 0 4px;font-weight:700}
+.rmhlb .rmhlist li{display:grid;grid-template-columns:2.6em minmax(0,1fr);gap:8px;padding:.3rem 0;border-bottom:0;line-height:1.5}
+.rmpsgend{margin:6px 0 0;font-size:.88rem}.rmpsgend .rmpsgt{min-height:44px;margin:0}
+.rmdeep>.rmpsg .rmpb{padding-top:16px}
 .rmgrp>.lsh:first-child{margin-top:12px}
 .rmpsg .rmp{margin-bottom:.9em}
 .rmpsg,.rmqs{min-height:0}
@@ -2004,13 +2024,22 @@ function doneLabel(e,d){return e.kind==='writing'||e.kind==='speaking'?(d.band!=
 /* ---------- Assignments ---------- */
 var slug=function(s){return String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')};
 var DEMO_ASG=['l1','l2','r1','r3','w1','s1'];
-function normAsg(a){if(a.start==null&&a.weekStart)a=Object.assign({},a,{start:fromISO(a.weekStart).getTime(),due:dueOf(a.weekStart).getTime()});if(!Array.isArray(a.ex))a=Object.assign({},a,{ex:[]});return a}
-// assignment type: 'external' = a link outside Mini Drills + a screenshot as proof; anything else (old records) = Mini Drills exercises
-function isExt(a){return !!a&&a.type==='external'}
+// One assignment = Library exercises (ex: [exercise ids]) and/or external tasks (ext: [{id 'x1'…, link, src, note}]), under one name,
+// send date and deadline. Old records: type 'external' with link / src / note at the top level = one external task 'x1'; no type = Library only.
+// type is written for older readers only ('mini' | 'external' | 'mixed'); the content itself is ex + ext.
+function asgExt(a){var L=Array.isArray(a.ext)?a.ext:(a.type==='external'?[{id:'x1',link:a.link,src:a.src,note:a.note}]:[]),seen={};
+  return L.map(function(x,i){x=x||{};var id=/^x\d{1,3}$/.test(String(x.id||''))&&!seen[x.id]?String(x.id):'x'+(i+1);seen[id]=1;return {id:id,link:safeLink(x.link),src:String(x.src||'').slice(0,40),note:String(x.note||'').slice(0,600)}})}
+function normAsg(a){if(a.start==null&&a.weekStart)a=Object.assign({},a,{start:fromISO(a.weekStart).getTime(),due:dueOf(a.weekStart).getTime()});a=Object.assign({},a,{ex:Array.isArray(a.ex)?a.ex:[]});a.ext=asgExt(a);return a}
+// external only (no Library exercise)
+function isExt(a){var n=normAsg(a);return !n.ex.length&&n.ext.length>0}
+function plural(n,w){return n+' '+w+(n===1?'':'s')}
+function asgSummary(a){var n=normAsg(a),k=n.ex.filter(exOf).length,x=n.ext.length,p=[];if(k)p.push(plural(k,'exercise'));if(x)p.push(plural(x,'external task'));return p.join(' · ')||'No content'}
 function safeLink(u){u=String(u||'').trim();return /^https?:\/\/[^\s<>"']+$/i.test(u)?u:''}
 // the student's proof for an external assignment = the hwdone record with a screenshot (one source of truth for "submitted")
 function hwRec(email,id){var r=hwdoneDocs.concat(localHwdone).filter(function(d){return d.email===email&&d.asgId===id});return r.sort(function(a,b){return (b.updatedAt||b.ts||0)-(a.updatedAt||a.ts||0)})[0]||null}
-function hwShot(email,id){var r=hwRec(email,id);return r&&r.shot&&r.shot.url?r:null}
+// screenshots of one hwdone record, by external task id (old records: "shot" = task x1)
+function hwShots(r){var o={};if(r&&r.shot&&r.shot.url)o.x1=r.shot;if(r&&r.shots&&typeof r.shots==='object')Object.keys(r.shots).forEach(function(k){var x=r.shots[k];if(x&&x.url)o[k]=x});return o}
+function hwImg(u){u=String(u||'');return safeImg(u)||(/^\/api\/image\/[A-Za-z0-9_-]{22}$/.test(u)||/^blob:/.test(u)?u:'')}
 function demoAsgs(){
   var wk=thisWk(),pw=shiftWk(wk,-1),out=[];
   CLS.forEach(function(c,ci){
@@ -2022,9 +2051,16 @@ function demoAsgs(){
   });
   return out;
 }
-function allAsgs(){return asgDocs.concat(localAsg).map(normAsg).concat(demoAsgs())}
+function allAsgs(){return asgDocs.concat(localAsg).concat(demoAsgs()).map(normAsg)}
 function currentAsg(cls){var n=Date.now();return allAsgs().filter(function(a){return a.cls===cls&&a.start<=n&&a.due>=n}).sort(function(a,b){return b.start-a.start})[0]||null}
-function hwDone(email,id){return hwdoneDocs.concat(localHwdone).some(function(d){return d.email===email&&d.asgId===id})}
+// the Library part was turned in ("I'm done!"): done flag, or an old record without screenshots (written by I'm done before 10/2026)
+function hwDone(email,id){return hwdoneDocs.concat(localHwdone).some(function(d){return d.email===email&&d.asgId===id&&(d.done===true||(!d.shot&&!d.shots))})}
+// status of one student for one assignment: each part (Library exercises done before the deadline, a screenshot per external task)
+// and the whole (fin = Library turned in AND every external task has a screenshot). A screenshot = submitted, never "correct".
+function asgState(a,email,now){a=normAsg(a);now=now||Date.now();var due=effDue(a,email),ids=a.ex.filter(exOf),dm=doneMap(email,a.start,due.getTime()),sh=hwShots(hwRec(email,a.id));
+  var X=a.ext.map(function(x){var t=sh[x.id]||null;return {x:x,s:t,late:!!(t&&t.ts>due.getTime())}});
+  var libFin=!ids.length||hwDone(email,a.id),extFin=X.every(function(t){return !!t.s}),libN=ids.filter(function(i){return dm[i]}).length;
+  return {a:a,due:due,ids:ids,dm:dm,pr:prog(ids,dm),X:X,over:due.getTime()<now,libFin:libFin,extFin:extFin,fin:(ids.length+X.length)>0&&libFin&&extFin,done:libN+X.filter(function(t){return !!t.s}).length,n:ids.length+X.length}}
 
 
 
@@ -2045,48 +2081,44 @@ function crumbs(){
   }).join('');
 }
 function hwStatus(a){
-  if(isExt(a)){var R=students().filter(function(s){return s.cls===a.cls}).map(function(s){var r=hwShot(s.email,a.id);return {name:s.name,email:s.email,done:r?1:0,n:1,fin:!!r}}),k=R.filter(function(r){return r.fin}).length;
-    return {ids:[],rows:R,pct:R.length?Math.round(k/R.length*100):0}}
-  var ids=a.ex.filter(exOf);
-  var rows=students().filter(function(s){return s.cls===a.cls}).map(function(s){
-    var until=effDue(a,s.email).getTime(),dm=doneMap(s.email,a.start,until),p=passFor(s.email,a.id);
-    return {name:s.name,email:s.email,done:ids.filter(function(i){return dm[i]}).length,n:ids.length,pass:p?p.kind:null,late:until<Date.now(),fin:hwDone(s.email,a.id)};
-  });
-  var pairs=rows.reduce(function(x,r){return x+r.done},0),tot=rows.length*ids.length;
-  return {ids:ids,rows:rows,pct:tot?Math.round(pairs/tot*100):0};
+  a=normAsg(a);var now=Date.now();
+  var rows=students().filter(function(s){return s.cls===a.cls}).map(function(s){var S=asgState(a,s.email,now),p=passFor(s.email,a.id);return {name:s.name,email:s.email,done:S.done,n:S.n,pass:p?p.kind:null,late:S.over,fin:S.fin}});
+  var pairs=rows.reduce(function(x,r){return x+r.done},0),tot=rows.reduce(function(x,r){return x+r.n},0);
+  return {ids:a.ex.filter(exOf),ext:a.ext,rows:rows,pct:tot?Math.round(pairs/tot*100):0};
 }
 function homeworkHTML(){
   var now=Date.now();
-  var ext=allAsgs().filter(function(a){return isExt(a)&&a.cls===U.cls&&a.start<=now&&!a.tOnly}).map(function(a){var due=effDue(a,U.email),r=hwShot(U.email,a.id);return {a:a,due:due,over:due.getTime()<now,r:r}})
-    .filter(function(x){return !x.over||!x.r}).sort(function(a,b){return a.due-b.due});
-  var items=allAsgs().filter(function(a){return !isExt(a)&&a.cls===U.cls&&a.start<=now&&!a.tOnly}).map(function(a){
-    var due=effDue(a,U.email),ids=a.ex.filter(exOf),dm=doneMap(U.email,a.start,due.getTime());
-    return {a:a,due:due,ids:ids,dm:dm,pr:prog(ids,dm),over:due.getTime()<now,fin:hwDone(U.email,a.id)};
-  }).filter(function(x){return x.ids.length&&(x.fin?!x.over:(!x.over||x.pr.d<x.pr.t))}).sort(function(a,b){return ((a.over?1:0)-(b.over?1:0))||(a.due-b.due)});
+  var items=allAsgs().filter(function(a){return a.cls===U.cls&&a.start<=now&&!a.tOnly}).map(function(a){return asgState(a,U.email,now)})
+    .filter(function(x){if(!x.n)return false;if(!x.over)return true;return !x.fin&&((x.ids.length&&x.pr.d<x.pr.t)||!x.extFin)})
+    .sort(function(a,b){return ((a.over?1:0)-(b.over?1:0))||(a.due-b.due)});
   var h='<h1 class="lock">Let\'s lock in</h1>';
-  if(!items.length&&!ext.length)return h+'<div class="hw"><p class="empty">You are all caught up. Nothing is due.</p></div>';
-  ext.forEach(function(x){h+=extHwHTML(x)});
-  items.forEach(function(x){
-    var a=x.a,p=passFor(U.email,a.id),shown=x.over?x.ids.filter(function(i){return !x.dm[i]}):x.ids;
-    h+='<div class="hw'+(x.over?' late':'')+'"><div class="sechead"><span class="chips2"><span class="chip">'+esc(asgName(a))+'</span>'+(x.over?'<span class="chip" style="background:var(--bad-bg);color:var(--bad)">Missing</span>':'')+'</span><span class="meta hwdue">'+(x.over?'<span class="hwdate">Was due </span><b>'+fmtDue(x.due)+'</b>':'<span class="hwdate">Due '+fmtDue(x.due)+' · </span><b>'+leftOf(x.due)+'</b>')+'</span></div><div class="lrows">'+shown.map(function(id){
-      var e=exOf(id),l=locOf(id),d=x.dm[id],bad=!d&&x.over;
-      return '<button class="lrow" data-act="nav" data-book="'+l.book+'" data-test="'+l.test+'" data-skill="'+l.skill+'" data-ex="'+id+'"><span><b>'+esc(e.title)+'</b></span>'+pcHTML(e,d,bad,bad?'Missed':'Waiting')+'</button>';
-    }).join('')+'</div>';
-    if(p)h+='<p class="due" style="margin:10px 0 0">Extended with your '+PASS[p.kind].label+'.</p>';
-    h+=actionsHTML(x)+'</div>';
-  });
+  if(!items.length)return h+'<div class="hw"><p class="empty">You are all caught up. Nothing is due.</p></div>';
+  items.forEach(function(x){h+=hwCardHTML(x)});
   return h;
 }
+// one card per assignment: Library exercises and / or external tasks, then the turn-in buttons
+function hwCardHTML(x){var a=x.a,p=passFor(U.email,a.id),miss=x.over&&!x.fin,both=x.ids.length&&x.X.length,shown=x.over?x.ids.filter(function(i){return !x.dm[i]}):x.ids;
+  var h='<div class="hw'+(x.X.length?' hwext':'')+(miss?' late':'')+'"><div class="sechead"><span class="chips2"><span class="chip">'+esc(asgName(a))+'</span>'+(miss?'<span class="chip" style="background:var(--bad-bg);color:var(--bad)">Missing</span>':'')+'</span><span class="meta hwdue">'+(x.over?'<span class="hwdate">Was due </span><b>'+fmtDue(x.due)+'</b>':'<span class="hwdate">Due '+fmtDue(x.due)+' · </span><b>'+leftOf(x.due)+'</b>')+'</span></div>';
+  if(both)h+='<p class="hwprog muted">'+x.done+' of '+x.n+' parts done</p>';
+  if(x.ids.length&&shown.length){h+=(both?'<h4 class="hwsh">Exercises from Library</h4>':'')+'<div class="lrows">'+shown.map(function(id){
+      var e=exOf(id),l=locOf(id),d=x.dm[id],bad=!d&&x.over;
+      return '<button class="lrow" data-act="nav" data-book="'+l.book+'" data-test="'+l.test+'" data-skill="'+l.skill+'" data-ex="'+id+'"><span><b>'+esc(e.title)+'</b></span>'+pcHTML(e,d,bad,bad?'Missed':'Waiting')+'</button>';
+    }).join('')+'</div>'}
+  if(x.X.length)h+=(both?'<h4 class="hwsh">External tasks</h4>':'')+x.X.map(function(t,i){return extHwHTML(x,t,i)}).join('');
+  if(p)h+='<p class="due" style="margin:10px 0 0">Extended with your '+PASS[p.kind].label+'.</p>';
+  h+=x.ids.length?actionsHTML(x):(x.fin?'<p class="okline">All done ✓ Nice work.</p>':'');
+  return h+'</div>'}
 // External homework card (student): what to do, Open link, then one screenshot = Submitted (not a mark of correctness)
 var HWUP={};
-function extHwHTML(x){var a=x.a,r=x.r,lk=safeLink(a.link),up=HWUP[a.id]||{},late=r&&r.shot.ts>x.due.getTime(),img=r?safeImg(r.shot.url)||(/^\/api\/image\/[A-Za-z0-9_-]{22}$/.test(r.shot.url)||/^blob:/.test(r.shot.url)?r.shot.url:''):'';
-  var h='<div class="hw hwext'+(x.over&&!r?' late':'')+'"><div class="sechead"><span class="chips2"><span class="chip">'+esc(asgName(a))+'</span><span class="pill">External'+(a.src?' · '+esc(a.src):'')+'</span>'+(x.over&&!r?'<span class="chip" style="background:var(--bad-bg);color:var(--bad)">Missing</span>':'')+'</span><span class="meta hwdue">'+(x.over?'<span class="hwdate">Was due </span><b>'+fmtDue(x.due)+'</b>':'<span class="hwdate">Due '+fmtDue(x.due)+' · </span><b>'+leftOf(x.due)+'</b>')+'</span></div>';
-  if(a.note)h+='<p class="hwnote">'+esc(a.note)+'</p>';
-  h+='<div class="hwxrow">'+(lk?'<a class="btn" href="'+esc(lk)+'" target="_blank" rel="noopener noreferrer">Open link ↗</a>':'<span class="err">The link is missing. Ask your teacher.</span>')+
-    '<span class="pill'+(r?' ok':'')+'" role="status">'+(r?(late?'Submitted late':'Submitted')+' · '+esc(fmtDue(new Date(r.shot.ts))):'Not submitted')+'</span></div>';
-  if(r&&img)h+='<a class="hwthumb" href="'+esc(img)+'" target="_blank" rel="noopener"><img src="'+esc(img)+'" alt="Your screenshot for '+esc(asgName(a))+'"></a>';
-  h+='<div class="hwact"><button class="btn'+(r?'':' pri')+'" type="button" data-act="hw-shot" data-asg="'+esc(a.id)+'"'+(up.busy?' disabled':'')+'>'+(up.busy?'Uploading… '+(up.pct||0)+'%':r?'Replace screenshot':'Upload screenshot')+'</button>'+
-    '<input type="file" accept="image/*" hidden id="hwShot_'+esc(a.id)+'" data-hwshot="'+esc(a.id)+'" aria-label="Screenshot for '+esc(asgName(a))+'"></div>'+
+// one external task (student): instructions, Open link, its own screenshot = Submitted (not a mark of correctness)
+function extHwHTML(x,t,i){var a=x.a,k=a.id+'|'+t.x.id,up=HWUP[k]||{},r=t.s,img=r?hwImg(r.url):'',nm=a.ext.length>1?'External task '+(i+1):'External';
+  var h='<div class="hwtask"><div class="hwxrow"><span class="pill">'+esc(nm)+(t.x.src?' · '+esc(t.x.src):'')+'</span></div>';
+  if(t.x.note)h+='<p class="hwnote">'+esc(t.x.note)+'</p>';
+  h+='<div class="hwxrow">'+(t.x.link?'<a class="btn" href="'+esc(t.x.link)+'" target="_blank" rel="noopener noreferrer">Open link ↗</a>':'<span class="err">The link is missing. Ask your teacher.</span>')+
+    '<span class="pill'+(r?' ok':'')+'" role="status">'+(r?(t.late?'Submitted late':'Submitted')+' · '+esc(fmtDue(new Date(r.ts))):'Not submitted')+'</span></div>';
+  if(r&&img)h+='<a class="hwthumb" href="'+esc(img)+'" target="_blank" rel="noopener"><img src="'+esc(img)+'" alt="Your screenshot for '+esc(asgName(a)+(a.ext.length>1?' · task '+(i+1):''))+'"></a>';
+  h+='<div class="hwact"><button class="btn'+(r?'':' pri')+'" type="button" data-act="hw-shot" data-asg="'+esc(a.id)+'" data-x="'+esc(t.x.id)+'"'+(up.busy?' disabled':'')+'>'+(up.busy?'Uploading… '+(up.pct||0)+'%':r?'Replace screenshot':'Upload screenshot')+'</button>'+
+    '<input type="file" accept="image/*" hidden id="hwShot_'+esc(a.id)+'_'+esc(t.x.id)+'" data-hwshot="'+esc(a.id)+'" data-x="'+esc(t.x.id)+'" aria-label="Screenshot for '+esc(asgName(a))+(a.ext.length>1?', task '+(i+1):'')+'"></div>'+
     (up.err?'<p class="err" role="alert">'+esc(up.err)+'</p>':'')+(r?'':'<p class="muted hwhelp">Do the task at the link, take a screenshot of your result, then upload it here.</p>');
   return h+'</div>'}
 // shrink big screenshots in the browser (long side 1600 px, JPEG .85) before upload; GIF / small files go as they are
@@ -2099,17 +2131,20 @@ function hwShotUpload(blob,prog){return new Promise(function(ok,no){
     if(x.upload)x.upload.onprogress=function(e){if(e.lengthComputable&&prog)prog(Math.round(e.loaded/e.total*100))};
     x.onload=function(){var d={};try{d=JSON.parse(x.responseText)}catch(e){}if(x.status>=200&&x.status<300&&d.id&&d.url)ok(d);else no(new Error((d.error||'Upload failed.')+' (code: http'+x.status+')'))};
     x.onerror=function(){no(new Error('No connection. Check your internet and try again.'))};x.send(blob)},function(){no(new Error('Your sign-in has expired. Sign in again.'))})})}
-document.addEventListener('change',function(e){var f=e.target,aid=f&&f.getAttribute&&f.getAttribute('data-hwshot');if(!aid||!f.files||!f.files[0]||!U)return;var file=f.files[0];
-  if(!/^image\//.test(file.type)){HWUP[aid]={err:'Choose a picture (PNG, JPG, WebP or GIF).'};return renderLib()}
-  if(file.size>15*1024*1024){HWUP[aid]={err:'This picture is too big. Take a smaller screenshot.'};return renderLib()}
-  HWUP[aid]={busy:true,pct:0};renderLib();
-  hwShrink(file).then(function(b){if(b.size>5*1024*1024)throw new Error('The picture is too big (5 MB at most).');return hwShotUpload(b,function(p){HWUP[aid].pct=p;var bt=document.querySelector('[data-act="hw-shot"][data-asg="'+aid+'"]');if(bt)bt.textContent='Uploading… '+p+'%'})})
-    .then(function(d){var now=Date.now(),old=hwRec(U.email,aid),did=slug(U.email)+'_'+aid,first=!old||!old.shot;
-      var rec={email:U.email,asgId:aid,ts:old&&old.ts||now,status:'submitted',shot:{id:d.id,url:d.url,ts:now},updatedAt:now};
-      var fin=function(){HWUP[aid]={};if(first)onHwDone(aid);renderLib();toast('Screenshot uploaded. Your homework is submitted.')};
+document.addEventListener('change',function(e){var f=e.target,aid=f&&f.getAttribute&&f.getAttribute('data-hwshot');if(!aid||!f.files||!f.files[0]||!U)return;var file=f.files[0],xid=f.getAttribute('data-x')||'x1',key=aid+'|'+xid;
+  if(!/^image\//.test(file.type)){HWUP[key]={err:'Choose a picture (PNG, JPG, WebP or GIF).'};return renderLib()}
+  if(file.size>15*1024*1024){HWUP[key]={err:'This picture is too big. Take a smaller screenshot.'};return renderLib()}
+  HWUP[key]={busy:true,pct:0};renderLib();
+  hwShrink(file).then(function(b){if(b.size>5*1024*1024)throw new Error('The picture is too big (5 MB at most).');return hwShotUpload(b,function(p){HWUP[key].pct=p;var bt=document.querySelector('[data-act="hw-shot"][data-asg="'+aid+'"][data-x="'+xid+'"]');if(bt)bt.textContent='Uploading… '+p+'%'})})
+    .then(function(d){var now=Date.now(),old=hwRec(U.email,aid),did=slug(U.email)+'_'+aid,asg=allAsgs().filter(function(x){return x.id===aid})[0],was=asg?asgState(asg,U.email).fin:false;
+      var shots=hwShots(old);shots[xid]={id:d.id,url:d.url,ts:now};
+      var rec={email:U.email,asgId:aid,ts:old&&old.ts||now,status:'submitted',shots:shots,updatedAt:now};
+      if(shots.x1)rec.shot=shots.x1; // older app versions read "shot"
+      if(old&&(old.done===true||(!old.shot&&!old.shots)))rec.done=true; // the Library part stays turned in
+      var fin=function(){HWUP[key]={};var now2=asg?asgState(asg,U.email).fin:true;if(!was&&now2)onHwDone(aid);renderLib();toast(now2?'Screenshot uploaded. Your homework is submitted.':'Screenshot uploaded. Finish the other parts to complete this homework.')};
       var loc=function(){localHwdone=localHwdone.filter(function(x){return x.id!==did});localHwdone.push(Object.assign({id:did},rec));fin()};
       if(dbh)dbh.doc('hwdone/'+did).set(rec).then(function(){localHwdone=localHwdone.filter(function(x){return x.id!==did});localHwdone.push(Object.assign({id:did},rec));fin()},loc);else loc()})
-    .catch(function(er){HWUP[aid]={err:(er&&er.message)||'Upload failed. Try again.'};renderLib()})});
+    .catch(function(er){HWUP[key]={err:(er&&er.message)||'Upload failed. Try again.'};renderLib()})});
 var PASS={day:{label:'1-day pass',days:1},week:{label:'1-week pass',days:7}};
 function passesOf(email){return passDocs.concat(localPass,samplePass).filter(function(p){return p.email===email})}
 function passFor(email,asgId){return passesOf(email).filter(function(p){return p.asgId===asgId})[0]||null}
@@ -2118,6 +2153,7 @@ function effDue(a,email){var p=passFor(email,a.id);return new Date(a.due+(p?PASS
 function actionsHTML(x){
   var a=x.a,p=passFor(U.email,a.id);
   if(x.fin)return '<p class="okline">All done ✓ Nice work.</p>';
+  if(x.libFin&&!x.extFin)return '<p class="okline">Library exercises done ✓ Upload a screenshot for each external task to finish.</p>';
   var h='<div class="hwact">';
   if(!x.over)h+='<button class="btn done" data-act="imdone" data-asg="'+a.id+'" type="button">I\'m done!</button>';
   if(!p)h+='<button class="btn more" data-act="needtime" data-asg="'+a.id+'" type="button">I need more time</button>';
@@ -2143,12 +2179,14 @@ function usePass(){
 }
 function imDone(id){
   var a=allAsgs().filter(function(x){return x.id===id})[0];if(!a)return;
-  var due=effDue(a,U.email),ids=a.ex.filter(exOf),pr=prog(ids,doneMap(U.email,a.start,due.getTime())),left=pr.t-pr.d;
+  var S=asgState(a,U.email),left=S.pr.t-S.pr.d;
   if(left>0){DONEMSG[id]=left+' exercise'+(left>1?'s':'')+' still to do. Finish them, or choose "I need more time".';return renderLib()}
   DONEMSG[id]='';
-  var rec={email:U.email,asgId:id,ts:Date.now()},did=slug(U.email)+'_'+id;onHwDone(id);
-  var loc=function(){localHwdone.push(Object.assign({id:did},rec));renderLib()};
-  if(dbh)dbh.doc('hwdone/'+did).set(rec).then(function(){renderLib()},loc);else loc();
+  var old=hwRec(U.email,id),now=Date.now(),did=slug(U.email)+'_'+id,sh=hwShots(old),rec={email:U.email,asgId:id,ts:old&&old.ts||now,done:true,updatedAt:now};
+  if(Object.keys(sh).length){rec.shots=sh;rec.status='submitted';if(sh.x1)rec.shot=sh.x1} // keep the screenshots of the external tasks
+  if(S.extFin)onHwDone(id); // the whole assignment is complete only with every external task submitted too
+  var put=function(){localHwdone=localHwdone.filter(function(x){return x.id!==did});localHwdone.push(Object.assign({id:did},rec));renderLib()};
+  if(dbh)dbh.doc('hwdone/'+did).set(rec).then(put,put);else put();
 }
 
 var SKL={listening:'L',reading:'R',writing:'W',speaking:'S'};
@@ -3976,77 +4014,102 @@ function pickIds(){
 }
 function pickedHTML(){
   var ids=Object.keys(AS.sel).filter(function(k){return AS.sel[k]});
-  return ids.map(function(id){var e=exOf(id);return e?'<span class="xchip">'+esc(locLabel(locOf(id)))+' · '+esc(e.title)+'<button data-act="pk-rm" data-id="'+id+'" type="button" aria-label="Remove '+esc(e.title)+'">×</button></span>':''}).join(''); // the count is in the footer
+  return ids.map(function(id){var e=exOf(id);return e?'<span class="xchip">'+esc(locLabel(locOf(id)))+' · '+esc(e.title)+'<button data-act="pk-rm" data-id="'+esc(id)+'" type="button" aria-label="Remove '+esc(e.title)+'">×</button></span>':''}).join('');
 }
+// select / unselect act on the exercises the filters show (never on the whole assignment; that is "Remove all")
+function pkBulkHTML(){var L=[];pickIds().forEach(function(g){L=L.concat(g.ids)});var m=L.length,k=L.filter(function(i){return AS.sel[i]}).length;if(!m)return '';
+  return (k<m?'<button class="btn sm" data-act="pk-all" type="button">Select all '+m+' shown</button>':'')+(k?'<button class="btn sm" data-act="pk-none" type="button">Unselect '+k+' shown</button>':'')}
 function treeHTML(){
-  var bs=pickBooks();if(!bs.length)return '<p class="saved">The library is empty. Add exercises first.</p>';
+  var bs=pickBooks();if(!bs.length)return '<p class="saved">The Library has no exercises yet.</p>';
   var pk=AS.pk;if(!pk||!bs.some(function(b){return b.id===pk.book}))pk=AS.pk={book:bs[0].id,test:'all',skill:'all'};
   var tests=TESTS.filter(function(t){return allIdsTest(pk.book,t).length});
   var h='<div class="pk"><label class="field">Book<select data-pk="book">'+bs.map(function(b){return '<option value="'+b.id+'"'+(b.id===pk.book?' selected':'')+'>'+esc(b.title)+'</option>'}).join('')+'</select></label>'+
    '<label class="field">Test<select data-pk="test"><option value="all">All tests</option>'+tests.map(function(t){return '<option value="'+t+'"'+(t===pk.test?' selected':'')+'>'+TNAME[t]+'</option>'}).join('')+'</select></label>'+
    '<label class="field">Skill<select data-pk="skill"><option value="all">All skills</option>'+SKILLS.map(function(k){return '<option value="'+k+'"'+(k===pk.skill?' selected':'')+'>'+SNAME[k]+'</option>'}).join('')+'</select></label>'+
-   '<span style="align-self:end;display:flex;gap:6px"><button class="btn sm" data-act="pk-all" type="button">Select all shown</button><button class="btn sm" data-act="pk-none" type="button">Clear shown</button></span></div>';
+   '<span class="pkbulk" id="pkBulk">'+pkBulkHTML()+'</span></div>';
   var groups=pickIds();
-  h+='<div class="pklist">'+(groups.length?groups.map(function(g){return '<h5>'+TNAME[g.t]+' · '+SNAME[g.s]+'</h5>'+g.ids.map(function(id){return '<label class="tl"><input type="checkbox" data-ck="'+id+'"'+(AS.sel[id]?' checked':'')+'> '+esc(exOf(id).title)+'</label>'}).join('')}).join(''):'<p class="saved">No exercises match.</p>')+'</div>';
-  return h+'<div class="chips" id="pkSel">'+pickedHTML()+'</div>';
+  return h+'<div class="pklist">'+(groups.length?groups.map(function(g){return '<h5>'+TNAME[g.t]+' · '+SNAME[g.s]+'</h5><div class="pkg">'+g.ids.map(function(id){return '<label class="tl"><input type="checkbox" data-ck="'+esc(id)+'"'+(AS.sel[id]?' checked':'')+'> '+esc(exOf(id).title)+'</label>'}).join('')+'</div>'}).join(''):'<p class="saved">No exercises match these filters.</p>')+'</div>';
 }
+function agSel(){return Object.keys(AS.sel).filter(function(k){return AS.sel[k]&&exOf(k)})}
+function agCountText(){var f=AG.form,n=agSel().length,x=f?f.ext.length:0,p=[];if(n)p.push(plural(n,'exercise'));if(x)p.push(plural(x,'external task'));return p.length?p.join(' · '):'Nothing added yet'}
 function syncTree(){
-  var ids=Object.keys(AS.sel).filter(function(k){return AS.sel[k]}),cnt=$('#asgCount');if(cnt&&!(AG.form&&AG.form.type==='external'))cnt.textContent=ids.length?ids.length+' selected':'Nothing selected yet';
-  var ps=$('#pkSel');if(ps)ps.innerHTML=pickedHTML();
+  var cnt=$('#asgCount');if(cnt&&AG.form)cnt.textContent=agCountText();
+  var n=agSel().length,ln=$('#afLibN');if(ln)ln.textContent=n?n+' selected':'None';
+  var ps=$('#pkSel');if(ps)ps.innerHTML=pickedHTML();var pb=$('#pkBulk');if(pb)pb.innerHTML=pkBulkHTML();
+  var pc=$('#pkClr');if(pc)pc.hidden=n<2;
 }
+// the form fields -> AG.form (before any redraw), so adding / removing a section never loses what was typed
+function agCollect(){var f=AG.form;if(!f||!f.live||!$('#fSd'))return;f.sd=$('#fSd').value;f.dd=$('#fDd').value;f.dt=$('#fDt').value;f.nm=$('#fNm').value;
+  f.ext.forEach(function(x,i){var l=$('#fXl'+i),r=$('#fXs'+i),n=$('#fXn'+i);if(l)x.link=l.value;if(r)x.src=r.value;if(n)x.note=n.value})}
 var AG={open:null,form:null,cur:null,sub:'list'};
 var inDate=function(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
 var fmtShort=function(ts){var d=new Date(ts);return DAYS[d.getDay()]+' '+d.getDate()+' '+MONTHS[d.getMonth()]};
 function nextSunday(d){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()+((7-x.getDay())%7));return x}
 function openForm(cls,a){
   AS.sel={};AS.pk=null;
-  if(a){(a.ex||[]).forEach(function(i){AS.sel[i]=1});var du=new Date(a.due);AG.form={id:a.id,cls:a.cls,nm:a.name||'',sd:inDate(new Date(a.start)),dd:inDate(du),dt:pad(du.getHours())+':'+pad(du.getMinutes()),type:isExt(a)?'external':'mini',link:a.link||'',note:a.note||'',src:a.src||''}}
-  else{var n=new Date();AG.form={id:null,cls:cls,nm:'',sd:inDate(n),dd:inDate(nextSunday(n)),dt:'22:00',type:'mini',link:'',note:'',src:''}}
+  if(a){a=normAsg(a);a.ex.forEach(function(i){AS.sel[i]=1});var du=new Date(a.due),X=a.ext.map(function(x){return {id:x.id,link:x.link,src:x.src,note:x.note}});
+    AG.form={id:a.id,cls:a.cls,nm:a.name||'',sd:inDate(new Date(a.start)),dd:inDate(du),dt:pad(du.getHours())+':'+pad(du.getMinutes()),ext:X,pick:!a.ex.length&&!X.length,nid:X.reduce(function(m,x){return Math.max(m,+x.id.slice(1))},0)+1}}
+  else{var n=new Date();AG.form={id:null,cls:cls,nm:'',sd:inDate(n),dd:inDate(nextSunday(n)),dt:'22:00',ext:[],pick:true,nid:1}}
 }
 function asgStatus(a){var n=Date.now();return n<a.start?'Upcoming':(n>a.due?'Closed':'Active')}
 function formHTML(){
-  var f=AG.form,ext=f.type==='external',dn=asgName({due:(function(){var p=f.dd.split('-');return new Date(+p[0],+p[1]-1,+p[2]).getTime()})()}),n=Object.keys(AS.sel).filter(function(k){return AS.sel[k]}).length;
+  var f=AG.form,X=f.ext,n=agSel().length,dn=/^\d{4}-\d{2}-\d{2}$/.test(f.dd||'')?asgName({due:(function(){var p=f.dd.split('-');return new Date(+p[0],+p[1]-1,+p[2]).getTime()})()}):''; // an empty deadline field must not break the form
   var h='<section class="afform" aria-labelledby="afH"><h3 id="afH" class="afh">'+(f.id?'Edit assignment':'New assignment')+' <span class="muted">· '+esc(classTitle(f.cls))+'</span></h3>'+
-    '<div class="afsec"><h4>Basics</h4><div class="aftype seg" role="group" aria-label="Assignment type">'+[['mini','Mini Drills'],['external','External link']].map(function(o){return '<button type="button" data-act="asg-type" data-v="'+o[0]+'" aria-pressed="'+((o[0]==='external')===ext)+'"'+(f.id?' disabled title="The type cannot change after saving"':'')+'>'+o[1]+'</button>'}).join('')+'</div>'+
-    '<div class="afgrid"><label class="field afnm" for="fNm">Name<input type="text" id="fNm" value="'+esc(f.nm)+'" placeholder="'+esc(dn)+'"></label>'+
+    '<div class="afsec"><h4>Assignment details</h4><div class="afgrid"><label class="field afnm" for="fNm">Name<input type="text" id="fNm" value="'+esc(f.nm)+'" placeholder="'+esc(dn)+'"></label>'+
     '<label class="field" for="fSd">Send date<input type="date" id="fSd" value="'+f.sd+'"></label>'+
     '<label class="field" for="fDd">Deadline<input type="date" id="fDd" value="'+f.dd+'"></label>'+
     '<label class="field" for="fDt">Time<input type="time" id="fDt" value="'+f.dt+'"></label></div></div>';
-  if(ext)h+='<div class="afsec"><h4>External task</h4><p class="muted afhelp">Students open the link, do the task outside Mini Drills, then upload a screenshot. The upload marks the homework as submitted (it is not checked for correctness).</p>'+
-    '<div class="afgrid afext"><label class="field afnm" for="fLink">Link (required)<input type="url" id="fLink" value="'+esc(f.link||'')+'" placeholder="https://…" inputmode="url" autocomplete="off"></label>'+
-    '<label class="field" for="fSrc">Source (optional)<input type="text" id="fSrc" list="fSrcL" maxlength="40" value="'+esc(f.src||'')+'" placeholder="Google Form"><datalist id="fSrcL"><option value="Google Form"><option value="Website"><option value="YouTube"><option value="PDF task"></datalist></label>'+
-    '<label class="field afnm" for="fNote">Instructions for students (optional)<textarea id="fNote" rows="3" maxlength="600" placeholder="e.g. Do all 20 questions, then take a screenshot of your score.">'+esc(f.note||'')+'</textarea></label></div></div>';
-  else h+='<div class="afsec"><h4>Exercises</h4>'+treeHTML()+'</div>';
-  return h+'<div class="affoot"><span class="saved" id="asgCount" role="status">'+(ext?'':n?n+' selected':'Nothing selected yet')+'</span><span class="err" id="asgMsg" style="margin:0" aria-live="polite"></span><span class="afbtns"><button class="btn" data-act="asg-cancel" type="button">Cancel</button><button class="btn pri" data-act="save-asg" type="button">Save assignment</button></span></div></section>';
+  // Library exercises: the selected list stays visible; the picker opens and closes
+  h+='<div class="afsec afc" role="group" aria-labelledby="afLibH"><div class="afch"><h4 id="afLibH">Exercises from Library</h4><span class="muted afcn" id="afLibN">'+(n?n+' selected':'None')+'</span>'+
+    '<button class="btn sm" type="button" data-act="pk-toggle" aria-expanded="'+!!f.pick+'" aria-controls="afPick">'+(f.pick?'Hide the list':n?'Add or change exercises':'Add exercises')+'</button></div>'+
+    '<div class="pksum"><div class="chips" id="pkSel">'+pickedHTML()+'</div><button class="linkish pkclr" type="button" id="pkClr" data-act="pk-clear"'+(n<2?' hidden':'')+'>Remove all selected</button></div>'+
+    (f.pick?'<div id="afPick">'+treeHTML()+'</div>':'')+'</div>';
+  // external tasks: as many as needed, each with its own link, source and instructions
+  h+='<div class="afsec afc" role="group" aria-labelledby="afExtH"><div class="afch"><h4 id="afExtH">External tasks</h4><span class="muted afcn">'+(X.length?X.length+' added':'None')+'</span><button class="btn sm" type="button" data-act="ax-add">Add external task</button></div>'+
+    (X.length?'<p class="muted afhelp">Students open the link, do the task, then upload a screenshot. The screenshot shows it was submitted; it is not marked right or wrong.</p>'+X.map(function(x,i){
+      return '<div class="afxt"><div class="afxth"><b>External task '+(i+1)+'</b><button class="btn sm" type="button" data-act="ax-rm" data-i="'+i+'" aria-label="Remove external task '+(i+1)+'">Remove</button></div>'+
+        '<div class="afgrid afext"><label class="field afnm" for="fXl'+i+'">Link<input type="url" id="fXl'+i+'" value="'+esc(x.link||'')+'" placeholder="https://…" inputmode="url" autocomplete="off"></label>'+
+        '<label class="field" for="fXs'+i+'">Source (optional)<input type="text" id="fXs'+i+'" list="fSrcL" maxlength="40" value="'+esc(x.src||'')+'" placeholder="Google Form"></label>'+
+        '<label class="field afnm" for="fXn'+i+'">Instructions for students (optional)<textarea id="fXn'+i+'" rows="2" maxlength="600" placeholder="e.g. Do all 20 questions, then take a screenshot of your score.">'+esc(x.note||'')+'</textarea></label></div></div>'}).join('')+
+      '<datalist id="fSrcL"><option value="Google Form"><option value="Website"><option value="YouTube"><option value="PDF task"></datalist>':'')+'</div>';
+  return h+'<div class="affoot"><span class="saved" id="asgCount" role="status">'+esc(agCountText())+'</span><span class="err" id="asgMsg" style="margin:0" aria-live="polite"></span><span class="afbtns"><button class="btn" data-act="asg-cancel" type="button">Cancel</button><button class="btn pri" data-act="save-asg" type="button">Save assignment</button></span></div></section>';
 }
 function hwRows(a,only){
-  if(isExt(a)){var nw=Date.now();return {ids:[],ext:true,rows:students().filter(function(s){return s.cls===a.cls&&(!only||only==='all'||s.email===only)}).map(function(s){
-    var due=effDue(a,s.email),r=hwShot(s.email,a.id),over=due.getTime()<nw;return {name:s.name,email:s.email,cells:[],all:!!r,none:!r,over:over,pass:null,fin:!!r,shot:r?r.shot:null,late:!!(r&&r.shot.ts>due.getTime())}})}}
-  var ids=a.ex.filter(exOf),now=Date.now();
-  return {ids:ids,rows:students().filter(function(s){return s.cls===a.cls&&(!only||only==='all'||s.email===only)}).map(function(s){
-    var due=effDue(a,s.email),dm=doneMap(s.email,a.start,due.getTime()),over=due.getTime()<now,p=passFor(s.email,a.id);
-    var cells=ids.map(function(i){return dm[i]?1:(over?0:-1)});
-    return {name:s.name,email:s.email,cells:cells,all:cells.length>0&&cells.every(function(c){return c===1}),none:cells.every(function(c){return c!==1}),over:over,pass:p?p.kind:null,fin:hwDone(s.email,a.id)};
+  a=normAsg(a);var ids=a.ex.filter(exOf),now=Date.now();
+  return {ids:ids,ext:a.ext,rows:students().filter(function(s){return s.cls===a.cls&&(!only||only==='all'||s.email===only)}).map(function(s){
+    var S=asgState(a,s.email,now),p=passFor(s.email,a.id);
+    var cells=ids.map(function(i){return S.dm[i]?1:(S.over?0:-1)}).concat(S.X.map(function(t){return t.s?1:(S.over?0:-1)}));
+    return {name:s.name,email:s.email,cells:cells,X:S.X,all:cells.length>0&&cells.every(function(c){return c===1}),none:cells.every(function(c){return c!==1}),over:S.over,pass:p?p.kind:null,fin:S.fin,shot:S.X[0]&&S.X[0].s||null,late:!!(S.X[0]&&S.X[0].late)};
   })};
 }
 var MKI={'1':'<span class="mk ok" aria-label="Done" title="Done">✓</span>','0':'<span class="mk no" aria-label="Not done" title="Not done">✕</span>','-1':'<span class="mk pd" aria-label="Not yet" title="Not yet">–</span>'};
-function extSubsHTML(a){var d=hwRows(a);if(!d.rows.length)return '<p class="saved">No students in this class.</p>';var k=d.rows.filter(function(r){return r.fin}).length;
-  return (safeLink(a.link)?'<p class="tsub" style="margin:0 0 6px">Link: <a href="'+esc(safeLink(a.link))+'" target="_blank" rel="noopener noreferrer">'+esc(safeLink(a.link))+'</a></p>':'')+(a.note?'<p class="tsub" style="margin:0 0 8px">'+esc(a.note)+'</p>':'')+
+function extTasksHTML(a){return a.ext.map(function(x,i){return '<p class="tsub" style="margin:0 0 6px">'+(a.ext.length>1?'Task '+(i+1)+' · ':'')+'Link: <a href="'+esc(x.link)+'" target="_blank" rel="noopener noreferrer">'+esc(x.link)+'</a>'+(x.src?' · '+esc(x.src):'')+(x.note?'<br>'+esc(x.note):'')+'</p>'}).join('')}
+// an assignment with one external task and no Library exercise: one row per student with the screenshot
+function extSubsHTML(a){a=normAsg(a);var d=hwRows(a);if(!d.rows.length)return '<p class="saved">No students in this class.</p>';var k=d.rows.filter(function(r){return r.fin}).length;
+  return extTasksHTML(a)+
     '<p class="tsub" style="margin:0 0 8px"><b>'+k+'</b> of '+d.rows.length+' students submitted</p><div class="scroll"><table class="hmx hwxt"><thead><tr><th scope="col">Student</th><th scope="col">Status</th><th scope="col">Submitted</th><th scope="col">Screenshot</th></tr></thead><tbody>'+
     d.rows.sort(function(x,y){return (x.fin?1:0)-(y.fin?1:0)||x.name.localeCompare(y.name)}).map(function(r){var u=r.shot&&(/^\/api\/image\/[A-Za-z0-9_-]{22}$/.test(r.shot.url)||/^blob:/.test(r.shot.url))?r.shot.url:'';
-      return '<tr><td>'+esc(r.name)+'</td><td>'+(r.fin?'<span class="pill ok">'+(r.late?'Submitted late':'Submitted')+'</span>':'<span class="pill'+(r.over?' bad':'')+'">'+(r.over?'Missing':'Not submitted')+'</span>')+'</td><td class="mono">'+(r.fin?esc(fmtDue(new Date(r.shot.ts))):'—')+'</td>'+
+      return '<tr><td>'+esc(r.name)+'</td><td>'+(r.fin?'<span class="pill ok">'+(r.late?'Submitted late':'Submitted')+'</span>':'<span class="pill'+(r.over?' bad':'')+'">'+(r.over?'Missing':'Not submitted')+'</span>')+'</td><td class="mono">'+(r.shot?esc(fmtDue(new Date(r.shot.ts))):'—')+'</td>'+
         '<td>'+(u?'<a class="hwthumb sm" href="'+esc(u)+'" target="_blank" rel="noopener" aria-label="Open the screenshot of '+esc(r.name)+'"><img src="'+esc(u)+'" alt=""></a>':'—')+'</td></tr>'}).join('')+'</tbody></table></div>'}
 function hwMatrixHTML(a,only){
-  if(isExt(a))return extSubsHTML(a);
+  a=normAsg(a);
+  if(!a.ex.filter(exOf).length&&a.ext.length===1)return extSubsHTML(a);
   var d=hwRows(a,only);if(!d.rows.length)return '<p class="saved">No students in this class.</p>';
-  var ok=d.rows.filter(function(r){return r.all}).length;
-  return '<p class="tsub" style="margin:0 0 8px"><b>'+ok+'</b> of '+d.rows.length+' students finished everything</p><div class="scroll"><table class="hmx"><thead><tr><th>Student</th>'+d.ids.map(function(id){var e=exOf(id);return '<th class="c" title="'+esc(e.title)+'">'+SKL[e.skill]+' · '+esc(e.title)+'</th>'}).join('')+'<th class="c" title="Pressed I\'m done">Turned in</th></tr></thead><tbody>'+d.rows.map(function(r){
-    return '<tr><td>'+esc(r.name)+(r.pass?' <small style="display:inline;color:var(--muted)">'+PASS[r.pass].label+'</small>':'')+'</td>'+r.cells.map(function(c){return '<td class="c">'+MKI[c]+'</td>'}).join('')+'<td class="c">'+(r.fin?MKI['1']:MKI['-1'])+'</td></tr>';
+  var ok=d.rows.filter(function(r){return r.fin}).length;
+  return extTasksHTML(a)+'<p class="tsub" style="margin:0 0 8px"><b>'+ok+'</b> of '+d.rows.length+' students finished everything</p><div class="scroll"><table class="hmx"><thead><tr><th>Student</th>'+
+    d.ids.map(function(id){var e=exOf(id);return '<th class="c" title="'+esc(e.title)+'">'+SKL[e.skill]+' · '+esc(e.title)+'</th>'}).join('')+
+    a.ext.map(function(x,i){return '<th class="c" title="'+esc(x.link)+'">Link'+(a.ext.length>1?' '+(i+1):'')+(x.src?' · '+esc(x.src):'')+'</th>'}).join('')+
+    '<th class="c" title="Every part done (Library turned in with I\'m done, every external task has a screenshot)">Complete</th></tr></thead><tbody>'+d.rows.map(function(r){
+    var nl=d.ids.length;
+    return '<tr><td>'+esc(r.name)+(r.pass?' <small style="display:inline;color:var(--muted)">'+PASS[r.pass].label+'</small>':'')+'</td>'+r.cells.map(function(c,j){
+      if(j<nl)return '<td class="c">'+MKI[c]+'</td>';var t=r.X[j-nl],u=t&&t.s?hwImg(t.s.url):'';
+      return '<td class="c">'+(t&&t.s?(u?'<a href="'+esc(u)+'" target="_blank" rel="noopener" aria-label="Screenshot of '+esc(r.name)+(t.late?', submitted late':'')+'" title="'+(t.late?'Submitted late · ':'Submitted · ')+esc(fmtDue(new Date(t.s.ts)))+'">'+MKI['1']+'</a>':MKI['1']):MKI[c])+'</td>'}).join('')+
+      '<td class="c">'+(r.fin?MKI['1']:MKI['-1'])+'</td></tr>';
   }).join('')+'</tbody></table></div>';
 }
 function asgRow(a){
   var hs=hwStatus(a),st=asgStatus(a),open=AG.open===a.id;
-  var r='<div><button class="alist" data-act="asg-open" data-id="'+esc(a.id)+'" aria-expanded="'+open+'"><span><b>'+esc(asgName(a))+'</b>'+(a.demo?' <small class="muted" style="display:inline">(demo)</small>':'')+'<small class="dts">Sent '+fmtShort(a.start)+' · Due '+fmtDue(new Date(a.due))+'</small></span><span class="muted">'+(isExt(a)?'External link':hs.ids.length+' exercises')+'</span><div class="pct"><div class="bar"><i style="width:'+hs.pct+'%;background:var(--accent)"></i></div><span class="mono">'+hs.pct+'%</span></div><span class="pill'+(st==='Active'?' ok':'')+'">'+st+'</span></button>';
+  var r='<div><button class="alist" data-act="asg-open" data-id="'+esc(a.id)+'" aria-expanded="'+open+'"><span><b>'+esc(asgName(a))+'</b>'+(a.demo?' <small class="muted" style="display:inline">(demo)</small>':'')+'<small class="dts">Sent '+fmtShort(a.start)+' · Due '+fmtDue(new Date(a.due))+'</small></span><span class="muted">'+esc(asgSummary(a))+'</span><div class="pct"><div class="bar"><i style="width:'+hs.pct+'%;background:var(--accent)"></i></div><span class="mono">'+hs.pct+'%</span></div><span class="pill'+(st==='Active'?' ok':'')+'">'+st+'</span></button>';
   if(open)r+='<div class="adet">'+hwMatrixHTML(a)+(a.demo?'':'<div class="actions"><button class="btn sm" data-act="asg-edit" data-id="'+esc(a.id)+'" type="button">Edit</button></div>')+'</div>';
   return r+'</div>';
 }
@@ -4136,8 +4199,7 @@ function clsDelete(c,btn){
   next().then(function(){},function(e){if(btn)btn.disabled=false;say('Stopped: '+(e&&e.message||'Something went wrong.')+' '+done+' of '+L.length+' student(s) were kicked. Press again to continue.')});
 }
 function renderAsg(){if(U&&U.role==='assistant')return renderHwa();
-  if(AG.form&&AG.form.live&&$('#fSd')){AG.form.sd=$('#fSd').value;AG.form.dd=$('#fDd').value;AG.form.dt=$('#fDt').value;AG.form.nm=$('#fNm').value;
-    if($('#fLink')){AG.form.link=$('#fLink').value;AG.form.src=$('#fSrc').value;AG.form.note=$('#fNote').value}}
+  agCollect();
   if(U&&U.adm&&!AD.sheet&&!AD.shErr&&!AD.locked&&!DEMO)adSheetLoad(); // pending classes come from the Sheet
   var cls=classListAll(),h='';
   if(AG.cur&&cls.indexOf(AG.cur)<0){AG.cur=null;AG.sub='list'}
@@ -4161,17 +4223,17 @@ function renderAsg(){if(U&&U.role==='assistant')return renderHwa();
   if(AG.cur&&AG.sub!=='settings'&&AG.form){AG.form.live=true;syncTree()}
 }
 function saveAsg(){
-  var f=AG.form,sd=$('#fSd').value,dd=$('#fDd').value,dt=$('#fDt').value||'22:00',msg=$('#asgMsg');
-  var ids=Object.keys(AS.sel).filter(function(k){return AS.sel[k]});
+  agCollect();var f=AG.form,sd=$('#fSd').value,dd=$('#fDd').value,dt=$('#fDt').value||'22:00',msg=$('#asgMsg'),ids=agSel();
   if(!sd||!dd){msg.textContent='Pick a send date and a deadline.';return}
   var sp=sd.split('-'),dp=dd.split('-'),tp=dt.split(':');
   var start=new Date(+sp[0],+sp[1]-1,+sp[2],0,0).getTime(),due=new Date(+dp[0],+dp[1]-1,+dp[2],+tp[0],+tp[1]).getTime();
   if(due<=start){msg.textContent='The deadline must be after the send date.';return}
-  var rec;
-  if(f.type==='external'){var lk=safeLink(($('#fLink')||{}).value);if(!lk){msg.textContent='Paste the full link, starting with https://';var li=$('#fLink');if(li&&li.focus)li.focus();return}
-    rec={cls:f.cls,name:($('#fNm').value||'').trim(),start:start,due:due,ex:[],type:'external',link:lk,src:String(($('#fSrc')||{}).value||'').trim().slice(0,40),note:String(($('#fNote')||{}).value||'').trim().slice(0,600),ts:Date.now()}}
-  else{if(!ids.length){msg.textContent='Tick at least one exercise.';return}
-    rec={cls:f.cls,name:($('#fNm').value||'').trim(),start:start,due:due,ex:ids,type:'mini',ts:Date.now()}}
+  var X=[],bad=-1;
+  f.ext.forEach(function(x,i){var lk=safeLink(x.link);if(!lk&&bad<0)bad=i;X.push({id:x.id,link:lk,src:String(x.src||'').trim().slice(0,40),note:String(x.note||'').trim().slice(0,600)})});
+  if(bad>=0){msg.textContent='External task '+(bad+1)+': paste the full link, starting with https:// (or remove the task).';var li=$('#fXl'+bad);if(li&&li.focus)li.focus();return}
+  if(!ids.length&&!X.length){msg.textContent='Add at least one exercise from the Library or one external task.';return}
+  var rec={cls:f.cls,name:($('#fNm').value||'').trim(),start:start,due:due,ex:ids,ext:X,type:X.length?(ids.length?'mixed':'external'):'mini',ts:Date.now()};
+  if(X.length){rec.link=X[0].link;rec.src=X[0].src;rec.note=X[0].note} // the first task also at the top level, for older app versions
   if(U&&U.role==='assistant'){msg.textContent='Saving…';hwaApi('hwa/asg',{op:'save',id:f.id||'',rec:rec}).then(function(){AG.form=null;toast('Assignment saved.');hwaLoad()},function(e){msg.textContent=e.message});return}
   var id=f.id||slug(f.cls)+'_'+Date.now();
   var fin=function(){AG.form=null;AG.open=id;renderAsg()};
@@ -4748,9 +4810,13 @@ function renderPrev(){
   $$('#cpView button').forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.v===CP.view))});
   if(!r)box.innerHTML='';
   else if(r.errs.length)box.innerHTML='<div class="cperr" role="alert"><b>Invalid format: fix '+r.errs.length+' issue'+(r.errs.length>1?'s':'')+' before adding.</b><ul class="errs">'+r.errs.map(function(e){return '<li>'+esc(e)+'</li>'}).join('')+'</ul></div>';
-  else box.innerHTML=CP.view==='stu'?'<p class="okmsg">Format OK. This is how students will see it.</p>'+(r.data.kind==='reading-ms'?cpLvHTML():'')+pvHTML(r.data):previewHTML(r.data);
+  else if(CP.view==='stu'){
+    // the real student screen; a problem drawing it is shown here (never a silent fall back to the Summary View)
+    try{box.innerHTML='<p class="okmsg">Format OK. This is how students will see it.</p>'+(r.data.kind==='reading-ms'?cpLvHTML():'')+pvHTML(r.data);if(r.data.kind==='reading-ms')rmPreview(r.data)}
+    catch(e){try{console.error('[preview]',e)}catch(x){}box.innerHTML='<div class="cperr" role="alert"><b>The student preview could not be drawn.</b><p>'+esc((e&&e.message)||'Unknown error')+'</p><p class="muted">The lesson data is unchanged. Switch to Summary View to check it, or press Try again.</p><button type="button" class="btn sm" data-act="cp-view" data-v="stu">Try again</button></div>'}}
+  else box.innerHTML=previewHTML(r.data);
+  if(r&&r.errs.length&&CP.view==='stu')box.insertAdjacentHTML&&box.insertAdjacentHTML('beforeend','<p class="muted">The Student View Preview appears once these problems are fixed.</p>');
   if(CP.skill==='reading'&&RD.job&&rdMedDone(RD.job)&&box.insertAdjacentHTML)box.insertAdjacentHTML('afterbegin',rdRvHTML());
-  if(r&&!r.errs.length&&CP.view==='stu'&&r.data.kind==='reading-ms')rmPreview(r.data);
   var fr=$('#createPrev .pvframe');if(fr)fr.classList.add('cpanim');
   renderAddTop();cpWideSync();
 }
@@ -4992,7 +5058,7 @@ function rdFails(){var J=RD.job,f=[];if(J)rdSteps().forEach(function(q){if(J.pt[
 function rdImpHTML(){var I=RD.imp;if(!I)return '';
   return '<p class="lbl" style="margin-top:10px">Versions in the file</p><ul class="rdlvs">'+RD_ORDER.map(function(l){var x=I[l];var st=!x?'wait':x==='ok'?'ok':'err';
     return '<li class="rdlv '+st+'"><b>'+({ok:'✓',err:'✗',wait:'·'})[st]+' '+RLV_NAME[l]+'</b> '+(st==='ok'?'<span class="rdpts">checked</span>':st==='wait'?'<span class="rdpts">not in the file'+(l==='medium'?'':' (students of this level get Medium)')+'</span>':'<span class="alerr rdperr">'+esc(x)+'</span>')+'</li>'}).join('')+'</ul>'}
-function rdLvHTML(){var J=RD.job;if(!J)return rdImpHTML();var ic={ok:'✓',err:'✗',busy:'…',wait:'○',idle:'–'};
+function rdLvHTML(){var J=RD.job;if(!J)return rdImpHTML();if(rdMedDone(J))return '<p class="saved" style="margin:8px 0 0">Medium is ready. Review it and follow the steps in the panel above the preview.</p>';var ic={ok:'✓',err:'✗',busy:'…',wait:'○',idle:'–'};
   var row=function(l){var P=J.pt[l],st=RD_PARTS.every(function(k){return P[k].st==='ok'})?'ok':RD_PARTS.some(function(k){return P[k].st==='err'})?'err':RD_PARTS.some(function(k){return P[k].st==='busy'})?'busy':'wait';
     return '<li class="rdlv '+st+'"><b>'+ic[st]+' '+RLV_NAME[l]+'</b> <span class="rdpts">'+RD_PARTS.map(function(k){var x=P[k];return '<span class="rdpt '+x.st+'">'+ic[x.st]+' '+RD_PNAME[k]+'</span>'}).join(' · ')+'</span>'+
       RD_PARTS.filter(function(k){return P[k].st==='err'}).map(function(k){return '<span class="alerr rdperr">'+RLV_NAME[l]+' · '+RD_PNAME[k]+': '+esc(P[k].msg||'Failed.')+'</span>'}).join('')+'</li>'};
@@ -5059,7 +5125,7 @@ function rdJobEnd(){
 /* Review Medium: Medium draft → fix issues → Approve Medium → Easy / Hard (from the approved Medium) → Add.
    Proposals from the AI (teacher feedback or "Fix with AI") are checked with the same rules first and only replace Medium when the teacher accepts.
    J.hist = older Medium versions (Undo), J.appr = {sig, ts} (approved Medium), J.der[l] = Medium signature a derived version was made from. */
-var RV={fb:'',scope:'all',busy:'',err:''};
+var RV={fb:'',scope:'all',busy:'',err:'',edit:false};
 function rdIssues(){var r=CP.last,W=parsed&&isArr(parsed.rwarn)?parsed.rwarn:[],errs=r&&r.errs?r.errs:[];
   var left=W.filter(function(w){return /(was|were) left out:/.test(w)&&!/extra heading/.test(w)}),auto=W.filter(function(w){return left.indexOf(w)<0});
   return {errs:errs,left:left,auto:auto}}
@@ -5077,18 +5143,33 @@ function rdDiff(a,b){var out=[],walk=function(x,y,p){if(out.length>=12)return;
 function rdRvFlowHTML(J){var ok=rdApproved(),der=RD_ORDER.filter(function(l){return l!=='medium'&&RD.lv&&RD.lv[l]&&!rdOutdated(l)}).length,I=rdIssues(),fix=!I.errs.length&&(!I.left.length||J.ackLeft===rdMedSig(J));
   var S=[['Medium draft',rdMedDone(J)],['Fix issues',fix],['Approve Medium',ok],['Easy / Hard',ok&&der===2],['Add',false]],cur=-1;S.forEach(function(s,i){if(cur<0&&!s[1])cur=i});
   return '<ol class="rdflow">'+S.map(function(s,i){return '<li class="'+(s[1]?'ok':i===cur?'cur':'')+'"'+(i===cur?' aria-current="step"':'')+'>'+(s[1]?'✓ ':'')+esc(s[0])+'</li>'}).join('')+'</ol>'}
-function rdRvHTML(){var J=RD.job;if(!J||!rdMedDone(J))return '';
-  var I=rdIssues(),sig=rdMedSig(J),ok=rdApproved(),bl=I.errs.length>0,lo=I.left.length>0&&J.ackLeft!==sig,busy=!!(RD.busy||RV.busy),P=J.prop;
-  var st=ok?['ok','Approved']:(bl||lo)?['bad','Draft']:['pend','Needs review'];
-  var h='<section class="rdrv" id="rdRv" aria-labelledby="rdRvH"><div class="rdrvhd"><h3 id="rdRvH">Review Medium</h3><span class="pill '+st[0]+'">'+st[1]+'</span></div>'+rdRvFlowHTML(J);
-  // issues: blocking problems and items left out (each with Fix with AI); automatic fixes only listed
+// Lesson workflow (one panel above the preview): the visible main action follows the state of the lesson.
+// review = Medium not approved (fix issues, feedback, Approve) · derive = approved, no Easy / Hard yet (Generate Easy & Hard)
+// versions = Easy / Hard being written, failed or outdated · ready = every version checked (Add to Library).
+// After approval the review tools fold into "Edit approved Medium" (RV.edit); a change there needs a new approval and makes
+// Easy / Hard outdated (rdOutdated). Student View Preview and Hide editor get the compact panel (status + main action only).
+function rdStage(J){if(!rdApproved())return 'review';var E=['easy','hard'],x=function(l){return RD.lv&&RD.lv[l]},any=function(l,st){return RD_PARTS.some(function(k){return J.pt[l][k].st===st})};
+  if(E.some(function(l){return any(l,'busy')||(any(l,'wait')&&RD.busy)}))return 'versions';
+  if(E.every(function(l){return x(l)&&x(l).st==='ok'&&!rdOutdated(l)}))return 'ready';
+  if(E.some(function(l){return (x(l)&&x(l).st==='ok')||any(l,'err')}))return 'versions';
+  return 'derive'}
+function rdVerState(J,l){var pt=J.pt[l],x=RD.lv&&RD.lv[l],any=function(st){return RD_PARTS.some(function(k){return pt[k].st===st})};
+  if(any('busy')||(any('wait')&&RD.busy))return {k:'busy',t:'Writing…'};
+  if(x&&x.st==='ok'&&rdOutdated(l))return {k:'old',t:'Outdated: Medium changed after this version was made'};
+  if(x&&x.st==='ok')return {k:'ok',t:'Ready'};
+  if(any('err'))return {k:'err',t:'Failed: '+RD_PARTS.filter(function(k){return pt[k].st==='err'}).map(function(k){return RD_PNAME[k]+' ('+(pt[k].code||'error')+')'}).join(', ')};
+  return {k:'none',t:'Not made yet'}}
+function rdRvFlowHTML(J){var st=rdStage(J),cur={review:1,derive:2,versions:2,ready:3}[st];
+  var S=['Medium draft','Review & approve Medium','Easy & Hard','Add to Library'];
+  return '<ol class="rdflow">'+S.map(function(n,i){var done=i<cur;return '<li class="'+(done?'ok':i===cur?'cur':'')+'"'+(i===cur?' aria-current="step"':'')+'>'+(done?'✓ ':'')+esc(n)+'</li>'}).join('')+'</ol>'}
+// the review tools (issues, AI proposal, teacher feedback, Undo): the main view while Medium is a draft, folded after approval
+function rdRvToolsHTML(J){var I=rdIssues(),sig=rdMedSig(J),bl=I.errs.length>0,busy=!!(RD.busy||RV.busy),P=J.prop,h='';
   var iss=I.errs.map(function(m){return {m:m,b:1}}).concat(I.left.map(function(m){return {m:m,b:0}}));
   if(iss.length){h+='<div class="rdiss"><h4>'+(bl?'Problems to fix before approving':'Items left out of the lesson')+'</h4><ul>'+iss.map(function(x,i){
       return '<li><span class="rdpartlab">'+esc(RD_PNAME[rdBlame(x.m)])+'</span> '+esc(String(x.m).replace(/\s*Press (Try again|Retry failed part)\.?/g,''))+' <button type="button" class="btn sm" data-act="rd-fix" data-i="'+i+'"'+(busy||P?' disabled':'')+'>Fix with AI</button></li>'}).join('')+'</ul>'+
     (iss.length>1?'<button type="button" class="btn sm" data-act="rd-fixall"'+(busy||P?' disabled':'')+'>Fix all '+iss.length+' with AI</button>':'')+
     (!bl&&I.left.length?'<label class="ck rdack"><input type="checkbox" id="rdAck"'+(J.ackLeft===sig?' checked':'')+'> Keep the lesson without the '+(I.left.length>1?I.left.length+' items':'item')+' left out</label>':'')+'</div>'}
   if(I.auto.length)h+='<details class="rdauto"><summary>Fixed automatically ('+I.auto.length+')</summary><ul>'+I.auto.map(function(m){return '<li>'+esc(m)+'</li>'}).join('')+'</ul></details>';
-  // an AI proposal waiting for the teacher
   if(P){var pc=P.check||{errs:[]},nd=P.diff||[];
     h+='<div class="rdprop" role="region" aria-label="AI proposal"><h4>AI proposal · '+esc(P.parts.map(function(k){return RD_PNAME[k]}).join(', '))+'</h4>'+
       (P.fails&&P.fails.length?'<p class="alerr">'+esc(P.fails.join(' '))+'</p>':'')+
@@ -5096,23 +5177,46 @@ function rdRvHTML(){var J=RD.job;if(!J||!rdMedDone(J))return '';
       (P.fixed&&P.fixed.length?'<p class="okmsg">Fixed: '+esc(P.fixed.join(' · '))+'</p>':'')+(P.still&&P.still.length?'<p class="alerr">Still a problem: '+esc(P.still.join(' · '))+'</p>':'')+
       (pc.errs.length?'<p class="alerr">This version does not pass the check: '+esc(pc.errs.slice(0,3).join(' '))+'</p>':'')+
       '<div class="actions"><button type="button" class="btn pri" data-act="rd-pacc"'+(pc.errs.length||!nd.length?' disabled':'')+'>Accept revision</button><button type="button" class="btn" data-act="rd-prej">Reject</button></div></div>'}
-  else{h+='<div class="rdfb"><label class="lbl" for="rdFb">What should AI change?</label><textarea id="rdFb" rows="3" placeholder="e.g. Make Question 2 clearer and keep the answer within two words. (English or Vietnamese)">'+esc(RV.fb)+'</textarea>'+
+  else h+='<details class="rdfbd"'+(RV.fb||!iss.length?' open':'')+'><summary>Ask AI to change something</summary><div class="rdfb"><label class="lbl" for="rdFb">What should AI change?</label><textarea id="rdFb" rows="3" placeholder="e.g. Make Question 2 clearer and keep the answer within two words. (English or Vietnamese)">'+esc(RV.fb)+'</textarea>'+
       '<div class="row rdfbrow"><label class="sr" for="rdScope">Part to change</label><select id="rdScope">'+[['all','Whole Medium lesson']].concat(RD_PARTS.map(function(k){return [k,RD_PNAME[k]]})).map(function(o){return '<option value="'+o[0]+'"'+(RV.scope===o[0]?' selected':'')+'>'+esc(o[1])+'</option>'}).join('')+'</select>'+
-      '<button type="button" class="btn" data-act="rd-fb"'+(busy||!RV.fb.trim()?' disabled':'')+'>Apply feedback with AI</button></div></div>'}
-  if(RV.busy)h+='<p class="saved" role="status">'+esc(RV.busy)+'</p>';else if(RV.err)h+='<p class="alerr" role="alert">'+esc(RV.err)+'</p>';
-  h+='<div class="actions rdappr">'+(J.hist&&J.hist.length?'<button type="button" class="btn" data-act="rd-undo"'+(busy||P?' disabled':'')+'>Undo · restore previous version</button>':'')+
-    (ok?'<span class="okmsg">Medium approved.</span>':'<button type="button" class="btn pri" data-act="rd-appr"'+(busy||P||bl||lo?' disabled':'')+'>Approve Medium</button>')+'</div>'+
-    (!ok&&(bl||lo)?'<p class="saved">'+(bl?'Fix the problems above first.':'Fix the items left out, or tick “Keep the lesson without…”.')+'</p>':'');
-  // Easy / Hard, only from the approved Medium
-  h+='<div class="rdder"><h4>Easy and Hard</h4>'+(ok?'':'<p class="saved">Approve Medium first: Easy and Hard are made from the approved Medium.</p>')+'<ul class="rdlvs">'+['easy','hard'].map(function(l){
-      var pt=J.pt[l],x=RD.lv&&RD.lv[l],any=function(s){return RD_PARTS.some(function(k){return pt[k].st===s})},s,btn='';
-      if(any('busy')||(any('wait')&&RD.busy))s='Writing…';else if(x&&x.st==='ok'&&rdOutdated(l))s='Outdated: Medium changed after this version was made';else if(x&&x.st==='ok')s='Ready';
-      else if(any('err'))s='Failed: '+RD_PARTS.filter(function(k){return pt[k].st==='err'}).map(function(k){return RD_PNAME[k]+' ('+(pt[k].code||'error')+')'}).join(', ');else s='Not made yet (students of this level get Medium)';
-      if(ok&&!busy){if(x&&x.st==='ok'&&rdOutdated(l))btn='<button type="button" class="btn sm" data-act="rd-der" data-v="'+l+'">Generate again</button><button type="button" class="btn sm" data-act="rd-keep" data-v="'+l+'">Keep this version</button>';
-        else if(any('err'))btn='<button type="button" class="btn sm" data-act="rd-retry">Retry failed part</button>';else if(!(x&&x.st==='ok'))btn='<button type="button" class="btn sm" data-act="rd-der" data-v="'+l+'">Generate '+RLV_NAME[l]+'</button>'}
-      return '<li class="rdlv"><b>'+RLV_NAME[l]+'</b> <span class="rdpts">'+esc(s)+'</span> '+btn+'</li>'}).join('')+'</ul>'+
-    (ok&&!busy&&['easy','hard'].every(function(l){return !(RD.lv&&RD.lv[l]&&RD.lv[l].st==='ok')&&!RD_PARTS.some(function(k){return J.pt[l][k].st==='err'})})?'<button type="button" class="btn sm" data-act="rd-der" data-v="both">Generate Easy and Hard</button>':'')+'</div>';
-  var dg=rdSteps().filter(function(q){var x=J.pt[q[0]][q[1]];return x.msg||x.model});
+      '<button type="button" class="btn" data-act="rd-fb"'+(busy||!RV.fb.trim()?' disabled':'')+'>Apply feedback with AI</button></div></div></details>';
+  if(J.hist&&J.hist.length)h+='<div class="row rdundo"><button type="button" class="btn sm" data-act="rd-undo"'+(busy||P?' disabled':'')+'>Undo · restore previous version</button></div>';
+  return h}
+// one list of versions (the only place their status is shown); a per-version button only when it failed or is outdated
+function rdVersHTML(J,compact){var busy=!!(RD.busy||RV.busy);
+  return '<ul class="rdvers" aria-label="Versions"><li class="rdv ok"><b>Medium</b><span>✓ Approved</span></li>'+['easy','hard'].map(function(l){var v=rdVerState(J,l),btn='';
+    if(!compact&&!busy){if(v.k==='old')btn='<button type="button" class="btn sm" data-act="rd-der" data-v="'+l+'">Generate again</button><button type="button" class="btn sm" data-act="rd-keep" data-v="'+l+'">Keep this version</button>'}
+    var why=v.k==='err'?RD_PARTS.filter(function(k){return J.pt[l][k].st==='err'}).map(function(k){return '<small class="alerr rdperr">'+RLV_NAME[l]+' · '+RD_PNAME[k]+': '+esc(J.pt[l][k].msg||'Failed.')+'</small>'}).join(''):'';
+    return '<li class="rdv '+v.k+'"><b>'+RLV_NAME[l]+'</b><span>'+({ok:'✓ ',err:'✗ ',busy:'… ',old:'! ',none:'○ '})[v.k]+esc(v.t)+'</span>'+btn+why+'</li>'}).join('')+'</ul>'}
+function rdRvHTML(){var J=RD.job;if(!J||!rdMedDone(J))return '';
+  var I=rdIssues(),sig=rdMedSig(J),st=rdStage(J),bl=I.errs.length>0,lo=I.left.length>0&&J.ackLeft!==sig,busy=!!(RD.busy||RV.busy),P=J.prop,compact=CP.view==='stu'||!!CP.wide;
+  if(st!=='review'&&!rdApproved())RV.edit=false;
+  var pill=st==='review'?((bl||lo)?['bad','Draft']:['pend','Needs review']):st==='ready'?['ok','Ready to add']:st==='versions'&&['easy','hard'].some(function(l){return rdVerState(J,l).k==='err'})?['bad','Needs attention']:['ok','Medium approved'];
+  var h='<section class="rdrv'+(compact?' cmp':'')+'" id="rdRv" aria-labelledby="rdRvH"><div class="rdrvhd"><h3 id="rdRvH">Reading lesson</h3><span class="pill '+pill[0]+'">'+pill[1]+'</span></div>'+rdRvFlowHTML(J);
+  var main='',note='',sl=cpSlotInfo();
+  if(st==='review'){
+    var n=I.errs.length+(lo?I.left.length:0);
+    note=busy?'':P?'An AI proposal is waiting for you below.':bl?n+' problem'+(n>1?'s':'')+' to fix before approving.':lo?'Some items were left out: fix them, or tick “Keep the lesson without…”.':'Check the lesson in Student View Preview, then approve it.';
+    main='<button type="button" class="btn pri" data-act="rd-appr"'+(busy||P||bl||lo?' disabled':'')+'>Approve Medium</button>';
+    if(compact&&(n||P))main='<button type="button" class="btn pri" data-act="rd-open">Review and fix issues</button>';
+  }else if(st==='derive'){note='Easy and Hard are made from the approved Medium. You can also add the lesson now: students of every level then get Medium.';
+    main='<button type="button" class="btn pri" data-act="rd-der" data-v="both"'+(busy?' disabled':'')+'>Generate Easy &amp; Hard</button>';
+  }else if(st==='versions'){var E=['easy','hard'].map(function(l){return [l,rdVerState(J,l)]});
+    if(E.some(function(x){return x[1].k==='busy'}))note='Writing the other versions… Stay on this page. Medium stays as it is.';
+    else if(E.some(function(x){return x[1].k==='err'})){note='A part failed. Finished parts are kept: only the failed part is sent again.';main='<button type="button" class="btn pri" data-act="rd-retry"'+(busy?' disabled':'')+'>Retry failed part</button>'}
+    else if(E.some(function(x){return x[1].k==='old'}))note='Medium changed after a version was made. Make it again from the new Medium, or keep it.';
+    else{var miss=E.filter(function(x){return x[1].k==='none'}).map(function(x){return x[0]});if(miss.length){note='One version is still missing.';main='<button type="button" class="btn pri" data-act="rd-der" data-v="'+miss[0]+'"'+(busy?' disabled':'')+'>Generate '+RLV_NAME[miss[0]]+'</button>'}}
+  }else{note='Every version is checked. Students get the version of their level (set in Classes › Class settings).';
+    main=sl.ok&&cpValid()?'<button type="button" class="btn pri" data-act="add-ex"'+(CP.adding?' disabled':'')+'>'+esc(CP.adding?'Adding…':sl.btn+' · '+sl.label)+'</button>':'<button type="button" class="btn pri" data-act="cp-goadd">Pick a slot to add it ↑</button>'}
+  if(st!=='review')h+=rdVersHTML(J,compact);
+  h+=(note?'<p class="rdnote">'+esc(note)+'</p>':'')+(RV.busy?'<p class="saved" role="status">'+esc(RV.busy)+'</p>':RV.err?'<p class="alerr" role="alert">'+esc(RV.err)+'</p>':'');
+  var sec=st!=='review'&&!compact?'<button type="button" class="btn" data-act="rd-edit" aria-expanded="'+!!RV.edit+'">'+(RV.edit?'Close Medium editing':'Edit approved Medium')+'</button>':'';
+  if(compact&&st!=='review')sec='<button type="button" class="btn" data-act="rd-open">Open lesson workflow</button>';
+  if(main||sec)h+='<div class="actions rdmain">'+main+sec+'</div>';
+  if(!compact&&(st==='review'||RV.edit)){
+    if(st!=='review')h+='<p class="rdnote warn">Editing Medium: any accepted change needs a new approval, and Easy / Hard made from this Medium become outdated.</p>';
+    h+=rdRvToolsHTML(J)}
+  var dg=compact?[]:rdSteps().filter(function(q){var x=J.pt[q[0]][q[1]];return x.msg||x.model});
   if(dg.length)h+='<details class="rddiag"><summary>Technical details</summary><ul>'+dg.map(function(q){var x=J.pt[q[0]][q[1]];return '<li>'+RLV_NAME[q[0]]+' · '+RD_PNAME[q[1]]+': '+esc(x.st)+(x.code?' · code '+esc(x.code):'')+(x.model?' · '+esc(x.model):'')+(x.msg?' · '+esc(x.msg):'')+'</li>'}).join('')+'</ul></details>';
   return h+'</section>'}
 function rdRvDraw(){var p=$('#rdRv');if(p)p.outerHTML=rdRvHTML();else if(RD.job&&rdMedDone(RD.job))renderPrev()}
@@ -5131,6 +5235,8 @@ function rdRevise(parts,fb,issues){var J=RD.job;if(!J||RD.busy||RV.busy||J.prop)
     J.prop={parts:got,outs:outs,fb:fb||'',fails:fails,check:{errs:chk.errs||[]},diff:rdDiff(before,cand),fixed:fixed,still:still};rdRvDraw()};
   next()}
 function rdRvAct(a,t){var J=RD.job;if(!J)return false;
+  if(a==='rd-open'){CP.view='sum';if(CP.wide){CP.wide=false;cpWideSync()}renderPrev();var p=$('#rdRv');if(p&&p.scrollIntoView)p.scrollIntoView({block:'start'});return true}
+  if(a==='rd-edit'){RV.edit=!RV.edit;rdRvDraw();return true}
   if(a==='rd-fb'){var ta=$('#rdFb');if(ta)RV.fb=ta.value;if(!RV.fb.trim())return true;rdRevise(RV.scope==='all'?RD_PARTS.slice():[RV.scope],RV.fb.trim(),[]);return true}
   if(a==='rd-fix'||a==='rd-fixall'){var I=rdIssues(),L=I.errs.concat(I.left),pick=a==='rd-fix'?[L[+t.dataset.i]].filter(Boolean):L;if(!pick.length)return true;
     var ps=[];pick.forEach(function(m){var k=rdBlame(m);if(ps.indexOf(k)<0)ps.push(k)});
@@ -5139,7 +5245,7 @@ function rdRvAct(a,t){var J=RD.job;if(!J)return false;
     P.parts.forEach(function(k){J.pt.medium[k].out=P.outs[k]});J.prop=null;rdLevelDone(J,'medium');rdJobSave();rdStatus();rdRvDraw();toast('Revision accepted. Medium needs approval again.');return true}
   if(a==='rd-prej'){J.prop=null;rdRvDraw();return true}
   if(a==='rd-undo'){var hs=J.hist||[];if(!hs.length||J.prop)return true;var last=hs.pop();RD_PARTS.forEach(function(k){if(last.outs[k])J.pt.medium[k].out=last.outs[k]});rdLevelDone(J,'medium');rdJobSave();rdStatus();rdRvDraw();toast('Previous Medium version restored.');return true}
-  if(a==='rd-appr'){var I2=rdIssues();if(RD.busy||J.prop||I2.errs.length||(I2.left.length&&J.ackLeft!==rdMedSig(J)))return true;J.appr={sig:rdMedSig(J),ts:Date.now()};rdJobSave();rdStatus();rdRvDraw();toast('Medium approved. Generate Easy and Hard next, or add the lesson.');return true}
+  if(a==='rd-appr'){var I2=rdIssues();if(RD.busy||J.prop||I2.errs.length||(I2.left.length&&J.ackLeft!==rdMedSig(J)))return true;J.appr={sig:rdMedSig(J),ts:Date.now()};RV.edit=false;rdJobSave();rdStatus();rdRvDraw();toast('Medium approved. Generate Easy and Hard next, or add the lesson.');return true}
   if(a==='rd-der'){if(!rdApproved()||RD.busy)return true;var ls=t.dataset.v==='both'?['easy','hard']:[t.dataset.v];
     ls.forEach(function(l){if(!J.pt[l])return;J.der[l]=J.appr.sig;J.runs[l]=rdRid();RD_PARTS.forEach(function(k){J.pt[l][k]={st:'wait',n:0}});if(RD.lv)delete RD.lv[l]});
     J.skip={};J.stop='';rdJobSave();rdRun();return true}
@@ -5183,6 +5289,7 @@ document.addEventListener('change',function(e){var f=e.target;if(!f||f.id!=='rdF
   rd.onerror=function(){if(m)m.textContent='The file could not be read. Try again.'};rd.readAsText(file)});
 function rdGen(){
   if(RD.busy)return;var tx=String(RD.tx||'').trim();
+  if(RD.job&&rdMedDone(RD.job)&&!confirm('Generate a new lesson? The current Medium'+(rdApproved()?' (approved)':'')+', its review and any Easy / Hard versions are replaced. This uses new AI requests.'))return;
   if(wordCount(tx)<80){RD.bad=true;RD.msg='Paste the whole passage first (at least 80 words).';rdStatus();return}
   if(rdParas(tx).length<2){RD.bad=true;RD.msg='Leave a blank line between the paragraphs of the passage.';rdStatus();return}
   // a new run: the old preview, versions and errors go away (they belong to the previous attempt)
@@ -5461,8 +5568,16 @@ document.addEventListener('click',function(e){
   if(a==='asg-edit'){var ea=allAsgs().filter(function(x){return x.id===t.dataset.id})[0];if(ea)openForm(ea.cls,ea);return renderAsg()}
   if(a==='asg-open'){AG.open=AG.open===t.dataset.id?null:t.dataset.id;return renderAsg()}
   if(a==='asg-cancel'){AG.form=null;return renderAsg()}
-  if(a==='asg-type'){if(!AG.form||AG.form.id)return true;AG.form.type=t.dataset.v==='external'?'external':'mini';renderAsg();return true}
-  if(a==='hw-shot'){var hs=$('#hwShot_'+t.dataset.asg);if(hs){hs.value='';hs.click()}return true}
+  if(a==='hw-shot'){var hs=$('#hwShot_'+t.dataset.asg+'_'+(t.dataset.x||'x1'));if(hs){hs.value='';hs.click()}return true}
+  // form sections: read the fields first, then change the content (live=false: the redraw must not read the old fields again)
+  if(a==='pk-toggle'||a==='ax-add'||a==='ax-rm'||a==='pk-clear'){var F=AG.form;if(!F)return true;agCollect();
+    if(a==='pk-clear'){var nn=agSel().length;if(!nn||!confirm('Remove all '+nn+' selected exercises from this assignment? External tasks stay.'))return true;AS.sel={}}
+    if(a==='pk-toggle')F.pick=!F.pick;
+    if(a==='ax-add')F.ext.push({id:'x'+(F.nid++),link:'',src:'',note:''});
+    if(a==='ax-rm'){var xi=+t.dataset.i,xx=F.ext[xi];if(!xx)return true;if((xx.link||xx.note||xx.src)&&!confirm('Remove external task '+(xi+1)+'?'))return true;F.ext.splice(xi,1)}
+    F.live=false;renderAsg();
+    if(a==='ax-add'){var nl=$('#fXl'+(F.ext.length-1));if(nl&&nl.focus)try{nl.focus({preventScroll:false})}catch(x){}}
+    return true}
   if(a==='pk-rm'){AS.sel[t.dataset.id]=0;renderAsg();return}
   if(a==='pk-all'||a==='pk-none'){pickIds().forEach(function(g){g.ids.forEach(function(i){AS.sel[i]=a==='pk-all'?1:0})});return renderAsg()}
   if(a==='save-grade')return saveGrade();
@@ -5481,7 +5596,7 @@ document.addEventListener('click',function(e){
   if(a==='rd-file'){if(RD.busy)return true;var rf=$('#rdFile');if(rf){rf.value='';rf.click()}return true}
   if(a==='al-gen')return alGen();
   if(a==='al-trn')return alTranscribe();
-  if(a==='cp-wide'){CP.wide=!CP.wide;cpWideSync();var wb=$('#cpWide');if(wb){try{wb.focus({preventScroll:true})}catch(x){}}return}
+  if(a==='cp-wide'){CP.wide=!CP.wide;cpWideSync();if(CP.skill==='reading')rdRvDraw();var wb=$('#cpWide');if(wb){try{wb.focus({preventScroll:true})}catch(x){}}return}
   if(a==='cp-goadd'){var sc0=$('#cpSlotCard');if(sc0&&sc0.scrollIntoView)sc0.scrollIntoView({block:'start'});var ab=$('#cpAddTop [data-act="add-ex"]');if(ab){try{ab.focus({preventScroll:true})}catch(x){}}return}
   if(a==='cp-lv'){if(!(U&&U.role==='teacher'))return;RM_TLV=t.dataset.v;return renderPrev()}
   if(a==='cp-view'){CP.view=t.dataset.v;if(!CP.last&&String(CP.raw||'').trim())return checkJSON();return renderPrev()}
@@ -6780,7 +6895,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-10-30d'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-10-31b'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(audAct(a,t))return true;
@@ -7617,7 +7732,7 @@ function rmStage1(){
           (chk&&x.p>=0?'<p class="lsexp">See '+rmPL(x.p)+'.</p>':'')+'</div>'}).join('');
     }
     var Hd=Q.head,rom=function(k){return rmRoman(RM.hOrd.indexOf(k))};
-    h+=sec('Matching headings','h')+'<p class="muted rmins">'+esc(Hd.ins)+'</p><div class="lsc rmhl"><p class="rmlbl">List of Headings</p><ol class="rmhlist">'+
+    h+=sec('Matching headings','h')+'<p class="muted rmins">'+esc(Hd.ins)+'</p><div class="rmhlb"><p class="rmlbl">List of Headings</p><ol class="rmhlist">'+
       RM.hOrd.map(function(k,j){return '<li><b class="mono">'+rmRoman(j)+'</b><span>'+esc(Hd.opts[k])+'</span></li>'}).join('')+'</ol></div>'+
       Hd.items.map(function(x,i){var v=RM.h[i],ok=chk&&RM.res['h'+i];
         return '<div class="lsc rmhrow" data-rmq="h'+i+'"><p class="rmlbl"><b class="qn">'+rmNo('h'+i)+'</b>'+rmPL(x.p)+'</p>'+rmSlot('rm-hd',i,v!=null?rom(v)+'  '+Hd.opts[v]:null,lock,chk,ok,'Choose a heading')+(chk&&!ok?'<span class="fix rmfix">→ '+esc(rom(x.a)+'  '+Hd.opts[x.a])+'</span>':'')+'</div>'}).join('');
@@ -7630,7 +7745,7 @@ function rmStage1(){
   if(n)h+='</section>';
   // laptop: passage left (sticky) | questions right. Phone: passage top half | questions bottom half, each scrolls on its own
   var sp=rmSplitPct(),ids=rmIds(D,0),qr=ids.length?rmNo(ids[0])+'–'+rmNo(ids[ids.length-1]):'';
-  return '<div class="rmdeep" style="--rmp:'+sp+'%"><section class="rmpsg" aria-label="Reading passage" tabindex="0"><div class="rmph"><h3>Reading passage</h3>'+rmPsgToggleHTML()+'</div><div class="rmpb">'+rmPsgHTML(true)+'</div></section>'+
+  return '<div class="rmdeep" style="--rmp:'+sp+'%"><section class="rmpsg" aria-label="Reading passage" tabindex="0"><h3 class="sr">Reading passage</h3><div class="rmpb">'+rmPsgHTML(true)+(rmPsgToggleHTML()?'<p class="rmpsgend">'+rmPsgToggleHTML()+'</p>':'')+'</div></section>'+
     '<div class="rmsplit" role="separator" aria-orientation="vertical" aria-label="Resize the passage and the questions" aria-valuemin="25" aria-valuemax="75" aria-valuenow="'+sp+'" tabindex="0"><span aria-hidden="true"></span></div><section class="rmqs" tabindex="-1" aria-label="Questions"><div class="rmph"><h3>Questions '+qr+'</h3></div><div class="rmpb">'+h+'</div></section></div>';
 }
 function rmStage2(){
@@ -7722,12 +7837,12 @@ function rmTick(){
   var t=rmTSec();v.textContent=rmClock(t);RMT[RM.ex.id]=t;
 }
 function rmTimerHTML(){var on=RM.trun;return '<div class="rmtimer" id="rmTimer"><b class="mono" id="rmTv" role="timer" aria-label="Reading time">'+rmClock(rmTSec())+'</b>'+(RM.fin?'':'<button type="button" class="rmtp" data-act="rm-tmr" aria-label="'+(on?'Pause the reading timer':'Resume the reading timer')+'" aria-pressed="'+(!on)+'">'+(on?'⏸':'▶')+'</button>')+'</div>'}
-function cpLvHTML(){var lv=rdLevels(),cur=RLV.indexOf(RM_TLV)>=0?RM_TLV:'medium';
+function cpLvHTML(){var lv=rdLevels()||{},cur=RLV.indexOf(RM_TLV)>=0&&(RM_TLV==='medium'||lv[RM_TLV])?RM_TLV:'medium'; // no Easy / Hard yet = {} (null used to throw)
   return '<div class="cplv"><span class="lulbl">Preview level</span><div class="seg" role="group" aria-label="Preview level">'+RLV.map(function(l){var has=l==='medium'||!!lv[l];
     return '<button type="button" data-act="cp-lv" data-v="'+l+'" aria-pressed="'+(cur===l&&has)+'"'+(has?'':' disabled title="No '+RLV_NAME[l]+' version was generated"')+'>'+RLV_NAME[l]+'</button>'}).join('')+'</div><span class="muted">Only this preview changes. Nothing is saved.</span></div>'}
 function rmPreview(d){
   delete RMT.prev;
-  var lv=rdLevels();
+  var lv=rdLevels()||{};
   renderRLesson({id:'prev',skill:'reading',title:d.title,kind:'reading-ms',rl:d.rlesson,rlv:lv,qs:d.qs},'<div class="phead"><span class="chip">Reading</span><h2>'+esc(d.title)+'</h2><p>'+esc(RM_HINT)+'</p></div>','','pvRm');
   RM.pv=d;
 }
@@ -8248,7 +8363,7 @@ function adListHTML(){
     var e=esc(u.email);
     return '<tr><td data-l="Name" class="c-nm"><b>'+esc(u.name||'—')+'</b>'+(u.src==='env'&&u.role==='teacher'?'<small>Listed in Cloudflare (TEACHERS)</small>':'')+'</td>'+
       '<td data-l="Email" class="c-em mono">'+e+'</td>'+
-      '<td data-l="Class" class="c-sm">'+(u.cls?esc(classTitle(u.cls))+(u.course?'<small>'+esc(u.course)+'</small>':''):'—')+'</td>'+
+      '<td data-l="Class" class="c-sm">'+(u.cls&&!u.tester?esc(classTitle(u.cls))+(u.course?'<small>'+esc(u.course)+'</small>':''):'—')+'</td>'+
       '<td data-l="Role" class="c-sm">'+adRoleHTML(u)+'</td><td data-l="Status" class="c-sm">'+adStatusHTML(u)+'</td>'+
       '<td data-l="Actions" class="c-ac">'+adMenuBtn(u,'users')+'</td></tr>'}).join('')+'</tbody></table></div>';
 }
@@ -8309,7 +8424,7 @@ function hwaOverviewHTML(){var D=HWA.data,now=D.now,cs=hwaSel(HWA.cls),stu=D.stu
   var fu=stu.filter(function(s){var w=hwaWatch(s);return w.lab==='attention'||w.lab==='watch'}).length;
   var card=function(n,l,d){return '<div class="hwa-num"><b>'+n+'</b><span>'+l+'</span><small>'+d+'</small></div>'};
   var up=A.filter(function(a){return a.start<=now&&a.due>now}).sort(function(x,y){return x.due-y.due}),rec=A.filter(function(a){return a.due<=now}).sort(function(x,y){return y.due-x.due}).slice(0,8),soon=A.filter(function(a){return a.start>now});
-  var row=function(a){var c=hwaCnt(a);return '<li><span><b>'+esc(asgName(a))+'</b> <span class="muted">· '+esc(a.cls)+(a.type==='external'?' · External':'')+'</span></span><span class="muted">Due '+esc(hwaDue(new Date(a.due)))+'</span><span>'+(c.done+c.late)+' / '+c.n+' submitted'+(c.missing?' · <b class="hwa-bad">'+c.missing+' missing</b>':'')+'</span>'+
+  var row=function(a){var c=hwaCnt(a);return '<li><span><b>'+esc(asgName(a))+'</b> <span class="muted">· '+esc(a.cls)+' · '+esc(asgSummary(a))+'</span></span><span class="muted">Due '+esc(hwaDue(new Date(a.due)))+'</span><span>'+(c.done+c.late)+' / '+c.n+' submitted'+(c.missing?' · <b class="hwa-bad">'+c.missing+' missing</b>':'')+'</span>'+
     (a.due<=now&&c.missing?'<button type="button" class="btn sm" data-act="hwa-rep" data-id="'+esc(a.id)+'">Copy missing list</button>':'')+'</li>'};
   return '<div class="hwa-sum">'+card(stu.length,'Students','in '+(HWA.cls==='all'?'your classes':esc(HWA.cls)))+card(pairs.sub,'Submitted','student × assignment, sent assignments')+card(pairs.miss,'Missing','deadline passed, nothing submitted')+card(fu,'Need follow-up','students: Needs attention or Watch')+'</div>'+
     '<p class="muted hwa-def">Period: assignments due from '+esc(hwaDay(D.from))+' (last 60 days) and upcoming. Counts are student × assignment pairs, except Students and Need follow-up (students).</p>'+
@@ -8319,7 +8434,7 @@ function hwaAssignHTML(){var D=HWA.data,now=D.now,A=D.assignments.filter(hwaSel(
   var h='<div class="hwa-bar"><label class="field" for="hwaNewCls">Class<select id="hwaNewCls">'+D.classes.map(function(c){return '<option'+(c===cl?' selected':'')+'>'+esc(c)+'</option>'}).join('')+'</select></label><button class="btn pri" type="button" data-act="hwa-new">Create assignment</button></div>';
   if(AG.form)h+=formHTML();
   return h+(A.length?'<ul class="hwa-list hwa-asgs">'+A.map(function(a){var c=hwaCnt(a),st=now<a.start?'Upcoming':now>a.due?'Closed':'Active';
-    return '<li><span><b>'+esc(asgName(a))+'</b> <span class="muted">· '+esc(a.cls)+' · '+(a.type==='external'?'External link':a.ex.length+' exercises')+'</span><small class="muted">Sent '+esc(hwaDay(a.start))+' · Due '+esc(hwaDue(new Date(a.due)))+'</small></span><span>'+(c.done+c.late)+' / '+c.n+' submitted</span><span class="pill'+(st==='Active'?' ok':'')+'">'+st+'</span>'+
+    return '<li><span><b>'+esc(asgName(a))+'</b> <span class="muted">· '+esc(a.cls)+' · '+esc(asgSummary(a))+'</span><small class="muted">Sent '+esc(hwaDay(a.start))+' · Due '+esc(hwaDue(new Date(a.due)))+'</small></span><span>'+(c.done+c.late)+' / '+c.n+' submitted</span><span class="pill'+(st==='Active'?' ok':'')+'">'+st+'</span>'+
       '<span class="hwa-acts"><button type="button" class="btn sm" data-act="hwa-edit" data-id="'+esc(a.id)+'">Edit</button><button type="button" class="btn sm bad" data-act="hwa-cancel" data-id="'+esc(a.id)+'">Cancel</button></span></li>'}).join('')+'</ul>':'<p class="muted">No assignments in this period.</p>')}
 function hwaMissingHTML(){var D=HWA.data,cs=hwaSel(HWA.cls),A=D.assignments.filter(cs).filter(function(a){return !HWA.asg||a.id===HWA.asg}).sort(function(x,y){return y.due-x.due}),rows=[];
   A.forEach(function(a){var m=(D.status||{})[a.id]||{};D.students.filter(function(s){return s.cls===a.cls}).forEach(function(s){var r=m[s.key];if(!r||r.st==='upcoming'||r.st==='none')return;if(HWA.st!=='all'&&r.st!==HWA.st)return;rows.push({s:s,a:a,r:r})})});
@@ -8328,7 +8443,7 @@ function hwaMissingHTML(){var D=HWA.data,cs=hwaSel(HWA.cls),A=D.assignments.filt
     '<label class="field" for="hwaSt">Status<select id="hwaSt">'+[['all','All']].concat(['missing','pending','late','done'].map(function(k){return [k,HWA_ST[k]]})).map(function(o){return '<option value="'+o[0]+'"'+(o[0]===HWA.st?' selected':'')+'>'+esc(o[1])+'</option>'}).join('')+'</select></label></div>';
   h+=rows.length?'<div class="scroll"><table class="hwa-t"><thead><tr><th scope="col">Student</th><th scope="col">Homework</th><th scope="col">Due</th><th scope="col">Status</th><th scope="col">Submitted</th></tr></thead><tbody>'+rows.map(function(x){var r=x.r,bad=r.st==='missing';
     return '<tr><td>'+esc(x.s.name)+' <span class="muted">· '+esc(x.s.cls)+'</span></td><td>'+esc(asgName(x.a))+'</td><td class="mono">'+esc(hwaDue(new Date(r.due)))+(r.ext?' <span class="muted">(extended)</span>':'')+'</td><td><span class="pill'+(bad?' bad':r.st==='done'?' ok':r.st==='late'?' pend':'')+'">'+esc(HWA_ST[r.st])+'</span></td><td class="mono">'+(r.at?esc(hwaDue(new Date(r.at))):'—')+
-      (r.shot?' <a href="'+esc(r.shot)+'" target="_blank" rel="noopener">screenshot</a>':'')+'</td></tr>'}).join('')+'</tbody></table></div>':'<p class="muted">Nothing matches these filters.</p>';
+      (r.shots||(r.shot?[r.shot]:[])).map(function(u,j,L){return ' <a href="'+esc(u)+'" target="_blank" rel="noopener">screenshot'+(L.length>1?' '+(j+1):'')+'</a>'}).join('')+'</td></tr>'}).join('')+'</tbody></table></div>':'<p class="muted">Nothing matches these filters.</p>';
   // group report (copy, never sent)
   var rp=HWA.rep,due=aopts.filter(function(a){return a.start<=D.now}),cur=rp.asg||(due[0]&&due[0].id)||'',R=cur?hwaReport(cur,rp.mode):null;
   h+='<section class="hwa-sec hwa-rep" aria-labelledby="hwaRepH"><h3 id="hwaRepH">Copy report for the class group</h3><div class="hwa-bar"><label class="field" for="hwaRepAsg">Homework<select id="hwaRepAsg">'+due.map(function(a){return '<option value="'+esc(a.id)+'"'+(a.id===cur?' selected':'')+'>'+esc(asgName(a)+' · '+a.cls)+'</option>'}).join('')+'</select></label>'+
@@ -8349,7 +8464,7 @@ function hwaStuHTML(s,w){var D=HWA.data,n=(D.notes||{})[s.key]||{status:'none',n
     '<p class="lbl">Private notes (only staff can see them)</p>'+(n.notes&&n.notes.length?'<ul class="hwa-notes">'+n.notes.slice().reverse().map(function(x){return '<li><span class="muted">'+esc(hwaDue(new Date(x.ts)))+' · '+esc(x.by)+'</span><br>'+esc(x.t)+'</li>'}).join('')+'</ul>':'<p class="muted">No notes yet.</p>')+
     '<label class="sr" for="hwaNote">New note</label><textarea id="hwaNote" rows="2" maxlength="1000" placeholder="e.g. Messaged the parent on Zalo."></textarea><div class="actions"><button type="button" class="btn sm" data-act="hwa-note" data-k="'+esc(s.key)+'">Save note</button></div></div>'}
 function renderHwa(){var el=$('#v-hwa');if(!el)return;if(!U||U.role!=='assistant'){el.innerHTML='';return}
-  if(AG.form&&AG.form.live&&$('#fSd')){AG.form.sd=$('#fSd').value;AG.form.dd=$('#fDd').value;AG.form.dt=$('#fDt').value;AG.form.nm=$('#fNm').value;if($('#fLink')){AG.form.link=$('#fLink').value;AG.form.src=$('#fSrc').value;AG.form.note=$('#fNote').value}}
+  agCollect();
   var D=HWA.data,h='<div class="pad hwa"><div class="sechead"><h2>Homework &amp; Student Progress</h2><button type="button" class="btn sm" data-act="hwa-ref"'+(HWA.loading?' disabled':'')+'>'+(HWA.loading?'Loading…':'Refresh')+'</button></div>';
   if(HWA.err)h+='<p class="err" role="alert">'+esc(HWA.err)+'</p>';
   if(!D){el.innerHTML=h+(HWA.loading?'<p class="muted" role="status">Loading your classes…</p>':'')+'</div>';if(!HWA.loading&&!HWA.err)hwaLoad();return}
@@ -8586,6 +8701,8 @@ populateBookTest();
   if(!c||!c.use){setStatus('local');dbReady=true;return}
   Promise.resolve(c.use('db')).then(function(db){
     if(!db){setStatus('local');dbReady=true;return}
+    // Homework Assistant: no Firestore at all (rules refuse it); its data comes from /api/hwa/* (class scope checked by the server)
+    if(window.MD_USER&&window.MD_USER.role==='assistant'){dbReady=true;setStatus('saved');if(!U)signIn(String(window.MD_USER.email||'').toLowerCase());return}
     dbh=db;
     var toDocs=function(snap){return snap.docs.map(function(d){return Object.assign({id:d.id,docId:d.id},d.data())})};
     var myEm=String((window.MD_USER&&window.MD_USER.email)||lsGet('md-email')||'').toLowerCase(),isT=DEMO||!!(window.MD_USER&&window.MD_USER.role==='teacher');

@@ -30,9 +30,9 @@ const C2_LONG = (k, r) => { if (k === 'deep') r.deep.exercises.completion.items[
     const A = app(); await gen(A);
     assert.deepStrictEqual(A.seen.map((b) => b.level + ':' + b.part), ['medium:deep', 'medium:vocab', 'medium:output']);
     assert.ok(A.T.cpOk() && !A.T.cpValid() && /Approve Medium first/.test(A.T.cpAddBarHTML()));
-    const h = A.T.rdRvHTML(); assert.ok(/id="rdRv"/.test(h) && />Review Medium</.test(h) && /class="pill pend">Needs review</.test(h) && /data-act="rd-appr">Approve Medium</.test(h));
+    const h = A.T.rdRvHTML(); assert.ok(/id="rdRv"/.test(h) && />Reading lesson</.test(h) && /aria-current="step">Review &amp; approve Medium</.test(h) && /class="pill pend">Needs review</.test(h) && /data-act="rd-appr">Approve Medium</.test(h));
     assert.ok(/What should AI change\?/.test(h) && /data-act="rd-fb" disabled/.test(h), 'feedback box, button off while empty');
-    assert.ok(/Approve Medium first: Easy and Hard are made from the approved Medium/.test(h) && !/data-act="rd-der"/.test(h));
+    assert.ok(!/data-act="rd-der"/.test(h) && !/class="rdvers"/.test(h), 'no Easy / Hard actions or version list before approval');
     await act(A, 'rd-der', { v: 'easy' }); assert.strictEqual(A.seen.length, 3, 'no Easy before approval');
     const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'); assert.ok(/box\.insertAdjacentHTML\('afterbegin',rdRvHTML\(\)\)/.test(src), 'panel sits in the preview column (stays when the editor is hidden)');
   });

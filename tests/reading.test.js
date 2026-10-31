@@ -50,7 +50,7 @@ const base = (B) => JSON.parse(B.T.EXAMPLE_R);
     D.paras = D.paras.concat(['An extra closing paragraph that no question uses.', 'Another unused paragraph.']);
     B.T.renderRLesson({ id: 'r2', skill: 'reading', title: 't', kind: 'reading-ms', rl: D, qs: r.data.qs }, '', '', null);
     const L = B.T.rmExIdx(); assert.ok(L && L.length < D.paras.length); let h = B.T.rmPsgExHTML();
-    const lib = B.el('libBody').innerHTML; assert.ok(!/Selected excerpts|not the whole passage|rmexh/.test(lib) && /<div class="rmph"><h3>Reading passage<\/h3><button type="button" class="linkish rmpsgt" data-act="rm-full"[^>]*>Show full passage</.test(lib), 'link in the passage card header');
+    const lib = B.el('libBody').innerHTML; assert.ok(!/Selected excerpts|not the whole passage|rmexh/.test(lib) && /<h3 class="sr">Reading passage<\/h3><div class="rmpb">/.test(lib) && !/<div class="rmph"><h3>Reading passage/.test(lib) && /<p class="rmpsgend"><button type="button" class="linkish rmpsgt" data-act="rm-full"[^>]*>Show full passage</.test(lib), 'no big passage header; a small full-passage link under the text');
     assert.strictEqual((h.match(/class="rmp"/g) || []).length, L.length);
     B.press({ act: 'rm-full' }); h = B.T.rmPsgExHTML(); assert.ok(/>Show only the paragraphs for these questions</.test(B.el('libBody').innerHTML)); assert.strictEqual((h.match(/class="rmp"/g) || []).length, D.paras.length);
   });
