@@ -1,17 +1,17 @@
 # Vocab QA status
 
-**BLOCKED** · QA PASS · round 3/3 · full
+**BLOCKED** · QA PASS · round 1/3 · full
 
-- Timestamp (Asia/Saigon): 2026-10-31 10:03:35 GMT+7
-- UTC: 2026-10-31T03:03:35.023Z
-- Branch/SHA: `feature/vocab-lab` / `8ca2aebbb5f7c0f332fdde1507b81bdb3b9c00d1`
-- Working source fingerprint: `ea332d93bd6a679f16f3b8226df3386feae06ae011653d521efc89cb866768da` (dirty working tree)
-- Command: `node tools/vocab-qa-runner.cjs --session phase27-content-audit --round 3 --changes-file qa-artifacts/phase27-content-audit/round3-changes.json`
-- Session: `phase27-content-audit`
+- Timestamp (Asia/Saigon): 2026-10-31 10:27:42 GMT+7
+- UTC: 2026-10-31T03:27:42.525Z
+- Branch/SHA: `feature/vocab-lab` / `57768755419e580d2b71f9cf2db63a3f04721ba7`
+- Working source fingerprint: `0e292d3cfe0630b411054bb63f54171f999a0e4ecdc93be74d866f2b3a518972` (dirty working tree)
+- Command: `node tools/vocab-qa-runner.cjs --session phase27-teacher-decisions --round 1 --changes-file qa-artifacts/phase27-teacher-decisions/focused-editorial-repair.json`
+- Session: `phase27-teacher-decisions`
 - Environment: Node v24.22.1, win32/x64, Playwright 1.62.1, browser msedge
-- Tests: 110 Node tests + 244 core assertions; 0 failed commands
-- Artifact directory: `qa-artifacts/phase27-content-audit/round-3-full` (443 screenshots)
-- Static manifest: `a969910c864542372ae416d498d0ca316acc4a9af77c4ad810aeef9c1970d906`
+- Tests: 117 Node tests + 244 core assertions; 0 failed commands
+- Artifact directory: `qa-artifacts/phase27-teacher-decisions/round-1-full` (443 screenshots)
+- Static manifest: `aa1d4474e101245cf429864219d2762fb187d90e221f56016e894ecf546278ea`
 
 ## Coverage
 
@@ -83,7 +83,7 @@
 
 ## Changes in this round
 
-- Environment interruption: requested 30-second wait returned after 2306 seconds; Mission was marked FAIL with empty log during the gap. Tool session 32259 subsequently disappeared; no QA runner process or completed round-2 report remains. Round 2 is INCOMPLETE, not PASS.; files: ; reproduction: Preserve round-2 artifacts. Run focused Mission and final round 3 while requesting Windows SYSTEM_REQUIRED only for the command lifetime; do not alter app code, tests or 480-second suite timeout.
+- New instruction used expression, containing the taught target press (048); all-102 browser leakage assertion detected it.; files: vocab-retrieval.js, vocab-mission.js; reproduction: Round 1 focused editorial: Answer visible C17-T1-R1-048. Replaced wording with vocabulary taught here; preserved the exact leakage assertions.
 
 ## Next action
 

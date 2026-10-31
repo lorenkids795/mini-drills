@@ -1,6 +1,6 @@
 /* Original Phase 2.7 draft repairs; never human approval or publication. */
 (function(root){var data={
-  "catalogVersion": 2,
+  "catalogVersion": 3,
   "packs": [
     {
       "schemaVersion": 1,
@@ -1364,7 +1364,7 @@
     {
       "schemaVersion": 1,
       "id": "p1-power-exhibit",
-      "version": 2,
+      "version": 3,
       "lessonId": "cam17-t1-reading-p1",
       "theme": "Museum editors check a fictional model-engine exhibit",
       "title": "The Power Exhibit Review",
@@ -1403,49 +1403,54 @@
           "sourceId": "C17-T1-R1-055",
           "term": "emission",
           "definition": "substances released by engines",
-          "sentence": "The exhibit log describes an emission of exhaust from an old engine.",
+          "sentence": "The exhibit log records exhaust emissions released by an old engine while it was running.",
           "investigate": {
             "kind": "meaning",
-            "prompt": "What does emission refer to here?",
+            "prompt": "What does emissions refer to in this exhibit log?",
             "options": [
-              "A substance released from the engine.",
-              "A substance supplied to the engine as fuel.",
-              "A substance retained inside the engine as lubricant."
+              "Substances released by the engine.",
+              "Substances supplied to the engine as fuel.",
+              "Substances retained inside the engine as lubricant."
             ],
             "answer": 0,
-            "clue": "Trace the direction of the material in the engine note.",
-            "why": "The emission leaves the engine. Fuel enters it, while lubricant retained inside has not been released.",
-            "context": "An archive note records material released from the engine during operation.",
+            "clue": "Trace where the substances go during operation.",
+            "why": "The emissions leave the engine; fuel enters it, while lubricant retained inside has not been released.",
+            "context": "The exhibit log records exhaust emissions released by an old engine while it was running.",
             "artifact": "Case evidence",
             "purpose": "Interpret this finding before writing the team recommendation.",
             "clue2": "Check the evidence against each option; avoid adding claims the finding does not make."
           },
           "decode": {
             "kind": "collocation",
-            "prompt": "Which wording fits the engine note?",
+            "prompt": "Which wording describes substances released by the engine?",
             "options": [
-              "an emission of exhaust",
-              "an admission of exhaust",
-              "a permission of exhaust"
+              "exhaust emissions from the engine",
+              "fuel deliveries to the engine",
+              "lubricant reserves inside the engine"
             ],
             "answer": 0,
-            "clue": "Choose the noun that names material released by an engine.",
-            "why": "An emission of exhaust describes a release; admission and permission have different meanings.",
+            "clue": "Follow the direction of movement described in the log.",
+            "why": "Exhaust emissions are substances released from the engine. Fuel deliveries go in, and lubricant reserves remain inside.",
             "artifact": "Team language memo",
             "purpose": "Keep the wording consistent with this mission finding."
           },
           "final": {
             "kind": "recall",
-            "prompt": "The monitor detected an ___ of nitrogen oxides from the engine while it was running.",
+            "prompt": "The laboratory measured the engine's ___. These included nitrogen oxides released during operation.",
             "answers": [
-              "emission"
+              "emissions"
             ],
-            "clue": "Check the article, number and any required small words on both sides of the gap.",
-            "why": "An emission of nitrogen oxides identifies material released by the engine; the article an requires a singular noun here.",
-            "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
+            "clue": "The next sentence refers back to several substances; check the number of the noun in the gap.",
+            "why": "Emissions is plural because these refers to substances released by the engine. The singular emission does not fit this plural reference.",
+            "variantPolicy": "Teacher direction: docs/CODEX-PHASE-2.7-TEACHER-DECISIONS.md. Bank label: emission. This exercise requires the reviewed plural emissions. Case and extra spaces are ignored; emission, fumes, exhaust and other synonyms are not accepted.",
             "artifact": "Independent final note",
             "purpose": "Recall the expression in a new finding without a word bank.",
             "strictVariants": true
+          },
+          "teacherDirection": {
+            "reference": "docs/CODEX-PHASE-2.7-TEACHER-DECISIONS.md",
+            "direction": "Use plural emissions throughout the exercise; retain approved bank lemma and sense.",
+            "status": "APPLIED_TO_DRAFT_NOT_APPROVAL"
           }
         },
         {
@@ -2041,6 +2046,329 @@
               }
             }
           ]
+        },
+        {
+          "version": 2,
+          "terms": [
+            {
+              "senseId": "sense-b9b6507069769c823a393841",
+              "sourceId": "C17-T1-R1-055",
+              "term": "emission",
+              "definition": "substances released by engines",
+              "sentence": "The exhibit log describes an emission of exhaust from an old engine.",
+              "investigate": {
+                "kind": "meaning",
+                "prompt": "What does emission refer to here?",
+                "options": [
+                  "A substance released from the engine.",
+                  "A substance supplied to the engine as fuel.",
+                  "A substance retained inside the engine as lubricant."
+                ],
+                "answer": 0,
+                "clue": "Trace the direction of the material in the engine note.",
+                "why": "The emission leaves the engine. Fuel enters it, while lubricant retained inside has not been released.",
+                "context": "An archive note records material released from the engine during operation.",
+                "artifact": "Case evidence",
+                "purpose": "Interpret this finding before writing the team recommendation.",
+                "clue2": "Check the evidence against each option; avoid adding claims the finding does not make."
+              },
+              "decode": {
+                "kind": "collocation",
+                "prompt": "Which wording fits the engine note?",
+                "options": [
+                  "an emission of exhaust",
+                  "an admission of exhaust",
+                  "a permission of exhaust"
+                ],
+                "answer": 0,
+                "clue": "Choose the noun that names material released by an engine.",
+                "why": "An emission of exhaust describes a release; admission and permission have different meanings.",
+                "artifact": "Team language memo",
+                "purpose": "Keep the wording consistent with this mission finding."
+              },
+              "final": {
+                "kind": "recall",
+                "prompt": "The monitor detected an ___ of nitrogen oxides from the engine while it was running.",
+                "answers": [
+                  "emission"
+                ],
+                "clue": "Check the article, number and any required small words on both sides of the gap.",
+                "why": "An emission of nitrogen oxides identifies material released by the engine; the article an requires a singular noun here.",
+                "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
+                "artifact": "Independent final note",
+                "purpose": "Recall the expression in a new finding without a word bank.",
+                "strictVariants": true
+              }
+            },
+            {
+              "senseId": "sense-76ab40715a668211f31eca6c",
+              "sourceId": "C17-T1-R1-062",
+              "term": "minimise",
+              "definition": "reduce as far as possible",
+              "sentence": "The curators want to minimise wasted electricity during opening hours.",
+              "investigate": {
+                "kind": "meaning",
+                "prompt": "Which aim matches minimise?",
+                "options": [
+                  "Keep the current level of waste unchanged.",
+                  "Reduce waste as far as possible.",
+                  "Move the waste elsewhere without reducing it."
+                ],
+                "answer": 1,
+                "clue": "Consider the intended change in the amount of waste.",
+                "why": "Minimise means reduce as far as possible; it is stronger than simply renaming a measure.",
+                "context": "The review asks for waste to be reduced as far as possible.",
+                "artifact": "Case evidence",
+                "purpose": "Interpret this finding before writing the team recommendation.",
+                "clue2": "Check the evidence against each option; avoid adding claims the finding does not make."
+              },
+              "decode": {
+                "kind": "reconstruct",
+                "prompt": "Restore the team memo.",
+                "tokens": [
+                  "We",
+                  "to",
+                  "waste",
+                  "the",
+                  "aim",
+                  "minimise",
+                  "during",
+                  "display."
+                ],
+                "answers": [
+                  "We aim to minimise waste during the display."
+                ],
+                "clue": "Start with the team aim, then the action and object.",
+                "why": "Minimise waste names the aim of reducing waste as far as possible.",
+                "artifact": "Team language memo",
+                "purpose": "Keep the wording consistent with this mission finding."
+              },
+              "final": {
+                "kind": "recall",
+                "prompt": "The organiser checked every stage of the schedule to ___ unnecessary waiting time.",
+                "answers": [
+                  "minimise",
+                  "minimize"
+                ],
+                "clue": "Check the verb form and any required small words against the sentence around the gap.",
+                "why": "Minimise and minimize are accepted British/American spellings in this base-verb slot.",
+                "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
+                "artifact": "Independent final note",
+                "purpose": "Recall the expression in a new finding without a word bank.",
+                "strictVariants": true
+              }
+            },
+            {
+              "senseId": "sense-06c262095128f7725da31684",
+              "sourceId": "C17-T1-R1-084",
+              "term": "condense",
+              "definition": "change from gas to liquid",
+              "sentence": "A diagram shows water vapour cooling until it can condense into liquid.",
+              "investigate": {
+                "kind": "meaning",
+                "prompt": "Which change is described by condense?",
+                "options": [
+                  "A liquid changing into a gas.",
+                  "A solid changing into a liquid.",
+                  "A gas changing into a liquid."
+                ],
+                "answer": 2,
+                "clue": "Follow the initial and final states in the diagram.",
+                "why": "Condense in this source sense means change from gas to liquid; the reverse change is not the target meaning.",
+                "context": "The diagram follows a substance changing from gas to liquid.",
+                "artifact": "Case evidence",
+                "purpose": "Interpret this finding before writing the team recommendation.",
+                "clue2": "Check the evidence against each option; avoid adding claims the finding does not make."
+              },
+              "decode": {
+                "kind": "collocation",
+                "prompt": "Complete the diagram caption: Vapour may condense ___ liquid.",
+                "options": [
+                  "from",
+                  "into",
+                  "away"
+                ],
+                "answer": 1,
+                "clue": "The following phrase identifies the resulting state.",
+                "why": "Condense into introduces the resulting liquid state.",
+                "artifact": "Team language memo",
+                "purpose": "Keep the wording consistent with this mission finding."
+              },
+              "final": {
+                "kind": "recall",
+                "prompt": "Warm vapour touches the cold pane and droplets begin to appear. The vapour can ___ on the glass.",
+                "answers": [
+                  "condense"
+                ],
+                "clue": "Check the verb form and any required small words against the sentence around the gap.",
+                "why": "Condense is the base verb here; condensation is the process noun.",
+                "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
+                "artifact": "Independent final note",
+                "purpose": "Recall the expression in a new finding without a word bank.",
+                "strictVariants": true
+              }
+            },
+            {
+              "senseId": "sense-d34dd630d6328faba29a8732",
+              "sourceId": "C17-T1-R1-095",
+              "term": "generator",
+              "definition": "device producing electric power",
+              "sentence": "A small generator produces electricity for the model display.",
+              "investigate": {
+                "kind": "meaning",
+                "prompt": "Which description fits generator?",
+                "options": [
+                  "A device that produces electrical power.",
+                  "A device that stores electricity for later use.",
+                  "A device that uses electricity to produce movement."
+                ],
+                "answer": 0,
+                "clue": "Consider the device’s stated function in this display.",
+                "why": "The generator produces electricity; storing electricity or using it to create motion describes different devices.",
+                "context": "The label identifies a device whose role is to produce electrical power.",
+                "artifact": "Case evidence",
+                "purpose": "Interpret this finding before writing the team recommendation.",
+                "clue2": "Check the evidence against each option; avoid adding claims the finding does not make."
+              },
+              "decode": {
+                "kind": "reconstruct",
+                "prompt": "Restore the team memo.",
+                "tokens": [
+                  "The",
+                  "supplies",
+                  "to",
+                  "model.",
+                  "generator",
+                  "electricity",
+                  "the"
+                ],
+                "answers": [
+                  "The generator supplies electricity to the model."
+                ],
+                "clue": "Start with the device and then describe its role.",
+                "why": "Generator is the subject; supplies electricity states its role in this display.",
+                "artifact": "Team language memo",
+                "purpose": "Keep the wording consistent with this mission finding."
+              },
+              "final": {
+                "kind": "recall",
+                "prompt": "During the power cut, a portable ___ produced electricity for the emergency lights.",
+                "answers": [
+                  "generator"
+                ],
+                "clue": "Check the article, number and any required small words on both sides of the gap.",
+                "why": "Generator identifies the electricity-producing device in this sentence.",
+                "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
+                "artifact": "Independent final note",
+                "purpose": "Recall the expression in a new finding without a word bank.",
+                "strictVariants": true
+              }
+            },
+            {
+              "senseId": "sense-1a95bb111e4aea4c24356619",
+              "sourceId": "C17-T1-R1-099",
+              "term": "power supply",
+              "definition": "supply of electric energy",
+              "sentence": "The team checks the power supply before opening the display to visitors.",
+              "investigate": {
+                "kind": "meaning",
+                "prompt": "What does power supply refer to here?",
+                "options": [
+                  "The electricity consumed by one component.",
+                  "The electrical energy supplied to the exhibit.",
+                  "The electrical capacity printed on a device."
+                ],
+                "answer": 1,
+                "clue": "Consider what the equipment needs before it can operate.",
+                "why": "The note concerns electrical energy delivered to the exhibit, rather than a component’s consumption or its stated capacity.",
+                "context": "The review note concerns the supply of electrical energy to the exhibit.",
+                "artifact": "Case evidence",
+                "purpose": "Interpret this finding before writing the team recommendation.",
+                "clue2": "Check the evidence against each option; avoid adding claims the finding does not make."
+              },
+              "decode": {
+                "kind": "paraphrase",
+                "prompt": "Which memo preserves the finding that the power supply stopped?",
+                "options": [
+                  "Electrical energy was still arriving but consumption rose.",
+                  "The equipment remained connected but demand fell.",
+                  "Electrical energy was no longer supplied."
+                ],
+                "answer": 2,
+                "clue": "Keep the same electrical event.",
+                "why": "An interruption means energy stopped reaching the equipment, not merely that demand or consumption changed.",
+                "artifact": "Team language memo",
+                "purpose": "Keep the wording consistent with this mission finding."
+              },
+              "final": {
+                "kind": "recall",
+                "prompt": "No electricity was reaching the equipment. The technicians restored the ___ before restarting it.",
+                "answers": [
+                  "power supply"
+                ],
+                "clue": "Check the article, number and any required small words on both sides of the gap.",
+                "why": "Power supply is the target two-word expression; power alone does not specify the supply.",
+                "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
+                "artifact": "Independent final note",
+                "purpose": "Recall the expression in a new finding without a word bank.",
+                "strictVariants": true
+              }
+            }
+          ],
+          "morph": [
+            {
+              "senseId": "sense-06c262095128f7725da31684",
+              "form": "condensation",
+              "definition": "noun: the process of a gas becoming liquid",
+              "partOfSpeech": "noun",
+              "attestationRef": "cambridge-condensation",
+              "discover": {
+                "kind": "recall",
+                "prompt": "Use the noun: The diagram labels the gas-to-liquid process as ___.",
+                "answers": [
+                  "condensation"
+                ],
+                "clue": "Name the process rather than give its verb.",
+                "why": "Condensation is the noun for the process; condense is the verb.",
+                "variantPolicy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap.",
+                "strictVariants": true
+              },
+              "transform": {
+                "kind": "recall",
+                "prompt": "Transform the verb into a noun: Vapour can condense. The process is called ___.",
+                "answers": [
+                  "condensation"
+                ],
+                "clue": "Use the process noun after called.",
+                "why": "Condensation names the gas-to-liquid process.",
+                "variantPolicy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap.",
+                "strictVariants": true
+              },
+              "recall": {
+                "kind": "recall",
+                "prompt": "Water droplets formed when warm air met the cold window. This process is called ___.",
+                "answers": [
+                  "condensation"
+                ],
+                "clue": "Name the phase-change process.",
+                "why": "Condensation is the process noun in this context.",
+                "variantPolicy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap.",
+                "strictVariants": true
+              },
+              "extra": {
+                "kind": "recall",
+                "prompt": "Warm water vapour cooled against the mirror and formed droplets through ___.",
+                "answers": [
+                  "condensation"
+                ],
+                "clue": "A noun names the process being labelled.",
+                "why": "Condensation names the process represented by the cooling vapour.",
+                "variantPolicy": "Explicit list only; case, sentence punctuation and spaces normalize. Articles/inflections must fit this exact gap.",
+                "strictVariants": true
+              }
+            }
+          ],
+          "origin": "before-teacher-directions"
         }
       ]
     }

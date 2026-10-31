@@ -18,7 +18,7 @@
 
 Audited every exact approved source/sense ID, not only the 15 mission targets. All 231 task records include original text, repair, field diff, severity, category, rationale and bounded automated checks. There are 102 original contexts and five extra pack-context appearances; 3 attested morphology families / 12 tasks. 99 senses have no authored morphology activity and are explicitly NOT_AUTHORED. No new family or sense was invented.
 
-All 102 drafts changed to authored version 2. The approved bank is unchanged. All remain TEACHER_REVIEW; 0 APPROVED / 0 PUBLISHED. Five source-specific decisions plus one shared recall-policy decision are prioritised; routine editorial signoff still covers all 102.
+All 102 drafts retain versioned audit repairs. Teacher directions now revise four routes and the Power Exhibit pack to version 3 (9 versioned items, including 4 unchanged pack siblings); other 93 items remain version 2. The approved bank is unchanged. All remain TEACHER_REVIEW; 0 APPROVED / 0 PUBLISHED. Five source-specific directions and Option A have been applied to drafts; routine editorial signoff still covers all 102.
 
 ## Before / after examples
 
@@ -170,7 +170,7 @@ After:
 ```json
 {
   "kind": "meaning",
-  "context": "In the fictional England-and-Wales setting, the client asks a solicitor to handle legal paperwork.",
+  "context": "In England and Wales, a client asks a solicitor for legal advice on a property contract.",
   "prompt": "Which interpretation is supported by this note?",
   "options": [
     "a professional whose main role is surveying buildings",
@@ -179,7 +179,7 @@ After:
   ],
   "answer": 2,
   "clue": "Check the profession in the stated jurisdiction.",
-  "why": "The bank identifies a legal practitioner in England and Wales; the example does not claim the same professional system applies everywhere."
+  "why": "A solicitor is a legal professional in England and Wales. This example concerns legal advice on a property contract, not a role shared by every profession or jurisdiction."
 }
 ```
 
@@ -200,12 +200,12 @@ After:
 ```json
 {
   "kind": "recall",
-  "prompt": "In this England-and-Wales scenario, Priya needs professional legal advice on a property contract. She makes an appointment with a ___.",
+  "prompt": "In England and Wales, Priya needs professional legal advice on a property contract. She makes an appointment with a ___.",
   "answers": [
     "solicitor"
   ],
   "clue": "Check the article, number and any required small words on both sides of the gap.",
-  "why": "The bank identifies a legal practitioner in England and Wales; the example does not claim the same professional system applies everywhere.",
+  "why": "A solicitor is a legal professional in England and Wales. This example concerns legal advice on a property contract, not a role shared by every profession or jurisdiction.",
   "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
   "strictVariants": true
 }
@@ -236,16 +236,16 @@ After:
 ```json
 {
   "kind": "meaning",
-  "prompt": "What does emission refer to here?",
+  "prompt": "What does emissions refer to in this exhibit log?",
   "options": [
-    "A substance released from the engine.",
-    "A substance supplied to the engine as fuel.",
-    "A substance retained inside the engine as lubricant."
+    "Substances released by the engine.",
+    "Substances supplied to the engine as fuel.",
+    "Substances retained inside the engine as lubricant."
   ],
   "answer": 0,
-  "clue": "Trace the direction of the material in the engine note.",
-  "why": "The emission leaves the engine. Fuel enters it, while lubricant retained inside has not been released.",
-  "context": "An archive note records material released from the engine during operation.",
+  "clue": "Trace where the substances go during operation.",
+  "why": "The emissions leave the engine; fuel enters it, while lubricant retained inside has not been released.",
+  "context": "The exhibit log records exhaust emissions released by an old engine while it was running.",
   "artifact": "Case evidence",
   "purpose": "Interpret this finding before writing the team recommendation.",
   "clue2": "Check the evidence against each option; avoid adding claims the finding does not make."
@@ -271,13 +271,13 @@ After:
 ```json
 {
   "kind": "recall",
-  "prompt": "The monitor detected an ___ of nitrogen oxides from the engine while it was running.",
+  "prompt": "The laboratory measured the engine's ___. These included nitrogen oxides released during operation.",
   "answers": [
-    "emission"
+    "emissions"
   ],
-  "clue": "Check the article, number and any required small words on both sides of the gap.",
-  "why": "An emission of nitrogen oxides identifies material released by the engine; the article an requires a singular noun here.",
-  "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
+  "clue": "The next sentence refers back to several substances; check the number of the noun in the gap.",
+  "why": "Emissions is plural because these refers to substances released by the engine. The singular emission does not fit this plural reference.",
+  "variantPolicy": "Teacher direction: docs/CODEX-PHASE-2.7-TEACHER-DECISIONS.md. Bank label: emission. This exercise requires the reviewed plural emissions. Case and extra spaces are ignored; emission, fumes, exhaust and other synonyms are not accepted.",
   "artifact": "Independent final note",
   "purpose": "Recall the expression in a new finding without a word bank.",
   "strictVariants": true

@@ -5323,21 +5323,21 @@
       "priority": "supporting",
       "term": "slum",
       "theme": "Reading a community archive",
-      "version": 2,
+      "version": 3,
       "status": "TEACHER_REVIEW",
       "batch": "phase26-3",
       "blocker": {
-        "topic": "Historical housing label and classroom framing",
+        "topic": "Verify draft implementation: slum",
         "options": [
-          "Historical housing conditions, with contextual caution",
-          "Replace productive use with a different reviewed context"
+          "Revision follows the recorded teacher direction",
+          "Request further revision"
         ],
-        "recommendation": "Retain only as a historical housing-condition label; explicitly separate conditions from the dignity of residents.",
+        "recommendedOption": "Revision follows the recorded teacher direction",
+        "recommendation": "Historical housing conditions; neutral and respectful toward residents. Direction is settled; inspect this exact version before any later approval.",
         "examples": [
-          "The archive used the term slum for the neglected housing district.",
-          "Residents described their community in their own words."
-        ],
-        "recommendedOption": "Historical housing conditions, with contextual caution"
+          "The historical report called the overcrowded district with very poor housing a slum. This describes housing conditions, not the worth of its residents.",
+          "A historical survey described an urban district of unsafe, overcrowded homes as a ___. The label described the housing conditions, not the residents."
+        ]
       },
       "authorship": {
         "origin": "original_offline_authored",
@@ -5346,11 +5346,11 @@
         "review": "TEACHER_REVIEW"
       },
       "content": {
-        "sentence": "The historical report used the word slum for an overcrowded district with very poor housing; the editor explains that the label must not define the residents.",
+        "sentence": "The historical report called the overcrowded district with very poor housing a slum. This describes housing conditions, not the worth of its residents.",
         "definition": "very poor, crowded urban housing area",
         "investigate": {
           "kind": "meaning",
-          "context": "The historical report used the word slum for an overcrowded district with very poor housing; the editor explains that the label must not define the residents.",
+          "context": "The historical report called the overcrowded district with very poor housing a slum. This describes housing conditions, not the worth of its residents.",
           "prompt": "Which interpretation is supported by this note?",
           "options": [
             "a district of inexpensive but adequate housing",
@@ -5363,7 +5363,7 @@
         },
         "final": {
           "kind": "recall",
-          "prompt": "In a historical account, families shared unsafe, overcrowded urban housing. The writer labelled the district a ___; discuss the limits of this label.",
+          "prompt": "A historical survey described an urban district of unsafe, overcrowded homes as a ___. The label described the housing conditions, not the residents.",
           "answers": [
             "slum"
           ],
@@ -5372,7 +5372,12 @@
           "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
           "strictVariants": true
         },
-        "forms": []
+        "forms": [],
+        "teacherDirection": {
+          "reference": "docs/CODEX-PHASE-2.7-TEACHER-DECISIONS.md",
+          "direction": "Historical housing conditions; neutral and respectful toward residents.",
+          "status": "APPLIED_TO_DRAFT_NOT_APPROVAL"
+        }
       },
       "history": [
         {
@@ -5408,10 +5413,59 @@
           "status": "TEACHER_REVIEW",
           "digest": "f8d7a624",
           "reviews": []
+        },
+        {
+          "version": 2,
+          "content": {
+            "sentence": "The historical report used the word slum for an overcrowded district with very poor housing; the editor explains that the label must not define the residents.",
+            "definition": "very poor, crowded urban housing area",
+            "investigate": {
+              "kind": "meaning",
+              "context": "The historical report used the word slum for an overcrowded district with very poor housing; the editor explains that the label must not define the residents.",
+              "prompt": "Which interpretation is supported by this note?",
+              "options": [
+                "a district of inexpensive but adequate housing",
+                "very poor, crowded urban housing area",
+                "a district containing only empty buildings"
+              ],
+              "answer": 1,
+              "clue": "Focus on the housing conditions described by the historical source, while treating residents respectfully.",
+              "why": "The term refers to poor, crowded housing conditions; it is not a description of the worth of the people living there."
+            },
+            "final": {
+              "kind": "recall",
+              "prompt": "In a historical account, families shared unsafe, overcrowded urban housing. The writer labelled the district a ___; discuss the limits of this label.",
+              "answers": [
+                "slum"
+              ],
+              "clue": "Check the article, number and any required small words on both sides of the gap.",
+              "why": "The term refers to poor, crowded housing conditions; it is not a description of the worth of the people living there.",
+              "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
+              "strictVariants": true
+            },
+            "forms": []
+          },
+          "status": "TEACHER_REVIEW",
+          "digest": "d4d1a9a1",
+          "reviews": [],
+          "blocker": {
+            "topic": "Historical housing label and classroom framing",
+            "options": [
+              "Historical housing conditions, with contextual caution",
+              "Replace productive use with a different reviewed context"
+            ],
+            "recommendation": "Retain only as a historical housing-condition label; explicitly separate conditions from the dignity of residents.",
+            "examples": [
+              "The archive used the term slum for the neglected housing district.",
+              "Residents described their community in their own words."
+            ],
+            "recommendedOption": "Historical housing conditions, with contextual caution"
+          },
+          "origin": "before-teacher-directions"
         }
       ],
       "reviews": [],
-      "sourceVersion": 2
+      "sourceVersion": 3
     },
     {
       "id": "route:sense-b0b8f112fe3686a19b5f7595",
@@ -5596,21 +5650,21 @@
       "priority": "supporting",
       "term": "carriage",
       "theme": "Reading a community archive",
-      "version": 2,
+      "version": 3,
       "status": "TEACHER_REVIEW",
       "batch": "phase26-3",
       "blocker": {
-        "topic": "Horse-drawn vehicle versus train compartment",
+        "topic": "Verify draft implementation: carriage",
         "options": [
-          "Horse-drawn vehicle in this museum task",
-          "Train compartment: request a replacement task"
+          "Revision follows the recorded teacher direction",
+          "Request further revision"
         ],
-        "recommendation": "This task explicitly uses a horse and shafts. Confirm that interpretation against the passage before publication; do not silently narrow the bank definition.",
+        "recommendedOption": "Revision follows the recorded teacher direction",
+        "recommendation": "Horse-drawn vehicle in this exercise only; verify passage scope before publication. Direction is settled; inspect this exact version before any later approval.",
         "examples": [
-          "A horse pulled the carriage along the road.",
-          "Passengers entered a railway carriage."
-        ],
-        "recommendedOption": "Horse-drawn vehicle in this museum task"
+          "The museum carriage has passenger seats and two shafts attached to a horse that pulls the vehicle.",
+          "A horse stood between the shafts of a wheeled passenger vehicle. Once the passengers were seated, the driver guided the ___ along the lane."
+        ]
       },
       "authorship": {
         "origin": "original_offline_authored",
@@ -5619,11 +5673,11 @@
         "review": "TEACHER_REVIEW"
       },
       "content": {
-        "sentence": "The museum's carriage has wheels, seats and shafts for a horse to pull it.",
+        "sentence": "The museum carriage has passenger seats and two shafts attached to a horse that pulls the vehicle.",
         "definition": "a horse-drawn vehicle or train compartment",
         "investigate": {
           "kind": "meaning",
-          "context": "The museum's carriage has wheels, seats and shafts for a horse to pull it.",
+          "context": "The museum carriage has passenger seats and two shafts attached to a horse that pulls the vehicle.",
           "prompt": "Which interpretation is supported by this note?",
           "options": [
             "a vehicle running on rails in this display",
@@ -5632,20 +5686,25 @@
           ],
           "answer": 1,
           "clue": "Identify the vehicle from the particular features in this display.",
-          "why": "The explicit horse-drawn scene selects one of the bank's two vehicle meanings; the broader bank definition remains unchanged."
+          "why": "The passenger seats, horse and shafts identify a horse-drawn carriage in this display. This exercise does not rule out the train-compartment meaning in other contexts."
         },
         "final": {
           "kind": "recall",
-          "prompt": "Two people climbed into the wheeled vehicle and the coachman guided the horse forward. The ___ rolled down the lane.",
+          "prompt": "A horse stood between the shafts of a wheeled passenger vehicle. Once the passengers were seated, the driver guided the ___ along the lane.",
           "answers": [
             "carriage"
           ],
           "clue": "Check the article, number and any required small words on both sides of the gap.",
-          "why": "The explicit horse-drawn scene selects one of the bank's two vehicle meanings; the broader bank definition remains unchanged.",
+          "why": "The passenger seats, horse and shafts identify a horse-drawn carriage in this display. This exercise does not rule out the train-compartment meaning in other contexts.",
           "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
           "strictVariants": true
         },
-        "forms": []
+        "forms": [],
+        "teacherDirection": {
+          "reference": "docs/CODEX-PHASE-2.7-TEACHER-DECISIONS.md",
+          "direction": "Horse-drawn vehicle in this exercise only; verify passage scope before publication.",
+          "status": "APPLIED_TO_DRAFT_NOT_APPROVAL"
+        }
       },
       "history": [
         {
@@ -5681,10 +5740,59 @@
           "status": "TEACHER_REVIEW",
           "digest": "5fb87ade",
           "reviews": []
+        },
+        {
+          "version": 2,
+          "content": {
+            "sentence": "The museum's carriage has wheels, seats and shafts for a horse to pull it.",
+            "definition": "a horse-drawn vehicle or train compartment",
+            "investigate": {
+              "kind": "meaning",
+              "context": "The museum's carriage has wheels, seats and shafts for a horse to pull it.",
+              "prompt": "Which interpretation is supported by this note?",
+              "options": [
+                "a vehicle running on rails in this display",
+                "a horse-drawn vehicle in this museum display",
+                "a cart intended only for carrying goods"
+              ],
+              "answer": 1,
+              "clue": "Identify the vehicle from the particular features in this display.",
+              "why": "The explicit horse-drawn scene selects one of the bank's two vehicle meanings; the broader bank definition remains unchanged."
+            },
+            "final": {
+              "kind": "recall",
+              "prompt": "Two people climbed into the wheeled vehicle and the coachman guided the horse forward. The ___ rolled down the lane.",
+              "answers": [
+                "carriage"
+              ],
+              "clue": "Check the article, number and any required small words on both sides of the gap.",
+              "why": "The explicit horse-drawn scene selects one of the bank's two vehicle meanings; the broader bank definition remains unchanged.",
+              "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
+              "strictVariants": true
+            },
+            "forms": []
+          },
+          "status": "TEACHER_REVIEW",
+          "digest": "07cb3648",
+          "reviews": [],
+          "blocker": {
+            "topic": "Horse-drawn vehicle versus train compartment",
+            "options": [
+              "Horse-drawn vehicle in this museum task",
+              "Train compartment: request a replacement task"
+            ],
+            "recommendation": "This task explicitly uses a horse and shafts. Confirm that interpretation against the passage before publication; do not silently narrow the bank definition.",
+            "examples": [
+              "A horse pulled the carriage along the road.",
+              "Passengers entered a railway carriage."
+            ],
+            "recommendedOption": "Horse-drawn vehicle in this museum task"
+          },
+          "origin": "before-teacher-directions"
         }
       ],
       "reviews": [],
-      "sourceVersion": 2
+      "sourceVersion": 3
     },
     {
       "id": "route:sense-d25e72758cb00a430a2678dd",
@@ -5695,21 +5803,21 @@
       "priority": "supporting",
       "term": "clear slums",
       "theme": "Reading a community archive",
-      "version": 2,
+      "version": 3,
       "status": "TEACHER_REVIEW",
       "batch": "phase26-3",
       "blocker": {
-        "topic": "Historical clearance and displacement",
+        "topic": "Verify draft implementation: clear slums",
         "options": [
-          "Historical removal action without endorsing its effects",
-          "Request further source-context review before using this route"
+          "Revision follows the recorded teacher direction",
+          "Request further revision"
         ],
-        "recommendation": "Describe the historical action and discuss who was affected. Do not equate removal with consent, successful rehousing or an unqualified benefit.",
+        "recommendedOption": "Revision follows the recorded teacher direction",
+        "recommendation": "Historical clearance and displacement; no assumed consent, benefit or rehousing. Direction is settled; inspect this exact version before any later approval.",
         "examples": [
-          "The archive proposed to clear slums but did not explain the rehousing plan.",
-          "The review asks how residents were consulted."
-        ],
-        "recommendedOption": "Historical removal action without endorsing its effects"
+          "The historical archive records a plan to clear slums by demolishing poor-quality housing. It does not say whether residents consented or where displaced households were rehoused.",
+          "The historical authorities planned to ___ by demolishing poor-quality housing. The record does not establish residents' consent, successful rehousing or any benefit to them."
+        ]
       },
       "authorship": {
         "origin": "original_offline_authored",
@@ -5718,11 +5826,11 @@
         "review": "TEACHER_REVIEW"
       },
       "content": {
-        "sentence": "The archive records a plan to clear slums by removing poor-quality housing; the accompanying note asks what happened to displaced residents.",
+        "sentence": "The historical archive records a plan to clear slums by demolishing poor-quality housing. It does not say whether residents consented or where displaced households were rehoused.",
         "definition": "remove poor-quality housing",
         "investigate": {
           "kind": "meaning",
-          "context": "The archive records a plan to clear slums by removing poor-quality housing; the accompanying note asks what happened to displaced residents.",
+          "context": "The historical archive records a plan to clear slums by demolishing poor-quality housing. It does not say whether residents consented or where displaced households were rehoused.",
           "prompt": "Which interpretation is supported by this note?",
           "options": [
             "repair the existing homes while residents remain",
@@ -5735,7 +5843,7 @@
         },
         "final": {
           "kind": "recall",
-          "prompt": "The historical plan proposed to ___ by removing the district's poor-quality housing. It gave no account of where residents would live afterwards.",
+          "prompt": "The historical authorities planned to ___ by demolishing poor-quality housing. The record does not establish residents' consent, successful rehousing or any benefit to them.",
           "answers": [
             "clear slums"
           ],
@@ -5744,7 +5852,12 @@
           "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
           "strictVariants": true
         },
-        "forms": []
+        "forms": [],
+        "teacherDirection": {
+          "reference": "docs/CODEX-PHASE-2.7-TEACHER-DECISIONS.md",
+          "direction": "Historical clearance and displacement; no assumed consent, benefit or rehousing.",
+          "status": "APPLIED_TO_DRAFT_NOT_APPROVAL"
+        }
       },
       "history": [
         {
@@ -5780,10 +5893,59 @@
           "status": "TEACHER_REVIEW",
           "digest": "d443df24",
           "reviews": []
+        },
+        {
+          "version": 2,
+          "content": {
+            "sentence": "The archive records a plan to clear slums by removing poor-quality housing; the accompanying note asks what happened to displaced residents.",
+            "definition": "remove poor-quality housing",
+            "investigate": {
+              "kind": "meaning",
+              "context": "The archive records a plan to clear slums by removing poor-quality housing; the accompanying note asks what happened to displaced residents.",
+              "prompt": "Which interpretation is supported by this note?",
+              "options": [
+                "repair the existing homes while residents remain",
+                "move residents while leaving the old buildings intact",
+                "remove poor-quality housing"
+              ],
+              "answer": 2,
+              "clue": "Identify the physical action separately from whether its effects were fair or beneficial.",
+              "why": "The phrase describes removal of poor-quality housing; it does not by itself establish rehousing, consent or a positive outcome."
+            },
+            "final": {
+              "kind": "recall",
+              "prompt": "The historical plan proposed to ___ by removing the district's poor-quality housing. It gave no account of where residents would live afterwards.",
+              "answers": [
+                "clear slums"
+              ],
+              "clue": "Check the verb form and any required small words against the sentence around the gap.",
+              "why": "The phrase describes removal of poor-quality housing; it does not by itself establish rehousing, consent or a positive outcome.",
+              "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
+              "strictVariants": true
+            },
+            "forms": []
+          },
+          "status": "TEACHER_REVIEW",
+          "digest": "ce9e6baf",
+          "reviews": [],
+          "blocker": {
+            "topic": "Historical clearance and displacement",
+            "options": [
+              "Historical removal action without endorsing its effects",
+              "Request further source-context review before using this route"
+            ],
+            "recommendation": "Describe the historical action and discuss who was affected. Do not equate removal with consent, successful rehousing or an unqualified benefit.",
+            "examples": [
+              "The archive proposed to clear slums but did not explain the rehousing plan.",
+              "The review asks how residents were consulted."
+            ],
+            "recommendedOption": "Historical removal action without endorsing its effects"
+          },
+          "origin": "before-teacher-directions"
         }
       ],
       "reviews": [],
-      "sourceVersion": 2
+      "sourceVersion": 3
     },
     {
       "id": "route:sense-aca45c8c33ce6d6b76305b9d",
@@ -6664,21 +6826,21 @@
       "priority": "advanced",
       "term": "solicitor",
       "theme": "Reading a community archive",
-      "version": 2,
+      "version": 3,
       "status": "TEACHER_REVIEW",
       "batch": "phase26-4",
       "blocker": {
-        "topic": "Jurisdiction-specific legal profession",
+        "topic": "Verify draft implementation: solicitor",
         "options": [
-          "England and Wales legal practitioner in this task",
-          "Different jurisdiction: request a replacement task"
+          "Revision follows the recorded teacher direction",
+          "Request further revision"
         ],
-        "recommendation": "Keep the bank jurisdiction explicit. Do not treat solicitor as a universal name for every legal professional.",
+        "recommendedOption": "Revision follows the recorded teacher direction",
+        "recommendation": "Legal professional in England and Wales; jurisdiction stays explicit. Direction is settled; inspect this exact version before any later approval.",
         "examples": [
-          "In the England-and-Wales example, a solicitor handled the paperwork.",
-          "The label for a legal practitioner may differ in another jurisdiction."
-        ],
-        "recommendedOption": "England and Wales legal practitioner in this task"
+          "In England and Wales, a client asks a solicitor for legal advice on a property contract.",
+          "In England and Wales, Priya needs professional legal advice on a property contract. She makes an appointment with a ___."
+        ]
       },
       "authorship": {
         "origin": "original_offline_authored",
@@ -6687,11 +6849,11 @@
         "review": "TEACHER_REVIEW"
       },
       "content": {
-        "sentence": "In the fictional England-and-Wales setting, the client asks a solicitor to handle legal paperwork.",
+        "sentence": "In England and Wales, a client asks a solicitor for legal advice on a property contract.",
         "definition": "type of legal practitioner in England and Wales",
         "investigate": {
           "kind": "meaning",
-          "context": "In the fictional England-and-Wales setting, the client asks a solicitor to handle legal paperwork.",
+          "context": "In England and Wales, a client asks a solicitor for legal advice on a property contract.",
           "prompt": "Which interpretation is supported by this note?",
           "options": [
             "a professional whose main role is surveying buildings",
@@ -6700,20 +6862,25 @@
           ],
           "answer": 2,
           "clue": "Check the profession in the stated jurisdiction.",
-          "why": "The bank identifies a legal practitioner in England and Wales; the example does not claim the same professional system applies everywhere."
+          "why": "A solicitor is a legal professional in England and Wales. This example concerns legal advice on a property contract, not a role shared by every profession or jurisdiction."
         },
         "final": {
           "kind": "recall",
-          "prompt": "In this England-and-Wales scenario, Priya needs professional legal advice on a property contract. She makes an appointment with a ___.",
+          "prompt": "In England and Wales, Priya needs professional legal advice on a property contract. She makes an appointment with a ___.",
           "answers": [
             "solicitor"
           ],
           "clue": "Check the article, number and any required small words on both sides of the gap.",
-          "why": "The bank identifies a legal practitioner in England and Wales; the example does not claim the same professional system applies everywhere.",
+          "why": "A solicitor is a legal professional in England and Wales. This example concerns legal advice on a property contract, not a role shared by every profession or jurisdiction.",
           "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
           "strictVariants": true
         },
-        "forms": []
+        "forms": [],
+        "teacherDirection": {
+          "reference": "docs/CODEX-PHASE-2.7-TEACHER-DECISIONS.md",
+          "direction": "Legal professional in England and Wales; jurisdiction stays explicit.",
+          "status": "APPLIED_TO_DRAFT_NOT_APPROVAL"
+        }
       },
       "history": [
         {
@@ -6749,10 +6916,59 @@
           "status": "TEACHER_REVIEW",
           "digest": "e2e6b352",
           "reviews": []
+        },
+        {
+          "version": 2,
+          "content": {
+            "sentence": "In the fictional England-and-Wales setting, the client asks a solicitor to handle legal paperwork.",
+            "definition": "type of legal practitioner in England and Wales",
+            "investigate": {
+              "kind": "meaning",
+              "context": "In the fictional England-and-Wales setting, the client asks a solicitor to handle legal paperwork.",
+              "prompt": "Which interpretation is supported by this note?",
+              "options": [
+                "a professional whose main role is surveying buildings",
+                "a professional whose main role is auditing accounts",
+                "type of legal practitioner in England and Wales"
+              ],
+              "answer": 2,
+              "clue": "Check the profession in the stated jurisdiction.",
+              "why": "The bank identifies a legal practitioner in England and Wales; the example does not claim the same professional system applies everywhere."
+            },
+            "final": {
+              "kind": "recall",
+              "prompt": "In this England-and-Wales scenario, Priya needs professional legal advice on a property contract. She makes an appointment with a ___.",
+              "answers": [
+                "solicitor"
+              ],
+              "clue": "Check the article, number and any required small words on both sides of the gap.",
+              "why": "The bank identifies a legal practitioner in England and Wales; the example does not claim the same professional system applies everywhere.",
+              "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
+              "strictVariants": true
+            },
+            "forms": []
+          },
+          "status": "TEACHER_REVIEW",
+          "digest": "c2ee74b3",
+          "reviews": [],
+          "blocker": {
+            "topic": "Jurisdiction-specific legal profession",
+            "options": [
+              "England and Wales legal practitioner in this task",
+              "Different jurisdiction: request a replacement task"
+            ],
+            "recommendation": "Keep the bank jurisdiction explicit. Do not treat solicitor as a universal name for every legal professional.",
+            "examples": [
+              "In the England-and-Wales example, a solicitor handled the paperwork.",
+              "The label for a legal practitioner may differ in another jurisdiction."
+            ],
+            "recommendedOption": "England and Wales legal practitioner in this task"
+          },
+          "origin": "before-teacher-directions"
         }
       ],
       "reviews": [],
-      "sourceVersion": 2
+      "sourceVersion": 3
     },
     {
       "id": "route:sense-0a29f0dee6be68f5dfd749c0",

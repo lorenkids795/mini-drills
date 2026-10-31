@@ -21,57 +21,57 @@ Batches add 22, 22, 22, 21 senses: cumulative 37, 59, 81, 102 including the exis
 
 ### slum · C17-T1-R1-016
 
-Historical housing label and classroom framing
+Verify draft implementation: slum
 
-Retain only as a historical housing-condition label; explicitly separate conditions from the dignity of residents.
+Historical housing conditions; neutral and respectful toward residents. Direction is settled; inspect this exact version before any later approval.
 
-- Historical housing conditions, with contextual caution
-- Replace productive use with a different reviewed context
+- Revision follows the recorded teacher direction
+- Request further revision
 
-> The archive used the term slum for the neglected housing district.
-> Residents described their community in their own words.
+> The historical report called the overcrowded district with very poor housing a slum. This describes housing conditions, not the worth of its residents.
+> A historical survey described an urban district of unsafe, overcrowded homes as a ___. The label described the housing conditions, not the residents.
 
 Choosing a different interpretation requires Request Fix, not approval of the existing task.
 
 ### carriage · C17-T1-R1-019
 
-Horse-drawn vehicle versus train compartment
+Verify draft implementation: carriage
 
-This task explicitly uses a horse and shafts. Confirm that interpretation against the passage before publication; do not silently narrow the bank definition.
+Horse-drawn vehicle in this exercise only; verify passage scope before publication. Direction is settled; inspect this exact version before any later approval.
 
-- Horse-drawn vehicle in this museum task
-- Train compartment: request a replacement task
+- Revision follows the recorded teacher direction
+- Request further revision
 
-> A horse pulled the carriage along the road.
-> Passengers entered a railway carriage.
+> The museum carriage has passenger seats and two shafts attached to a horse that pulls the vehicle.
+> A horse stood between the shafts of a wheeled passenger vehicle. Once the passengers were seated, the driver guided the ___ along the lane.
 
 Choosing a different interpretation requires Request Fix, not approval of the existing task.
 
 ### clear slums · C17-T1-R1-029
 
-Historical clearance and displacement
+Verify draft implementation: clear slums
 
-Describe the historical action and discuss who was affected. Do not equate removal with consent, successful rehousing or an unqualified benefit.
+Historical clearance and displacement; no assumed consent, benefit or rehousing. Direction is settled; inspect this exact version before any later approval.
 
-- Historical removal action without endorsing its effects
-- Request further source-context review before using this route
+- Revision follows the recorded teacher direction
+- Request further revision
 
-> The archive proposed to clear slums but did not explain the rehousing plan.
-> The review asks how residents were consulted.
+> The historical archive records a plan to clear slums by demolishing poor-quality housing. It does not say whether residents consented or where displaced households were rehoused.
+> The historical authorities planned to ___ by demolishing poor-quality housing. The record does not establish residents' consent, successful rehousing or any benefit to them.
 
 Choosing a different interpretation requires Request Fix, not approval of the existing task.
 
 ### solicitor · C17-T1-R1-026
 
-Jurisdiction-specific legal profession
+Verify draft implementation: solicitor
 
-Keep the bank jurisdiction explicit. Do not treat solicitor as a universal name for every legal professional.
+Legal professional in England and Wales; jurisdiction stays explicit. Direction is settled; inspect this exact version before any later approval.
 
-- England and Wales legal practitioner in this task
-- Different jurisdiction: request a replacement task
+- Revision follows the recorded teacher direction
+- Request further revision
 
-> In the England-and-Wales example, a solicitor handled the paperwork.
-> The label for a legal practitioner may differ in another jurisdiction.
+> In England and Wales, a client asks a solicitor for legal advice on a property contract.
+> In England and Wales, Priya needs professional legal advice on a property contract. She makes an appointment with a ___.
 
 Choosing a different interpretation requires Request Fix, not approval of the existing task.
 

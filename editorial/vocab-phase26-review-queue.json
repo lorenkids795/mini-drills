@@ -1036,15 +1036,13 @@
       "term": "emission",
       "priority": "core",
       "kind": "mission",
-      "version": 2,
-      "digest": "7429c370",
+      "version": 3,
+      "digest": "02232103",
       "status": "TEACHER_REVIEW",
       "deterministic": "PASS",
       "heuristics": {
         "status": "TEACHER_REVIEW",
-        "flags": [
-          "Check task/context alignment"
-        ],
+        "flags": [],
         "checks": [
           "Automated unique key/variants/source/schema check",
           "Offline context, collocation, grammatical gap and explanation review performed",
@@ -1053,47 +1051,47 @@
       },
       "blocker": null,
       "content": {
-        "sentence": "The exhibit log describes an emission of exhaust from an old engine.",
+        "sentence": "The exhibit log records exhaust emissions released by an old engine while it was running.",
         "definition": "substances released by engines",
         "investigate": {
           "kind": "meaning",
-          "prompt": "What does emission refer to here?",
+          "prompt": "What does emissions refer to in this exhibit log?",
           "options": [
-            "A substance released from the engine.",
-            "A substance supplied to the engine as fuel.",
-            "A substance retained inside the engine as lubricant."
+            "Substances released by the engine.",
+            "Substances supplied to the engine as fuel.",
+            "Substances retained inside the engine as lubricant."
           ],
           "answer": 0,
-          "clue": "Trace the direction of the material in the engine note.",
-          "why": "The emission leaves the engine. Fuel enters it, while lubricant retained inside has not been released.",
-          "context": "An archive note records material released from the engine during operation.",
+          "clue": "Trace where the substances go during operation.",
+          "why": "The emissions leave the engine; fuel enters it, while lubricant retained inside has not been released.",
+          "context": "The exhibit log records exhaust emissions released by an old engine while it was running.",
           "artifact": "Case evidence",
           "purpose": "Interpret this finding before writing the team recommendation.",
           "clue2": "Check the evidence against each option; avoid adding claims the finding does not make."
         },
         "decode": {
           "kind": "collocation",
-          "prompt": "Which wording fits the engine note?",
+          "prompt": "Which wording describes substances released by the engine?",
           "options": [
-            "an emission of exhaust",
-            "an admission of exhaust",
-            "a permission of exhaust"
+            "exhaust emissions from the engine",
+            "fuel deliveries to the engine",
+            "lubricant reserves inside the engine"
           ],
           "answer": 0,
-          "clue": "Choose the noun that names material released by an engine.",
-          "why": "An emission of exhaust describes a release; admission and permission have different meanings.",
+          "clue": "Follow the direction of movement described in the log.",
+          "why": "Exhaust emissions are substances released from the engine. Fuel deliveries go in, and lubricant reserves remain inside.",
           "artifact": "Team language memo",
           "purpose": "Keep the wording consistent with this mission finding."
         },
         "final": {
           "kind": "recall",
-          "prompt": "The monitor detected an ___ of nitrogen oxides from the engine while it was running.",
+          "prompt": "The laboratory measured the engine's ___. These included nitrogen oxides released during operation.",
           "answers": [
-            "emission"
+            "emissions"
           ],
-          "clue": "Check the article, number and any required small words on both sides of the gap.",
-          "why": "An emission of nitrogen oxides identifies material released by the engine; the article an requires a singular noun here.",
-          "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
+          "clue": "The next sentence refers back to several substances; check the number of the noun in the gap.",
+          "why": "Emissions is plural because these refers to substances released by the engine. The singular emission does not fit this plural reference.",
+          "variantPolicy": "Teacher direction: docs/CODEX-PHASE-2.7-TEACHER-DECISIONS.md. Bank label: emission. This exercise requires the reviewed plural emissions. Case and extra spaces are ignored; emission, fumes, exhaust and other synonyms are not accepted.",
           "artifact": "Independent final note",
           "purpose": "Recall the expression in a new finding without a word bank.",
           "strictVariants": true
@@ -1116,6 +1114,11 @@
             }
           ],
           "debrief": "The curators now have more precise captions for the fictional exhibit. Keep process nouns separate from verbs and do not treat the case as practical engineering instructions."
+        },
+        "teacherDirection": {
+          "reference": "docs/CODEX-PHASE-2.7-TEACHER-DECISIONS.md",
+          "direction": "Use plural emissions throughout the exercise; retain approved bank lemma and sense.",
+          "status": "APPLIED_TO_DRAFT_NOT_APPROVAL"
         }
       }
     },
@@ -1126,7 +1129,7 @@
       "term": "minimise",
       "priority": "core",
       "kind": "mission",
-      "version": 2,
+      "version": 3,
       "digest": "12bd7824",
       "status": "TEACHER_REVIEW",
       "deterministic": "PASS",
@@ -1224,7 +1227,7 @@
       "term": "condense",
       "priority": "advanced",
       "kind": "mission",
-      "version": 2,
+      "version": 3,
       "digest": "b6428994",
       "status": "TEACHER_REVIEW",
       "deterministic": "PASS",
@@ -1366,7 +1369,7 @@
       "term": "generator",
       "priority": "advanced",
       "kind": "mission",
-      "version": 2,
+      "version": 3,
       "digest": "d7c8468e",
       "status": "TEACHER_REVIEW",
       "deterministic": "PASS",
@@ -1462,7 +1465,7 @@
       "term": "power supply",
       "priority": "core",
       "kind": "mission",
-      "version": 2,
+      "version": 3,
       "digest": "e1bbf2d0",
       "status": "TEACHER_REVIEW",
       "deterministic": "PASS",
@@ -4666,8 +4669,8 @@
       "term": "slum",
       "priority": "supporting",
       "kind": "contextual-challenge",
-      "version": 2,
-      "digest": "d4d1a9a1",
+      "version": 3,
+      "digest": "e4123c22",
       "status": "TEACHER_REVIEW",
       "deterministic": "PASS",
       "heuristics": {
@@ -4682,24 +4685,24 @@
         ]
       },
       "blocker": {
-        "topic": "Historical housing label and classroom framing",
+        "topic": "Verify draft implementation: slum",
         "options": [
-          "Historical housing conditions, with contextual caution",
-          "Replace productive use with a different reviewed context"
+          "Revision follows the recorded teacher direction",
+          "Request further revision"
         ],
-        "recommendation": "Retain only as a historical housing-condition label; explicitly separate conditions from the dignity of residents.",
+        "recommendedOption": "Revision follows the recorded teacher direction",
+        "recommendation": "Historical housing conditions; neutral and respectful toward residents. Direction is settled; inspect this exact version before any later approval.",
         "examples": [
-          "The archive used the term slum for the neglected housing district.",
-          "Residents described their community in their own words."
-        ],
-        "recommendedOption": "Historical housing conditions, with contextual caution"
+          "The historical report called the overcrowded district with very poor housing a slum. This describes housing conditions, not the worth of its residents.",
+          "A historical survey described an urban district of unsafe, overcrowded homes as a ___. The label described the housing conditions, not the residents."
+        ]
       },
       "content": {
-        "sentence": "The historical report used the word slum for an overcrowded district with very poor housing; the editor explains that the label must not define the residents.",
+        "sentence": "The historical report called the overcrowded district with very poor housing a slum. This describes housing conditions, not the worth of its residents.",
         "definition": "very poor, crowded urban housing area",
         "investigate": {
           "kind": "meaning",
-          "context": "The historical report used the word slum for an overcrowded district with very poor housing; the editor explains that the label must not define the residents.",
+          "context": "The historical report called the overcrowded district with very poor housing a slum. This describes housing conditions, not the worth of its residents.",
           "prompt": "Which interpretation is supported by this note?",
           "options": [
             "a district of inexpensive but adequate housing",
@@ -4712,7 +4715,7 @@
         },
         "final": {
           "kind": "recall",
-          "prompt": "In a historical account, families shared unsafe, overcrowded urban housing. The writer labelled the district a ___; discuss the limits of this label.",
+          "prompt": "A historical survey described an urban district of unsafe, overcrowded homes as a ___. The label described the housing conditions, not the residents.",
           "answers": [
             "slum"
           ],
@@ -4721,7 +4724,12 @@
           "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
           "strictVariants": true
         },
-        "forms": []
+        "forms": [],
+        "teacherDirection": {
+          "reference": "docs/CODEX-PHASE-2.7-TEACHER-DECISIONS.md",
+          "direction": "Historical housing conditions; neutral and respectful toward residents.",
+          "status": "APPLIED_TO_DRAFT_NOT_APPROVAL"
+        }
       }
     },
     {
@@ -4833,8 +4841,8 @@
       "term": "carriage",
       "priority": "supporting",
       "kind": "contextual-challenge",
-      "version": 2,
-      "digest": "07cb3648",
+      "version": 3,
+      "digest": "23ac3f4b",
       "status": "TEACHER_REVIEW",
       "deterministic": "PASS",
       "heuristics": {
@@ -4849,24 +4857,24 @@
         ]
       },
       "blocker": {
-        "topic": "Horse-drawn vehicle versus train compartment",
+        "topic": "Verify draft implementation: carriage",
         "options": [
-          "Horse-drawn vehicle in this museum task",
-          "Train compartment: request a replacement task"
+          "Revision follows the recorded teacher direction",
+          "Request further revision"
         ],
-        "recommendation": "This task explicitly uses a horse and shafts. Confirm that interpretation against the passage before publication; do not silently narrow the bank definition.",
+        "recommendedOption": "Revision follows the recorded teacher direction",
+        "recommendation": "Horse-drawn vehicle in this exercise only; verify passage scope before publication. Direction is settled; inspect this exact version before any later approval.",
         "examples": [
-          "A horse pulled the carriage along the road.",
-          "Passengers entered a railway carriage."
-        ],
-        "recommendedOption": "Horse-drawn vehicle in this museum task"
+          "The museum carriage has passenger seats and two shafts attached to a horse that pulls the vehicle.",
+          "A horse stood between the shafts of a wheeled passenger vehicle. Once the passengers were seated, the driver guided the ___ along the lane."
+        ]
       },
       "content": {
-        "sentence": "The museum's carriage has wheels, seats and shafts for a horse to pull it.",
+        "sentence": "The museum carriage has passenger seats and two shafts attached to a horse that pulls the vehicle.",
         "definition": "a horse-drawn vehicle or train compartment",
         "investigate": {
           "kind": "meaning",
-          "context": "The museum's carriage has wheels, seats and shafts for a horse to pull it.",
+          "context": "The museum carriage has passenger seats and two shafts attached to a horse that pulls the vehicle.",
           "prompt": "Which interpretation is supported by this note?",
           "options": [
             "a vehicle running on rails in this display",
@@ -4875,20 +4883,25 @@
           ],
           "answer": 1,
           "clue": "Identify the vehicle from the particular features in this display.",
-          "why": "The explicit horse-drawn scene selects one of the bank's two vehicle meanings; the broader bank definition remains unchanged."
+          "why": "The passenger seats, horse and shafts identify a horse-drawn carriage in this display. This exercise does not rule out the train-compartment meaning in other contexts."
         },
         "final": {
           "kind": "recall",
-          "prompt": "Two people climbed into the wheeled vehicle and the coachman guided the horse forward. The ___ rolled down the lane.",
+          "prompt": "A horse stood between the shafts of a wheeled passenger vehicle. Once the passengers were seated, the driver guided the ___ along the lane.",
           "answers": [
             "carriage"
           ],
           "clue": "Check the article, number and any required small words on both sides of the gap.",
-          "why": "The explicit horse-drawn scene selects one of the bank's two vehicle meanings; the broader bank definition remains unchanged.",
+          "why": "The passenger seats, horse and shafts identify a horse-drawn carriage in this display. This exercise does not rule out the train-compartment meaning in other contexts.",
           "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
           "strictVariants": true
         },
-        "forms": []
+        "forms": [],
+        "teacherDirection": {
+          "reference": "docs/CODEX-PHASE-2.7-TEACHER-DECISIONS.md",
+          "direction": "Horse-drawn vehicle in this exercise only; verify passage scope before publication.",
+          "status": "APPLIED_TO_DRAFT_NOT_APPROVAL"
+        }
       }
     },
     {
@@ -4898,8 +4911,8 @@
       "term": "clear slums",
       "priority": "supporting",
       "kind": "contextual-challenge",
-      "version": 2,
-      "digest": "ce9e6baf",
+      "version": 3,
+      "digest": "8be14e0c",
       "status": "TEACHER_REVIEW",
       "deterministic": "PASS",
       "heuristics": {
@@ -4914,24 +4927,24 @@
         ]
       },
       "blocker": {
-        "topic": "Historical clearance and displacement",
+        "topic": "Verify draft implementation: clear slums",
         "options": [
-          "Historical removal action without endorsing its effects",
-          "Request further source-context review before using this route"
+          "Revision follows the recorded teacher direction",
+          "Request further revision"
         ],
-        "recommendation": "Describe the historical action and discuss who was affected. Do not equate removal with consent, successful rehousing or an unqualified benefit.",
+        "recommendedOption": "Revision follows the recorded teacher direction",
+        "recommendation": "Historical clearance and displacement; no assumed consent, benefit or rehousing. Direction is settled; inspect this exact version before any later approval.",
         "examples": [
-          "The archive proposed to clear slums but did not explain the rehousing plan.",
-          "The review asks how residents were consulted."
-        ],
-        "recommendedOption": "Historical removal action without endorsing its effects"
+          "The historical archive records a plan to clear slums by demolishing poor-quality housing. It does not say whether residents consented or where displaced households were rehoused.",
+          "The historical authorities planned to ___ by demolishing poor-quality housing. The record does not establish residents' consent, successful rehousing or any benefit to them."
+        ]
       },
       "content": {
-        "sentence": "The archive records a plan to clear slums by removing poor-quality housing; the accompanying note asks what happened to displaced residents.",
+        "sentence": "The historical archive records a plan to clear slums by demolishing poor-quality housing. It does not say whether residents consented or where displaced households were rehoused.",
         "definition": "remove poor-quality housing",
         "investigate": {
           "kind": "meaning",
-          "context": "The archive records a plan to clear slums by removing poor-quality housing; the accompanying note asks what happened to displaced residents.",
+          "context": "The historical archive records a plan to clear slums by demolishing poor-quality housing. It does not say whether residents consented or where displaced households were rehoused.",
           "prompt": "Which interpretation is supported by this note?",
           "options": [
             "repair the existing homes while residents remain",
@@ -4944,7 +4957,7 @@
         },
         "final": {
           "kind": "recall",
-          "prompt": "The historical plan proposed to ___ by removing the district's poor-quality housing. It gave no account of where residents would live afterwards.",
+          "prompt": "The historical authorities planned to ___ by demolishing poor-quality housing. The record does not establish residents' consent, successful rehousing or any benefit to them.",
           "answers": [
             "clear slums"
           ],
@@ -4953,7 +4966,12 @@
           "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
           "strictVariants": true
         },
-        "forms": []
+        "forms": [],
+        "teacherDirection": {
+          "reference": "docs/CODEX-PHASE-2.7-TEACHER-DECISIONS.md",
+          "direction": "Historical clearance and displacement; no assumed consent, benefit or rehousing.",
+          "status": "APPLIED_TO_DRAFT_NOT_APPROVAL"
+        }
       }
     },
     {
@@ -5473,8 +5491,8 @@
       "term": "solicitor",
       "priority": "advanced",
       "kind": "contextual-challenge",
-      "version": 2,
-      "digest": "c2ee74b3",
+      "version": 3,
+      "digest": "8cd5fc97",
       "status": "TEACHER_REVIEW",
       "deterministic": "PASS",
       "heuristics": {
@@ -5489,24 +5507,24 @@
         ]
       },
       "blocker": {
-        "topic": "Jurisdiction-specific legal profession",
+        "topic": "Verify draft implementation: solicitor",
         "options": [
-          "England and Wales legal practitioner in this task",
-          "Different jurisdiction: request a replacement task"
+          "Revision follows the recorded teacher direction",
+          "Request further revision"
         ],
-        "recommendation": "Keep the bank jurisdiction explicit. Do not treat solicitor as a universal name for every legal professional.",
+        "recommendedOption": "Revision follows the recorded teacher direction",
+        "recommendation": "Legal professional in England and Wales; jurisdiction stays explicit. Direction is settled; inspect this exact version before any later approval.",
         "examples": [
-          "In the England-and-Wales example, a solicitor handled the paperwork.",
-          "The label for a legal practitioner may differ in another jurisdiction."
-        ],
-        "recommendedOption": "England and Wales legal practitioner in this task"
+          "In England and Wales, a client asks a solicitor for legal advice on a property contract.",
+          "In England and Wales, Priya needs professional legal advice on a property contract. She makes an appointment with a ___."
+        ]
       },
       "content": {
-        "sentence": "In the fictional England-and-Wales setting, the client asks a solicitor to handle legal paperwork.",
+        "sentence": "In England and Wales, a client asks a solicitor for legal advice on a property contract.",
         "definition": "type of legal practitioner in England and Wales",
         "investigate": {
           "kind": "meaning",
-          "context": "In the fictional England-and-Wales setting, the client asks a solicitor to handle legal paperwork.",
+          "context": "In England and Wales, a client asks a solicitor for legal advice on a property contract.",
           "prompt": "Which interpretation is supported by this note?",
           "options": [
             "a professional whose main role is surveying buildings",
@@ -5515,20 +5533,25 @@
           ],
           "answer": 2,
           "clue": "Check the profession in the stated jurisdiction.",
-          "why": "The bank identifies a legal practitioner in England and Wales; the example does not claim the same professional system applies everywhere."
+          "why": "A solicitor is a legal professional in England and Wales. This example concerns legal advice on a property contract, not a role shared by every profession or jurisdiction."
         },
         "final": {
           "kind": "recall",
-          "prompt": "In this England-and-Wales scenario, Priya needs professional legal advice on a property contract. She makes an appointment with a ___.",
+          "prompt": "In England and Wales, Priya needs professional legal advice on a property contract. She makes an appointment with a ___.",
           "answers": [
             "solicitor"
           ],
           "clue": "Check the article, number and any required small words on both sides of the gap.",
-          "why": "The bank identifies a legal practitioner in England and Wales; the example does not claim the same professional system applies everywhere.",
+          "why": "A solicitor is a legal professional in England and Wales. This example concerns legal advice on a property contract, not a role shared by every profession or jurisdiction.",
           "variantPolicy": "Explicit reviewed forms only. Ignore case, curly apostrophes and repeated spaces; preserve articles, inflections, hyphens and internal punctuation. Other wording is not automatically accepted.",
           "strictVariants": true
         },
-        "forms": []
+        "forms": [],
+        "teacherDirection": {
+          "reference": "docs/CODEX-PHASE-2.7-TEACHER-DECISIONS.md",
+          "direction": "Legal professional in England and Wales; jurisdiction stays explicit.",
+          "status": "APPLIED_TO_DRAFT_NOT_APPROVAL"
+        }
       }
     },
     {

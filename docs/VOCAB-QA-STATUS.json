@@ -1,25 +1,25 @@
 {
   "schemaVersion": 1,
-  "timestampUTC": "2026-10-31T03:03:35.023Z",
-  "timestampLocal": "2026-10-31 10:03:35 GMT+7",
+  "timestampUTC": "2026-10-31T03:27:42.525Z",
+  "timestampLocal": "2026-10-31 10:27:42 GMT+7",
   "branch": "feature/vocab-lab",
-  "sha": "8ca2aebbb5f7c0f332fdde1507b81bdb3b9c00d1",
-  "sourceFingerprint": "ea332d93bd6a679f16f3b8226df3386feae06ae011653d521efc89cb866768da",
+  "sha": "57768755419e580d2b71f9cf2db63a3f04721ba7",
+  "sourceFingerprint": "0e292d3cfe0630b411054bb63f54171f999a0e4ecdc93be74d866f2b3a518972",
   "dirty": true,
-  "session": "phase27-content-audit",
-  "round": 3,
+  "session": "phase27-teacher-decisions",
+  "round": 1,
   "mode": "full",
   "commandArgv": [
     "node",
     "tools/vocab-qa-runner.cjs",
     "--session",
-    "phase27-content-audit",
+    "phase27-teacher-decisions",
     "--round",
-    "3",
+    "1",
     "--changes-file",
-    "qa-artifacts/phase27-content-audit/round3-changes.json"
+    "qa-artifacts/phase27-teacher-decisions/focused-editorial-repair.json"
   ],
-  "command": "node tools/vocab-qa-runner.cjs --session phase27-content-audit --round 3 --changes-file qa-artifacts/phase27-content-audit/round3-changes.json",
+  "command": "node tools/vocab-qa-runner.cjs --session phase27-teacher-decisions --round 1 --changes-file qa-artifacts/phase27-teacher-decisions/focused-editorial-repair.json",
   "environment": {
     "node": "v24.22.1",
     "platform": "win32",
@@ -27,9 +27,9 @@
     "browser": "msedge",
     "playwright": "1.62.1"
   },
-  "artifactDirectory": "qa-artifacts/phase27-content-audit/round-3-full",
+  "artifactDirectory": "qa-artifacts/phase27-teacher-decisions/round-1-full",
   "counts": {
-    "node": 110,
+    "node": 117,
     "regression": 244
   },
   "steps": [
@@ -58,15 +58,15 @@
     },
     {
       "id": "unit",
-      "command": "node --test tests/vocab-batch.test.js tests/vocab-content-quality.test.js tests/vocab-editorial.test.js tests/vocab-highlight.test.js tests/vocab-lab.test.js tests/vocab-mission-engine.test.js tests/vocab-mission-planner.test.js tests/vocab-mission-store.test.js tests/vocab-mission.test.js tests/vocab-qa-runner.test.js tests/vocab-reality.test.js tests/vocab-routes.test.js tests/vocab-ui-preview.test.js",
+      "command": "node --test tests/vocab-batch.test.js tests/vocab-content-quality.test.js tests/vocab-editorial.test.js tests/vocab-highlight.test.js tests/vocab-lab.test.js tests/vocab-mission-engine.test.js tests/vocab-mission-planner.test.js tests/vocab-mission-store.test.js tests/vocab-mission.test.js tests/vocab-qa-runner.test.js tests/vocab-reality.test.js tests/vocab-routes.test.js tests/vocab-teacher-decisions.test.js tests/vocab-ui-preview.test.js",
       "log": "logs/unit.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 1392,
+      "elapsedMs": 1498,
       "counts": {
         "kind": "node",
-        "passed": 110,
-        "total": 110
+        "passed": 117,
+        "total": 117
       },
       "summary": "See log"
     },
@@ -76,7 +76,7 @@
       "log": "logs/regression-admin-kick.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 1867,
+      "elapsedMs": 1582,
       "counts": {
         "kind": "assertions",
         "passed": 50,
@@ -90,7 +90,7 @@
       "log": "logs/regression-chart-facts.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 133,
+      "elapsedMs": 150,
       "counts": {
         "kind": "assertions",
         "passed": 56,
@@ -104,7 +104,7 @@
       "log": "logs/regression-lm-meta.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 68,
+      "elapsedMs": 77,
       "counts": {
         "kind": "assertions",
         "passed": 22,
@@ -118,7 +118,7 @@
       "log": "logs/regression-lm-unit0.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 309,
+      "elapsedMs": 328,
       "counts": {
         "kind": "assertions",
         "passed": 23,
@@ -132,7 +132,7 @@
       "log": "logs/regression-lm-unit2-ui.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 355,
+      "elapsedMs": 314,
       "counts": {
         "kind": "assertions",
         "passed": 41,
@@ -146,7 +146,7 @@
       "log": "logs/regression-misc.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 121,
+      "elapsedMs": 122,
       "counts": {
         "kind": "assertions",
         "passed": 6,
@@ -160,7 +160,7 @@
       "log": "logs/regression-reading.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 164,
+      "elapsedMs": 145,
       "counts": {
         "kind": "assertions",
         "passed": 12,
@@ -174,7 +174,7 @@
       "log": "logs/regression-server-purge.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 72,
+      "elapsedMs": 76,
       "counts": {
         "kind": "assertions",
         "passed": 8,
@@ -188,7 +188,7 @@
       "log": "logs/regression-sign-in.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 68,
+      "elapsedMs": 72,
       "counts": {
         "kind": "assertions",
         "passed": 11,
@@ -202,7 +202,7 @@
       "log": "logs/regression-ui-audit.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 306,
+      "elapsedMs": 318,
       "counts": {
         "kind": "assertions",
         "passed": 15,
@@ -216,7 +216,7 @@
       "log": "logs/writing-content.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 77,
+      "elapsedMs": 65,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -230,7 +230,7 @@
       "log": "logs/reality.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 50535,
+      "elapsedMs": 50742,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -244,7 +244,7 @@
       "log": "logs/batch.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 52558,
+      "elapsedMs": 52291,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -258,7 +258,7 @@
       "log": "logs/isolation.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 37212,
+      "elapsedMs": 38455,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -272,7 +272,7 @@
       "log": "logs/visual.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 8096,
+      "elapsedMs": 7342,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -286,7 +286,7 @@
       "log": "logs/check.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 10964,
+      "elapsedMs": 10208,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -300,7 +300,7 @@
       "log": "logs/accessibility.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 19432,
+      "elapsedMs": 22064,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -314,7 +314,7 @@
       "log": "logs/mission.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 48719,
+      "elapsedMs": 46393,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -328,7 +328,7 @@
       "log": "logs/shell.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 75528,
+      "elapsedMs": 74373,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -342,7 +342,7 @@
       "log": "logs/engine.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 113050,
+      "elapsedMs": 113112,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -356,7 +356,7 @@
       "log": "logs/editorial.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 31698,
+      "elapsedMs": 23115,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -384,7 +384,7 @@
     }
   ],
   "changes": [
-    "Environment interruption: requested 30-second wait returned after 2306 seconds; Mission was marked FAIL with empty log during the gap. Tool session 32259 subsequently disappeared; no QA runner process or completed round-2 report remains. Round 2 is INCOMPLETE, not PASS.; files: ; reproduction: Preserve round-2 artifacts. Run focused Mission and final round 3 while requesting Windows SYSTEM_REQUIRED only for the command lifetime; do not alter app code, tests or 480-second suite timeout."
+    "New instruction used expression, containing the taught target press (048); all-102 browser leakage assertion detected it.; files: vocab-retrieval.js, vocab-mission.js; reproduction: Round 1 focused editorial: Answer visible C17-T1-R1-048. Replaced wording with vocabulary taught here; preserved the exact leakage assertions."
   ],
   "screenshots": [
     "browser/accessibility/check-before-1280-dark.png",
@@ -957,6 +957,6 @@
   "qaPass": true,
   "releaseReadiness": "BLOCKED",
   "repositoryValid": true,
-  "manifestSha256": "a969910c864542372ae416d498d0ca316acc4a9af77c4ad810aeef9c1970d906",
-  "completedUTC": "2026-10-31T03:11:09.667Z"
+  "manifestSha256": "aa1d4474e101245cf429864219d2762fb187d90e221f56016e894ecf546278ea",
+  "completedUTC": "2026-10-31T03:35:06.980Z"
 }
