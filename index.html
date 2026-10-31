@@ -339,6 +339,10 @@ body.lg .shell{margin-top:0}
 .lupara{margin:0;line-height:1.85;font-size:1rem}
 .lug{border-radius:4px;padding:1px 2px;color:var(--ink)}
 .lug-trends{background:var(--mk-g)}.lug-highest{background:var(--mk-y)}.lug-highlights{background:var(--mk-p)}
+.luideas .luidea{display:flex;flex-wrap:wrap;align-items:center;gap:6px;text-align:left}.luhelp{margin-top:10px}.luframes{margin:6px 0;padding-left:18px;font-size:.92rem}
+.lustale{display:flex;flex-direction:column;gap:6px}.lustale p{margin:0}.luarch{margin:8px 0}
+.luba{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media (max-width:640px){.luba{grid-template-columns:1fr}}
+.lurvex>summary{cursor:pointer}.lulegend summary{cursor:pointer;list-style-position:outside}
 .lulegend{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 .lulegend>li{border-left:6px solid var(--line);padding:4px 0 4px 10px}
 .lulegend>li.lug-trends{border-left-color:var(--good);background:none}.lulegend>li.lug-highest{border-left-color:var(--warn);background:none}.lulegend>li.lug-highlights{border-left-color:var(--accent);background:none}
@@ -568,10 +572,15 @@ td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:now
 .rmhd2{display:flex;align-items:center;justify-content:space-between;gap:8px 14px;flex-wrap:wrap;width:100%}
 .rmhl{display:flex;align-items:center;gap:8px;min-width:0;flex:1 1 220px}.rmht{min-width:0}.rmht h2{margin:0;font-size:1.15rem;line-height:1.3;overflow-wrap:anywhere}.rmht p{margin:0;font-size:.84rem;color:var(--muted)}
 .rmback{flex:none;width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--line-2);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer}
-.rmstepsel{min-height:40px;padding:4px 30px 4px 10px;border:1px solid var(--line-2);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;font-size:.9rem;font-weight:600;max-width:100%}
+.rmstepsel{height:44px;padding:0 34px 0 14px;border:1px solid var(--line-2);border-radius:12px;background:var(--surface) var(--sel-arrow) no-repeat right 12px center;-webkit-appearance:none;appearance:none;color:var(--ink);font:inherit;font-size:.9rem;font-weight:600;max-width:100%}
 .rmgear{display:grid;place-items:center}
-.rmprog{height:4px;border-radius:99px;background:var(--track);overflow:hidden;width:100%;margin-top:8px}.rmprog>span{display:block;height:100%;background:var(--accent);transition:width .3s}
-.rmsetp{min-width:250px;display:flex;flex-direction:column;gap:10px;padding:12px}.rmsetg{display:flex;flex-direction:column;gap:6px}.rmfsl{display:flex;flex-wrap:wrap;gap:4px}.rmsetp .lsdemo{margin:0}
+/* Reading · Option A: settings in three groups */
+.rmsetp{width:300px;max-width:calc(100vw - 24px);display:flex;flex-direction:column;gap:0;padding:6px 14px}
+.rmsetg{display:flex;flex-direction:column;gap:8px;padding:12px 0}.rmsetg+.rmsetg{border-top:1px solid var(--line)}
+.rmsetg h4{margin:0;font-size:.78rem;font-weight:700;color:var(--muted);display:flex;justify-content:space-between;align-items:baseline}.rmfsn{font-weight:700;color:var(--ink)}
+.rmsetg .seg{display:grid;grid-template-columns:repeat(3,1fr)}.rmsetg .seg button{min-width:0}
+.rmfsl{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.rmfsm .rmfsl button{text-align:center;padding:0;min-height:44px;border:1px solid var(--line-2);border-radius:10px;display:flex;align-items:center;justify-content:center}.rmsetp .lsdemo{margin:0}
 .rmpsgt{margin:0 0 6px}
 @media (max-width:640px){.rmhd2 .rmtools{width:100%;justify-content:flex-start}.rmstepsel{flex:1 1 auto}}
 .cpok{margin-top:8px}
@@ -640,7 +649,27 @@ button.lsstep{background:none;font:inherit;font-size:.8rem;cursor:pointer}button
 .alist .bar{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
 .alist .bar i{display:block;height:100%}
 .adet{border:1px solid var(--line);border-radius:8px;padding:14px;margin:-2px 0 10px;background:var(--surface)}
-.afform{border:1px solid var(--accent);border-radius:10px;padding:14px;margin-bottom:12px;background:var(--surface)}
+.afform{border:1px solid var(--line-strong);border-radius:14px;padding:18px 20px;margin:0 0 16px;background:var(--surface);display:flex;flex-direction:column;gap:18px}
+.hwa-top{display:flex;flex-wrap:wrap;align-items:end;gap:12px;margin:0 0 14px}.hwa-top .field{margin:0}
+.hwa-sum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.hwa-num{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface);display:flex;flex-direction:column;gap:2px}.hwa-num b{font-size:1.6rem;line-height:1.1}.hwa-num small{color:var(--muted);font-size:.78rem}
+.hwa-def{font-size:.85rem;margin:8px 0 14px}.hwa-sec{margin:16px 0}.hwa-sec h3{font-size:1rem;margin:0 0 8px}
+.hwa-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}.hwa-list>li{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--surface)}.hwa-list>li>span:first-child{flex:1 1 220px;min-width:0}.hwa-list small{display:block}
+.hwa-acts{display:flex;gap:6px}.hwa-bad{color:var(--bad)}.hwa-bar{display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin:0 0 12px}.hwa-bar .field{margin:0}
+.hwa-t{width:100%;border-collapse:collapse}.hwa-t th,.hwa-t td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle}.hwa-t th{font-size:.78rem;color:var(--muted)}
+.hwa-txt{width:100%;font-family:var(--font);line-height:1.6}.hwa-drill{flex:1 1 100%;border-top:1px solid var(--line);padding-top:10px;margin-top:4px}.hwa-notes{margin:0 0 8px;padding-left:18px}.hwa-drill textarea{width:100%}
+.as-cls{display:flex;flex-wrap:wrap;gap:6px 14px}
+@media (max-width:720px){.hwa-sum{grid-template-columns:1fr 1fr}}
+.afh{margin:0;font-size:1.1rem}.afsec{display:flex;flex-direction:column;gap:10px}.afsec h4{margin:0;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.afgrid{display:grid;grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr));gap:12px}.afgrid .field{margin:0;min-width:0}.afgrid input,.afgrid textarea{width:100%}
+.afext{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}.afext .afnm:last-child{grid-column:1/-1}.afhelp{margin:0;font-size:.88rem}
+.aftype{align-self:flex-start}
+.afsec .pk{margin:0}.afsec .pklist{max-height:300px;padding:8px 14px;border-radius:10px;scrollbar-width:thin}.afsec .pklist .tl{display:flex;gap:8px;align-items:center;min-height:36px}
+.affoot{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:14px}.affoot .afbtns{margin-left:auto;display:flex;gap:8px}
+@media (max-width:820px){.afgrid{grid-template-columns:1fr 1fr}.afgrid .afnm{grid-column:1/-1}}
+@media (max-width:480px){.afgrid,.afext{grid-template-columns:1fr}.affoot .afbtns{margin-left:0;width:100%}.affoot .afbtns .btn{flex:1}}
+.hwext .hwnote{margin:6px 0 10px;line-height:1.6}.hwxrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0}
+.hwthumb{display:inline-block;border:1px solid var(--line);border-radius:10px;overflow:hidden;max-width:240px;margin:4px 0 8px}.hwthumb img{display:block;width:100%;height:auto;max-height:180px;object-fit:cover}
+.hwthumb.sm{max-width:72px;margin:0}.hwthumb.sm img{max-height:52px}.hwhelp{margin:8px 0 0;font-size:.88rem}
 .mtiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
 .mtile{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 10px;align-items:center;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
 .mtile:hover{border-color:var(--accent)}
@@ -1091,14 +1120,14 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .rmlbl{font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
 .rmp{font-size:1.06rem;line-height:1.8;margin:0;overflow-wrap:anywhere}
 /* reading timer: right end of the sticky .rmtop bar */
-.rmtimer{flex:none;display:flex;align-items:center;gap:4px;margin-top:2px;border:1px solid var(--line-strong);border-radius:999px;padding:3px 4px 3px 12px;background:var(--surface)}
+.rmtimer{flex:none;display:flex;align-items:center;gap:4px;height:44px;border:1px solid var(--line-2);border-radius:12px;padding:0 4px 0 14px;background:var(--surface)}
 .rmtimer b{font-family:var(--mono);font-size:1rem;font-variant-numeric:tabular-nums;color:var(--ink)}
 .rmtp{width:34px;height:34px;border:0;border-radius:50%;background:transparent;color:var(--ink);font:inherit;font-size:.9rem;cursor:pointer;display:grid;place-items:center}
 .rmtp:hover{background:var(--line)}.rmtp:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 /* Stage 1 Deep reading: passage left (sticky) + questions right on wide screens, "Show passage" on phones */
 .pane.single.rm.rmwide{max-width:1180px}
 /* sticky top of a Reading lesson: stage bar | timer, Demo helper under them (always visible while scrolling) */
-.rm .rmtop{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:10px;margin:6px 0 14px;box-shadow:0 1px 0 var(--line)}
+.rm .rmtop{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:10px;margin:0 0 12px;padding:8px 0}
 .rm .rmtop .lsbar{position:static;margin:0;box-shadow:none}
 .rm .rmtop .lsdemo{grid-column:1/-1;margin:0 0 8px}
 /* question groups of Deep reading = separate cards */
@@ -1257,6 +1286,21 @@ mark.wch.act,mark.wch:focus-visible{outline:2px solid var(--accent);outline-offs
 .rmgrp>.lsh:first-child{margin-top:12px}
 .rmpsg .rmp{margin-bottom:.9em}
 .rmpsg,.rmqs{min-height:0}
+/* Reading · Option A: two cards (passage | questions), own headers, thin scrollbars, bottom dock */
+.rmdeep>.rmpsg,.rmdeep>.rmqs{border:1px solid var(--line);border-radius:16px;background:var(--surface);display:flex;flex-direction:column;min-width:0}
+.rmph{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 18px 6px;flex:none;position:sticky;top:0;background:var(--surface);z-index:1;border-radius:16px 16px 0 0}
+.rmph h3{margin:0;font-size:1rem;font-weight:700}.rmph .rmpsgt{margin:0;min-height:44px}
+.rmpb{padding:6px 18px 18px}.rmpsg .rmpb .lsc{border:0;padding:0;background:none}
+.rmpsg,.rmqs{scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent}
+.rmpsg::-webkit-scrollbar,.rmqs::-webkit-scrollbar{width:8px}.rmpsg::-webkit-scrollbar-thumb,.rmqs::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:8px}.rmpsg::-webkit-scrollbar-track,.rmqs::-webkit-scrollbar-track{background:transparent}
+.rmrng{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:999px;background:var(--hl-soft);color:var(--accent);font-size:.78rem;font-weight:700;margin-left:6px;vertical-align:middle}
+.rmdock{position:sticky;bottom:0;z-index:4;display:flex;align-items:center;gap:16px 24px;flex-wrap:wrap;background:var(--surface);border-top:1px solid var(--line);padding:12px 0;margin-top:12px}
+.rmdprog{width:180px;flex:none}.rmdprog b{font-size:.88rem}.rmdtrack{height:6px;border-radius:3px;background:var(--track);margin-top:6px;overflow:hidden}.rmdtrack span{display:block;height:100%;background:var(--accent);transition:width .2s}
+.rmpal{display:flex;flex-wrap:wrap;gap:6px;flex:1;min-width:0}
+.rmqn{width:36px;height:36px;padding:0;border-radius:9px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);font:inherit;font-size:.82rem;font-weight:700;cursor:pointer}
+.rmqn.a{background:var(--fill-bg);border-color:var(--fill-line)}.rmqn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rmdock .rmdact{margin:0;flex:none}
+@media (pointer:coarse){.rmqn{width:44px;height:44px}}
 .rmins{font-style:italic}
 .rmhlist{list-style:none;margin:0;padding:0}.rmhlist li{display:flex;gap:12px;padding:.45rem 0;border-bottom:1px solid var(--line)}.rmhlist li:last-child{border-bottom:0}
 .rmhlist b{flex:none;min-width:2.4em;color:var(--accent);font-family:var(--mono)}
@@ -1270,11 +1314,13 @@ mark.wch.act,mark.wch:focus-visible{outline:2px solid var(--accent);outline-offs
   .rmsplit:hover span,.rmsplit:focus-visible span,.rmsplit.drag span{background:var(--accent)}
   .rmsplit:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
   body.rmsizing{cursor:col-resize;user-select:none;-webkit-user-select:none}
-  .rmpsg{position:sticky;top:120px;max-height:calc(100vh - 140px);overflow:auto}}
+  .rm .rmdeep{align-items:stretch}.rm .rmdeep>.rmpsg,.rm .rmdeep>.rmqs{position:static;max-height:none;overflow-y:auto;overscroll-behavior:contain;height:100%}
+  .rmsplit{min-height:0}.rmsplit span{width:2px;background:var(--line)}}
 @media (max-width:899px){ /* split screen: passage top half, questions bottom half, two scroll areas */
-  .rmdeep{display:grid;grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:10px;height:calc(100vh - 190px);height:calc(100dvh - 190px);min-height:420px}
+  .rmdeep{display:flex;flex-direction:column;gap:12px;height:auto;min-height:0}
+  .rm .rmdeep>.rmpsg{max-height:46vh;max-height:46dvh;overflow-y:auto}.rm .rmdeep>.rmqs{overflow:visible}
   .rmpsg,.rmqs{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
-  .rmpsg{border-bottom:2px solid var(--line-strong);padding-bottom:6px}}
+  .rmpsg{padding-bottom:0}}
 .rmslot{width:100%;margin-top:12px;text-align:left;border:1.5px dashed var(--accent);background:var(--surface);border-radius:8px;padding:.7rem .85rem;min-height:48px;font:inherit;font-size:.95rem;color:var(--accent);font-weight:600;display:flex;gap:8px;align-items:center}
 .rmslot.has{border-style:solid;color:var(--ink);font-weight:500}
 .rmslot .arr{margin-left:auto;color:var(--muted);flex:none}
@@ -1646,6 +1692,7 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
   <section id="v-asg" hidden></section>
   <section id="v-mark" hidden></section>
   <section id="v-admin" hidden></section>
+  <section id="v-hwa" hidden></section>
 
   <section id="v-roster" hidden>
     <div class="pad">
@@ -1858,6 +1905,7 @@ function allRoster(){
 var meFromToken=function(e){var mu=window.MD_USER;if(DEMO||!mu||String(mu.email||'').toLowerCase()!==e)return null;
   var row=allRoster().filter(function(x){return x.email===e})[0]||{};
   if(mu.role==='teacher')return {email:e,name:mu.name||row.name||'Teacher',role:'teacher',adm:mu.adm===true,course:'',cls:''};
+  if(mu.role==='assistant')return {email:e,name:mu.name||'Homework Assistant',role:'assistant',adm:false,course:'',cls:''};
   return Object.assign({},row,{email:e,name:row.name||mu.name||e.split('@')[0],role:'student',course:row.course||'',cls:row.cls||''})};
 var findUser=function(email){var e=String(email||'').trim().toLowerCase();var tk=meFromToken(e);if(tk)return (tk.role==='student'&&removedAll()[e])?null:tk;var r=allRoster();for(var i=0;i<r.length;i++)if(r[i].email===e)return (r[i].role==='student'&&removedAll()[e])?null:r[i];if(!DEMO&&e&&e.indexOf('@')>0){var gn=(window.MD_USER&&window.MD_USER.name)||e.split('@')[0];return {email:e,name:gn,role:'student',course:'',cls:''}}return null};
 var classDocs=[],localClasses={};
@@ -1956,7 +2004,13 @@ function doneLabel(e,d){return e.kind==='writing'||e.kind==='speaking'?(d.band!=
 /* ---------- Assignments ---------- */
 var slug=function(s){return String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')};
 var DEMO_ASG=['l1','l2','r1','r3','w1','s1'];
-function normAsg(a){if(a.start==null&&a.weekStart)return Object.assign({},a,{start:fromISO(a.weekStart).getTime(),due:dueOf(a.weekStart).getTime()});return a}
+function normAsg(a){if(a.start==null&&a.weekStart)a=Object.assign({},a,{start:fromISO(a.weekStart).getTime(),due:dueOf(a.weekStart).getTime()});if(!Array.isArray(a.ex))a=Object.assign({},a,{ex:[]});return a}
+// assignment type: 'external' = a link outside Mini Drills + a screenshot as proof; anything else (old records) = Mini Drills exercises
+function isExt(a){return !!a&&a.type==='external'}
+function safeLink(u){u=String(u||'').trim();return /^https?:\/\/[^\s<>"']+$/i.test(u)?u:''}
+// the student's proof for an external assignment = the hwdone record with a screenshot (one source of truth for "submitted")
+function hwRec(email,id){var r=hwdoneDocs.concat(localHwdone).filter(function(d){return d.email===email&&d.asgId===id});return r.sort(function(a,b){return (b.updatedAt||b.ts||0)-(a.updatedAt||a.ts||0)})[0]||null}
+function hwShot(email,id){var r=hwRec(email,id);return r&&r.shot&&r.shot.url?r:null}
 function demoAsgs(){
   var wk=thisWk(),pw=shiftWk(wk,-1),out=[];
   CLS.forEach(function(c,ci){
@@ -1991,6 +2045,8 @@ function crumbs(){
   }).join('');
 }
 function hwStatus(a){
+  if(isExt(a)){var R=students().filter(function(s){return s.cls===a.cls}).map(function(s){var r=hwShot(s.email,a.id);return {name:s.name,email:s.email,done:r?1:0,n:1,fin:!!r}}),k=R.filter(function(r){return r.fin}).length;
+    return {ids:[],rows:R,pct:R.length?Math.round(k/R.length*100):0}}
   var ids=a.ex.filter(exOf);
   var rows=students().filter(function(s){return s.cls===a.cls}).map(function(s){
     var until=effDue(a,s.email).getTime(),dm=doneMap(s.email,a.start,until),p=passFor(s.email,a.id);
@@ -2001,12 +2057,15 @@ function hwStatus(a){
 }
 function homeworkHTML(){
   var now=Date.now();
-  var items=allAsgs().filter(function(a){return a.cls===U.cls&&a.start<=now&&!a.tOnly}).map(function(a){
+  var ext=allAsgs().filter(function(a){return isExt(a)&&a.cls===U.cls&&a.start<=now&&!a.tOnly}).map(function(a){var due=effDue(a,U.email),r=hwShot(U.email,a.id);return {a:a,due:due,over:due.getTime()<now,r:r}})
+    .filter(function(x){return !x.over||!x.r}).sort(function(a,b){return a.due-b.due});
+  var items=allAsgs().filter(function(a){return !isExt(a)&&a.cls===U.cls&&a.start<=now&&!a.tOnly}).map(function(a){
     var due=effDue(a,U.email),ids=a.ex.filter(exOf),dm=doneMap(U.email,a.start,due.getTime());
     return {a:a,due:due,ids:ids,dm:dm,pr:prog(ids,dm),over:due.getTime()<now,fin:hwDone(U.email,a.id)};
   }).filter(function(x){return x.ids.length&&(x.fin?!x.over:(!x.over||x.pr.d<x.pr.t))}).sort(function(a,b){return ((a.over?1:0)-(b.over?1:0))||(a.due-b.due)});
   var h='<h1 class="lock">Let\'s lock in</h1>';
-  if(!items.length)return h+'<div class="hw"><p class="empty">You are all caught up. Nothing is due.</p></div>';
+  if(!items.length&&!ext.length)return h+'<div class="hw"><p class="empty">You are all caught up. Nothing is due.</p></div>';
+  ext.forEach(function(x){h+=extHwHTML(x)});
   items.forEach(function(x){
     var a=x.a,p=passFor(U.email,a.id),shown=x.over?x.ids.filter(function(i){return !x.dm[i]}):x.ids;
     h+='<div class="hw'+(x.over?' late':'')+'"><div class="sechead"><span class="chips2"><span class="chip">'+esc(asgName(a))+'</span>'+(x.over?'<span class="chip" style="background:var(--bad-bg);color:var(--bad)">Missing</span>':'')+'</span><span class="meta hwdue">'+(x.over?'<span class="hwdate">Was due </span><b>'+fmtDue(x.due)+'</b>':'<span class="hwdate">Due '+fmtDue(x.due)+' · </span><b>'+leftOf(x.due)+'</b>')+'</span></div><div class="lrows">'+shown.map(function(id){
@@ -2018,6 +2077,39 @@ function homeworkHTML(){
   });
   return h;
 }
+// External homework card (student): what to do, Open link, then one screenshot = Submitted (not a mark of correctness)
+var HWUP={};
+function extHwHTML(x){var a=x.a,r=x.r,lk=safeLink(a.link),up=HWUP[a.id]||{},late=r&&r.shot.ts>x.due.getTime(),img=r?safeImg(r.shot.url)||(/^\/api\/image\/[A-Za-z0-9_-]{22}$/.test(r.shot.url)||/^blob:/.test(r.shot.url)?r.shot.url:''):'';
+  var h='<div class="hw hwext'+(x.over&&!r?' late':'')+'"><div class="sechead"><span class="chips2"><span class="chip">'+esc(asgName(a))+'</span><span class="pill">External'+(a.src?' · '+esc(a.src):'')+'</span>'+(x.over&&!r?'<span class="chip" style="background:var(--bad-bg);color:var(--bad)">Missing</span>':'')+'</span><span class="meta hwdue">'+(x.over?'<span class="hwdate">Was due </span><b>'+fmtDue(x.due)+'</b>':'<span class="hwdate">Due '+fmtDue(x.due)+' · </span><b>'+leftOf(x.due)+'</b>')+'</span></div>';
+  if(a.note)h+='<p class="hwnote">'+esc(a.note)+'</p>';
+  h+='<div class="hwxrow">'+(lk?'<a class="btn" href="'+esc(lk)+'" target="_blank" rel="noopener noreferrer">Open link ↗</a>':'<span class="err">The link is missing. Ask your teacher.</span>')+
+    '<span class="pill'+(r?' ok':'')+'" role="status">'+(r?(late?'Submitted late':'Submitted')+' · '+esc(fmtDue(new Date(r.shot.ts))):'Not submitted')+'</span></div>';
+  if(r&&img)h+='<a class="hwthumb" href="'+esc(img)+'" target="_blank" rel="noopener"><img src="'+esc(img)+'" alt="Your screenshot for '+esc(asgName(a))+'"></a>';
+  h+='<div class="hwact"><button class="btn'+(r?'':' pri')+'" type="button" data-act="hw-shot" data-asg="'+esc(a.id)+'"'+(up.busy?' disabled':'')+'>'+(up.busy?'Uploading… '+(up.pct||0)+'%':r?'Replace screenshot':'Upload screenshot')+'</button>'+
+    '<input type="file" accept="image/*" hidden id="hwShot_'+esc(a.id)+'" data-hwshot="'+esc(a.id)+'" aria-label="Screenshot for '+esc(asgName(a))+'"></div>'+
+    (up.err?'<p class="err" role="alert">'+esc(up.err)+'</p>':'')+(r?'':'<p class="muted hwhelp">Do the task at the link, take a screenshot of your result, then upload it here.</p>');
+  return h+'</div>'}
+// shrink big screenshots in the browser (long side 1600 px, JPEG .85) before upload; GIF / small files go as they are
+function hwShrink(file){return new Promise(function(ok){if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size<400*1024)return ok(file);
+  var im=new Image(),u=URL.createObjectURL(file);im.onload=function(){var s=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*s));c.height=Math.max(1,Math.round(im.height*s));
+    try{c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(function(b){URL.revokeObjectURL(u);ok(b&&b.size<file.size?b:file)},'image/jpeg',.85)}catch(e){URL.revokeObjectURL(u);ok(file)}};im.onerror=function(){URL.revokeObjectURL(u);ok(file)};im.src=u})}
+function hwShotUpload(blob,prog){return new Promise(function(ok,no){
+  if(DEMO){var p=0,iv=setInterval(function(){p=Math.min(100,p+25);if(prog)prog(p);if(p>=100){clearInterval(iv);ok({id:'demo'+Date.now().toString(36),url:URL.createObjectURL(blob)})}},120);return}
+  idTok().then(function(tok){var x=new XMLHttpRequest();x.open('POST',API_BASE+'/image?kind=hwshot');x.setRequestHeader('Content-Type',blob.type||'image/jpeg');if(tok)x.setRequestHeader('Authorization','Bearer '+tok);
+    if(x.upload)x.upload.onprogress=function(e){if(e.lengthComputable&&prog)prog(Math.round(e.loaded/e.total*100))};
+    x.onload=function(){var d={};try{d=JSON.parse(x.responseText)}catch(e){}if(x.status>=200&&x.status<300&&d.id&&d.url)ok(d);else no(new Error((d.error||'Upload failed.')+' (code: http'+x.status+')'))};
+    x.onerror=function(){no(new Error('No connection. Check your internet and try again.'))};x.send(blob)},function(){no(new Error('Your sign-in has expired. Sign in again.'))})})}
+document.addEventListener('change',function(e){var f=e.target,aid=f&&f.getAttribute&&f.getAttribute('data-hwshot');if(!aid||!f.files||!f.files[0]||!U)return;var file=f.files[0];
+  if(!/^image\//.test(file.type)){HWUP[aid]={err:'Choose a picture (PNG, JPG, WebP or GIF).'};return renderLib()}
+  if(file.size>15*1024*1024){HWUP[aid]={err:'This picture is too big. Take a smaller screenshot.'};return renderLib()}
+  HWUP[aid]={busy:true,pct:0};renderLib();
+  hwShrink(file).then(function(b){if(b.size>5*1024*1024)throw new Error('The picture is too big (5 MB at most).');return hwShotUpload(b,function(p){HWUP[aid].pct=p;var bt=document.querySelector('[data-act="hw-shot"][data-asg="'+aid+'"]');if(bt)bt.textContent='Uploading… '+p+'%'})})
+    .then(function(d){var now=Date.now(),old=hwRec(U.email,aid),did=slug(U.email)+'_'+aid,first=!old||!old.shot;
+      var rec={email:U.email,asgId:aid,ts:old&&old.ts||now,status:'submitted',shot:{id:d.id,url:d.url,ts:now},updatedAt:now};
+      var fin=function(){HWUP[aid]={};if(first)onHwDone(aid);renderLib();toast('Screenshot uploaded. Your homework is submitted.')};
+      var loc=function(){localHwdone=localHwdone.filter(function(x){return x.id!==did});localHwdone.push(Object.assign({id:did},rec));fin()};
+      if(dbh)dbh.doc('hwdone/'+did).set(rec).then(function(){localHwdone=localHwdone.filter(function(x){return x.id!==did});localHwdone.push(Object.assign({id:did},rec));fin()},loc);else loc()})
+    .catch(function(er){HWUP[aid]={err:(er&&er.message)||'Upload failed. Try again.'};renderLib()})});
 var PASS={day:{label:'1-day pass',days:1},week:{label:'1-week pass',days:7}};
 function passesOf(email){return passDocs.concat(localPass,samplePass).filter(function(p){return p.email===email})}
 function passFor(email,asgId){return passesOf(email).filter(function(p){return p.asgId===asgId})[0]||null}
@@ -2241,7 +2333,19 @@ function luStoreOk(){try{var k='md-lm-probe';localStorage.setItem(k,'1');localSt
 var LU_SNAP=null,LU_AFD=null,LMY=0; // Unit 2 Demo helper on: {lesson, d:{guided, indep}} = the drafts, in memory only; switched off = dropped
 function luAfd(u,act){return LU_AFD&&LU_AFD.lesson===u.lesson&&(act==='guided'||act==='indep')}
 function luGet(u,act){if(luAfd(u,act))return LU_AFD.d[act]?JSON.parse(JSON.stringify(LU_AFD.d[act])):null;try{var v=localStorage.getItem(luKey(u,act));return v?JSON.parse(v):null}catch(e){return null}}
-function luPut(u,act,o){if(luAfd(u,act)){LU_AFD.d[act]=JSON.parse(JSON.stringify(o));return true}try{o.ts=Date.now();localStorage.setItem(luKey(u,act),JSON.stringify(o));return true}catch(e){return false}}
+// chart signature = chart id + line names; a guided/indep draft stores the one it was written for (cv)
+function luChartSig(u,act){var k=act==='guided'?'A':'B',fx=u.charts[k];return fx?fx.id+'|'+fx.chart.series.map(function(s){return s.label}).join('|'):''}
+function luDraftText(d){d=d||{};var w=d.w||{};return [d.t,d.orig,w.trend,w.high,w.note].filter(function(x){return typeof x==='string'&&x.trim()}).join('\n\n')}
+// 'stale' = saved for another chart version (metadata); 'legacy' = no metadata and names no line of the chart now (soft notice); '' = fine
+function luStale(u,act,d){if(!d||(act!=='guided'&&act!=='indep'))return '';var sig=luChartSig(u,act);if(d.cv)return d.cv===sig?'':'stale';if(d.cvOk===sig)return '';
+  var tx=luDraftText(d).toLowerCase();if(!tx)return '';var k=act==='guided'?'A':'B';
+  return u.charts[k].chart.series.some(function(s){return tx.indexOf(String(s.label).toLowerCase())>=0})?'':'legacy'}
+function luStaleHTML(u,act,d){var st=luStale(u,act,d),a=esc(act),h='';
+  if(st)h+='<div class="luwarn lustale" role="status"><p>'+esc(luU(u,st==='stale'?'ui.dr.stale':'ui.dr.legacy'))+'</p><div class="actions"><button type="button" class="btn sm" data-act="lu-stale-copy" data-a="'+a+'">'+esc(luU(u,'ui.btn.staleCopy'))+'</button><button type="button" class="btn sm" data-act="lu-stale-keep" data-a="'+a+'">'+esc(luU(u,'ui.btn.staleKeep'))+'</button><button type="button" class="btn sm" data-act="lu-stale-new" data-a="'+a+'">'+esc(luU(u,'ui.btn.staleNew'))+'</button></div></div>';
+  if(d&&d.arch)h+='<details class="lufaq luarch"><summary>'+esc(luU(u,'ui.dr.archived'))+'</summary><div class="essay lufirst" lang="en">'+esc(d.arch)+'</div></details>';
+  return h}
+function luPut(u,act,o){if((act==='guided'||act==='indep')&&o&&!o.cv&&!luStale(u,act,o))o.cv=luChartSig(u,act);
+  if(luAfd(u,act)){LU_AFD.d[act]=JSON.parse(JSON.stringify(o));return true}try{o.ts=Date.now();localStorage.setItem(luKey(u,act),JSON.stringify(o));return true}catch(e){return false}}
 function luDrop(u,act){try{localStorage.removeItem(luKey(u,act))}catch(e){}}
 // drafts of this activity saved for ANOTHER content version (cannot be restored; the student may discard them)
 function luOld(u,act){var o=[];try{var pre='md-lm:'+u.lesson+':v',suf=':'+act,cur=luKey(u,act);for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf(pre)===0&&k.slice(-suf.length)===suf&&k!==cur)o.push(k)}}catch(e){}return o}
@@ -2394,8 +2498,8 @@ function luLearn(u){
   h+=card(5,'ui.learn.s5',luCopy(u,'copy.learn.build')+luFrameHTML(u));
   // 6: the samples (on purpose: only after pressing the button), concise first, then the annotated structure
   var conc=luConcise(models),legend='<ul class="lulegend">'+models.map(function(x){var ks=(x.kf||[]).map(kfBy).filter(Boolean),opt=ks.length&&ks.every(function(k){return k.importance==='secondary'});
-      return '<li class="lug-'+esc(x.group||'')+'"><b>'+esc(luU(u,'ui.lens.'+(x.group||'trends')))+'</b>'+(opt?' <span class="pill">'+esc(luU(u,'ui.lbl.optional'))+'</span>':'')+luPair(luTxt(x,x.why.en),luTxt(x,x.why.vi),'luwhy')+
-        (ks.length?'<div class="lurow"><span class="lulbl">'+esc(luU(u,'ui.lbl.features'))+':</span>'+ks.map(function(k){return luChip(u,k)}).join('')+'</div>':'')+'</li>'}).join('')+'</ul>';
+      return '<li class="lug-'+esc(x.group||'')+'"><details><summary><b>'+esc(luU(u,'ui.lens.'+(x.group||'trends')))+'</b>'+(opt?' <span class="pill">'+esc(luU(u,'ui.lbl.optional'))+'</span>':'')+'</summary>'+luPair(luTxt(x,x.why.en),luTxt(x,x.why.vi),'luwhy')+
+        (ks.length?'<div class="lurow"><span class="lulbl">'+esc(luU(u,'ui.lbl.features'))+':</span>'+ks.map(function(k){return luChip(u,k)}).join('')+'</div>':'')+'</details></li>'}).join('')+'</ul>';
   var revBtn='<div class="actions"><button type="button" class="btn" data-act="lu-lrev">'+esc(luU(u,'ui.btn.reveal'))+'</button></div>';
   h+=card(6,'ui.learn.s6',luCopy(u,'copy.learn.reveal')+(LU.lrev?'<p class="lulbl">'+esc(luU(u,'ui.learn.concise'))+'</p>'+luParaHTML(u,conc,false)+
     '<p class="lulbl">'+esc(luU(u,'ui.learn.annot'))+'</p>'+luParaHTML(u,models,true)+legend:revBtn));
@@ -2439,7 +2543,7 @@ function luGPieces(u){return luGItems(u).filter(function(x){return x.kind!=='lea
 // the two separate states, side by side: objective recognition score, and writing (only ever "not assessed")
 function luGStateHTML(u,sc,d){var pass=LU.gpass;
   return '<div class="lustate" role="status"><span class="pill'+(pass?' ok':'')+'">'+esc(luUf(u,'ui.st.recog',LU.gchk?sc.ok:0,sc.n))+' · '+esc(luU(u,pass?'ui.st.recogPass':'ui.st.recogNot'))+'</span>'+
-    '<span class="pill">'+esc(luU(u,d.sub?'ui.st.writing':'ui.st.writingNone'))+'</span></div>'}
+    '<span class="pill">'+esc(luU(u,d.sub?'ui.st.attempted':'ui.st.writingNone'))+'</span></div>'}
 function luGuided(u){
   var d=luGet(u,'guided')||{},L=luGItems(u),sc=luGScore(u),chk=LU.gchk,K=luItems(u,'keyFeatures','learn','A'),S=luSeries(u,'A');
   var fb=function(x){if(!chk)return '';var ok=LU.g[x.id]===x.a;return '<div class="lufb" role="status"><b>'+esc(luU(u,ok?'ui.ctl.correct':'ui.ctl.wrong'))+'</b>'+(ok?'':' '+esc(luU(u,'ui.ctl.answer'))+' <span lang="en">'+esc(x.kind==='leave'?(K.filter(function(k){return k.id===x.a})[0]||{reason:{}}).reason.en:x.kind==='trend'?luGSent(u,x,x.a):luGSent(u,x,x.a))+'</span>')+'</div>'};
@@ -2459,11 +2563,22 @@ function luGuided(u){
   if(LU.gpass){
     var pieces=luGPieces(u),W=d.w||{},R=LU.wres||{},fbk=function(k){return R[k]==null?'':'<p class="lufb lupc'+(R[k]?' no':' ok')+'" role="status">'+(R[k]?'✗ ':'✓ ')+esc(luPcMsg(u,R[k]))+'</p>'};
     var box=function(k,rows){return '<label class="lbl" for="luW_'+k+'">'+esc(luU(u,'ui.gd.w.'+k))+'</label><p class="lunote">'+esc(luU(u,'ui.gd.w.'+k+'Hint'))+'</p><textarea class="wbox luw" id="luW_'+k+'" data-w="'+k+'" rows="'+rows+'" lang="en" spellcheck="true">'+esc(W[k]||'')+'</textarea>'+fbk(k)};
-    h+='<section class="lucard"><h4 class="luh">'+esc(luU(u,'ui.gd.w.h'))+'</h4>'+(pieces.length?'<p class="lulbl">'+esc(luU(u,'copy.gd.pieces'))+'</p><ul class="lupieces" lang="en">'+pieces.map(function(p){return '<li>'+luKw(p)+'</li>'}).join('')+'</ul>':'')+
-      box('trend',2)+box('high',2)+box('note',2)+'<div class="actions"><button type="button" class="btn" data-act="lu-wchk">'+esc(luU(u,'ui.gd.w.chk'))+'</button></div></section>';
+    h+=luStaleHTML(u,'guided',d);
+    // 2. ideas = the reviewed key features of Chart A, shown as checked evidence (no ready-made English sentences)
+    var ideas=d.ideas||{},nI=K.filter(function(k){return ideas[k.id]}).length;
+    h+='<section class="lucard"><h4 class="luh">'+esc(luU(u,'ui.gd.i.h'))+'</h4><p class="lunote">'+esc(luU(u,'ui.gd.i.note'))+'</p><div class="luopts luv luideas" role="group" aria-label="'+esc(luU(u,'ui.gd.i.h'))+'">'+K.map(function(k){
+        return '<button type="button" class="luopt luidea" data-act="lu-gidea" data-id="'+esc(k.id)+'" aria-pressed="'+!!ideas[k.id]+'">'+luImp(u,k)+' <span class="luser">'+esc(luKfLabels(u,k))+'</span> '+luChip(u,k)+'</button>'}).join('')+'</div>'+
+      (nI<2?'<p class="lunote" role="status">'+esc(luU(u,'ui.gd.i.need'))+'</p>':'')+'</section>';
+    if(nI>=2)h+='<section class="lucard"><h4 class="luh">'+esc(luU(u,'ui.gd.w.h'))+'</h4>'+box('trend',2)+box('high',2)+box('note',2)+
+      '<details class="lufaq luhelp"><summary>'+esc(luU(u,'ui.gd.help'))+'</summary><p class="lunote">'+esc(luU(u,'ui.gd.help.note'))+'</p>'+
+        '<ul class="luframes" lang="en">'+['copy.gd.f.trend','copy.gd.f.top','copy.gd.f.bottom'].map(function(id){var c=luC(u,id);return c?'<li>'+esc(c.en)+'</li>':''}).join('')+'</ul>'+
+        (pieces.length?'<p class="lulbl">'+esc(luU(u,'copy.gd.pieces'))+'</p><ul class="lupieces" lang="en">'+pieces.map(function(p){return '<li>'+luKw(p)+'</li>'}).join('')+'</ul>':'')+'</details>'+
+      (LU.wmin?'<p class="lufb lupc no" role="status">✗ '+esc(luU(u,'ui.gd.wmin'))+'</p>':'')+
+      '<div class="actions"><button type="button" class="btn" data-act="lu-wchk">'+esc(luU(u,'ui.gd.w.chk'))+'</button></div></section>';
     if(d.wok){
       h+='<section class="lucard"><h4 class="luh">'+esc(luU(u,'ui.gd.a.h'))+'</h4>'+luCopy(u,'copy.gd.a.note')+
-        '<label class="lbl" for="luG">'+esc(luU(u,'ui.lbl.yourOverview'))+'</label><textarea class="wbox" id="luG" rows="5" lang="en" spellcheck="true">'+esc(d.t||'')+'</textarea>'+
+        '<div class="actions"><button type="button" class="btn sm" data-act="lu-gcomb">'+esc(luU(u,'ui.gd.comb'))+'</button></div>'+
+        '<label class="lbl" for="luG">'+esc(luU(u,'ui.lbl.yourOverview'))+'</label><textarea class="wbox" id="luG" rows="5" lang="en" spellcheck="true">'+esc(d.t||'')+'</textarea><p class="lucnt" aria-live="polite">'+esc(luCnt(u,d.t))+'</p>'+
         (LU.gres!=null?'<p class="lufb lupc'+(LU.gres?' no':' ok')+'" role="status">'+(LU.gres?'✗ ':'✓ ')+esc(luPcMsg(u,LU.gres))+'</p>':'')+
         '<div class="actions"><button type="button" class="btn" data-act="lu-gsub">'+esc(luU(u,'ui.gd.a.sub'))+'</button></div></section>';
     }
@@ -2478,28 +2593,34 @@ function luGuided(u){
 }
 function luIndependent(u){
   var d=luGet(u,'indep')||{},M=luItems(u,'claims','learn','A');
-  return luLayout(u,'B',luCopy(u,'copy.indep.task')+
+  return luLayout(u,'B',luCopy(u,'copy.indep.task')+luStaleHTML(u,'indep',d)+
     '<label class="lbl" for="luI">'+esc(luU(u,'ui.lbl.yourOverview'))+'</label><textarea class="wbox" id="luI" rows="6" lang="en" spellcheck="true">'+esc(d.t||'')+'</textarea>'+
     '<p class="lucnt" id="luCnt" aria-live="polite">'+esc(luCnt(u,d.t))+'</p>'+
     // a hint that opens the CHART A sample only (never anything about this chart)
     '<details class="lufaq luhintA"'+(LU.ihint?' open':'')+'><summary data-act="lu-ihint">'+esc(luU(u,'ui.ind.hint'))+'</summary>'+luCopy(u,'copy.ind.hint.note')+luParaHTML(u,luConcise(M),false)+'</details>'+
     (LU.ires?'<p class="lufb lupc no" role="status">✗ '+esc(luPcMsg(u,LU.ires))+'</p>':'')+
-    (U&&U.adm?luItems(u,'claims','review','B').filter(function(x){return x.kind==='paragraph'}).map(function(x){return '<details class="lufaq luadms"><summary>'+esc(luU(u,'ui.ind.adminSample'))+'</summary><p class="lusent" lang="en">'+esc(luTxt(x,x.en))+'</p></details>'}).join(''):'')+
+    (lmDemoOk()?luItems(u,'claims','review','B').filter(function(x){return x.kind==='paragraph'}).map(function(x){return '<details class="lufaq luadms"><summary>'+esc(luU(u,'ui.ind.adminSample'))+'</summary><p class="lusent" lang="en">'+esc(luTxt(x,x.en))+'</p></details>'}).join(''):'')+
     luDraftHTML(u,'indep')+'<div class="actions"><button type="button" class="btn pri" data-act="lu-rv">'+esc(luU(u,'ui.btn.done'))+'</button></div>');
 }
 function luFactChips(u,x){var seen={};return Object.keys(x.binds||{}).map(function(k){var id=x.binds[k];if(seen[id])return '';seen[id]=1;return luChip(u,{fact:id,chart:x.chart})}).join('')}
 function luReview(u){
   var d=luGet(u,'indep')||{},M=luItems(u,'claims','review','B'),PA=M.filter(function(x){return x.kind==='paragraph'}),MS=M.filter(function(x){return x.kind!=='paragraph'});
-  var extra=['ui.rv.avoidNums','ui.rv.chartLang'];
-  return luLayout(u,'B',(d.orig?'<h4 class="luh">'+esc(luU(u,'ui.rv.first'))+'</h4><div class="essay lufirst" lang="en">'+esc(d.orig)+'</div><p class="lunote">'+esc(luU(u,'ui.rv.revise'))+'</p>':'')+
-    '<h4 class="luh">'+esc(luU(u,'ui.rv.h1'))+'</h4><label class="lbl sr" for="luI">'+esc(luU(u,'ui.lbl.yourOverview'))+'</label><textarea class="wbox" id="luI" rows="6" lang="en" spellcheck="true">'+esc(d.t||'')+'</textarea>'+
-    '<p class="lucnt" id="luCnt" aria-live="polite">'+esc(luCnt(u,d.t))+'</p>'+
-    '<h4 class="luh">'+esc(luU(u,'ui.rv.h2'))+'</h4>'+luCopy(u,'copy.review.self')+'<ul class="lukf pick">'+luItems(u,'keyFeatures','review','B').map(function(x){var lab=x.self?(luL()==='vi'?luTxt(x,x.self.vi):luTxt(x,x.self.en)):(luL()==='vi'?x.reason.vi:x.reason.en);
+  var extra=['ui.rv.avoidNums','ui.rv.chartLang'],first=d.orig||d.t||'',rv=d.rev||null;
+  var h=luStaleHTML(u,'indep',d)+
+    '<section class="lucard"><h4 class="luh">'+esc(luU(u,'ui.rv.s1'))+'</h4><div class="essay lufirst" lang="en">'+esc(first)+'</div></section>'+
+    '<section class="lucard"><h4 class="luh">'+esc(luU(u,'ui.rv.s2'))+'</h4><p class="lunote">'+esc(luU(u,'ui.rv.selfNote'))+'</p><ul class="lukf pick">'+luItems(u,'keyFeatures','review','B').map(function(x){var lab=x.self?(luL()==='vi'?luTxt(x,x.self.vi):luTxt(x,x.self.en)):(luL()==='vi'?x.reason.vi:x.reason.en);
       return '<li><label><input type="checkbox" data-act="lu-self" data-id="'+esc(x.id)+'"'+(LU.self[x.id]?' checked':'')+'> '+luImp(u,x)+'<span class="luself">'+esc(lab)+'</span></label></li>'}).join('')+
-      extra.map(function(id){return '<li><label><input type="checkbox" data-act="lu-self" data-id="'+id+'"'+(LU.self[id]?' checked':'')+'> <span class="luself">'+esc(luU(u,id))+'</span></label></li>'}).join('')+'</ul>'+
-    PA.map(function(x){return '<h4 class="luh">'+esc(luU(u,'ui.rv.oneOf'))+'</h4><div class="lumod1">'+luModel(x,'<div class="lurow">'+luFactChips(u,x)+'</div>')+'</div>'}).join('')+
-    '<h4 class="luh">'+esc(luU(u,'ui.rv.h3'))+'</h4><ul class="lumod">'+MS.map(function(x){return '<li>'+luModel(x,'<div class="lurow">'+luFactChips(u,x)+'</div>')+'</li>'}).join('')+'</ul>'+
-    '<p class="lunote">'+esc(luU(u,'ui.done.free'))+'</p>'+luDraftHTML(u,'indep'));
+      extra.map(function(id){return '<li><label><input type="checkbox" data-act="lu-self" data-id="'+id+'"'+(LU.self[id]?' checked':'')+'> <span class="luself">'+esc(luU(u,id))+'</span></label></li>'}).join('')+'</ul></section>'+
+    '<details class="lucard lufaq lurvex"><summary class="luh">'+esc(luU(u,'ui.rv.s3'))+'</summary>'+
+      PA.map(function(x){return '<p class="lulbl">'+esc(luU(u,'ui.rv.oneOf'))+'</p><div class="lumod1">'+luModel(x,'<div class="lurow">'+luFactChips(u,x)+'</div>')+'</div>'}).join('')+
+      '<p class="lulbl">'+esc(luU(u,'ui.rv.h3'))+'</p><ul class="lumod">'+MS.map(function(x){return '<li>'+luModel(x,'<div class="lurow">'+luFactChips(u,x)+'</div>')+'</li>'}).join('')+'</ul></details>'+
+    '<section class="lucard"><h4 class="luh">'+esc(luU(u,'ui.rv.s4'))+'</h4><p class="lunote">'+esc(luU(u,'ui.rv.s4note'))+'</p><label class="lbl sr" for="luI">'+esc(luU(u,'ui.lbl.yourOverview'))+'</label><textarea class="wbox" id="luI" rows="6" lang="en" spellcheck="true">'+esc(d.t||'')+'</textarea>'+
+      '<p class="lucnt" id="luCnt" aria-live="polite">'+esc(luCnt(u,d.t))+'</p>'+(LU.rvres?'<p class="lufb lupc no" role="status">✗ '+esc(luPcMsg(u,LU.rvres))+'</p>':'')+
+      '<div class="actions"><button type="button" class="btn pri" data-act="lu-rvsave">'+esc(luU(u,'ui.rv.save'))+'</button></div></section>';
+  if(rv)h+='<section class="lucard"><h4 class="luh">'+esc(luU(u,'ui.rv.s5'))+'</h4>'+(rv.same?'<p class="lunote" role="status">'+esc(luU(u,'ui.rv.same'))+'</p>':
+      '<div class="luba"><div><p class="lulbl">'+esc(luU(u,'ui.rv.before'))+'</p><div class="essay" lang="en">'+esc(first)+'</div></div><div><p class="lulbl">'+esc(luU(u,'ui.rv.after'))+'</p><div class="essay" lang="en">'+esc(rv.t)+'</div></div></div><p class="lunote" role="status">'+esc(luU(u,'ui.rv.saved'))+'</p>')+
+      (String(d.t||'')!==String(rv.t||'')?'<p class="lunote">'+esc(luU(u,'ui.rv.unsaved'))+'</p>':'')+'</section>';
+  return luLayout(u,'B',h+'<p class="lunote">'+esc(luU(u,'ui.done.free'))+'</p>'+luDraftHTML(u,'indep'));
 }
 var LU_FN={learn:luLearn,controlled:luControlled,guided:luGuided,independent:luIndependent,review:luReview};
 // one stage's HTML (also used by the Node tests to prove Chart B never appears before Independent)
@@ -2519,6 +2640,7 @@ function luAutoFill(u){
   luGItems(u).forEach(function(x){if(!LU.g[x.id])LU.g[x.id]=x.a});
   LU.lensSeen=LU.lensSeen||{};LU_LENS.forEach(function(L){LU.lensSeen[L[0]]=true});
   if(!LU_AFD)return;var G=LU_AFD.d.guided=LU_AFD.d.guided||{},W=G.w=G.w||{},I=LU_AFD.d.indep=LU_AFD.d.indep||{},em=function(v){return !String(v||'').trim()};
+  if(!G.ideas||!Object.keys(G.ideas).length){G.ideas={};luItems(u,'keyFeatures','learn','A').filter(function(k){return k.importance==='main'}).forEach(function(k){G.ideas[k.id]=true})}
   ['trend','high','note'].forEach(function(k){if(em(W[k]))W[k]=u0Sample(u,'g:'+k)});
   if(em(G.t))G.t=u0Sample(u,'g:ov');
   if(em(I.t))I.t=u0Sample(u,'i:ov');
@@ -2565,11 +2687,21 @@ function luAct(a,t){
   if(a==='lu-gredo'){LU.gchk=false;LU.g={};keep();return true}
   if(a==='lu-ihint'){LU.ihint=!LU.ihint;return true}
   if(a==='lu-self'){LU.self[t.dataset.id]=t.checked;return true}
-  if(a==='lu-rv'){var ta=$('#luI'),tx=ta?ta.value:((luGet(u,'indep')||{}).t||''),pc=luPre(u,'B',tx,'overview');if(pc){LU.ires=pc;toast(luPcMsg(u,pc));keep();var t2=$('#luI');if(t2&&t2.focus)t2.focus();return true}
-    LU.ires='';luPut(u,'indep',{t:tx,rv:true,orig:tx});LU.stage='review';redraw(true);return true}
+  if(a==='lu-gidea'){var gi=luGet(u,'guided')||{};gi.ideas=gi.ideas||{};var gid=t.dataset.id;if(gi.ideas[gid])delete gi.ideas[gid];else gi.ideas[gid]=true;luPut(u,'guided',gi);keep();return true}
+  if(a==='lu-gcomb'){var gc=luGet(u,'guided')||{},Wc=gc.w||{},jt=['trend','high','note'].map(function(k){return String(Wc[k]||'').trim()}).filter(Boolean).join(' ');if(!jt)return true;
+    if(String(gc.t||'').trim()&&!confirm(luU(u,'ui.gd.comb.confirm')))return true;gc.t=jt;gc.sub=false;LU.gres=null;luPut(u,'guided',gc);keep();var gg=$('#luG');if(gg&&gg.focus)gg.focus();return true}
+  if(a==='lu-stale-copy'){var sc0=luGet(u,t.dataset.a==='guided'?'guided':'indep')||{},stx=luDraftText(sc0);try{navigator.clipboard.writeText(stx).then(function(){toast(luU(u,'ui.dr.copied'))},function(){})}catch(e){}return true}
+  if(a==='lu-stale-keep'){var ka=t.dataset.a==='guided'?'guided':'indep',kd=luGet(u,ka)||{};kd.cv=luChartSig(u,ka);kd.cvOk=kd.cv;luPut(u,ka,kd);keep();return true}
+  if(a==='lu-stale-new'){var na=t.dataset.a==='guided'?'guided':'indep',nd=luGet(u,na)||{};if(!confirm(luU(u,'ui.dr.staleNewConfirm')))return true; // nothing is deleted: the old text moves to "Earlier draft"
+    var arch=luDraftText(nd);luPut(u,na,{arch:[nd.arch,arch].filter(Boolean).join('\n\n—\n\n'),cv:luChartSig(u,na)});if(na==='indep'){LU.self={};if(LU.stage==='review')LU.stage='independent'}LU.wres=null;LU.gres=null;redraw();return true}
+  if(a==='lu-rvsave'){var rd=luGet(u,'indep')||{},rta=$('#luI'),rtx=rta?rta.value:String(rd.t||''),rpc=luPre(u,'B',rtx,'overview');LU.rvres=rpc;
+    if(!rpc){rd.t=rtx;rd.rev={t:rtx,ts:Date.now(),same:lmNorm(rtx)===lmNorm(rd.orig||'')};luPut(u,'indep',rd)}keep();return true}
+  if(a==='lu-rv'){if(luStale(u,'indep',luGet(u,'indep')||{})==='stale'){toast(luU(u,'ui.dr.staleBlock'));return true}var ta=$('#luI'),tx=ta?ta.value:((luGet(u,'indep')||{}).t||''),pc=luPre(u,'B',tx,'overview');if(pc){LU.ires=pc;toast(luPcMsg(u,pc));keep();var t2=$('#luI');if(t2&&t2.focus)t2.focus();return true}
+    LU.ires='';var od=luGet(u,'indep')||{};luPut(u,'indep',{t:tx,rv:true,orig:tx,arch:od.arch,cv:od.cv});LU.stage='review';redraw(true);return true}
   if(a==='lu-wchk'){var gd=luGet(u,'guided')||{},W=gd.w||{},R={};['trend','high','note'].forEach(function(k){var v=String(W[k]||'');if(k==='trend'||v.trim())R[k]=luPre(u,'A',v,k==='trend'?'trend':'short')});
-    LU.wres=R;gd.wok=!R.trend&&!R.high&&!R.note;luPut(u,'guided',gd);keep();return true}
-  if(a==='lu-gsub'){var g2=luGet(u,'guided')||{},pc2=luPre(u,'A',g2.t,'overview');LU.gres=pc2;if(!pc2){g2.sub=true;luPut(u,'guided',g2)}keep();return true}
+    var nW=['trend','high','note'].filter(function(k){return String(W[k]||'').trim()}).length;LU.wmin=nW<2; // the trend + at least one more (2–3 features are enough)
+    LU.wres=R;gd.wok=!R.trend&&!R.high&&!R.note&&!LU.wmin;luPut(u,'guided',gd);keep();return true}
+  if(a==='lu-gsub'){if(luStale(u,'guided',luGet(u,'guided')||{})==='stale'){toast(luU(u,'ui.dr.staleBlock'));return true}var g2=luGet(u,'guided')||{},pc2=luPre(u,'A',g2.t,'overview');LU.gres=pc2;if(!pc2){g2.sub=true;luPut(u,'guided',g2)}keep();return true}
   if(a==='lu-grv'){var g3=luGet(u,'guided')||{};g3.rv=g3.rv||{};g3.rv[t.dataset.k]=!!t.checked;luPut(u,'guided',g3);return true}
   if(a==='lu-clear'){var act=t.dataset.a==='guided'?'guided':'indep';if(!confirm(luU(u,'ui.dr.confirmClear')))return true;luDrop(u,act);if(act==='indep'){LU.self={};LU.stage='independent'}redraw();toast(luU(u,'ui.dr.cleared'));return true}
   if(a==='lu-old'){var ak=t.dataset.a==='guided'?'guided':'indep';if(!confirm(luU(u,'ui.dr.confirmOld')))return true;luOld(u,ak).forEach(function(k){try{localStorage.removeItem(k)}catch(e){}});redraw();return true}
@@ -3844,7 +3976,7 @@ function pickIds(){
 }
 function pickedHTML(){
   var ids=Object.keys(AS.sel).filter(function(k){return AS.sel[k]});
-  return ids.length?ids.map(function(id){var e=exOf(id);return e?'<span class="xchip">'+esc(locLabel(locOf(id)))+' · '+esc(e.title)+'<button data-act="pk-rm" data-id="'+id+'" type="button" aria-label="Remove">×</button></span>':''}).join(''):'<span class="saved">Nothing selected yet.</span>';
+  return ids.map(function(id){var e=exOf(id);return e?'<span class="xchip">'+esc(locLabel(locOf(id)))+' · '+esc(e.title)+'<button data-act="pk-rm" data-id="'+id+'" type="button" aria-label="Remove '+esc(e.title)+'">×</button></span>':''}).join(''); // the count is in the footer
 }
 function treeHTML(){
   var bs=pickBooks();if(!bs.length)return '<p class="saved">The library is empty. Add exercises first.</p>';
@@ -3859,7 +3991,7 @@ function treeHTML(){
   return h+'<div class="chips" id="pkSel">'+pickedHTML()+'</div>';
 }
 function syncTree(){
-  var ids=Object.keys(AS.sel).filter(function(k){return AS.sel[k]}),cnt=$('#asgCount');if(cnt)cnt.textContent=ids.length+' selected';
+  var ids=Object.keys(AS.sel).filter(function(k){return AS.sel[k]}),cnt=$('#asgCount');if(cnt&&!(AG.form&&AG.form.type==='external'))cnt.textContent=ids.length?ids.length+' selected':'Nothing selected yet';
   var ps=$('#pkSel');if(ps)ps.innerHTML=pickedHTML();
 }
 var AG={open:null,form:null,cur:null,sub:'list'};
@@ -3868,21 +4000,28 @@ var fmtShort=function(ts){var d=new Date(ts);return DAYS[d.getDay()]+' '+d.getDa
 function nextSunday(d){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()+((7-x.getDay())%7));return x}
 function openForm(cls,a){
   AS.sel={};AS.pk=null;
-  if(a){a.ex.forEach(function(i){AS.sel[i]=1});var du=new Date(a.due);AG.form={id:a.id,cls:a.cls,nm:a.name||'',sd:inDate(new Date(a.start)),dd:inDate(du),dt:pad(du.getHours())+':'+pad(du.getMinutes())}}
-  else{var n=new Date();AG.form={id:null,cls:cls,nm:'',sd:inDate(n),dd:inDate(nextSunday(n)),dt:'22:00'}}
+  if(a){(a.ex||[]).forEach(function(i){AS.sel[i]=1});var du=new Date(a.due);AG.form={id:a.id,cls:a.cls,nm:a.name||'',sd:inDate(new Date(a.start)),dd:inDate(du),dt:pad(du.getHours())+':'+pad(du.getMinutes()),type:isExt(a)?'external':'mini',link:a.link||'',note:a.note||'',src:a.src||''}}
+  else{var n=new Date();AG.form={id:null,cls:cls,nm:'',sd:inDate(n),dd:inDate(nextSunday(n)),dt:'22:00',type:'mini',link:'',note:'',src:''}}
 }
 function asgStatus(a){var n=Date.now();return n<a.start?'Upcoming':(n>a.due?'Closed':'Active')}
 function formHTML(){
-  var f=AG.form,dn=asgName({due:(function(){var p=f.dd.split('-');return new Date(+p[0],+p[1]-1,+p[2]).getTime()})()});
-  return '<div class="afform"><h4 style="margin-bottom:6px">'+(f.id?'Edit assignment':'New assignment')+' · '+esc(f.cls)+'</h4><div class="form-row" style="padding-block:6px 12px">'+
-  '<label class="field" for="fNm">Name<input type="text" id="fNm" value="'+esc(f.nm)+'" placeholder="'+esc(dn)+'"></label>'+
-  '<label class="field" for="fSd">Send date<input type="date" id="fSd" value="'+f.sd+'"></label>'+
-  '<label class="field" for="fDd">Deadline<input type="date" id="fDd" value="'+f.dd+'"></label>'+
-  '<label class="field" for="fDt">Time<input type="time" id="fDt" value="'+f.dt+'"></label></div>'+
-  treeHTML()+
-  '<div class="actions"><button class="btn pri" data-act="save-asg" type="button">Save</button><button class="btn" data-act="asg-cancel" type="button">Cancel</button><span class="saved" id="asgCount"></span><span class="err" id="asgMsg" style="margin:0" aria-live="polite"></span></div></div>';
+  var f=AG.form,ext=f.type==='external',dn=asgName({due:(function(){var p=f.dd.split('-');return new Date(+p[0],+p[1]-1,+p[2]).getTime()})()}),n=Object.keys(AS.sel).filter(function(k){return AS.sel[k]}).length;
+  var h='<section class="afform" aria-labelledby="afH"><h3 id="afH" class="afh">'+(f.id?'Edit assignment':'New assignment')+' <span class="muted">· '+esc(classTitle(f.cls))+'</span></h3>'+
+    '<div class="afsec"><h4>Basics</h4><div class="aftype seg" role="group" aria-label="Assignment type">'+[['mini','Mini Drills'],['external','External link']].map(function(o){return '<button type="button" data-act="asg-type" data-v="'+o[0]+'" aria-pressed="'+((o[0]==='external')===ext)+'"'+(f.id?' disabled title="The type cannot change after saving"':'')+'>'+o[1]+'</button>'}).join('')+'</div>'+
+    '<div class="afgrid"><label class="field afnm" for="fNm">Name<input type="text" id="fNm" value="'+esc(f.nm)+'" placeholder="'+esc(dn)+'"></label>'+
+    '<label class="field" for="fSd">Send date<input type="date" id="fSd" value="'+f.sd+'"></label>'+
+    '<label class="field" for="fDd">Deadline<input type="date" id="fDd" value="'+f.dd+'"></label>'+
+    '<label class="field" for="fDt">Time<input type="time" id="fDt" value="'+f.dt+'"></label></div></div>';
+  if(ext)h+='<div class="afsec"><h4>External task</h4><p class="muted afhelp">Students open the link, do the task outside Mini Drills, then upload a screenshot. The upload marks the homework as submitted (it is not checked for correctness).</p>'+
+    '<div class="afgrid afext"><label class="field afnm" for="fLink">Link (required)<input type="url" id="fLink" value="'+esc(f.link||'')+'" placeholder="https://…" inputmode="url" autocomplete="off"></label>'+
+    '<label class="field" for="fSrc">Source (optional)<input type="text" id="fSrc" list="fSrcL" maxlength="40" value="'+esc(f.src||'')+'" placeholder="Google Form"><datalist id="fSrcL"><option value="Google Form"><option value="Website"><option value="YouTube"><option value="PDF task"></datalist></label>'+
+    '<label class="field afnm" for="fNote">Instructions for students (optional)<textarea id="fNote" rows="3" maxlength="600" placeholder="e.g. Do all 20 questions, then take a screenshot of your score.">'+esc(f.note||'')+'</textarea></label></div></div>';
+  else h+='<div class="afsec"><h4>Exercises</h4>'+treeHTML()+'</div>';
+  return h+'<div class="affoot"><span class="saved" id="asgCount" role="status">'+(ext?'':n?n+' selected':'Nothing selected yet')+'</span><span class="err" id="asgMsg" style="margin:0" aria-live="polite"></span><span class="afbtns"><button class="btn" data-act="asg-cancel" type="button">Cancel</button><button class="btn pri" data-act="save-asg" type="button">Save assignment</button></span></div></section>';
 }
 function hwRows(a,only){
+  if(isExt(a)){var nw=Date.now();return {ids:[],ext:true,rows:students().filter(function(s){return s.cls===a.cls&&(!only||only==='all'||s.email===only)}).map(function(s){
+    var due=effDue(a,s.email),r=hwShot(s.email,a.id),over=due.getTime()<nw;return {name:s.name,email:s.email,cells:[],all:!!r,none:!r,over:over,pass:null,fin:!!r,shot:r?r.shot:null,late:!!(r&&r.shot.ts>due.getTime())}})}}
   var ids=a.ex.filter(exOf),now=Date.now();
   return {ids:ids,rows:students().filter(function(s){return s.cls===a.cls&&(!only||only==='all'||s.email===only)}).map(function(s){
     var due=effDue(a,s.email),dm=doneMap(s.email,a.start,due.getTime()),over=due.getTime()<now,p=passFor(s.email,a.id);
@@ -3891,7 +4030,14 @@ function hwRows(a,only){
   })};
 }
 var MKI={'1':'<span class="mk ok" aria-label="Done" title="Done">✓</span>','0':'<span class="mk no" aria-label="Not done" title="Not done">✕</span>','-1':'<span class="mk pd" aria-label="Not yet" title="Not yet">–</span>'};
+function extSubsHTML(a){var d=hwRows(a);if(!d.rows.length)return '<p class="saved">No students in this class.</p>';var k=d.rows.filter(function(r){return r.fin}).length;
+  return (safeLink(a.link)?'<p class="tsub" style="margin:0 0 6px">Link: <a href="'+esc(safeLink(a.link))+'" target="_blank" rel="noopener noreferrer">'+esc(safeLink(a.link))+'</a></p>':'')+(a.note?'<p class="tsub" style="margin:0 0 8px">'+esc(a.note)+'</p>':'')+
+    '<p class="tsub" style="margin:0 0 8px"><b>'+k+'</b> of '+d.rows.length+' students submitted</p><div class="scroll"><table class="hmx hwxt"><thead><tr><th scope="col">Student</th><th scope="col">Status</th><th scope="col">Submitted</th><th scope="col">Screenshot</th></tr></thead><tbody>'+
+    d.rows.sort(function(x,y){return (x.fin?1:0)-(y.fin?1:0)||x.name.localeCompare(y.name)}).map(function(r){var u=r.shot&&(/^\/api\/image\/[A-Za-z0-9_-]{22}$/.test(r.shot.url)||/^blob:/.test(r.shot.url))?r.shot.url:'';
+      return '<tr><td>'+esc(r.name)+'</td><td>'+(r.fin?'<span class="pill ok">'+(r.late?'Submitted late':'Submitted')+'</span>':'<span class="pill'+(r.over?' bad':'')+'">'+(r.over?'Missing':'Not submitted')+'</span>')+'</td><td class="mono">'+(r.fin?esc(fmtDue(new Date(r.shot.ts))):'—')+'</td>'+
+        '<td>'+(u?'<a class="hwthumb sm" href="'+esc(u)+'" target="_blank" rel="noopener" aria-label="Open the screenshot of '+esc(r.name)+'"><img src="'+esc(u)+'" alt=""></a>':'—')+'</td></tr>'}).join('')+'</tbody></table></div>'}
 function hwMatrixHTML(a,only){
+  if(isExt(a))return extSubsHTML(a);
   var d=hwRows(a,only);if(!d.rows.length)return '<p class="saved">No students in this class.</p>';
   var ok=d.rows.filter(function(r){return r.all}).length;
   return '<p class="tsub" style="margin:0 0 8px"><b>'+ok+'</b> of '+d.rows.length+' students finished everything</p><div class="scroll"><table class="hmx"><thead><tr><th>Student</th>'+d.ids.map(function(id){var e=exOf(id);return '<th class="c" title="'+esc(e.title)+'">'+SKL[e.skill]+' · '+esc(e.title)+'</th>'}).join('')+'<th class="c" title="Pressed I\'m done">Turned in</th></tr></thead><tbody>'+d.rows.map(function(r){
@@ -3900,7 +4046,7 @@ function hwMatrixHTML(a,only){
 }
 function asgRow(a){
   var hs=hwStatus(a),st=asgStatus(a),open=AG.open===a.id;
-  var r='<div><button class="alist" data-act="asg-open" data-id="'+esc(a.id)+'" aria-expanded="'+open+'"><span><b>'+esc(asgName(a))+'</b>'+(a.demo?' <small class="muted" style="display:inline">(demo)</small>':'')+'<small class="dts">Sent '+fmtShort(a.start)+' · Due '+fmtDue(new Date(a.due))+'</small></span><span class="muted">'+hs.ids.length+' exercises</span><div class="pct"><div class="bar"><i style="width:'+hs.pct+'%;background:var(--accent)"></i></div><span class="mono">'+hs.pct+'%</span></div><span class="pill'+(st==='Active'?' ok':'')+'">'+st+'</span></button>';
+  var r='<div><button class="alist" data-act="asg-open" data-id="'+esc(a.id)+'" aria-expanded="'+open+'"><span><b>'+esc(asgName(a))+'</b>'+(a.demo?' <small class="muted" style="display:inline">(demo)</small>':'')+'<small class="dts">Sent '+fmtShort(a.start)+' · Due '+fmtDue(new Date(a.due))+'</small></span><span class="muted">'+(isExt(a)?'External link':hs.ids.length+' exercises')+'</span><div class="pct"><div class="bar"><i style="width:'+hs.pct+'%;background:var(--accent)"></i></div><span class="mono">'+hs.pct+'%</span></div><span class="pill'+(st==='Active'?' ok':'')+'">'+st+'</span></button>';
   if(open)r+='<div class="adet">'+hwMatrixHTML(a)+(a.demo?'':'<div class="actions"><button class="btn sm" data-act="asg-edit" data-id="'+esc(a.id)+'" type="button">Edit</button></div>')+'</div>';
   return r+'</div>';
 }
@@ -3989,8 +4135,9 @@ function clsDelete(c,btn){
   };
   next().then(function(){},function(e){if(btn)btn.disabled=false;say('Stopped: '+(e&&e.message||'Something went wrong.')+' '+done+' of '+L.length+' student(s) were kicked. Press again to continue.')});
 }
-function renderAsg(){
-  if(AG.form&&AG.form.live&&$('#fSd')){AG.form.sd=$('#fSd').value;AG.form.dd=$('#fDd').value;AG.form.dt=$('#fDt').value;AG.form.nm=$('#fNm').value}
+function renderAsg(){if(U&&U.role==='assistant')return renderHwa();
+  if(AG.form&&AG.form.live&&$('#fSd')){AG.form.sd=$('#fSd').value;AG.form.dd=$('#fDd').value;AG.form.dt=$('#fDt').value;AG.form.nm=$('#fNm').value;
+    if($('#fLink')){AG.form.link=$('#fLink').value;AG.form.src=$('#fSrc').value;AG.form.note=$('#fNote').value}}
   if(U&&U.adm&&!AD.sheet&&!AD.shErr&&!AD.locked&&!DEMO)adSheetLoad(); // pending classes come from the Sheet
   var cls=classListAll(),h='';
   if(AG.cur&&cls.indexOf(AG.cur)<0){AG.cur=null;AG.sub='list'}
@@ -4020,8 +4167,13 @@ function saveAsg(){
   var sp=sd.split('-'),dp=dd.split('-'),tp=dt.split(':');
   var start=new Date(+sp[0],+sp[1]-1,+sp[2],0,0).getTime(),due=new Date(+dp[0],+dp[1]-1,+dp[2],+tp[0],+tp[1]).getTime();
   if(due<=start){msg.textContent='The deadline must be after the send date.';return}
-  if(!ids.length){msg.textContent='Tick at least one exercise.';return}
-  var rec={cls:f.cls,name:($('#fNm').value||'').trim(),start:start,due:due,ex:ids,ts:Date.now()},id=f.id||slug(f.cls)+'_'+Date.now();
+  var rec;
+  if(f.type==='external'){var lk=safeLink(($('#fLink')||{}).value);if(!lk){msg.textContent='Paste the full link, starting with https://';var li=$('#fLink');if(li&&li.focus)li.focus();return}
+    rec={cls:f.cls,name:($('#fNm').value||'').trim(),start:start,due:due,ex:[],type:'external',link:lk,src:String(($('#fSrc')||{}).value||'').trim().slice(0,40),note:String(($('#fNote')||{}).value||'').trim().slice(0,600),ts:Date.now()}}
+  else{if(!ids.length){msg.textContent='Tick at least one exercise.';return}
+    rec={cls:f.cls,name:($('#fNm').value||'').trim(),start:start,due:due,ex:ids,type:'mini',ts:Date.now()}}
+  if(U&&U.role==='assistant'){msg.textContent='Saving…';hwaApi('hwa/asg',{op:'save',id:f.id||'',rec:rec}).then(function(){AG.form=null;toast('Assignment saved.');hwaLoad()},function(e){msg.textContent=e.message});return}
+  var id=f.id||slug(f.cls)+'_'+Date.now();
   var fin=function(){AG.form=null;AG.open=id;renderAsg()};
   var loc=function(){localAsg=localAsg.filter(function(a){return a.id!==id});localAsg.push(Object.assign({id:id},rec));fin()};
   if(dbh)dbh.doc('assignments/'+id).set(rec).then(fin,loc);else loc();
@@ -5201,17 +5353,18 @@ function sbInit(){sbSet(sbWide()?sbPref():false)}
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&SB.open&&!sbWide()&&document.body.classList.contains('nav-on')){e.preventDefault();e.stopImmediatePropagation();sbSet(false,true)}},true);
 function curDark(){var t=document.documentElement.getAttribute('data-theme');if(t)return t==='dark';return !!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)}
 // Admin: everything (Students and XP live inside Admin). Teacher: only their classes (see myCls). Student: unchanged.
-function tabsFor(){return U.adm?[['dash','Dashboard'],['asg','Classes'],['mark','Marking'],['library','Library'],['create','Create'],['prize','Prizes'],['admin','Admin']]:U.role==='teacher'?[['asg','Classes'],['mark','Marking'],['dash','Dashboard'],['library','Library']]:[['library','Home'],['cards','Flashcards'],['errors','Error Notebook'],['ranks','Leaderboard'],['wheel','Lucky Wheel'],['bag','Inventory'],['set','Settings']]}
+function tabsFor(){return U.role==='assistant'?[['hwa','Homework']]:U.adm?[['dash','Dashboard'],['asg','Classes'],['mark','Marking'],['library','Library'],['create','Create'],['prize','Prizes'],['admin','Admin']]:U.role==='teacher'?[['asg','Classes'],['mark','Marking'],['dash','Dashboard'],['library','Library']]:[['library','Home'],['cards','Flashcards'],['errors','Error Notebook'],['ranks','Leaderboard'],['wheel','Lucky Wheel'],['bag','Inventory'],['set','Settings']]}
 function showTab(t){
   TAB=t;stopAudio();clearTimer();MK.open=false;recClearAll();
   if(t!=='admin'){AD.modal=null;var amr=document.getElementById('adModalRoot');if(amr)amr.innerHTML=''} // leaving Admin closes its confirm box
-  ['login','lib','cards','errors','ranks','wheel','bag','set','prize','xps','dash','asg','mark','roster','create','admin'].forEach(function(n){$('#v-'+n).hidden=true});
+  ['login','lib','cards','errors','ranks','wheel','bag','set','prize','xps','dash','asg','mark','roster','create','admin','hwa'].forEach(function(n){$('#v-'+n).hidden=true});
   if(!U){var lv=$('#v-login');lv.hidden=false;if(!DEMO&&lsGet('md-email')&&!window.MD_USER){lv.setAttribute('data-wait','');setTimeout(function(){lv.removeAttribute('data-wait')},10000)}else lv.removeAttribute('data-wait');$('#tabs').hidden=true;$('#who').hidden=true;$('#sbBtn').hidden=true;document.body.classList.remove('nav-on');document.body.classList.add('lg');sbInit();return}
   $('#v-login').removeAttribute('data-wait');document.body.classList.remove('lg');
   if(t!=='library'&&!tabsFor().some(function(x){return x[0]===t})){t=tabsFor()[0][0];TAB=t} // a tab this role does not have
-  $('#tabs').hidden=tabsFor().length<2;document.body.classList.toggle('nav-on',!$('#tabs').hidden);$('#sbBtn').hidden=$('#tabs').hidden;sbSet(SB.open);/* keeps the open / closed state */$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28,true)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b>'+(U.adm||U.role==='student'?'':'<span class="rl"> · '+U.role+'</span>');
+  $('#tabs').hidden=tabsFor().length<2;document.body.classList.toggle('nav-on',!$('#tabs').hidden);$('#sbBtn').hidden=$('#tabs').hidden;sbSet(SB.open);/* keeps the open / closed state */$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28,true)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b>'+(U.adm||U.role==='student'?'':'<span class="rl"> · '+(U.role==='assistant'?'Homework Assistant':U.role)+'</span>');
   $('#tabs').innerHTML=tabsFor().map(function(x){return '<button role="tab" data-act="tab" data-tab="'+x[0]+'" aria-selected="'+(x[0]===t)+'">'+x[1]+'</button>'}).join('');
-  var id={library:'lib',cards:'cards',errors:'errors',ranks:'ranks',wheel:'wheel',bag:'bag',set:'set',prize:'prize',xps:'xps',dash:'dash',asg:'asg',mark:'mark',roster:'roster',create:'create',admin:'admin'}[t];$('#v-'+id).hidden=false;updMarq();
+  var id={library:'lib',cards:'cards',errors:'errors',ranks:'ranks',wheel:'wheel',bag:'bag',set:'set',prize:'prize',xps:'xps',dash:'dash',asg:'asg',mark:'mark',roster:'roster',create:'create',admin:'admin',hwa:'hwa'}[t];$('#v-'+id).hidden=false;updMarq();
+  if(t==='hwa'){AG.form=null;renderHwa()}
   if(t==='admin')renderAdmin();
   if(t==='library')renderLib();if(t==='cards')renderCards();if(t==='errors'){EP=null;EN.rv=null;renderErrors()}if(t==='ranks')renderRanks();if(t==='wheel')renderWheel();if(t==='bag')renderBag();if(t==='set')renderSettings();if(t==='prize')renderPrize();if(t==='xps')renderXps();if(t==='dash')renderDash();if(t==='roster')renderRoster();if(t==='create'){renderCpPrompt();renderPrev()}if(t==='mark')renderMark();
   if(t==='asg'){AG.form=null;AG.open=null;AG.cur=null;AG.sub='list';renderAsg()}
@@ -5308,6 +5461,8 @@ document.addEventListener('click',function(e){
   if(a==='asg-edit'){var ea=allAsgs().filter(function(x){return x.id===t.dataset.id})[0];if(ea)openForm(ea.cls,ea);return renderAsg()}
   if(a==='asg-open'){AG.open=AG.open===t.dataset.id?null:t.dataset.id;return renderAsg()}
   if(a==='asg-cancel'){AG.form=null;return renderAsg()}
+  if(a==='asg-type'){if(!AG.form||AG.form.id)return true;AG.form.type=t.dataset.v==='external'?'external':'mini';renderAsg();return true}
+  if(a==='hw-shot'){var hs=$('#hwShot_'+t.dataset.asg);if(hs){hs.value='';hs.click()}return true}
   if(a==='pk-rm'){AS.sel[t.dataset.id]=0;renderAsg();return}
   if(a==='pk-all'||a==='pk-none'){pickIds().forEach(function(g){g.ids.forEach(function(i){AS.sel[i]=a==='pk-all'?1:0})});return renderAsg()}
   if(a==='save-grade')return saveGrade();
@@ -6625,10 +6780,11 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-10-29e'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-10-30d'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(audAct(a,t))return true;
+  if(hwaAct(a,t))return true;
   if(adAct(a,t))return true;
   if(enAct(a,t))return true;
   if(mkAct(a,t))return true;
@@ -7307,8 +7463,24 @@ function rmGrade(id){
   if(k==='w')return RM.w[i]===i;
   return false;
 }
-function rmAnswered(st){return rmIds(RM.D,st).every(function(id){var k=id.charAt(0),i=+id.slice(1);
-  return k==='o'?RM.o[i]!=null:k==='k'?!!String(RM.k[i]||'').trim():k==='t'?RM.tf[i]!=null:k==='h'?RM.h[i]!=null:k==='m'?RM.mi[i]!=null:k==='n'?RM.pr[i]!=null:k==='g'?RM.g[i]!=null:k==='c'?RM.c[i]!=null:RM.w[i]!=null})}
+function rmIdAns(id){var k=id.charAt(0),i=+id.slice(1);
+  return k==='o'?RM.o[i]!=null:k==='k'?!!String(RM.k[i]||'').trim():k==='t'?RM.tf[i]!=null:k==='h'?RM.h[i]!=null:k==='m'?RM.mi[i]!=null:k==='n'?RM.pr[i]!=null:k==='g'?RM.g[i]!=null:k==='c'?RM.c[i]!=null:RM.w[i]!=null}
+function rmAnswered(st){return rmIds(RM.D,st).every(rmIdAns)}
+// bottom dock (Option A): "x / y answered", a thin bar, one button per real question of this step (answered = filled), then the step's own buttons
+function rmDockHTML(act){var L=rmIds(RM.D,RM.st),n=L.filter(rmIdAns).length,t=L.length,pct=t?Math.round(n/t*100):0;
+  return '<div class="rmdock" id="rmDock"><div class="rmdprog"><b id="rmDCnt">'+n+' / '+t+' answered</b><div class="rmdtrack" role="progressbar" aria-label="Questions answered" aria-valuemin="0" aria-valuemax="'+t+'" aria-valuenow="'+n+'"><span id="rmDFill" style="width:'+pct+'%"></span></div></div>'+
+    '<nav class="rmpal" aria-label="Questions in this step">'+L.map(function(id){var a=rmIdAns(id);return '<button type="button" class="rmqn'+(a?' a':'')+'" data-act="rm-qn" data-q="'+id+'" aria-label="Question '+rmNo(id)+(a?', answered':', not answered')+'">'+rmNo(id)+'</button>'}).join('')+'</nav>'+act+'</div>'}
+function rmDockSync(){var d=document.getElementById('rmDock');if(!d||!RM)return;var L=rmIds(RM.D,RM.st),n=L.filter(rmIdAns).length,t=L.length;
+  var c=document.getElementById('rmDCnt');if(c)c.textContent=n+' / '+t+' answered';var f=document.getElementById('rmDFill');if(f)f.style.width=(t?Math.round(n/t*100):0)+'%';
+  var tr=d.querySelector('.rmdtrack');if(tr)tr.setAttribute('aria-valuenow',String(n));
+  $$('#rmDock .rmqn').forEach(function(b){var a=rmIdAns(b.dataset.q);b.classList.toggle('a',a);b.setAttribute('aria-label','Question '+rmNo(b.dataset.q)+(a?', answered':', not answered'))})}
+['input','change','click'].forEach(function(ev){document.addEventListener(ev,function(){if(RM&&document.getElementById('rmDock'))setTimeout(rmDockSync,0)})});
+// Stage 1 on a laptop: the two cards fill the screen under the sticky header and above the dock; each card scrolls on its own.
+// The height is measured from the real header / dock (no fixed offset), again on resize and after a redraw.
+function rmFit(){var d=document.querySelector('.rm .rmdeep');if(!d)return;if((window.innerWidth||1280)<900){d.style.height='';return}
+  var top=document.querySelector('.rm .rmtop'),dock=document.getElementById('rmDock'),th=top?top.offsetHeight:0,dh=dock?dock.offsetHeight:0;
+  d.style.height=Math.max(380,(window.innerHeight||800)-th-dh-36)+'px'}
+window.addEventListener('resize',function(){if(RM)rmFit()});
 function rmScore(st){var a=rmIds(RM.D,st);return a.filter(function(x){return RM.res[x]}).length+'/'+a.length}
 var rmStem=function(w){w=String(w).toLowerCase();return w.length>=7?w.slice(0,w.length-2):w};
 // Stage 3 words used in the 4.2 answer (simple endings ignored: counterpart / counterparts)
@@ -7328,7 +7500,7 @@ function rmPara(i,chips){
     if(!chips)return esc(m[1]);
     var gi=-1;D.prons.forEach(function(x,j){if(gi<0&&!seen[j]&&x.p===i&&x.w===m[1])gi=j});if(gi<0)return esc(m[1]);seen[gi]=1;
     var cl='rmpn'+(RM.chk[1]?(RM.res['n'+gi]?' ok':' no'):(RM.pr[gi]!=null?' done':''));
-    return '<button type="button" class="'+cl+'" data-act="rm-pn" data-i="'+gi+'" aria-label="Question '+rmNo('n'+gi)+': '+esc(m[1])+'">'+esc(m[1])+'<sup>'+rmNo('n'+gi)+'</sup></button>';
+    return '<button type="button" class="'+cl+'" data-act="rm-pn" data-rmq="n'+gi+'" data-i="'+gi+'" aria-label="Question '+rmNo('n'+gi)+': '+esc(m[1])+'">'+esc(m[1])+'<sup>'+rmNo('n'+gi)+'</sup></button>';
   }).join('');
 }
 function rmSlot(act,i,label,lock,chk,ok,empty){
@@ -7337,7 +7509,7 @@ function rmSlot(act,i,label,lock,chk,ok,empty){
 function rmLimMsg(v){var Q=RM.D.deep,l=Q&&Q.comp?Q.comp.lim:2;return wordCount(v)>l?'No more than '+['one','two','three'][l-1]+' word'+(l>1?'s':'')+' from the passage.':''}
 /* ---- passage | questions width (desktop): drag the bar (Pointer Events) or use ← → on it; kept in localStorage md-rmsplit (25–75 %) ---- */
 var RMSP=null;
-function rmSplitPct(){var n=parseFloat(lsGet('md-rmsplit')||'50');return n>=25&&n<=75?Math.round(n):50}
+function rmSplitPct(){var n=parseFloat(lsGet('md-rmsplit')||'46');return n>=25&&n<=75?Math.round(n):46} // Option A: passage 46 %, questions 54 %
 function rmSplitSet(v,save){v=Math.max(25,Math.min(75,Math.round(v)));var d=$('.rmdeep'),b=$('.rmsplit');if(d)d.style.setProperty('--rmp',v+'%');if(b)b.setAttribute('aria-valuenow',v);if(save)lsSet('md-rmsplit',String(v))}
 document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('.rmsplit');if(!b||(e.button&&e.button!==0))return;var d=b.closest('.rmdeep');if(!d)return;
   e.preventDefault();RMSP={id:e.pointerId,d:d};try{b.setPointerCapture(e.pointerId)}catch(x){}b.classList.add('drag');document.body.classList.add('rmsizing')});
@@ -7360,15 +7532,14 @@ var RFS=[['Very small',.86],['Small',.93],['Medium',1],['Large',1.12],['Very lar
 function rmFsIdx(){var n=parseInt(lsGet('md-rmfs')||'2',10);return n>=0&&n<RFS.length?n:2}
 function rmPsgExHTML(){
   var L=rmExIdx(),full=!L||RM.full,ps=RM.D.paras.map(function(t,i){return i}).filter(function(i){return full||L.indexOf(i)>=0});
-  var head=L?'<p class="rmpsgt"><button type="button" class="linkish" data-act="rm-full" aria-pressed="'+!!RM.full+'">'+(full?'Show only the paragraphs for these questions':'Show full passage')+'</button></p>':'';
-  return head+ps.map(function(i){return '<p class="rmlbl">'+rmPL(i)+'</p><p class="rmp" data-pi="'+i+'">'+rmHlText(i)+'</p>'}).join('');
+  return ps.map(function(i){return '<p class="rmlbl">'+rmPL(i)+'</p><p class="rmp" data-pi="'+i+'">'+rmHlText(i)+'</p>'}).join('');
 }
+function rmPsgToggleHTML(){var L=rmExIdx();if(!L)return '';var full=RM.full;return '<button type="button" class="linkish rmpsgt" data-act="rm-full" aria-pressed="'+!!full+'">'+(full?'Show only the paragraphs for these questions':'Show full passage')+'</button>'}
 function rmSubText(){var l=RM.ex&&locOf(RM.ex.id);if(l)return bookShort(l.book)+' · '+TNAME[l.test]+' · Reading';if(RM.root&&CP&&CP.book&&TNAME[CP.test])return bookShort(CP.book)+' · '+TNAME[CP.test]+' · Reading · preview';return 'Reading'}
 function rmDone(){return RM.fin?RST.length:RM.chk.filter(Boolean).length}
 function rmHeadHTML(){var l=!RM.root&&RM.ex&&locOf(RM.ex.id),pct=Math.round(rmDone()/RST.length*100),title=(RM.ex&&RM.ex.title)||RM.D.title||'Reading';
   return '<div class="rmhd2"><div class="rmhl">'+(l?'<button type="button" class="rmback" data-act="nav" data-book="'+esc(l.book)+'" data-test="'+esc(l.test)+'" data-skill="'+esc(l.skill)+'" aria-label="Back to '+esc(bookShort(l.book)+' · '+TNAME[l.test])+'" title="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 18l-6-6 6-6"/></svg></button>':'')+
-    '<div class="rmht"><h2>'+esc(title)+'</h2><p>'+esc(rmSubText())+'</p></div></div>'+rmToolsHTML()+'</div>'+
-    '<div class="rmprog" role="progressbar" aria-label="Lesson progress" aria-valuemin="0" aria-valuemax="'+RST.length+'" aria-valuenow="'+rmDone()+'" aria-valuetext="'+rmDone()+' of '+RST.length+' steps done"><span style="width:'+pct+'%"></span></div>'}
+    '<div class="rmht"><h2>'+esc(title)+'</h2><p>'+esc(rmSubText())+'</p></div></div>'+rmToolsHTML()+'</div>'}
 // step menu: the preview can open any step (as before); a student only sees where they are (steps open in order, as before)
 function rmStepSelHTML(){var pv=!!RM.root;
   return '<label class="sr" for="rmStepSel">Lesson step</label><select class="rmstepsel" id="rmStepSel">'+RST.map(function(n,i){var ok=pv||i===RM.st;return '<option value="'+i+'"'+(i===RM.st?' selected':'')+(ok?'':' disabled')+'>Step '+(i+1)+'/'+RST.length+' · '+n+(RM.chk[i]?' ✓':'')+'</option>'}).join('')+'</select>'}
@@ -7379,9 +7550,9 @@ function rmToolsHTML(){
     '<div class="seg rmlv" role="group" aria-label="Version">'+RLV.map(function(l){var has=l==='medium'||v[l];return '<button type="button" data-act="rm-lv" data-v="'+l+'" aria-pressed="'+(RM.lv===l)+'"'+(has?'':' disabled title="No '+RLV_NAME[l]+' version"')+'>'+RLV_NAME[l]+'</button>'}).join('')+'</div>';
   var chk=RM.chk[RM.st],demo=!chk&&RM.fail!==RM.st&&!RM.fin?demoBarHTML('rm'):'';
   // settings (gear): version / level, text size, and the demo helper (teachers, admins and testers only, as before)
-  var panel=RM.fsOpen?'<div class="rmfsm rmsetp" role="dialog" aria-label="Lesson settings">'+(lvh?'<div class="rmsetg"><span class="lulbl">'+(RM.student?'Your level':'Version')+'</span>'+lvh+'</div>':'')+
-      '<div class="rmsetg"><span class="lulbl">Text size</span><div class="rmfsl" role="group" aria-label="Text size">'+RFS.map(function(x,i){return '<button type="button" role="menuitemradio" aria-checked="'+(i===k)+'" data-act="rm-fsv" data-i="'+i+'"><span style="font-size:'+x[1]+'em">'+x[0]+'</span></button>'}).join('')+'</div></div>'+
-      (demo?'<div class="rmsetg">'+demo+'</div>':'')+'</div>':'';
+  var panel=RM.fsOpen?'<div class="rmfsm rmsetp" role="dialog" aria-label="Lesson settings">'+(lvh?'<section class="rmsetg"><h4>'+(RM.student?'Your level':'Version')+'</h4>'+lvh+'</section>':'')+
+      '<section class="rmsetg"><h4>Text size <span class="rmfsn">'+esc(RFS[k][0])+'</span></h4><div class="rmfsl" role="radiogroup" aria-label="Text size">'+RFS.map(function(x,i){return '<button type="button" role="radio" aria-checked="'+(i===k)+'" data-act="rm-fsv" data-i="'+i+'" aria-label="'+x[0]+'" title="'+x[0]+'"><span style="font-size:'+(.7+i*.14)+'rem">A</span></button>'}).join('')+'</div></section>'+
+      (demo?'<section class="rmsetg">'+demo+'</section>':'')+'</div>':'';
   return '<div class="rmtools">'+rmStepSelHTML()+rmTimerHTML()+'<div class="rmfsw"><button type="button" class="rmfsb rmgear" data-act="rm-fs" aria-haspopup="dialog" aria-expanded="'+!!RM.fsOpen+'" aria-label="Lesson settings (level, text size)" title="Settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg></button>'+panel+'</div></div>';
 }
 function rmToolsDraw(){var t=$('.rm .rmtools');if(t)t.outerHTML=rmToolsHTML()}
@@ -7424,42 +7595,43 @@ document.addEventListener('click',function(e){if(RM&&RM.fsOpen&&!(e.target.close
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&RM&&RM.fsOpen){RM.fsOpen=false;rmToolsDraw();var fb=$('.rm .rmfsb');if(fb)fb.focus()}});
 // Stage 1 Deep reading: the passage with paragraph letters (laptop: sticky left column; phone: "Show passage") + the parts
 function rmStage1(){
-  var D=RM.D,Q=D.deep,chk=RM.chk[0],lock=chk||RM.fail===0,h='',n=0,sec=function(t){n++;return (n>1?'</section>':'')+'<section class="rmgrp"><h3 class="lsh">1.'+n+' '+t+'</h3>'};
+  var D=RM.D,Q=D.deep,chk=RM.chk[0],lock=chk||RM.fail===0,h='',n=0,sec=function(t,c){n++;var ids=rmIds(D,0).filter(function(x){return x.charAt(0)===c}),rg=ids.length?rmNo(ids[0])+(ids.length>1?'–'+rmNo(ids[ids.length-1]):''):'';
+    return (n>1?'</section>':'')+'<section class="rmgrp"><h3 class="lsh">1.'+n+' '+t+(rg?' <span class="rmrng">Q'+rg+'</span>':'')+'</h3>'};
   if(!Q){ // old lesson: match each paragraph to one of the summaries (one is extra)
-    h+=sec('Matching headings')+'<p class="muted">Choose the best heading for each paragraph. One heading is extra.</p>';
+    h+=sec('Matching headings','o')+'<p class="muted">Choose the best heading for each paragraph. One heading is extra.</p>';
     D.paras.forEach(function(t,i){var v=RM.o[i],ok=chk&&RM.res['o'+i];
-      h+='<div class="lsc rmhrow"><p class="rmlbl"><b class="qn">'+rmNo('o'+i)+'</b>'+rmPL(i)+'</p>'+rmSlot('rm-slot',i,v!=null?D.sums[v]:null,lock,chk,ok,'Choose a heading')+
+      h+='<div class="lsc rmhrow" data-rmq="o'+i+'"><p class="rmlbl"><b class="qn">'+rmNo('o'+i)+'</b>'+rmPL(i)+'</p>'+rmSlot('rm-slot',i,v!=null?D.sums[v]:null,lock,chk,ok,'Choose a heading')+
         (chk&&!ok?'<span class="fix rmfix">→ '+esc(D.sums[i])+'</span>':'')+(chk&&D.why&&D.why[i]?'<p class="lsexp">'+esc(D.why[i])+'</p>':'')+'</div>'});
   }else{
     if(Q.comp){
       var ttl={table:'Table completion',form:'Form completion',notes:'Note completion'}[Q.comp.type]||'Summary completion';
-      h+=sec(ttl)+'<p class="muted rmins">'+esc(Q.comp.ins)+'</p><div class="lsc">'+Q.comp.items.map(function(x,i){
+      h+=sec(ttl,'k')+'<p class="muted rmins">'+esc(Q.comp.ins)+'</p><div class="lsc">'+Q.comp.items.map(function(x,i){
         var v=RM.k[i]||'',ok=chk&&RM.res['k'+i],pt=x.q.split(/_{2,}/);
         var inp='<input type="text" class="gap rmk'+(chk?(ok?' ok':' bad'):'')+'" data-i="'+i+'" value="'+esc(v)+'" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Answer '+(i+1)+'" aria-describedby="rmkw'+i+'"'+(lock?' readonly':'')+'>';
-        return '<div class="qrow"><span class="qn">'+rmNo('k'+i)+'</span><span>'+esc(pt[0])+inp+esc(pt.slice(1).join(' '))+(chk&&!ok?' <span class="fix">→ '+esc(x.a[0])+'</span>':'')+
+        return '<div class="qrow" data-rmq="k'+i+'"><span class="qn">'+rmNo('k'+i)+'</span><span>'+esc(pt[0])+inp+esc(pt.slice(1).join(' '))+(chk&&!ok?' <span class="fix">→ '+esc(x.a[0])+'</span>':'')+
           '<small class="rmkw" id="rmkw'+i+'" aria-live="polite">'+(lock?'':esc(rmLimMsg(v)))+'</small></span></div>'}).join('')+'</div>';
     }
     if(Q.tfng){
-      h+=sec('True / False / Not Given')+'<p class="muted rmins">'+esc(Q.tfng.ins)+'</p>'+Q.tfng.items.map(function(x,i){
-        return '<div class="lsc"><p class="lsq"><b>'+rmNo('t'+i)+'.</b> '+esc(x.s)+'</p>'+rmRadios('rmt'+i,RTF,[0,1,2],RM.tf[i],x.a,chk,lock).replace('<div class="opts">','<div class="opts h rmtf">')+
+      h+=sec('True / False / Not Given','t')+'<p class="muted rmins">'+esc(Q.tfng.ins)+'</p>'+Q.tfng.items.map(function(x,i){
+        return '<div class="lsc" data-rmq="t'+i+'"><p class="lsq"><b>'+rmNo('t'+i)+'.</b> '+esc(x.s)+'</p>'+rmRadios('rmt'+i,RTF,[0,1,2],RM.tf[i],x.a,chk,lock).replace('<div class="opts">','<div class="opts h rmtf">')+
           (chk&&x.p>=0?'<p class="lsexp">See '+rmPL(x.p)+'.</p>':'')+'</div>'}).join('');
     }
     var Hd=Q.head,rom=function(k){return rmRoman(RM.hOrd.indexOf(k))};
-    h+=sec('Matching headings')+'<p class="muted rmins">'+esc(Hd.ins)+'</p><div class="lsc rmhl"><p class="rmlbl">List of Headings</p><ol class="rmhlist">'+
+    h+=sec('Matching headings','h')+'<p class="muted rmins">'+esc(Hd.ins)+'</p><div class="lsc rmhl"><p class="rmlbl">List of Headings</p><ol class="rmhlist">'+
       RM.hOrd.map(function(k,j){return '<li><b class="mono">'+rmRoman(j)+'</b><span>'+esc(Hd.opts[k])+'</span></li>'}).join('')+'</ol></div>'+
       Hd.items.map(function(x,i){var v=RM.h[i],ok=chk&&RM.res['h'+i];
-        return '<div class="lsc rmhrow"><p class="rmlbl"><b class="qn">'+rmNo('h'+i)+'</b>'+rmPL(x.p)+'</p>'+rmSlot('rm-hd',i,v!=null?rom(v)+'  '+Hd.opts[v]:null,lock,chk,ok,'Choose a heading')+(chk&&!ok?'<span class="fix rmfix">→ '+esc(rom(x.a)+'  '+Hd.opts[x.a])+'</span>':'')+'</div>'}).join('');
+        return '<div class="lsc rmhrow" data-rmq="h'+i+'"><p class="rmlbl"><b class="qn">'+rmNo('h'+i)+'</b>'+rmPL(x.p)+'</p>'+rmSlot('rm-hd',i,v!=null?rom(v)+'  '+Hd.opts[v]:null,lock,chk,ok,'Choose a heading')+(chk&&!ok?'<span class="fix rmfix">→ '+esc(rom(x.a)+'  '+Hd.opts[x.a])+'</span>':'')+'</div>'}).join('');
     if(Q.info){
-      h+=sec('Matching information')+'<p class="muted rmins">'+esc(Q.info.ins)+'</p>'+Q.info.items.map(function(x,i){
+      h+=sec('Matching information','m')+'<p class="muted rmins">'+esc(Q.info.ins)+'</p>'+Q.info.items.map(function(x,i){
         var v=RM.mi[i],ok=chk&&RM.res['m'+i],lab=function(a){return x.k==='p'?rmPL(a):Q.info.ents[a]};
-        return '<div class="lsc"><p class="lsq"><b>'+rmNo('m'+i)+'.</b> '+esc(x.q)+'</p>'+rmSlot('rm-mi',i,v!=null?lab(v):null,lock,chk,ok,x.k==='p'?'Choose a paragraph':'Choose a name')+(chk&&!ok?'<span class="fix rmfix">→ '+esc(lab(x.a))+'</span>':'')+'</div>'}).join('');
+        return '<div class="lsc" data-rmq="m'+i+'"><p class="lsq"><b>'+rmNo('m'+i)+'.</b> '+esc(x.q)+'</p>'+rmSlot('rm-mi',i,v!=null?lab(v):null,lock,chk,ok,x.k==='p'?'Choose a paragraph':'Choose a name')+(chk&&!ok?'<span class="fix rmfix">→ '+esc(lab(x.a))+'</span>':'')+'</div>'}).join('');
     }
   }
   if(n)h+='</section>';
   // laptop: passage left (sticky) | questions right. Phone: passage top half | questions bottom half, each scrolls on its own
-  var sp=rmSplitPct();
-  return '<div class="rmdeep" style="--rmp:'+sp+'%"><section class="rmpsg" aria-label="Passage" tabindex="0"><div class="lsc">'+rmPsgHTML(true)+'</div></section>'+
-    '<div class="rmsplit" role="separator" aria-orientation="vertical" aria-label="Resize the passage and the questions" aria-valuemin="25" aria-valuemax="75" aria-valuenow="'+sp+'" tabindex="0"><span aria-hidden="true"></span></div><div class="rmqs" tabindex="-1">'+h+'</div></div>';
+  var sp=rmSplitPct(),ids=rmIds(D,0),qr=ids.length?rmNo(ids[0])+'–'+rmNo(ids[ids.length-1]):'';
+  return '<div class="rmdeep" style="--rmp:'+sp+'%"><section class="rmpsg" aria-label="Reading passage" tabindex="0"><div class="rmph"><h3>Reading passage</h3>'+rmPsgToggleHTML()+'</div><div class="rmpb">'+rmPsgHTML(true)+'</div></section>'+
+    '<div class="rmsplit" role="separator" aria-orientation="vertical" aria-label="Resize the passage and the questions" aria-valuemin="25" aria-valuemax="75" aria-valuenow="'+sp+'" tabindex="0"><span aria-hidden="true"></span></div><section class="rmqs" tabindex="-1" aria-label="Questions"><div class="rmph"><h3>Questions '+qr+'</h3></div><div class="rmpb">'+h+'</div></section></div>';
 }
 function rmStage2(){
   var D=RM.D,chk=RM.chk[1],h='';
@@ -7478,14 +7650,14 @@ function rmStage3(){
   var D=RM.D,chk=RM.chk[2],lock=chk||RM.fail===2,h='';
   h+='<h3 class="lsh">3.1 Guess the meaning from context</h3><p class="muted">Read the sentence and choose what the word means here.</p>';
   D.words.forEach(function(x,i){
-    h+='<div class="lsc"><div class="lsw"><b>'+rmNo('g'+i)+'. '+esc(x.w)+'</b> <span class="muted">· '+rmPL(x.p)+'</span></div><p class="ex">'+lsHl(rmSentOf(x.p,x.w,D),x.w)+'</p><p class="lsq">What does it mean?</p>'+
+    h+='<div class="lsc" data-rmq="g'+i+'"><div class="lsw"><b>'+rmNo('g'+i)+'. '+esc(x.w)+'</b> <span class="muted">· '+rmPL(x.p)+'</span></div><p class="ex">'+lsHl(rmSentOf(x.p,x.w,D),x.w)+'</p><p class="lsq">What does it mean?</p>'+
       rmRadios('rmg'+i,x.opts,RM.gOrd[i],RM.g[i],x.a,chk,lock)+(chk?rmCard(x):'')+'</div>';
   });
   if(chk&&RM.student)h+='<div class="actions"><button class="btn" data-act="rm-saveall" type="button">Save these words to Flashcards</button></div>';
   h+='<h3 class="lsh">3.2 Match each phrase with its paraphrase</h3><p class="muted">Choose the phrase that means the same. One option is extra.</p>';
   var par=function(id){return id<D.pairs.length?D.pairs[id].par:D.pdist};
   D.pairs.forEach(function(x,i){
-    h+='<div class="lsc"><p class="rmlbl">'+rmPL(x.p)+'</p><p class="lsq"><b>'+rmNo('c'+i)+'.</b> “'+esc(x.ph)+'”</p>'+rmRadios('rmc'+i,RM.cOrd[i].map(par),RM.cOrd[i].map(function(v,k){return k}),RM.c[i]!=null?RM.cOrd[i].indexOf(RM.c[i]):null,RM.cOrd[i].indexOf(i),chk,lock)+(chk?'<div class="lsexp rmpar">'+(x.segs&&x.segs.length?'<ul class="rmsegs">'+x.segs.map(function(g){return '<li><b>'+esc(g.q)+'</b> <span aria-hidden="true">≈</span><span class="sr">matches</span> <b>'+esc(g.t)+'</b>'+(g.note?' <span class="muted">· '+esc(g.note)+'</span>':'')+'</li>'}).join('')+'</ul>':'<b>“'+esc(x.par)+'”</b> → <b>“'+esc(x.ph)+'”</b>')+(x.why?'<br>'+esc(x.why):'')+'</div>':'')+'</div>';
+    h+='<div class="lsc" data-rmq="c'+i+'"><p class="rmlbl">'+rmPL(x.p)+'</p><p class="lsq"><b>'+rmNo('c'+i)+'.</b> “'+esc(x.ph)+'”</p>'+rmRadios('rmc'+i,RM.cOrd[i].map(par),RM.cOrd[i].map(function(v,k){return k}),RM.c[i]!=null?RM.cOrd[i].indexOf(RM.c[i]):null,RM.cOrd[i].indexOf(i),chk,lock)+(chk?'<div class="lsexp rmpar">'+(x.segs&&x.segs.length?'<ul class="rmsegs">'+x.segs.map(function(g){return '<li><b>'+esc(g.q)+'</b> <span aria-hidden="true">≈</span><span class="sr">matches</span> <b>'+esc(g.t)+'</b>'+(g.note?' <span class="muted">· '+esc(g.note)+'</span>':'')+'</li>'}).join('')+'</ul>':'<b>“'+esc(x.par)+'”</b> → <b>“'+esc(x.ph)+'”</b>')+(x.why?'<br>'+esc(x.why):'')+'</div>':'')+'</div>';
   });
   return h;
 }
@@ -7500,7 +7672,7 @@ function rmClozeHTML(){
     if(i%2===0)return esc(p);
     var b=+p-1,v=RM.w[b],ok=chk&&RM.res['w'+b],cl='rmblank'+(v!=null?' has':'')+(chk?(ok?' ok':' no'):'');
     var lab='Question '+rmNo('w'+b)+': '+(v!=null?D.cloze.bank[v]:'empty');
-    return '<span class="rmbw"><button type="button" class="'+cl+'" data-act="rm-blank" data-n="'+b+'"'+(v!=null&&!lock?' data-drag="1" data-b="'+v+'"':'')+(lock?' disabled':'')+' aria-label="'+esc(lab)+'">'+(chk?(ok?'✓ ':'✗ '):'')+(v!=null?esc(D.cloze.bank[v]):'&nbsp;')+'<sup>'+rmNo('w'+b)+'</sup></button>'+
+    return '<span class="rmbw" data-rmq="w'+b+'"><button type="button" class="'+cl+'" data-act="rm-blank" data-n="'+b+'"'+(v!=null&&!lock?' data-drag="1" data-b="'+v+'"':'')+(lock?' disabled':'')+' aria-label="'+esc(lab)+'">'+(chk?(ok?'✓ ':'✗ '):'')+(v!=null?esc(D.cloze.bank[v]):'&nbsp;')+'<sup>'+rmNo('w'+b)+'</sup></button>'+
       (v!=null&&!lock?'<button type="button" class="rmx" data-act="rm-x" data-n="'+b+'" aria-label="Remove the word from question '+rmNo('w'+b)+'">×</button>':'')+'</span>';
   }).join('')+'</p>';
   if(chk)h+='<p class="rmcorr">Correct words: '+D.cloze.bank.slice(0,n).map(function(w,i){return rmNo('w'+i)+' '+esc(w)}).join(' · ')+'</p>';
@@ -7530,12 +7702,13 @@ function rmDraw(){
   var chip='<span class="btn pri lsscore">Stage '+(st+1)+': '+rmScore(st)+'</span> ',act;
   if(RM.fin)act='';
   else if(RM.fail===st)act='<div class="actions">'+chip+'<button class="btn" data-act="rm-retry" type="button">Try again</button></div><p class="muted" style="margin:6px 0 0">You need at least 70% to move on. The correct answers stay hidden until you reach it, so read again and retry.</p>';
-  else if(!chk)act='<div class="actions"><button class="btn pri" data-act="rm-check" type="button">Check answers</button>'+(pv&&st<3?'<button class="btn" data-act="rm-next" type="button">Next: '+RST[st+1]+' →</button>':'')+'</div><p class="err" id="rmMsg" aria-live="polite"></p>';
+  else if(!chk)act=rmDockHTML('<div class="actions rmdact">'+(pv&&st<3?'<button class="btn" data-act="rm-next" type="button">Next: '+RST[st+1]+' →</button>':'')+'<button class="btn pri" data-act="rm-check" type="button">Check answers</button></div>')+'<p class="err" id="rmMsg" aria-live="polite"></p>';
   else if(st<3)act='<div class="actions">'+chip+'<button class="btn pri" data-act="rm-next" type="button">Next: '+RST[st+1]+' →</button>'+(pv?'<button class="btn" data-act="rm-retry" type="button">Try this stage again</button>':'')+'</div>';
   else{var s=rmOutOk();act='<div class="actions">'+chip+'<button class="btn pri" id="rmFin" data-act="rm-finish" type="button"'+(s.ok?'':' disabled')+'>Finish lesson</button></div><p class="muted" id="rmWhy" aria-live="polite">'+esc(s.why)+'</p>'}
   var host=RM.root?document.getElementById(RM.root):$('#libBody');if(!host)return;
   rmHlHide();
   host.innerHTML='<div class="pane single rm'+(st===0&&!RM.fin?' rmwide':'')+'" style="--rmfs:'+RFS[rmFsIdx()][1]+'">'+RM.ban+'<div class="rmtop">'+rmHeadHTML()+'</div>'+'<div id="rmBody">'+[rmStage1,rmStage2,rmStage3,rmStage4][st]()+'</div>'+act+'<div id="result">'+(RM.fin?rmFinal():'')+'</div></div>';
+  rmFit();
 }
 // Create › Student View Preview: the same student screen, drawn in #pvRm, nothing is saved (rmFinish saves for students only)
 /* ---- reading timer: starts when the lesson opens, ⏸/▶, stops at Finish; leaving the lesson stops it (RMT keeps the seconds for this session) ---- */
@@ -7686,8 +7859,10 @@ function rmAct(a,t){
   if(a==='rm-full'){RM.full=!RM.full;rmDraw();return true}
   if(a==='rm-finish'){rmFinish();return true}
   if(a==='rm-saveall'){var n2=0;D.words.forEach(function(x){if(saveCard({w:x.w,ipa:'',pos:x.pos||x.fam||'',en:x.en,vi:x.vi||'',ex:x.ex||rmSentOf(x.p,x.w,D),syn:[],ant:[]}))n2++});if(n2)toast(n2+' word'+(n2>1?'s':'')+' saved to Flashcards.');return true}
+  if(a==='rm-qn'){var qe=document.querySelector('.rm [data-rmq="'+t.dataset.q+'"]');if(qe){if(qe.scrollIntoView)qe.scrollIntoView({block:'center',behavior:reducedMotion()?'auto':'smooth'});
+      var fo=qe.matches&&qe.matches('button,input,select')?qe:qe.querySelector('input,select,button');if(fo&&fo.focus)fo.focus({preventScroll:true})}return true}
   if(a==='rm-fs'){RM.fsOpen=!RM.fsOpen;rmToolsDraw();var fm=RM.fsOpen?$('.rm .rmsetp button'):$('.rm .rmgear');if(fm)fm.focus();return true}
-  if(a==='rm-fsv'){var fi=+t.dataset.i;lsSet('md-rmfs',String(fi));var pn=$('.pane.rm');if(pn)pn.style.setProperty('--rmfs',RFS[fi][1]);rmToolsDraw();var fb2=$('.rm .rmfsl [data-i="'+fi+'"]');if(fb2)fb2.focus();return true}
+  if(a==='rm-fsv'){var fi=+t.dataset.i;lsSet('md-rmfs',String(fi));var pn=$('.pane.rm');if(pn)pn.style.setProperty('--rmfs',RFS[fi][1]);rmToolsDraw();rmFit();var fb2=$('.rm .rmfsl [data-i="'+fi+'"]');if(fb2)fb2.focus();return true}
   if(a==='rm-hl'){rmHlApply(t.dataset.c);return true}
   if(a==='rm-tmr'){if(RM.trun)rmTStop();else rmTStart();var tm=$('#rmTimer');if(tm){tm.outerHTML=rmTimerHTML();var tb=$('#rmTimer .rmtp');if(tb){try{tb.focus({preventScroll:true})}catch(x){}}}return true}
   return true;
@@ -7919,12 +8094,12 @@ function adAiTestRun(){
 }
 function renderAdmin(){
   adMenuClose(false);var el=$('#v-admin');if(!U||!U.adm){el.innerHTML='';return}
-  var subs=[['guide','Guide'],['users','Users'],['teachers','Teachers'],['students','Students'],['sheet','Google Sheet'],['xp','XP'],['season','Season'],['aitest','AI test'],['me','My account']];
+  var subs=[['guide','Guide'],['users','Users'],['teachers','Teachers'],['students','Students'],['sheet','Google Sheet'],['xp','XP'],['season','Season'],['aitest','AI test'],['assist','Assistants'],['me','My account']];
   var needList=AD.sub==='users'||AD.sub==='teachers';
   if(needList&&!AD.locked&&!AD.users&&!AD.loadErr)adLoad();
   if(AD.sub==='sheet'&&!AD.locked&&!AD.sheet&&!AD.shErr)adSheetLoad();
   // Students = the old Students tab (section #v-roster, shown under this one); XP = the old Settings tab. Neither needs the admin key.
-  var body=AD.sub==='guide'?adGuideHTML():AD.sub==='students'?'':AD.sub==='xp'?xpsHTML():AD.locked?adUnlockHTML():AD.sub==='teachers'?adTeachersHTML():AD.sub==='sheet'?adSheetHTML():AD.sub==='aitest'?adAiTestHTML():AD.sub==='season'?adSeasonHTML():AD.sub==='me'?adMeHTML():adUsersHTML();
+  var body=AD.sub==='guide'?adGuideHTML():AD.sub==='students'?'':AD.sub==='xp'?xpsHTML():AD.locked?adUnlockHTML():AD.sub==='teachers'?adTeachersHTML():AD.sub==='sheet'?adSheetHTML():AD.sub==='aitest'?adAiTestHTML():AD.sub==='season'?adSeasonHTML():AD.sub==='me'?adMeHTML():AD.sub==='assist'?adAssistHTML():adUsersHTML();
   el.innerHTML='<div class="pad adm"><div class="sechead"><h2>Admin</h2></div>'+
     (DEMO?'<p class="adm-demo" role="note">Demo: changes are not saved.</p>':'')+
     '<div class="subtabs" role="tablist">'+subs.map(function(s){return '<button type="button" role="tab" data-act="ad-sub" data-v="'+s[0]+'" aria-selected="'+(AD.sub===s[0])+'">'+s[1]+'</button>'}).join('')+'</div>'+
@@ -8022,6 +8197,7 @@ var ADM=null,ICO_DOTS='<svg width="20" height="20" viewBox="0 0 24 24" fill="cur
 function adMenuItems(u,ctx){var I=[];if(!u)return I;
   if(u.role==='admin')return ctx==='users'?[['ad-sub','My account',0,'me']]:[];
   if(u.status==='moved')return I;
+  if(u.role==='assistant')return [['ad-pw','Change password']]; // classes, pause and remove: Admin › Assistants
   I.push(['ad-pw','Change password']);
   if(ctx==='users'&&u.role==='student'&&u.tester)I.push(['ad-tseed','Add sample data']);
   if(ctx==='users'&&(u.status==='paused'||u.status==='kicked'))I.push(['ad-on','Resume']);
@@ -8062,7 +8238,7 @@ function adFiltered(){
 }
 function adStatusHTML(u){return u.status==='kicked'?'<span class="pill bad">Removed</span>':u.status==='paused'?'<span class="pill bad">Paused</span>':u.status==='moved'?'<span class="pill pend">Email changed</span>':!u.hasPassword?'<span class="pill">No password yet</span>':'<span class="pill ok">Active</span>'}
 // one badge for every role (same size, border, radius); only the colour differs: Admin accent, Tester amber, Teacher / Student neutral
-function adRoleHTML(u){return u.role==='admin'?'<span class="pill acc">Admin</span>':u.role==='teacher'?'<span class="pill role">Teacher</span>':u.tester?'<span class="pill tst">Tester</span>':'<span class="pill role">Student</span>'}
+function adRoleHTML(u){return u.role==='assistant'?'<span class="pill role">Homework Assistant</span>':u.role==='admin'?'<span class="pill acc">Admin</span>':u.role==='teacher'?'<span class="pill role">Teacher</span>':u.tester?'<span class="pill tst">Tester</span>':'<span class="pill role">Student</span>'}
 function adListHTML(){
   if(!AD.users)return '';
   var L=adFiltered();if(!L.length)return '<p class="saved">No one matches.</p>';
@@ -8091,6 +8267,140 @@ function adTeachersHTML(){
       '<td data-l="Email" class="c-em mono">'+e+'</td><td data-l="Role" class="c-sm">'+adRoleHTML(u)+'</td><td data-l="Status" class="c-sm">'+adStatusHTML(u)+'</td>'+
       '<td data-l="Actions" class="c-ac">'+adMenuBtn(u,'teachers')+'</td></tr>'}).join('')+'</tbody></table></div>';
 }
+/* ---------- Homework Assistant (role 'assistant'): Homework & Student Progress ----------
+   Everything comes from /api/hwa/* (server checks the role and the classes the admin gave, on every call). The assistant never
+   reads attempts, hwdone, grades or emails directly; students come as {key, name, cls}. Nothing here grades, awards XP or
+   marks homework as submitted. Report text is plain and has no emails, grades or notes. */
+function hwaDue(d){d=new Date(+d);return DAYS[d.getDay()]+' '+fmtD(+d)+' '+pad(d.getHours())+':'+pad(d.getMinutes())}
+function hwaDay(ts){return fmtD(ts)}
+var HWA={data:null,loading:false,err:'',view:'overview',cls:'all',asg:'',st:'all',rep:{asg:'',mode:'overdue'},stu:null,msg:'',newCls:''};
+var HWA_ST={done:'Submitted on time',late:'Submitted late',missing:'Missing — overdue',pending:'Not submitted — before deadline',upcoming:'Not sent yet',none:'No exercises'};
+var HWA_FU=[['none','Not contacted'],['sent','Reminder sent'],['waiting','Awaiting reply'],['resolved','Resolved']];
+function hwaApi(path,body){if(DEMO)return Promise.reject(new Error('The Homework Assistant workspace needs the live site (demo mode).'));
+  return authHdr().then(function(h){return adPost(path,body,'',h)}).then(function(d){if(!d._ok){var e=new Error(d.error||'Something went wrong. Try again.');e.status=d._status;throw e}return d})}
+function hwaLoad(cb){HWA.loading=true;HWA.err='';renderHwa();hwaApi('hwa/data',{days:60}).then(function(d){HWA.data=d;HWA.loading=false;renderHwa();if(cb)cb()},function(e){HWA.loading=false;HWA.err=e.message;renderHwa()})}
+function hwaStu(k){var D=HWA.data;return D?(D.students.filter(function(s){return s.key===k})[0]||null):null}
+function hwaA(id){var D=HWA.data;return D?(D.assignments.filter(function(a){return a.id===id})[0]||null):null}
+function hwaSel(cls){return function(x){return cls==='all'||x.cls===cls}}
+// assignment-level numbers for one assignment
+function hwaCnt(a){var m=(HWA.data.status||{})[a.id]||{},c={done:0,late:0,missing:0,pending:0,n:0};Object.keys(m).forEach(function(k){c.n++;if(c[m[k].st]!=null)c[m[k].st]++});return c}
+// follow-up priority from the last 4 assignments of the student's class whose deadline has passed (homework facts only)
+function hwaWatch(s){var D=HWA.data,now=D.now;
+  var L=D.assignments.filter(function(a){return a.cls===s.cls}).map(function(a){var r=((D.status||{})[a.id]||{})[s.key];return r&&(r.st==='done'||r.st==='late'||r.st==='missing')?{a:a,r:r}:null}).filter(Boolean)
+    .sort(function(x,y){return y.r.due-x.r.due}).slice(0,4);
+  var miss=L.filter(function(x){return x.r.st==='missing'}).length,late=L.filter(function(x){return x.r.st==='late'}).length,n=L.length;
+  var last=D.assignments.map(function(a){var r=((D.status||{})[a.id]||{})[s.key];return r&&r.at?r.at:0}).reduce(function(x,y){return Math.max(x,y)},0);
+  var lab=n<4?'history':miss>=3?'attention':(miss>=2||late>=2)?'watch':'ok';
+  var why=n<4?'Only '+n+' due assignment'+(n===1?'':'s')+' so far: not enough history ('+miss+' missing, '+late+' late)':
+    lab==='attention'?'Missing '+miss+' of the last 4 due assignments':lab==='watch'?(miss>=2?'Missing '+miss+' of the last 4 due assignments':'Late '+late+' of the last 4 due assignments'):'Missing '+miss+', late '+late+' of the last 4';
+  return {lab:lab,why:why,miss:miss,late:late,n:n,last:last,hist:L}}
+var HWA_LAB={attention:['bad','Needs attention'],watch:['pend','Watch'],ok:['ok','On track'],history:['','Not enough history']};
+// the group report: exact owner wording, data from the selected assignment, nothing private
+function hwaReport(id,mode){var D=HWA.data,a=hwaA(id);if(!D||!a)return null;var m=(D.status||{})[a.id]||{};
+  var names=D.students.filter(function(s){return s.cls===a.cls&&m[s.key]&&m[s.key].st===(mode==='reminder'?'pending':'missing')}).map(function(s){return s.name}).sort(function(x,y){return x.localeCompare(y,'vi')});
+  if(!names.length)return {empty:true,a:a};
+  var head='LỚP '+String(a.cls).toUpperCase()+' — '+asgName(a);
+  var lead=mode==='reminder'?'Nhắc trước hạn nộp — các bạn chưa nộp bài (hạn '+hwaDue(new Date(a.due))+'):':'Danh sách các bạn còn thiếu bài:';
+  return {a:a,n:names.length,text:head+'\n\n'+lead+'\n'+names.map(function(n,i){return (i+1)+'. '+n}).join('\n')+'\n\nNếu có gặp vấn đề gì trong quá trình làm bài, các bạn nhắn anh nhé.'}}
+function hwaCopy(txt){var ok=function(){HWA.msg='Copied. Paste it into the class group (nothing was sent automatically).';renderHwa()},no=function(){HWA.msg='Copy is blocked in this browser: select the text in the box and copy it.';renderHwa()};
+  try{navigator.clipboard.writeText(txt).then(ok,no)}catch(e){no()}}
+function hwaOverviewHTML(){var D=HWA.data,now=D.now,cs=hwaSel(HWA.cls),stu=D.students.filter(cs),A=D.assignments.filter(cs);
+  var due=A.filter(function(a){return a.start<=now}),pairs={sub:0,miss:0,open:0};due.forEach(function(a){var c=hwaCnt(a);pairs.sub+=c.done+c.late;pairs.miss+=c.missing;pairs.open+=c.pending});
+  var fu=stu.filter(function(s){var w=hwaWatch(s);return w.lab==='attention'||w.lab==='watch'}).length;
+  var card=function(n,l,d){return '<div class="hwa-num"><b>'+n+'</b><span>'+l+'</span><small>'+d+'</small></div>'};
+  var up=A.filter(function(a){return a.start<=now&&a.due>now}).sort(function(x,y){return x.due-y.due}),rec=A.filter(function(a){return a.due<=now}).sort(function(x,y){return y.due-x.due}).slice(0,8),soon=A.filter(function(a){return a.start>now});
+  var row=function(a){var c=hwaCnt(a);return '<li><span><b>'+esc(asgName(a))+'</b> <span class="muted">· '+esc(a.cls)+(a.type==='external'?' · External':'')+'</span></span><span class="muted">Due '+esc(hwaDue(new Date(a.due)))+'</span><span>'+(c.done+c.late)+' / '+c.n+' submitted'+(c.missing?' · <b class="hwa-bad">'+c.missing+' missing</b>':'')+'</span>'+
+    (a.due<=now&&c.missing?'<button type="button" class="btn sm" data-act="hwa-rep" data-id="'+esc(a.id)+'">Copy missing list</button>':'')+'</li>'};
+  return '<div class="hwa-sum">'+card(stu.length,'Students','in '+(HWA.cls==='all'?'your classes':esc(HWA.cls)))+card(pairs.sub,'Submitted','student × assignment, sent assignments')+card(pairs.miss,'Missing','deadline passed, nothing submitted')+card(fu,'Need follow-up','students: Needs attention or Watch')+'</div>'+
+    '<p class="muted hwa-def">Period: assignments due from '+esc(hwaDay(D.from))+' (last 60 days) and upcoming. Counts are student × assignment pairs, except Students and Need follow-up (students).</p>'+
+    '<section class="hwa-sec"><h3>Upcoming deadlines</h3>'+(up.length?'<ul class="hwa-list">'+up.map(row).join('')+'</ul>':'<p class="muted">No open assignment.</p>')+(soon.length?'<p class="muted">'+soon.length+' scheduled (not sent yet).</p>':'')+'</section>'+
+    '<section class="hwa-sec"><h3>Recently due</h3>'+(rec.length?'<ul class="hwa-list">'+rec.map(row).join('')+'</ul>':'<p class="muted">No assignment was due in this period.</p>')+'</section>'}
+function hwaAssignHTML(){var D=HWA.data,now=D.now,A=D.assignments.filter(hwaSel(HWA.cls)).sort(function(x,y){return y.due-x.due}),cl=HWA.cls!=='all'?HWA.cls:(HWA.newCls||D.classes[0]||'');
+  var h='<div class="hwa-bar"><label class="field" for="hwaNewCls">Class<select id="hwaNewCls">'+D.classes.map(function(c){return '<option'+(c===cl?' selected':'')+'>'+esc(c)+'</option>'}).join('')+'</select></label><button class="btn pri" type="button" data-act="hwa-new">Create assignment</button></div>';
+  if(AG.form)h+=formHTML();
+  return h+(A.length?'<ul class="hwa-list hwa-asgs">'+A.map(function(a){var c=hwaCnt(a),st=now<a.start?'Upcoming':now>a.due?'Closed':'Active';
+    return '<li><span><b>'+esc(asgName(a))+'</b> <span class="muted">· '+esc(a.cls)+' · '+(a.type==='external'?'External link':a.ex.length+' exercises')+'</span><small class="muted">Sent '+esc(hwaDay(a.start))+' · Due '+esc(hwaDue(new Date(a.due)))+'</small></span><span>'+(c.done+c.late)+' / '+c.n+' submitted</span><span class="pill'+(st==='Active'?' ok':'')+'">'+st+'</span>'+
+      '<span class="hwa-acts"><button type="button" class="btn sm" data-act="hwa-edit" data-id="'+esc(a.id)+'">Edit</button><button type="button" class="btn sm bad" data-act="hwa-cancel" data-id="'+esc(a.id)+'">Cancel</button></span></li>'}).join('')+'</ul>':'<p class="muted">No assignments in this period.</p>')}
+function hwaMissingHTML(){var D=HWA.data,cs=hwaSel(HWA.cls),A=D.assignments.filter(cs).filter(function(a){return !HWA.asg||a.id===HWA.asg}).sort(function(x,y){return y.due-x.due}),rows=[];
+  A.forEach(function(a){var m=(D.status||{})[a.id]||{};D.students.filter(function(s){return s.cls===a.cls}).forEach(function(s){var r=m[s.key];if(!r||r.st==='upcoming'||r.st==='none')return;if(HWA.st!=='all'&&r.st!==HWA.st)return;rows.push({s:s,a:a,r:r})})});
+  var aopts=D.assignments.filter(cs).sort(function(x,y){return y.due-x.due});
+  var h='<div class="hwa-bar"><label class="field" for="hwaAsg">Assignment<select id="hwaAsg"><option value="">All assignments</option>'+aopts.map(function(a){return '<option value="'+esc(a.id)+'"'+(a.id===HWA.asg?' selected':'')+'>'+esc(asgName(a)+' · '+a.cls)+'</option>'}).join('')+'</select></label>'+
+    '<label class="field" for="hwaSt">Status<select id="hwaSt">'+[['all','All']].concat(['missing','pending','late','done'].map(function(k){return [k,HWA_ST[k]]})).map(function(o){return '<option value="'+o[0]+'"'+(o[0]===HWA.st?' selected':'')+'>'+esc(o[1])+'</option>'}).join('')+'</select></label></div>';
+  h+=rows.length?'<div class="scroll"><table class="hwa-t"><thead><tr><th scope="col">Student</th><th scope="col">Homework</th><th scope="col">Due</th><th scope="col">Status</th><th scope="col">Submitted</th></tr></thead><tbody>'+rows.map(function(x){var r=x.r,bad=r.st==='missing';
+    return '<tr><td>'+esc(x.s.name)+' <span class="muted">· '+esc(x.s.cls)+'</span></td><td>'+esc(asgName(x.a))+'</td><td class="mono">'+esc(hwaDue(new Date(r.due)))+(r.ext?' <span class="muted">(extended)</span>':'')+'</td><td><span class="pill'+(bad?' bad':r.st==='done'?' ok':r.st==='late'?' pend':'')+'">'+esc(HWA_ST[r.st])+'</span></td><td class="mono">'+(r.at?esc(hwaDue(new Date(r.at))):'—')+
+      (r.shot?' <a href="'+esc(r.shot)+'" target="_blank" rel="noopener">screenshot</a>':'')+'</td></tr>'}).join('')+'</tbody></table></div>':'<p class="muted">Nothing matches these filters.</p>';
+  // group report (copy, never sent)
+  var rp=HWA.rep,due=aopts.filter(function(a){return a.start<=D.now}),cur=rp.asg||(due[0]&&due[0].id)||'',R=cur?hwaReport(cur,rp.mode):null;
+  h+='<section class="hwa-sec hwa-rep" aria-labelledby="hwaRepH"><h3 id="hwaRepH">Copy report for the class group</h3><div class="hwa-bar"><label class="field" for="hwaRepAsg">Homework<select id="hwaRepAsg">'+due.map(function(a){return '<option value="'+esc(a.id)+'"'+(a.id===cur?' selected':'')+'>'+esc(asgName(a)+' · '+a.cls)+'</option>'}).join('')+'</select></label>'+
+    '<div class="seg" role="group" aria-label="Report type"><button type="button" data-act="hwa-mode" data-v="overdue" aria-pressed="'+(rp.mode!=='reminder')+'">Missing after deadline</button><button type="button" data-act="hwa-mode" data-v="reminder" aria-pressed="'+(rp.mode==='reminder')+'">Reminder before deadline</button></div></div>'+
+    (!R?'<p class="muted">No sent homework in this period.</p>':R.empty?'<p class="muted" role="status">'+(rp.mode==='reminder'?'Everybody has submitted or the deadline has passed.':'Nobody is missing this homework.')+'</p>':
+      '<label class="sr" for="hwaRepTxt">Report text</label><textarea id="hwaRepTxt" class="hwa-txt" rows="'+(R.n+6)+'" readonly>'+esc(R.text)+'</textarea><div class="actions"><button type="button" class="btn pri" data-act="hwa-copy" data-id="'+esc(cur)+'">Refresh and copy</button></div>')+
+    '<p class="saved" role="status" aria-live="polite">'+esc(HWA.msg||'')+'</p></section>';
+  return h}
+function hwaWatchHTML(){var D=HWA.data,S=D.students.filter(hwaSel(HWA.cls)).map(function(s){return {s:s,w:hwaWatch(s)}});
+  var ord={attention:0,watch:1,history:2,ok:3};S.sort(function(x,y){return ord[x.w.lab]-ord[y.w.lab]||y.w.miss-x.w.miss||y.w.late-x.w.late||(x.w.last-y.w.last)});
+  var h='<p class="muted hwa-def">Follow-up priority from the last 4 assignments whose deadline has passed (extensions counted; not-yet-due and upcoming homework left out). It is about homework only, never about the student’s ability. Never shown to students or put in group reports.</p>';
+  h+=S.length?'<ul class="hwa-list hwa-stu">'+S.map(function(x){var L=HWA_LAB[x.w.lab],fu=((D.notes||{})[x.s.key]||{}).status||'none';
+    return '<li><button type="button" class="linkish" data-act="hwa-stu" data-k="'+esc(x.s.key)+'" aria-expanded="'+(HWA.stu===x.s.key)+'"><b>'+esc(x.s.name)+'</b></button> <span class="muted">· '+esc(x.s.cls)+'</span><span class="pill '+L[0]+'">'+L[1]+'</span><span class="muted">'+esc(x.w.why)+'</span><span class="muted">'+esc((HWA_FU.filter(function(f){return f[0]===fu})[0]||HWA_FU[0])[1])+'</span>'+(HWA.stu===x.s.key?hwaStuHTML(x.s,x.w):'')+'</li>'}).join('')+'</ul>':'<p class="muted">No students in your classes.</p>';
+  return h}
+function hwaStuHTML(s,w){var D=HWA.data,n=(D.notes||{})[s.key]||{status:'none',notes:[]},H=D.assignments.filter(function(a){return a.cls===s.cls}).map(function(a){return {a:a,r:((D.status||{})[a.id]||{})[s.key]}}).filter(function(x){return x.r&&x.r.st!=='upcoming'}).sort(function(x,y){return y.a.due-x.a.due});
+  return '<div class="hwa-drill"><div class="scroll"><table class="hwa-t"><thead><tr><th scope="col">Homework</th><th scope="col">Due</th><th scope="col">Status</th><th scope="col">Submitted</th></tr></thead><tbody>'+H.map(function(x){return '<tr><td>'+esc(asgName(x.a))+'</td><td class="mono">'+esc(hwaDue(new Date(x.r.due)))+'</td><td>'+esc(HWA_ST[x.r.st])+'</td><td class="mono">'+(x.r.at?esc(hwaDue(new Date(x.r.at))):'—')+'</td></tr>'}).join('')+'</tbody></table></div>'+
+    '<div class="hwa-bar"><label class="field" for="hwaFu">Follow-up<select id="hwaFu" data-k="'+esc(s.key)+'">'+HWA_FU.map(function(f){return '<option value="'+f[0]+'"'+(f[0]===n.status?' selected':'')+'>'+f[1]+'</option>'}).join('')+'</select></label></div>'+
+    '<p class="lbl">Private notes (only staff can see them)</p>'+(n.notes&&n.notes.length?'<ul class="hwa-notes">'+n.notes.slice().reverse().map(function(x){return '<li><span class="muted">'+esc(hwaDue(new Date(x.ts)))+' · '+esc(x.by)+'</span><br>'+esc(x.t)+'</li>'}).join('')+'</ul>':'<p class="muted">No notes yet.</p>')+
+    '<label class="sr" for="hwaNote">New note</label><textarea id="hwaNote" rows="2" maxlength="1000" placeholder="e.g. Messaged the parent on Zalo."></textarea><div class="actions"><button type="button" class="btn sm" data-act="hwa-note" data-k="'+esc(s.key)+'">Save note</button></div></div>'}
+function renderHwa(){var el=$('#v-hwa');if(!el)return;if(!U||U.role!=='assistant'){el.innerHTML='';return}
+  if(AG.form&&AG.form.live&&$('#fSd')){AG.form.sd=$('#fSd').value;AG.form.dd=$('#fDd').value;AG.form.dt=$('#fDt').value;AG.form.nm=$('#fNm').value;if($('#fLink')){AG.form.link=$('#fLink').value;AG.form.src=$('#fSrc').value;AG.form.note=$('#fNote').value}}
+  var D=HWA.data,h='<div class="pad hwa"><div class="sechead"><h2>Homework &amp; Student Progress</h2><button type="button" class="btn sm" data-act="hwa-ref"'+(HWA.loading?' disabled':'')+'>'+(HWA.loading?'Loading…':'Refresh')+'</button></div>';
+  if(HWA.err)h+='<p class="err" role="alert">'+esc(HWA.err)+'</p>';
+  if(!D){el.innerHTML=h+(HWA.loading?'<p class="muted" role="status">Loading your classes…</p>':'')+'</div>';if(!HWA.loading&&!HWA.err)hwaLoad();return}
+  if(!D.classes.length){el.innerHTML=h+'<p class="lmempty" role="status"><b>No classes yet.</b><span>The admin has not given you a class. Ask the admin to add one.</span></p></div>';return}
+  h+='<div class="hwa-top"><label class="field" for="hwaCls">Class<select id="hwaCls"><option value="all">All my classes</option>'+D.classes.map(function(c){return '<option'+(c===HWA.cls?' selected':'')+'>'+esc(c)+'</option>'}).join('')+'</select></label>'+
+    '<div class="subtabs" role="tablist">'+[['overview','Dashboard'],['assign','Assignments'],['missing','Missing homework'],['watch','Students to watch']].map(function(t){return '<button role="tab" type="button" data-act="hwa-view" data-v="'+t[0]+'" aria-selected="'+(HWA.view===t[0])+'">'+t[1]+'</button>'}).join('')+'</div></div>';
+  h+=HWA.view==='assign'?hwaAssignHTML():HWA.view==='missing'?hwaMissingHTML():HWA.view==='watch'?hwaWatchHTML():hwaOverviewHTML();
+  el.innerHTML=h+'</div>';if(AG.form){AG.form.live=true;syncTree()}}
+function hwaAct(a,t){if(a.indexOf('hwa-')!==0)return false;
+  if(a==='hwa-ref'){HWA.msg='';hwaLoad();return true}
+  if(a==='hwa-view'){HWA.view=t.dataset.v;HWA.msg='';AG.form=null;renderHwa();return true}
+  if(a==='hwa-new'){var nc=$('#hwaNewCls'),cl=nc?nc.value:'';if(!cl)return true;HWA.newCls=cl;openForm(cl);renderHwa();return true}
+  if(a==='hwa-edit'){var ea=hwaA(t.dataset.id);if(ea){openForm(ea.cls,ea);renderHwa()}return true}
+  if(a==='hwa-cancel'){var ca=hwaA(t.dataset.id);if(!ca||!confirm('Cancel “'+asgName(ca)+'” for '+ca.cls+'? Students will no longer see it. This cannot be undone.'))return true;
+    hwaApi('hwa/asg',{op:'cancel',id:ca.id}).then(function(){toast('Assignment cancelled.');hwaLoad()},function(e){HWA.err=e.message;renderHwa()});return true}
+  if(a==='hwa-rep'){HWA.view='missing';HWA.rep.asg=t.dataset.id;renderHwa();return true}
+  if(a==='hwa-mode'){HWA.rep.mode=t.dataset.v==='reminder'?'reminder':'overdue';HWA.msg='';renderHwa();return true}
+  if(a==='hwa-copy'){var id=t.dataset.id,mode=HWA.rep.mode;HWA.msg='Refreshing…';renderHwa();
+    hwaLoad(function(){var R=hwaReport(id,mode);if(!R||R.empty){HWA.msg='After refreshing, nobody is on this list any more. Nothing was copied.';renderHwa();return}hwaCopy(R.text)});return true}
+  if(a==='hwa-stu'){HWA.stu=HWA.stu===t.dataset.k?null:t.dataset.k;renderHwa();return true}
+  if(a==='hwa-note'){var ta=$('#hwaNote'),tx=ta?ta.value.trim():'';if(!tx)return true;var k=t.dataset.k;
+    hwaApi('hwa/note',{key:k,text:tx}).then(function(d){HWA.data.notes=HWA.data.notes||{};HWA.data.notes[k]={status:d.status,notes:d.notes};renderHwa();toast('Note saved.')},function(e){HWA.err=e.message;renderHwa()});return true}
+  return false}
+document.addEventListener('change',function(e){var t=e.target;if(!t||!HWA.data||!$('#v-hwa')||$('#v-hwa').hidden)return;
+  if(t.id==='hwaCls'){HWA.cls=t.value;HWA.asg='';HWA.rep.asg='';renderHwa()}
+  if(t.id==='hwaAsg'){HWA.asg=t.value;renderHwa()}
+  if(t.id==='hwaSt'){HWA.st=t.value;renderHwa()}
+  if(t.id==='hwaRepAsg'){HWA.rep.asg=t.value;HWA.msg='';renderHwa()}
+  if(t.id==='hwaFu'){var k=t.getAttribute('data-k');hwaApi('hwa/note',{key:k,status:t.value}).then(function(d){HWA.data.notes=HWA.data.notes||{};HWA.data.notes[k]={status:d.status,notes:d.notes};toast('Follow-up saved.');renderHwa()},function(er){HWA.err=er.message;renderHwa()})}});
+/* ---------- Admin › Homework Assistants ---------- */
+var ASI={edit:null};
+function adAssistHTML(){var L=(AD.users||[]).filter(function(u){return u.role==='assistant'}),C=classListAll();
+  var cks=function(pre,sel){return '<div class="as-cls" role="group" aria-label="Classes">'+(C.length?C.map(function(c){return '<label class="ck"><input type="checkbox" data-ascls="'+pre+'" value="'+esc(c)+'"'+(sel.indexOf(c)>=0?' checked':'')+'> '+esc(c)+'</label>'}).join(''):'<span class="muted">No classes yet.</span>')+'</div>'};
+  var h='<section class="adform" aria-labelledby="asH"><h3 id="asH">Add a Homework Assistant</h3><p class="adform-n" style="margin:0 0 10px">A separate login that can only give homework, check who submitted and follow up, for the classes you tick. It cannot mark, change scores, award XP, manage accounts or see other classes.</p><div class="adform-g">'+
+    '<label class="field" for="asName">Name<input id="asName" maxlength="80" autocomplete="off"></label><label class="field" for="asEmail">Email<input id="asEmail" type="email" autocomplete="off"></label>'+
+    '<div class="field adpwf"><label for="asPw">Password</label><div class="adpw"><input id="asPw" type="text" autocomplete="off" spellcheck="false" placeholder="At least 6 characters"><button class="btn" type="button" data-act="ad-gen" data-for="asPw">Generate</button></div></div>'+
+    '<button class="btn pri adform-go" type="button" data-act="ad-as-add">Add assistant</button></div><p class="lbl" style="margin-top:12px">Classes</p>'+cks('new',[])+'</section>';
+  h+=L.length?'<div class="scroll adt"><table class="adtbl"><thead><tr><th class="c-nm">Name</th><th class="c-em">Email</th><th>Classes</th><th class="c-sm">Status</th><th class="c-ac"><span class="sr">Actions</span></th></tr></thead><tbody>'+L.map(function(u){var ed=ASI.edit===u.email;
+    return '<tr><td class="c-nm"><b>'+esc(u.name)+'</b></td><td class="c-em mono">'+esc(u.email)+'</td><td>'+(ed?cks('e',u.classes||[])+'<div class="actions"><button class="btn sm pri" type="button" data-act="ad-as-save" data-email="'+esc(u.email)+'">Save classes</button><button class="btn sm" type="button" data-act="ad-as-edit" data-email="">Cancel</button></div>':((u.classes||[]).length?(u.classes||[]).map(function(c){return '<span class="pill role">'+esc(c)+'</span>'}).join(' '):'<span class="muted">No classes</span>'))+'</td>'+
+      '<td class="c-sm">'+adStatusHTML(u)+'</td><td class="c-ac"><div class="acts">'+(ed?'':'<button class="btn sm" type="button" data-act="ad-as-edit" data-email="'+esc(u.email)+'">Classes</button>')+(u.status==='paused'?'<button class="btn sm" type="button" data-act="ad-on" data-email="'+esc(u.email)+'">Resume</button>':'<button class="btn sm" type="button" data-act="ad-as-off" data-email="'+esc(u.email)+'">Pause</button>')+'<button class="btn sm bad" type="button" data-act="ad-as-rm" data-email="'+esc(u.email)+'">Remove</button></div></td></tr>'}).join('')+'</tbody></table></div>':'<p class="muted">No Homework Assistants yet.</p>';
+  return h}
+function adAsCls(pre){return $$('[data-ascls="'+pre+'"]').filter(function(i){return i.checked}).map(function(i){return i.value})}
+function adAsAct(a,t){
+  if(a==='ad-as-add'){var nm=($('#asName')||{}).value||'',em=($('#asEmail')||{}).value||'',pw=($('#asPw')||{}).value||'';
+    adminApi('admin/assistants',{op:'add',name:nm.trim(),email:em.trim(),password:pw,classes:adAsCls('new')}).then(function(){toast('Homework Assistant added. Give them the email and password.');adLoad(true)},function(e){adSay(e.message)});return true}
+  if(a==='ad-as-edit'){ASI.edit=t.dataset.email||null;renderAdmin();return true}
+  if(a==='ad-as-save'){var se=t.dataset.email;adminApi('admin/assistants',{op:'set',email:se,classes:adAsCls('e')}).then(function(d){ASI.edit=null;adSet(se,{classes:d.classes||[]})(AD.users||[]);renderAdmin();toast('Classes saved. The change applies at once.')},function(e){adSay(e.message)});return true}
+  if(a==='ad-as-off'){var oe=t.dataset.email;adminApi('admin/active',{email:oe,active:false}).then(function(){adSet(oe,{status:'paused'})(AD.users||[]);renderAdmin();toast('Paused. They are signed out within 10 minutes.')},function(e){adSay(e.message)});return true}
+  if(a==='ad-as-rm'){var re=t.dataset.email;if(!confirm('Remove the Homework Assistant '+re+'? Their login stops working. Homework and notes stay.'))return true;
+    adminApi('admin/assistants',{op:'remove',email:re}).then(function(){AD.users=(AD.users||[]).filter(function(u){return u.email!==re});renderAdmin();toast('Removed.')},function(e){adSay(e.message)});return true}
+  return false}
 /* Admin › Season: show the season, preview the reset, start a new one (POST /api/admin/season). */
 var SEA={prev:null,err:'',busy:false};
 function seasonWeeks(c){return c&&c.start?Math.max(1,Math.floor((Date.now()-c.start)/(7*DAYMS))+1):0}
@@ -8155,6 +8465,7 @@ function adModalCheck(){var m0=AD.modal;setTimeout(function(){if(!m0||AD.modal!=
 function adAct(a,t){
   if(a.indexOf('ad-')!==0)return false;
   var who=t.dataset.email||'',u=adUser(who),nm=u.name||who;
+  if(adAsAct(a,t))return true;
   if(a==='ad-menu'){if(ADM&&ADM.btn===t)adMenuClose(true);else adMenuOpen(t);return true}
   if(a==='ad-sub'){if(AD.sub==='aitest'){var atx=$('#atText'),atk=$('#atTask');if(atx)AT.text=atx.value;if(atk)AT.task=atk.value}AD.sub=t.dataset.v;AD.err='';renderAdmin();return true}
   if(a==='ad-aitest'){adAiTestRun();return true}

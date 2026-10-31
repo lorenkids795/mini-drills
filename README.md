@@ -34,6 +34,12 @@ Upload cả thư mục này (index.html, md-config.js, md-backend.js, README.md,
 - Tạm khóa hoặc xóa giáo viên: không đăng nhập được nữa, thiết bị đang mở bị đăng xuất trong vòng 10 phút. Không xóa dữ liệu.
 - Firestore rules **không cần sửa** cho tính năng admin.
 
+## 3b2. Trợ lý bài tập (Homework Assistant)
+1. Đăng nhập admin → **Admin › Assistants** → điền Name, Email, bấm **Generate** (hoặc gõ mật khẩu ≥ 6 ký tự), tick các lớp → **Add assistant**.
+2. Gửi email + mật khẩu cho trợ lý; trợ lý đăng nhập bằng **Teacher sign in**.
+3. Đổi lớp: nút **Classes** → tick → **Save classes** (có hiệu lực ngay). **Pause** = tạm khóa, **Remove** = xóa đăng nhập (bài giao và ghi chú vẫn giữ).
+Không cần sửa `firestore.rules` hay thêm biến môi trường: mọi quyền của trợ lý được kiểm ở server (`/api/hwa/*`).
+
 ## 3c. Danh sách lớp từ Google Sheet
 1. Sheet cần dòng tiêu đề có cột **Họ và tên** và **Lớp** (tùy chọn: Giáo viên, Khối, Hiện tại, id). Các dòng tiêu đề phụ phía trên được bỏ qua.
 2. Lớp ghi theo giờ: `7H30`, `15H`, `17PM`… App hiển thị thành `7h30`, `15h`, `17h` và sắp theo giờ.

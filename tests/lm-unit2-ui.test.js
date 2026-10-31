@@ -170,7 +170,7 @@ t('Guided: three small exercises with answers from the facts (trend verb, highes
 });
 // ---------- P0: recognition (objective) and writing (never "passed") are separate; non-responses never open Independent ----------
 const GOOD_OV = 'Overall, visitors to Larkfield Museum and Corvale Museum increased over the period, while the number for Westmere Museum fell. Larkfield Museum also had the most visitors in every year shown.';
-const toGuided = (w, pass) => { const L1 = w.T.LU(); L1.ldone = true; L1.cpass = true; L1.stage = 'guided'; if (pass) { Object.assign(L1.g, G_OK); act(w, 'lu-gchk'); } return L1; };
+const toGuided = (w, pass) => { const L1 = w.T.LU(); L1.ldone = true; L1.cpass = true; L1.stage = 'guided'; if (pass) { Object.assign(L1.g, G_OK); act(w, 'lu-gchk'); w.T.luPut(w.MD_LM_U2, 'guided', Object.assign(w.T.luGet(w.MD_LM_U2, 'guided') || {}, { ideas: { 'kf.a.rise': true, 'kf.a.highest': true } })); } return L1; }; // + 2 ideas chosen
 const gd = (w) => w.T.luGet(w.MD_LM_U2, 'guided') || {};
 const setG = (w, o) => w.T.luPut(w.MD_LM_U2, 'guided', Object.assign(gd(w), o));
 const writeAll = (w, ov) => { setG(w, { w: { trend: 'Larkfield Museum and Corvale Museum rose overall, while Westmere Museum fell.', high: 'Larkfield Museum had the most visitors in every year.' } }); act(w, 'lu-wchk'); setG(w, { t: ov }); act(w, 'lu-gsub'); };
@@ -179,6 +179,8 @@ t('Guided recognition: under 70 % stays closed (retry); 5 / 6 opens the writing 
   Object.assign(L1.g, G_OK, { 't:museum-a': 'down', top: 'museum-b' }); act(w, 'lu-gchk'); let h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
   assert.ok(h.includes('Đúng 4 / 6 câu') && !h.includes('id="luW_trend"') && !L1.gpass && h.includes('Luyện nhận biết: đúng 4 / 6 · chưa đạt') && h.includes('Bài viết: chưa có lần viết nào'));
   act(w, 'lu-gredo'); Object.assign(L1.g, G_OK, { top: 'museum-b' }); act(w, 'lu-gchk'); h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
+  assert.ok(L1.gpass && h.includes('data-act="lu-gidea"') && !h.includes('id="luW_trend"'), 'ideas first');
+  w.T.luPut(w.MD_LM_U2, 'guided', { ideas: { 'kf.a.rise': true, 'kf.a.fall': true } }); h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
   assert.ok(L1.gpass && h.includes('id="luW_trend"') && h.includes('id="luW_high"') && h.includes('id="luW_note"') && !h.includes('id="luG"'), 'sentences first, overview box later');
   assert.ok(h.includes('<ul class="lupieces" lang="en"><li>Larkfield Museum increased between 2000 and 2020.</li>') && !h.includes('Westmere Museum had the most'));
   assert.ok(h.includes('· đạt') && !/data-s="independent"/.test(h), 'no way forward yet');
@@ -199,11 +201,13 @@ t('P0: each sentence is prechecked; the trends sentence is needed, the others ar
   const w = open(boot({ user: STU })); toGuided(w, true); setG(w, { w: { trend: 'dcd' } }); act(w, 'lu-wchk'); let h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
   assert.ok(!gd(w).wok && !h.includes('id="luG"') && h.includes(W.esc(copyOf('ui.pc.short').vi)));
   setG(w, { w: { trend: 'Larkfield Museum and Corvale Museum rose overall, while Westmere Museum fell.', note: '' } }); act(w, 'lu-wchk'); h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
+  assert.ok(!gd(w).wok && h.includes(W.esc(copyOf('ui.gd.wmin').vi)), 'the trend + at least one more sentence');
+  setG(w, { w: { trend: 'Larkfield Museum and Corvale Museum rose overall, while Westmere Museum fell.', high: 'Larkfield Museum had the most visitors in every year.' } }); act(w, 'lu-wchk'); h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
   assert.ok(gd(w).wok && h.includes('id="luG"') && h.includes(W.esc(copyOf('ui.pc.ok').vi)));
 });
 t('P0: a real two-sentence overview is saved as a practice attempt: "not assessed", never "passed"; Independent opens as "continue practising"', () => {
   const w = open(boot({ user: STU })); toGuided(w, true); writeAll(w, GOOD_OV); const h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
-  assert.ok(gd(w).sub && h.includes('Bài viết: chưa được đánh giá') && !/Bài viết: đạt|writing passed|mastered|bài viết.{0,20}(đạt|70)/i.test(h));
+  assert.ok(gd(w).sub && h.includes('Đã luyện viết — bài viết chưa được đánh giá') && !/Bài viết: đạt|writing passed|mastered|bài viết.{0,20}(đạt|70)/i.test(h));
   assert.ok(h.includes('>Tiếp tục luyện (bài viết chưa được đánh giá)<') && !/data-s="independent" disabled/.test(h) && h.includes('data-act="lu-grv"'));
   act(w, 'lu-go', { s: 'independent' }); assert.strictEqual(w.T.LU().stage, 'independent');
 });
@@ -220,7 +224,7 @@ t('P0: admin preview opens every stage but says so; it never makes a student att
 });
 t('P0: language switch keeps sentences, overview and the "saved for practice" state', () => {
   const w = open(boot({ user: STU })); toGuided(w, true); writeAll(w, GOOD_OV); act(w, 'lu-lang', { v: 'en' }); const h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
-  assert.ok(gd(w).sub && h.includes('Writing: not assessed') && h.includes(W.esc(GOOD_OV)) && h.includes('Westmere Museum fell.'));
+  assert.ok(gd(w).sub && h.includes('Practice attempted — writing not assessed') && h.includes(W.esc(GOOD_OV)) && h.includes('Westmere Museum fell.'));
 });
 // ---------- Independent / Review ----------
 t('Independent: Chart B, a hint that opens only the Chart A sample; students see no B sample or feature', () => {
@@ -329,6 +333,78 @@ t('index.html loads the content after md-chart.js and before the app', () => {
   assert.ok(i('md-chart.js') > 0 && i('md-chart.js') < i('lm-engine.js') && i('lm-engine.js') < i('lm-unit2.js') && i('lm-unit2.js') < app);
 });
 t('Unit 2 may be "published" only when the release check passes', () => { if (L.status !== 'published') { assert.strictEqual(L.status, 'unpublished'); return; } const r = W.LMX.lmCheck(U2, true); assert.strictEqual(r.errors.length, 0); });
+
+// ---------- final refinement (10/2026) ----------
+const LBL_B = B.chart.series.map((x) => x.label), indep = (w) => w.T.luGet(w.MD_LM_U2, 'indep') || {};
+const sigB = () => 'lm-u2-b|' + LBL_B.join('|');
+t('fresh Demo samples use the current Chart B names (Chatora / Pixlo / Notivo) and bound facts, never App X / Y / Z', () => {
+  ['u2.s.i.ov', 'u2.s.r.ov'].forEach((id) => { const x = U2.claims.find((c) => c.id === id); const txt = resolved(x, x.en);
+    assert.ok(LBL_B.every((l) => txt.includes(l)) && !/App [XYZ]/.test(txt), id + ': ' + txt); assert.ok(Object.values(x.binds).every((b) => /^lm-u2-b@1:/.test(b))); });
+  assert.ok(!/App [XYZ]/.test(fs.readFileSync(path.join(ROOT, 'lm-unit2.js'), 'utf8')), 'no old names left in the content');
+});
+t('stale draft: saved for an older chart (cv) → notice, "I\'m done" blocked, text untouched; Keep editing / Start fresh keep the old text', () => {
+  const w = open(boot({ user: STU })); w.T.LU().stage = 'independent';
+  const old = 'Overall, the number of daily users of App Y and App Z increased, while the figure for App X declined.';
+  w.localStorage.setItem(w.T.luKey(w.MD_LM_U2, 'indep'), JSON.stringify({ t: old, cv: 'lm-u2-b|App X|App Y|App Z' }));
+  let h = w.T.luStageHTML(w.MD_LM_U2, 'independent'); assert.ok(h.includes(W.esc(copyOf('ui.dr.stale').vi)) && h.includes(W.esc(old)), 'notice + the text is still in the box');
+  act(w, 'lu-rv'); assert.strictEqual(w.T.LU().stage, 'independent', 'cannot finish a stale draft'); assert.strictEqual(indep(w).t, old, 'never rewritten');
+  act(w, 'lu-stale-new', { a: 'indep' }); const d = indep(w); assert.ok(!d.t && d.arch === old && d.cv === sigB(), 'start fresh: old text kept read-only');
+  h = w.T.luStageHTML(w.MD_LM_U2, 'independent'); assert.ok(h.includes('class="lufaq luarch"') && h.includes(W.esc(old)) && !h.includes(W.esc(copyOf('ui.dr.stale').vi)));
+  const k = open(boot({ user: STU })); k.localStorage.setItem(k.T.luKey(k.MD_LM_U2, 'indep'), JSON.stringify({ t: old, cv: 'old' })); act(k, 'lu-stale-keep', { a: 'indep' });
+  assert.ok(indep(k).t === old && indep(k).cv === sigB() && !k.T.luStageHTML(k.MD_LM_U2, 'independent').includes('lustale'), 'keep editing: same text, notice gone');
+});
+t('legacy draft without metadata: soft notice only when it names no current line; a normal draft is stamped with the chart version', () => {
+  const w = open(boot({ user: STU })); w.localStorage.setItem(w.T.luKey(w.MD_LM_U2, 'indep'), JSON.stringify({ t: 'App X fell and App Y rose over the period.' }));
+  let h = w.T.luStageHTML(w.MD_LM_U2, 'independent'); assert.ok(h.includes(W.esc(copyOf('ui.dr.legacy').vi)));
+  act(w, 'lu-rv'); assert.ok(!/ui\.dr\.staleBlock/.test(String(w._toast)) && w._toast !== copyOf('ui.dr.staleBlock').vi, 'uncertain = not blocked (the usual precheck still applies)');
+  const g = open(boot({ user: STU })); g.localStorage.setItem(g.T.luKey(g.MD_LM_U2, 'indep'), JSON.stringify({ t: 'Pixlo rose while Chatora fell.' }));
+  assert.ok(!g.T.luStageHTML(g.MD_LM_U2, 'independent').includes('lustale')); g.T.luPut(g.MD_LM_U2, 'indep', indep(g)); assert.strictEqual(indep(g).cv, sigB());
+});
+t('Demo helper: never overwrites text the tester typed; off = the real draft is back; ordinary students have no Demo helper', () => {
+  const w = open(boot({ user: { email: 'tess@x.com', role: 'student' } })); w.testerEm = () => ({ 'tess@x.com': 1 });
+  w.T.luPut(w.MD_LM_U2, 'guided', { w: { trend: 'My own trend sentence about Larkfield Museum rising.' } });
+  act(w, 'lu-af'); w.T.luStageHTML(w.MD_LM_U2, 'guided'); const g = w.T.luGet(w.MD_LM_U2, 'guided');
+  assert.strictEqual(g.w.trend, 'My own trend sentence about Larkfield Museum rising.'); assert.ok(g.w.high && Object.keys(g.ideas).length >= 2);
+  act(w, 'lu-af'); assert.strictEqual(w.T.luGet(w.MD_LM_U2, 'guided').w.high, undefined); assert.ok(!w.T.LU().af);
+  assert.ok(!open(boot({ user: STU })).T.luHTML(L, U2).includes('Demo helper'));
+});
+t('Guided: ideas are checked evidence (no full model sentences), 2 needed; model sentences only inside "Need help?" (closed); Combine fills the overview box', () => {
+  const w = open(boot({ user: STU })); toGuided(w, true); w.T.luPut(w.MD_LM_U2, 'guided', { ideas: {} }); let h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
+  assert.ok(h.includes('data-act="lu-gidea"') && h.includes(W.esc(copyOf('ui.gd.i.need').vi)) && !h.includes('lupieces'));
+  act(w, 'lu-gidea', { id: 'kf.a.rise' }); act(w, 'lu-gidea', { id: 'kf.a.highest' }); h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
+  assert.ok(/<details class="lufaq luhelp"><summary>[^<]+<\/summary>[\s\S]*class="lupieces"/.test(h) && !/<details class="lufaq luhelp" open/.test(h), 'help is hidden until opened');
+  setG(w, { w: { trend: 'Larkfield Museum and Corvale Museum rose overall, while Westmere Museum fell.', high: 'Larkfield Museum had the most visitors in every year.' } }); act(w, 'lu-wchk'); act(w, 'lu-gcomb');
+  assert.strictEqual(gd(w).t, 'Larkfield Museum and Corvale Museum rose overall, while Westmere Museum fell. Larkfield Museum had the most visitors in every year.');
+  act(w, 'lu-gsub'); h = w.T.luStageHTML(w.MD_LM_U2, 'guided'); assert.ok(gd(w).sub && h.includes('Đã luyện viết — bài viết chưa được đánh giá') && !/đạt bài viết|writing passed|band \d/i.test(h));
+});
+t('precheck is an attempt guard, not a grader: dcd / gfg / frf rejected; long nonsense with chart words may pass but is still only "not assessed"', () => {
+  const w = open(boot({ user: STU })); // the precheck is tested through the Guided step (same luPre / lmPrecheck as everywhere)
+  toGuided(w, true); ['dcd', 'gfg gfg gfg', 'frf'].forEach((x) => { setG(w, { w: { trend: x, high: x } }); act(w, 'lu-wchk'); assert.ok(!gd(w).wok, x); });
+  setG(w, { w: { trend: 'Larkfield Museum purple went sideways Corvale Museum yesterday banana while Westmere Museum.', high: 'Larkfield Museum had the most visitors in every year.' } }); act(w, 'lu-wchk');
+  setG(w, { t: 'Larkfield Museum purple went sideways Corvale Museum yesterday banana while Westmere Museum rose.' }); act(w, 'lu-gsub'); const h = w.T.luStageHTML(w.MD_LM_U2, 'guided');
+  const pills = (h.match(/<span class="pill[^"]*">[^<]*<\/span>/g) || []).join(' ');
+  assert.ok(/chưa được đánh giá|chưa có lần viết nào/.test(pills), 'the writing pill never says passed: ' + pills); assert.ok(!/Band \d|mastery|writing passed/i.test(h), 'no band, no writing score');
+});
+t('Independent draft survives stage changes and language switches (versioned key); Chart B text never shows before Independent', () => {
+  const w = open(boot({ user: STU })); w.T.LU().stage = 'independent'; w.T.luPut(w.MD_LM_U2, 'indep', { t: 'Pixlo rose while Chatora fell overall.' });
+  act(w, 'lu-go', { s: 'learn' }); act(w, 'lu-lang', { v: 'en' }); act(w, 'lu-go', { s: 'independent' });
+  assert.ok(w.T.luStageHTML(w.MD_LM_U2, 'independent').includes('Pixlo rose while Chatora fell overall.') && /md-lm:lm-writing-ac-t1-u2:v1:indep/.test(w.T.luKey(w.MD_LM_U2, 'indep')));
+  ['learn', 'controlled', 'guided'].forEach((st) => { const hh = w.T.luStageHTML(w.MD_LM_U2, st); assert.ok(!LBL_B.some((l) => hh.includes(l)), st + ' shows no Chart B name'); });
+});
+t('Review: frozen first draft, self-check note, examples closed, revision box starts from the draft; Save → Before / After "not automatically assessed"; unchanged → no improvement claimed', () => {
+  const w = open(boot({ user: STU })); const first = 'Overall, Pixlo and Notivo gained users, while Chatora lost users. Chatora led at first, but Pixlo had the most users by 2024.';
+  w.T.luPut(w.MD_LM_U2, 'indep', { t: first, orig: first, rv: true }); w.T.LU().stage = 'review'; let h = w.T.luStageHTML(w.MD_LM_U2, 'review');
+  assert.ok(h.indexOf(W.esc(copyOf('ui.rv.s1').vi)) < h.indexOf(W.esc(copyOf('ui.rv.s2').vi)) && h.indexOf(W.esc(copyOf('ui.rv.s2').vi)) < h.indexOf(W.esc(copyOf('ui.rv.s3').vi)) && h.indexOf(W.esc(copyOf('ui.rv.s3').vi)) < h.indexOf(W.esc(copyOf('ui.rv.s4').vi)));
+  assert.ok(h.includes(W.esc(copyOf('ui.rv.selfNote').vi)) && /<details class="lucard lufaq lurvex">/.test(h) && /id="luI"[^>]*>Overall, Pixlo and Notivo gained users/.test(h));
+  act(w, 'lu-rvsave'); h = w.T.luStageHTML(w.MD_LM_U2, 'review'); assert.ok(indep(w).rev.same && h.includes(W.esc(copyOf('ui.rv.same').vi)) && !h.includes(W.esc(copyOf('ui.rv.saved').vi)));
+  const better = 'Overall, the number of daily users of Pixlo and Notivo rose, while the figure for Chatora fell. Although Chatora had the most users at first, Pixlo had overtaken it by 2024.';
+  w.T.luPut(w.MD_LM_U2, 'indep', Object.assign(indep(w), { t: better })); act(w, 'lu-rvsave'); h = w.T.luStageHTML(w.MD_LM_U2, 'review');
+  assert.ok(!indep(w).rev.same && indep(w).orig === first && /class="luba"/.test(h) && h.includes(W.esc(copyOf('ui.rv.saved').vi)) && !/Band \d|improved/i.test(h));
+});
+t('every new UI id exists in EN + VI and is pending (no automatic approval)', () => {
+  ['ui.gd.i.h', 'ui.gd.help', 'ui.gd.comb', 'ui.st.attempted', 'ui.dr.stale', 'ui.dr.legacy', 'ui.btn.staleNew', 'ui.rv.s1', 'ui.rv.s5', 'ui.rv.saved', 'ui.rv.same'].forEach((id) => { const c = copyOf(id); assert.ok(c && c.en && c.vi && c.review === 'pending', id); });
+  assert.strictEqual(L.status, 'unpublished');
+});
 
 console.log('---- ' + pass + '/' + (pass + fail) + ' passed');
 process.exit(fail ? 1 : 0);

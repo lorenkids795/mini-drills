@@ -92,7 +92,7 @@ const flush = async () => { for (let i = 0; i < 20; i++) await new Promise((r) =
   });
   await t('server: a teacher email (TEACHERS or added by the admin) cannot create its own password, even with the old setup key', () => {
     const S = require('fs').readFileSync(require('path').join(__dirname, '..', 'functions', 'api', '[[path]].js'), 'utf8');
-    assert.ok(/if \(teachers\(env\)\.indexOf\(email\) >= 0 \|\| \(await staffMap\(env\)\)\[email\]\) \{\s*return fail\('Teacher accounts are set up by the admin/.test(S));
+    assert.ok(/if \(teachers\(env\)\.indexOf\(email\) >= 0 \|\| \(await staffMap\(env\)\)\[email\] \|\| \(await assistMap\(env\)\)\[email\]\) \{\s*return fail\('Teacher accounts are set up by the admin/.test(S));
     assert.ok(!/body\.setupKey|ADMIN_SETUP_KEY\)\.length/.test(S), 'the setup-key route is gone');
   });
   await t('every input and select has an id and a name (autofill)', () => { const B = boot(); walk(B.root, (e) => { if (e.tagName === 'INPUT' || e.tagName === 'SELECT') { assert.ok(e.id, 'id'); assert.strictEqual(e.attrs.name, e.id); } }); });

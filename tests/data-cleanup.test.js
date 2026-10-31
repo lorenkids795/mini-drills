@@ -143,13 +143,19 @@ const world = () => ({
   });
   // ---------- Reading header ----------
   await t('Reading: one header (back, title, "Cam · Test · Reading" | step menu, timer, settings) + progress bar; level, text size, demo inside settings; no "Selected excerpts"', async () => {
-    const HR = 'parseReading:parseReading,EXAMPLE_R:EXAMPLE_R,renderRLesson:renderRLesson,get RM(){return RM},rmHeadHTML:rmHeadHTML,rmToolsHTML:rmToolsHTML';
+    const HR = 'parseReading:parseReading,EXAMPLE_R:EXAMPLE_R,renderRLesson:renderRLesson,get RM(){return RM},rmHeadHTML:rmHeadHTML,rmToolsHTML:rmToolsHTML,rmDockHTML:rmDockHTML';
     const B = boot({ hooks: HR }), r = B.T.parseReading(JSON.parse(B.T.EXAMPLE_R)); B.T.renderRLesson({ id: 'r1', skill: 'reading', title: 'Cycling in the City', kind: 'reading-ms', rl: r.data.rlesson, qs: r.data.qs }, '', '', null);
     let h = B.el('libBody').innerHTML; assert.ok(/<div class="rmhd2">[\s\S]*<h2>Cycling in the City<\/h2><p>Cam 14 · Test 1 · Reading<\/p>/.test(h) && h.includes('data-act="nav" data-book="cam14"'));
     assert.ok(/<select class="rmstepsel" id="rmStepSel"><option value="0" selected>Step 1\/4 · Deep reading<\/option><option value="1" disabled>/.test(h) && h.includes('id="rmTimer"') && h.includes('aria-label="Lesson settings (level, text size)"'));
-    assert.ok(/class="rmprog"[^>]*aria-valuenow="0"[^>]*><span style="width:0%">/.test(h) && !/Selected excerpts|lsbar/.test(h) && !h.includes('id="dmBar"'), 'demo only inside the settings panel');
-    B.T.RM.chk[0] = 1; B.T.RM.st = 1; assert.ok(/aria-valuenow="1"[^>]*><span style="width:25%">/.test(B.T.rmHeadHTML()), 'progress from real state');
+    assert.ok(!/class="rmprog"/.test(h) && !/Selected excerpts|lsbar/.test(h) && !h.includes('id="dmBar"'), 'no long bar under the title; demo only inside the settings panel');
+    // Option A: two cards + dock built from the real questions of this step
+    const ids = h.match(/data-rmq="[a-z]\d+"/g) || [], qn = h.match(/class="rmqn[^"]*" data-act="rm-qn" data-q="[a-z]\d+"/g) || [];
+    assert.ok(/<section class="rmpsg"[^>]*><div class="rmph"><h3>Reading passage<\/h3>/.test(h) && /<section class="rmqs"[^>]*><div class="rmph"><h3>Questions 1–\d+<\/h3>/.test(h));
+    assert.ok(qn.length > 0 && qn.length === ids.length, 'one navigator button per real question (' + qn.length + ' / ' + ids.length + ')');
+    assert.ok(new RegExp('<b id="rmDCnt">0 / ' + qn.length + ' answered</b>').test(h) && /<span class="rmrng">Q1–\d+<\/span>/.test(h) && /data-act="rm-check"/.test(h));
+    B.T.RM.k[0] = 'protected'; assert.ok(/1 \/ \d+ answered/.test(B.T.rmDockHTML('')) && /class="rmqn a" data-act="rm-qn" data-q="k0"/.test(B.T.rmDockHTML('')), 'answered state from the real answers');
     B.T.RM.fsOpen = true; h = B.T.rmToolsHTML(); assert.ok(h.includes('role="dialog" aria-label="Lesson settings"') && h.includes('data-act="rm-fsv"') && h.includes('id="dmBar"'), 'teacher: demo in settings');
+    assert.ok((h.match(/<section class="rmsetg">/g) || []).length >= 2 && /role="radiogroup" aria-label="Text size"/.test(h) && (h.match(/role="radio" aria-checked="true"/g) || []).length === 1, 'grouped settings, one text size selected');
     const S = boot({ hooks: HR, user: { name: 'S', email: 's@x.com', role: 'student', cls: 'A' } }), r2 = S.T.parseReading(JSON.parse(S.T.EXAMPLE_R)); S.T.renderRLesson({ id: 'rm1', skill: 'reading', title: 'x', kind: 'reading-ms', rl: r2.data.rlesson, qs: r2.data.qs }, '', '', null); S.T.RM.fsOpen = true;
     assert.ok(!S.T.rmToolsHTML().includes('id="dmBar"'), 'no demo helper for a real student');
   });

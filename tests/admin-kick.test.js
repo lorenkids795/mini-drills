@@ -142,7 +142,8 @@ const kicks = (B) => B.W.calls.filter((c) => /\/api\/admin\/kick$/.test(c.url));
     assert.strictEqual(B.W.asked, 1); const k = kicks(B); assert.strictEqual(k.length, 1); assert.deepStrictEqual(JSON.parse(k[0].opt.body), { email: '3667@gmail.com' });
     assert.ok(!B.AD.users.some((x) => x.email === '3667@gmail.com')); assert.ok(/was kicked/.test(B.toast()));
   });
-  await t('browser dialog answered Cancel: nothing is sent', async () => { const B = boot({ check: true, visible: false, answer: false }); B.press({ act: 'ad-kick', email: '3667@gmail.com' }); await B.flush(); assert.strictEqual(B.W.asked, 1); assert.strictEqual(kicks(B).length, 0); });
+  await t('browser dialog answered Cancel: nothing is sent', async () => { const 
+    B = boot({ check: true, visible: false, answer: false }); B.press({ act: 'ad-kick', email: '3667@gmail.com' }); await B.flush(); assert.strictEqual(B.W.asked, 1); assert.strictEqual(kicks(B).length, 0); });
   await t('browser dialog + server error: the error is shown (alert + message), row kept', async () => {
     const B = boot({ check: true, visible: false }); B.W.reply = () => ({ status: 500, body: { error: 'Firestore write failed.' } });
     B.press({ act: 'ad-kick', email: 'nghiatucayfai@gmail.com' }); await B.flush(); assert.ok(/Firestore write failed/.test(B.W.alerted)); assert.ok(B.AD.users.some((x) => x.email === 'nghiatucayfai@gmail.com'));

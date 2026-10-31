@@ -417,13 +417,19 @@ async function takenSet(env) {
 async function staffMap(env) {
   return (await env.MD_KV.get('staff', 'json')) || {};
 }
-// -> { role, adm, name } or null. Order: ADMIN_EMAIL, then staff / TEACHERS, then a student in the roster.
+// Homework Assistants: KV 'assist' = { email: { name, classes: [class labels], ts } }, set only by the admin (admin/assistants).
+async function assistMap(env) {
+  return (await env.MD_KV.get('assist', 'json')) || {};
+}
+// -> { role, adm, name } or null. Order: ADMIN_EMAIL, then staff / TEACHERS, then a Homework Assistant, then a student in the roster.
 async function roleOf(env, email) {
   if (!email) return null;
   if (email === adminEmail(env)) return { role: 'teacher', adm: true, name: 'Admin' };
   const st = await staffMap(env);
   if (st[email]) return { role: 'teacher', adm: false, name: st[email].name || 'Teacher' };
   if (teachers(env).indexOf(email) >= 0) return { role: 'teacher', adm: false, name: 'Teacher' };
+  const as = await assistMap(env);
+  if (as[email]) return { role: 'assistant', adm: false, name: as[email].name || 'Homework Assistant' };
   const row = await fsGet(env, 'roster', email);
   if (row && row.data.role !== 'teacher') return { role: 'student', adm: false, name: row.data.name };
   return null;
@@ -569,6 +575,198 @@ async function audioServe(env, request, id) {
   return new Response(head ? null : a.buf, { status: 200, headers: Object.assign({}, base, { 'Content-Length': String(total) }) });
 }
 
+// External homework screenshots: POST /api/image?kind=hwshot (signed-in user, Bearer ID token), body = the image.
+// Stored like audio (R2 'img/<id>' when MD_AUDIO is bound, otherwise KV 'img:<id>', 400 days), never inside Firestore:
+// the student's hwdone document only keeps {id, url, ts}. GET /api/image/<id> = the file (random 128-bit id).
+const IMG_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
+const IMG_MAX = 5 * 1024 * 1024;
+async function imageUpload(env, request, url, ip) {
+  if (String(url.searchParams.get('kind') || '') !== 'hwshot') return fail('Unknown image kind.');
+  const who = await idUser(env, request);
+  if (!who) return needSignIn();
+  const type = String(request.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase();
+  if (IMG_TYPES.indexOf(type) < 0) return fail('Use a PNG, JPG, WebP or GIF picture.', 415);
+  if (Number(request.headers.get('Content-Length') || 0) > IMG_MAX) return fail('The picture is too big (5 MB at most).', 413);
+  if ((await bump(env, 'iup:' + ip, 3600)) > 30) return fail('Too many uploads from this network. Try again in an hour.', 429);
+  if ((await bump(env, 'iue:' + who.em, 3600)) > 20) return fail('Too many uploads in one hour. Try again later.', 429);
+  const buf = await request.arrayBuffer();
+  if (buf.byteLength > IMG_MAX) return fail('The picture is too big (5 MB at most).', 413);
+  if (buf.byteLength < 100) return fail('The picture is empty.');
+  const id = b64url(crypto.getRandomValues(new Uint8Array(16)));
+  const meta = { type, size: buf.byteLength, by: who.em, kind: 'hwshot', ts: Date.now() };
+  if (env.MD_AUDIO) {
+    const cm = {}; Object.keys(meta).forEach((k) => { cm[k] = String(meta[k]); });
+    await env.MD_AUDIO.put('img/' + id, buf, { httpMetadata: { contentType: type }, customMetadata: cm });
+  } else await env.MD_KV.put('img:' + id, buf, { metadata: meta, expirationTtl: 400 * 86400 });
+  return json({ id, url: '/api/image/' + id, size: buf.byteLength });
+}
+async function imageServe(env, request, id) {
+  let buf = null, type = 'image/jpeg';
+  if (env.MD_AUDIO) { const o = await env.MD_AUDIO.get('img/' + id); if (o) { buf = await o.arrayBuffer(); type = (o.httpMetadata && o.httpMetadata.contentType) || type; } }
+  else { const r = await env.MD_KV.getWithMetadata('img:' + id, 'arrayBuffer'); if (r && r.value) { buf = r.value; type = (r.metadata && r.metadata.type) || type; } }
+  if (!buf) return new Response('Not found', { status: 404, headers: { 'Cache-Control': 'no-store' } });
+  return new Response(request.method === 'HEAD' ? null : buf, { status: 200, headers: { 'Content-Type': type, 'Content-Length': String(buf.byteLength), 'Cache-Control': 'private, max-age=31536000, immutable', 'X-Content-Type-Options': 'nosniff' } });
+}
+
+// POST /api/admin/assistants {op:'list'|'add'|'set'|'remove', email, name?, password?, classes?[]} (X-Admin-Key).
+// add: a new Homework Assistant (not a student, teacher or admin email), password typed by the admin; set: replace the classes.
+async function adminAssistants(env, body) {
+  const op = String(body.op || 'list'), email = normEmail(body.email), am = await assistMap(env);
+  const cls = (Array.isArray(body.classes) ? body.classes : []).map((c) => String(c || '').trim().slice(0, 40)).filter(Boolean).filter((c, i, a) => a.indexOf(c) === i).slice(0, 30);
+  if (op === 'list') return json({ assistants: Object.keys(am).map((e) => ({ email: e, name: am[e].name, classes: am[e].classes || [] })) });
+  if (!emailOk(email)) return fail('Enter a valid email.');
+  if (op === 'add') {
+    const name = String(body.name || '').trim().slice(0, 80), pw = String(body.password || '');
+    if (!name) return fail('Enter a name.');
+    if (pw.length < 6) return fail('The password needs at least 6 characters.');
+    if (am[email]) return fail('This email is already a Homework Assistant.', 409);
+    const who = await roleOf(env, email);
+    if (who) return fail('This email is already a ' + (who.adm ? 'admin' : who.role) + ' account. Use a separate email for the Homework Assistant.', 409);
+    am[email] = { name, classes: cls, ts: Date.now() };
+    await env.MD_KV.put('assist', JSON.stringify(am));
+    await savePassword(env, email, pw);
+    await env.MD_KV.delete('off:' + email);
+    return json({ ok: true });
+  }
+  if (!am[email]) return fail('This Homework Assistant was not found.', 404);
+  if (op === 'set') { am[email].classes = cls; await env.MD_KV.put('assist', JSON.stringify(am)); return json({ ok: true, classes: cls }); }
+  if (op === 'remove') {
+    delete am[email];
+    await env.MD_KV.put('assist', JSON.stringify(am));
+    await env.MD_KV.delete('acct:' + email);
+    await env.MD_KV.put('off:' + email, 'kicked');
+    return json({ ok: true });
+  }
+  return fail('Unknown operation.');
+}
+
+/* ---------- Homework Assistant workspace (/api/hwa/*) ----------
+   Every call: a valid Firebase ID token with role 'assistant', the account still in KV 'assist' and not paused.
+   The allowed classes are read from KV on EVERY call (revoking a class works at once), never from the request.
+   Students are sent as {key, name, cls}: key = a hash of the email, so the assistant never gets emails. */
+const HWA_FOLLOW = ['none', 'sent', 'waiting', 'resolved'];
+async function hwaScope(env, request) {
+  const who = await idUser(env, request);
+  if (!who) return { res: needSignIn() };
+  if (who.role !== 'assistant') return { res: fail('This page is only for Homework Assistants.', 403) };
+  const am = (await assistMap(env))[who.em];
+  if (!am) return { res: fail('Your Homework Assistant access was removed. Ask the admin.', 403) };
+  if (await offState(env, who.em)) return { res: fail('Your account is paused. Ask the admin.', 403) };
+  return { who, classes: (am.classes || []).slice(), name: am.name };
+}
+async function hwaKey(email) { return 'k' + (await sha256Hex('hwa|' + normEmail(email))).slice(0, 20); }
+// the students of the allowed classes (testers and removed students left out)
+async function hwaStudents(env, classes) {
+  const removed = {};
+  await Promise.all(classes.map(async (c) => { const d = await fsGet(env, 'classes', slug(c)); ((d && d.data && d.data.removed) || []).forEach((e) => { removed[normEmail(e)] = 1; }); }));
+  const rows = (await fsList(env, 'roster')).filter((r) => r.role !== 'teacher' && r.tester !== true && classes.indexOf(r.cls) >= 0 && !removed[normEmail(r.email || r.id)]);
+  return Promise.all(rows.map(async (r) => { const em = normEmail(r.email || r.id); return { em, key: await hwaKey(em), name: r.name || '', cls: r.cls }; }));
+}
+function hwaNormAsg(a) {
+  const x = Object.assign({}, a);
+  if (x.start == null && x.weekStart) { const s = new Date(x.weekStart + 'T00:00:00'); x.start = s.getTime(); x.due = s.getTime() + 6 * 864e5 + 22 * 3600e3; }
+  if (!Array.isArray(x.ex)) x.ex = [];
+  return x;
+}
+const PASS_DAYS = { day: 1, week: 7 };
+// status of one student for one assignment (same rules as the app): extension = late pass; Mini Drills = every exercise of the
+// assignment has an attempt since the send date; external = the screenshot in hwdone. done | late | missing | pending (+ at)
+function hwaStatus(a, atts, hw, pass, now) {
+  const due = a.due + (pass && PASS_DAYS[pass.kind] ? PASS_DAYS[pass.kind] * 864e5 : 0);
+  let at = 0;
+  if (a.type === 'external') { at = hw && hw.shot && Number(hw.shot.ts) ? Number(hw.shot.ts) : 0; }
+  else {
+    const ex = a.ex || [];
+    if (!ex.length) return { st: 'none', due };
+    for (const id of ex) {
+      const ts = atts.filter((t) => t.ex === id && t.ts >= a.start).map((t) => t.ts).sort((x, y) => x - y)[0];
+      if (!ts) { at = 0; break; }
+      at = Math.max(at, ts);
+    }
+  }
+  if (at) return { st: at <= due ? 'done' : 'late', at, due, ext: !!pass };
+  return { st: now > due ? 'missing' : 'pending', due, ext: !!pass };
+}
+async function hwaData(env, request, body) {
+  const sc = await hwaScope(env, request);
+  if (sc.res) return sc.res;
+  const now = Date.now(), from = now - Math.min(180, Math.max(7, Number(body.days) || 60)) * 864e5;
+  const stu = await hwaStudents(env, sc.classes);
+  const asg = (await fsList(env, 'assignments')).map(hwaNormAsg).filter((a) => sc.classes.indexOf(a.cls) >= 0 && (a.due >= from || a.start >= from));
+  const byEm = {};
+  stu.forEach((s) => { byEm[s.em] = s; });
+  const atts = {};
+  await Promise.all(sc.classes.map(async (c) => {
+    (await fsQueryDocs(env, 'attempts', 'cls', c)).forEach((t) => { const em = normEmail(t.email); if (byEm[em] && Number(t.ts) >= from - 30 * 864e5) (atts[em] = atts[em] || []).push({ ex: t.ex, ts: Number(t.ts) }); });
+  }));
+  const status = {};
+  await Promise.all(asg.map(async (a) => {
+    const hw = {}, ps = {};
+    (await fsQueryDocs(env, 'hwdone', 'asgId', a.id)).forEach((d) => { const em = normEmail(d.email); if (!hw[em] || (d.updatedAt || d.ts || 0) > (hw[em].updatedAt || hw[em].ts || 0)) hw[em] = d; });
+    (await fsQueryDocs(env, 'passes', 'asgId', a.id)).forEach((d) => { ps[normEmail(d.email)] = d; });
+    const m = {};
+    stu.filter((s) => s.cls === a.cls).forEach((s) => {
+      const r = a.start > now ? { st: 'upcoming', due: a.due } : hwaStatus(a, atts[s.em] || [], hw[s.em], ps[s.em], now);
+      if (a.type === 'external' && hw[s.em] && hw[s.em].shot && /^\/api\/image\/[A-Za-z0-9_-]{22}$/.test(String(hw[s.em].shot.url || ''))) r.shot = String(hw[s.em].shot.url);
+      m[s.key] = r;
+    });
+    status[a.id] = m;
+  }));
+  const notes = {};
+  await Promise.all(stu.map(async (s) => { const d = await fsGet(env, 'hwnotes', slug(s.em)); if (d && d.data) notes[s.key] = { status: d.data.status || 'none', notes: (d.data.notes || []).slice(-20) }; }));
+  return json({
+    me: { name: sc.name }, classes: sc.classes, now, from,
+    students: stu.map((s) => ({ key: s.key, name: s.name, cls: s.cls })),
+    assignments: asg.map((a) => ({ id: a.id, cls: a.cls, name: a.name || '', start: a.start, due: a.due, type: a.type === 'external' ? 'external' : 'mini', ex: a.ex, link: a.link || '', src: a.src || '', note: a.note || '' })),
+    status, notes,
+  });
+}
+// create / edit / cancel (= delete) an assignment of an allowed class. The class of an existing assignment is checked too.
+async function hwaAsg(env, request, body) {
+  const sc = await hwaScope(env, request);
+  if (sc.res) return sc.res;
+  const op = String(body.op || ''), id = String(body.id || '');
+  if (id && !/^[A-Za-z0-9_-]{1,100}$/.test(id)) return fail('Bad assignment id.');
+  const old = id ? await fsGet(env, 'assignments', id) : null;
+  if (old && sc.classes.indexOf(old.data.cls) < 0) return fail('This assignment is not in your classes.', 403);
+  if (op === 'cancel') {
+    if (!old) return fail('This assignment was not found.', 404);
+    await fsDelete(env, 'assignments', id);
+    return json({ ok: true });
+  }
+  if (op !== 'save') return fail('Unknown operation.');
+  const r = body.rec || {}, cls = String(r.cls || '');
+  if (sc.classes.indexOf(cls) < 0) return fail('You can only give homework to your own classes.', 403);
+  const start = Number(r.start), due = Number(r.due);
+  if (!(start > 0 && due > start)) return fail('The deadline must be after the send date.');
+  const rec = { cls, name: String(r.name || '').trim().slice(0, 80), start, due, ts: Date.now(), by: sc.who.em };
+  if (r.type === 'external') {
+    const link = String(r.link || '').trim();
+    if (!/^https?:\/\/[^\s<>"']+$/i.test(link)) return fail('Paste the full link, starting with https://');
+    Object.assign(rec, { type: 'external', ex: [], link: link.slice(0, 500), src: String(r.src || '').trim().slice(0, 40), note: String(r.note || '').trim().slice(0, 600) });
+  } else {
+    const ex = (Array.isArray(r.ex) ? r.ex : []).map((x) => String(x || '')).filter((x) => /^[A-Za-z0-9_-]{1,60}$/.test(x)).slice(0, 40);
+    if (!ex.length) return fail('Tick at least one exercise.');
+    Object.assign(rec, { type: 'mini', ex });
+  }
+  const nid = id || slug(cls) + '_' + Date.now();
+  await fsPut(env, 'assignments', nid, rec);
+  return json({ ok: true, id: nid });
+}
+// private follow-up notes + status for a student of an allowed class (collection hwnotes, server only; never in reports)
+async function hwaNote(env, request, body) {
+  const sc = await hwaScope(env, request);
+  if (sc.res) return sc.res;
+  const stu = await hwaStudents(env, sc.classes), s = stu.filter((x) => x.key === String(body.key || ''))[0];
+  if (!s) return fail('This student is not in your classes.', 403);
+  const d = await fsGet(env, 'hwnotes', slug(s.em)), cur = (d && d.data) || { notes: [] };
+  const rec = { email: s.em, cls: s.cls, status: HWA_FOLLOW.indexOf(body.status) >= 0 ? body.status : (cur.status || 'none'), notes: (cur.notes || []).slice(-49), updatedAt: Date.now() };
+  const text = String(body.text || '').trim().slice(0, 1000);
+  if (text) rec.notes.push({ t: text, by: sc.name || sc.who.em, ts: Date.now() });
+  await fsPut(env, 'hwnotes', slug(s.em), rec);
+  return json({ ok: true, status: rec.status, notes: rec.notes.slice(-20) });
+}
+
 /* ---------- routes ---------- */
 // Names a new student can pick. With a Sheet linked: Sheet rows nobody has taken yet, classes in time order.
 async function listNames(env) {
@@ -634,7 +832,7 @@ async function register(env, body, ip) {
 
   // Teacher accounts are set up by the admin only (Admin › Teachers / Users › Change password). A teacher email can never
   // create its own password here (the old ADMIN_SETUP_KEY route is gone) and never falls through to a student sign-up.
-  if (teachers(env).indexOf(email) >= 0 || (await staffMap(env))[email]) {
+  if (teachers(env).indexOf(email) >= 0 || (await staffMap(env))[email] || (await assistMap(env))[email]) {
     return fail('Teacher accounts are set up by the admin. Ask the admin for your password, then use Teacher sign in.', 403);
   }
 
@@ -705,6 +903,8 @@ async function adminUsers(env) {
   const st = await staffMap(env);
   Object.keys(st).forEach((e) => add({ email: e, name: st[e].name || 'Teacher', role: 'teacher', cls: '', course: '', src: 'admin' }));
   teachers(env).forEach((e) => add({ email: e, name: 'Teacher', role: 'teacher', cls: '', course: '', src: 'env' }));
+  const am = await assistMap(env);
+  Object.keys(am).forEach((e) => add({ email: e, name: am[e].name || 'Homework Assistant', role: 'assistant', cls: '', course: '', src: 'admin', classes: am[e].classes || [] }));
   (await fsList(env, 'roster')).forEach((r) => {
     if (r.role === 'teacher') return;
     add({ email: normEmail(r.email || r.id), name: r.name || '', role: 'student', cls: r.cls || '', course: r.course || '', src: 'roster', tester: r.tester === true });
@@ -898,7 +1098,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-10-29d';
+const API_VERSION = '2026-10-30b';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -947,6 +1147,12 @@ async function fsQueryEq(env, col, field, value) {
   if (!r.ok) throw new Error('firestore query ' + col + ' ' + r.status);
   const rows = await r.json();
   return (Array.isArray(rows) ? rows : []).filter((x) => x && x.document).map((x) => x.document.name);
+}
+async function fsQueryDocs(env, col, field, value) {
+  const r = await fs(env, 'POST', ':runQuery', { structuredQuery: { from: [{ collectionId: col }], where: { fieldFilter: { field: { fieldPath: field }, op: 'EQUAL', value: { stringValue: String(value) } } }, limit: 3000 } });
+  if (!r.ok) throw new Error('firestore query ' + col + ' ' + r.status);
+  const rows = await r.json();
+  return (Array.isArray(rows) ? rows : []).filter((x) => x && x.document).map((x) => Object.assign({ id: decodeURIComponent(x.document.name.split('/').pop()) }, fromFields(x.document.fields)));
 }
 async function fsDeleteNames(env, names) {
   let n = 0;
@@ -2190,7 +2396,10 @@ export async function onRequest(ctx) {
     }
     const am = /^audio\/([A-Za-z0-9_-]{22})$/.exec(route);
     if (am && (request.method === 'GET' || request.method === 'HEAD')) return await audioServe(env, request, am[1]);
+    const im = /^image\/([A-Za-z0-9_-]{22})$/.exec(route);
+    if (im && (request.method === 'GET' || request.method === 'HEAD')) return await imageServe(env, request, im[1]);
     if (request.method !== 'POST') return fail('Not found.', 404);
+    if (route === 'image') return await imageUpload(env, request, url, request.headers.get('CF-Connecting-IP') || 'x');
     // audio upload: the body is the file, not JSON
     if (route === 'audio') return await audioUpload(env, request, url, request.headers.get('CF-Connecting-IP') || 'x');
     let body = {};
@@ -2207,6 +2416,9 @@ export async function onRequest(ctx) {
     if (route === 'ai/lesson') return await aiLesson(env, request, body);
     if (route === 'ai/transcribe') return await aiTranscribe(env, request, body);
     if (route === 'ai/reading') return await aiReading(env, request, body);
+    if (route === 'hwa/data') return await hwaData(env, request, body);
+    if (route === 'hwa/asg') return await hwaAsg(env, request, body);
+    if (route === 'hwa/note') return await hwaNote(env, request, body);
     if (route.indexOf('admin/') === 0) {
       if (!(await adminKeyOk(env, request))) {
         return json({ error: 'Your admin session ended. Enter your admin password to continue.', needUnlock: true }, 401);
@@ -2215,6 +2427,7 @@ export async function onRequest(ctx) {
       if (route === 'admin/password') return await adminPassword(env, body);
       if (route === 'admin/active') return await adminActive(env, body);
       if (route === 'admin/teachers') return await adminTeachers(env, body);
+      if (route === 'admin/assistants') return await adminAssistants(env, body);
       if (route === 'admin/sheet') return await adminSheet(env, body);
       if (route === 'admin/class') return await adminClass(env, body);
       if (route === 'admin/kick') return await adminKick(env, body);

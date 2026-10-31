@@ -570,5 +570,23 @@ Deploy `index.html` + `functions/` (Admin › My account › Diagnostics phải 
 6. [ ] Mục "Completion … was left out: … more than 2 words" → Fix with AI → "Fixed: …" → Accept → mục trở lại; nếu AI không sửa được: "Still a problem", Accept mờ.
 7. [ ] Approve Medium → Generate Easy / Hard (riêng hoặc cả hai) → Ready; sửa Medium sau đó → Easy/Hard "Outdated" + phải duyệt lại; Generate again hoặc Keep this version → Add → bài trong Library có đúng các bản đã duyệt.
 
+## Unit 2 — Guided / Independent / Review (10/2026)
+Deploy `index.html` + `lm-unit2.js` (My account › Diagnostics: "app 2026-10-30a"). Dùng tài khoản tester hoặc admin.
+1. [ ] Nếu ô Independent còn chữ "App X / App Y / App Z": thấy thông báo "earlier version of the chart"; "I'm done" bị chặn với bản nháp có đánh dấu phiên bản cũ; Copy / Keep editing / Start fresh chạy; Start fresh giữ chữ cũ trong "Earlier draft".
+2. [ ] Guided: sau khi đạt 70% → "Choose your ideas" (chọn 2) → 3 ô câu (câu mẫu chỉ trong "Need help?") → "Combine my sentences" → Save → trạng thái "Practice attempted — writing not assessed".
+3. [ ] Review: 5 bước theo thứ tự; ví dụ mẫu gập sẵn; Save revision không đổi gì → "No changes were made"; sửa rồi Save → bảng Trước / Sau.
+4. [ ] Demo helper (tester): Fill correct answers điền ý + câu mẫu tên Chatora / Pixlo / Notivo, không ghi đè chữ đã gõ; Undo trả lại.
+5. [ ] Cuộn trang dài ở máy tính: biểu đồ bên trái dính khi cuộn; điện thoại: biểu đồ ở trên, không tràn ngang. (Chưa kiểm trên trình duyệt.)
+
+## Reading Option A + bài tập ngoài + Homework Assistant (10/2026)
+Deploy `index.html` + `functions/` (Admin › My account › Diagnostics: "app 2026-10-30d · server 2026-10-30b").
+1. [ ] Reading Stage 1 ở máy tính: không còn khoảng trắng lớn dưới header; 2 thẻ "Reading passage" | "Questions" cuộn riêng; thanh đáy "x / y answered" + nút số câu (bấm = nhảy tới câu) + Check answers. Đổi cỡ chữ → bố cục tự vừa lại. Điện thoại: xếp dọc, không tràn ngang.
+2. [ ] Giáo viên: New assignment → chọn **External link** → dán link https + hướng dẫn → Save assignment. Học sinh: thấy Open link (tab mới), Upload screenshot → "Submitted · giờ" + ảnh; tải lại trang vẫn còn. Giáo viên thấy học sinh đó Submitted + link ảnh.
+3. [ ] Admin › **Assistants** → Add a Homework Assistant (tên, email, Generate mật khẩu, tick lớp) → đăng nhập bằng Teacher sign in với email đó: chỉ có tab **Homework**, chỉ thấy lớp đã tick, không có Marking/Admin/Create.
+4. [ ] Trợ lý: Create assignment cho lớp của mình → học sinh lớp đó thấy bài; Cancel (có hỏi lại) → bài biến mất.
+5. [ ] Missing homework → chọn bài đã hết hạn → **Refresh and copy** → dán vào Zalo/Notes: đúng mẫu "LỚP … — …", "Danh sách các bạn còn thiếu bài:", đánh số, câu cuối "Nếu có gặp vấn đề gì…"; không có email/điểm. Reminder before deadline chỉ liệt kê bạn chưa nộp bài còn hạn.
+6. [ ] Students to watch: mở một bạn → đổi Follow-up + lưu ghi chú → Refresh vẫn còn.
+7. [ ] Admin bỏ tick một lớp (Classes → Save classes) → trợ lý bấm Refresh: lớp đó biến mất ngay. Pause → trợ lý bị đăng xuất trong 10 phút; Remove → không đăng nhập được.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.
