@@ -1,0 +1,12 @@
+# Codex Phase 2.8 — Teacher Approval & Safe Staging Integration
+
+Work ONLY in `lorenkids795/mini-drills` branch `feature/vocab-lab`. Read attached detailed Phase 2.8 prompt if available. Phase 2.7 left 102/102 draft routes, 0 human-approved/published, and 87 new routes without durable learner progress. Preserve all approved Vocabulary Bank meanings, Writing, existing Check 20/12, Reality Check and library UI. No main merge, production deployment or real student data.
+
+1. **Audit latest main before changes:** verify branch/clean tree; compare root index/auth/Firestore rules/backend/Writing with origin/main, list conflicts, do not overwrite or merge.
+2. **Approval system:** implement least-privilege server/rules-validated teacher/admin review in Firebase emulator or isolated staging architecture. DRAFT, REQUEST_FIX, REJECTED, APPROVED for immutable exact content version/hash and separate explicit PUBLISHED action. Append-only reviewer UID/timestamp/note/history, draft revision invalidates approval while preserving old sessions. Don't import demo/localStorage approvals as real decisions.
+3. **87-route learner progress:** persist per authorized student/lesson/sense/form/task/version with independent vs assisted evidence, retry/reveal semantics, idempotent writes, resume, cross-device concurrency and isolation. Students cannot read unpublished drafts even by direct API.
+4. **Security integration tests:** emulator fake identities for student/teacher/admin/tester/anonymous, unauthorized direct read/write, approval spoof, stale versions, rule enforcement, auth/session expiry, data segregation and restore/reload. If no emulator, report BLOCKED—not equivalent to mocked UI QA.
+5. Run `node tools/vocab-qa-runner.cjs` and all regression/browser suites; keep exact UI-only preview network-zero without Firebase/production calls. No new external deployment, provisioning, credentials or production connection.
+6. Write `docs/VOCAB-PHASE-2.8-HANDOFF.md` with actual PASS/FAIL/NOT_TESTED, schema, migrations, QA, latest-main conflict plan and teacher gates. Keep 0 approved/published until real authenticated human approvals. Commit/push only feature branch with [CF-Pages-Skip]; NO merge, Cloudflare deploy, production writes, or staging deploy without explicit consent.
+
+Do not claim release-ready merely because emulator tests PASS. Human editorial and secure staging review remain separate gates.
