@@ -72,7 +72,7 @@
     var sBtn = h('button', { type: 'submit', 'class': 'lgbtn', text: 'Sign in' });
     var formIn = h('form', {}, [field('Email', sEmail), field('Password', sPass), sBtn]);
     var toReg = h('button', { type: 'button', 'class': 'lgalt', text: 'First time here? Create your password' });
-    var toTeach = h('button', { type: 'button', 'class': 'lglink', text: 'Teacher sign in' });
+    var toTeach = h('button', { type: 'button', 'class': 'lglink', text: 'Sign in as teachers' });
 
     /* student: first time */
     var rClass = h('select', { id: 'rClass', name: 'rClass', required: 'required' });
@@ -90,9 +90,18 @@
     var tBtn = h('button', { type: 'submit', 'class': 'lgbtn', text: 'Sign in' });
     var formT = h('form', { hidden: 'hidden' }, [field('Email', tEmail), field('Password', tPass), tBtn]);
     var toStu = h('button', { type: 'button', 'class': 'lglink', hidden: 'hidden', text: 'Sign in as student' });
-    // no teacher first-time form: teacher passwords are set by the admin (Admin › Teachers / Users), the server refuses teacher sign-ups
+    // kept from v1 (not in the mockup): a new teacher still needs a way to create the first password
+    var toTReg = h('button', { type: 'button', 'class': 'lglink', hidden: 'hidden', text: 'First time? Create your teacher password' });
 
-    [formIn, formReg, formT, msg, toReg, toIn, toTeach, toStu].forEach(function (x) { root.appendChild(x); });
+    /* teacher: first time (needs the setup key from the Cloudflare settings) */
+    var trEmail = inp('trEmail', 'email', 'you@example.com', 'email');
+    var trPass = inp('trPass', 'password', 'At least 6 characters', 'new-password');
+    var trKey = inp('trKey', 'password', 'Setup key', 'off');
+    var trBtn = h('button', { type: 'submit', 'class': 'lgbtn', text: 'Create teacher password' });
+    var formTR = h('form', { hidden: 'hidden' }, [field('Email', trEmail), field('Choose a password', trPass), field('Setup key', trKey), trBtn]);
+    var toTIn = h('button', { type: 'button', 'class': 'lgalt', hidden: 'hidden', text: 'I already have a password' });
+
+    [formIn, formReg, formT, formTR, msg, toReg, toIn, toTIn, toTeach, toStu, toTReg].forEach(function (x) { root.appendChild(x); });
     var host = document.querySelector('#loginForm');
     card.insertBefore(root, host || null);
 
@@ -126,7 +135,9 @@
     function show(which) {
       formIn.hidden = which !== 'student'; toReg.hidden = which !== 'student'; toTeach.hidden = which !== 'student';
       formReg.hidden = which !== 'reg'; toIn.hidden = which !== 'reg';
-      formT.hidden = which !== 'teacher'; toStu.hidden = which !== 'teacher';
+      formT.hidden = which !== 'teacher'; toTReg.hidden = which !== 'teacher';
+      formTR.hidden = which !== 'treg'; toTIn.hidden = which !== 'treg';
+      toStu.hidden = which !== 'teacher' && which !== 'treg';
       say('');
       if (which === 'reg') loadNames();
     }
@@ -134,6 +145,8 @@
     toStu.onclick = function () { show('student'); };
     toReg.onclick = function () { show('reg'); };
     toIn.onclick = function () { show('student'); };
+    toTReg.onclick = function () { show('treg'); };
+    toTIn.onclick = function () { show('teacher'); };
     show('student');
     // signed out by the status check: say why
     var ended = '';
@@ -160,6 +173,10 @@
     formT.onsubmit = function (ev) {
       ev.preventDefault();
       run(tBtn, function () { return post('login', { email: tEmail.value, password: tPass.value }).then(enter); });
+    };
+    formTR.onsubmit = function (ev) {
+      ev.preventDefault();
+      run(trBtn, function () { return post('register', { email: trEmail.value, password: trPass.value, setupKey: trKey.value }).then(enter); });
     };
   }
 
@@ -210,7 +227,7 @@
             var em = String(t.claims.em || '').toLowerCase();
             if (!em) { fb.auth().signOut(); return; }
             try { localStorage.setItem('md-email', em); } catch (e) {}
-            window.MD_USER = { name: t.claims.nm || '', email: em, role: t.claims.role === 'teacher' || t.claims.role === 'assistant' ? t.claims.role : 'student', /* Homework Assistant keeps its own role (never the student UI) */ adm: t.claims.adm === true };
+            window.MD_USER = { name: t.claims.nm || '', email: em, role: t.claims.role === 'teacher' ? 'teacher' : 'student', adm: t.claims.adm === true };
             var rf = document.getElementById('mdReset');
             if (rf && window.MD_USER.adm) rf.hidden = true;
             resolveDb(fb.firestore());

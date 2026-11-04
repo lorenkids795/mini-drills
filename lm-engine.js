@@ -146,13 +146,6 @@ function lmClassify(x,ctx,u){
   var c=x.claim||{};
   if(c.basis==='x_not_observed'){var fx=u.charts[x.chart],s=fx&&CH.chSeries(fx.chart,c.series);if(!s)return {label:'?',why:'unknown series'};
     return CH.chXs(s).indexOf(c.x)<0?{label:'not_determinable',why:'x = '+c.x+' is not an observed point'}:{label:'?',why:'x = '+c.x+' IS observed'}}
-  // gap between two lines at the first and last years shown (both endpoint facts, same years): narrowed / widened / same
-  if(c.basis==='gap'){var fa=ctx.byId[(x.binds||{})[c.a]],fb=ctx.byId[(x.binds||{})[c.b]];
-    if(!fa||!fb||fa.type!=='endpoint'||fb.type!=='endpoint'||fa.status!=='supported'||fb.status!=='supported')return {label:'not_determinable',why:'needs two supported endpoint facts'};
-    var ea=fa.evidence,eb=fb.evidence;if(ea.x0!==eb.x0||ea.x1!==eb.x1)return {label:'not_determinable',why:'the two lines do not share their first / last year'};
-    if((ea.y0-eb.y0)*(ea.y1-eb.y1)<0)return {label:'not_determinable',why:'the lines changed places, so "the gap" is not one gap'};
-    var g0=Math.abs(ea.y0-eb.y0),g1=Math.abs(ea.y1-eb.y1),r=g1<g0?'narrowed':(g1>g0?'widened':'same');
-    return r===c.value?{label:'supported',why:'gap '+g0+' → '+g1+' = '+r}:{label:'contradicted',why:'gap '+g0+' → '+g1+' = '+r+', not '+c.value}}
   if(c.basis==='no_fact_type')return ctx.list.some(function(f){return f._chart===x.chart&&f.type===c.type})?{label:'?',why:'a "'+c.type+'" fact exists'}:{label:'not_determinable',why:'no "'+c.type+'" fact can exist'};
   var f=ctx.byId[(x.binds||{})[c.bind]];if(!f)return {label:'?',why:'no fact'};
   if(f.status!=='supported')return {label:'not_determinable',why:f.id+' is '+f.status+(f.reason?' ('+f.reason+')':'')};

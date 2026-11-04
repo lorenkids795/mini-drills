@@ -1,6 +1,6 @@
 // Mini Drills auth API (Cloudflare Pages Function, served at /api/*).
 // Everyone signs in with email + password. Students pick class + name the first time;
-// teacher passwords are set by the admin (Admin › Teachers / Users). Teachers reset forgotten student passwords.
+// teachers create their password once with a setup key. Teachers reset forgotten student passwords.
 // After a successful login it returns a Firebase custom token, so Firestore rules keep working.
 //
 // Pages -> Settings -> Variables and Secrets:
@@ -8,7 +8,7 @@
 //   FIREBASE_CLIENT_EMAIL  secret  from the service account JSON (client_email)
 //   FIREBASE_PRIVATE_KEY   secret  from the service account JSON (private_key)
 //   TEACHERS               text    comma list, e.g. lorenkids795@gmail.com (old way to add teachers, still works)
-//   ADMIN_SETUP_KEY        no longer used (10/2026: teachers cannot create their own password); can be deleted
+//   ADMIN_SETUP_KEY        secret  any long phrase only the teacher knows (first-time teacher password)
 //   ADMIN_EMAIL            text    the one admin account (a teacher who also manages users)
 //   ADMIN_PASSWORD         secret  the admin's first password (used once, when acct:<ADMIN_EMAIL> does not exist yet)
 //   GEMINI_KEY             secret  Google AI Studio key, for /api/ai/correct (AI Writing correction)
@@ -417,19 +417,13 @@ async function takenSet(env) {
 async function staffMap(env) {
   return (await env.MD_KV.get('staff', 'json')) || {};
 }
-// Homework Assistants: KV 'assist' = { email: { name, classes: [class labels], ts } }, set only by the admin (admin/assistants).
-async function assistMap(env) {
-  return (await env.MD_KV.get('assist', 'json')) || {};
-}
-// -> { role, adm, name } or null. Order: ADMIN_EMAIL, then staff / TEACHERS, then a Homework Assistant, then a student in the roster.
+// -> { role, adm, name } or null. Order: ADMIN_EMAIL, then staff / TEACHERS, then a student in the roster.
 async function roleOf(env, email) {
   if (!email) return null;
   if (email === adminEmail(env)) return { role: 'teacher', adm: true, name: 'Admin' };
   const st = await staffMap(env);
   if (st[email]) return { role: 'teacher', adm: false, name: st[email].name || 'Teacher' };
   if (teachers(env).indexOf(email) >= 0) return { role: 'teacher', adm: false, name: 'Teacher' };
-  const as = await assistMap(env);
-  if (as[email]) return { role: 'assistant', adm: false, name: as[email].name || 'Homework Assistant' };
   const row = await fsGet(env, 'roster', email);
   if (row && row.data.role !== 'teacher') return { role: 'student', adm: false, name: row.data.name };
   return null;
@@ -575,222 +569,6 @@ async function audioServe(env, request, id) {
   return new Response(head ? null : a.buf, { status: 200, headers: Object.assign({}, base, { 'Content-Length': String(total) }) });
 }
 
-// External homework screenshots: POST /api/image?kind=hwshot (signed-in user, Bearer ID token), body = the image.
-// Stored like audio (R2 'img/<id>' when MD_AUDIO is bound, otherwise KV 'img:<id>', 400 days), never inside Firestore:
-// the student's hwdone document only keeps {id, url, ts}. GET /api/image/<id> = the file (random 128-bit id).
-const IMG_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
-const IMG_MAX = 5 * 1024 * 1024;
-async function imageUpload(env, request, url, ip) {
-  if (String(url.searchParams.get('kind') || '') !== 'hwshot') return fail('Unknown image kind.');
-  const who = await idUser(env, request);
-  if (!who) return needSignIn();
-  const type = String(request.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase();
-  if (IMG_TYPES.indexOf(type) < 0) return fail('Use a PNG, JPG, WebP or GIF picture.', 415);
-  if (Number(request.headers.get('Content-Length') || 0) > IMG_MAX) return fail('The picture is too big (5 MB at most).', 413);
-  if ((await bump(env, 'iup:' + ip, 3600)) > 30) return fail('Too many uploads from this network. Try again in an hour.', 429);
-  if ((await bump(env, 'iue:' + who.em, 3600)) > 20) return fail('Too many uploads in one hour. Try again later.', 429);
-  const buf = await request.arrayBuffer();
-  if (buf.byteLength > IMG_MAX) return fail('The picture is too big (5 MB at most).', 413);
-  if (buf.byteLength < 100) return fail('The picture is empty.');
-  const id = b64url(crypto.getRandomValues(new Uint8Array(16)));
-  const meta = { type, size: buf.byteLength, by: who.em, kind: 'hwshot', ts: Date.now() };
-  if (env.MD_AUDIO) {
-    const cm = {}; Object.keys(meta).forEach((k) => { cm[k] = String(meta[k]); });
-    await env.MD_AUDIO.put('img/' + id, buf, { httpMetadata: { contentType: type }, customMetadata: cm });
-  } else await env.MD_KV.put('img:' + id, buf, { metadata: meta, expirationTtl: 400 * 86400 });
-  return json({ id, url: '/api/image/' + id, size: buf.byteLength });
-}
-async function imageServe(env, request, id) {
-  let buf = null, type = 'image/jpeg';
-  if (env.MD_AUDIO) { const o = await env.MD_AUDIO.get('img/' + id); if (o) { buf = await o.arrayBuffer(); type = (o.httpMetadata && o.httpMetadata.contentType) || type; } }
-  else { const r = await env.MD_KV.getWithMetadata('img:' + id, 'arrayBuffer'); if (r && r.value) { buf = r.value; type = (r.metadata && r.metadata.type) || type; } }
-  if (!buf) return new Response('Not found', { status: 404, headers: { 'Cache-Control': 'no-store' } });
-  return new Response(request.method === 'HEAD' ? null : buf, { status: 200, headers: { 'Content-Type': type, 'Content-Length': String(buf.byteLength), 'Cache-Control': 'private, max-age=31536000, immutable', 'X-Content-Type-Options': 'nosniff' } });
-}
-
-// POST /api/admin/assistants {op:'list'|'add'|'set'|'remove', email, name?, password?, classes?[]} (X-Admin-Key).
-// add: a new Homework Assistant (not a student, teacher or admin email), password typed by the admin; set: replace the classes.
-async function adminAssistants(env, body) {
-  const op = String(body.op || 'list'), email = normEmail(body.email), am = await assistMap(env);
-  const cls = (Array.isArray(body.classes) ? body.classes : []).map((c) => String(c || '').trim().slice(0, 40)).filter(Boolean).filter((c, i, a) => a.indexOf(c) === i).slice(0, 30);
-  if (op === 'list') return json({ assistants: Object.keys(am).map((e) => ({ email: e, name: am[e].name, classes: am[e].classes || [] })) });
-  if (!emailOk(email)) return fail('Enter a valid email.');
-  if (op === 'add') {
-    const name = String(body.name || '').trim().slice(0, 80), pw = String(body.password || '');
-    if (!name) return fail('Enter a name.');
-    if (pw.length < 6) return fail('The password needs at least 6 characters.');
-    if (am[email]) return fail('This email is already a Homework Assistant.', 409);
-    const who = await roleOf(env, email);
-    if (who) return fail('This email is already a ' + (who.adm ? 'admin' : who.role) + ' account. Use a separate email for the Homework Assistant.', 409);
-    am[email] = { name, classes: cls, ts: Date.now() };
-    await env.MD_KV.put('assist', JSON.stringify(am));
-    await savePassword(env, email, pw);
-    await env.MD_KV.delete('off:' + email);
-    return json({ ok: true });
-  }
-  if (!am[email]) return fail('This Homework Assistant was not found.', 404);
-  if (op === 'set') { am[email].classes = cls; await env.MD_KV.put('assist', JSON.stringify(am)); return json({ ok: true, classes: cls }); }
-  if (op === 'remove') {
-    delete am[email];
-    await env.MD_KV.put('assist', JSON.stringify(am));
-    await env.MD_KV.delete('acct:' + email);
-    await env.MD_KV.put('off:' + email, 'kicked');
-    return json({ ok: true });
-  }
-  return fail('Unknown operation.');
-}
-
-/* ---------- Homework Assistant workspace (/api/hwa/*) ----------
-   Every call: a valid Firebase ID token with role 'assistant', the account still in KV 'assist' and not paused.
-   The allowed classes are read from KV on EVERY call (revoking a class works at once), never from the request.
-   Students are sent as {key, name, cls}: key = a hash of the email, so the assistant never gets emails. */
-const HWA_FOLLOW = ['none', 'sent', 'waiting', 'resolved'];
-async function hwaScope(env, request) {
-  const who = await idUser(env, request);
-  if (!who) return { res: needSignIn() };
-  if (who.role !== 'assistant') return { res: fail('This page is only for Homework Assistants.', 403) };
-  const am = (await assistMap(env))[who.em];
-  if (!am) return { res: fail('Your Homework Assistant access was removed. Ask the admin.', 403) };
-  if (await offState(env, who.em)) return { res: fail('Your account is paused. Ask the admin.', 403) };
-  return { who, classes: (am.classes || []).slice(), name: am.name };
-}
-async function hwaKey(email) { return 'k' + (await sha256Hex('hwa|' + normEmail(email))).slice(0, 20); }
-// the students of the allowed classes (testers and removed students left out)
-async function hwaStudents(env, classes) {
-  const removed = {};
-  await Promise.all(classes.map(async (c) => { const d = await fsGet(env, 'classes', slug(c)); ((d && d.data && d.data.removed) || []).forEach((e) => { removed[normEmail(e)] = 1; }); }));
-  const rows = (await fsList(env, 'roster')).filter((r) => r.role !== 'teacher' && r.tester !== true && classes.indexOf(r.cls) >= 0 && !removed[normEmail(r.email || r.id)]);
-  return Promise.all(rows.map(async (r) => { const em = normEmail(r.email || r.id); return { em, key: await hwaKey(em), name: r.name || '', cls: r.cls }; }));
-}
-// external tasks of an assignment: ext[{id, link, src, note}]; an old type 'external' record = one task 'x1' (link / src / note at the top level)
-function hwaExt(a) {
-  const L = Array.isArray(a.ext) ? a.ext : (a.type === 'external' ? [{ id: 'x1', link: a.link, src: a.src, note: a.note }] : []);
-  const seen = {};
-  return L.map((x, i) => { x = x || {}; let id = /^x\d{1,3}$/.test(String(x.id || '')) && !seen[x.id] ? String(x.id) : 'x' + (i + 1); seen[id] = 1;
-    return { id, link: String(x.link || ''), src: String(x.src || ''), note: String(x.note || '') }; });
-}
-// screenshots of one hwdone record by task id (old records: "shot" = task x1)
-function hwaShots(hw) {
-  const o = {};
-  const ok = (x) => !!(x && (x.url || Number(x.ts)));
-  if (hw && ok(hw.shot)) o.x1 = hw.shot;
-  if (hw && hw.shots && typeof hw.shots === 'object') Object.keys(hw.shots).forEach((k) => { if (ok(hw.shots[k])) o[k] = hw.shots[k]; });
-  return o;
-}
-function hwaNormAsg(a) {
-  const x = Object.assign({}, a);
-  if (x.start == null && x.weekStart) { const s = new Date(x.weekStart + 'T00:00:00'); x.start = s.getTime(); x.due = s.getTime() + 6 * 864e5 + 22 * 3600e3; }
-  if (!Array.isArray(x.ex)) x.ex = [];
-  x.ext = hwaExt(x);
-  return x;
-}
-const PASS_DAYS = { day: 1, week: 7 };
-// status of one student for one assignment (same rules as the app): extension = late pass. The assignment is submitted only when
-// EVERY part is: each Library exercise has an attempt since the send date AND each external task has its screenshot in hwdone
-// (a screenshot = submitted, never "correct"). done | late | missing | pending | none (+ at = when the last part came in)
-function hwaStatus(a, atts, hw, pass, now) {
-  const due = a.due + (pass && PASS_DAYS[pass.kind] ? PASS_DAYS[pass.kind] * 864e5 : 0);
-  const ex = a.ex || [], X = Array.isArray(a.ext) ? a.ext : hwaExt(a), sh = hwaShots(hw);
-  if (!ex.length && !X.length) return { st: 'none', due };
-  let at = 0, ok = true;
-  for (const id of ex) {
-    const ts = atts.filter((t) => t.ex === id && t.ts >= a.start).map((t) => t.ts).sort((x, y) => x - y)[0];
-    if (!ts) { ok = false; break; }
-    at = Math.max(at, ts);
-  }
-  if (ok) for (const x of X) { const t = sh[x.id] && Number(sh[x.id].ts); if (!t) { ok = false; break; } at = Math.max(at, t); }
-  if (!ok) at = 0;
-  if (at) return { st: at <= due ? 'done' : 'late', at, due, ext: !!pass };
-  return { st: now > due ? 'missing' : 'pending', due, ext: !!pass };
-}
-async function hwaData(env, request, body) {
-  const sc = await hwaScope(env, request);
-  if (sc.res) return sc.res;
-  const now = Date.now(), from = now - Math.min(180, Math.max(7, Number(body.days) || 60)) * 864e5;
-  const stu = await hwaStudents(env, sc.classes);
-  const asg = (await fsList(env, 'assignments')).map(hwaNormAsg).filter((a) => sc.classes.indexOf(a.cls) >= 0 && (a.due >= from || a.start >= from));
-  const byEm = {};
-  stu.forEach((s) => { byEm[s.em] = s; });
-  const atts = {};
-  await Promise.all(sc.classes.map(async (c) => {
-    (await fsQueryDocs(env, 'attempts', 'cls', c)).forEach((t) => { const em = normEmail(t.email); if (byEm[em] && Number(t.ts) >= from - 30 * 864e5) (atts[em] = atts[em] || []).push({ ex: t.ex, ts: Number(t.ts) }); });
-  }));
-  const status = {};
-  await Promise.all(asg.map(async (a) => {
-    const hw = {}, ps = {};
-    (await fsQueryDocs(env, 'hwdone', 'asgId', a.id)).forEach((d) => { const em = normEmail(d.email); if (!hw[em] || (d.updatedAt || d.ts || 0) > (hw[em].updatedAt || hw[em].ts || 0)) hw[em] = d; });
-    (await fsQueryDocs(env, 'passes', 'asgId', a.id)).forEach((d) => { ps[normEmail(d.email)] = d; });
-    const m = {};
-    stu.filter((s) => s.cls === a.cls).forEach((s) => {
-      const r = a.start > now ? { st: 'upcoming', due: a.due } : hwaStatus(a, atts[s.em] || [], hw[s.em], ps[s.em], now);
-      const sh = hwaShots(hw[s.em]), us = a.ext.map((x) => sh[x.id] && String(sh[x.id].url || '')).filter((u) => /^\/api\/image\/[A-Za-z0-9_-]{22}$/.test(u || ''));
-      if (us.length) { r.shots = us; r.shot = us[0]; }
-      m[s.key] = r;
-    });
-    status[a.id] = m;
-  }));
-  const notes = {};
-  await Promise.all(stu.map(async (s) => { const d = await fsGet(env, 'hwnotes', slug(s.em)); if (d && d.data) notes[s.key] = { status: d.data.status || 'none', notes: (d.data.notes || []).slice(-20) }; }));
-  return json({
-    me: { name: sc.name }, classes: sc.classes, now, from,
-    students: stu.map((s) => ({ key: s.key, name: s.name, cls: s.cls })),
-    assignments: asg.map((a) => ({ id: a.id, cls: a.cls, name: a.name || '', start: a.start, due: a.due, type: a.ext.length ? (a.ex.length ? 'mixed' : 'external') : 'mini', ex: a.ex, ext: a.ext, link: a.link || '', src: a.src || '', note: a.note || '' })),
-    status, notes,
-  });
-}
-// create / edit / cancel (= delete) an assignment of an allowed class. The class of an existing assignment is checked too.
-async function hwaAsg(env, request, body) {
-  const sc = await hwaScope(env, request);
-  if (sc.res) return sc.res;
-  const op = String(body.op || ''), id = String(body.id || '');
-  if (id && !/^[A-Za-z0-9_-]{1,100}$/.test(id)) return fail('Bad assignment id.');
-  const old = id ? await fsGet(env, 'assignments', id) : null;
-  if (old && sc.classes.indexOf(old.data.cls) < 0) return fail('This assignment is not in your classes.', 403);
-  if (op === 'cancel') {
-    if (!old) return fail('This assignment was not found.', 404);
-    await fsDelete(env, 'assignments', id);
-    return json({ ok: true });
-  }
-  if (op !== 'save') return fail('Unknown operation.');
-  const r = body.rec || {}, cls = String(r.cls || '');
-  if (sc.classes.indexOf(cls) < 0) return fail('You can only give homework to your own classes.', 403);
-  const start = Number(r.start), due = Number(r.due);
-  if (!(start > 0 && due > start)) return fail('The deadline must be after the send date.');
-  const rec = { cls, name: String(r.name || '').trim().slice(0, 80), start, due, ts: Date.now(), by: sc.who.em };
-  // one assignment = Library exercises (ex) and / or external tasks (ext[{id, link, src, note}]); old clients send type 'external' + link
-  const ex = (Array.isArray(r.ex) ? r.ex : []).map((x) => String(x || '')).filter((x) => /^[A-Za-z0-9_-]{1,60}$/.test(x)).slice(0, 40);
-  const extIn = Array.isArray(r.ext) ? r.ext : (r.type === 'external' ? [{ id: 'x1', link: r.link, src: r.src, note: r.note }] : []);
-  if (extIn.length > 10) return fail('At most 10 external tasks in one assignment.');
-  const ext = [], used = {};
-  for (let i = 0; i < extIn.length; i++) {
-    const x = extIn[i] || {}, link = String(x.link || '').trim();
-    if (!/^https?:\/\/[^\s<>"']+$/i.test(link)) return fail('External task ' + (i + 1) + ': paste the full link, starting with https://');
-    let xid = /^x\d{1,3}$/.test(String(x.id || '')) ? String(x.id) : 'x' + (i + 1);
-    while (used[xid]) xid = 'x' + (Number(xid.slice(1)) + 1);
-    used[xid] = 1;
-    ext.push({ id: xid, link: link.slice(0, 500), src: String(x.src || '').trim().slice(0, 40), note: String(x.note || '').trim().slice(0, 600) });
-  }
-  if (!ex.length && !ext.length) return fail('Add at least one exercise from the Library or one external task.');
-  Object.assign(rec, { type: ext.length ? (ex.length ? 'mixed' : 'external') : 'mini', ex, ext });
-  if (ext.length) Object.assign(rec, { link: ext[0].link, src: ext[0].src, note: ext[0].note });
-  const nid = id || slug(cls) + '_' + Date.now();
-  await fsPut(env, 'assignments', nid, rec);
-  return json({ ok: true, id: nid });
-}
-// private follow-up notes + status for a student of an allowed class (collection hwnotes, server only; never in reports)
-async function hwaNote(env, request, body) {
-  const sc = await hwaScope(env, request);
-  if (sc.res) return sc.res;
-  const stu = await hwaStudents(env, sc.classes), s = stu.filter((x) => x.key === String(body.key || ''))[0];
-  if (!s) return fail('This student is not in your classes.', 403);
-  const d = await fsGet(env, 'hwnotes', slug(s.em)), cur = (d && d.data) || { notes: [] };
-  const rec = { email: s.em, cls: s.cls, status: HWA_FOLLOW.indexOf(body.status) >= 0 ? body.status : (cur.status || 'none'), notes: (cur.notes || []).slice(-49), updatedAt: Date.now() };
-  const text = String(body.text || '').trim().slice(0, 1000);
-  if (text) rec.notes.push({ t: text, by: sc.name || sc.who.em, ts: Date.now() });
-  await fsPut(env, 'hwnotes', slug(s.em), rec);
-  return json({ ok: true, status: rec.status, notes: rec.notes.slice(-20) });
-}
-
 /* ---------- routes ---------- */
 // Names a new student can pick. With a Sheet linked: Sheet rows nobody has taken yet, classes in time order.
 async function listNames(env) {
@@ -854,10 +632,14 @@ async function register(env, body, ip) {
   const off = await offState(env, email);
   if (off && off !== 'kicked') return fail(OFF_MSG[off], 403); // a kicked student may register again
 
-  // Teacher accounts are set up by the admin only (Admin › Teachers / Users › Change password). A teacher email can never
-  // create its own password here (the old ADMIN_SETUP_KEY route is gone) and never falls through to a student sign-up.
-  if (teachers(env).indexOf(email) >= 0 || (await staffMap(env))[email] || (await assistMap(env))[email]) {
-    return fail('Teacher accounts are set up by the admin. Ask the admin for your password, then use Teacher sign in.', 403);
+  if (teachers(env).indexOf(email) >= 0) {
+    const key = String(body.setupKey || '');
+    if ((await bump(env, 'setup:' + ip, 3600)) > 10) return fail('Too many tries. Try again later.', 429);
+    if (!env.ADMIN_SETUP_KEY || String(env.ADMIN_SETUP_KEY).length < 8 || !timingEq(key, String(env.ADMIN_SETUP_KEY))) {
+      return fail('Wrong teacher setup key.', 403);
+    }
+    await savePassword(env, email, pw);
+    return json({ token: await customToken(env, email, { role: 'teacher', name: 'Teacher' }), user: { email, name: 'Teacher', role: 'teacher' }, staffKey: await newStaffKey(env, email) });
   }
 
   let name = '';
@@ -927,8 +709,6 @@ async function adminUsers(env) {
   const st = await staffMap(env);
   Object.keys(st).forEach((e) => add({ email: e, name: st[e].name || 'Teacher', role: 'teacher', cls: '', course: '', src: 'admin' }));
   teachers(env).forEach((e) => add({ email: e, name: 'Teacher', role: 'teacher', cls: '', course: '', src: 'env' }));
-  const am = await assistMap(env);
-  Object.keys(am).forEach((e) => add({ email: e, name: am[e].name || 'Homework Assistant', role: 'assistant', cls: '', course: '', src: 'admin', classes: am[e].classes || [] }));
   (await fsList(env, 'roster')).forEach((r) => {
     if (r.role === 'teacher') return;
     add({ email: normEmail(r.email || r.id), name: r.name || '', role: 'student', cls: r.cls || '', course: r.course || '', src: 'roster', tester: r.tester === true });
@@ -1122,7 +902,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-10-31a';
+const API_VERSION = '2026-10-24b';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -1172,12 +952,6 @@ async function fsQueryEq(env, col, field, value) {
   const rows = await r.json();
   return (Array.isArray(rows) ? rows : []).filter((x) => x && x.document).map((x) => x.document.name);
 }
-async function fsQueryDocs(env, col, field, value) {
-  const r = await fs(env, 'POST', ':runQuery', { structuredQuery: { from: [{ collectionId: col }], where: { fieldFilter: { field: { fieldPath: field }, op: 'EQUAL', value: { stringValue: String(value) } } }, limit: 3000 } });
-  if (!r.ok) throw new Error('firestore query ' + col + ' ' + r.status);
-  const rows = await r.json();
-  return (Array.isArray(rows) ? rows : []).filter((x) => x && x.document).map((x) => Object.assign({ id: decodeURIComponent(x.document.name.split('/').pop()) }, fromFields(x.document.fields)));
-}
 async function fsDeleteNames(env, names) {
   let n = 0;
   for (let i = 0; i < names.length; i += 400) {
@@ -1214,39 +988,6 @@ async function adminClassDel(env, body) {
   let settings = 0;
   if (cid && (await fsGet(env, 'classes', cid))) { await fsDelete(env, 'classes', cid); settings = 1; }
   return json({ ok: true, cls, assignments, names, settings, remaining });
-}
-
-/* ---------- Leftover data of deleted students (Admin › Users › Clean up) ----------
-   An "orphan" = an email that owns attempts but has no roster row and is not staff / admin (deleted before Kick purged data,
-   or a roster row removed by hand). preview = list only (dry run); purge = ONE email per call (Workers sub-request limit),
-   re-checked on the server right before deleting, every collection of purgeStudent, for each spelling of the email found,
-   and an audit record. Idempotent: purging an email that has no data left does nothing. Never by name. */
-async function orphanScan(env) {
-  const roster = await fsList(env, 'roster'), keep = new Set();
-  roster.forEach((r) => { const e = normEmail(r.email || r.id); if (e) keep.add(e); });
-  Object.keys(await staffMap(env)).forEach((e) => keep.add(normEmail(e)));
-  teachers(env).forEach((e) => keep.add(e)); keep.add(adminEmail(env));
-  const att = await fsList(env, 'attempts'), by = {};
-  att.forEach((a) => { const raw = String(a.email || ''), e = normEmail(raw); if (!e || keep.has(e)) return;
-    const o = by[e] || (by[e] = { email: e, raw: [], attempts: 0, names: [], classes: [], last: 0 });
-    o.attempts++; if (raw && o.raw.indexOf(raw) < 0) o.raw.push(raw);
-    if (a.student && o.names.indexOf(a.student) < 0) o.names.push(String(a.student).slice(0, 80));
-    if (a.cls && o.classes.indexOf(a.cls) < 0) o.classes.push(String(a.cls).slice(0, 40));
-    o.last = Math.max(o.last, Number(a.ts) || 0); });
-  return { scanned: att.length, truncated: att.length >= 3000, orphans: Object.keys(by).sort().map((k) => by[k]) };
-}
-async function adminOrphans(env, body) {
-  const op = String(body.op || 'preview');
-  if (op === 'preview') { const r = await orphanScan(env); return json({ ok: true, scanned: r.scanned, truncated: r.truncated, orphans: r.orphans.map((o) => ({ email: o.email, attempts: o.attempts, names: o.names, classes: o.classes, last: o.last })) }); }
-  if (op !== 'purge') return fail('Unknown operation.');
-  const e = normEmail(body.email);
-  if (!emailOk(e)) return fail('Enter a valid email.');
-  const r = await orphanScan(env), o = r.orphans.filter((x) => x.email === e)[0];
-  if (!o) return fail('This email is not a leftover any more (it has a roster row, is staff, or has no data). Nothing was deleted.', 409);
-  const out = {};
-  for (const raw of o.raw.length ? o.raw : [e]) { const d = await purgeStudent(env, raw); Object.keys(d).forEach((k) => { out[k] = (out[k] || 0) + d[k]; }); }
-  try { await fsPut(env, 'audit', 'orphans_' + slug(e) + '_' + Date.now(), { kind: 'orphan-purge', email: e, deleted: JSON.stringify(out), ts: Date.now() }); } catch (x) { /* the purge itself is done; the audit row is best effort */ }
-  return json({ ok: true, email: e, deleted: out });
 }
 
 // Move a registered student to another class (the Sheet only matters before sign-up).
@@ -1608,15 +1349,6 @@ function genConfig(model, schema, thinking) {
   }
   return gc;
 }
-// 'relay' = the relay is set up wrong (wrong secret, no key, wrong /exec link, not shared with "Anyone"): every request fails, stop.
-// 'relay_busy' = the relay was reached but this call failed (Apps Script timeout, quota, Google busy, an HTML error page): try again.
-function relayCode(status, text) {
-  const t = String(text || '');
-  if (/secret|GEMINI_KEY is not set/i.test(t)) return 'relay';
-  if (status === 401 || status === 403 || status === 404) return 'relay';
-  if (/^\s*</.test(t) && /sign in|accounts\.google|not found|unable to open/i.test(t)) return 'relay'; // login / missing page = not shared for "Anyone"
-  return 'relay_busy';
-}
 async function geminiOnce(env, model, prompt, schema, thinking, ms) {
   const gc = genConfig(model, schema, thinking);
   const ctl = new AbortController();
@@ -1637,8 +1369,8 @@ async function geminiOnce(env, model, prompt, schema, thinking, ms) {
       const txt = await r.text().catch(() => '');
       let j = null;
       try { j = JSON.parse(txt); } catch (e) { /* not JSON = wrong URL or the script is not shared with "Anyone" */ }
-      if (!r.ok || !j) throw new AiError(relayCode(r.status, txt), 'HTTP ' + r.status + ' ' + txt.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').slice(0, 200));
-      if (j.relayError) throw new AiError(relayCode(200, j.relayError), String(j.relayError).slice(0, 300));
+      if (!r.ok || !j) throw new AiError('relay', 'HTTP ' + r.status + ' ' + txt.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').slice(0, 200));
+      if (j.relayError) throw new AiError('relay', String(j.relayError).slice(0, 300));
       if (Number(j.status) !== 200) throw new AiError('http' + Number(j.status || 0), String(j.body || '').slice(0, 400));
       try { d = JSON.parse(j.body); } catch (e) { d = null; }
     } else {
@@ -1693,10 +1425,10 @@ async function askGemini(env, prompt, schema, shape, maxMs) {
     // Next model when this one is busy, over its free quota, unknown, or answered badly.
     // Stop at once for problems every model would have: wrong key (403), blocked location / bad key (400), timeout, safety, relay.
     const c = last.code || '', det = last.detail || '';
-    const next = /^http(404|429|500|502|503|504)$/.test(c) || ['network', 'empty', 'parse', 'too_long', 'relay_busy'].indexOf(c) >= 0 ||
+    const next = /^http(404|429|500|502|503|504)$/.test(c) || ['network', 'empty', 'parse', 'too_long'].indexOf(c) >= 0 ||
       (c === 'http400' && !/location|api[ _]?key/i.test(det));
     if (!next) throw last;
-    if (/^http(429|5)/.test(c) || c === 'relay_busy') await new Promise((res) => setTimeout(res, 800));
+    if (/^http(429|5)/.test(c)) await new Promise((res) => setTimeout(res, 800));
   }
   throw last;
 }
@@ -1902,12 +1634,11 @@ async function aiTranscribe(env, request, body) {
 // [P1], [P2]… and only names words / phrases in them; the app builds the lesson text from the teacher's own passage
 // (rdBuild in index.html) and checks everything with parseReading. Paragraphs = blocks separated by a blank line (same split as the app).
 const readingParas = (t) => String(t || '').replace(/\r\n?/g, '\n').split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean);
-const R_HEAD =
+const RPROMPT =
   'You are an expert IELTS Reading teacher and a strict JSON formatter. I will give you an IELTS-style reading passage. ' +
   'Its paragraphs are numbered [P1], [P2], [P3]… (when you get a passage without numbers: paragraphs are separated by a blank line, number them from P1 yourself). ' +
   'Build a 4-stage reading lesson: 1. Deep reading, 2. Pronouns, 3. Vocabulary, 4. Output. Language level: IELTS Band 6-7.5. ' +
-  'Output ONLY one JSON object, no markdown fences, no text outside the JSON.\n\n';
-const R_GEN =
+  'Output ONLY one JSON object, no markdown fences, no text outside the JSON.\n\n' +
   'General rules:\n' +
   '- Do NOT copy or rewrite the passage: the app already has it. Only name words and phrases that are in it.\n' +
   '- Every answer must be traceable to the passage. Never invent facts.\n' +
@@ -1916,14 +1647,11 @@ const R_GEN =
   '- ORDER: list the completion items and the TRUE/FALSE/NOT GIVEN items in the order their answers appear in the passage (P1 first, then P2…); a NOT GIVEN statement may go anywhere. Matching exercises do not follow this rule.\n' +
   '- "paragraph_id" (in "deep") is a string: "P1", "P2"… "p" (in prons, words, pairs) is the paragraph NUMBER: 1 = [P1], 2 = [P2]… ' +
   'Every "w", "ph" and completion "answer" must be copied from THAT paragraph character for character ' +
-  '(same spelling, same word form: "obligations" is not "obligation"; never join words from two sentences).\n\n';
-const R_DEEP_H =
-  'Stage 1, "deep":\n';
-const R_DEEP_NOTES =
+  '(same spelling, same word form: "obligations" is not "obligation"; never join words from two sentences).\n\n' +
+  'Stage 1, "deep":\n' +
   '- "passage_id": a slug of the title. "paragraphs": for each paragraph {"id": "P1", "main_idea", "key_sentences": [{"text": copied from the passage, "fact_type": "date" | "person" | "event" | "definition" | "opinion", "related_entities": [names]}]}. ' +
   '"entities": the people, groups, places and things of the passage, each {"name": exactly as written in the passage, "attributes": [short facts]}. "timeline": [{"year", "event", "paragraph_id"}] (empty list when there are no dates). ' +
-  '"vocab_targets": [{"word", "paragraph_id", "meaning"}]. Use these notes to build the exercises.\n';
-const R_DEEP_EX =
+  '"vocab_targets": [{"word", "paragraph_id", "meaning"}]. Use these notes to build the exercises.\n' +
   '- "exercises.completion": {"type": "summary" | "form" | "table", "instructions": "Complete the summary below. Choose NO MORE THAN TWO WORDS from the passage for each answer.", ' +
   '"items": 3 to 5 items {"id": "C1", "prompt_with_blank": a sentence with ONE blank written ______, "answer": 1 or 2 words (never more than 3) copied EXACTLY from that paragraph, "paragraph_id"}}.\n' +
   '- "exercises.true_false_not_given": {"instructions": "Do the following statements agree with the information given in the passage? Write TRUE, FALSE, or NOT GIVEN.", ' +
@@ -1936,18 +1664,15 @@ const R_DEEP_EX =
   'A heading is a short IELTS-style noun phrase that states the main idea of the paragraph; never copy a sentence from the passage.\n' +
   '- "exercises.matching_information": {"instructions": "Match each entity or piece of information to the correct paragraph or related entity.", ' +
   '"items": 3 to 5 items {"id": "MI1", "prompt", "answer": a paragraph id such as "P4", OR the exact "name" of one of the entities}}. ' +
-  'Prefer matching an entity with an event, or an entity with a paragraph, so it does not repeat Matching headings.\n\n';
-const R_S24_H =
-  'Stages 2 to 4:\n';
-const R_PW =
+  'Prefer matching an entity with an event, or an entity with a paragraph, so it does not repeat Matching headings.\n\n' +
+  'Stages 2 to 4:\n' +
   '- "prons": 4 to 6 pronouns or reference phrases (it, they, their, this policy, this trend, such…) that the reader must understand to follow the argument, ' +
   'in the order they appear in the passage: {"w": the exact words as written, "p": paragraph number, "opts": 4 options, "a": index (from 0) of the right option, "why": one short explanation}. ' +
   'Choose each w only once per paragraph. The right answer and the 3 distractors must all be phrases taken from the passage.\n' +
   '- "words" (Guess the meaning): 3 to 6 important words a student MUST understand to follow the main ideas: academic or common words at level B1-C1, preferably in topic sentences or sentences with a main idea ' +
   '(you may take them from "vocab_targets"). NEVER choose technical terms, proper names, numbers, very easy words (A1-A2) or words that appear only in a minor example. ' +
   'Each: {"w": the word exactly as written, "p": its paragraph number, "pos": "n" | "v" | "adj" | "adv", "opts": 4 short meanings in easy English (distractors that fit the sentence), "a": index of the right meaning, ' +
-  '"en": English definition, "syn": 1 or 2 simple synonyms, comma-separated (e.g. "rich, wealthy"), "vi": Vietnamese meaning, "fam": word family, e.g. "congest (v), congested (adj), congestion (n)", "col": 2 common collocations, "ex": a new example sentence}.\n';
-const R_OUT =
+  '"en": English definition, "syn": 1 or 2 simple synonyms, comma-separated (e.g. "rich, wealthy"), "vi": Vietnamese meaning, "fam": word family, e.g. "congest (v), congested (adj), congestion (n)", "col": 2 common collocations, "ex": a new example sentence}.\n' +
   '- "pairs": 4 to 6 key phrases of 2 to 6 words copied exactly from one sentence of the passage, each {"ph": the phrase, "p": its paragraph number, "par": a simpler paraphrase (as an exam question would say it), "why": one short sentence on how the two match, ' +
   '"segs": the match split into 1 to 3 meaningful pairs [{"q": words copied from "par", "t": the words of "ph" they match, copied exactly, "note": optional few words on the difference}] ' +
   '(e.g. "tailored to promote those cultural activities" → "geared toward such pursuits" gives [{"q":"geared toward","t":"tailored to"},{"q":"such pursuits","t":"those cultural activities"}]); ' +
@@ -1958,8 +1683,7 @@ const R_OUT =
   '- "wprompt": ONE open question about the topic that a student can answer in 1 or 2 sentences, e.g. "Should your city spend more on cycling lanes?" ' +
   'If it has a difficult word, put a simple synonym right after it with a slash, e.g. "Should affluent / rich countries pay more?"\n' +
   '- "wguide": 2 or 3 short guiding questions that help the student plan the answer (e.g. "Who would benefit?", "What could go wrong?").\n' +
-  '- "title": a short title (keep the given title if there is one).\n\n';
-const R_SHAPE =
+  '- "title": a short title (keep the given title if there is one).\n\n' +
   'Shape: {"title":"…","deep":{"passage_id":"…","paragraphs":[{"id":"P1","main_idea":"…","key_sentences":[{"text":"…","fact_type":"event","related_entities":["…"]}]}],' +
   '"entities":[{"name":"…","attributes":["…"]}],"timeline":[],"vocab_targets":[{"word":"…","paragraph_id":"P1","meaning":"…"}],' +
   '"exercises":{"completion":{"type":"summary","instructions":"…","items":[{"id":"C1","prompt_with_blank":"… ______ …","answer":"…","paragraph_id":"P3"}]},' +
@@ -1969,42 +1693,6 @@ const R_SHAPE =
   '"prons":[{"w":"…","p":1,"opts":["…","…","…","…"],"a":0,"why":"…"}],' +
   '"words":[{"w":"…","p":1,"pos":"n","opts":["…","…","…","…"],"a":0,"en":"…","syn":"…","vi":"…","fam":"…","col":"…","ex":"…"}],' +
   '"pairs":[{"ph":"…","p":1,"par":"…","why":"…","segs":[{"q":"…","t":"…","note":"…"}]}],"pdist":"…","cloze":{"text":"… {{1}} … {{2}} …","answers":["…","…"],"extra":"…"},"wprompt":"…","wguide":["…","…"]}\n';
-// the whole lesson in one answer (Copy prompt for another AI chat, and old clients)
-const RPROMPT = R_HEAD + R_GEN + R_DEEP_H + R_DEEP_NOTES + R_DEEP_EX + R_S24_H + R_PW + R_OUT + R_SHAPE;
-// The app writes a lesson in 3 smaller parts per version (deep / vocab / output), so one answer is never cut off (MAX_TOKENS = code too_long):
-// the one big answer had paragraph notes with copied key sentences for every paragraph, then all 4 stages, and long passages ran out of room
-// near the end ("pairs" came back short or empty, or the answer was cut off). The deep part asks only for what the app uses (entities + exercises).
-const R_PART = 'This request is ONE PART of the lesson. Write ONLY the fields of the shape below: the other parts are written in separate requests.\n\n';
-const R_DEEP_LITE =
-  '- "passage_id": a slug of the title. "entities": the people, groups, places and things of the passage, each {"name": exactly as written in the passage, "attributes": [at most 2 very short facts]}. ' +
-  'Do NOT write paragraph notes, key sentences, a timeline or vocabulary notes: they are not needed.\n';
-const R_PARTS = {
-  deep: {
-    name: 'Deep reading',
-    prompt: R_HEAD + R_PART + R_GEN + R_DEEP_H + R_DEEP_LITE + R_DEEP_EX +
-      'Shape: {"deep":{"passage_id":"…","entities":[{"name":"…","attributes":["…"]}],' +
-      '"exercises":{"completion":{"type":"summary","instructions":"…","items":[{"id":"C1","prompt_with_blank":"… ______ …","answer":"…","paragraph_id":"P3"}]},' +
-      '"true_false_not_given":{"instructions":"…","items":[{"id":"TFNG1","statement":"…","answer":"TRUE","paragraph_id":"P2"}]},' +
-      '"matching_headings":{"instructions":"…","heading_options":["…"],"items":[{"id":"MH1","paragraph_id":"P2","answer_heading":"…","difficulty":"easy"}]},' +
-      '"matching_information":{"instructions":"…","items":[{"id":"MI1","prompt":"…","answer":"P4"}]}}}}\n',
-    keys: ['deep'],
-  },
-  vocab: {
-    name: 'Pronouns and vocabulary',
-    prompt: R_HEAD + R_PART + R_GEN + 'Stages 2 and 3 (pronouns, vocabulary):\n' + R_PW +
-      '- "title": a short title (keep the given title if there is one).\n\n' +
-      'Shape: {"title":"…","prons":[{"w":"…","p":1,"opts":["…","…","…","…"],"a":0,"why":"…"}],' +
-      '"words":[{"w":"…","p":1,"pos":"n","opts":["…","…","…","…"],"a":0,"en":"…","syn":"…","vi":"…","fam":"…","col":"…","ex":"…"}]}\n',
-    keys: ['title', 'prons', 'words'],
-  },
-  output: {
-    name: 'Paraphrases and output',
-    // R_OUT minus its last line (title is written in the vocab part)
-    prompt: R_HEAD + R_PART + R_GEN + 'Stages 3 and 4 (paraphrases, summary, writing):\n' + R_OUT.replace(/- "title": a short title \(keep the given title if there is one\)\.\n\n$/, '\n') +
-      'Shape: {"pairs":[{"ph":"…","p":1,"par":"…","why":"…","segs":[{"q":"…","t":"…","note":"…"}]}],"pdist":"…","cloze":{"text":"… {{1}} … {{2}} …","answers":["…","…"],"extra":"…"},"wprompt":"…","wguide":["…","…"]}\n',
-    keys: ['pairs', 'pdist', 'cloze', 'wprompt', 'wguide'],
-  },
-};
 const R_STR = { type: 'STRING' }, R_INT = { type: 'INTEGER' }, R_LIST = { type: 'ARRAY', items: { type: 'STRING' } };
 const R_NSTR = { type: 'STRING', nullable: true };
 const R_ITEMS = (props, req) => ({ type: 'OBJECT', properties: { instructions: R_STR, items: { type: 'ARRAY', items: { type: 'OBJECT', properties: props, required: req } } }, required: ['instructions', 'items'] });
@@ -2047,31 +1735,6 @@ const RSCHEMA = {
   },
   required: ['title', 'deep', 'prons', 'words', 'pairs', 'pdist', 'cloze', 'wprompt'],
 };
-const RP = RSCHEMA.properties;
-R_PARTS.deep.schema = { type: 'OBJECT', properties: { deep: { type: 'OBJECT', properties: { passage_id: R_STR, entities: RP.deep.properties.entities, exercises: RP.deep.properties.exercises }, required: ['passage_id', 'entities', 'exercises'] } }, required: ['deep'] };
-R_PARTS.vocab.schema = { type: 'OBJECT', properties: { title: R_STR, prons: RP.prons, words: RP.words }, required: ['title', 'prons', 'words'] };
-R_PARTS.output.schema = { type: 'OBJECT', properties: { pairs: RP.pairs, pdist: R_STR, cloze: RP.cloze, wprompt: R_STR, wguide: R_LIST }, required: ['pairs', 'pdist', 'cloze', 'wprompt'] };
-// Checks of one part. A problem = the part is written again (the app retries only that part); never filled with made-up items.
-// "pairs" = the paraphrase items: 2 to 6 of them (each phrase is 2 to 6 words long, a different rule).
-function partProblems(part, o, N) {
-  const isA = Array.isArray, str = (x) => typeof x === 'string' && x.trim() !== '';
-  if (part === 'deep') return o.deep && typeof o.deep === 'object' ? deepProblems(o, N) : ['"deep" is missing.'];
-  const out = [];
-  if (part === 'vocab') {
-    if (!isA(o.prons) || !o.prons.length) out.push('"prons" (pronouns) is missing or empty.');
-    if (!isA(o.words)) out.push('"words" is missing.');
-    else if (o.words.length < 3) out.push('"words" has ' + o.words.length + ' word' + (o.words.length === 1 ? '' : 's') + '; it needs 3 to 6.');
-    return out;
-  }
-  if (!isA(o.pairs)) out.push('"pairs" is missing.');
-  else {
-    if (o.pairs.length < 2) out.push('"pairs" has ' + o.pairs.length + ' paraphrase item' + (o.pairs.length === 1 ? '' : 's') + '; it needs 2 to 6.');
-    o.pairs.forEach((x, i) => { if (!x || !str(x.ph) || !str(x.par)) out.push('Paraphrase item ' + (i + 1) + ' needs "ph" and "par".'); });
-  }
-  if (!o.cloze || typeof o.cloze !== 'object' || !str(o.cloze.text) || !isA(o.cloze.answers) || !o.cloze.answers.length) out.push('"cloze" (the summary with blanks) is missing or has no answers.');
-  if (!str(o.wprompt)) out.push('"wprompt" (the writing question) is missing.');
-  return out;
-}
 // Problems the app cannot repair (it repairs or leaves out the other items: parseReading / rmParseDeep in index.html).
 // Matching headings: exactly 3 paragraphs (easy, medium, hard) that exist, answers in the list, 2-3 extra headings.
 function deepProblems(o, N) {
@@ -2112,134 +1775,16 @@ const READING_LEVELS = {
   hard: 'VERSION: HARD (Advanced students, about IELTS Band 7-8). This overrides the language level above. Statements paraphrase the passage more and need inference from two sentences; ' +
     'completion answers may be 2 words; TRUE/FALSE/NOT GIVEN: 5 or 6 items with at least two NOT GIVEN; distractors are close and plausible; words are B2-C1; pairs use less obvious paraphrases; the cloze has 7 or 8 blanks; wprompt asks for an opinion with a reason.',
 };
-const AI_WHY_READ = {
-  too_long: 'The AI answer was cut off before it finished. The passage is fine: press Retry failed part.',
-  parse: 'The AI answer was not complete JSON. Press Retry failed part.',
-  empty: 'The AI returned an empty answer. Press Retry failed part.',
-};
-// One part of one version: { part: 'deep'|'vocab'|'output', level, run, words? }. The daily limit counts 1 per version of a run
-// (as before: Medium, Easy, Hard = 3 of the 30), at most 8 requests per version (3 parts + retries), one request per part at a time.
-async function aiReadingPart(env, em, body, passage, title, P) {
-  const part = body.part, def = R_PARTS[part];
-  const level = READING_LEVELS[body.level] ? body.level : 'medium';
-  const run = String(body.run || '');
-  if (!/^[A-Za-z0-9]{8,40}$/.test(run)) return fail('Start again with Generate (missing run id).');
-  const day = dayOf(body.tzo).day, qKey = 'ail:' + em + ':' + day, rKey = 'ailr:' + em + ':' + run + ':' + level;
-  const used = await count(env, rKey);
-  if (used >= 8) return json({ error: 'This version has used its AI requests (8). Press Generate to start again.', code: 'runcap' }, 429);
-  if (!used) {
-    if ((await count(env, qKey)) >= 30) return json({ error: 'You have used today\'s 30 AI lesson runs. Try again tomorrow.', code: 'quota' }, 429);
-    await bump(env, qKey, 172800);
-  }
-  const lKey = 'ailk:' + em + ':' + run + ':' + level + ':' + part, lock = String((await env.MD_KV.get(lKey)) || '');
-  if (/^pending/.test(lock) && Date.now() - Number(lock.split(':')[1] || 0) < 360000) return json({ error: 'This part is already being written. Wait for it to finish.', code: 'dup' }, 409);
-  await bump(env, rKey, 86400);
-  await env.MD_KV.put(lKey, 'pending:' + Date.now(), { expirationTtl: 600 });
-  const hint = part === 'output' && Array.isArray(body.words) ? body.words.filter((w) => typeof w === 'string' && w.trim()).slice(0, 6).map((w) => w.trim().slice(0, 40)) : [];
-  let baseTxt = '';
-  if (level !== 'medium' && body.base && typeof body.base === 'object') {
-    const bj = JSON.stringify(body.base);
-    if (bj.length > 40000) { await env.MD_KV.delete(lKey); return fail('The approved Medium part is too big to send (40,000 characters at most).', 413); }
-    baseTxt = 'APPROVED MEDIUM VERSION OF THIS PART (the teacher checked and approved it):\n' + bj + '\n' +
-      'Write the ' + level.toUpperCase() + ' version FROM it: keep the same exercise types, the same paragraphs and the same learning goals; ' +
-      'change the wording, the number of items and the difficulty only as the VERSION note says. Every answer must still be correct and come from the passage.\n\n';
-  }
-  const full = def.prompt + '\n' + READING_LEVELS[level] + '\n' + baseTxt + (title ? 'TITLE: ' + title + '\n\n' : '') +
-    (hint.length ? 'Words of this lesson (reuse them in the cloze when you can): ' + hint.join(', ') + '.\n\n' : '') +
-    'The passage has ' + P.length + ' paragraphs ([P1] to [P' + P.length + ']). Use only these paragraph ids and numbers.\n\nPASSAGE:\n' + P.map((t, i) => '[P' + (i + 1) + '] ' + t).join('\n\n');
-  let g;
-  try {
-    g = await askGemini(env, full, def.schema, '', AI_TIMEOUT);
-  } catch (e) {
-    await env.MD_KV.delete(lKey);
-    const c = e.code || 'server';
-    console.log('[ai] reading part failed', level, part, c, String(e.detail || e.message || '').slice(0, 300));
-    const why = AI_WHY_READ[c] || AI_WHY[c] || AI_WHY[c.replace(/\d+$/, (n) => n[0] + 'xx')] || 'Press Retry failed part.';
-    const det = /^relay/.test(c) ? String(e.detail || '').replace(/key=[^&\s]+/gi, 'key=…').slice(0, 160) : '';
-    return json({ error: 'The AI could not write this part (code: ' + c + '). ' + why + (det ? ' Details: ' + det : ''), code: c }, 502);
-  }
-  await env.MD_KV.delete(lKey);
-  const o = g.out && typeof g.out === 'object' ? g.out : {};
-  const bad = partProblems(part, o, P.length);
-  if (bad.length) {
-    console.log('[ai] reading part shape', level, part, bad.join(' | '));
-    return json({ error: bad.join(' ') + ' Press Retry failed part.', code: 'shape', problems: bad }, 502);
-  }
-  return json({ part, level, out: partOut(part, o, title), model: g.model, paras: P.length });
-}
-// only the fields of that part go back to the app
-function partOut(part, o, title) {
-  const res = {};
-  R_PARTS[part].keys.forEach((k) => { if (o[k] !== undefined) res[k] = o[k]; });
-  if (part === 'deep') res.deep = { passage_id: o.deep.passage_id, entities: o.deep.entities, exercises: o.deep.exercises }; // no notes, no ordering
-  if (part === 'vocab' && title) res.title = title;
-  return res;
-}
-// Teacher review (Create › Reading › Review Medium): { op:'revise', part, current, feedback?, issues?[] } -> the same part, revised.
-// The AI gets the current part JSON + the passage + the teacher's words and/or the exact check problems, and must change only what is asked.
-// Nothing is saved: the app shows the proposal, checks it again and the teacher accepts or rejects it. 60 revisions a day (ailv:), apart from the 30 lesson runs.
-async function aiReadingRevise(env, em, body, passage, title, P) {
-  const part = body.part, def = R_PARTS[part];
-  if (!def) return fail('Unknown part of the lesson.');
-  const cur = body.current;
-  if (!cur || typeof cur !== 'object' || Array.isArray(cur)) return fail('There is nothing to revise yet.');
-  const cj = JSON.stringify(cur);
-  if (cj.length > 40000) return fail('This part is too big to revise (40,000 characters at most).', 413);
-  const fb = String(body.feedback || '').replace(/\r\n?/g, '\n').trim().slice(0, 2000);
-  const iss = (Array.isArray(body.issues) ? body.issues : []).filter((s) => typeof s === 'string' && s.trim()).slice(0, 12).map((s) => s.trim().slice(0, 400));
-  if (!fb && !iss.length) return fail('Write what the AI should change first.');
-  const day = dayOf(body.tzo).day, qKey = 'ailv:' + em + ':' + day;
-  if ((await count(env, qKey)) >= 60) return json({ error: "You have used today's 60 AI revisions. Try again tomorrow.", code: 'quota' }, 429);
-  const lKey = 'ailk:' + em + ':rev:' + part, lock = String((await env.MD_KV.get(lKey)) || '');
-  if (/^pending/.test(lock) && Date.now() - Number(lock.split(':')[1] || 0) < 360000) return json({ error: 'This part is already being revised. Wait for it to finish.', code: 'dup' }, 409);
-  await bump(env, qKey, 172800);
-  await env.MD_KV.put(lKey, 'pending:' + Date.now(), { expirationTtl: 600 });
-  const full = def.prompt + '\n' + READING_LEVELS.medium + '\n' +
-    'REVISION TASK: below is the CURRENT version of this part (JSON). Change ONLY what the teacher asks for and what the listed problems need. ' +
-    'Keep every other item exactly as it is (same order, same wording, same answers). Make the smallest change that works: a fixed answer must still be correct, ' +
-    'still answer its question, and still be copied word for word from the passage within the word limit (never just cut a right answer into a wrong one). ' +
-    'The teacher may write in Vietnamese or English; the lesson stays in English. Return the WHOLE part in the shape above.\n' +
-    (fb ? 'TEACHER REQUEST:\n' + fb + '\n' : '') + (iss.length ? 'PROBLEMS FOUND BY THE APP\'S CHECK:\n' + iss.map((s) => '- ' + s).join('\n') + '\n' : '') +
-    'CURRENT:\n' + cj + '\n\n' + (title ? 'TITLE: ' + title + '\n\n' : '') +
-    'The passage has ' + P.length + ' paragraphs ([P1] to [P' + P.length + ']). Use only these paragraph ids and numbers.\n\nPASSAGE:\n' + P.map((t, i) => '[P' + (i + 1) + '] ' + t).join('\n\n');
-  let g;
-  try {
-    g = await askGemini(env, full, def.schema, '', AI_TIMEOUT);
-  } catch (e) {
-    await env.MD_KV.delete(lKey);
-    const c = e.code || 'server';
-    console.log('[ai] reading revise failed', part, c, String(e.detail || e.message || '').slice(0, 300));
-    const why = AI_WHY_READ[c] || AI_WHY[c] || AI_WHY[c.replace(/\d+$/, (n) => n[0] + 'xx')] || 'Try again.';
-    const det = /^relay/.test(c) ? String(e.detail || '').replace(/key=[^&\s]+/gi, 'key=…').slice(0, 160) : '';
-    return json({ error: 'The AI could not revise this part (code: ' + c + '). ' + why + (det ? ' Details: ' + det : ''), code: c }, 502);
-  }
-  await env.MD_KV.delete(lKey);
-  const o = g.out && typeof g.out === 'object' ? g.out : {};
-  const bad = partProblems(part, o, P.length);
-  if (bad.length) return json({ error: 'The AI revision is incomplete: ' + bad.join(' ') + ' Try again.', code: 'shape', problems: bad }, 502);
-  return json({ part, out: partOut(part, o, title), model: g.model });
-}
-// Copy prompt (Create › Reading › Advanced): one file with the 3 versions { "medium": lesson, "easy": lesson, "hard": lesson }, for Upload JSON file
-function readingPrompt3() {
-  return RPROMPT + '\nTHREE VERSIONS: write this lesson THREE times for the same passage, once for each version below. ' +
-    'Every version follows all the rules and the shape above, has all its fields, and uses the same paragraph numbers.\n' +
-    ['medium', 'easy', 'hard'].map((l) => '- "' + l + '": ' + READING_LEVELS[l]).join('\n') +
-    '\nOutput ONLY one JSON object: {"medium": {…the whole lesson…}, "easy": {…}, "hard": {…}}. No markdown fences, no text outside the JSON. ' +
-    'Do not write the passage itself. The passage comes after this line (paragraphs separated by a blank line).\n\nPASSAGE:\n';
-}
 async function aiReading(env, request, body) {
   const em = await staffEmail(env, request);
   if (!em) return staffLocked();
   if (body.op === 'prompt') return json({ prompt: RPROMPT });
-  if (body.op === 'prompt3') return json({ prompt: readingPrompt3() });
   if (!aiReady(env)) return json({ error: AI_WHY.nokey, code: 'nokey' }, 502);
   const passage = String(body.passage || '').replace(/\r\n?/g, '\n').trim(), title = String(body.title || '').replace(/\s+/g, ' ').trim().slice(0, 120);
   const words = passage.split(/\s+/).filter(Boolean).length, P = readingParas(passage);
   if (words < 80) return fail('Paste the whole passage first (at least 80 words).');
   if (passage.length > 12000) return fail('The passage is too long (12,000 characters at most).');
   if (P.length < 2) return fail('Leave a blank line between the paragraphs of the passage (at least 2 paragraphs).');
-  if (body.op === 'revise') return aiReadingRevise(env, em, body, passage, title, P);
-  if (R_PARTS[body.part]) return aiReadingPart(env, em, body, passage, title, P);
   const qKey = 'ail:' + em + ':' + dayOf(body.tzo).day;
   if ((await count(env, qKey)) >= 30) return fail('You have used today\'s 30 AI lesson runs. Try again tomorrow.', 429);
   await bump(env, qKey, 172800);
@@ -2369,7 +1914,6 @@ const AI_WHY = {
   timeout: 'Gemini did not answer within 5 minutes. Try again in a few minutes.',
   network: 'The server could not reach Gemini. Try again.',
   http400: 'Gemini rejected the request: a wrong GEMINI_KEY, a model that does not support these settings, or "User location is not supported" (Cloudflare runs in a blocked region: set up the Apps Script relay, README 3e).',
-  relay_busy: 'The Apps Script relay was reached but this call failed (it timed out or is busy). Nothing is wrong with the setup: try again in a minute.',
   relay: 'The Apps Script relay failed: check GEMINI_PROXY_URL (the /exec link), GEMINI_PROXY_SECRET = RELAY_SECRET in the script, and that the web app is deployed for "Anyone".',
   http403: 'The key is not allowed: check GEMINI_KEY (Google AI Studio) and that the Gemini API is enabled.',
   http404: 'Model not found or not available to this key: check GEMINI_MODELS (default gemini-3.8-flash, gemini-3.6-flash, gemini-3.5-flash-lite).',
@@ -2420,10 +1964,7 @@ export async function onRequest(ctx) {
     }
     const am = /^audio\/([A-Za-z0-9_-]{22})$/.exec(route);
     if (am && (request.method === 'GET' || request.method === 'HEAD')) return await audioServe(env, request, am[1]);
-    const im = /^image\/([A-Za-z0-9_-]{22})$/.exec(route);
-    if (im && (request.method === 'GET' || request.method === 'HEAD')) return await imageServe(env, request, im[1]);
     if (request.method !== 'POST') return fail('Not found.', 404);
-    if (route === 'image') return await imageUpload(env, request, url, request.headers.get('CF-Connecting-IP') || 'x');
     // audio upload: the body is the file, not JSON
     if (route === 'audio') return await audioUpload(env, request, url, request.headers.get('CF-Connecting-IP') || 'x');
     let body = {};
@@ -2440,9 +1981,6 @@ export async function onRequest(ctx) {
     if (route === 'ai/lesson') return await aiLesson(env, request, body);
     if (route === 'ai/transcribe') return await aiTranscribe(env, request, body);
     if (route === 'ai/reading') return await aiReading(env, request, body);
-    if (route === 'hwa/data') return await hwaData(env, request, body);
-    if (route === 'hwa/asg') return await hwaAsg(env, request, body);
-    if (route === 'hwa/note') return await hwaNote(env, request, body);
     if (route.indexOf('admin/') === 0) {
       if (!(await adminKeyOk(env, request))) {
         return json({ error: 'Your admin session ended. Enter your admin password to continue.', needUnlock: true }, 401);
@@ -2451,12 +1989,10 @@ export async function onRequest(ctx) {
       if (route === 'admin/password') return await adminPassword(env, body);
       if (route === 'admin/active') return await adminActive(env, body);
       if (route === 'admin/teachers') return await adminTeachers(env, body);
-      if (route === 'admin/assistants') return await adminAssistants(env, body);
       if (route === 'admin/sheet') return await adminSheet(env, body);
       if (route === 'admin/class') return await adminClass(env, body);
       if (route === 'admin/kick') return await adminKick(env, body);
       if (route === 'admin/classdel') return await adminClassDel(env, body);
-      if (route === 'admin/orphans') return await adminOrphans(env, body);
       if (route === 'admin/aitest') return await adminAiTest(env, body);
       if (route === 'admin/season') return await adminSeason(env, body);
       if (route === 'admin/tester') return await adminTester(env, body);

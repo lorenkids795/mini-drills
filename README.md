@@ -2,7 +2,7 @@
 
 Đăng nhập KHÔNG dùng Google, KHÔNG gửi mã:
 - Học sinh: lần đầu chọn lớp → chọn tên → nhập email + tự đặt mật khẩu. Các lần sau chỉ email + mật khẩu. Thiết bị được nhớ, không phải đăng nhập lại (trừ khi bấm Sign out hoặc xóa dữ liệu trình duyệt).
-- Giáo viên: admin tạo tài khoản và mật khẩu (Admin › Teachers, hoặc Admin › Users › Change password); giáo viên đăng nhập bằng "Teacher sign in". Giáo viên **không** tự tạo mật khẩu được.
+- Giáo viên: lần đầu tạo mật khẩu bằng "setup key" (chỉ bạn biết), sau đó đăng nhập bằng email + mật khẩu.
 - Học sinh quên mật khẩu: nhắn giáo viên/admin → admin vào **Admin → Users** → Change password → báo mật khẩu mới cho học sinh. (Giáo viên không còn tab Students.)
 - Phần xác thực nằm trong thư mục `functions/` (Cloudflare Pages Functions), tự chạy khi deploy.
 
@@ -22,7 +22,7 @@ Upload cả thư mục này (index.html, md-config.js, md-backend.js, README.md,
    - `FIREBASE_CLIENT_EMAIL` (Secret): `client_email` trong file JSON
    - `FIREBASE_PRIVATE_KEY` (Secret): `private_key` trong file JSON, dán nguyên cả đoạn từ `-----BEGIN PRIVATE KEY-----`
    - `TEACHERS` (Text): `lorenkids795@gmail.com` (nhiều email thì cách nhau bằng dấu phẩy; phải trùng `teachers` trong `md-config.js`)
-   - `ADMIN_SETUP_KEY`: **không còn dùng** (từ 10/2026), có thể xóa
+   - `ADMIN_SETUP_KEY` (Secret): một câu dài ít nhất 8 ký tự do bạn tự nghĩ, dùng 1 lần khi tạo mật khẩu giáo viên
    - `ADMIN_EMAIL` (Text): email của tài khoản admin (admin = giáo viên có thêm tab **Admin**)
    - `ADMIN_PASSWORD` (Secret): mật khẩu đầu tiên của admin, ít nhất 6 ký tự. Chỉ dùng ở lần đăng nhập đầu; sau đó đổi trong Admin → My account
 4. Deploy lại (Deployments → Retry deployment) để biến mới có hiệu lực.
@@ -33,12 +33,6 @@ Upload cả thư mục này (index.html, md-config.js, md-backend.js, README.md,
 - Giáo viên do admin thêm được lưu trong KV (key `staff`), không cần sửa `TEACHERS`.
 - Tạm khóa hoặc xóa giáo viên: không đăng nhập được nữa, thiết bị đang mở bị đăng xuất trong vòng 10 phút. Không xóa dữ liệu.
 - Firestore rules **không cần sửa** cho tính năng admin.
-
-## 3b2. Trợ lý bài tập (Homework Assistant)
-1. Đăng nhập admin → **Admin › Assistants** → điền Name, Email, bấm **Generate** (hoặc gõ mật khẩu ≥ 6 ký tự), tick các lớp → **Add assistant**.
-2. Gửi email + mật khẩu cho trợ lý; trợ lý đăng nhập bằng **Teacher sign in**.
-3. Đổi lớp: nút **Classes** → tick → **Save classes** (có hiệu lực ngay). **Pause** = tạm khóa, **Remove** = xóa đăng nhập (bài giao và ghi chú vẫn giữ).
-Không cần sửa `firestore.rules` hay thêm biến môi trường: mọi quyền của trợ lý được kiểm ở server (`/api/hwa/*`).
 
 ## 3c. Danh sách lớp từ Google Sheet
 1. Sheet cần dòng tiêu đề có cột **Họ và tên** và **Lớp** (tùy chọn: Giáo viên, Khối, Hiện tại, id). Các dòng tiêu đề phụ phía trên được bỏ qua.
@@ -84,7 +78,7 @@ Cloudflare có thể chạy `/api` ở máy chủ thuộc khu vực Gemini chặ
 - Giáo viên/admin cần phiên đăng nhập còn hạn (12 giờ) để upload; hết hạn thì app tự hỏi lại mật khẩu.
 
 ## 4. Dùng
-- Giáo viên: admin đặt mật khẩu ở Admin › Teachers (hoặc Users › Change password) rồi đưa cho giáo viên → giáo viên mở site → **Teacher sign in**.
+- Giáo viên: mở site → tab **Teacher** → "First time? Create your teacher password" → nhập email, mật khẩu mới và setup key.
 - Tab **Students** → dán danh sách CSV với cột `name, course, class` → Import. Học sinh tự chọn tên trên trang đăng nhập.
 - Nếu đã biết email học sinh, thêm cột `email`: học sinh bấm "My teacher already added my email" để đặt mật khẩu.
 - Audio nghe: ở tab **Create** → Listening → khung **Audio** → Upload a file (mp3/m4a/wav, tối đa 8 MB) hoặc Record. Audio tự gắn vào bài. Cách cũ (bỏ mp3 vào thư mục `audio/` và ghi `"audio_url": "audio/ten-file.mp3"`) vẫn dùng được.
