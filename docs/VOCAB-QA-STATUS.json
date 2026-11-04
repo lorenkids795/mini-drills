@@ -1,23 +1,25 @@
 {
   "schemaVersion": 1,
-  "timestampUTC": "2026-11-04T11:47:16.023Z",
-  "timestampLocal": "2026-11-04 18:47:16 GMT+7",
+  "timestampUTC": "2026-11-04T16:46:16.810Z",
+  "timestampLocal": "2026-11-04 23:46:16 GMT+7",
   "branch": "feature/vocab-lab",
-  "sha": "9d6a8ca673811cf326fce93dd1fd231579edcb2d",
-  "sourceFingerprint": "28f00865a1516cb63eec4f5e470f51880b1b7086bd06e5976a6ccaa3e9e1203c",
+  "sha": "749d86f12ed91dbb4d9517011c4a5d3c380f1fe8",
+  "sourceFingerprint": "33abb0b87cfb7336a235efac645fdf71d753313960c1cd325f63bd504f6e49f7",
   "dirty": true,
-  "session": "phase28-approval-staging",
-  "round": 1,
+  "session": "phase29-integration-readiness",
+  "round": 2,
   "mode": "full",
   "commandArgv": [
     "node",
     "tools/vocab-qa-runner.cjs",
     "--session",
-    "phase28-approval-staging",
+    "phase29-integration-readiness",
     "--round",
-    "1"
+    "2",
+    "--changes-file",
+    "qa-artifacts/phase29-integration-readiness/changes-round-2.json"
   ],
-  "command": "node tools/vocab-qa-runner.cjs --session phase28-approval-staging --round 1",
+  "command": "node tools/vocab-qa-runner.cjs --session phase29-integration-readiness --round 2 --changes-file qa-artifacts/phase29-integration-readiness/changes-round-2.json",
   "environment": {
     "node": "v24.22.1",
     "platform": "win32",
@@ -25,9 +27,9 @@
     "browser": "msedge",
     "playwright": "1.62.1"
   },
-  "artifactDirectory": "qa-artifacts/phase28-approval-staging/round-1-full",
+  "artifactDirectory": "qa-artifacts/phase29-integration-readiness/round-2-full",
   "counts": {
-    "node": 122,
+    "node": 126,
     "regression": 244
   },
   "steps": [
@@ -56,15 +58,15 @@
     },
     {
       "id": "unit",
-      "command": "node --test tests/vocab-batch.test.js tests/vocab-content-quality.test.js tests/vocab-editorial.test.js tests/vocab-highlight.test.js tests/vocab-lab.test.js tests/vocab-mission-engine.test.js tests/vocab-mission-planner.test.js tests/vocab-mission-store.test.js tests/vocab-mission.test.js tests/vocab-qa-runner.test.js tests/vocab-reality.test.js tests/vocab-routes.test.js tests/vocab-staging.test.js tests/vocab-teacher-decisions.test.js tests/vocab-ui-preview.test.js",
+      "command": "node --test tests/vocab-batch.test.js tests/vocab-content-quality.test.js tests/vocab-editorial.test.js tests/vocab-highlight.test.js tests/vocab-integration.test.js tests/vocab-lab.test.js tests/vocab-mission-engine.test.js tests/vocab-mission-planner.test.js tests/vocab-mission-store.test.js tests/vocab-mission.test.js tests/vocab-qa-runner.test.js tests/vocab-reality.test.js tests/vocab-routes.test.js tests/vocab-staging.test.js tests/vocab-teacher-decisions.test.js tests/vocab-ui-preview.test.js",
       "log": "logs/unit.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 1605,
+      "elapsedMs": 1371,
       "counts": {
         "kind": "node",
-        "passed": 122,
-        "total": 122
+        "passed": 126,
+        "total": 126
       },
       "summary": "See log"
     },
@@ -74,7 +76,7 @@
       "log": "logs/regression-admin-kick.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 1859,
+      "elapsedMs": 1579,
       "counts": {
         "kind": "assertions",
         "passed": 50,
@@ -88,7 +90,7 @@
       "log": "logs/regression-chart-facts.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 102,
+      "elapsedMs": 99,
       "counts": {
         "kind": "assertions",
         "passed": 56,
@@ -102,7 +104,7 @@
       "log": "logs/regression-lm-meta.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 59,
+      "elapsedMs": 64,
       "counts": {
         "kind": "assertions",
         "passed": 22,
@@ -116,7 +118,7 @@
       "log": "logs/regression-lm-unit0.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 294,
+      "elapsedMs": 307,
       "counts": {
         "kind": "assertions",
         "passed": 23,
@@ -130,7 +132,7 @@
       "log": "logs/regression-lm-unit2-ui.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 287,
+      "elapsedMs": 289,
       "counts": {
         "kind": "assertions",
         "passed": 41,
@@ -144,7 +146,7 @@
       "log": "logs/regression-misc.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 110,
+      "elapsedMs": 117,
       "counts": {
         "kind": "assertions",
         "passed": 6,
@@ -158,7 +160,7 @@
       "log": "logs/regression-reading.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 136,
+      "elapsedMs": 147,
       "counts": {
         "kind": "assertions",
         "passed": 12,
@@ -172,7 +174,7 @@
       "log": "logs/regression-server-purge.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 69,
+      "elapsedMs": 87,
       "counts": {
         "kind": "assertions",
         "passed": 8,
@@ -186,7 +188,7 @@
       "log": "logs/regression-sign-in.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 70,
+      "elapsedMs": 65,
       "counts": {
         "kind": "assertions",
         "passed": 11,
@@ -200,7 +202,7 @@
       "log": "logs/regression-ui-audit.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 295,
+      "elapsedMs": 317,
       "counts": {
         "kind": "assertions",
         "passed": 15,
@@ -214,7 +216,7 @@
       "log": "logs/writing-content.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 67,
+      "elapsedMs": 65,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -228,7 +230,7 @@
       "log": "logs/reality.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 33904,
+      "elapsedMs": 34507,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -242,7 +244,7 @@
       "log": "logs/batch.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 39095,
+      "elapsedMs": 39258,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -256,7 +258,7 @@
       "log": "logs/isolation.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 26754,
+      "elapsedMs": 32094,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -270,7 +272,7 @@
       "log": "logs/visual.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 5421,
+      "elapsedMs": 5307,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -284,7 +286,7 @@
       "log": "logs/check.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 8176,
+      "elapsedMs": 8315,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -298,7 +300,7 @@
       "log": "logs/accessibility.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 11974,
+      "elapsedMs": 12041,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -312,7 +314,7 @@
       "log": "logs/mission.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 31625,
+      "elapsedMs": 31972,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -326,7 +328,7 @@
       "log": "logs/shell.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 59067,
+      "elapsedMs": 59033,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -340,7 +342,7 @@
       "log": "logs/engine.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 76128,
+      "elapsedMs": 76258,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -354,7 +356,7 @@
       "log": "logs/editorial.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 21575,
+      "elapsedMs": 21931,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -382,7 +384,7 @@
     }
   ],
   "changes": [
-    "Initial QA run; no automatic code/content edits."
+    "origin/main advanced to 8d9cf7742a14f64db4d7e22f63a395ee68531113 during readiness audit; historical index conflict and lmSkillLocked no longer exist. Make the new readiness test accept zero conflicts while retaining exact-main Writing hash equality, conflict-path restriction and Vocab/gating browser assertions. Existing browser Writing assertion is unchanged and its candidate failure remains a blocker.; files: tests/vocab-integration.test.js; reproduction: Latest-main candidate yields no textual conflicts and lacks lmSkillLocked. Run node --test tests/vocab-integration.test.js against refreshed origin/main."
   ],
   "screenshots": [
     "browser/accessibility/check-before-1280-dark.png",
@@ -956,5 +958,5 @@
   "releaseReadiness": "BLOCKED",
   "repositoryValid": true,
   "manifestSha256": "aa1d4474e101245cf429864219d2762fb187d90e221f56016e894ecf546278ea",
-  "completedUTC": "2026-11-04T11:52:41.640Z"
+  "completedUTC": "2026-11-04T16:51:44.210Z"
 }

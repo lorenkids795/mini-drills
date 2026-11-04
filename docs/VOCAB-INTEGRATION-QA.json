@@ -1,0 +1,128 @@
+{
+  "phase": "2.9",
+  "timestamp": "2026-11-04T16:52:07.380Z",
+  "overallReadiness": "BLOCKED",
+  "main": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+  "featureBase": "749d86f12ed91dbb4d9517011c4a5d3c380f1fe8",
+  "featureQA": {
+    "status": "PASS",
+    "round": 2,
+    "counts": {
+      "node": 126,
+      "regression": 244
+    },
+    "browserSuites": [
+      {
+        "id": "reality",
+        "status": "PASS"
+      },
+      {
+        "id": "batch",
+        "status": "PASS"
+      },
+      {
+        "id": "isolation",
+        "status": "PASS"
+      },
+      {
+        "id": "visual",
+        "status": "PASS"
+      },
+      {
+        "id": "check",
+        "status": "PASS"
+      },
+      {
+        "id": "accessibility",
+        "status": "PASS"
+      },
+      {
+        "id": "mission",
+        "status": "PASS"
+      },
+      {
+        "id": "shell",
+        "status": "PASS"
+      },
+      {
+        "id": "engine",
+        "status": "PASS"
+      },
+      {
+        "id": "editorial",
+        "status": "PASS"
+      }
+    ],
+    "screenshots": 443,
+    "sourceFingerprint": "33abb0b87cfb7336a235efac645fdf71d753313960c1cd325f63bd504f6e49f7",
+    "report": "qa-artifacts/phase29-integration-readiness/round-2-full/report.json",
+    "reportSha256": "883b3d10b72f3cc5650075706105fd18c6bed8a145e1ebc3965ad6c8ffe3f4b9",
+    "failedCommands": 0
+  },
+  "emulatorQA": {
+    "sha": "749d86f12ed91dbb4d9517011c4a5d3c380f1fe8",
+    "branch": "feature/vocab-lab",
+    "sourceFingerprint": "671afc1253a6f9b292cb66a50b2f1236506b92b5cb3cb121594724e4b8a70087",
+    "sourceUnchanged": true,
+    "timestamp": "2026-11-04T16:40:12.885Z",
+    "projectId": "demo-mini-drills-vocab-test",
+    "authHost": "127.0.0.1:19099",
+    "firestoreHost": "127.0.0.1:18080",
+    "steps": [
+      {
+        "id": "security",
+        "status": "PASS",
+        "tests": 11,
+        "exitCode": 0,
+        "error": null
+      },
+      {
+        "id": "browser",
+        "status": "PASS",
+        "tests": 2,
+        "exitCode": 0,
+        "error": null
+      }
+    ],
+    "qaPass": true,
+    "limitations": [
+      "Auth emulator tokens are unsigned; emulator results do not prove production cryptographic verification or IAM.",
+      "No production or isolated deployed staging connection was tested.",
+      "102 seeded drafts remain pending; fixture approvals/publications are erased after tests."
+    ]
+  },
+  "latestMainCandidate": {
+    "status": "FAIL",
+    "main": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+    "textConflicts": [],
+    "writingRegionUnchanged": true,
+    "failure": "tests/vocab-shell.browser.js:95: ordinary student Writing header enabled on latest main; unchanged feature regression expects disabled/Coming soon.",
+    "failureLog": "qa-artifacts/phase29/latest-candidate-browser-edge.txt",
+    "failureLogSha256": "2ba65fcd199a81fb7054b48b28a2696beb66cc307026c6e5831de7964d39b743",
+    "networkViolations": [],
+    "subsequentChecks": "NOT_TESTED after the failing assertion",
+    "protectedWritingNotModified": true
+  },
+  "historicalCandidate": {
+    "main": "3ea771389edf53750ddd1d79445e78afd199a4d1",
+    "status": "PASS",
+    "log": "qa-artifacts/phase29/candidate-browser-edge.txt",
+    "notFinalMainEvidence": true
+  },
+  "content": {
+    "denominator": 102,
+    "assessableDraft": 102,
+    "published": 0,
+    "approvedShipped": 0,
+    "pendingReview": 102,
+    "editorialBlockers": 4,
+    "missing": []
+  },
+  "limitations": [
+    "No actual main merge, deployed staging, production connection or deployment.",
+    "Reference auth contract has no JWT verification or service endpoint; signed-token/IAM adapter remains future work.",
+    "Main-only Reading/Homework/admin test additions are preserved by the proposed integration plan but not run in the feature QA Runner.",
+    "Full-102 published personalized mission engine is not implemented."
+  ],
+  "provenanceNote": "QA ran on the uncommitted implementation against feature base; final changes after QA are report-only. No runtime/test source changes after round 2."
+}

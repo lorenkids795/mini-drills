@@ -1,0 +1,3 @@
+'use strict';
+// Read-only overlay for existing browser suites; no application files are changed.
+const fs=require('fs'),path=require('path'),root=path.resolve(__dirname,'..'),dir=path.join(root,'qa-artifacts/phase29/candidate'),read=fs.readFileSync.bind(fs),files=JSON.parse(read(path.join(dir,'main-files.json'),'utf8'));files['index.html']=read(path.join(dir,'index.html'),'utf8');const map=new Map(Object.entries(files).map(([p,s])=>[path.resolve(root,p).toLowerCase(),Buffer.from(s)]));fs.readFileSync=function(p,opt){const v=typeof p==='string'&&map.get(path.resolve(p).toLowerCase());if(!v)return read(p,opt);const encoding=typeof opt==='string'?opt:opt?.encoding;return encoding?v.toString(encoding):Buffer.from(v)};

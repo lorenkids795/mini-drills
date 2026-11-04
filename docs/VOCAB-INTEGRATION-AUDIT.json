@@ -1,0 +1,25 @@
+{
+  "main": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+  "feature": "749d86f12ed91dbb4d9517011c4a5d3c380f1fe8",
+  "mergeBase": "56cb32b5fddc63c2898f6b294cae777259ca925d",
+  "dryRunTree": "87dbf5b3da8cfc396e5b261aa8fb119649a4b33e",
+  "textConflicts": [],
+  "overlappingChangedPaths": [],
+  "divergentProtectedPaths": [
+    "firestore.rules"
+  ],
+  "mainProtectedHashes": {
+    "functions/api/[[path]].js": "4988db761bad162c9c9a7d86b663044e0086e277d9359bcbd678049bfb57d341",
+    "firestore.rules": "89864060ee004b7507b03433b8db142288c7b47ea3193ed4834b8f72ee2ee825",
+    "lm-engine.js": "3aff23f67777413f7b21faac04e0c3fa22273d81383df39d2a2e97840f29b6ea",
+    "lm-unit0.js": "047353c8682a8c831ad7dc2093a3c4c79c77c646ca8d1aaa3e7033504533258f",
+    "lm-unit2.js": "39b03a126045da33e0c337010b760471a0f8e3549c54f4f18640e02e0e49bcc3",
+    "md-backend.js": "94fd8d537882ec41025f66cd838697afc4b7bb0644f1944229f0a716f44ff8fc",
+    "md-config.js": "b3b8f4539af0e2fc4adf325575c0ea309163114864fe6ce7ae8f73778a1b829d"
+  },
+  "mainWritingRegionSha256": "7ee4fa0b6bb971a47291503c1e7fcdc3c065b03a4cee92442383144a863d0c55",
+  "candidateWritingRegionSha256": "7ee4fa0b6bb971a47291503c1e7fcdc3c065b03a4cee92442383144a863d0c55",
+  "candidateIndexSha256": "c907e559237e8bd41d15726eec49f8cec1581ed81f0e8a27f3bf634d26826e12",
+  "resolution": "Discard feature Writing-region changes and keep latest-main region byte-for-byte; retain Vocab-only Library hooks. Keep latest-main auth/backend/rules assets. Generated candidate is QA-only; no branch/ref/index/worktree merge.",
+  "candidateDirectory": "qa-artifacts/phase29/candidate"
+}

@@ -1,16 +1,16 @@
 # Vocab QA status
 
-**BLOCKED** · QA PASS · round 1/3 · full
+**BLOCKED** · QA PASS · round 2/3 · full
 
-- Timestamp (Asia/Saigon): 2026-11-04 18:47:16 GMT+7
-- UTC: 2026-11-04T11:47:16.023Z
-- Branch/SHA: `feature/vocab-lab` / `9d6a8ca673811cf326fce93dd1fd231579edcb2d`
-- Working source fingerprint: `28f00865a1516cb63eec4f5e470f51880b1b7086bd06e5976a6ccaa3e9e1203c` (dirty working tree)
-- Command: `node tools/vocab-qa-runner.cjs --session phase28-approval-staging --round 1`
-- Session: `phase28-approval-staging`
+- Timestamp (Asia/Saigon): 2026-11-04 23:46:16 GMT+7
+- UTC: 2026-11-04T16:46:16.810Z
+- Branch/SHA: `feature/vocab-lab` / `749d86f12ed91dbb4d9517011c4a5d3c380f1fe8`
+- Working source fingerprint: `33abb0b87cfb7336a235efac645fdf71d753313960c1cd325f63bd504f6e49f7` (dirty working tree)
+- Command: `node tools/vocab-qa-runner.cjs --session phase29-integration-readiness --round 2 --changes-file qa-artifacts/phase29-integration-readiness/changes-round-2.json`
+- Session: `phase29-integration-readiness`
 - Environment: Node v24.22.1, win32/x64, Playwright 1.62.1, browser msedge
-- Tests: 122 Node tests + 244 core assertions; 0 failed commands
-- Artifact directory: `qa-artifacts/phase28-approval-staging/round-1-full` (443 screenshots)
+- Tests: 126 Node tests + 244 core assertions; 0 failed commands
+- Artifact directory: `qa-artifacts/phase29-integration-readiness/round-2-full` (443 screenshots)
 - Static manifest: `aa1d4474e101245cf429864219d2762fb187d90e221f56016e894ecf546278ea`
 
 ## Coverage
@@ -83,7 +83,7 @@
 
 ## Changes in this round
 
-- Initial QA run; no automatic code/content edits.
+- origin/main advanced to 8d9cf7742a14f64db4d7e22f63a395ee68531113 during readiness audit; historical index conflict and lmSkillLocked no longer exist. Make the new readiness test accept zero conflicts while retaining exact-main Writing hash equality, conflict-path restriction and Vocab/gating browser assertions. Existing browser Writing assertion is unchanged and its candidate failure remains a blocker.; files: tests/vocab-integration.test.js; reproduction: Latest-main candidate yields no textual conflicts and lacks lmSkillLocked. Run node --test tests/vocab-integration.test.js against refreshed origin/main.
 
 ## Next action
 
