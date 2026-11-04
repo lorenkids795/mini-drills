@@ -2,15 +2,15 @@
 
 **BLOCKED** · QA PASS · round 1/3 · full
 
-- Timestamp (Asia/Saigon): 2026-10-31 10:27:42 GMT+7
-- UTC: 2026-10-31T03:27:42.525Z
-- Branch/SHA: `feature/vocab-lab` / `57768755419e580d2b71f9cf2db63a3f04721ba7`
-- Working source fingerprint: `0e292d3cfe0630b411054bb63f54171f999a0e4ecdc93be74d866f2b3a518972` (dirty working tree)
-- Command: `node tools/vocab-qa-runner.cjs --session phase27-teacher-decisions --round 1 --changes-file qa-artifacts/phase27-teacher-decisions/focused-editorial-repair.json`
-- Session: `phase27-teacher-decisions`
+- Timestamp (Asia/Saigon): 2026-11-04 18:47:16 GMT+7
+- UTC: 2026-11-04T11:47:16.023Z
+- Branch/SHA: `feature/vocab-lab` / `9d6a8ca673811cf326fce93dd1fd231579edcb2d`
+- Working source fingerprint: `28f00865a1516cb63eec4f5e470f51880b1b7086bd06e5976a6ccaa3e9e1203c` (dirty working tree)
+- Command: `node tools/vocab-qa-runner.cjs --session phase28-approval-staging --round 1`
+- Session: `phase28-approval-staging`
 - Environment: Node v24.22.1, win32/x64, Playwright 1.62.1, browser msedge
-- Tests: 117 Node tests + 244 core assertions; 0 failed commands
-- Artifact directory: `qa-artifacts/phase27-teacher-decisions/round-1-full` (443 screenshots)
+- Tests: 122 Node tests + 244 core assertions; 0 failed commands
+- Artifact directory: `qa-artifacts/phase28-approval-staging/round-1-full` (443 screenshots)
 - Static manifest: `aa1d4474e101245cf429864219d2762fb187d90e221f56016e894ecf546278ea`
 
 ## Coverage
@@ -35,7 +35,7 @@
 | draft-102-routes | PASS | yes | 102 independently assessable DRAFT senses: 15 pilot + 87 new routes, 4 explicit editorial blockers; 0 human-approved shipped, 0 published. |
 | curriculum-editorial | TEACHER_REVIEW | yes | IELTS sense/context quality and pending teaching content need teacher approval; automation is not the authority. |
 | human-visual-ux | TEACHER_REVIEW | no | Teacher reviews screenshots/aesthetics; screenshot automation is not aesthetic approval. |
-| staging-auth-security | TEACHER_REVIEW | yes | Mocks/static contracts only. Firebase emulator/staging auth/rules required before production; no live credentials/student data used. |
+| staging-auth-security | TEACHER_REVIEW | yes | This runner covers mocks/static contracts. Separate Phase 2.8 emulator evidence is in VOCAB-PHASE-2.8-HANDOFF.md; deployed staging, signed-token/IAM and human security review remain required. No live student data. |
 | latest-main-reconciliation | NOT_TESTED | no | Offline run does not fetch/merge main. Writing baseline compatibility is checked; latest main divergence must be reconciled before a future approved merge. |
 
 ## Commands
@@ -78,12 +78,12 @@
 - full-102-personalized-missions: NOT_IMPLEMENTED — 0/102 published targets; 15 candidate targets; 5 context-only senses. Missing approved full-bank routes prevent readiness.
 - curriculum-editorial: TEACHER_REVIEW — IELTS sense/context quality and pending teaching content need teacher approval; automation is not the authority.
 - human-visual-ux: TEACHER_REVIEW — Teacher reviews screenshots/aesthetics; screenshot automation is not aesthetic approval.
-- staging-auth-security: TEACHER_REVIEW — Mocks/static contracts only. Firebase emulator/staging auth/rules required before production; no live credentials/student data used.
+- staging-auth-security: TEACHER_REVIEW — This runner covers mocks/static contracts. Separate Phase 2.8 emulator evidence is in VOCAB-PHASE-2.8-HANDOFF.md; deployed staging, signed-token/IAM and human security review remain required. No live student data.
 - latest-main-reconciliation: NOT_TESTED — Offline run does not fetch/merge main. Writing baseline compatibility is checked; latest main divergence must be reconciled before a future approved merge.
 
 ## Changes in this round
 
-- New instruction used expression, containing the taught target press (048); all-102 browser leakage assertion detected it.; files: vocab-retrieval.js, vocab-mission.js; reproduction: Round 1 focused editorial: Answer visible C17-T1-R1-048. Replaced wording with vocabulary taught here; preserved the exact leakage assertions.
+- Initial QA run; no automatic code/content edits.
 
 ## Next action
 

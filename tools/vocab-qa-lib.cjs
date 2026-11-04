@@ -31,7 +31,7 @@ function coverage(steps,checks,mode){const c=require('../vocab-mission-planner')
  {id:'draft-102-routes',status:pass(['unit','editorial']),mandatory:true,detail:'102 independently assessable DRAFT senses: 15 pilot + 87 new routes, 4 explicit editorial blockers; 0 human-approved shipped, 0 published.'},
  {id:'curriculum-editorial',status:'TEACHER_REVIEW',mandatory:true,detail:'IELTS sense/context quality and pending teaching content need teacher approval; automation is not the authority.'},
  {id:'human-visual-ux',status:'TEACHER_REVIEW',mandatory:false,detail:'Teacher reviews screenshots/aesthetics; screenshot automation is not aesthetic approval.'},
- {id:'staging-auth-security',status:'TEACHER_REVIEW',mandatory:true,detail:'Mocks/static contracts only. Firebase emulator/staging auth/rules required before production; no live credentials/student data used.'},
+ {id:'staging-auth-security',status:'TEACHER_REVIEW',mandatory:true,detail:'This runner covers mocks/static contracts. Separate Phase 2.8 emulator evidence is in VOCAB-PHASE-2.8-HANDOFF.md; deployed staging, signed-token/IAM and human security review remain required. No live student data.'},
  {id:'latest-main-reconciliation',status:'NOT_TESTED',mandatory:false,detail:'Offline run does not fetch/merge main. Writing baseline compatibility is checked; latest main divergence must be reconciled before a future approved merge.'}
  ]}
 function writeAtomic(file,data){fs.mkdirSync(path.dirname(file),{recursive:true});const tmp=file+'.tmp';fs.writeFileSync(tmp,data);try{fs.renameSync(tmp,file)}catch(e){if(!['EPERM','EEXIST'].includes(e.code)||!fs.existsSync(file))throw e;fs.copyFileSync(tmp,file);fs.unlinkSync(tmp)}}

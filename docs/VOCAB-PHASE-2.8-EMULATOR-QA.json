@@ -1,0 +1,41 @@
+{
+  "sha": "9d6a8ca673811cf326fce93dd1fd231579edcb2d",
+  "branch": "feature/vocab-lab",
+  "sourceFingerprint": "fa04a9107184dedb1ad044bcd7b8a83bd28ba2b53295f95f6230310e1b93f54b",
+  "sourceUnchanged": true,
+  "timestamp": "2026-11-04T11:54:36.086Z",
+  "projectId": "demo-mini-drills-vocab-test",
+  "authHost": "127.0.0.1:19099",
+  "firestoreHost": "127.0.0.1:18080",
+  "steps": [
+    {
+      "id": "security",
+      "status": "PASS",
+      "tests": 11,
+      "exitCode": 0,
+      "error": null
+    },
+    {
+      "id": "browser",
+      "status": "PASS",
+      "tests": 2,
+      "exitCode": 0,
+      "error": null
+    }
+  ],
+  "qaPass": true,
+  "limitations": [
+    "Auth emulator tokens are unsigned; emulator results do not prove production cryptographic verification or IAM.",
+    "No production or isolated deployed staging connection was tested.",
+    "102 seeded drafts remain pending; fixture approvals/publications are erased after tests."
+  ],
+  "finalState": {
+    "projectId": "demo-mini-drills-vocab-test",
+    "total": 102,
+    "draft": 102,
+    "approved": 0,
+    "published": 0,
+    "decisionEvents": 0,
+    "authFixtureUsersRemaining": 0
+  }
+}

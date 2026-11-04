@@ -1,25 +1,23 @@
 {
   "schemaVersion": 1,
-  "timestampUTC": "2026-10-31T03:27:42.525Z",
-  "timestampLocal": "2026-10-31 10:27:42 GMT+7",
+  "timestampUTC": "2026-11-04T11:47:16.023Z",
+  "timestampLocal": "2026-11-04 18:47:16 GMT+7",
   "branch": "feature/vocab-lab",
-  "sha": "57768755419e580d2b71f9cf2db63a3f04721ba7",
-  "sourceFingerprint": "0e292d3cfe0630b411054bb63f54171f999a0e4ecdc93be74d866f2b3a518972",
+  "sha": "9d6a8ca673811cf326fce93dd1fd231579edcb2d",
+  "sourceFingerprint": "28f00865a1516cb63eec4f5e470f51880b1b7086bd06e5976a6ccaa3e9e1203c",
   "dirty": true,
-  "session": "phase27-teacher-decisions",
+  "session": "phase28-approval-staging",
   "round": 1,
   "mode": "full",
   "commandArgv": [
     "node",
     "tools/vocab-qa-runner.cjs",
     "--session",
-    "phase27-teacher-decisions",
+    "phase28-approval-staging",
     "--round",
-    "1",
-    "--changes-file",
-    "qa-artifacts/phase27-teacher-decisions/focused-editorial-repair.json"
+    "1"
   ],
-  "command": "node tools/vocab-qa-runner.cjs --session phase27-teacher-decisions --round 1 --changes-file qa-artifacts/phase27-teacher-decisions/focused-editorial-repair.json",
+  "command": "node tools/vocab-qa-runner.cjs --session phase28-approval-staging --round 1",
   "environment": {
     "node": "v24.22.1",
     "platform": "win32",
@@ -27,9 +25,9 @@
     "browser": "msedge",
     "playwright": "1.62.1"
   },
-  "artifactDirectory": "qa-artifacts/phase27-teacher-decisions/round-1-full",
+  "artifactDirectory": "qa-artifacts/phase28-approval-staging/round-1-full",
   "counts": {
-    "node": 117,
+    "node": 122,
     "regression": 244
   },
   "steps": [
@@ -58,15 +56,15 @@
     },
     {
       "id": "unit",
-      "command": "node --test tests/vocab-batch.test.js tests/vocab-content-quality.test.js tests/vocab-editorial.test.js tests/vocab-highlight.test.js tests/vocab-lab.test.js tests/vocab-mission-engine.test.js tests/vocab-mission-planner.test.js tests/vocab-mission-store.test.js tests/vocab-mission.test.js tests/vocab-qa-runner.test.js tests/vocab-reality.test.js tests/vocab-routes.test.js tests/vocab-teacher-decisions.test.js tests/vocab-ui-preview.test.js",
+      "command": "node --test tests/vocab-batch.test.js tests/vocab-content-quality.test.js tests/vocab-editorial.test.js tests/vocab-highlight.test.js tests/vocab-lab.test.js tests/vocab-mission-engine.test.js tests/vocab-mission-planner.test.js tests/vocab-mission-store.test.js tests/vocab-mission.test.js tests/vocab-qa-runner.test.js tests/vocab-reality.test.js tests/vocab-routes.test.js tests/vocab-staging.test.js tests/vocab-teacher-decisions.test.js tests/vocab-ui-preview.test.js",
       "log": "logs/unit.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 1498,
+      "elapsedMs": 1605,
       "counts": {
         "kind": "node",
-        "passed": 117,
-        "total": 117
+        "passed": 122,
+        "total": 122
       },
       "summary": "See log"
     },
@@ -76,7 +74,7 @@
       "log": "logs/regression-admin-kick.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 1582,
+      "elapsedMs": 1859,
       "counts": {
         "kind": "assertions",
         "passed": 50,
@@ -90,7 +88,7 @@
       "log": "logs/regression-chart-facts.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 150,
+      "elapsedMs": 102,
       "counts": {
         "kind": "assertions",
         "passed": 56,
@@ -104,7 +102,7 @@
       "log": "logs/regression-lm-meta.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 77,
+      "elapsedMs": 59,
       "counts": {
         "kind": "assertions",
         "passed": 22,
@@ -118,7 +116,7 @@
       "log": "logs/regression-lm-unit0.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 328,
+      "elapsedMs": 294,
       "counts": {
         "kind": "assertions",
         "passed": 23,
@@ -132,7 +130,7 @@
       "log": "logs/regression-lm-unit2-ui.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 314,
+      "elapsedMs": 287,
       "counts": {
         "kind": "assertions",
         "passed": 41,
@@ -146,7 +144,7 @@
       "log": "logs/regression-misc.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 122,
+      "elapsedMs": 110,
       "counts": {
         "kind": "assertions",
         "passed": 6,
@@ -160,7 +158,7 @@
       "log": "logs/regression-reading.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 145,
+      "elapsedMs": 136,
       "counts": {
         "kind": "assertions",
         "passed": 12,
@@ -174,7 +172,7 @@
       "log": "logs/regression-server-purge.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 76,
+      "elapsedMs": 69,
       "counts": {
         "kind": "assertions",
         "passed": 8,
@@ -188,7 +186,7 @@
       "log": "logs/regression-sign-in.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 72,
+      "elapsedMs": 70,
       "counts": {
         "kind": "assertions",
         "passed": 11,
@@ -202,7 +200,7 @@
       "log": "logs/regression-ui-audit.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 318,
+      "elapsedMs": 295,
       "counts": {
         "kind": "assertions",
         "passed": 15,
@@ -216,7 +214,7 @@
       "log": "logs/writing-content.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 65,
+      "elapsedMs": 67,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -230,7 +228,7 @@
       "log": "logs/reality.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 50742,
+      "elapsedMs": 33904,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -244,7 +242,7 @@
       "log": "logs/batch.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 52291,
+      "elapsedMs": 39095,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -258,7 +256,7 @@
       "log": "logs/isolation.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 38455,
+      "elapsedMs": 26754,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -272,7 +270,7 @@
       "log": "logs/visual.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 7342,
+      "elapsedMs": 5421,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -286,7 +284,7 @@
       "log": "logs/check.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 10208,
+      "elapsedMs": 8176,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -300,7 +298,7 @@
       "log": "logs/accessibility.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 22064,
+      "elapsedMs": 11974,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -314,7 +312,7 @@
       "log": "logs/mission.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 46393,
+      "elapsedMs": 31625,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -328,7 +326,7 @@
       "log": "logs/shell.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 74373,
+      "elapsedMs": 59067,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -342,7 +340,7 @@
       "log": "logs/engine.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 113112,
+      "elapsedMs": 76128,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -356,7 +354,7 @@
       "log": "logs/editorial.txt",
       "status": "PASS",
       "exitCode": 0,
-      "elapsedMs": 23115,
+      "elapsedMs": 21575,
       "counts": {
         "kind": "assertions",
         "passed": 0,
@@ -384,7 +382,7 @@
     }
   ],
   "changes": [
-    "New instruction used expression, containing the taught target press (048); all-102 browser leakage assertion detected it.; files: vocab-retrieval.js, vocab-mission.js; reproduction: Round 1 focused editorial: Answer visible C17-T1-R1-048. Replaced wording with vocabulary taught here; preserved the exact leakage assertions."
+    "Initial QA run; no automatic code/content edits."
   ],
   "screenshots": [
     "browser/accessibility/check-before-1280-dark.png",
@@ -945,7 +943,7 @@
       "id": "staging-auth-security",
       "status": "TEACHER_REVIEW",
       "mandatory": true,
-      "detail": "Mocks/static contracts only. Firebase emulator/staging auth/rules required before production; no live credentials/student data used."
+      "detail": "This runner covers mocks/static contracts. Separate Phase 2.8 emulator evidence is in VOCAB-PHASE-2.8-HANDOFF.md; deployed staging, signed-token/IAM and human security review remain required. No live student data."
     },
     {
       "id": "latest-main-reconciliation",
@@ -958,5 +956,5 @@
   "releaseReadiness": "BLOCKED",
   "repositoryValid": true,
   "manifestSha256": "aa1d4474e101245cf429864219d2762fb187d90e221f56016e894ecf546278ea",
-  "completedUTC": "2026-10-31T03:35:06.980Z"
+  "completedUTC": "2026-11-04T11:52:41.640Z"
 }

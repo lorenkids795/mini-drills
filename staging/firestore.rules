@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+  function signed() { return request.auth != null && request.auth.token.exp > request.time.toMillis() / 1000; }
+  function admin() { return signed() && request.auth.token.get('role', '') == 'admin'; }
+  function staff() { return admin() || (signed() && request.auth.token.get('role', '') == 'teacher' && exists(/databases/$(database)/documents/vocab28_staff/$(request.auth.uid)) && get(/databases/$(database)/documents/vocab28_staff/$(request.auth.uid)).data.active == true && 'cam17-t1-reading-p1' in get(/databases/$(database)/documents/vocab28_staff/$(request.auth.uid)).data.lessons); }
+  function learner(uid) { return signed() && request.auth.uid == uid && request.auth.token.get('role', '') == 'student' && exists(/databases/$(database)/documents/vocab28_enrollments/$(uid)) && get(/databases/$(database)/documents/vocab28_enrollments/$(uid)).data.active == true && 'cam17-t1-reading-p1' in get(/databases/$(database)/documents/vocab28_enrollments/$(uid)).data.lessons; }
+  match /vocab28_items/{id} { allow read: if staff(); allow write: if false; }
+  match /vocab28_versions/{id} { allow read: if staff(); allow write: if false; }
+  match /vocab28_decisions/{id} { allow read: if staff(); allow write: if false; }
+  match /vocab28_publications/{id} { allow read: if staff(); allow write: if false; }
+  // Public catalog contains metadata only, never task answers or private draft content.
+  match /vocab28_public/{id} { allow read: if staff() || learner(request.auth.uid); allow write: if false; }
+  match /vocab28_students/{uid}/{collection}/{id} {
+   allow read: if collection in ['sessions', 'progress', 'events'] && learner(uid);
+   allow write: if false;
+  }
+  match /{document=**} { allow read, write: if false; }
+ }
+}

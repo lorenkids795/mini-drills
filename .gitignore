@@ -1,3 +1,14 @@
 /preview-ui-dist/
 /qa-artifacts/
 /tools/qa-runtime/node_modules/
+
+/tools/emulator-runtime/node_modules/
+/tools/emulator-runtime/bootstrap/
+/tools/emulator-runtime/java/
+/tools/emulator-runtime/downloads/
+/staging/*-debug.log
+/staging/.firebase/
+
+/firebase-debug.log
+/firestore-debug.log
+/ui-debug.log
