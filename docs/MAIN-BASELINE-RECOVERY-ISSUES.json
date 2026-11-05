@@ -1,0 +1,1785 @@
+{
+  "main": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+  "parent": "ff1a3b363ce2ba102fbd534380b09a1d2ea66234",
+  "featureBase": "b9d7075af2031feac89d13a4765283cae09c9ef3",
+  "overall": "BLOCKED; audit complete, Admin-only proposal verified",
+  "baseline": {
+    "main": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+    "label": "baseline-lf",
+    "commands": 23,
+    "passedCommands": 12,
+    "failedCommands": 11,
+    "counts": {
+      "passed": 246,
+      "total": 350
+    },
+    "sourceUnchanged": true,
+    "changedPaths": [],
+    "testsUnmodified": true,
+    "results": [
+      {
+        "command": "tests/admin-actions.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 1,
+          "total": 9
+        },
+        "error": null,
+        "failures": [
+          "FAIL no click action is handled by two different branches (except shared guards / grouped buttons) -> ad-tadd @ 7645,7705",
+          "FAIL the tester and teacher forms use their own input ids -> shared id adTName",
+          "FAIL Add teacher: valid fields -> only admin/teachers {op:add}; no null error; list reloads -> The expression evaluated to a falsy value:",
+          "FAIL Add teacher: missing name / bad email / short password -> message, no request -> The expression evaluated to a falsy value:",
+          "FAIL Create tester still works: only admin/tester {op:create} -> The expression evaluated to a falsy value:",
+          "FAIL a form that is not on screen (other tab) cannot be read: message instead of a crash, no request -> The expression evaluated to a falsy value:",
+          "FAIL Generate fills the password box of its own form -> The expression evaluated to a falsy value:",
+          "FAIL a server error shows its message but never the password -> The expression evaluated to a falsy value:"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/admin-actions.test.js.txt",
+        "logSha256": "24a29c41a6ca0d32f7c72495857acaa860b319e080a46ca71de0cf3ef5db3876"
+      },
+      {
+        "command": "tests/admin-kick.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 50,
+          "total": 50
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/admin-kick.test.js.txt",
+        "logSha256": "5b1e00c90705747f38a13bdc23cd36f90e2e485a6440a81fa9a45960bb946619"
+      },
+      {
+        "command": "tests/chart-facts.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 56,
+          "total": 56
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/chart-facts.test.js.txt",
+        "logSha256": "f0890299de22c9dd67de45348545646c0e04238f273ddccc9746c1e27ad99600"
+      },
+      {
+        "command": "tests/create-reading-ui.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 0,
+          "total": 9
+        },
+        "error": null,
+        "failures": [
+          "FAIL root cause: no Easy / Hard yet → rdLevels() is null; the level switch and the preview no longer throw -> rdRvAct is not defined",
+          "FAIL Student View Preview of an unapproved Medium draft = the interactive lesson (passage, questions, step menu, dock), not the summary -> rdRvAct is not defined",
+          "FAIL Easy / Medium / Hard switch changes the real lesson content in the preview -> rdRvAct is not defined",
+          "FAIL workflow: review → derive (one \"Generate Easy & Hard\", review tools folded, Edit approved Medium) → ready (Add) -> rdRvAct is not defined",
+          "FAIL compact panel in Student View / Hide editor: status + main action only (no feedback box, no technical details) -> rdRvAct is not defined",
+          "FAIL Generate again on an existing Medium asks first (no accidental regeneration) -> rdRvAct is not defined",
+          "FAIL Reading lesson: no big passage header, list of headings not squeezed by the header class, groups and questions unframed -> .rmhl flex only for the header",
+          "FAIL Admin › Users: Tester class cell shows —, the stored class stays (filters use it) -> rdRvAct is not defined",
+          "FAIL Homework Assistant: md-backend keeps the assistant role; rules give it no Firestore access; Boot opens no snapshots for it -> The expression evaluated to a falsy value:"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/create-reading-ui.test.js.txt",
+        "logSha256": "cacb5d835099499ef70b745b8cf43246f3d9caa120a92fa2b577a38832262ba8"
+      },
+      {
+        "command": "tests/data-cleanup.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 0,
+          "total": 15
+        },
+        "error": null,
+        "failures": [
+          "FAIL server preview (dry run): lists only emails without a roster row that are not staff; same name \"Cherry\" on a live student is kept; nothing deleted -> adminOrphans is not defined",
+          "FAIL server purge: deletes every spelling of that email in all learning collections + profile, writes an audit row; live student, tester and staff untouched; running again is refused (idempotent) -> adminOrphans is not defined",
+          "FAIL server purge refuses a live student, a tester, a teacher and a bad email -> adminOrphans is not defined",
+          "FAIL one rule for staff views: live = roster student (by email), not removed from a class; testers are live -> liveEmails is not defined",
+          "FAIL Marking: deleted and removed students' submissions are gone (cards, counts, class filter); the tester's is only under Tester -> liveEmails is not defined",
+          "FAIL Marking filter: All / Tester / a class by email + tester flag (not the name), seeded results, stale class labels, counts = cards -> liveEmails is not defined",
+          "FAIL Marking: an open submission whose student was removed closes with a message (no broken modal) -> liveEmails is not defined",
+          "FAIL Dashboard: attempts, averages, classes and charts only from live students (tester still left out); nothing left -> no fake numbers -> liveEmails is not defined",
+          "FAIL Dashboard clean-up: no Sample data switch, no extra labels, no empty-state sentences; no attempts = \"–\" (not a measured 0%) -> liveEmails is not defined",
+          "FAIL Create: no \"TEST 1 · READING\" caption, no \"Select a slot…\" hint, none of the Reading helper sentences -> liveEmails is not defined",
+          "FAIL Admin › Users: \"Clean up data of deleted students\" previews first, deletes one email after a confirm -> The expression evaluated to a falsy value:",
+          "FAIL cover: card and editor use the same renderer and position; zoom / reset / cancel / save; remove clears the position -> coverImgHTML is not defined",
+          "FAIL Create: the only Add button is at the top of \"Pick a free slot\"; previews draw none; disabled until a valid lesson + slot -> The expression evaluated to a falsy value:",
+          "FAIL Create: Hide editor / Show editor is a class switch only (no redraw, no AI call); Easy / Medium / Hard above the reading preview changes the preview only -> The expression evaluated to a falsy value:",
+          "FAIL Reading: one header (back, title, \"Cam · Test · Reading\" | step menu, timer, settings) + progress bar; level, text size, demo inside settings; no \"Selected excerpts\" -> rmHeadHTML is not defined"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/data-cleanup.test.js.txt",
+        "logSha256": "b2e1fc427a62ac0efcfe0b1b495de87611b0f6c9548cdc8b160f768e7bf704ee"
+      },
+      {
+        "command": "tests/hw-assistant.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 0,
+          "total": 10
+        },
+        "error": null,
+        "failures": [
+          "FAIL server: roleOf gives the assistant role (never student); only the assistant role opens /api/hwa -> hwaData is not defined",
+          "FAIL server: data = only the allowed classes; no emails; testers and removed students left out; statuses -> hwaData is not defined",
+          "FAIL server: statuses = on time / late / missing / pending / extended by a late pass -> hwaData is not defined",
+          "FAIL server: assignments only for own classes (forged class refused, other class assignment refused); cancel -> hwaData is not defined",
+          "FAIL server: revoking a class / removing / pausing works at once (next call) -> hwaData is not defined",
+          "FAIL server: notes only for students of own classes; follow-up status kept; stored by the server -> hwaData is not defined",
+          "FAIL client: assistant gets only the Homework tab -> hwaReport is not defined",
+          "FAIL client: copy report = exact owner wording, sorted names, nothing private -> hwaReport is not defined",
+          "FAIL client: follow-up label from the last 4 due assignments; honest when history is short -> hwaReport is not defined",
+          "FAIL client: workspace renders without emails; Admin menu for an assistant = Change password only -> hwaReport is not defined"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/hw-assistant.test.js.txt",
+        "logSha256": "d7e30e1c0b0df127a718c56a4087c0b8294a0cf0750418d98e97180d31b1e890"
+      },
+      {
+        "command": "tests/hw-external.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 0,
+          "total": 7
+        },
+        "error": null,
+        "failures": [
+          "FAIL form: Assignment details → Exercises from Library + External tasks (both addable, no type switch) → footer \"Save assignment\" -> extSubsHTML is not defined",
+          "FAIL save External only: link required (http/https only); saved record = ext [{x1, link, note, source}], ex [], type external -> extSubsHTML is not defined",
+          "FAIL old assignments (no type) still work as Mini Drills; a saved Mini Drills one gets type mini -> extSubsHTML is not defined",
+          "FAIL student: external card = name, due, instructions, Open link (new tab, safe href), \"Not submitted\", Upload screenshot -> extSubsHTML is not defined",
+          "FAIL after an upload (hwdone with a screenshot): Submitted + time + thumbnail + Replace; survives a reload (same record); late upload says so -> extSubsHTML is not defined",
+          "FAIL teacher: per student Submitted / Not submitted / Missing, time, screenshot link; progress = submitted students -> extSubsHTML is not defined",
+          "FAIL server: /api/image needs a signed-in user, an image type and the hwshot kind; stores outside Firestore; serves it back -> imageUpload is not defined"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/hw-external.test.js.txt",
+        "logSha256": "ca71d262a720f726d73c7db8c2b7fe8dbc7cb98a4c59fa269887ceb2f51223fb"
+      },
+      {
+        "command": "tests/hw-mixed.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 0,
+          "total": 13
+        },
+        "error": null,
+        "failures": [
+          "FAIL 1. Library only: saved with ex, ext [], type mini -> asgState is not defined",
+          "FAIL 2. nothing added → refused with a clear message, nothing saved, fields kept -> asgState is not defined",
+          "FAIL 3. Library + one external link → one record, type mixed -> asgState is not defined",
+          "FAIL 4. several Library exercises + several links; typed values survive adding a section; ids x1, x2, x3 -> asgState is not defined",
+          "FAIL 5. edit a mixed assignment: remove one task and one exercise, the rest (and the task ids) stay; new task gets a new id -> asgState is not defined",
+          "FAIL 6. student: one card, two sections; Library rows open the exercise; each external task has its own link + upload -> asgState is not defined",
+          "FAIL 7–8. completion: screenshots alone ≠ complete; Library alone ≠ complete; both = complete; a screenshot is \"Submitted\", never a score -> asgState is not defined",
+          "FAIL 8b. \"I'm done!\" on a mixed assignment keeps the screenshots in the same record (no duplicate record) -> asgState is not defined",
+          "FAIL 9. teacher: hwStatus counts parts; matrix shows exercise + task columns, screenshot link, \"Complete\" only when everything is in -> asgState is not defined",
+          "FAIL 10. legacy records: old external (top-level link) = task x1 with its old \"shot\"; old Library-only and old \"I'm done\" still work -> asgState is not defined",
+          "FAIL 11. bulk select acts on the filtered exercises only; Remove all clears the whole selection (after confirm) -> asgState is not defined",
+          "FAIL 12. layout: no inner scroll box in the picker, sticky footer, no type switch CSS hooks left in the form -> The expression evaluated to a falsy value:",
+          "FAIL server: assistant saves Library + several links for its own class; bad link refused by position; status needs every part -> hwaAsg is not defined"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/hw-mixed.test.js.txt",
+        "logSha256": "1abcbfd61a8f453bf98c3efd013485bd9fefbad4d9c5e72fae04989937d6b0a0"
+      },
+      {
+        "command": "tests/lm-access.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 0,
+          "total": 9
+        },
+        "error": null,
+        "failures": [
+          "FAIL ordinary student: Writing is shown, dimmed, disabled, \"Coming soon\"; no unit, no toggle -> lmTester is not defined",
+          "FAIL ordinary student: exactly 4 rows (Writing, Listening, Reading, Speaking), each \"Coming soon\", no arrow, no nested list -> lmTester is not defined",
+          "FAIL focused lesson view: an open unit fills the page (no Today, homework, Library tabs, Recent results); Back brings the list and Home back -> lmTester is not defined",
+          "FAIL ordinary student cannot open a Writing unit by any route (action, state, even a published one) -> lmTester is not defined",
+          "FAIL hidden tester: no \"Coming soon\", Writing opens, Unit 0 and Unit 2 open as before -> lmTester is not defined",
+          "FAIL the tester flag comes from the roster row (staff-written), not from the user object or the display name -> lmTester is not defined",
+          "FAIL teacher: unchanged (Writing opens, unpublished units hidden); admin: unchanged (sees and opens everything) -> lmTester is not defined",
+          "FAIL switching account updates at once (no state kept from the previous user) -> lmTester is not defined",
+          "FAIL other skills and the Cambridge library are not affected -> lmTester is not defined"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/lm-access.test.js.txt",
+        "logSha256": "4ff1b428c7200b2030223db1ec67ce67fef13ec1c78899608a897615490d8c08"
+      },
+      {
+        "command": "tests/lm-meta.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 22,
+          "total": 22
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/lm-meta.test.js.txt",
+        "logSha256": "f8dd54c6f6eb25ecf31ae311c84277deb6838bada63690fee4f259a7a3d2b92b"
+      },
+      {
+        "command": "tests/lm-unit0.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 23,
+          "total": 23
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/lm-unit0.test.js.txt",
+        "logSha256": "714675feb34a7304c06f1591c793e0f083fd11f5a8e6509c1589a0f500dc1d7c"
+      },
+      {
+        "command": "tests/lm-unit2-ui.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 41,
+          "total": 41
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/lm-unit2-ui.test.js.txt",
+        "logSha256": "04616b6ad4799a49613d784e2d2c2b3ee216ef9a39fea2dcd3a3dfcafe3426f7"
+      },
+      {
+        "command": "tests/misc.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 6,
+          "total": 6
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/misc.test.js.txt",
+        "logSha256": "20213ef1a45792c7278648b84ffdb827ae0cbca1397698ccf7f8dbce314e7888"
+      },
+      {
+        "command": "tests/reading-gen.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 0,
+          "total": 14
+        },
+        "error": null,
+        "failures": [
+          "FAIL 934-word / 7-paragraph passage: accepted as it is, no \"shorter\" advice; split into 3 smaller prompts -> aiReadingPart is not defined",
+          "FAIL server: a cut-off answer (MAX_TOKENS) = code too_long with a \"Retry failed part\" message, never \"shorter essay\"; not saved -> aiReadingPart is not defined",
+          "FAIL server: \"pairs\" with 0 / 1 items is rejected with the exact count; 2 and 6 pass; 7 passes to the app (only 6 used) -> aiReadingPart is not defined",
+          "FAIL server: the daily limit counts 1 per version of a run (like before: 3 per lesson), at most 8 requests per version -> aiReadingPart is not defined",
+          "FAIL app: Generate = 9 real requests in order (Medium, Easy, Hard x 3 parts); passage unchanged in every version; Add on at the end -> rdRetry is not defined",
+          "FAIL app: Add stays off while parts are being written -> rdRetry is not defined",
+          "FAIL app: a cut-off part is sent once more by itself; still cut off → stops; Retry failed part sends ONLY that part; finished parts kept -> rdRetry is not defined",
+          "FAIL app: invalid \"pairs\" (0 / 1 / 7 items) — nothing broken is used; exact item-level message; 7 → first 6 with a note -> rdRetry is not defined",
+          "FAIL app: \"pairs\" with 2 items and with 6 items pass (no false failure) -> rdRetry is not defined",
+          "FAIL app: quota used up (429) stops at once, no more requests; the old preview is gone (no stale errors) -> rdRetry is not defined",
+          "FAIL reload: finished parts come back (same passage); the part that failed is retried alone, no part written twice -> rdRetry is not defined",
+          "FAIL relay: a passing relay failure (timeout / busy / HTML error) is retried by itself; only a setup problem stops the job -> aiReadingPart is not defined",
+          "FAIL assembled-lesson problems are sent back to the right part -> rdRetry is not defined",
+          "FAIL Advanced: pasted JSON goes through the same checks, with no AI call -> rdRetry is not defined"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/reading-gen.test.js.txt",
+        "logSha256": "1ed1e0b60fadcac70632fa1778c6bf244843e71ad2837c4d7b5cb79f0618061a"
+      },
+      {
+        "command": "tests/reading-import.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 1,
+          "total": 10
+        },
+        "error": null,
+        "failures": [
+          "FAIL valid 3-version file: all 3 checked, preview has Easy / Medium / Hard, passage unchanged in each, Add on, no AI call -> rdImport is not defined",
+          "FAIL invalid file: Easy \"pairs\" has 1 item -> Easy not used, exact message; Hard \"not in the file\"; Medium still addable -> rdImport is not defined",
+          "FAIL Medium with problems (0 / 1 / 7 pairs) -> Add off for 0 and 1 (nothing can be saved); 7 -> first 6 used -> rdImport is not defined",
+          "FAIL no \"medium\" version, broken JSON, or a version with a different passage text are rejected -> rdImport is not defined",
+          "FAIL one-lesson JSON (old way) still works = Medium only -> rdImport is not defined",
+          "FAIL Add saves Medium + Easy + Hard to the chosen slot (book, test, passage); reload keeps them -> rdImport is not defined",
+          "FAIL occupied slot: Add asks first; Cancel keeps the old lesson untouched -> rdImport is not defined",
+          "FAIL server: \"Copy prompt (3 versions)\" asks for {medium, easy, hard} with the 3 level notes; the 1-version prompt is unchanged -> readingPrompt3 is not defined",
+          "FAIL UI: Upload JSON file + Copy prompt in Advanced; a file over 1 MB is refused; students have no Create tab -> The expression evaluated to a falsy value:"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/reading-import.test.js.txt",
+        "logSha256": "364c845f814953fe8f216d966287a2dc80b4e3fc2fb4d0d2130d8562f084ec1f"
+      },
+      {
+        "command": "tests/reading-review.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 0,
+          "total": 10
+        },
+        "error": null,
+        "failures": [
+          "FAIL Generate = Medium only (3 requests); Easy / Hard wait; Add off \"Approve Medium first\"; Review Medium panel in the preview -> rdRetry is not defined",
+          "FAIL Apply feedback with AI: one revise request per part with the current part, passage and feedback; proposal with changes; Accept replaces Medium; Undo restores -> rdRetry is not defined",
+          "FAIL Reject keeps the current Medium; a failed revision changes nothing and says so -> rdRetry is not defined",
+          "FAIL a 3-word answer in a TWO WORDS question: listed as left out with Fix with AI; Approve off; fixed → revalidated → Approve on -> rdRetry is not defined",
+          "FAIL an AI \"fix\" that changes nothing is not marked fixed and cannot be accepted (honest error state) -> rdRetry is not defined",
+          "FAIL blocking problems: Approve stays off; the teacher may keep a lesson without items left out only by ticking the box -> rdRetry is not defined",
+          "FAIL after approval: Generate Easy only → Easy requests carry the approved Medium part (base); Hard independent; Add on -> rdRetry is not defined",
+          "FAIL a failed Easy part (relay) keeps the approved Medium and Hard; only the failed part is retried -> rdRetry is not defined",
+          "FAIL editing Medium after Easy / Hard were made: they become Outdated (not used by Add), approval is needed again; Keep this version is explicit -> rdRetry is not defined",
+          "FAIL server: op revise = staff only, the current part + passage + teacher words + problems, same part schema, separate daily limit -> The expression evaluated to a falsy value:"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/reading-review.test.js.txt",
+        "logSha256": "da8c56d760ceeab0f07fdc15e71023b2904700fce1363db2e13c2de095c95f34"
+      },
+      {
+        "command": "tests/reading.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 12,
+          "total": 12
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/reading.test.js.txt",
+        "logSha256": "2d7ed7cfa96309f651f25d6099db22586f665133070ae5144d3236803251e518"
+      },
+      {
+        "command": "tests/server-purge.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 8,
+          "total": 8
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/server-purge.test.js.txt",
+        "logSha256": "96a34c82316f8ba17ec89b7393ed7620442942df73c5a4b0d616e1f958c463c3"
+      },
+      {
+        "command": "tests/sign-in.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 11,
+          "total": 11
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/sign-in.test.js.txt",
+        "logSha256": "00e44ff8d31ed0fda9972ea58d4b3907e31afa56d6f2af9bab58d177ed561a60"
+      },
+      {
+        "command": "tests/ui-audit.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 15,
+          "total": 15
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/ui-audit.test.js.txt",
+        "logSha256": "17c8e18ac7bff5df4025365af986314db2aa9caaa7eb03ba8739c627cded3f20"
+      },
+      {
+        "command": "tests/contrast.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": null,
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/contrast.js.txt",
+        "logSha256": "4d081042089e28a39949ab1a73d813535e5c2413aed1a669566fcaceb4d0d53f"
+      },
+      {
+        "command": "tests/contrast-rules.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": null,
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/contrast-rules.js.txt",
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "command": "tests/lm-check.js --release",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": null,
+        "error": null,
+        "failures": [
+          "  - 152 item(s) still waiting for owner review (pending).",
+          "  - 165 item(s) still waiting for owner review (pending)."
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/baseline-lf-results/lm-check.js.txt",
+        "logSha256": "b567e7b26ff5878ebe05946159c81b90f3111ee7b7ad8e68b1a7f4be84ba0c55"
+      }
+    ]
+  },
+  "candidate": {
+    "main": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+    "label": "candidate-2",
+    "commands": 23,
+    "passedCommands": 13,
+    "failedCommands": 10,
+    "counts": {
+      "passed": 254,
+      "total": 350
+    },
+    "sourceUnchanged": true,
+    "changedPaths": [
+      "index.html"
+    ],
+    "testsUnmodified": true,
+    "results": [
+      {
+        "command": "tests/admin-actions.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 9,
+          "total": 9
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/admin-actions.test.js.txt",
+        "logSha256": "546b9ad3e06aacce5e9f9fbd6fb82c92d3e4ab436afda27fddf4276d2c9306cb"
+      },
+      {
+        "command": "tests/admin-kick.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 50,
+          "total": 50
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/admin-kick.test.js.txt",
+        "logSha256": "5b1e00c90705747f38a13bdc23cd36f90e2e485a6440a81fa9a45960bb946619"
+      },
+      {
+        "command": "tests/chart-facts.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 56,
+          "total": 56
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/chart-facts.test.js.txt",
+        "logSha256": "f0890299de22c9dd67de45348545646c0e04238f273ddccc9746c1e27ad99600"
+      },
+      {
+        "command": "tests/create-reading-ui.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 0,
+          "total": 9
+        },
+        "error": null,
+        "failures": [
+          "FAIL root cause: no Easy / Hard yet → rdLevels() is null; the level switch and the preview no longer throw -> rdRvAct is not defined",
+          "FAIL Student View Preview of an unapproved Medium draft = the interactive lesson (passage, questions, step menu, dock), not the summary -> rdRvAct is not defined",
+          "FAIL Easy / Medium / Hard switch changes the real lesson content in the preview -> rdRvAct is not defined",
+          "FAIL workflow: review → derive (one \"Generate Easy & Hard\", review tools folded, Edit approved Medium) → ready (Add) -> rdRvAct is not defined",
+          "FAIL compact panel in Student View / Hide editor: status + main action only (no feedback box, no technical details) -> rdRvAct is not defined",
+          "FAIL Generate again on an existing Medium asks first (no accidental regeneration) -> rdRvAct is not defined",
+          "FAIL Reading lesson: no big passage header, list of headings not squeezed by the header class, groups and questions unframed -> .rmhl flex only for the header",
+          "FAIL Admin › Users: Tester class cell shows —, the stored class stays (filters use it) -> rdRvAct is not defined",
+          "FAIL Homework Assistant: md-backend keeps the assistant role; rules give it no Firestore access; Boot opens no snapshots for it -> The expression evaluated to a falsy value:"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/create-reading-ui.test.js.txt",
+        "logSha256": "cacb5d835099499ef70b745b8cf43246f3d9caa120a92fa2b577a38832262ba8"
+      },
+      {
+        "command": "tests/data-cleanup.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 0,
+          "total": 15
+        },
+        "error": null,
+        "failures": [
+          "FAIL server preview (dry run): lists only emails without a roster row that are not staff; same name \"Cherry\" on a live student is kept; nothing deleted -> adminOrphans is not defined",
+          "FAIL server purge: deletes every spelling of that email in all learning collections + profile, writes an audit row; live student, tester and staff untouched; running again is refused (idempotent) -> adminOrphans is not defined",
+          "FAIL server purge refuses a live student, a tester, a teacher and a bad email -> adminOrphans is not defined",
+          "FAIL one rule for staff views: live = roster student (by email), not removed from a class; testers are live -> liveEmails is not defined",
+          "FAIL Marking: deleted and removed students' submissions are gone (cards, counts, class filter); the tester's is only under Tester -> liveEmails is not defined",
+          "FAIL Marking filter: All / Tester / a class by email + tester flag (not the name), seeded results, stale class labels, counts = cards -> liveEmails is not defined",
+          "FAIL Marking: an open submission whose student was removed closes with a message (no broken modal) -> liveEmails is not defined",
+          "FAIL Dashboard: attempts, averages, classes and charts only from live students (tester still left out); nothing left -> no fake numbers -> liveEmails is not defined",
+          "FAIL Dashboard clean-up: no Sample data switch, no extra labels, no empty-state sentences; no attempts = \"–\" (not a measured 0%) -> liveEmails is not defined",
+          "FAIL Create: no \"TEST 1 · READING\" caption, no \"Select a slot…\" hint, none of the Reading helper sentences -> liveEmails is not defined",
+          "FAIL Admin › Users: \"Clean up data of deleted students\" previews first, deletes one email after a confirm -> The expression evaluated to a falsy value:",
+          "FAIL cover: card and editor use the same renderer and position; zoom / reset / cancel / save; remove clears the position -> coverImgHTML is not defined",
+          "FAIL Create: the only Add button is at the top of \"Pick a free slot\"; previews draw none; disabled until a valid lesson + slot -> The expression evaluated to a falsy value:",
+          "FAIL Create: Hide editor / Show editor is a class switch only (no redraw, no AI call); Easy / Medium / Hard above the reading preview changes the preview only -> The expression evaluated to a falsy value:",
+          "FAIL Reading: one header (back, title, \"Cam · Test · Reading\" | step menu, timer, settings) + progress bar; level, text size, demo inside settings; no \"Selected excerpts\" -> rmHeadHTML is not defined"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/data-cleanup.test.js.txt",
+        "logSha256": "b2e1fc427a62ac0efcfe0b1b495de87611b0f6c9548cdc8b160f768e7bf704ee"
+      },
+      {
+        "command": "tests/hw-assistant.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 0,
+          "total": 10
+        },
+        "error": null,
+        "failures": [
+          "FAIL server: roleOf gives the assistant role (never student); only the assistant role opens /api/hwa -> hwaData is not defined",
+          "FAIL server: data = only the allowed classes; no emails; testers and removed students left out; statuses -> hwaData is not defined",
+          "FAIL server: statuses = on time / late / missing / pending / extended by a late pass -> hwaData is not defined",
+          "FAIL server: assignments only for own classes (forged class refused, other class assignment refused); cancel -> hwaData is not defined",
+          "FAIL server: revoking a class / removing / pausing works at once (next call) -> hwaData is not defined",
+          "FAIL server: notes only for students of own classes; follow-up status kept; stored by the server -> hwaData is not defined",
+          "FAIL client: assistant gets only the Homework tab -> hwaReport is not defined",
+          "FAIL client: copy report = exact owner wording, sorted names, nothing private -> hwaReport is not defined",
+          "FAIL client: follow-up label from the last 4 due assignments; honest when history is short -> hwaReport is not defined",
+          "FAIL client: workspace renders without emails; Admin menu for an assistant = Change password only -> hwaReport is not defined"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/hw-assistant.test.js.txt",
+        "logSha256": "d7e30e1c0b0df127a718c56a4087c0b8294a0cf0750418d98e97180d31b1e890"
+      },
+      {
+        "command": "tests/hw-external.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 0,
+          "total": 7
+        },
+        "error": null,
+        "failures": [
+          "FAIL form: Assignment details → Exercises from Library + External tasks (both addable, no type switch) → footer \"Save assignment\" -> extSubsHTML is not defined",
+          "FAIL save External only: link required (http/https only); saved record = ext [{x1, link, note, source}], ex [], type external -> extSubsHTML is not defined",
+          "FAIL old assignments (no type) still work as Mini Drills; a saved Mini Drills one gets type mini -> extSubsHTML is not defined",
+          "FAIL student: external card = name, due, instructions, Open link (new tab, safe href), \"Not submitted\", Upload screenshot -> extSubsHTML is not defined",
+          "FAIL after an upload (hwdone with a screenshot): Submitted + time + thumbnail + Replace; survives a reload (same record); late upload says so -> extSubsHTML is not defined",
+          "FAIL teacher: per student Submitted / Not submitted / Missing, time, screenshot link; progress = submitted students -> extSubsHTML is not defined",
+          "FAIL server: /api/image needs a signed-in user, an image type and the hwshot kind; stores outside Firestore; serves it back -> imageUpload is not defined"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/hw-external.test.js.txt",
+        "logSha256": "ca71d262a720f726d73c7db8c2b7fe8dbc7cb98a4c59fa269887ceb2f51223fb"
+      },
+      {
+        "command": "tests/hw-mixed.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 0,
+          "total": 13
+        },
+        "error": null,
+        "failures": [
+          "FAIL 1. Library only: saved with ex, ext [], type mini -> asgState is not defined",
+          "FAIL 2. nothing added → refused with a clear message, nothing saved, fields kept -> asgState is not defined",
+          "FAIL 3. Library + one external link → one record, type mixed -> asgState is not defined",
+          "FAIL 4. several Library exercises + several links; typed values survive adding a section; ids x1, x2, x3 -> asgState is not defined",
+          "FAIL 5. edit a mixed assignment: remove one task and one exercise, the rest (and the task ids) stay; new task gets a new id -> asgState is not defined",
+          "FAIL 6. student: one card, two sections; Library rows open the exercise; each external task has its own link + upload -> asgState is not defined",
+          "FAIL 7–8. completion: screenshots alone ≠ complete; Library alone ≠ complete; both = complete; a screenshot is \"Submitted\", never a score -> asgState is not defined",
+          "FAIL 8b. \"I'm done!\" on a mixed assignment keeps the screenshots in the same record (no duplicate record) -> asgState is not defined",
+          "FAIL 9. teacher: hwStatus counts parts; matrix shows exercise + task columns, screenshot link, \"Complete\" only when everything is in -> asgState is not defined",
+          "FAIL 10. legacy records: old external (top-level link) = task x1 with its old \"shot\"; old Library-only and old \"I'm done\" still work -> asgState is not defined",
+          "FAIL 11. bulk select acts on the filtered exercises only; Remove all clears the whole selection (after confirm) -> asgState is not defined",
+          "FAIL 12. layout: no inner scroll box in the picker, sticky footer, no type switch CSS hooks left in the form -> The expression evaluated to a falsy value:",
+          "FAIL server: assistant saves Library + several links for its own class; bad link refused by position; status needs every part -> hwaAsg is not defined"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/hw-mixed.test.js.txt",
+        "logSha256": "1abcbfd61a8f453bf98c3efd013485bd9fefbad4d9c5e72fae04989937d6b0a0"
+      },
+      {
+        "command": "tests/lm-access.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 0,
+          "total": 9
+        },
+        "error": null,
+        "failures": [
+          "FAIL ordinary student: Writing is shown, dimmed, disabled, \"Coming soon\"; no unit, no toggle -> lmTester is not defined",
+          "FAIL ordinary student: exactly 4 rows (Writing, Listening, Reading, Speaking), each \"Coming soon\", no arrow, no nested list -> lmTester is not defined",
+          "FAIL focused lesson view: an open unit fills the page (no Today, homework, Library tabs, Recent results); Back brings the list and Home back -> lmTester is not defined",
+          "FAIL ordinary student cannot open a Writing unit by any route (action, state, even a published one) -> lmTester is not defined",
+          "FAIL hidden tester: no \"Coming soon\", Writing opens, Unit 0 and Unit 2 open as before -> lmTester is not defined",
+          "FAIL the tester flag comes from the roster row (staff-written), not from the user object or the display name -> lmTester is not defined",
+          "FAIL teacher: unchanged (Writing opens, unpublished units hidden); admin: unchanged (sees and opens everything) -> lmTester is not defined",
+          "FAIL switching account updates at once (no state kept from the previous user) -> lmTester is not defined",
+          "FAIL other skills and the Cambridge library are not affected -> lmTester is not defined"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/lm-access.test.js.txt",
+        "logSha256": "4ff1b428c7200b2030223db1ec67ce67fef13ec1c78899608a897615490d8c08"
+      },
+      {
+        "command": "tests/lm-meta.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 22,
+          "total": 22
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/lm-meta.test.js.txt",
+        "logSha256": "f8dd54c6f6eb25ecf31ae311c84277deb6838bada63690fee4f259a7a3d2b92b"
+      },
+      {
+        "command": "tests/lm-unit0.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 23,
+          "total": 23
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/lm-unit0.test.js.txt",
+        "logSha256": "714675feb34a7304c06f1591c793e0f083fd11f5a8e6509c1589a0f500dc1d7c"
+      },
+      {
+        "command": "tests/lm-unit2-ui.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 41,
+          "total": 41
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/lm-unit2-ui.test.js.txt",
+        "logSha256": "04616b6ad4799a49613d784e2d2c2b3ee216ef9a39fea2dcd3a3dfcafe3426f7"
+      },
+      {
+        "command": "tests/misc.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 6,
+          "total": 6
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/misc.test.js.txt",
+        "logSha256": "20213ef1a45792c7278648b84ffdb827ae0cbca1397698ccf7f8dbce314e7888"
+      },
+      {
+        "command": "tests/reading-gen.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 0,
+          "total": 14
+        },
+        "error": null,
+        "failures": [
+          "FAIL 934-word / 7-paragraph passage: accepted as it is, no \"shorter\" advice; split into 3 smaller prompts -> aiReadingPart is not defined",
+          "FAIL server: a cut-off answer (MAX_TOKENS) = code too_long with a \"Retry failed part\" message, never \"shorter essay\"; not saved -> aiReadingPart is not defined",
+          "FAIL server: \"pairs\" with 0 / 1 items is rejected with the exact count; 2 and 6 pass; 7 passes to the app (only 6 used) -> aiReadingPart is not defined",
+          "FAIL server: the daily limit counts 1 per version of a run (like before: 3 per lesson), at most 8 requests per version -> aiReadingPart is not defined",
+          "FAIL app: Generate = 9 real requests in order (Medium, Easy, Hard x 3 parts); passage unchanged in every version; Add on at the end -> rdRetry is not defined",
+          "FAIL app: Add stays off while parts are being written -> rdRetry is not defined",
+          "FAIL app: a cut-off part is sent once more by itself; still cut off → stops; Retry failed part sends ONLY that part; finished parts kept -> rdRetry is not defined",
+          "FAIL app: invalid \"pairs\" (0 / 1 / 7 items) — nothing broken is used; exact item-level message; 7 → first 6 with a note -> rdRetry is not defined",
+          "FAIL app: \"pairs\" with 2 items and with 6 items pass (no false failure) -> rdRetry is not defined",
+          "FAIL app: quota used up (429) stops at once, no more requests; the old preview is gone (no stale errors) -> rdRetry is not defined",
+          "FAIL reload: finished parts come back (same passage); the part that failed is retried alone, no part written twice -> rdRetry is not defined",
+          "FAIL relay: a passing relay failure (timeout / busy / HTML error) is retried by itself; only a setup problem stops the job -> aiReadingPart is not defined",
+          "FAIL assembled-lesson problems are sent back to the right part -> rdRetry is not defined",
+          "FAIL Advanced: pasted JSON goes through the same checks, with no AI call -> rdRetry is not defined"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/reading-gen.test.js.txt",
+        "logSha256": "1ed1e0b60fadcac70632fa1778c6bf244843e71ad2837c4d7b5cb79f0618061a"
+      },
+      {
+        "command": "tests/reading-import.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 1,
+          "total": 10
+        },
+        "error": null,
+        "failures": [
+          "FAIL valid 3-version file: all 3 checked, preview has Easy / Medium / Hard, passage unchanged in each, Add on, no AI call -> rdImport is not defined",
+          "FAIL invalid file: Easy \"pairs\" has 1 item -> Easy not used, exact message; Hard \"not in the file\"; Medium still addable -> rdImport is not defined",
+          "FAIL Medium with problems (0 / 1 / 7 pairs) -> Add off for 0 and 1 (nothing can be saved); 7 -> first 6 used -> rdImport is not defined",
+          "FAIL no \"medium\" version, broken JSON, or a version with a different passage text are rejected -> rdImport is not defined",
+          "FAIL one-lesson JSON (old way) still works = Medium only -> rdImport is not defined",
+          "FAIL Add saves Medium + Easy + Hard to the chosen slot (book, test, passage); reload keeps them -> rdImport is not defined",
+          "FAIL occupied slot: Add asks first; Cancel keeps the old lesson untouched -> rdImport is not defined",
+          "FAIL server: \"Copy prompt (3 versions)\" asks for {medium, easy, hard} with the 3 level notes; the 1-version prompt is unchanged -> readingPrompt3 is not defined",
+          "FAIL UI: Upload JSON file + Copy prompt in Advanced; a file over 1 MB is refused; students have no Create tab -> The expression evaluated to a falsy value:"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/reading-import.test.js.txt",
+        "logSha256": "364c845f814953fe8f216d966287a2dc80b4e3fc2fb4d0d2130d8562f084ec1f"
+      },
+      {
+        "command": "tests/reading-review.test.js",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": {
+          "passed": 0,
+          "total": 10
+        },
+        "error": null,
+        "failures": [
+          "FAIL Generate = Medium only (3 requests); Easy / Hard wait; Add off \"Approve Medium first\"; Review Medium panel in the preview -> rdRetry is not defined",
+          "FAIL Apply feedback with AI: one revise request per part with the current part, passage and feedback; proposal with changes; Accept replaces Medium; Undo restores -> rdRetry is not defined",
+          "FAIL Reject keeps the current Medium; a failed revision changes nothing and says so -> rdRetry is not defined",
+          "FAIL a 3-word answer in a TWO WORDS question: listed as left out with Fix with AI; Approve off; fixed → revalidated → Approve on -> rdRetry is not defined",
+          "FAIL an AI \"fix\" that changes nothing is not marked fixed and cannot be accepted (honest error state) -> rdRetry is not defined",
+          "FAIL blocking problems: Approve stays off; the teacher may keep a lesson without items left out only by ticking the box -> rdRetry is not defined",
+          "FAIL after approval: Generate Easy only → Easy requests carry the approved Medium part (base); Hard independent; Add on -> rdRetry is not defined",
+          "FAIL a failed Easy part (relay) keeps the approved Medium and Hard; only the failed part is retried -> rdRetry is not defined",
+          "FAIL editing Medium after Easy / Hard were made: they become Outdated (not used by Add), approval is needed again; Keep this version is explicit -> rdRetry is not defined",
+          "FAIL server: op revise = staff only, the current part + passage + teacher words + problems, same part schema, separate daily limit -> The expression evaluated to a falsy value:"
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/reading-review.test.js.txt",
+        "logSha256": "da8c56d760ceeab0f07fdc15e71023b2904700fce1363db2e13c2de095c95f34"
+      },
+      {
+        "command": "tests/reading.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 12,
+          "total": 12
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/reading.test.js.txt",
+        "logSha256": "2d7ed7cfa96309f651f25d6099db22586f665133070ae5144d3236803251e518"
+      },
+      {
+        "command": "tests/server-purge.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 8,
+          "total": 8
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/server-purge.test.js.txt",
+        "logSha256": "96a34c82316f8ba17ec89b7393ed7620442942df73c5a4b0d616e1f958c463c3"
+      },
+      {
+        "command": "tests/sign-in.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 11,
+          "total": 11
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/sign-in.test.js.txt",
+        "logSha256": "00e44ff8d31ed0fda9972ea58d4b3907e31afa56d6f2af9bab58d177ed561a60"
+      },
+      {
+        "command": "tests/ui-audit.test.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": {
+          "passed": 15,
+          "total": 15
+        },
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/ui-audit.test.js.txt",
+        "logSha256": "17c8e18ac7bff5df4025365af986314db2aa9caaa7eb03ba8739c627cded3f20"
+      },
+      {
+        "command": "tests/contrast.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": null,
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/contrast.js.txt",
+        "logSha256": "4d081042089e28a39949ab1a73d813535e5c2413aed1a669566fcaceb4d0d53f"
+      },
+      {
+        "command": "tests/contrast-rules.js",
+        "status": "PASS",
+        "exitCode": 0,
+        "counts": null,
+        "error": null,
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/contrast-rules.js.txt",
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "command": "tests/lm-check.js --release",
+        "status": "FAIL",
+        "exitCode": 1,
+        "counts": null,
+        "error": null,
+        "failures": [
+          "  - 152 item(s) still waiting for owner review (pending).",
+          "  - 165 item(s) still waiting for owner review (pending)."
+        ],
+        "log": "qa-artifacts/main-baseline-recovery/candidate-2-results/lm-check.js.txt",
+        "logSha256": "b567e7b26ff5878ebe05946159c81b90f3111ee7b7ad8e68b1a7f4be84ba0c55"
+      }
+    ]
+  },
+  "history": {
+    "main": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+    "parent": "ff1a3b363ce2ba102fbd534380b09a1d2ea66234",
+    "purpose": "Regression attribution only. Historical tree is not a proposed recovery candidate; no historical index/API copied onto main or the repair candidate.",
+    "results": [
+      {
+        "id": "admin-actions",
+        "test": "tests/admin-actions.test.js",
+        "file": "index.html",
+        "symbol": "ad-teacher-add",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "3ea771389edf53750ddd1d79445e78afd199a4d1 Add files via upload",
+          "92b254a1d831e5219aebc2a86ad76706ae7b7034 Add files via upload",
+          "372e9c0ba66fac186e5356dfb432185cba9186d0 Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "8c0c1843352809c8296646ee9ae359c18e1dc2ee81496c60dde14a7e00bf7374",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 9,
+          "total": 9
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/admin-actions.txt",
+        "logSha256": "546b9ad3e06aacce5e9f9fbd6fb82c92d3e4ab436afda27fddf4276d2c9306cb"
+      },
+      {
+        "id": "create-reading-ui",
+        "test": "tests/create-reading-ui.test.js",
+        "file": "index.html",
+        "symbol": "function rdRvAct",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "9536e3a022308b906975e3cbce292cf7699c8518 Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "18b25341b6c396811290751b22adfd1b65f6e20b42dc73cb9a355b124c523487",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 9,
+          "total": 9
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/create-reading-ui.txt",
+        "logSha256": "a94e0c574161108c58dba7ce6d0ae337563ae04ed7adf8e66ae9371d7ccab311"
+      },
+      {
+        "id": "data-cleanup",
+        "test": "tests/data-cleanup.test.js",
+        "file": "functions/api/[[path]].js",
+        "symbol": "function adminOrphans",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "92b254a1d831e5219aebc2a86ad76706ae7b7034 Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "db31c5eef3889898ac10ca6502138c408bf7a1b90cac0dff8465d5ecee1d1652",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 15,
+          "total": 15
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/data-cleanup.txt",
+        "logSha256": "bddb9d3f0156f6f82e06a489c0a156967049a2c1d12def9bc48c8248c5bf54fc"
+      },
+      {
+        "id": "hw-assistant",
+        "test": "tests/hw-assistant.test.js",
+        "file": "functions/api/[[path]].js",
+        "symbol": "function hwaData",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "123af940166e21a082bd104a40220cbacd844f0f Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "4bb8606bb4f5167f7be78d3af29633acfadbd0361684323e305856ab7bd940d3",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 10,
+          "total": 10
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/hw-assistant.txt",
+        "logSha256": "305faaff5517d1749c5a8a18e13bbfbe423af88ff8406b0930fa7db3770e0d06"
+      },
+      {
+        "id": "hw-external",
+        "test": "tests/hw-external.test.js",
+        "file": "index.html",
+        "symbol": "function extSubsHTML",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "123af940166e21a082bd104a40220cbacd844f0f Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "c25547579bb4b745ae459248376d47a65375b0f8995525260335278db41ee32c",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 7,
+          "total": 7
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/hw-external.txt",
+        "logSha256": "b750b50f923a13f4ed106da058e99fbee6dca12d4458c2363d5e57743a03936e"
+      },
+      {
+        "id": "hw-mixed",
+        "test": "tests/hw-mixed.test.js",
+        "file": "index.html",
+        "symbol": "function asgState",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "ff1a3b363ce2ba102fbd534380b09a1d2ea66234 Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "bb5891c23d6353e57e62009c95e25787270ad922d38743b69c101875c012aa42",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 13,
+          "total": 13
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/hw-mixed.txt",
+        "logSha256": "bf46a1eb9388459a946d1f1aaba0e2df57cf3a22d980bc8667d467e438e62149"
+      },
+      {
+        "id": "lm-access",
+        "test": "tests/lm-access.test.js",
+        "file": "index.html",
+        "symbol": "function lmTester",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "3ea771389edf53750ddd1d79445e78afd199a4d1 Add files via upload",
+          "92b254a1d831e5219aebc2a86ad76706ae7b7034 Add files via upload",
+          "372e9c0ba66fac186e5356dfb432185cba9186d0 Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "575213ad6ef5837ee1569bae79b81e4f5fab7fd7ce340b0971e1738be68a1267",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 9,
+          "total": 9
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/lm-access.txt",
+        "logSha256": "1be0a8158cb9523149c00a8d69a3521ba74f86ac10647ced5920f317778b536b"
+      },
+      {
+        "id": "reading-gen",
+        "test": "tests/reading-gen.test.js",
+        "file": "functions/api/[[path]].js",
+        "symbol": "function aiReadingPart",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "934cb366ff89be171ef5cb70b2e91fb46f79c9c0 Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "c20af042484db4a184f4e9ae28d01762d9263c994d7b85bdae884b4b566b3eb6",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 14,
+          "total": 14
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/reading-gen.txt",
+        "logSha256": "44ab0cec56e46013d605365c91d282a8f5fcf2fe4f8bc8dc3d035ec2345e0624"
+      },
+      {
+        "id": "reading-import",
+        "test": "tests/reading-import.test.js",
+        "file": "index.html",
+        "symbol": "function rdImport",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "934cb366ff89be171ef5cb70b2e91fb46f79c9c0 Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "458dc1052a7d6bb5c508d29d24eb8460d8829c0ce7d92dba937ddfdee9c0ce58",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 10,
+          "total": 10
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/reading-import.txt",
+        "logSha256": "736a460542271becacdc62ddb3dd2614d705691c0ee1c0ba524207c51a00e387"
+      },
+      {
+        "id": "reading-review",
+        "test": "tests/reading-review.test.js",
+        "file": "index.html",
+        "symbol": "function rdRetry",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "934cb366ff89be171ef5cb70b2e91fb46f79c9c0 Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "b5818deff0f19c18e2cc11e79e83609c8d8f5cceafda69570b564c0287c59489",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 10,
+          "total": 10
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/reading-review.txt",
+        "logSha256": "41e3c02f8fda2030a05b3862a44485a1d8f897d9ebc2ebc59f1d0295d3c65c3f"
+      }
+    ]
+  },
+  "issues": [
+    {
+      "id": "admin-actions",
+      "classification": "REAL_SOURCE_REGRESSION",
+      "regressionCommit": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+      "verifiedParent": "ff1a3b363ce2ba102fbd534380b09a1d2ea66234",
+      "rootCause": "Add teacher and Create tester share action ad-tadd and fields; the first handler can read the wrong/missing form.",
+      "userImpact": "Inferred from source and executable test contracts: Add teacher and Create tester share action ad-tadd and fields; the first handler can read the wrong/missing form.",
+      "symptoms": [
+        "FAIL no click action is handled by two different branches (except shared guards / grouped buttons) -> ad-tadd @ 7645,7705",
+        "FAIL the tester and teacher forms use their own input ids -> shared id adTName",
+        "FAIL Add teacher: valid fields -> only admin/teachers {op:add}; no null error; list reloads -> The expression evaluated to a falsy value:",
+        "FAIL Add teacher: missing name / bad email / short password -> message, no request -> The expression evaluated to a falsy value:",
+        "FAIL Create tester still works: only admin/tester {op:create} -> The expression evaluated to a falsy value:",
+        "FAIL a form that is not on screen (other tab) cannot be read: message instead of a crash, no request -> The expression evaluated to a falsy value:",
+        "FAIL Generate fills the password box of its own form -> The expression evaluated to a falsy value:",
+        "FAIL a server error shows its message but never the password -> The expression evaluated to a falsy value:"
+      ],
+      "baselineCounts": {
+        "passed": 1,
+        "total": 9
+      },
+      "parentCounts": {
+        "passed": 9,
+        "total": 9
+      },
+      "candidateCounts": {
+        "passed": 9,
+        "total": 9
+      },
+      "candidateStatus": "PASS",
+      "sourceEvidence": {
+        "id": "admin-actions",
+        "test": "tests/admin-actions.test.js",
+        "file": "index.html",
+        "symbol": "ad-teacher-add",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "3ea771389edf53750ddd1d79445e78afd199a4d1 Add files via upload",
+          "92b254a1d831e5219aebc2a86ad76706ae7b7034 Add files via upload",
+          "372e9c0ba66fac186e5356dfb432185cba9186d0 Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "8c0c1843352809c8296646ee9ae359c18e1dc2ee81496c60dde14a7e00bf7374",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 9,
+          "total": 9
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/admin-actions.txt",
+        "logSha256": "546b9ad3e06aacce5e9f9fbd6fb82c92d3e4ab436afda27fddf4276d2c9306cb"
+      },
+      "minimalProposal": "Split action names and IDs and restore guarded adForm reads; existing endpoint bodies and error handling unchanged.",
+      "affectedFiles": [
+        "index.html"
+      ],
+      "risk": "LOW-MEDIUM: account creation UI; no new endpoint or permission change.",
+      "proposalStatus": "TESTED_PROPOSAL",
+      "approvalNeeded": "Approve the isolated 22-line Admin diff for a future implementation checkout.",
+      "verification": "Retain and rerun tests/admin-actions.test.js unchanged, full 23-command baseline and dependent role/schema regression checks."
+    },
+    {
+      "id": "create-reading-ui",
+      "classification": "REAL_SOURCE_REGRESSION",
+      "regressionCommit": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+      "verifiedParent": "ff1a3b363ce2ba102fbd534380b09a1d2ea66234",
+      "rootCause": "Reading draft preview/review controls reference removed review handlers.",
+      "userImpact": "Inferred from source and executable test contracts: Reading draft preview/review controls reference removed review handlers.",
+      "symptoms": [
+        "FAIL root cause: no Easy / Hard yet → rdLevels() is null; the level switch and the preview no longer throw -> rdRvAct is not defined",
+        "FAIL Student View Preview of an unapproved Medium draft = the interactive lesson (passage, questions, step menu, dock), not the summary -> rdRvAct is not defined",
+        "FAIL Easy / Medium / Hard switch changes the real lesson content in the preview -> rdRvAct is not defined",
+        "FAIL workflow: review → derive (one \"Generate Easy & Hard\", review tools folded, Edit approved Medium) → ready (Add) -> rdRvAct is not defined",
+        "FAIL compact panel in Student View / Hide editor: status + main action only (no feedback box, no technical details) -> rdRvAct is not defined",
+        "FAIL Generate again on an existing Medium asks first (no accidental regeneration) -> rdRvAct is not defined",
+        "FAIL Reading lesson: no big passage header, list of headings not squeezed by the header class, groups and questions unframed -> .rmhl flex only for the header",
+        "FAIL Admin › Users: Tester class cell shows —, the stored class stays (filters use it) -> rdRvAct is not defined",
+        "FAIL Homework Assistant: md-backend keeps the assistant role; rules give it no Firestore access; Boot opens no snapshots for it -> The expression evaluated to a falsy value:"
+      ],
+      "baselineCounts": {
+        "passed": 0,
+        "total": 9
+      },
+      "parentCounts": {
+        "passed": 9,
+        "total": 9
+      },
+      "candidateCounts": {
+        "passed": 0,
+        "total": 9
+      },
+      "candidateStatus": "FAIL",
+      "sourceEvidence": {
+        "id": "create-reading-ui",
+        "test": "tests/create-reading-ui.test.js",
+        "file": "index.html",
+        "symbol": "function rdRvAct",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "9536e3a022308b906975e3cbce292cf7699c8518 Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "18b25341b6c396811290751b22adfd1b65f6e20b42dc73cb9a355b124c523487",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 9,
+          "total": 9
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/create-reading-ui.txt",
+        "logSha256": "a94e0c574161108c58dba7ce6d0ae337563ae04ed7adf8e66ae9371d7ccab311"
+      },
+      "minimalProposal": "Reintroduce only review-state/preview dispatch and stale-preview validation after the Reading review contract is restored; retain current Writing and Library handlers.",
+      "affectedFiles": [
+        "index.html"
+      ],
+      "risk": "MEDIUM: editor state and draft acceptance boundaries.",
+      "proposalStatus": "DESIGN_ONLY",
+      "approvalNeeded": "Authorize scoped Reading recovery; do not restore the whole index.",
+      "verification": "Retain and rerun tests/create-reading-ui.test.js unchanged, full 23-command baseline and dependent role/schema regression checks."
+    },
+    {
+      "id": "data-cleanup",
+      "classification": "REAL_SOURCE_REGRESSION",
+      "regressionCommit": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+      "verifiedParent": "ff1a3b363ce2ba102fbd534380b09a1d2ea66234",
+      "rootCause": "Orphan preview/purge and live-roster filtering helpers were removed; tests for account-scoped cleanup and staff views cannot execute.",
+      "userImpact": "Inferred from source and executable test contracts: Orphan preview/purge and live-roster filtering helpers were removed; tests for account-scoped cleanup and staff views cannot execute.",
+      "symptoms": [
+        "FAIL server preview (dry run): lists only emails without a roster row that are not staff; same name \"Cherry\" on a live student is kept; nothing deleted -> adminOrphans is not defined",
+        "FAIL server purge: deletes every spelling of that email in all learning collections + profile, writes an audit row; live student, tester and staff untouched; running again is refused (idempotent) -> adminOrphans is not defined",
+        "FAIL server purge refuses a live student, a tester, a teacher and a bad email -> adminOrphans is not defined",
+        "FAIL one rule for staff views: live = roster student (by email), not removed from a class; testers are live -> liveEmails is not defined",
+        "FAIL Marking: deleted and removed students' submissions are gone (cards, counts, class filter); the tester's is only under Tester -> liveEmails is not defined",
+        "FAIL Marking filter: All / Tester / a class by email + tester flag (not the name), seeded results, stale class labels, counts = cards -> liveEmails is not defined",
+        "FAIL Marking: an open submission whose student was removed closes with a message (no broken modal) -> liveEmails is not defined",
+        "FAIL Dashboard: attempts, averages, classes and charts only from live students (tester still left out); nothing left -> no fake numbers -> liveEmails is not defined",
+        "FAIL Dashboard clean-up: no Sample data switch, no extra labels, no empty-state sentences; no attempts = \"–\" (not a measured 0%) -> liveEmails is not defined",
+        "FAIL Create: no \"TEST 1 · READING\" caption, no \"Select a slot…\" hint, none of the Reading helper sentences -> liveEmails is not defined",
+        "FAIL Admin › Users: \"Clean up data of deleted students\" previews first, deletes one email after a confirm -> The expression evaluated to a falsy value:",
+        "FAIL cover: card and editor use the same renderer and position; zoom / reset / cancel / save; remove clears the position -> coverImgHTML is not defined",
+        "FAIL Create: the only Add button is at the top of \"Pick a free slot\"; previews draw none; disabled until a valid lesson + slot -> The expression evaluated to a falsy value:",
+        "FAIL Create: Hide editor / Show editor is a class switch only (no redraw, no AI call); Easy / Medium / Hard above the reading preview changes the preview only -> The expression evaluated to a falsy value:",
+        "FAIL Reading: one header (back, title, \"Cam · Test · Reading\" | step menu, timer, settings) + progress bar; level, text size, demo inside settings; no \"Selected excerpts\" -> rmHeadHTML is not defined"
+      ],
+      "baselineCounts": {
+        "passed": 0,
+        "total": 15
+      },
+      "parentCounts": {
+        "passed": 15,
+        "total": 15
+      },
+      "candidateCounts": {
+        "passed": 0,
+        "total": 15
+      },
+      "candidateStatus": "FAIL",
+      "sourceEvidence": {
+        "id": "data-cleanup",
+        "test": "tests/data-cleanup.test.js",
+        "file": "functions/api/[[path]].js",
+        "symbol": "function adminOrphans",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "92b254a1d831e5219aebc2a86ad76706ae7b7034 Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "db31c5eef3889898ac10ca6502138c408bf7a1b90cac0dff8465d5ecee1d1652",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 15,
+          "total": 15
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/data-cleanup.txt",
+        "logSha256": "bddb9d3f0156f6f82e06a489c0a156967049a2c1d12def9bc48c8248c5bf54fc"
+      },
+      "minimalProposal": "Restore adminOrphans preview contract and exact-email/current-roster/staff protection first; separately restore purge transaction/audit plus staff-view filters. Keep deletion disabled until synthetic dry-run/idempotence/authorization tests pass.",
+      "affectedFiles": [
+        "functions/api/[[path]].js",
+        "index.html"
+      ],
+      "risk": "HIGH: deletion, account identity, data retention; no production deletion authorized.",
+      "proposalStatus": "DESIGN_ONLY",
+      "approvalNeeded": "Authorize a separate synthetic cleanup recovery candidate; any future real deletion needs separate approval.",
+      "verification": "Retain and rerun tests/data-cleanup.test.js unchanged, full 23-command baseline and dependent role/schema regression checks."
+    },
+    {
+      "id": "hw-assistant",
+      "classification": "REAL_SOURCE_REGRESSION",
+      "regressionCommit": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+      "verifiedParent": "ff1a3b363ce2ba102fbd534380b09a1d2ea66234",
+      "rootCause": "Dedicated assistant data/role/class-scoping implementation is absent.",
+      "userImpact": "Inferred from source and executable test contracts: Dedicated assistant data/role/class-scoping implementation is absent.",
+      "symptoms": [
+        "FAIL server: roleOf gives the assistant role (never student); only the assistant role opens /api/hwa -> hwaData is not defined",
+        "FAIL server: data = only the allowed classes; no emails; testers and removed students left out; statuses -> hwaData is not defined",
+        "FAIL server: statuses = on time / late / missing / pending / extended by a late pass -> hwaData is not defined",
+        "FAIL server: assignments only for own classes (forged class refused, other class assignment refused); cancel -> hwaData is not defined",
+        "FAIL server: revoking a class / removing / pausing works at once (next call) -> hwaData is not defined",
+        "FAIL server: notes only for students of own classes; follow-up status kept; stored by the server -> hwaData is not defined",
+        "FAIL client: assistant gets only the Homework tab -> hwaReport is not defined",
+        "FAIL client: copy report = exact owner wording, sorted names, nothing private -> hwaReport is not defined",
+        "FAIL client: follow-up label from the last 4 due assignments; honest when history is short -> hwaReport is not defined",
+        "FAIL client: workspace renders without emails; Admin menu for an assistant = Change password only -> hwaReport is not defined"
+      ],
+      "baselineCounts": {
+        "passed": 0,
+        "total": 10
+      },
+      "parentCounts": {
+        "passed": 10,
+        "total": 10
+      },
+      "candidateCounts": {
+        "passed": 0,
+        "total": 10
+      },
+      "candidateStatus": "FAIL",
+      "sourceEvidence": {
+        "id": "hw-assistant",
+        "test": "tests/hw-assistant.test.js",
+        "file": "functions/api/[[path]].js",
+        "symbol": "function hwaData",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "123af940166e21a082bd104a40220cbacd844f0f Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "4bb8606bb4f5167f7be78d3af29633acfadbd0361684323e305856ab7bd940d3",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 10,
+          "total": 10
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/hw-assistant.txt",
+        "logSha256": "305faaff5517d1749c5a8a18e13bbfbe423af88ff8406b0930fa7db3770e0d06"
+      },
+      "minimalProposal": "Restore assistant role resolution, authenticated hwa route and authoritative current assignments, then UI adapters; check class revocation/disabled accounts and no student email exposure.",
+      "affectedFiles": [
+        "functions/api/[[path]].js",
+        "index.html",
+        "md-backend.js (dependency review)"
+      ],
+      "risk": "HIGH: authentication/authorization and class privacy.",
+      "proposalStatus": "DESIGN_ONLY",
+      "approvalNeeded": "Authorize separate auth-scoped assistant recovery with mocked/emulator security verification.",
+      "verification": "Retain and rerun tests/hw-assistant.test.js unchanged, full 23-command baseline and dependent role/schema regression checks."
+    },
+    {
+      "id": "hw-external",
+      "classification": "REAL_SOURCE_REGRESSION",
+      "regressionCommit": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+      "verifiedParent": "ff1a3b363ce2ba102fbd534380b09a1d2ea66234",
+      "rootCause": "External task rendering/submission helpers are missing.",
+      "userImpact": "Inferred from source and executable test contracts: External task rendering/submission helpers are missing.",
+      "symptoms": [
+        "FAIL form: Assignment details → Exercises from Library + External tasks (both addable, no type switch) → footer \"Save assignment\" -> extSubsHTML is not defined",
+        "FAIL save External only: link required (http/https only); saved record = ext [{x1, link, note, source}], ex [], type external -> extSubsHTML is not defined",
+        "FAIL old assignments (no type) still work as Mini Drills; a saved Mini Drills one gets type mini -> extSubsHTML is not defined",
+        "FAIL student: external card = name, due, instructions, Open link (new tab, safe href), \"Not submitted\", Upload screenshot -> extSubsHTML is not defined",
+        "FAIL after an upload (hwdone with a screenshot): Submitted + time + thumbnail + Replace; survives a reload (same record); late upload says so -> extSubsHTML is not defined",
+        "FAIL teacher: per student Submitted / Not submitted / Missing, time, screenshot link; progress = submitted students -> extSubsHTML is not defined",
+        "FAIL server: /api/image needs a signed-in user, an image type and the hwshot kind; stores outside Firestore; serves it back -> imageUpload is not defined"
+      ],
+      "baselineCounts": {
+        "passed": 0,
+        "total": 7
+      },
+      "parentCounts": {
+        "passed": 7,
+        "total": 7
+      },
+      "candidateCounts": {
+        "passed": 0,
+        "total": 7
+      },
+      "candidateStatus": "FAIL",
+      "sourceEvidence": {
+        "id": "hw-external",
+        "test": "tests/hw-external.test.js",
+        "file": "index.html",
+        "symbol": "function extSubsHTML",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "123af940166e21a082bd104a40220cbacd844f0f Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "c25547579bb4b745ae459248376d47a65375b0f8995525260335278db41ee32c",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 7,
+          "total": 7
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/hw-external.txt",
+        "logSha256": "b750b50f923a13f4ed106da058e99fbee6dca12d4458c2363d5e57743a03936e"
+      },
+      "minimalProposal": "Restore external-task normalization/rendering and submit/review handlers as a small dependent group; preserve legacy Library-only assignments and validate URLs.",
+      "affectedFiles": [
+        "index.html"
+      ],
+      "risk": "MEDIUM: assignment schema and completion/evidence.",
+      "proposalStatus": "DESIGN_ONLY",
+      "approvalNeeded": "Approve recovery of external Homework behavior before mixed assignments.",
+      "verification": "Retain and rerun tests/hw-external.test.js unchanged, full 23-command baseline and dependent role/schema regression checks."
+    },
+    {
+      "id": "hw-mixed",
+      "classification": "REAL_SOURCE_REGRESSION",
+      "regressionCommit": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+      "verifiedParent": "ff1a3b363ce2ba102fbd534380b09a1d2ea66234",
+      "rootCause": "asgState and mixed assignment calculation/form logic are missing.",
+      "userImpact": "Inferred from source and executable test contracts: asgState and mixed assignment calculation/form logic are missing.",
+      "symptoms": [
+        "FAIL 1. Library only: saved with ex, ext [], type mini -> asgState is not defined",
+        "FAIL 2. nothing added → refused with a clear message, nothing saved, fields kept -> asgState is not defined",
+        "FAIL 3. Library + one external link → one record, type mixed -> asgState is not defined",
+        "FAIL 4. several Library exercises + several links; typed values survive adding a section; ids x1, x2, x3 -> asgState is not defined",
+        "FAIL 5. edit a mixed assignment: remove one task and one exercise, the rest (and the task ids) stay; new task gets a new id -> asgState is not defined",
+        "FAIL 6. student: one card, two sections; Library rows open the exercise; each external task has its own link + upload -> asgState is not defined",
+        "FAIL 7–8. completion: screenshots alone ≠ complete; Library alone ≠ complete; both = complete; a screenshot is \"Submitted\", never a score -> asgState is not defined",
+        "FAIL 8b. \"I'm done!\" on a mixed assignment keeps the screenshots in the same record (no duplicate record) -> asgState is not defined",
+        "FAIL 9. teacher: hwStatus counts parts; matrix shows exercise + task columns, screenshot link, \"Complete\" only when everything is in -> asgState is not defined",
+        "FAIL 10. legacy records: old external (top-level link) = task x1 with its old \"shot\"; old Library-only and old \"I'm done\" still work -> asgState is not defined",
+        "FAIL 11. bulk select acts on the filtered exercises only; Remove all clears the whole selection (after confirm) -> asgState is not defined",
+        "FAIL 12. layout: no inner scroll box in the picker, sticky footer, no type switch CSS hooks left in the form -> The expression evaluated to a falsy value:",
+        "FAIL server: assistant saves Library + several links for its own class; bad link refused by position; status needs every part -> hwaAsg is not defined"
+      ],
+      "baselineCounts": {
+        "passed": 0,
+        "total": 13
+      },
+      "parentCounts": {
+        "passed": 13,
+        "total": 13
+      },
+      "candidateCounts": {
+        "passed": 0,
+        "total": 13
+      },
+      "candidateStatus": "FAIL",
+      "sourceEvidence": {
+        "id": "hw-mixed",
+        "test": "tests/hw-mixed.test.js",
+        "file": "index.html",
+        "symbol": "function asgState",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "ff1a3b363ce2ba102fbd534380b09a1d2ea66234 Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "bb5891c23d6353e57e62009c95e25787270ad922d38743b69c101875c012aa42",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 13,
+          "total": 13
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/hw-mixed.txt",
+        "logSha256": "bf46a1eb9388459a946d1f1aaba0e2df57cf3a22d980bc8667d467e438e62149"
+      },
+      "minimalProposal": "Restore mixed ex/ext normalization, state/completion and edit handlers after external Homework; preserve stable task IDs and existing data without migration writes.",
+      "affectedFiles": [
+        "index.html",
+        "functions/api/[[path]].js (assistant integration contract)"
+      ],
+      "risk": "MEDIUM-HIGH: schema compatibility and completion counts.",
+      "proposalStatus": "DESIGN_ONLY",
+      "approvalNeeded": "Authorize scoped mixed-Homework candidate and compatibility tests.",
+      "verification": "Retain and rerun tests/hw-mixed.test.js unchanged, full 23-command baseline and dependent role/schema regression checks."
+    },
+    {
+      "id": "lm-access",
+      "classification": "REAL_SOURCE_REGRESSION",
+      "regressionCommit": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+      "verifiedParent": "ff1a3b363ce2ba102fbd534380b09a1d2ea66234",
+      "rootCause": "lmTester/lmSkillLocked and focused lesson presentation removed; ordinary Writing category enabled, roster tester preview lost.",
+      "userImpact": "Inferred from source and executable test contracts: lmTester/lmSkillLocked and focused lesson presentation removed; ordinary Writing category enabled, roster tester preview lost.",
+      "symptoms": [
+        "FAIL ordinary student: Writing is shown, dimmed, disabled, \"Coming soon\"; no unit, no toggle -> lmTester is not defined",
+        "FAIL ordinary student: exactly 4 rows (Writing, Listening, Reading, Speaking), each \"Coming soon\", no arrow, no nested list -> lmTester is not defined",
+        "FAIL focused lesson view: an open unit fills the page (no Today, homework, Library tabs, Recent results); Back brings the list and Home back -> lmTester is not defined",
+        "FAIL ordinary student cannot open a Writing unit by any route (action, state, even a published one) -> lmTester is not defined",
+        "FAIL hidden tester: no \"Coming soon\", Writing opens, Unit 0 and Unit 2 open as before -> lmTester is not defined",
+        "FAIL the tester flag comes from the roster row (staff-written), not from the user object or the display name -> lmTester is not defined",
+        "FAIL teacher: unchanged (Writing opens, unpublished units hidden); admin: unchanged (sees and opens everything) -> lmTester is not defined",
+        "FAIL switching account updates at once (no state kept from the previous user) -> lmTester is not defined",
+        "FAIL other skills and the Cambridge library are not affected -> lmTester is not defined"
+      ],
+      "baselineCounts": {
+        "passed": 0,
+        "total": 9
+      },
+      "parentCounts": {
+        "passed": 9,
+        "total": 9
+      },
+      "candidateCounts": {
+        "passed": 0,
+        "total": 9
+      },
+      "candidateStatus": "FAIL",
+      "sourceEvidence": {
+        "id": "lm-access",
+        "test": "tests/lm-access.test.js",
+        "file": "index.html",
+        "symbol": "function lmTester",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "3ea771389edf53750ddd1d79445e78afd199a4d1 Add files via upload",
+          "92b254a1d831e5219aebc2a86ad76706ae7b7034 Add files via upload",
+          "372e9c0ba66fac186e5356dfb432185cba9186d0 Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "575213ad6ef5837ee1569bae79b81e4f5fab7fd7ce340b0971e1738be68a1267",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 9,
+          "total": 9
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/lm-access.txt",
+        "logSha256": "1be0a8158cb9523149c00a8d69a3521ba74f86ac10647ced5920f317778b536b"
+      },
+      "minimalProposal": "Review existing Writing gate patch only. Keep Writing source unchanged in this recovery. Separate review for focused lesson layout and legacy test fixtures; never let ordinary Published fixtures bypass confirmed policy.",
+      "affectedFiles": [
+        "index.html",
+        "existing docs/VOCAB-WRITING-POLICY-TEACHER-REVIEW.patch"
+      ],
+      "risk": "MEDIUM: policy and protected Writing boundary.",
+      "proposalStatus": "REVIEW_ONLY_NOT_APPLIED",
+      "approvalNeeded": "Authorize future narrow gate integration and separately decide whether to restore focused lesson layout; Coming Soon policy is already confirmed.",
+      "verification": "Retain and rerun tests/lm-access.test.js unchanged, full 23-command baseline and dependent role/schema regression checks."
+    },
+    {
+      "id": "reading-gen",
+      "classification": "REAL_SOURCE_REGRESSION",
+      "regressionCommit": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+      "verifiedParent": "ff1a3b363ce2ba102fbd534380b09a1d2ea66234",
+      "rootCause": "aiReadingPart and associated partial-generation/retry orchestration absent.",
+      "userImpact": "Inferred from source and executable test contracts: aiReadingPart and associated partial-generation/retry orchestration absent.",
+      "symptoms": [
+        "FAIL 934-word / 7-paragraph passage: accepted as it is, no \"shorter\" advice; split into 3 smaller prompts -> aiReadingPart is not defined",
+        "FAIL server: a cut-off answer (MAX_TOKENS) = code too_long with a \"Retry failed part\" message, never \"shorter essay\"; not saved -> aiReadingPart is not defined",
+        "FAIL server: \"pairs\" with 0 / 1 items is rejected with the exact count; 2 and 6 pass; 7 passes to the app (only 6 used) -> aiReadingPart is not defined",
+        "FAIL server: the daily limit counts 1 per version of a run (like before: 3 per lesson), at most 8 requests per version -> aiReadingPart is not defined",
+        "FAIL app: Generate = 9 real requests in order (Medium, Easy, Hard x 3 parts); passage unchanged in every version; Add on at the end -> rdRetry is not defined",
+        "FAIL app: Add stays off while parts are being written -> rdRetry is not defined",
+        "FAIL app: a cut-off part is sent once more by itself; still cut off → stops; Retry failed part sends ONLY that part; finished parts kept -> rdRetry is not defined",
+        "FAIL app: invalid \"pairs\" (0 / 1 / 7 items) — nothing broken is used; exact item-level message; 7 → first 6 with a note -> rdRetry is not defined",
+        "FAIL app: \"pairs\" with 2 items and with 6 items pass (no false failure) -> rdRetry is not defined",
+        "FAIL app: quota used up (429) stops at once, no more requests; the old preview is gone (no stale errors) -> rdRetry is not defined",
+        "FAIL reload: finished parts come back (same passage); the part that failed is retried alone, no part written twice -> rdRetry is not defined",
+        "FAIL relay: a passing relay failure (timeout / busy / HTML error) is retried by itself; only a setup problem stops the job -> aiReadingPart is not defined",
+        "FAIL assembled-lesson problems are sent back to the right part -> rdRetry is not defined",
+        "FAIL Advanced: pasted JSON goes through the same checks, with no AI call -> rdRetry is not defined"
+      ],
+      "baselineCounts": {
+        "passed": 0,
+        "total": 14
+      },
+      "parentCounts": {
+        "passed": 14,
+        "total": 14
+      },
+      "candidateCounts": {
+        "passed": 0,
+        "total": 14
+      },
+      "candidateStatus": "FAIL",
+      "sourceEvidence": {
+        "id": "reading-gen",
+        "test": "tests/reading-gen.test.js",
+        "file": "functions/api/[[path]].js",
+        "symbol": "function aiReadingPart",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "934cb366ff89be171ef5cb70b2e91fb46f79c9c0 Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "c20af042484db4a184f4e9ae28d01762d9263c994d7b85bdae884b4b566b3eb6",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 14,
+          "total": 14
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/reading-gen.txt",
+        "logSha256": "44ab0cec56e46013d605365c91d282a8f5fcf2fe4f8bc8dc3d035ec2345e0624"
+      },
+      "minimalProposal": "Restore the part endpoint and validator for immutable passage/part structure plus retry-failed-part client state; mocks only, no model API requests.",
+      "affectedFiles": [
+        "functions/api/[[path]].js",
+        "index.html"
+      ],
+      "risk": "MEDIUM-HIGH: input/output validation, AI cost and draft consistency.",
+      "proposalStatus": "DESIGN_ONLY",
+      "approvalNeeded": "Authorize Reading generation recovery with zero external/model calls during QA.",
+      "verification": "Retain and rerun tests/reading-gen.test.js unchanged, full 23-command baseline and dependent role/schema regression checks."
+    },
+    {
+      "id": "reading-import",
+      "classification": "REAL_SOURCE_REGRESSION",
+      "regressionCommit": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+      "verifiedParent": "ff1a3b363ce2ba102fbd534380b09a1d2ea66234",
+      "rootCause": "rdImport and three-level import preview/validation absent.",
+      "userImpact": "Inferred from source and executable test contracts: rdImport and three-level import preview/validation absent.",
+      "symptoms": [
+        "FAIL valid 3-version file: all 3 checked, preview has Easy / Medium / Hard, passage unchanged in each, Add on, no AI call -> rdImport is not defined",
+        "FAIL invalid file: Easy \"pairs\" has 1 item -> Easy not used, exact message; Hard \"not in the file\"; Medium still addable -> rdImport is not defined",
+        "FAIL Medium with problems (0 / 1 / 7 pairs) -> Add off for 0 and 1 (nothing can be saved); 7 -> first 6 used -> rdImport is not defined",
+        "FAIL no \"medium\" version, broken JSON, or a version with a different passage text are rejected -> rdImport is not defined",
+        "FAIL one-lesson JSON (old way) still works = Medium only -> rdImport is not defined",
+        "FAIL Add saves Medium + Easy + Hard to the chosen slot (book, test, passage); reload keeps them -> rdImport is not defined",
+        "FAIL occupied slot: Add asks first; Cancel keeps the old lesson untouched -> rdImport is not defined",
+        "FAIL server: \"Copy prompt (3 versions)\" asks for {medium, easy, hard} with the 3 level notes; the 1-version prompt is unchanged -> readingPrompt3 is not defined",
+        "FAIL UI: Upload JSON file + Copy prompt in Advanced; a file over 1 MB is refused; students have no Create tab -> The expression evaluated to a falsy value:"
+      ],
+      "baselineCounts": {
+        "passed": 1,
+        "total": 10
+      },
+      "parentCounts": {
+        "passed": 10,
+        "total": 10
+      },
+      "candidateCounts": {
+        "passed": 1,
+        "total": 10
+      },
+      "candidateStatus": "FAIL",
+      "sourceEvidence": {
+        "id": "reading-import",
+        "test": "tests/reading-import.test.js",
+        "file": "index.html",
+        "symbol": "function rdImport",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "934cb366ff89be171ef5cb70b2e91fb46f79c9c0 Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "458dc1052a7d6bb5c508d29d24eb8460d8829c0ce7d92dba937ddfdee9c0ce58",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 10,
+          "total": 10
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/reading-import.txt",
+        "logSha256": "736a460542271becacdc62ddb3dd2614d705691c0ee1c0ba524207c51a00e387"
+      },
+      "minimalProposal": "Restore local JSON import and level-specific validation/preview, preserving original passage and adding only valid reviewed drafts; no AI or network import.",
+      "affectedFiles": [
+        "index.html"
+      ],
+      "risk": "MEDIUM: curriculum validation and draft state.",
+      "proposalStatus": "DESIGN_ONLY",
+      "approvalNeeded": "Authorize isolated import candidate after shared Reading validators are mapped.",
+      "verification": "Retain and rerun tests/reading-import.test.js unchanged, full 23-command baseline and dependent role/schema regression checks."
+    },
+    {
+      "id": "reading-review",
+      "classification": "REAL_SOURCE_REGRESSION",
+      "regressionCommit": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+      "verifiedParent": "ff1a3b363ce2ba102fbd534380b09a1d2ea66234",
+      "rootCause": "rdRetry/review revision state, approval gating and no-op/undo helpers absent.",
+      "userImpact": "Inferred from source and executable test contracts: rdRetry/review revision state, approval gating and no-op/undo helpers absent.",
+      "symptoms": [
+        "FAIL Generate = Medium only (3 requests); Easy / Hard wait; Add off \"Approve Medium first\"; Review Medium panel in the preview -> rdRetry is not defined",
+        "FAIL Apply feedback with AI: one revise request per part with the current part, passage and feedback; proposal with changes; Accept replaces Medium; Undo restores -> rdRetry is not defined",
+        "FAIL Reject keeps the current Medium; a failed revision changes nothing and says so -> rdRetry is not defined",
+        "FAIL a 3-word answer in a TWO WORDS question: listed as left out with Fix with AI; Approve off; fixed → revalidated → Approve on -> rdRetry is not defined",
+        "FAIL an AI \"fix\" that changes nothing is not marked fixed and cannot be accepted (honest error state) -> rdRetry is not defined",
+        "FAIL blocking problems: Approve stays off; the teacher may keep a lesson without items left out only by ticking the box -> rdRetry is not defined",
+        "FAIL after approval: Generate Easy only → Easy requests carry the approved Medium part (base); Hard independent; Add on -> rdRetry is not defined",
+        "FAIL a failed Easy part (relay) keeps the approved Medium and Hard; only the failed part is retried -> rdRetry is not defined",
+        "FAIL editing Medium after Easy / Hard were made: they become Outdated (not used by Add), approval is needed again; Keep this version is explicit -> rdRetry is not defined",
+        "FAIL server: op revise = staff only, the current part + passage + teacher words + problems, same part schema, separate daily limit -> The expression evaluated to a falsy value:"
+      ],
+      "baselineCounts": {
+        "passed": 0,
+        "total": 10
+      },
+      "parentCounts": {
+        "passed": 10,
+        "total": 10
+      },
+      "candidateCounts": {
+        "passed": 0,
+        "total": 10
+      },
+      "candidateStatus": "FAIL",
+      "sourceEvidence": {
+        "id": "reading-review",
+        "test": "tests/reading-review.test.js",
+        "file": "index.html",
+        "symbol": "function rdRetry",
+        "parentPresent": true,
+        "mainPresent": false,
+        "history": [
+          "8d9cf7742a14f64db4d7e22f63a395ee68531113 Add files via upload",
+          "934cb366ff89be171ef5cb70b2e91fb46f79c9c0 Add files via upload"
+        ],
+        "testsIdentical": true,
+        "testSha256": "b5818deff0f19c18e2cc11e79e83609c8d8f5cceafda69570b564c0287c59489",
+        "parentStatus": "PASS",
+        "parentCounts": {
+          "passed": 10,
+          "total": 10
+        },
+        "failures": [],
+        "log": "qa-artifacts/main-baseline-recovery/history-results/reading-review.txt",
+        "logSha256": "41e3c02f8fda2030a05b3862a44485a1d8f897d9ebc2ebc59f1d0295d3c65c3f"
+      },
+      "minimalProposal": "Restore review draft revisions and Apply/Accept/Undo plus validation and no-op checks; preserve existing data and require explicit human approval to add content.",
+      "affectedFiles": [
+        "index.html",
+        "functions/api/[[path]].js"
+      ],
+      "risk": "HIGH: editorial approval boundaries and revisions.",
+      "proposalStatus": "DESIGN_ONLY",
+      "approvalNeeded": "Authorize review recovery with synthetic drafts; no actual approval/publication.",
+      "verification": "Retain and rerun tests/reading-review.test.js unchanged, full 23-command baseline and dependent role/schema regression checks."
+    },
+    {
+      "id": "writing-release-editorial",
+      "classification": "EXPECTED_EDITORIAL_GATE",
+      "regressionCommit": null,
+      "rootCause": "Unit 2 152 and Unit 0 165 items remain pending; --release intentionally rejects unreviewed content.",
+      "baselineStatus": "FAIL expected",
+      "candidateStatus": "FAIL expected",
+      "minimalProposal": "No code fix. Preserve pending statuses; separate human exact-version review.",
+      "risk": "HIGH if bypassed or auto-approved",
+      "approvalNeeded": "Explicit item-level editorial decisions before any publication."
+    },
+    {
+      "id": "windows-crlf-harness",
+      "classification": "ENVIRONMENT_HARNESS",
+      "regressionCommit": null,
+      "rootCause": "Fresh Windows core.autocrlf checkout uses CRLF; legacy harness locates literal <script>\\n(function(){ and slices invalid source on CRLF.",
+      "evidence": "qa-artifacts/main-baseline-recovery/baseline-results/report.json",
+      "minimalProposal": "Use isolated worktrees created with git -c core.autocrlf=false; exact Git blob materialization recovers the baseline without modifying tests or source semantics.",
+      "candidateStatus": "RESOLVED_ENVIRONMENT",
+      "approvalNeeded": "None for local QA setup."
+    },
+    {
+      "id": "candidate-lm-meta-legacy-assumption",
+      "classification": "POLICY_TEST_CONFLICT",
+      "regressionCommit": null,
+      "rootCause": "Prior Writing-gated candidate denies all normal-student Writing; legacy test expects No units yet subtree.",
+      "evidence": "docs/VOCAB-INTEGRATION-CANDIDATE-FOLLOWUP-QA.json",
+      "candidateStatus": "NOT_APPLIED_THIS_RECOVERY",
+      "minimalProposal": "Separately reconcile category expectation with confirmed Coming Soon policy, preserving access-denial assertions.",
+      "approvalNeeded": "Review test-contract reconciliation; do not relax the gate."
+    },
+    {
+      "id": "candidate-unit0-published-student",
+      "classification": "POLICY_TEST_CONFLICT",
+      "regressionCommit": null,
+      "rootCause": "Four prior candidate Unit 0 flows publish a fixture for an ordinary student, contrary to preview-only policy.",
+      "evidence": "docs/VOCAB-INTEGRATION-CANDIDATE-FOLLOWUP-QA.json",
+      "candidateStatus": "NOT_APPLIED_THIS_RECOVERY",
+      "minimalProposal": "Separately run existing practice/progress assertions under an explicitly authorized roster-tester fixture, retaining separate ordinary/published denial tests.",
+      "approvalNeeded": "Review fixture reconciliation; no gameplay/content/grading change."
+    }
+  ],
+  "integrity": {
+    "lm-content.js": true,
+    "lm-engine.js": true,
+    "lm-unit0.js": true,
+    "lm-unit2.js": true,
+    "md-config.js": true,
+    "md-backend.js": true,
+    "firestore.rules": true,
+    "functions/api/[[path]].js": true
+  },
+  "proposal": {
+    "main": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+    "status": "PROPOSED_ONLY",
+    "before": "b7101982e41be9bf29f6479a9e5be0e448098b37e55d8d70260fc8780cd7cd42",
+    "after": "e5ab0c4441936423a287482be0c1d9f09fd0bfd5b2f6c9c04a538cbc8eeeff8c",
+    "writingUnchanged": true,
+    "changedPaths": [
+      "index.html"
+    ]
+  },
+  "note": "Only the detached candidate index Admin regions differ. No runtime, test, Writing, Vocab or data edit in feature/main. Baseline/candidate-1 results capture setup/proposal guard diagnostics; candidate-2 is the actual Admin proposal run."
+}
