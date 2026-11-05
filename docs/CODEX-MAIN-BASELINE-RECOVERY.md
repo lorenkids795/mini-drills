@@ -1,0 +1,11 @@
+# Codex — Main Baseline Recovery (audit first, NO main edits)
+
+Read `docs/VOCAB-INTEGRATION-CANDIDATE-FOLLOWUP.md`, its QA JSON, and `docs/VOCAB-WRITING-POLICY-TEACHER-REVIEW.patch`. Follow the full attached `CODEX-MAIN-BASELINE-RECOVERY.md` if supplied.
+
+**Safety**: Never change, push, revert, reset, merge or deploy `main`, never touch production data, Cloudflare, Firebase or Writing source in the real checkout. Use isolated disposable clean worktree from freshly fetched origin/main; avoid shared checkout with another Codex task. Protect `feature/vocab-lab` and latest Writing.
+
+Reproduce main's 23 command baseline with logs. Prior report: pristine main 12 PASS/11 FAIL, candidate 10 PASS/13 FAIL; Vocab feature suites PASS. Differentiate preexisting main regressions from candidate-induced failures and release editorial gates. For each failure identify classification (real source regression, stale test, environment, policy, unresolved), source commit where regression entered if possible, user-visible impact, minimal patch, risk and verification. Cover admin actions, Reading create/import/generation/review, Homework Assistant/external/mixed, cleanup, Writing access, main-only tests and pending Writing Unit 0/2 editorial gate. Never weaken assertions or auto-approve content.
+
+Confirmed policy: ordinary student Writing Coming Soon; authorized Admin/roster Tester may preview. Review exact narrow Writing gate patch without applying to main. Prepare small reviewable repair candidates only in ignored isolated worktree; do not wholesale restore historical index or blindly rewrite production API. Keep all logs and at most 3 bounded fix/test cycles.
+
+Deliver `docs/MAIN-BASELINE-RECOVERY-AUDIT.md`, JSON issue ledger and concise teacher decision digest: PASS/FAIL matrix, root cause vs symptom, proposed file diffs, before/after candidate tests, unresolved failures and approval required. Commit/push only audit docs/scripts to `feature/vocab-lab` with [CF-Pages-Skip] if appropriate; **stop before any main modification, PR, merge or deployment**.
