@@ -507,5 +507,155 @@ Tự động (đã chạy): `lm-unit0` 23/23, `lm-check` 0 lỗi (Unit 0: 165 pe
 7. [ ] Tải lại trang giữa chừng: quay lại đúng bước, đáp án và ghi chú còn. ENG | VI không làm mất gì. "Preview: auto-fill" (admin) bật → câu chấm được có sẵn đáp án; tắt → về như cũ.
 8. [ ] Điện thoại 390px + dark mode: biểu đồ trên, bài dưới; ô chọn Guided xếp 1 cột; không tràn ngang.
 
+## P0 cổng bài viết + Unit 2 Refinement (10/2026)
+Tự động (đã chạy): `lm-unit2-ui` 55/55, `lm-unit0` 25/25, `lm-check` 0 lỗi (Unit 2: 189 pending, Unit 0: 172 pending), các bộ khác như cũ. Thử với tài khoản **học sinh/tester** (admin luôn mở mọi bước):
+1. [ ] Guided Unit 2: gõ `dcd`, chỉ dấu cách, "Overall", chữ lung tung hoặc chép đề → bấm lưu → báo lý do (EN/VI), **không** có nút sang Independent.
+2. [ ] Viết 2 câu overview thật → "Save my overview for practice" → dòng "Bài viết: chưa được đánh giá", nút "Tiếp tục luyện (bài viết chưa được đánh giá)". Sửa overview thành `dcd` → nút mờ lại.
+3. [ ] Dòng trạng thái tách riêng: "Luyện nhận biết: đúng 5 / 6 · đạt" và "Bài viết: …"; không chỗ nào ghi bài viết "đạt" hay "70%".
+4. [ ] Independent: "I'm done" với `dcd` → báo lý do; viết thật → Review hiện "Your first version" + ô sửa + đoạn mẫu "One possible overview…" có chip số liệu.
+5. [ ] Admin: dòng vàng "Admin preview: every stage is open…"; ở Independent có mục mở ra "Reviewed sample overview…" (không chèn vào ô viết).
+6. [ ] Unit 0 Guided/Independent: `dcd` ở ô nhận xét / ô bảng kiểm bị từ chối kèm tên ô; nhận xét thật thì qua; dòng "Ghi chú của bạn: chưa được đánh giá".
+
+## Add teacher · Unit 0 refinement · Writing "Coming soon" (10/2026)
+Tự động (đã chạy): `admin-actions` 9/9, `lm-access` 7/7, `lm-unit0` 27/27, `lm-unit2-ui` 55/55, `lm-meta` 23/23, các bộ khác như cũ; `lm-check` 0 lỗi (Unit 0: 206 pending, Unit 2: 189 pending). Users phải ghi "app 2026-10-28a".
+1. [ ] Admin › Teachers: Name + Email + Password (hoặc Generate) → Add teacher → không còn "Something went wrong", giáo viên mới hiện trong danh sách. Thiếu ô → câu báo, không gửi. Admin › Users › Add a tester account vẫn tạo được tester.
+2. [ ] Học sinh **thường**: Library › Learning Materials → dòng Writing mờ, "Coming soon", bấm không mở. **Tester**: Writing mở, thấy Unit 0 và Unit 2, làm được như trước. Đăng xuất rồi đăng nhập bằng tài khoản kia → hiện đúng.
+3. [ ] Unit 0 (đăng nhập tester): Learn tiêu đề không còn "3 2. …"; bấm Solar thấy "Đầu → cuối … 2 → 15" và "Hình dạng: lúc tăng lúc giảm". Bước chọn: sau Kiểm tra có ghi chú chính/phụ + "Một lựa chọn hợp lý khác".
+4. [ ] Controlled: 10 câu, có 2 câu "The gap between…"; 6/10 không qua, 7/10 qua.
+5. [ ] Guided: gõ `gfg`, `abc`, `gfg gfg` vào nhận xét → không được gộp; chọn 2–3 đặc điểm → mỗi đặc điểm một ô; "Check my observations" mới hiện số liệu đã kiểm; gộp ghi chú; phải bấm "Tôi đã so… chưa được đánh giá" mới sang Independent; không chỗ nào ghi "đạt".
+6. [ ] Independent: đúng 5 ô gọn; `frf` ở một ô → báo đúng ô. Review: A. So sánh (lần đầu cạnh đáp án) → B. Sửa → "Save revision": không sửa gì → "chưa sửa"; có sửa → bảng Trước / Sau.
+7. [ ] Admin bật "Preview: auto-fill": đi hết 5 bước không phải gõ; Guided là câu về Coal/Wind/Solar, Independent/Review là câu về Car/Bus/Bicycle, bản Sau khác bản Trước; tắt auto-fill → chữ mẫu biến mất, chữ admin tự gõ còn nguyên.
+8. [ ] Điện thoại 390px + dark mode: Unit 0 các ô gọn, không tràn; bảng Trước / Sau cuộn ngang được.
+
+## Dữ liệu sau khi xóa · ảnh bìa · Create · header Reading (10/2026)
+Tự động (đã chạy): `data-cleanup` 12/12, `reading` 12/12, các bộ khác như cũ. Cần deploy `index.html` **và** `functions/` (Users phải ghi "app 2026-10-28b · server 2026-10-28a").
+1. [ ] Dashboard + Marking: học sinh đã Kick / gỡ khỏi lớp không còn trong số liệu, biểu đồ, bảng lớp, thẻ Marking, "N submitted", bộ lọc Class — ngay sau khi xóa và sau khi tải lại. Bài của tester (còn trong Users) vẫn ở Marking.
+2. [ ] ⚠ Admin › Users › "Clean up data of deleted students" → Preview: xem danh sách email (chỉ email không còn trong roster, không phải giáo viên). Kiểm kỹ, rồi "Delete data" từng email (có hỏi lại). Preview lần nữa → email đó không còn.
+3. [ ] Classes › Class settings › Cover image: chọn ảnh → kéo ảnh, zoom bằng thanh trượt và −/+, Reset, Cancel / Save → thẻ lớp hiện đúng như khung chỉnh; tải lại vẫn giữ; "Adjust position" sửa lại được; Remove image xóa ảnh. Thẻ lớp cao hơn một chút, nhiều lớp vẫn thẳng hàng, điện thoại không vỡ.
+4. [ ] Create › Reading: nút Add nằm ở đầu "Pick a free slot", mờ tới khi có bài + chọn slot; slot đã có bài → hỏi trước khi thay. Generate xong → "Hide editor" → preview rộng ra; "Show editor" → bài, slot, preview còn nguyên (không gọi AI lại). "Add to slot ↑" chỉ cuộn lên nút Add.
+5. [ ] Student View Preview: Easy / Medium / Hard trên preview đổi đúng nội dung (bản chưa tạo thì nút mờ); đổi nhiều lần, cả khi đã ẩn editor; Add xong bài lưu không bị ảnh hưởng.
+6. [ ] Bài Reading (học sinh + preview): không còn khung "Selected excerpts"; có link "Show full passage". Header 1 hàng: ← + tên bài + "Cam … · Test … · Reading" | "Step 1/4 · Deep reading" | đồng hồ ⏸ | bánh răng (mức độ, cỡ chữ, Demo helper chỉ với giáo viên/tester); thanh tiến độ tăng khi qua bước. Điện thoại: header xuống dòng gọn, không đè nhau; bàn phím mở/đóng được (Esc).
+
+## Reading AI theo từng phần · Marking tester · Learning Materials · dọn giao diện (10/2026)
+Tự động (đã chạy): `reading-gen` 12/12, `reading` 12/12, `data-cleanup` 15/15, `lm-access` 9/9, `lm-unit0` 27/27, `lm-unit2-ui` 56/56, `lm-meta` 23/23, các bộ khác như cũ. Deploy `index.html`, `functions/`, `lm-content.js`, `lm-unit2.js`, `md-backend.js` (Users phải ghi "app 2026-10-29a · server 2026-10-29a").
+1. [ ] Create › Reading: dán bài ~930 từ / 7 đoạn → Generate: dòng tiến độ đổi qua "(1 of 9)"… "(9 of 9)"; mỗi bản có 3 phần ✓; nút Add mờ tới khi xong; xong → preview Easy / Medium / Hard; bài đọc giống hệt bài dán.
+2. [ ] Nếu một phần báo ✗: chỉ có nút "Retry failed part" → bấm → chỉ phần đó chạy lại; các phần ✓ giữ nguyên. Không còn câu "Try a shorter essay".
+3. [ ] Advanced › paste JSON → Check JSON: preview + Add như cũ, không gọi AI.
+4. [ ] Marking: Class = All không có bài của tester; chọn "Tester" → chỉ bài tester (chấm được như thường); số submitted/marked khớp số thẻ ở mọi lựa chọn; tải lại trang vẫn đúng.
+5. [ ] Học sinh thường: Library › Learning Materials = 4 dòng Writing / Listening / Reading / Speaking, đều "Coming soon", không mũi tên, không Task 1/2.
+6. [ ] Tester: Writing › Task 1 / Task 2 › Unit 0, Unit 2 mở được; trang chỉ còn bài đó (không Daily, Homework, Recent results); "Learning Materials" ở breadcrumb quay lại đúng chỗ.
+7. [ ] Tester trong bài: "Demo helper · Fill correct answers" → mọi stage mở, câu chọn + ô viết được điền (ENG và VI); Check / Continue chạy; "Undo demo answers" → trở lại như trước; không có bài nộp / XP mới.
+8. [ ] Dashboard: không còn ô Sample data, chữ "Average score", "Share of questions…", 4 câu báo trống; lọc ra rỗng → vòng tròn "–", không vỡ bố cục (máy tính, điện thoại, tối).
+9. [ ] Đăng nhập: form gọn ở giữa, có phụ đề; không còn khoảng hở lớn dưới nút Sign in; "Teacher sign in" mở form giáo viên như cũ; điện thoại không tràn ngang.
+10. [ ] Admin › Teachers: Admin và Teacher cùng kiểu badge; mọi "Active" giống nhau, thẳng hàng (sáng / tối / điện thoại).
+11. [ ] Create › Reading › Advanced: dán bài đọc ở bước 1 → "Copy prompt (3 versions)" → dán vào Claude/ChatGPT + bài đọc → lưu câu trả lời thành `.json` → "Upload JSON file" → danh sách "Versions in the file" ✓ Medium / Easy / Hard → preview đổi được 3 bản → chọn slot → Add → mở lại Library: bài ở đúng Cam … · Test … · Passage, đủ 3 bản.
+12. [ ] Thử `tests/fixtures/reading-import-invalid.json`: Easy báo "pairs has 1 item", Hard "not in the file"; slot đã có bài → Add hỏi, Cancel → bài cũ còn nguyên.
+13. [ ] Đang Generate thì tải lại trang (F5): các phần ✓ còn, phần dở thành ✗ → "Retry failed part" chạy tiếp, không tạo lại phần đã xong. Deploy phải ghi "app 2026-10-29b · server 2026-10-29b".
+
+## Đăng nhập giáo viên + lỗi relay (10/2026)
+Deploy `index.html`, `md-backend.js`, `functions/` (Users phải ghi "app 2026-10-29c · server 2026-10-29c").
+1. [ ] Trang đăng nhập: không còn "Sign in to continue your learning journey."; khoảng cách gọn.
+2. [ ] Teacher sign in: chỉ Email, Password, Sign in, "Sign in as student"; không còn "First time? Create your teacher password". Giáo viên đã có mật khẩu đăng nhập được.
+3. [ ] Học sinh: "First time here? Create your password" vẫn chạy (chọn lớp → tên → email → mật khẩu).
+4. [ ] Giáo viên mới: Admin › Teachers › Add teacher (hoặc Users › Change password) → giáo viên đăng nhập được.
+5. [ ] Create › Reading › Generate với bài dài: nếu một phần báo relay, dòng lỗi có "(code: relay_busy)" + "Details: …" và phần đó được tự gửi lại; nếu vẫn lỗi → Retry failed part. Chụp lại dòng Details nếu còn lỗi.
+
+## Admin Users / Teachers + Review Medium (10/2026)
+Deploy `index.html` + `functions/` (Admin › My account › Diagnostics phải ghi "app 2026-10-29e · server 2026-10-29d").
+1. [ ] Admin › Users: thanh Search · Role · Class · "N accounts" (đổi khi lọc); mỗi dòng một ⋯. Admin: chỉ "My account". Giáo viên / học sinh: Change password, Kick (đỏ). Tester: thêm Add sample data. Kick vẫn hỏi xác nhận rồi mới xóa. Không còn chữ "app … · server …" ở trang này.
+2. [ ] Menu ⋯: bấm ngoài / Esc đóng; mũi tên lên xuống chọn mục; dòng cuối bảng thì menu lật lên, không bị cắt; điện thoại ⋯ ở góc phải mỗi thẻ.
+3. [ ] Admin › Teachers: thẻ "Add a teacher" (Generate nằm cạnh ô Password) → Add teacher chạy như cũ; mỗi giáo viên một ⋯ (Change password, Remove đỏ); dòng Admin ghi "Protected".
+4. [ ] Create › Reading › Generate: chỉ tạo Medium; bảng **Review Medium** ở đầu preview (vẫn thấy khi Hide editor); Add mờ "Approve Medium first".
+5. [ ] Gõ góp ý (vd. "Make Question 2 clearer and keep the answer within two words") → Apply feedback with AI → thấy danh sách thay đổi → Accept (preview đổi) hoặc Reject (không đổi); Undo trở lại bản trước.
+6. [ ] Mục "Completion … was left out: … more than 2 words" → Fix with AI → "Fixed: …" → Accept → mục trở lại; nếu AI không sửa được: "Still a problem", Accept mờ.
+7. [ ] Approve Medium → Generate Easy / Hard (riêng hoặc cả hai) → Ready; sửa Medium sau đó → Easy/Hard "Outdated" + phải duyệt lại; Generate again hoặc Keep this version → Add → bài trong Library có đúng các bản đã duyệt.
+
+## Unit 2 — Guided / Independent / Review (10/2026)
+Deploy `index.html` + `lm-unit2.js` (My account › Diagnostics: "app 2026-10-30a"). Dùng tài khoản tester hoặc admin.
+1. [ ] Nếu ô Independent còn chữ "App X / App Y / App Z": thấy thông báo "earlier version of the chart"; "I'm done" bị chặn với bản nháp có đánh dấu phiên bản cũ; Copy / Keep editing / Start fresh chạy; Start fresh giữ chữ cũ trong "Earlier draft".
+2. [ ] Guided: sau khi đạt 70% → "Choose your ideas" (chọn 2) → 3 ô câu (câu mẫu chỉ trong "Need help?") → "Combine my sentences" → Save → trạng thái "Practice attempted — writing not assessed".
+3. [ ] Review: 5 bước theo thứ tự; ví dụ mẫu gập sẵn; Save revision không đổi gì → "No changes were made"; sửa rồi Save → bảng Trước / Sau.
+4. [ ] Demo helper (tester): Fill correct answers điền ý + câu mẫu tên Chatora / Pixlo / Notivo, không ghi đè chữ đã gõ; Undo trả lại.
+5. [ ] Cuộn trang dài ở máy tính: biểu đồ bên trái dính khi cuộn; điện thoại: biểu đồ ở trên, không tràn ngang. (Chưa kiểm trên trình duyệt.)
+
+## Reading Option A + bài tập ngoài + Homework Assistant (10/2026)
+Deploy `index.html` + `functions/` (Admin › My account › Diagnostics: "app 2026-10-30d · server 2026-10-30b").
+1. [ ] Reading Stage 1 ở máy tính: không còn khoảng trắng lớn dưới header; 2 thẻ "Reading passage" | "Questions" cuộn riêng; thanh đáy "x / y answered" + nút số câu (bấm = nhảy tới câu) + Check answers. Đổi cỡ chữ → bố cục tự vừa lại. Điện thoại: xếp dọc, không tràn ngang.
+2. [ ] Giáo viên: New assignment → chọn **External link** → dán link https + hướng dẫn → Save assignment. Học sinh: thấy Open link (tab mới), Upload screenshot → "Submitted · giờ" + ảnh; tải lại trang vẫn còn. Giáo viên thấy học sinh đó Submitted + link ảnh.
+3. [ ] Admin › **Assistants** → Add a Homework Assistant (tên, email, Generate mật khẩu, tick lớp) → đăng nhập bằng Teacher sign in với email đó: chỉ có tab **Homework**, chỉ thấy lớp đã tick, không có Marking/Admin/Create.
+4. [ ] Trợ lý: Create assignment cho lớp của mình → học sinh lớp đó thấy bài; Cancel (có hỏi lại) → bài biến mất.
+5. [ ] Missing homework → chọn bài đã hết hạn → **Refresh and copy** → dán vào Zalo/Notes: đúng mẫu "LỚP … — …", "Danh sách các bạn còn thiếu bài:", đánh số, câu cuối "Nếu có gặp vấn đề gì…"; không có email/điểm. Reminder before deadline chỉ liệt kê bạn chưa nộp bài còn hạn.
+6. [ ] Students to watch: mở một bạn → đổi Follow-up + lưu ghi chú → Refresh vẫn còn.
+7. [ ] Admin bỏ tick một lớp (Classes → Save classes) → trợ lý bấm Refresh: lớp đó biến mất ngay. Pause → trợ lý bị đăng xuất trong 10 phút; Remove → không đăng nhập được.
+
+## Sửa lỗi trợ lý / Create Reading / bài Reading (10/2026)
+Deploy `index.html` + `md-backend.js` + **dán lại `firestore.rules`** vào Firebase Console (Diagnostics: "app 2026-10-31a").
+1. [ ] Trợ lý đăng nhập bằng Teacher sign in → màn hình "Homework & Student Progress", không thấy Home/Flashcards/Leaderboard của học sinh. Chưa được giao lớp → "No classes yet".
+2. [ ] Học sinh, giáo viên, admin, tester đăng nhập vẫn vào đúng màn hình cũ.
+3. [ ] Admin › Users: ô Class của Cherry / Tester là "—"; bộ lọc Class vẫn lọc được.
+4. [ ] Create › Reading › Generate → khi Medium chưa duyệt bấm Student View Preview: thấy bài đọc + câu hỏi làm được; bấm lại Summary View: không mất gì.
+5. [ ] Approve Medium → panel chỉ còn một nút "Generate Easy & Hard", ô góp ý gập vào "Edit approved Medium"; xong Easy/Hard → Preview level Easy/Medium/Hard đổi nội dung bài.
+6. [ ] Hide editor: panel gọn (trạng thái + một nút), preview rộng.
+7. [ ] Bài Reading (học sinh và preview): không còn tiêu đề "Reading passage" to; List of Headings không bị bóp hẹp; câu hỏi không bọc từng khung; ô chọn/ô điền vẫn rõ; thử sáng/tối, 390px.
+
+## Bài giao kết hợp Library + bài ngoài (10/2026)
+Deploy `index.html` + `functions/` (Diagnostics: "app 2026-10-31b · server 2026-10-31a").
+1. [ ] Classes › Create assignment: không còn nút "Mini Drills | External link"; có 2 mục Exercises from Library và External tasks. Lưu được: chỉ bài Library; chỉ link; Library + 1 link; nhiều bài + nhiều link. Không thêm gì → báo lỗi, không mất chữ đã gõ.
+2. [ ] Lọc Skill = Listening → "Select all N shown" chỉ chọn bài Listening; bài Reading đã chọn vẫn còn. "Remove all selected" hỏi lại trước khi xóa.
+3. [ ] Sửa một bài kết hợp: xóa 1 link, thêm 1 link, bỏ 1 bài → Save: phần còn lại giữ nguyên.
+4. [ ] Học sinh: một thẻ, 2 mục; làm bài Library như cũ; mỗi link có nút upload riêng. Chỉ upload ảnh → chưa "All done"; chỉ làm Library + I'm done → "Library exercises done ✓ Upload…"; đủ cả hai → "All done ✓".
+5. [ ] Giáo viên mở bài: bảng có cột bài + cột Link (✓ mở ảnh) + Complete. Bài External cũ và bài Library cũ vẫn hiện, sửa, lưu được.
+6. [ ] Trợ lý: tạo bài kết hợp cho lớp của mình; Missing homework chỉ tính "đã nộp" khi đủ mọi phần.
+7. [ ] 390px và dark mode: form không tràn ngang, chân form (Cancel / Save) luôn thấy, không có khung cuộn lồng.
+
+## Admin › Users theo vai trò, Admin › Students (10/2026)
+Deploy `index.html` (Diagnostics: "app 2026-10-31c").
+1. [ ] Admin › Users: các bảng theo thứ tự Admin → Teachers → Homework Assistants → Testers → Students, mỗi bảng có số lượng; không còn cột Role; tester và staff ở cột Class là "—".
+2. [ ] Gõ tìm một tên: chỉ nhóm có người khớp hiện ra, số "1 of N" đúng. Chọn "Students’ class": chỉ bảng Students thay đổi.
+3. [ ] Nút ⋯ từng dòng vẫn như cũ (Change password, Kick có hỏi lại, Add sample data cho tester).
+4. [ ] Admin › Students: chỉ học sinh thật (BẢO AN…), không còn dòng "Teacher"; cột Name | Email | Class, lớp hiện "21h".
+5. [ ] 390px và dark mode: mỗi bảng thành thẻ gọn, không tràn ngang.
+
+## Thẻ bài tập như bản gốc + bút chì Edit (10/2026)
+Deploy `index.html` (Diagnostics: "app 2026-10-31d"); học sinh tải lại trang.
+1. [ ] Bài 2 bài Library + 1 link (Source "Website"): học sinh thấy 3 dòng trong một danh sách (không còn tiêu đề phụ), dòng thứ 3 tên "Website", bên phải "Waiting".
+2. [ ] Bấm "Website": hiện hướng dẫn, Open link (mở đúng URL ở tab mới), Upload screenshot. Tải ảnh → dòng thành "Submitted"; tải lại trang vẫn còn; giáo viên thấy ✓ ở cột "Website".
+3. [ ] Chỉ làm 2 bài Library + I'm done → "Library exercises done ✓ Upload a screenshot…" (chưa All done); nộp thêm ảnh → "All done ✓".
+4. [ ] Source để trống → dòng tên "External task". Hai link → hai dòng riêng.
+5. [ ] Giáo viên mở bài trong Classes: không còn link / hướng dẫn / câu "0 of 1 students finished everything"; bút chì cạnh "Active" mở form Edit; không còn nút Edit ở dưới. Thử Tab + Enter vào bút chì.
+
+## Rà UI/UX toàn web (11/2026)
+Deploy `index.html` (Diagnostics: "app 2026-11-01a").
+1. [ ] Mọi câu hỏi xác nhận (xóa lớp gõ DELETE, hủy bài giao, bỏ link, đóng modal chấm chưa lưu, Generate lại Reading…) hiện trong hộp của app, đọc được ở dark mode và điện thoại; Esc / Cancel không làm gì.
+2. [ ] Học sinh có bài chưa xong: "Let's lock in" ở trên Daily practice; chưa làm đủ bài thì không có "I'm done!" mà có dòng "N of M exercises to do"; làm đủ thì nút xanh hiện ra.
+3. [ ] Writing sau khi AI chữa: Corrections mở sẵn, Corrected essay và Vocabulary upgrades bấm Show để mở.
+4. [ ] Giáo viên: Library là các thẻ sách giống học sinh; Dashboard cuộn xuống thì bộ lọc vẫn ở trên (máy tính); Class settings có thanh mục, Delete class gập lại; modal chấm cuộn dài vẫn thấy Close và nút lưu.
+5. [ ] Admin: tab con chia 4 nhóm (People, Classes & data, Gamification, Tools); nút Prizes mở trang Prizes.
+6. [ ] Tester: header có "Tester mode"; Demo helper luôn là dải ở đầu bài (Listening, Reading, Learning Materials).
+7. [ ] Homework Assistant: sidebar có 4 mục; Students to watch mở chi tiết bên phải (máy tính) / ở trên (điện thoại).
+8. [ ] Kiểm chung sáng/tối, 390px và ≥ 1280px: chữ nhỏ không quá nhỏ, không tràn ngang.
+
+## Dashboard / Marking theo tài khoản + link tham gia lớp (11/2026)
+Deploy `index.html` + `md-backend.js` + `functions/` (Diagnostics: "app 2026-11-04a · server 2026-11-04a").
+1. [ ] Admin › Marking: "All" không còn bài của Cherry / TESTER; chọn 67PM chỉ có học sinh thật đang ở 67PM; chọn **Tester accounts** thấy mọi bài của Cherry và TESTER (kể cả bài cũ ghi lớp 67PM). Số "submitted · marked" khớp số thẻ; đổi qua lại nhiều lần vẫn đúng.
+2. [ ] Đăng nhập giáo viên thường: Marking không có bài của tester, không có mục Tester accounts.
+3. [ ] Dashboard: All không có tester / học sinh đã Kick; mục Students không còn tên bài dạng `c_…` (bài đã xóa = "Removed exercise"); admin chọn Tester accounts thấy riêng tester.
+4. [ ] Class settings › Join link › Create join link → Copy link → mở ở cửa sổ ẩn danh: trang đăng ký mở sẵn lớp đó, chọn tên → tạo mật khẩu → vào đúng lớp, thấy bài tập.
+5. [ ] Học sinh lớp khác mở link khi đã đăng nhập → báo "Ask your teacher to move you" (không đổi lớp). Học sinh đúng lớp → "You are already in …". Mã sai / sau khi bấm New code → link cũ báo không hợp lệ.
+6. [ ] Nếu "All" vẫn còn bài của TESTER sau bước 1: tài khoản đó trên dữ liệu thật **không** có cờ tester (vd. một email khác cùng tên) — kiểm ở Admin › Users xem nó nằm ở nhóm Testers hay Students.
+
+## P0 Homework Assistant + Reading workspace (11/2026)
+Deploy `index.html` + `md-backend.js` + `functions/` (Admin › My account › Diagnostics: "app 2026-11-04c · server 2026-11-04c"). Rules của mục 77 phải đã dán.
+1. [ ] Tài khoản trợ lý đăng nhập → thấy 4 trang Homework ở sidebar, **không** thấy Home/Flashcards của học sinh. Trợ lý đang mở trang từ trước → bị đăng xuất 1 lần với câu "Your account type was changed…", đăng nhập lại thì đúng.
+2. [ ] Học sinh, giáo viên, admin, tester đăng nhập vẫn như cũ.
+3. [ ] Học sinh mở một bài Reading lần đầu → mẹo "Highlight while reading" + Got it!; mở bài khác không còn mẹo.
+4. [ ] Bôi chữ trong bài đọc / câu hỏi / đáp án → tô vàng; bôi lại → xóa. Settings › Choose colors → thanh 4 màu. Off → bôi chữ không làm gì. Tải lại trang → chỗ tô còn (cùng máy). Bôi chữ trên một đáp án không chọn đáp án đó. Gõ trong ô điền không bị tô.
+5. [ ] Double-click "Paragraph B" (điện thoại: chạm 2 lần) → đoạn gập; mũi tên cạnh nhãn cũng gập/mở; câu trả lời không mất.
+6. [ ] Step 2 Pronouns: không còn hộp giữa màn hình; bấm từ in đậm → câu hỏi hiện ở cột phải, chọn đáp án, "Next word"; đoạn không có từ nào tự gập. Điện thoại: câu hỏi hiện dưới bài đọc.
+7. [ ] Kéo thanh giữa bài đọc / câu hỏi; ← → trên thanh. Màn hình 390px không tràn ngang; thanh số câu cuộn ngang được.
+8. [ ] Settings có Version (giáo viên), Text size, Text highlighting, Demo helper (giáo viên / admin / tester). Student View Preview ở Create giống bài thật.
+9. [ ] Admin › Tools › Reading check › Scan: bài có giải thích "fine fine…" hiện ở danh sách; "Clear this explanation" hỏi trước rồi mới xóa đúng trường đó; học sinh mở 3.2 không còn chữ lặp (hoặc "Explanation unavailable.").
+10. [ ] Create › Reading tạo bài mới: nếu AI trả giải thích lặp, Review báo "Phrase n: the explanation … repeats …" và Fix with AI sửa được phần đó.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

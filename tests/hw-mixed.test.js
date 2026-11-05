@@ -45,22 +45,25 @@ const hasAtt = (B) => { try { return B.T.setAttempts; } catch (e) { return null;
   });
   await t('5. edit a mixed assignment: remove one task and one exercise, the rest (and the task ids) stay; new task gets a new id', () => {
     const B = tea(); B.T.setAsg([MIX]); B.T.AG.cur = '7h30'; B.T.openForm('7h30', B.T.allAsgs().find((a) => a.id === 'm1')); B.T.renderAsg(); dates(B); fill(B);
-    B.press({ act: 'ax-rm', i: '0' }); fill(B); B.press({ act: 'pk-rm', id: 'r1' }); fill(B); B.press({ act: 'ax-add' }); fill(B); B.el('fXl1').value = 'https://new.example.com'; dates(B);
+    B.press({ act: 'ax-rm', i: '0' }); assert.ok(/Remove external task 1\?/.test(B.asking())); B.ok(); fill(B); B.press({ act: 'pk-rm', id: 'r1' }); fill(B); B.press({ act: 'ax-add' }); fill(B); B.el('fXl1').value = 'https://new.example.com'; dates(B);
     B.T.saveAsg(); const r = B.T.localAsg.find((a) => a.id === 'm1');
     assert.ok(r && B.T.localAsg.length === 1 && r.ex.join() === 'l1' && r.ext.map((x) => x.id).join() === 'x2,x3' && r.ext[0].link === 'https://quizlet.example.com/b');
   });
-  await t('6. student: one card, two sections; Library rows open the exercise; each external task has its own link + upload', () => {
-    const B = stu(); B.T.setAsg([MIX]); const h = B.T.homeworkHTML();
-    assert.strictEqual((h.match(/<div class="hw hwext/g) || []).length, 1, 'one card');
-    assert.ok(h.includes('>Exercises from Library<') && h.includes('>External tasks<') && /data-act="nav"[^>]*data-ex="l1"/.test(h) && /data-ex="r1"/.test(h));
-    assert.ok(h.includes('data-act="hw-shot" data-asg="m1" data-x="x1"') && h.includes('data-act="hw-shot" data-asg="m1" data-x="x2"') && h.includes('id="hwShot_m1_x2"'));
-    assert.ok(h.includes('href="https://forms.example.com/a" target="_blank" rel="noopener noreferrer">Open link') && h.includes('Do part A.') && h.includes('>0 of 4 parts done<'));
+  await t('6. student: one card, one list like before: 2 Library rows + 1 row per external task (Source name, "External task" when empty); details on click', () => {
+    const B = stu(); B.T.setAsg([MIX]); let h = B.T.homeworkHTML();
+    assert.strictEqual((h.match(/<div class="hw hwext/g) || []).length, 1, 'one card'); assert.strictEqual((h.match(/class="lrows"/g) || []).length, 1, 'one list');
+    assert.strictEqual((h.match(/class="lrow( hwxr)?[" ]/g) || []).length, 4, '2 exercises + 2 tasks');
+    assert.ok(!/Exercises from Library|External tasks<|parts done/.test(h) && /data-act="nav"[^>]*data-ex="l1"/.test(h) && /data-ex="r1"/.test(h));
+    assert.ok(/data-k="m1\|x1"[^>]*><span><b>Google Form<\/b>/.test(h) && /data-k="m1\|x2"[^>]*><span><b>External task<\/b><\/span>/.test(h) && !h.includes('quizlet.example.com') && !h.includes('Do part A.'), 'no URL / instructions in the summary');
+    B.press({ act: 'hw-xopen', k: 'm1|x1' }); B.press({ act: 'hw-xopen', k: 'm1|x2' }); h = B.T.homeworkHTML();
+    assert.ok(h.includes('data-act="hw-shot" data-asg="m1" data-x="x1"') && h.includes('data-act="hw-shot" data-asg="m1" data-x="x2"') && h.includes('id="hwShot_m1_x2"') && /aria-expanded="true"/.test(h));
+    assert.ok(h.includes('href="https://forms.example.com/a" target="_blank" rel="noopener noreferrer">Open link') && h.includes('Do part A.'));
   });
   await t('7–8. completion: screenshots alone ≠ complete; Library alone ≠ complete; both = complete; a screenshot is "Submitted", never a score', () => {
     const B = stu(); B.T.setAsg([MIX]); const a = B.T.allAsgs().find((x) => x.id === 'm1');
     B.T.setHw([{ id: 'lan-x-com_m1', email: 'lan@x.com', asgId: 'm1', ts: now, status: 'submitted', shots: { x1: { id: A22, url: '/api/image/' + A22, ts: now }, x2: { id: B22, url: '/api/image/' + B22, ts: now } } }]);
     let S = B.T.asgState(a, 'lan@x.com'); assert.ok(S.extFin && !S.libFin && !S.fin, 'external done, Library not');
-    let h = B.T.homeworkHTML(); assert.ok(/>Submitted · /.test(h) && !/score|correct/i.test(h) && !h.includes('All done ✓') && h.includes('>2 of 4 parts done<'));
+    let h = B.T.homeworkHTML(); assert.ok((h.match(/<span class="best">Submitted<\/span>/g) || []).length === 2 && !/score|correct/i.test(h) && !h.includes('All done ✓'));
     B.T.setHw([{ id: 'lan-x-com_m1', email: 'lan@x.com', asgId: 'm1', ts: now, done: true }]);
     S = B.T.asgState(a, 'lan@x.com'); assert.ok(S.libFin && !S.extFin && !S.fin, 'Library turned in, external missing');
     assert.ok(B.T.homeworkHTML().includes('Library exercises done ✓ Upload a screenshot for each external task to finish.'));
@@ -76,8 +79,14 @@ const hasAtt = (B) => { try { return B.T.setAttempts; } catch (e) { return null;
   await t('9. teacher: hwStatus counts parts; matrix shows exercise + task columns, screenshot link, "Complete" only when everything is in', () => {
     const B = tea(); B.T.setAsg([MIX]); B.T.setHw([{ email: 'lan@x.com', asgId: 'm1', ts: now, shots: { x1: { id: A22, url: '/api/image/' + A22, ts: now } } }]);
     const hs = B.T.hwStatus(MIX); assert.strictEqual(hs.pct, Math.round(1 / 8 * 100));
-    const h = B.T.hwMatrixHTML(MIX); assert.ok(h.includes('>Link 1 · Google Form<') && h.includes('>Link 2<') && h.includes('href="/api/image/' + A22 + '"') && h.includes('<b>0</b> of 2 students finished everything') && h.includes('>Complete<'));
+    const h = B.T.hwMatrixHTML(MIX); assert.ok(h.includes('>Google Form<') && h.includes('>External task 2<') && h.includes('href="/api/image/' + A22 + '"') && !/finished everything|forms\.example\.com\/a<|Do part A/.test(h) && h.includes('>Complete<'));
     const R = B.T.hwRows(MIX).rows.find((r) => r.email === 'lan@x.com'); assert.ok(!R.all && !R.fin && R.cells.length === 4);
+  });
+  await t('9b. class view: Edit = pencil next to the status (same edit flow), no Edit button at the bottom; demo rows have none', () => {
+    const B = tea(); B.T.setAsg([MIX]); B.T.AG.cur = '7h30'; B.T.AG.open = 'm1'; B.T.renderAsg(); const h = B.el('v-asg').innerHTML;
+    assert.ok(/<div class="arow"><button class="alist" data-act="asg-open" data-id="m1"[\s\S]*?<span class="pill ok">Active<\/span><\/button><button class="iconbtn aedit" type="button" data-act="asg-edit" data-id="m1" aria-label="Edit assignment: HW MIX" title="Edit assignment">/.test(h));
+    assert.ok(!/<button class="btn sm" data-act="asg-edit"/.test(h) && !/finished everything/.test(h));
+    B.press({ act: 'asg-edit', id: 'm1' }); assert.ok(B.T.AG.form && B.T.AG.form.id === 'm1' && B.T.AG.form.ext.length === 2, 'opens the same edit form');
   });
   await t('10. legacy records: old external (top-level link) = task x1 with its old "shot"; old Library-only and old "I\'m done" still work', () => {
     const B = stu(); const OLD = { id: 'o1', cls: '7h30', start: now - DAY, due: now + DAY, ex: [], type: 'external', link: 'https://old.example.com', note: 'Old note' };
@@ -95,8 +104,8 @@ const hasAtt = (B) => { try { return B.T.setAttempts; } catch (e) { return null;
     assert.ok(shown.length && shown.every((i) => !/^r/.test(i)));
     B.press({ act: 'pk-all' }); assert.ok(shown.every((i) => B.T.AS.sel[i]) && B.T.AS.sel.r1, 'Reading choice untouched');
     B.press({ act: 'pk-none' }); assert.ok(shown.every((i) => !B.T.AS.sel[i]) && B.T.AS.sel.r1, 'unselect only the shown ones');
-    B.T.AS.sel.l1 = 1; B.W.confirm = () => false; B.press({ act: 'pk-clear' }); assert.ok(B.T.agSel().length === 2, 'cancel keeps them');
-    B.W.confirm = () => true; B.press({ act: 'pk-clear' }); assert.strictEqual(B.T.agSel().length, 0);
+    B.T.AS.sel.l1 = 1; B.press({ act: 'pk-clear' }); assert.ok(/Remove all 2 selected exercises\?/.test(B.asking())); B.cancel(); assert.ok(B.T.agSel().length === 2, 'cancel keeps them');
+    B.press({ act: 'pk-clear' }); B.ok(); assert.strictEqual(B.T.agSel().length, 0);
   });
   await t('12. layout: no inner scroll box in the picker, sticky footer, no type switch CSS hooks left in the form', () => {
     const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');

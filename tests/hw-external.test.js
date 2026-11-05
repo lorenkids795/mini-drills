@@ -34,19 +34,21 @@ const tea = () => { const B = boot({ hooks: HOOKS }); B.T.setRoster(ROSTER); ret
     assert.ok(a && !B.T.isExt(a) && B.T.hwStatus(a).ids.length === 1);
   });
   await t('student: external card = name, due, instructions, Open link (new tab, safe href), "Not submitted", Upload screenshot', () => {
-    const B = stu(); B.T.setAsg([EXT]); const h = B.T.homeworkHTML();
+    const B = stu(); B.T.setAsg([EXT]); let h = B.T.homeworkHTML();
+    assert.ok(/<button type="button" class="lrow hwxr" data-act="hw-xopen" data-k="e1\|x1" aria-expanded="false"[^>]*><span><b>Google Form<\/b>/.test(h) && />Waiting</.test(h) && !h.includes('Open link'), 'one row named after the Source; details closed');
+    B.press({ act: 'hw-xopen', k: 'e1|x1' }); h = B.T.homeworkHTML();
     assert.ok(h.includes('class="hw hwext"') && h.includes('href="https://forms.example.com/abc" target="_blank" rel="noopener noreferrer">Open link') && h.includes('Do all 20 questions.') && h.includes('>Not submitted<') && h.includes('data-act="hw-shot" data-asg="e1"') && h.includes('type="file" accept="image/*"'));
     B.T.setAsg([Object.assign({}, EXT, { link: 'javascript:alert(1)' })]); assert.ok(!/href="javascript/.test(B.T.homeworkHTML()), 'never a javascript: link');
   });
   await t('after an upload (hwdone with a screenshot): Submitted + time + thumbnail + Replace; survives a reload (same record); late upload says so', () => {
     const B = stu(); B.T.setAsg([EXT]); B.T.setHw([{ id: 'lan-x-com_e1', email: 'lan@x.com', asgId: 'e1', ts: now, status: 'submitted', shot: { id: 'a'.repeat(22), url: '/api/image/' + 'a'.repeat(22), ts: now }, updatedAt: now }]);
-    let h = B.T.homeworkHTML(); assert.ok(/>Submitted · /.test(h) && h.includes('<img src="/api/image/' + 'a'.repeat(22)) && h.includes('>Replace screenshot<'));
+    B.press({ act: 'hw-xopen', k: 'e1|x1' }); let h = B.T.homeworkHTML(); assert.ok(/<span class="best">Submitted<\/span>/.test(h) && />Submitted · /.test(h) && h.includes('<img src="/api/image/' + 'a'.repeat(22)) && h.includes('>Replace screenshot<'));
     const L = Object.assign({}, EXT, { id: 'e2', start: now - 5 * DAY, due: now - DAY }); B.T.setAsg([L]); assert.ok(/Missing/.test(B.T.homeworkHTML()), 'overdue + no screenshot = Missing');
     B.T.setHw([{ email: 'lan@x.com', asgId: 'e2', ts: now, shot: { id: 'b'.repeat(22), url: '/api/image/' + 'b'.repeat(22), ts: now } }]); assert.ok(!B.T.homeworkHTML().includes('hwext'), 'submitted after the deadline: no longer listed as to-do');
   });
   await t('teacher: per student Submitted / Not submitted / Missing, time, screenshot link; progress = submitted students', () => {
     const B = tea(); B.T.setAsg([EXT]); B.T.setHw([{ email: 'lan@x.com', asgId: 'e1', ts: now, shot: { id: 'a'.repeat(22), url: '/api/image/' + 'a'.repeat(22), ts: now } }]);
-    const h = B.T.extSubsHTML(EXT); assert.ok(h.includes('<b>1</b> of 2 students submitted') && /Lan<\/td><td><span class="pill ok">Submitted</.test(h) && /Minh<\/td><td><span class="pill">Not submitted</.test(h) && h.includes('href="/api/image/' + 'a'.repeat(22)));
+    const h = B.T.extSubsHTML(EXT); assert.ok(!/students submitted|https:\/\/forms\.example\.com|Do all 20/.test(h), 'no link / instructions / summary line here'); assert.ok(/Lan<\/td><td><span class="pill ok">Submitted</.test(h) && /Minh<\/td><td><span class="pill">Not submitted</.test(h) && h.includes('href="/api/image/' + 'a'.repeat(22)));
     assert.strictEqual(B.T.hwStatus(EXT).pct, 50); const R = B.T.hwRows(EXT).rows; assert.ok(R.find((r) => r.email === 'lan@x.com').all && !R.find((r) => r.email === 'minh@x.com').all);
     const over = Object.assign({}, EXT, { due: now - DAY }); assert.ok(/Minh<\/td><td><span class="pill bad">Missing</.test(B.T.extSubsHTML(over)));
   });

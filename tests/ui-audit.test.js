@@ -30,7 +30,7 @@ t('form controls have a name for screen readers (label for / wrapping label / ar
   assert.deepStrictEqual(bad, []);
 });
 t('clickable elements that are not buttons are keyboard reachable (role="button" + tabindex) or are backdrops', () => {
-  const OK = new Set(['sb-close', 'mk-close', 'fb-close', 'rm-sclose', 'stu', 'wh-center', 'lu-ihint']); const re = /<(div|span|li|p|td|tr|label|mark|b|section|g)\b([^>]*data-act="([^"]+)"[^>]*)>/g; let m;
+  const OK = new Set(['sb-close', 'mk-close', 'fb-close', 'rm-sclose', 'stu', 'wh-center', 'lu-ihint', 'ui-cancel', 'ui-box']); const re = /<(div|span|li|p|td|tr|label|mark|b|section|g)\b([^>]*data-act="([^"]+)"[^>]*)>/g; let m;
   while ((m = re.exec(html))) { if (OK.has(m[3])) continue; assert.ok(/role="button"/.test(m[2]) && /tabindex="0"/.test(m[2]), 'line ' + ln(html, m.index) + ' ' + m[3]); }
   assert.ok(/getAttribute\('role'\)==='button'&&t\.tagName!=='BUTTON'&&t\.getAttribute\('data-act'\)&&t\.click\)\{e\.preventDefault\(\);t\.click\(\)\}/.test(html), 'Enter / Space handler');
 });

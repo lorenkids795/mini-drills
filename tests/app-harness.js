@@ -35,10 +35,14 @@ function boot(opt) {
   ['md-chart.js', 'lm-content.js', 'lm-engine.js', 'lm-unit2.js', 'lm-unit0.js'].forEach((f) => vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), ctx));
   vm.runInContext(SRC, ctx, { filename: 'index.html#app' });
   const T = W.__T; T.setU(Object.assign({ cls: '' }, user));
+  // press({act, ...}) = a click on a button with these data-*; btn.click() clicks it again (used by the app's confirm box, uiGate)
+  const clickOn = (btn) => { const ev = { target: btn, preventDefault() {}, stopPropagation() {}, stopImmediatePropagation() { ev._stop = true; } }; (handlers.click || []).forEach((h) => { if (!ev._stop) h.f(ev); }); };
   const press = (dataset) => { const btn = { tagName: 'BUTTON', id: '', dataset, disabled: false, attrs: {}, setAttribute(k, v) { this.attrs[k] = v; }, getAttribute(k) { return this.attrs[k] || null; }, closest(s) { return s === '[data-act]' ? this : null; } };
-    const ev = { target: btn, preventDefault() {}, stopPropagation() {}, stopImmediatePropagation() { ev._stop = true; } }; (handlers.click || []).forEach((h) => { if (!ev._stop) h.f(ev); }); return btn; };
+    btn.click = () => clickOn(btn); clickOn(btn); return btn; };
   const fire = (ty) => (target) => { const ev = { target, preventDefault() {} }; (handlers[ty] || []).forEach((h) => h.f(ev)); };
   const flush = async () => { for (let k = 0; k < 3; k++) { await new Promise((r) => setTimeout(r, 5)); for (let i = 0; i < 12; i++) await new Promise((r) => setImmediate(r)); } };
-  return { W, T, el, press, change: fire('change'), input: fire('input'), flush, toast: () => el('toast').textContent };
+  // the app's confirm box (uiAsk / uiGate): asking() = the open question or '', ok() / cancel() answer it
+  const asking = () => { const r = els.uiDlg; return r && r.parentNode && /data-act="ui-ok"/.test(r.innerHTML) ? (r.innerHTML.match(/<h3 id="uiDT">([^<]*)/) || [])[1] || '?' : ''; };
+  return { W, T, el, press, change: fire('change'), input: fire('input'), flush, toast: () => el('toast').textContent, asking, ok: () => press({ act: 'ui-ok' }), cancel: () => press({ act: 'ui-cancel' }) };
 }
 module.exports = { boot, html, ROOT };

@@ -61,7 +61,7 @@ const gen = async (A) => { A.T.rdGen(); await settle(A); const J = A.T.RD.job, I
     act(A, 'rd-open'); assert.ok(A.T.CP.view === 'sum' && !A.T.CP.wide);
   });
   await t('Generate again on an existing Medium asks first (no accidental regeneration)', async () => {
-    const A = app(); await gen(A); const n = A.seen.length; A.B.W.confirm = () => false; A.T.rdGen(); await settle(A); assert.strictEqual(A.seen.length, n);
+    const A = app(); await gen(A); const n = A.seen.length; A.B.press({ act: 'rd-gen' }); assert.ok(/Generate a new lesson\?/.test(A.B.asking())); A.B.cancel(); await settle(A); assert.strictEqual(A.seen.length, n);
   });
   await t('Reading lesson: no big passage header, list of headings not squeezed by the header class, groups and questions unframed', () => {
     const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
@@ -76,7 +76,7 @@ const gen = async (A) => { A.T.rdGen(); await settle(A); const J = A.T.RD.job, I
   });
   await t('Homework Assistant: md-backend keeps the assistant role; rules give it no Firestore access; Boot opens no snapshots for it', () => {
     const be = fs.readFileSync(path.join(ROOT, 'md-backend.js'), 'utf8'), ru = fs.readFileSync(path.join(ROOT, 'firestore.rules'), 'utf8'), src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-    assert.ok(/role: t\.claims\.role === 'teacher' \|\| t\.claims\.role === 'assistant' \? t\.claims\.role : 'student'/.test(be));
+    assert.ok(/var cr = String\(t\.claims\.role \|\| ''\), KNOWN = \{ teacher: 1, assistant: 1, student: 1 \};/.test(be) && /role: cr,/.test(be), 'the token role is kept as is (checked by whoami), never mapped to student');
     assert.ok(/request\.auth\.token\.get\('role', ''\) != 'assistant'/.test(ru));
     assert.ok(/window\.MD_USER\.role==='assistant'\)\{dbReady=true;setStatus\('saved'\);if\(!U\)signIn/.test(src));
   });

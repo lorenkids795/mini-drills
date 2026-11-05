@@ -115,7 +115,7 @@ t('browser load: md-chart.js, lm-engine.js, lm-unit2.js as plain scripts', () =>
 });
 t('index.html loads md-chart.js before the app and no longer defines the analysis inline', () => {
   const h = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-  assert.ok(h.indexOf('<script src="md-chart.js"></script>') > 0 && h.indexOf('<script src="md-chart.js"></script>') < h.indexOf('(function(){\n\'use strict\''));
+  assert.ok(h.search(/<script src="md-chart\.js(\?v=[\w-]+)?"><\/script>/) > 0 && h.search(/<script src="md-chart\.js(\?v=[\w-]+)?"><\/script>/) < h.indexOf('(function(){\n\'use strict\''));
   assert.ok(!/function chValidate\(/.test(h)); assert.ok(/function chLineHTML\(/.test(h));
 });
 t('old Unit 2 panel in exam Writing is off', () => assert.ok(/var t1On=function\(\)\{return false\}/.test(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'))));

@@ -11,7 +11,7 @@ const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const a0 = html.indexOf("<script>\n(function(){"), b0 = html.indexOf('</script>', a0);
 let SRC = html.slice(a0 + 8, b0);
 const END = SRC.lastIndexOf('})();');
-SRC = SRC.slice(0, END) + ';window.__T={get AD(){return AD},setU:function(u){U=u},renderAdmin:renderAdmin,showTab:showTab,get AG(){return AG},setRoster:function(r){rosterDocs=r},renderAsg:renderAsg,renderPrize:renderPrize,prizeList:prizeList,imgMap:imgMap,setRFV:function(v){RFV=v},clsStatus:clsStatus,classListAll:classListAll,setLocalImg:function(k,v){localImg[k]=v}};\n' + SRC.slice(END);
+SRC = SRC.slice(0, END) + ';window.__T={get UIA(){return UIA},uiAct:uiAct,get AD(){return AD},get ADM(){return ADM},setU:function(u){U=u},renderAdmin:renderAdmin,showTab:showTab,get AG(){return AG},setRoster:function(r){rosterDocs=r},renderAsg:renderAsg,renderPrize:renderPrize,prizeList:prizeList,imgMap:imgMap,setRFV:function(v){RFV=v},clsStatus:clsStatus,classListAll:classListAll,setLocalImg:function(k,v){localImg[k]=v}};\n' + SRC.slice(END);
 
 const STATIC_IDS = new Set((html.slice(0, a0).match(/id="([\w-]+)"/g) || []).map((m) => m.slice(4, -1)));
 const USERS = () => [
@@ -59,23 +59,43 @@ function boot(opt) {
     const btn = { tagName: tag || 'BUTTON', id: '', dataset, disabled: false, textContent: '', checked: false, attrs: {},
       setAttribute(k, v) { this.attrs[k] = v; }, getAttribute(k) { return this.attrs[k] || null; }, closest(s) { return s === '[data-act]' ? this : null; } };
     if (btn.disabled) return btn;
-    const ev = { target: btn, preventDefault() {}, stopPropagation() {}, stopImmediatePropagation() { ev._stop = true; } };
-    (handlers.click || []).slice().sort((x, y) => (y.c ? 1 : 0) - (x.c ? 1 : 0)).forEach((h) => { if (!ev._stop) h.f(ev); });
+    const fireIt = () => { const ev = { target: btn, preventDefault() {}, stopPropagation() {}, stopImmediatePropagation() { ev._stop = true; } };
+      (handlers.click || []).slice().sort((x, y) => (y.c ? 1 : 0) - (x.c ? 1 : 0)).forEach((h) => { if (!ev._stop) h.f(ev); }); };
+    btn.click = fireIt; fireIt(); // click() = pressed again by the app's confirm box (uiGate)
     return btn;
   };
   const key = (k) => { const ev = { key: k, target: el('body'), preventDefault() {}, stopPropagation() {}, stopImmediatePropagation() { ev._stop = true; } }; (handlers.keydown || []).forEach((h) => { if (!ev._stop) h.f(ev); }); };
   const flush = async () => { for (let k = 0; k < 3; k++) { await new Promise((r) => setTimeout(r, 5)); for (let i = 0; i < 12; i++) await new Promise((r) => setImmediate(r)); } };
   const change = (target) => { const ev = { target, preventDefault() {} }; (handlers.change || []).forEach((h) => h.f(ev)); };
   const input = (target) => { const ev = { target, preventDefault() {} }; (handlers.input || []).forEach((h) => h.f(ev)); };
-  return { W, T, AD, el, press, key, flush, change, input, view: () => el('v-admin').innerHTML, modal: () => el('adModalRoot').innerHTML, toast: () => el('toast').textContent };
+  // the app's confirm box: asking() = its title or '', ok() / cancel() answer it
+  const asking = () => (T.UIA ? T.UIA.title : ''), ok = () => press({ act: 'ui-ok' }), cancel = () => press({ act: 'ui-cancel' });
+  return { asking, ok, cancel, W, T, AD, el, press, key, flush, change, input, view: () => el('v-admin').innerHTML, modal: () => el('adModalRoot').innerHTML, toast: () => el('toast').textContent };
 }
 const kicks = (B) => B.W.calls.filter((c) => /\/api\/admin\/kick$/.test(c.url));
 
 (async () => {
-  await t('Users list renders a Kick button for each non-admin account (data-email escaped)', () => {
+  await t('Users: one ⋯ menu per row (no exposed action buttons); each menu holds only the actions of that account; admin has My account only, never Kick', () => {
     const B = boot(); const v = B.view();
-    assert.strictEqual((v.match(/data-act="ad-kick"/g) || []).length, 4); assert.ok(v.includes('data-act="ad-kick" data-email="3667@gmail.com"'));
-    assert.ok(!/data-act="ad-kick" data-email="lorenkids795/.test(v), 'admin must have no Kick');
+    assert.strictEqual((v.match(/data-act="ad-kick"/g) || []).length, 0, 'no inline Kick'); assert.strictEqual((v.match(/data-act="ad-menu"/g) || []).length, B.AD.users.length);
+    assert.ok(/aria-haspopup="menu" aria-expanded="false" aria-label="Actions for /.test(v));
+    const menu = (em) => { B.press({ act: 'ad-menu', email: em, ctx: 'users' }); return B.el('adMenu').innerHTML; };
+    let m = menu('3667@gmail.com'); assert.ok(m.includes('data-act="ad-pw" data-email="3667@gmail.com"') && m.includes('class="admi bad" data-act="ad-kick" data-email="3667@gmail.com"') && /role="menuitem"/.test(m));
+    m = menu('lorenkids795@gmail.com'); assert.ok(m.includes('data-act="ad-sub"') && m.includes('>My account<') && !m.includes('ad-kick') && !m.includes('ad-pw'), 'admin: My account only');
+    B.key('Escape'); assert.strictEqual(B.T.ADM, null, 'Esc closes');
+  });
+  await t('Users: choosing Kick in the menu runs the same confirm + POST /api/admin/kick as before', async () => {
+    const B = boot({ visible: true }); B.press({ act: 'ad-menu', email: '3667@gmail.com', ctx: 'users' }); B.press({ act: 'ad-kick', email: '3667@gmail.com' });
+    assert.ok(/Kick this student\?/.test(B.modal())); B.press({ act: 'ad-ok' }); await B.flush();
+    assert.strictEqual(B.W.calls.filter((c) => /admin\/kick$/.test(c.url)).length, 1);
+  });
+  await t('Teachers: form card (Generate next to Password), ⋯ menu with Change password + Remove; the admin row is "Protected" with no menu', () => {
+    const B = boot(); B.AD.sub = 'teachers'; B.T.renderAdmin(); const v = B.view();
+    assert.ok(/class="adform"[\s\S]*<div class="adpw"><input id="adTcPw"[^>]*><button class="btn" type="button" data-act="ad-gen" data-for="adTcPw">Generate<\/button>/.test(v) && v.includes('data-act="ad-teacher-add"'));
+    assert.ok(!/data-act="ad-trm"/.test(v) && !/data-act="ad-pw"/.test(v), 'no inline buttons'); assert.ok(/class="muted adprot">Protected</.test(v));
+    assert.ok(!/data-act="ad-menu" data-ctx="teachers" data-email="lorenkids795/.test(v), 'no menu for the admin');
+    const T1 = B.AD.users.filter((u) => u.role === 'teacher')[0]; B.press({ act: 'ad-menu', email: T1.email, ctx: 'teachers' }); const m = B.el('adMenu').innerHTML;
+    assert.ok(m.includes('data-act="ad-pw"') && m.includes('class="admi bad" data-act="ad-trm"') && !m.includes('ad-kick'));
   });
   await t('Kick opens the confirm box with the right name and email', () => {
     const B = boot(); B.press({ act: 'ad-kick', email: '3667@gmail.com' });
@@ -125,7 +145,8 @@ const kicks = (B) => B.W.calls.filter((c) => /\/api\/admin\/kick$/.test(c.url));
     assert.strictEqual(B.W.asked, 1); const k = kicks(B); assert.strictEqual(k.length, 1); assert.deepStrictEqual(JSON.parse(k[0].opt.body), { email: '3667@gmail.com' });
     assert.ok(!B.AD.users.some((x) => x.email === '3667@gmail.com')); assert.ok(/was kicked/.test(B.toast()));
   });
-  await t('browser dialog answered Cancel: nothing is sent', async () => { const B = boot({ check: true, visible: false, answer: false }); B.press({ act: 'ad-kick', email: '3667@gmail.com' }); await B.flush(); assert.strictEqual(B.W.asked, 1); assert.strictEqual(kicks(B).length, 0); });
+  await t('browser dialog answered Cancel: nothing is sent', async () => { const 
+    B = boot({ check: true, visible: false, answer: false }); B.press({ act: 'ad-kick', email: '3667@gmail.com' }); await B.flush(); assert.strictEqual(B.W.asked, 1); assert.strictEqual(kicks(B).length, 0); });
   await t('browser dialog + server error: the error is shown (alert + message), row kept', async () => {
     const B = boot({ check: true, visible: false }); B.W.reply = () => ({ status: 500, body: { error: 'Firestore write failed.' } });
     B.press({ act: 'ad-kick', email: 'nghiatucayfai@gmail.com' }); await B.flush(); assert.ok(/Firestore write failed/.test(B.W.alerted)); assert.ok(B.AD.users.some((x) => x.email === 'nghiatucayfai@gmail.com'));
@@ -178,7 +199,7 @@ const kicks = (B) => B.W.calls.filter((c) => /\/api\/admin\/kick$/.test(c.url));
   });
   await t('Delete class: type DELETE → kicks each non-tester student one by one, then admin/classdel', async () => {
     const B = cls({ answer: 'DELETE' }); B.W.reply = (u) => (/classdel$/.test(u) ? { status: 200, body: { ok: true, assignments: 2, remaining: 1 } } : { status: 200, body: { ok: true, role: 'student' } });
-    B.press({ act: 'cls-set', cls: '17h' }); B.W.calls.length = 0; B.press({ act: 'cs-del' }); await B.flush(); await B.flush();
+    B.press({ act: 'cls-set', cls: '17h' }); B.W.calls.length = 0; B.press({ act: 'cs-del' }); assert.ok(/Delete the class/.test(B.asking())); B.el('uiIn').value = 'DELETE'; B.ok(); await B.flush(); await B.flush();
     const seq = B.W.calls.map((c) => c.url.replace('/api/', '') + (c.opt && c.opt.body ? ' ' + JSON.parse(c.opt.body).email || '' : ''));
     assert.deepStrictEqual(B.W.calls.map((c) => c.url), ['/api/admin/kick', '/api/admin/kick', '/api/admin/classdel'], seq.join(' | '));
     assert.deepStrictEqual(B.W.calls.slice(0, 2).map((c) => JSON.parse(c.opt.body).email), ['a@x.com', 'b@x.com']); assert.strictEqual(JSON.parse(B.W.calls[2].opt.body).cls, '17h');
@@ -189,14 +210,15 @@ const kicks = (B) => B.W.calls.filter((c) => /\/api\/admin\/kick$/.test(c.url));
   });
   await t('Delete class: a failed kick stops and says how far it got', async () => {
     const B = cls({ answer: 'DELETE' }); let n = 0; B.W.reply = () => (++n === 2 ? { status: 500, body: { error: 'KV busy.' } } : { status: 200, body: { ok: true } });
-    B.press({ act: 'cls-set', cls: '17h' }); B.W.calls.length = 0; B.press({ act: 'cs-del' }); await B.flush(); await B.flush();
+    B.press({ act: 'cls-set', cls: '17h' }); B.W.calls.length = 0; B.press({ act: 'cs-del' }); assert.ok(/Delete the class/.test(B.asking())); B.el('uiIn').value = 'DELETE'; B.ok(); await B.flush(); await B.flush();
     assert.ok(!B.W.calls.some((c) => /classdel$/.test(c.url))); assert.ok(/Stopped: KV busy\. 1 of 2/.test(B.el('csDelMsg').textContent), B.el('csDelMsg').textContent);
   });
   await t('Live Avatar Preview: "Remove frame" next to Reset only when a frame exists; removing clears it', () => {
     const B = boot(); B.T.setRFV(0); B.T.showTab('prize'); assert.ok(!B.el('v-prize').innerHTML.includes('data-act="rf-del"'));
     B.T.setLocalImg('frame0', 'data:image/png;base64,AAAA'); B.T.renderPrize(); const v = B.el('v-prize').innerHTML;
     assert.ok(/data-act="rf-reset">Reset<\/button><button class="btn sm bad" type="button" data-act="rf-del">Remove frame<\/button>/.test(v));
-    B.press({ act: 'rf-del' }); assert.strictEqual(B.T.imgMap().frame0, ''); assert.ok(!B.el('v-prize').innerHTML.includes('data-act="rf-del"')); assert.ok(B.W.asked >= 1);
+    B.press({ act: 'rf-del' }); assert.ok(/Remove the .*frame\?/.test(B.asking()) && B.T.imgMap().frame0, 'asks first in the app box'); B.cancel(); assert.ok(B.T.imgMap().frame0 && !B.asking(), 'Cancel keeps it');
+    B.press({ act: 'rf-del' }); B.ok(); assert.strictEqual(B.T.imgMap().frame0, ''); assert.ok(!B.el('v-prize').innerHTML.includes('data-act="rf-del"'));
   });
   await t('Prizes: Type has "Custom / Other…"; choosing it shows the custom name field', () => {
     const B = boot(); B.T.showTab('prize'); const v = B.el('v-prize').innerHTML; assert.ok(v.includes('<option value="custom">Custom / Other…</option>') && /id="prCustomL" hidden/.test(v));
@@ -227,6 +249,7 @@ const kicks = (B) => B.W.calls.filter((c) => /\/api\/admin\/kick$/.test(c.url));
   await t('Edit class opens its box', () => { const B = boot(); B.press({ act: 'ad-cls', email: 'nghiatucayfai@gmail.com' }); assert.ok(B.AD.modal && /Edit class/.test(B.AD.modal.title)); });
   await t('Resume sends admin/active', async () => { const B = boot(); B.AD.users[4].status = 'paused'; B.W.calls.length = 0; B.press({ act: 'ad-on', email: 'nghiatucayfai@gmail.com' }); await B.flush(); assert.ok(B.W.calls.some((c) => /admin\/active$/.test(c.url))); });
   await t('Teachers and My account tabs render', () => { const B = boot(); B.press({ act: 'ad-sub', v: 'teachers' }); assert.ok(B.view().length > 100); B.press({ act: 'ad-sub', v: 'me' }); assert.ok(B.view().length > 100); });
-  await t('Users shows the app version next to the server version', () => { const B = boot(); assert.ok(/ · app \d{4}-\d\d-\d\d\w? · server 2026-10-23d/.test(B.view())); });
+  await t('versions are not on the Users page any more; Admin › My account › Diagnostics shows app + server', () => { const B = boot(); assert.ok(!/ · app \d{4}/.test(B.view()) && !/server 2026-10-23d/.test(B.view()) && /\d+ accounts/.test(B.view()));
+    B.AD.sub = 'me'; B.T.renderAdmin(); assert.ok(/id="adVer">app \d{4}-\d\d-\d\d\w? · server 2026-10-23d/.test(B.view())); });
   out.forEach((l) => console.log(l)); console.log('---- ' + pass + '/' + (pass + fail) + ' passed'); process.exit(fail ? 1 : 0);
 })();

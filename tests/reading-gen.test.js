@@ -123,12 +123,12 @@ const LONG = (() => { const w = 'Laughter is one of the oldest signals humans sh
       assert.ok(!A.B.T.cpValid(), 'Add off'); assert.ok(A.seen.every((b) => b.level === 'medium'), 'Easy / Hard wait for Medium');
       assert.ok(new RegExp('Paraphrases \\+ Output</span> Paraphrases: &quot;pairs&quot; has ' + n + ' item').test(A.B.T.rdLvHTML() + A.B.T.rdRvHTML()), A.B.T.rdLvHTML() + A.B.T.rdRvHTML());
     }
-    const A = app((part, level, k, g) => { if (part !== 'output') return null; while (g.pairs.length < 7) g.pairs.push(clone(g.pairs[0])); return { status: 200, body: { out: g } }; });
+    const A = app((part, level, k, g) => { if (part !== 'output') return null; while (g.pairs.length < 7) { const c = clone(g.pairs[0]); c.par += ' (version ' + g.pairs.length + ')'; g.pairs.push(c); } return { status: 200, body: { out: g } }; });
     await run(A); assert.ok(A.B.T.cpValid()); assert.strictEqual(A.B.T.parsed.rlesson.pairs.length, 6); assert.ok(A.B.T.parsed.rwarn.some((w) => /only the first 6/.test(w)));
   });
   await t('app: "pairs" with 2 items and with 6 items pass (no false failure)', async () => {
     for (const n of [2, 6]) {
-      const A = app((part, level, k, g) => { if (part !== 'output') return null; while (g.pairs.length < n) g.pairs.push(clone(g.pairs[g.pairs.length % 2])); g.pairs = g.pairs.slice(0, n); return { status: 200, body: { out: g } }; });
+      const A = app((part, level, k, g) => { if (part !== 'output') return null; while (g.pairs.length < n) { const c = clone(g.pairs[g.pairs.length % 2]); c.par += ' (version ' + g.pairs.length + ')'; g.pairs.push(c); } g.pairs = g.pairs.slice(0, n); return { status: 200, body: { out: g } }; });
       await run(A); assert.ok(A.B.T.cpValid(), n + ' pairs'); assert.strictEqual(A.B.T.parsed.rlesson.pairs.length, n);
     }
   });

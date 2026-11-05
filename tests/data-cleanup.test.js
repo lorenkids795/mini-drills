@@ -68,7 +68,7 @@ const world = () => ({
   await t('Marking: deleted and removed students\' submissions are gone (cards, counts, class filter); the tester\'s is only under Tester', async () => {
     const B = mkT(); B.T.showTab('mark'); let h = B.el('v-mark').innerHTML;
     assert.ok(h.includes('data-id="s1"') && !h.includes('data-id="s3"') && !h.includes('data-id="s2"') && !h.includes('data-id="s4"')); assert.ok(/1 submitted/.test(h) && !/<option[^>]*>OLD</.test(h));
-    assert.ok(/<option value="__tester">Tester<\/option>/.test(h) && !/<option value="Test"/.test(h), 'Tester option, no class option made from the tester');
+    assert.ok(/<option value="__tester">Tester accounts<\/option>/.test(h) && !/<option value="Test"/.test(h), 'Tester option, no class option made from the tester');
     B.T.MK.cls = '__tester'; B.T.renderMark(); h = B.el('v-mark').innerHTML;
     assert.ok(h.includes('data-id="s3"') && !h.includes('data-id="s1"') && /1 submitted · 0 marked/.test(h));
   });
@@ -112,8 +112,8 @@ const world = () => ({
     assert.ok(B.el('v-admin').innerHTML.includes('data-act="ad-orph-prev"')); B.W.calls.length = 0;
     B.W.reply = (u, o) => (/admin\/orphans/.test(u) ? (JSON.parse(o.body).op === 'preview' ? { status: 200, body: { ok: true, scanned: 3, orphans: [{ email: 'gone@x.com', attempts: 2, names: ['Cherry'], classes: ['OLD'] }] } } : { status: 200, body: { ok: true } }) : { status: 200, body: { ok: true } });
     B.press({ act: 'ad-orph-prev' }); await B.flush(); assert.ok(B.el('v-admin').innerHTML.includes('data-email="gone@x.com"')); assert.strictEqual(JSON.parse(B.W.calls[0].opt.body).op, 'preview');
-    B.W.confirm = () => false; B.press({ act: 'ad-orph-del', email: 'gone@x.com' }); await B.flush(); assert.strictEqual(B.W.calls.length, 1, 'cancel = no request');
-    B.W.confirm = () => true; B.press({ act: 'ad-orph-del', email: 'gone@x.com' }); await B.flush(); const b = JSON.parse(B.W.calls[1].opt.body); assert.deepStrictEqual([b.op, b.email], ['purge', 'gone@x.com']); assert.ok(!B.el('v-admin').innerHTML.includes('data-email="gone@x.com"'));
+    B.press({ act: 'ad-orph-del', email: 'gone@x.com' }); assert.ok(/Delete ALL learning data left by gone@x.com/.test(B.asking())); B.cancel(); await B.flush(); assert.strictEqual(B.W.calls.length, 1, 'cancel = no request');
+    B.press({ act: 'ad-orph-del', email: 'gone@x.com' }); B.ok(); await B.flush(); const b = JSON.parse(B.W.calls[1].opt.body); assert.deepStrictEqual([b.op, b.email], ['purge', 'gone@x.com']); assert.ok(!B.el('v-admin').innerHTML.includes('data-email="gone@x.com"'));
   });
 
   // ---------- class cover editor ----------
@@ -146,18 +146,18 @@ const world = () => ({
     const HR = 'parseReading:parseReading,EXAMPLE_R:EXAMPLE_R,renderRLesson:renderRLesson,get RM(){return RM},rmHeadHTML:rmHeadHTML,rmToolsHTML:rmToolsHTML,rmDockHTML:rmDockHTML';
     const B = boot({ hooks: HR }), r = B.T.parseReading(JSON.parse(B.T.EXAMPLE_R)); B.T.renderRLesson({ id: 'r1', skill: 'reading', title: 'Cycling in the City', kind: 'reading-ms', rl: r.data.rlesson, qs: r.data.qs }, '', '', null);
     let h = B.el('libBody').innerHTML; assert.ok(/<div class="rmhd2">[\s\S]*<h2>Cycling in the City<\/h2><p>Cam 14 · Test 1 · Reading<\/p>/.test(h) && h.includes('data-act="nav" data-book="cam14"'));
-    assert.ok(/<select class="rmstepsel" id="rmStepSel"><option value="0" selected>Step 1\/4 · Deep reading<\/option><option value="1" disabled>/.test(h) && h.includes('id="rmTimer"') && h.includes('aria-label="Lesson settings (level, text size)"'));
-    assert.ok(!/class="rmprog"/.test(h) && !/Selected excerpts|lsbar/.test(h) && !h.includes('id="dmBar"'), 'no long bar under the title; demo only inside the settings panel');
+    assert.ok(/<select class="rmstepsel" id="rmStepSel"><option value="0" selected>Step 1\/4 · Deep reading<\/option><option value="1" disabled>/.test(h) && h.includes('id="rmTimer"') && h.includes('aria-label="Lesson settings (level, text size, highlighting)"'));
+    assert.ok(!/class="rmprog"/.test(h) && !/Selected excerpts|lsbar/.test(h) && !/<div id="rmBody"><div class="lsdemo"/.test(h), 'no long bar under the title; the demo helper is inside Settings (Reading workspace, 11/2026)');
     // Option A: two cards + dock built from the real questions of this step
     const ids = h.match(/data-rmq="[a-z]\d+"/g) || [], qn = h.match(/class="rmqn[^"]*" data-act="rm-qn" data-q="[a-z]\d+"/g) || [];
     assert.ok(/<section class="rmpsg"[^>]*><h3 class="sr">Reading passage<\/h3>/.test(h) && /<section class="rmqs"[^>]*><div class="rmph"><h3>Questions 1–\d+<\/h3>/.test(h));
     assert.ok(qn.length > 0 && qn.length === ids.length, 'one navigator button per real question (' + qn.length + ' / ' + ids.length + ')');
     assert.ok(new RegExp('<b id="rmDCnt">0 / ' + qn.length + ' answered</b>').test(h) && /<span class="rmrng">Q1–\d+<\/span>/.test(h) && /data-act="rm-check"/.test(h));
     B.T.RM.k[0] = 'protected'; assert.ok(/1 \/ \d+ answered/.test(B.T.rmDockHTML('')) && /class="rmqn a" data-act="rm-qn" data-q="k0"/.test(B.T.rmDockHTML('')), 'answered state from the real answers');
-    B.T.RM.fsOpen = true; h = B.T.rmToolsHTML(); assert.ok(h.includes('role="dialog" aria-label="Lesson settings"') && h.includes('data-act="rm-fsv"') && h.includes('id="dmBar"'), 'teacher: demo in settings');
-    assert.ok((h.match(/<section class="rmsetg">/g) || []).length >= 2 && /role="radiogroup" aria-label="Text size"/.test(h) && (h.match(/role="radio" aria-checked="true"/g) || []).length === 1, 'grouped settings, one text size selected');
+    B.T.RM.fsOpen = true; h = B.T.rmToolsHTML(); assert.ok(h.includes('role="dialog" aria-label="Lesson settings"') && h.includes('data-act="rm-fsv"') && h.includes('data-act="rm-hlm"') && h.includes('id="dmBar"'), 'settings = level, text size, highlighting and (staff/tester) the demo helper');
+    assert.ok((h.match(/<section class="rmsetg">/g) || []).length >= 1 && /role="radiogroup" aria-label="Text size"/.test(h) && (h.match(/role="radio" aria-checked="true"/g) || []).length === 2 && /role="radiogroup" aria-label="Text highlighting"/.test(h), 'grouped settings: one text size + one highlight mode selected');
     const S = boot({ hooks: HR, user: { name: 'S', email: 's@x.com', role: 'student', cls: 'A' } }), r2 = S.T.parseReading(JSON.parse(S.T.EXAMPLE_R)); S.T.renderRLesson({ id: 'rm1', skill: 'reading', title: 'x', kind: 'reading-ms', rl: r2.data.rlesson, qs: r2.data.qs }, '', '', null); S.T.RM.fsOpen = true;
-    assert.ok(!S.T.rmToolsHTML().includes('id="dmBar"'), 'no demo helper for a real student');
+    assert.ok(!S.T.rmToolsHTML().includes('id="dmBar"') && !S.el('libBody').innerHTML.includes('id="dmBar"'), 'no demo helper for a real student');
   });
   out.forEach((l) => console.log(l)); console.log('---- ' + pass + '/' + (pass + fail) + ' passed'); process.exit(fail ? 1 : 0);
 })();

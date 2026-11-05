@@ -35,7 +35,7 @@ const app = (withPassage) => { const B = boot({ hooks: HOOKS }); B.T.CP.skill = 
   await t('Medium with problems (0 / 1 / 7 pairs) -> Add off for 0 and 1 (nothing can be saved); 7 -> first 6 used', () => {
     for (const n of [0, 1]) { const B = app(), f = clone(VALID); f.medium.pairs = f.medium.pairs.slice(0, n); B.T.rdImport(JSON.stringify(f));
       assert.ok(!B.T.cpValid(), n + ' pairs'); assert.ok(/Medium has problems/.test(B.T.RD.msg)); B.T.addExercise(); assert.strictEqual(B.T.localCustom.length, 0, 'nothing saved'); }
-    const B = app(), f = clone(VALID); while (f.medium.pairs.length < 7) f.medium.pairs.push(clone(f.medium.pairs[0])); B.T.rdImport(JSON.stringify(f));
+    const B = app(), f = clone(VALID); while (f.medium.pairs.length < 7) { const c = clone(f.medium.pairs[0]); c.par += ' (version ' + f.medium.pairs.length + ')'; f.medium.pairs.push(c); } B.T.rdImport(JSON.stringify(f));
     assert.ok(B.T.cpValid()); assert.strictEqual(B.T.parsed.rlesson.pairs.length, 6);
   });
   await t('no "medium" version, broken JSON, or a version with a different passage text are rejected', () => {

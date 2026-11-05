@@ -97,6 +97,20 @@ function seed(S) {
     r = await S.call('hwaNote', { key: lan, status: 'bogus' }); assert.ok(r.d.status === 'sent', 'unknown status ignored');
   });
 
+  await t('server whoami: the role the server gives NOW (assistant / student / none), from the ID token, never from the request body', async () => {
+    const S = server(); seed(S); vm.runInContext('this.T.whoami=whoami;', S.ctx);
+    const w = async () => JSON.parse((await S.ctx.T.whoami(S.env, {})).body);
+    S.ctx.setWho({ em: 'as@x.com', role: 'student' }); let d = await w(); assert.ok(d.role === 'assistant' && !d.adm, 'old student claim, server says assistant');
+    S.ctx.setWho({ em: 'lan@x.com', role: 'student' }); d = await w(); assert.strictEqual(d.role, 'student');
+    S.ctx.setWho({ em: 'nobody@x.com', role: 'student' }); d = await w(); assert.ok(d.role === '' && d.code === 'norole');
+    S.ctx.setWho(null); assert.strictEqual((await S.ctx.T.whoami(S.env, {})).status, 401);
+  });
+  await t('session: md-backend checks the token role with whoami (mismatch / unknown -> sign out with a reason, never the student UI)', () => {
+    const b = fs.readFileSync(path.join(ROOT, 'md-backend.js'), 'utf8');
+    assert.ok(/fetch\(API \+ '\/whoami'/.test(b) && /if \(d\.role !== cr \|\| !!d\.adm !== \(t\.claims\.adm === true\)\) \{ end\('role'\); return; \}/.test(b) && /if \(!d\.role\) \{ end\('norole'\); return; \}/.test(b));
+    assert.ok(!/: 'student', \/\* Homework/.test(b), 'no "anything else = student" mapping');
+    const h = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'); assert.ok(/<script src="md-backend\.js\?v=\d{4}-\d{2}-\d{2}[a-z]"/.test(h), 'script url carries the version');
+  });
   // ---------- client ----------
   const HOOKS = 'get HWA(){return HWA},hwaReport:hwaReport,hwaWatch:hwaWatch,renderHwa:renderHwa,tabsFor:tabsFor,adMenuItems:adMenuItems';
   const DATA = () => ({ me: { name: 'A' }, classes: ['7h30'], now, from: now - 60 * DAY,
@@ -105,8 +119,12 @@ function seed(S) {
     status: { a1: { k1: { st: 'missing', due: now - DAY }, k2: { st: 'missing', due: now - DAY }, k3: { st: 'done', at: now - 2 * DAY, due: now - DAY } }, a2: { k1: { st: 'pending', due: now + DAY }, k2: { st: 'done', at: now, due: now + DAY }, k3: { st: 'pending', due: now + DAY } } },
     notes: {} });
   const asst = () => boot({ hooks: HOOKS, user: { name: 'Anh Tuan', email: 'as@x.com', role: 'assistant' } });
+  await t('client: an unknown role from the token is never treated as a student (no account, no Student Home)', () => {
+    const B = boot({ hooks: HOOKS + ',findUser:findUser', user: { name: 'X', email: 'x@x.com', role: 'weird' } });
+    assert.strictEqual(B.T.findUser('x@x.com'), null);
+  });
   await t('client: assistant gets only the Homework tab', () => {
-    const B = asst(); assert.strictEqual(JSON.stringify(B.T.tabsFor().map((x) => x[0])), '["hwa"]');
+    const B = asst(); assert.strictEqual(JSON.stringify(B.T.tabsFor().map((x) => x[0])), '["hwa","hwa-asg","hwa-miss","hwa-watch"]', 'the 4 pages are in the sidebar');
   });
   await t('client: copy report = exact owner wording, sorted names, nothing private', () => {
     const B = asst(); B.T.HWA.data = DATA(); const R = B.T.hwaReport('a1', 'overdue');
@@ -124,7 +142,7 @@ function seed(S) {
   });
   await t('client: workspace renders without emails; Admin menu for an assistant = Change password only', () => {
     const B = asst(); B.T.HWA.data = DATA(); B.T.renderHwa(); const h = B.el('v-hwa').innerHTML;
-    assert.ok(h.includes('Homework &amp; Student Progress') && h.includes('data-act="hwa-view"') && !h.includes('@x.com'));
+    assert.ok(h.includes('<h2>Homework dashboard</h2>') && !h.includes('data-act="hwa-view"') && !h.includes('@x.com'));
     const A = boot({ hooks: HOOKS }); assert.strictEqual(JSON.stringify(A.T.adMenuItems({ email: 'as@x.com', role: 'assistant', status: 'active' }, 'users').map((x) => x[0])), '["ad-pw"]');
   });
   out.forEach((l) => console.log(l)); console.log('---- ' + pass + '/' + (pass + fail) + ' passed'); process.exit(fail ? 1 : 0);

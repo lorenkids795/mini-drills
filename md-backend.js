@@ -72,7 +72,7 @@
     var sBtn = h('button', { type: 'submit', 'class': 'lgbtn', text: 'Sign in' });
     var formIn = h('form', {}, [field('Email', sEmail), field('Password', sPass), sBtn]);
     var toReg = h('button', { type: 'button', 'class': 'lgalt', text: 'First time here? Create your password' });
-    var toTeach = h('button', { type: 'button', 'class': 'lglink', text: 'Sign in as teachers' });
+    var toTeach = h('button', { type: 'button', 'class': 'lglink', text: 'Teacher sign in' });
 
     /* student: first time */
     var rClass = h('select', { id: 'rClass', name: 'rClass', required: 'required' });
@@ -90,18 +90,9 @@
     var tBtn = h('button', { type: 'submit', 'class': 'lgbtn', text: 'Sign in' });
     var formT = h('form', { hidden: 'hidden' }, [field('Email', tEmail), field('Password', tPass), tBtn]);
     var toStu = h('button', { type: 'button', 'class': 'lglink', hidden: 'hidden', text: 'Sign in as student' });
-    // kept from v1 (not in the mockup): a new teacher still needs a way to create the first password
-    var toTReg = h('button', { type: 'button', 'class': 'lglink', hidden: 'hidden', text: 'First time? Create your teacher password' });
+    // no teacher first-time form: teacher passwords are set by the admin (Admin › Teachers / Users), the server refuses teacher sign-ups
 
-    /* teacher: first time (needs the setup key from the Cloudflare settings) */
-    var trEmail = inp('trEmail', 'email', 'you@example.com', 'email');
-    var trPass = inp('trPass', 'password', 'At least 6 characters', 'new-password');
-    var trKey = inp('trKey', 'password', 'Setup key', 'off');
-    var trBtn = h('button', { type: 'submit', 'class': 'lgbtn', text: 'Create teacher password' });
-    var formTR = h('form', { hidden: 'hidden' }, [field('Email', trEmail), field('Choose a password', trPass), field('Setup key', trKey), trBtn]);
-    var toTIn = h('button', { type: 'button', 'class': 'lgalt', hidden: 'hidden', text: 'I already have a password' });
-
-    [formIn, formReg, formT, formTR, msg, toReg, toIn, toTIn, toTeach, toStu, toTReg].forEach(function (x) { root.appendChild(x); });
+    [formIn, formReg, formT, msg, toReg, toIn, toTeach, toStu].forEach(function (x) { root.appendChild(x); });
     var host = document.querySelector('#loginForm');
     card.insertBefore(root, host || null);
 
@@ -135,9 +126,7 @@
     function show(which) {
       formIn.hidden = which !== 'student'; toReg.hidden = which !== 'student'; toTeach.hidden = which !== 'student';
       formReg.hidden = which !== 'reg'; toIn.hidden = which !== 'reg';
-      formT.hidden = which !== 'teacher'; toTReg.hidden = which !== 'teacher';
-      formTR.hidden = which !== 'treg'; toTIn.hidden = which !== 'treg';
-      toStu.hidden = which !== 'teacher' && which !== 'treg';
+      formT.hidden = which !== 'teacher'; toStu.hidden = which !== 'teacher';
       say('');
       if (which === 'reg') loadNames();
     }
@@ -145,15 +134,32 @@
     toStu.onclick = function () { show('student'); };
     toReg.onclick = function () { show('reg'); };
     toIn.onclick = function () { show('student'); };
-    toTReg.onclick = function () { show('treg'); };
-    toTIn.onclick = function () { show('teacher'); };
     show('student');
+    // class join link (?join=CODE): keep the code for after sign-in, then open "First time here?" with the class chosen
+    // (the student still picks their own name from the class list; an existing account just signs in)
+    var jm = /[?&]join=([A-Za-z0-9]{6,12})/.exec(location.search || '');
+    if (jm) {
+      var jcode = jm[1].toUpperCase();
+      try { sessionStorage.setItem('md-join', jcode); } catch (e) {}
+      fetch(API + '/join?code=' + encodeURIComponent(jcode)).then(function (r) { return r.json().then(function (d) { d._ok = r.ok; return d; }); }).then(function (d) {
+        if (!d._ok) { say(d.error || 'This join link is not valid.'); try { sessionStorage.removeItem('md-join'); } catch (e) {} return; }
+        show('reg');
+        loadNames().then(function () {
+          var has = (namesAll || []).some(function (n) { return n.cls === d.cls; });
+          if (!has) { show('student'); say('Everyone in ' + d.title + ' already has an account. Sign in, or ask your teacher.'); return; }
+          rClass.value = d.cls; fillNames();
+          say('Joining ' + d.title + ': choose your name, then create your password. Already have an account? Press "I already have a password".', true);
+        });
+      }, function () { say('Could not check the join link. Check your internet.'); });
+    }
     // signed out by the status check: say why
     var ended = '';
     try { ended = sessionStorage.getItem('md-ended') || ''; sessionStorage.removeItem('md-ended'); } catch (e) {}
     if (ended === 'moved') say('Your email was changed by the admin. Sign in with your new email.');
     else if (ended === 'off') say('Your account is paused. Ask your teacher.');
     else if (ended === 'kicked') say('Your account was removed. To come back, choose "First time here? Create your password".');
+    else if (ended === 'role') say('Your account type was changed by the admin. Sign in again to open the right workspace.');
+    else if (ended === 'norole') say('This account is not set up yet. Ask the admin.');
 
     function run(btn, fn) {
       btn.disabled = true; say('');
@@ -173,10 +179,6 @@
     formT.onsubmit = function (ev) {
       ev.preventDefault();
       run(tBtn, function () { return post('login', { email: tEmail.value, password: tPass.value }).then(enter); });
-    };
-    formTR.onsubmit = function (ev) {
-      ev.preventDefault();
-      run(trBtn, function () { return post('register', { email: trEmail.value, password: trPass.value, setupKey: trKey.value }).then(enter); });
     };
   }
 
@@ -227,12 +229,29 @@
             var em = String(t.claims.em || '').toLowerCase();
             if (!em) { fb.auth().signOut(); return; }
             try { localStorage.setItem('md-email', em); } catch (e) {}
-            window.MD_USER = { name: t.claims.nm || '', email: em, role: t.claims.role === 'teacher' ? 'teacher' : 'student', adm: t.claims.adm === true };
-            var rf = document.getElementById('mdReset');
-            if (rf && window.MD_USER.adm) rf.hidden = true;
-            resolveDb(fb.firestore());
-            checkStatus(fb, em);
-            if (!timer) timer = setInterval(function () { checkStatus(fb, em); }, 600000);
+            // the role comes from the token, checked against the server (whoami): an old session (claims from before the admin changed
+            // the account) or an unknown role never starts the app as a student; it signs out and says why
+            var cr = String(t.claims.role || ''), KNOWN = { teacher: 1, assistant: 1, student: 1 };
+            var end = function (why) {
+              try { sessionStorage.setItem('md-ended', why); sessionStorage.removeItem('md-akey'); sessionStorage.removeItem('md-skey'); localStorage.removeItem('md-email'); } catch (e) {}
+              fb.auth().signOut().then(function () { location.reload(); });
+            };
+            var go = function () {
+              window.MD_USER = { name: t.claims.nm || '', email: em, role: cr, adm: t.claims.adm === true };
+              var rf = document.getElementById('mdReset');
+              if (rf && window.MD_USER.adm) rf.hidden = true;
+              resolveDb(fb.firestore());
+              checkStatus(fb, em);
+              if (!timer) timer = setInterval(function () { checkStatus(fb, em); }, 600000);
+            };
+            fetch(API + '/whoami', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + t.token }, body: '{}' })
+              .then(function (r) { return r.json().then(function (d) { d._ok = r.ok; return d; }); })
+              .then(function (d) {
+                if (!d._ok) { if (KNOWN[cr]) go(); else end('norole'); return; } // server busy / old server: the token's role, if known
+                if (!d.role) { end('norole'); return; }
+                if (d.role !== cr || !!d.adm !== (t.claims.adm === true)) { end('role'); return; }
+                go();
+              }, function () { if (KNOWN[cr]) go(); else end('norole'); }); // offline: the token's role, if known
           });
         } else if (first) {
           // no saved session: forget a stale local email once, then show the login page

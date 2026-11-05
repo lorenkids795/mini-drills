@@ -38,12 +38,12 @@ t('student forced into the lesson (state set directly) still gets the list', () 
 t('admin list shows Unit 2 marked as preview', () => { ctx.U = ADM; api.setLMV(null); api.open('m:ielts-academic-task1'); const h = api.lmHTML(); assert.ok(h.includes('data-act="lm-open"') && h.includes('Unit 2') && h.includes('Unpublished preview')); });
 t('admin opens the shell: no fake practice', () => { ctx.U = ADM; api.setLMV('lm-writing-ac-t1-u2'); const h = api.lmHTML(); assert.ok(h.includes('lmshell') && h.includes('no content yet')); assert.ok(!/Check answers|Submit|textarea/.test(h)); });
 t('unknown lesson id falls back to the list', () => { ctx.U = ADM; api.setLMV('nope'); assert.ok(!api.lmHTML().includes('lmshell')); });
-t('published lessons are visible to students', () => { ctx.U = STU; assert.strictEqual(api.lmVisible({ status: 'published' }), true); });
+t('Coming soon: an ordinary student sees no lesson of any skill, even a published one; teacher keeps published lessons', () => { ctx.U = STU; ['writing', 'listening', 'reading', 'speaking'].forEach((k) => assert.strictEqual(api.lmVisible({ status: 'published', skill: k }), false)); ctx.U = TEA; assert.strictEqual(api.lmVisible({ status: 'published', skill: 'listening' }), true); });
 t('tabs: Cambridge IELTS + Learning Materials', () => { const h = api.libTabsHTML(); assert.ok(h.includes('>Cambridge<') && h.includes('Learning Materials') && (h.match(/role="tab"/g) || []).length === 2); });
 t('tree: 4 skills in order; Writing open by default with 2 task groups (closed); skills without groups are disabled "Coming soon"', () => {
   ctx.U = ADM; api.setLMV(null); api.close('m:ielts-academic-task1'); const h = api.lmHTML(); const n = (re) => (h.match(re) || []).length;
   assert.deepStrictEqual((h.match(/class="lmnm">(\w+)</g) || []).map((x) => x.slice(13, -1)), ['Writing', 'Listening', 'Reading', 'Speaking']);
-  assert.ok(/data-k="s:writing" aria-expanded="true"/.test(h)); assert.strictEqual(n(/class="lmth"/g), 2); assert.ok(h.includes('>IELTS Task 2<') && /data-k="m:ielts-task2" aria-expanded="false"/.test(h));
+  assert.ok(/data-k="s:writing" aria-expanded="true"/.test(h)); assert.strictEqual(n(/class="lmth"/g), 2); assert.ok(h.includes('>Task 2<') && h.includes('>Task 1<') && /data-k="m:ielts-task2" aria-expanded="false"/.test(h));
   assert.strictEqual(n(/class="lmhd" disabled/g), 3); assert.strictEqual(n(/>Coming soon</g), 3); assert.ok(!h.includes('lm-open'), 'groups closed');
 });
 t('tree: open Task 1 shows the unit row (title, amber preview badge, chevron); empty Task 2 says "No units yet"', () => {
@@ -51,7 +51,9 @@ t('tree: open Task 1 shows the unit row (title, amber preview badge, chevron); e
   assert.ok(/<button type="button" class="lmu" data-act="lm-open" data-id="lm-writing-ac-t1-u2"><span>Unit 2: Overview \(Time-series Line Charts\)<\/span><span class="lmbd">Unpublished preview<\/span><span class="lmarr"/.test(h));
   assert.ok(h.includes('<p class="lmno">No units yet</p>')); api.close('m:ielts-task2');
 });
-t('tree: a student never sees the unpublished unit, even with the group open', () => { ctx.U = STU; api.open('m:ielts-academic-task1'); const h = api.lmHTML(); assert.ok(!h.includes('Unit 2') && h.includes('No units yet')); });
+t('tree: an ordinary student sees Writing as "Coming soon" (disabled), never a unit, even with the group state open', () => { ctx.U = STU; api.open('s:writing'); api.open('m:ielts-academic-task1'); const h = api.lmHTML();
+  assert.ok(!h.includes('Unit 2') && !h.includes('Unit 0') && !h.includes('data-k="s:writing"') && /<section class="lmmod lm-writing dis"[^>]*><button type="button" class="lmhd" disabled>[\s\S]*?Coming soon/.test(h)); });
+t('tree: a teacher keeps the old view (Writing opens, unpublished units hidden)', () => { ctx.U = TEA; api.open('m:ielts-academic-task1'); const h = api.lmHTML(); assert.ok(h.includes('data-k="s:writing"') && !h.includes('Unit 2') && h.includes('No units yet')); });
 t('tree: every unit title / skill name is escaped; toggles are buttons with aria-expanded', () => { ctx.U = ADM; const h = api.lmHTML(); assert.ok(!/<div[^>]*data-act=/.test(h)); assert.strictEqual((h.match(/data-act="lm-tg"/g) || []).length, (h.match(/data-act="lm-tg"[^>]*aria-expanded=/g) || []).length); });
 t('no Firestore use in the Learning Materials block', () => assert.ok(!/dbh|collection\(|firestore/i.test(html.slice(a, b))));
 
