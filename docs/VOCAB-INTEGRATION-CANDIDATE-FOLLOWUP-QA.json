@@ -1,0 +1,1100 @@
+{
+  "status": "BLOCKED for full integration; Writing policy resolved in disposable candidate",
+  "main": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+  "featureBase": "463d860c556d9a14c5dd957726ad3a8a383d1bd5",
+  "build": {
+    "main": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+    "feature": "463d860c556d9a14c5dd957726ad3a8a383d1bd5",
+    "candidateDir": "C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\qa-artifacts\\phase29-followup\\candidate",
+    "mainDir": "C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\qa-artifacts\\phase29-followup\\main",
+    "mainFilesUnmodifiedExceptIndex": true,
+    "mainFileCount": 53,
+    "policyChanges": 2,
+    "proposalStatus": "TEACHER_REVIEW before actual integration",
+    "candidateSha256": "94c74b84c7b0a7d4395bec846be26ae4b9d22e3ab29fa778394e4ae18d98e545",
+    "mainSha256": "b7101982e41be9bf29f6479a9e5be0e448098b37e55d8d70260fc8780cd7cd42",
+    "addedVocabAssets": [
+      "data/vocab-lab-import-audit.json",
+      "data/vocab-lab-p1.json",
+      "data/vocab-lab-practice-v1.json",
+      "data/vocab-lab-practice.json",
+      "vocab-editorial-core.js",
+      "vocab-editorial.css",
+      "vocab-editorial.js",
+      "vocab-lab-core.js",
+      "vocab-lab-shell.js",
+      "vocab-lab-store.js",
+      "vocab-lab.css",
+      "vocab-lab.js",
+      "vocab-mission-content.js",
+      "vocab-mission-core.js",
+      "vocab-mission-engine.js",
+      "vocab-mission-library.js",
+      "vocab-mission-packs.js",
+      "vocab-mission-planner.js",
+      "vocab-mission-store.js",
+      "vocab-mission.css",
+      "vocab-mission.js",
+      "vocab-retrieval.js",
+      "vocab-routes.js"
+    ],
+    "mainTests": [
+      "tests/admin-actions.test.js",
+      "tests/admin-kick.test.js",
+      "tests/chart-facts.test.js",
+      "tests/create-reading-ui.test.js",
+      "tests/data-cleanup.test.js",
+      "tests/hw-assistant.test.js",
+      "tests/hw-external.test.js",
+      "tests/hw-mixed.test.js",
+      "tests/lm-access.test.js",
+      "tests/lm-meta.test.js",
+      "tests/lm-unit0.test.js",
+      "tests/lm-unit2-ui.test.js",
+      "tests/misc.test.js",
+      "tests/reading-gen.test.js",
+      "tests/reading-import.test.js",
+      "tests/reading-review.test.js",
+      "tests/reading.test.js",
+      "tests/server-purge.test.js",
+      "tests/sign-in.test.js",
+      "tests/ui-audit.test.js"
+    ]
+  },
+  "featureQA": {
+    "qaPass": true,
+    "counts": {
+      "node": 130,
+      "regression": 244
+    },
+    "browserSuites": 10,
+    "screenshots": 443,
+    "sourceFingerprint": "485b3904df2a3d8169f8a1f5bcef0f548d0bd61d246cf941a5c87defb594a696",
+    "report": "qa-artifacts/phase29-writing-followup/round-1-full/report.json",
+    "reportSha256": "f8d969d1e92cbb3afd44f74c4652bd55239cff7d940d56a27355807746c55887"
+  },
+  "candidateBrowser": {
+    "main": "8d9cf7742a14f64db4d7e22f63a395ee68531113",
+    "candidateSha256": "94c74b84c7b0a7d4395bec846be26ae4b9d22e3ab29fa778394e4ae18d98e545",
+    "candidateUnchanged": true,
+    "status": "PASS",
+    "results": [
+      {
+        "id": "reality",
+        "command": "node --require C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\tools\\vocab-integration-preload.cjs tests/vocab-reality.browser.js",
+        "log": "logs/reality.txt",
+        "status": "PASS",
+        "exitCode": 0,
+        "elapsedMs": 45586,
+        "counts": {
+          "kind": "assertions",
+          "passed": 0,
+          "total": 0
+        },
+        "summary": "See log"
+      },
+      {
+        "id": "batch",
+        "command": "node --require C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\tools\\vocab-integration-preload.cjs tests/vocab-batch.browser.js",
+        "log": "logs/batch.txt",
+        "status": "PASS",
+        "exitCode": 0,
+        "elapsedMs": 44259,
+        "counts": {
+          "kind": "assertions",
+          "passed": 0,
+          "total": 0
+        },
+        "summary": "See log"
+      },
+      {
+        "id": "mission",
+        "command": "node --require C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\tools\\vocab-integration-preload.cjs tests/vocab-mission.browser.js",
+        "log": "logs/mission.txt",
+        "status": "PASS",
+        "exitCode": 0,
+        "elapsedMs": 37696,
+        "counts": {
+          "kind": "assertions",
+          "passed": 0,
+          "total": 0
+        },
+        "summary": "See log"
+      },
+      {
+        "id": "shell",
+        "command": "node --require C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\tools\\vocab-integration-preload.cjs tests/vocab-shell.browser.js",
+        "log": "logs/shell.txt",
+        "status": "PASS",
+        "exitCode": 0,
+        "elapsedMs": 67323,
+        "counts": {
+          "kind": "assertions",
+          "passed": 0,
+          "total": 0
+        },
+        "summary": "See log"
+      },
+      {
+        "id": "engine",
+        "command": "node --require C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\tools\\vocab-integration-preload.cjs tests/vocab-mission-engine.browser.js",
+        "log": "logs/engine.txt",
+        "status": "PASS",
+        "exitCode": 0,
+        "elapsedMs": 89848,
+        "counts": {
+          "kind": "assertions",
+          "passed": 0,
+          "total": 0
+        },
+        "summary": "See log"
+      },
+      {
+        "id": "editorial",
+        "command": "node --require C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\tools\\vocab-integration-preload.cjs tests/vocab-editorial.browser.js",
+        "log": "logs/editorial.txt",
+        "status": "PASS",
+        "exitCode": 0,
+        "elapsedMs": 23806,
+        "counts": {
+          "kind": "assertions",
+          "passed": 0,
+          "total": 0
+        },
+        "summary": "See log"
+      }
+    ],
+    "network": [
+      {
+        "suite": "batch",
+        "violations": [],
+        "blockedExternalAssets": []
+      },
+      {
+        "suite": "editorial",
+        "violations": [],
+        "blockedExternalAssets": []
+      },
+      {
+        "suite": "engine",
+        "violations": [],
+        "blockedExternalAssets": []
+      },
+      {
+        "suite": "mission",
+        "violations": [],
+        "blockedExternalAssets": [
+          {
+            "kind": "blocked external asset",
+            "url": "https://fonts.googleapis.com/css2"
+          }
+        ]
+      },
+      {
+        "suite": "reality",
+        "violations": [],
+        "blockedExternalAssets": []
+      },
+      {
+        "suite": "shell",
+        "violations": [],
+        "blockedExternalAssets": []
+      }
+    ]
+  },
+  "policyBrowser": {
+    "status": "PASS",
+    "checks": [
+      {
+        "role": "student",
+        "width": 390,
+        "theme": "light",
+        "status": "PASS"
+      },
+      {
+        "role": "tester",
+        "width": 390,
+        "theme": "light",
+        "status": "PASS"
+      },
+      {
+        "role": "admin",
+        "width": 390,
+        "theme": "light",
+        "status": "PASS"
+      },
+      {
+        "role": "student",
+        "width": 390,
+        "theme": "dark",
+        "status": "PASS"
+      },
+      {
+        "role": "tester",
+        "width": 390,
+        "theme": "dark",
+        "status": "PASS"
+      },
+      {
+        "role": "admin",
+        "width": 390,
+        "theme": "dark",
+        "status": "PASS"
+      },
+      {
+        "role": "student",
+        "width": 768,
+        "theme": "light",
+        "status": "PASS"
+      },
+      {
+        "role": "tester",
+        "width": 768,
+        "theme": "light",
+        "status": "PASS"
+      },
+      {
+        "role": "admin",
+        "width": 768,
+        "theme": "light",
+        "status": "PASS"
+      },
+      {
+        "role": "student",
+        "width": 768,
+        "theme": "dark",
+        "status": "PASS"
+      },
+      {
+        "role": "tester",
+        "width": 768,
+        "theme": "dark",
+        "status": "PASS"
+      },
+      {
+        "role": "admin",
+        "width": 768,
+        "theme": "dark",
+        "status": "PASS"
+      },
+      {
+        "role": "student",
+        "width": 1280,
+        "theme": "light",
+        "status": "PASS"
+      },
+      {
+        "role": "tester",
+        "width": 1280,
+        "theme": "light",
+        "status": "PASS"
+      },
+      {
+        "role": "admin",
+        "width": 1280,
+        "theme": "light",
+        "status": "PASS"
+      },
+      {
+        "role": "student",
+        "width": 1280,
+        "theme": "dark",
+        "status": "PASS"
+      },
+      {
+        "role": "tester",
+        "width": 1280,
+        "theme": "dark",
+        "status": "PASS"
+      },
+      {
+        "role": "admin",
+        "width": 1280,
+        "theme": "dark",
+        "status": "PASS"
+      }
+    ],
+    "limitations": [
+      "Browser smoke covers existing Reading renderer, Homework card and Admin/Class navigation only; advanced main features are assessed by unmodified main scripts.",
+      "Synthetic demo roster, not signed-token security."
+    ]
+  },
+  "mainQA": {
+    "baseline": {
+      "commands": 23,
+      "passedCommands": 12,
+      "failedCommands": 11,
+      "assertions": {
+        "passed": 246,
+        "total": 350
+      },
+      "results": [
+        {
+          "kind": "main",
+          "command": "tests/admin-actions.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 1,
+            "total": 9
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-admin-actions.test.js.txt",
+          "logSha256": "24a29c41a6ca0d32f7c72495857acaa860b319e080a46ca71de0cf3ef5db3876",
+          "firstFailures": [
+            "FAIL no click action is handled by two different branches (except shared guards / grouped buttons) -> ad-tadd @ 7645,7705",
+            "FAIL the tester and teacher forms use their own input ids -> shared id adTName",
+            "FAIL Add teacher: valid fields -> only admin/teachers {op:add}; no null error; list reloads -> The expression evaluated to a falsy value:"
+          ]
+        },
+        {
+          "kind": "main",
+          "command": "tests/admin-kick.test.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": {
+            "passed": 50,
+            "total": 50
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-admin-kick.test.js.txt",
+          "logSha256": "5b1e00c90705747f38a13bdc23cd36f90e2e485a6440a81fa9a45960bb946619",
+          "firstFailures": []
+        },
+        {
+          "kind": "main",
+          "command": "tests/chart-facts.test.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": {
+            "passed": 56,
+            "total": 56
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-chart-facts.test.js.txt",
+          "logSha256": "f0890299de22c9dd67de45348545646c0e04238f273ddccc9746c1e27ad99600",
+          "firstFailures": []
+        },
+        {
+          "kind": "main",
+          "command": "tests/create-reading-ui.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 0,
+            "total": 9
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-create-reading-ui.test.js.txt",
+          "logSha256": "cacb5d835099499ef70b745b8cf43246f3d9caa120a92fa2b577a38832262ba8",
+          "firstFailures": [
+            "FAIL root cause: no Easy / Hard yet → rdLevels() is null; the level switch and the preview no longer throw -> rdRvAct is not defined",
+            "FAIL Student View Preview of an unapproved Medium draft = the interactive lesson (passage, questions, step menu, dock), not the summary -> rdRvAct is not defined",
+            "FAIL Easy / Medium / Hard switch changes the real lesson content in the preview -> rdRvAct is not defined"
+          ]
+        },
+        {
+          "kind": "main",
+          "command": "tests/data-cleanup.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 0,
+            "total": 15
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-data-cleanup.test.js.txt",
+          "logSha256": "b2e1fc427a62ac0efcfe0b1b495de87611b0f6c9548cdc8b160f768e7bf704ee",
+          "firstFailures": [
+            "FAIL server preview (dry run): lists only emails without a roster row that are not staff; same name \"Cherry\" on a live student is kept; nothing deleted -> adminOrphans is not defined",
+            "FAIL server purge: deletes every spelling of that email in all learning collections + profile, writes an audit row; live student, tester and staff untouched; running again is refused (idempotent) -> adminOrphans is not defined",
+            "FAIL server purge refuses a live student, a tester, a teacher and a bad email -> adminOrphans is not defined"
+          ]
+        },
+        {
+          "kind": "main",
+          "command": "tests/hw-assistant.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 0,
+            "total": 10
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-hw-assistant.test.js.txt",
+          "logSha256": "d7e30e1c0b0df127a718c56a4087c0b8294a0cf0750418d98e97180d31b1e890",
+          "firstFailures": [
+            "FAIL server: roleOf gives the assistant role (never student); only the assistant role opens /api/hwa -> hwaData is not defined",
+            "FAIL server: data = only the allowed classes; no emails; testers and removed students left out; statuses -> hwaData is not defined",
+            "FAIL server: statuses = on time / late / missing / pending / extended by a late pass -> hwaData is not defined"
+          ]
+        },
+        {
+          "kind": "main",
+          "command": "tests/hw-external.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 0,
+            "total": 7
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-hw-external.test.js.txt",
+          "logSha256": "ca71d262a720f726d73c7db8c2b7fe8dbc7cb98a4c59fa269887ceb2f51223fb",
+          "firstFailures": [
+            "FAIL form: Assignment details → Exercises from Library + External tasks (both addable, no type switch) → footer \"Save assignment\" -> extSubsHTML is not defined",
+            "FAIL save External only: link required (http/https only); saved record = ext [{x1, link, note, source}], ex [], type external -> extSubsHTML is not defined",
+            "FAIL old assignments (no type) still work as Mini Drills; a saved Mini Drills one gets type mini -> extSubsHTML is not defined"
+          ]
+        },
+        {
+          "kind": "main",
+          "command": "tests/hw-mixed.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 0,
+            "total": 13
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-hw-mixed.test.js.txt",
+          "logSha256": "1abcbfd61a8f453bf98c3efd013485bd9fefbad4d9c5e72fae04989937d6b0a0",
+          "firstFailures": [
+            "FAIL 1. Library only: saved with ex, ext [], type mini -> asgState is not defined",
+            "FAIL 2. nothing added → refused with a clear message, nothing saved, fields kept -> asgState is not defined",
+            "FAIL 3. Library + one external link → one record, type mixed -> asgState is not defined"
+          ]
+        },
+        {
+          "kind": "main",
+          "command": "tests/lm-access.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 0,
+            "total": 9
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-lm-access.test.js.txt",
+          "logSha256": "4ff1b428c7200b2030223db1ec67ce67fef13ec1c78899608a897615490d8c08",
+          "firstFailures": [
+            "FAIL ordinary student: Writing is shown, dimmed, disabled, \"Coming soon\"; no unit, no toggle -> lmTester is not defined",
+            "FAIL ordinary student: exactly 4 rows (Writing, Listening, Reading, Speaking), each \"Coming soon\", no arrow, no nested list -> lmTester is not defined",
+            "FAIL focused lesson view: an open unit fills the page (no Today, homework, Library tabs, Recent results); Back brings the list and Home back -> lmTester is not defined"
+          ]
+        },
+        {
+          "kind": "main",
+          "command": "tests/lm-meta.test.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": {
+            "passed": 22,
+            "total": 22
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-lm-meta.test.js.txt",
+          "logSha256": "f8dd54c6f6eb25ecf31ae311c84277deb6838bada63690fee4f259a7a3d2b92b",
+          "firstFailures": []
+        },
+        {
+          "kind": "main",
+          "command": "tests/lm-unit0.test.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": {
+            "passed": 23,
+            "total": 23
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-lm-unit0.test.js.txt",
+          "logSha256": "714675feb34a7304c06f1591c793e0f083fd11f5a8e6509c1589a0f500dc1d7c",
+          "firstFailures": []
+        },
+        {
+          "kind": "main",
+          "command": "tests/lm-unit2-ui.test.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": {
+            "passed": 41,
+            "total": 41
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-lm-unit2-ui.test.js.txt",
+          "logSha256": "04616b6ad4799a49613d784e2d2c2b3ee216ef9a39fea2dcd3a3dfcafe3426f7",
+          "firstFailures": []
+        },
+        {
+          "kind": "main",
+          "command": "tests/misc.test.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": {
+            "passed": 6,
+            "total": 6
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-misc.test.js.txt",
+          "logSha256": "20213ef1a45792c7278648b84ffdb827ae0cbca1397698ccf7f8dbce314e7888",
+          "firstFailures": []
+        },
+        {
+          "kind": "main",
+          "command": "tests/reading-gen.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 0,
+            "total": 14
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-reading-gen.test.js.txt",
+          "logSha256": "1ed1e0b60fadcac70632fa1778c6bf244843e71ad2837c4d7b5cb79f0618061a",
+          "firstFailures": [
+            "FAIL 934-word / 7-paragraph passage: accepted as it is, no \"shorter\" advice; split into 3 smaller prompts -> aiReadingPart is not defined",
+            "FAIL server: a cut-off answer (MAX_TOKENS) = code too_long with a \"Retry failed part\" message, never \"shorter essay\"; not saved -> aiReadingPart is not defined",
+            "FAIL server: \"pairs\" with 0 / 1 items is rejected with the exact count; 2 and 6 pass; 7 passes to the app (only 6 used) -> aiReadingPart is not defined"
+          ]
+        },
+        {
+          "kind": "main",
+          "command": "tests/reading-import.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 1,
+            "total": 10
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-reading-import.test.js.txt",
+          "logSha256": "364c845f814953fe8f216d966287a2dc80b4e3fc2fb4d0d2130d8562f084ec1f",
+          "firstFailures": [
+            "FAIL valid 3-version file: all 3 checked, preview has Easy / Medium / Hard, passage unchanged in each, Add on, no AI call -> rdImport is not defined",
+            "FAIL invalid file: Easy \"pairs\" has 1 item -> Easy not used, exact message; Hard \"not in the file\"; Medium still addable -> rdImport is not defined",
+            "FAIL Medium with problems (0 / 1 / 7 pairs) -> Add off for 0 and 1 (nothing can be saved); 7 -> first 6 used -> rdImport is not defined"
+          ]
+        },
+        {
+          "kind": "main",
+          "command": "tests/reading-review.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 0,
+            "total": 10
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-reading-review.test.js.txt",
+          "logSha256": "da8c56d760ceeab0f07fdc15e71023b2904700fce1363db2e13c2de095c95f34",
+          "firstFailures": [
+            "FAIL Generate = Medium only (3 requests); Easy / Hard wait; Add off \"Approve Medium first\"; Review Medium panel in the preview -> rdRetry is not defined",
+            "FAIL Apply feedback with AI: one revise request per part with the current part, passage and feedback; proposal with changes; Accept replaces Medium; Undo restores -> rdRetry is not defined",
+            "FAIL Reject keeps the current Medium; a failed revision changes nothing and says so -> rdRetry is not defined"
+          ]
+        },
+        {
+          "kind": "main",
+          "command": "tests/reading.test.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": {
+            "passed": 12,
+            "total": 12
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-reading.test.js.txt",
+          "logSha256": "2d7ed7cfa96309f651f25d6099db22586f665133070ae5144d3236803251e518",
+          "firstFailures": []
+        },
+        {
+          "kind": "main",
+          "command": "tests/server-purge.test.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": {
+            "passed": 8,
+            "total": 8
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-server-purge.test.js.txt",
+          "logSha256": "96a34c82316f8ba17ec89b7393ed7620442942df73c5a4b0d616e1f958c463c3",
+          "firstFailures": []
+        },
+        {
+          "kind": "main",
+          "command": "tests/sign-in.test.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": {
+            "passed": 11,
+            "total": 11
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-sign-in.test.js.txt",
+          "logSha256": "00e44ff8d31ed0fda9972ea58d4b3907e31afa56d6f2af9bab58d177ed561a60",
+          "firstFailures": []
+        },
+        {
+          "kind": "main",
+          "command": "tests/ui-audit.test.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": {
+            "passed": 15,
+            "total": 15
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-ui-audit.test.js.txt",
+          "logSha256": "17c8e18ac7bff5df4025365af986314db2aa9caaa7eb03ba8739c627cded3f20",
+          "firstFailures": []
+        },
+        {
+          "kind": "main",
+          "command": "tests/contrast.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": null,
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-contrast.js.txt",
+          "logSha256": "4d081042089e28a39949ab1a73d813535e5c2413aed1a669566fcaceb4d0d53f",
+          "firstFailures": []
+        },
+        {
+          "kind": "main",
+          "command": "tests/contrast-rules.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": null,
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-contrast-rules.js.txt",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "firstFailures": []
+        },
+        {
+          "kind": "main",
+          "command": "tests/lm-check.js --release",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": null,
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/main-lm-check.js.txt",
+          "logSha256": "b567e7b26ff5878ebe05946159c81b90f3111ee7b7ad8e68b1a7f4be84ba0c55",
+          "firstFailures": [
+            "  - 152 item(s) still waiting for owner review (pending).",
+            "  - 165 item(s) still waiting for owner review (pending)."
+          ]
+        }
+      ]
+    },
+    "candidate": {
+      "commands": 23,
+      "passedCommands": 10,
+      "failedCommands": 13,
+      "assertions": {
+        "passed": 249,
+        "total": 350
+      },
+      "results": [
+        {
+          "kind": "candidate",
+          "command": "tests/admin-actions.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 1,
+            "total": 9
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-admin-actions.test.js.txt",
+          "logSha256": "a920fd08725a517f16589bf0c653e97606bd9ccaa615f4078df4c3e222446a23",
+          "firstFailures": [
+            "FAIL no click action is handled by two different branches (except shared guards / grouped buttons) -> ad-tadd @ 7680,7740",
+            "FAIL the tester and teacher forms use their own input ids -> shared id adTName",
+            "FAIL Add teacher: valid fields -> only admin/teachers {op:add}; no null error; list reloads -> The expression evaluated to a falsy value:"
+          ]
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/admin-kick.test.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": {
+            "passed": 50,
+            "total": 50
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-admin-kick.test.js.txt",
+          "logSha256": "5b1e00c90705747f38a13bdc23cd36f90e2e485a6440a81fa9a45960bb946619",
+          "firstFailures": []
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/chart-facts.test.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": {
+            "passed": 56,
+            "total": 56
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-chart-facts.test.js.txt",
+          "logSha256": "f0890299de22c9dd67de45348545646c0e04238f273ddccc9746c1e27ad99600",
+          "firstFailures": []
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/create-reading-ui.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 0,
+            "total": 9
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-create-reading-ui.test.js.txt",
+          "logSha256": "cacb5d835099499ef70b745b8cf43246f3d9caa120a92fa2b577a38832262ba8",
+          "firstFailures": [
+            "FAIL root cause: no Easy / Hard yet → rdLevels() is null; the level switch and the preview no longer throw -> rdRvAct is not defined",
+            "FAIL Student View Preview of an unapproved Medium draft = the interactive lesson (passage, questions, step menu, dock), not the summary -> rdRvAct is not defined",
+            "FAIL Easy / Medium / Hard switch changes the real lesson content in the preview -> rdRvAct is not defined"
+          ]
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/data-cleanup.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 0,
+            "total": 15
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-data-cleanup.test.js.txt",
+          "logSha256": "b2e1fc427a62ac0efcfe0b1b495de87611b0f6c9548cdc8b160f768e7bf704ee",
+          "firstFailures": [
+            "FAIL server preview (dry run): lists only emails without a roster row that are not staff; same name \"Cherry\" on a live student is kept; nothing deleted -> adminOrphans is not defined",
+            "FAIL server purge: deletes every spelling of that email in all learning collections + profile, writes an audit row; live student, tester and staff untouched; running again is refused (idempotent) -> adminOrphans is not defined",
+            "FAIL server purge refuses a live student, a tester, a teacher and a bad email -> adminOrphans is not defined"
+          ]
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/hw-assistant.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 0,
+            "total": 10
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-hw-assistant.test.js.txt",
+          "logSha256": "d7e30e1c0b0df127a718c56a4087c0b8294a0cf0750418d98e97180d31b1e890",
+          "firstFailures": [
+            "FAIL server: roleOf gives the assistant role (never student); only the assistant role opens /api/hwa -> hwaData is not defined",
+            "FAIL server: data = only the allowed classes; no emails; testers and removed students left out; statuses -> hwaData is not defined",
+            "FAIL server: statuses = on time / late / missing / pending / extended by a late pass -> hwaData is not defined"
+          ]
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/hw-external.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 0,
+            "total": 7
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-hw-external.test.js.txt",
+          "logSha256": "ca71d262a720f726d73c7db8c2b7fe8dbc7cb98a4c59fa269887ceb2f51223fb",
+          "firstFailures": [
+            "FAIL form: Assignment details → Exercises from Library + External tasks (both addable, no type switch) → footer \"Save assignment\" -> extSubsHTML is not defined",
+            "FAIL save External only: link required (http/https only); saved record = ext [{x1, link, note, source}], ex [], type external -> extSubsHTML is not defined",
+            "FAIL old assignments (no type) still work as Mini Drills; a saved Mini Drills one gets type mini -> extSubsHTML is not defined"
+          ]
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/hw-mixed.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 0,
+            "total": 13
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-hw-mixed.test.js.txt",
+          "logSha256": "1abcbfd61a8f453bf98c3efd013485bd9fefbad4d9c5e72fae04989937d6b0a0",
+          "firstFailures": [
+            "FAIL 1. Library only: saved with ex, ext [], type mini -> asgState is not defined",
+            "FAIL 2. nothing added → refused with a clear message, nothing saved, fields kept -> asgState is not defined",
+            "FAIL 3. Library + one external link → one record, type mixed -> asgState is not defined"
+          ]
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/lm-access.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 8,
+            "total": 9
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-lm-access.test.js.txt",
+          "logSha256": "ca0043cc10f84c5a87c7af84b71c8e1058d71fe05654d76e25e3caf54653f19d",
+          "firstFailures": [
+            "FAIL focused lesson view: an open unit fills the page (no Today, homework, Library tabs, Recent results); Back brings the list and Home back -> The expression evaluated to a falsy value:"
+          ]
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/lm-meta.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 21,
+            "total": 22
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-lm-meta.test.js.txt",
+          "logSha256": "a800c0aef327de52426d90e19cfafec9821718c2dd5928da836c5f2a6063efb8",
+          "firstFailures": [
+            "FAIL tree: a student never sees the unpublished unit, even with the group open -> The expression evaluated to a falsy value:"
+          ]
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/lm-unit0.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 19,
+            "total": 23
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-lm-unit0.test.js.txt",
+          "logSha256": "c9bc69e65625c23815ba3f35f3baaca8fe93f7b31344e7fd47b0e6c36980ffc4",
+          "firstFailures": [
+            "FAIL Controlled: 8 scored items; YES / NO / NOT GIVEN mapped to supported / contradicted / not_determinable; 5 / 8 keeps Guided closed, 6 / 8 opens it -> stuck at step 2",
+            "FAIL Guided: 7 checklist selects (trend answers from the facts), 5 / 7 needed; then choices, observations, summary and revision before Independent -> The expression evaluated to a falsy value:",
+            "FAIL \"I am done\" needs every checklist field; then Review shows the verified reference, main features and \"I included / I avoided\" self-check (not a mark) -> The expression evaluated to a falsy value:"
+          ]
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/lm-unit2-ui.test.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": {
+            "passed": 41,
+            "total": 41
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-lm-unit2-ui.test.js.txt",
+          "logSha256": "04616b6ad4799a49613d784e2d2c2b3ee216ef9a39fea2dcd3a3dfcafe3426f7",
+          "firstFailures": []
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/misc.test.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": {
+            "passed": 6,
+            "total": 6
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-misc.test.js.txt",
+          "logSha256": "20213ef1a45792c7278648b84ffdb827ae0cbca1397698ccf7f8dbce314e7888",
+          "firstFailures": []
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/reading-gen.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 0,
+            "total": 14
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-reading-gen.test.js.txt",
+          "logSha256": "1ed1e0b60fadcac70632fa1778c6bf244843e71ad2837c4d7b5cb79f0618061a",
+          "firstFailures": [
+            "FAIL 934-word / 7-paragraph passage: accepted as it is, no \"shorter\" advice; split into 3 smaller prompts -> aiReadingPart is not defined",
+            "FAIL server: a cut-off answer (MAX_TOKENS) = code too_long with a \"Retry failed part\" message, never \"shorter essay\"; not saved -> aiReadingPart is not defined",
+            "FAIL server: \"pairs\" with 0 / 1 items is rejected with the exact count; 2 and 6 pass; 7 passes to the app (only 6 used) -> aiReadingPart is not defined"
+          ]
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/reading-import.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 1,
+            "total": 10
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-reading-import.test.js.txt",
+          "logSha256": "364c845f814953fe8f216d966287a2dc80b4e3fc2fb4d0d2130d8562f084ec1f",
+          "firstFailures": [
+            "FAIL valid 3-version file: all 3 checked, preview has Easy / Medium / Hard, passage unchanged in each, Add on, no AI call -> rdImport is not defined",
+            "FAIL invalid file: Easy \"pairs\" has 1 item -> Easy not used, exact message; Hard \"not in the file\"; Medium still addable -> rdImport is not defined",
+            "FAIL Medium with problems (0 / 1 / 7 pairs) -> Add off for 0 and 1 (nothing can be saved); 7 -> first 6 used -> rdImport is not defined"
+          ]
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/reading-review.test.js",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": {
+            "passed": 0,
+            "total": 10
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-reading-review.test.js.txt",
+          "logSha256": "da8c56d760ceeab0f07fdc15e71023b2904700fce1363db2e13c2de095c95f34",
+          "firstFailures": [
+            "FAIL Generate = Medium only (3 requests); Easy / Hard wait; Add off \"Approve Medium first\"; Review Medium panel in the preview -> rdRetry is not defined",
+            "FAIL Apply feedback with AI: one revise request per part with the current part, passage and feedback; proposal with changes; Accept replaces Medium; Undo restores -> rdRetry is not defined",
+            "FAIL Reject keeps the current Medium; a failed revision changes nothing and says so -> rdRetry is not defined"
+          ]
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/reading.test.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": {
+            "passed": 12,
+            "total": 12
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-reading.test.js.txt",
+          "logSha256": "2d7ed7cfa96309f651f25d6099db22586f665133070ae5144d3236803251e518",
+          "firstFailures": []
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/server-purge.test.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": {
+            "passed": 8,
+            "total": 8
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-server-purge.test.js.txt",
+          "logSha256": "96a34c82316f8ba17ec89b7393ed7620442942df73c5a4b0d616e1f958c463c3",
+          "firstFailures": []
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/sign-in.test.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": {
+            "passed": 11,
+            "total": 11
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-sign-in.test.js.txt",
+          "logSha256": "00e44ff8d31ed0fda9972ea58d4b3907e31afa56d6f2af9bab58d177ed561a60",
+          "firstFailures": []
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/ui-audit.test.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": {
+            "passed": 15,
+            "total": 15
+          },
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-ui-audit.test.js.txt",
+          "logSha256": "17c8e18ac7bff5df4025365af986314db2aa9caaa7eb03ba8739c627cded3f20",
+          "firstFailures": []
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/contrast.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": null,
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-contrast.js.txt",
+          "logSha256": "4d081042089e28a39949ab1a73d813535e5c2413aed1a669566fcaceb4d0d53f",
+          "firstFailures": []
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/contrast-rules.js",
+          "status": "PASS",
+          "exitCode": 0,
+          "counts": null,
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-contrast-rules.js.txt",
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "firstFailures": []
+        },
+        {
+          "kind": "candidate",
+          "command": "tests/lm-check.js --release",
+          "status": "FAIL",
+          "exitCode": 1,
+          "counts": null,
+          "error": null,
+          "log": "qa-artifacts/phase29-followup/main-qa-round-2/candidate-lm-check.js.txt",
+          "logSha256": "b567e7b26ff5878ebe05946159c81b90f3111ee7b7ad8e68b1a7f4be84ba0c55",
+          "firstFailures": [
+            "  - 152 item(s) still waiting for owner review (pending).",
+            "  - 165 item(s) still waiting for owner review (pending)."
+          ]
+        }
+      ]
+    }
+  },
+  "emulatorQA": {
+    "sha": "463d860c556d9a14c5dd957726ad3a8a383d1bd5",
+    "branch": "feature/vocab-lab",
+    "sourceFingerprint": "485b3904df2a3d8169f8a1f5bcef0f548d0bd61d246cf941a5c87defb594a696",
+    "sourceUnchanged": true,
+    "timestamp": "2026-11-04T17:05:25.796Z",
+    "projectId": "demo-mini-drills-vocab-test",
+    "authHost": "127.0.0.1:19099",
+    "firestoreHost": "127.0.0.1:18080",
+    "steps": [
+      {
+        "id": "security",
+        "status": "PASS",
+        "tests": 11,
+        "exitCode": 0,
+        "error": null
+      },
+      {
+        "id": "browser",
+        "status": "PASS",
+        "tests": 2,
+        "exitCode": 0,
+        "error": null
+      }
+    ],
+    "qaPass": true,
+    "limitations": [
+      "Auth emulator tokens are unsigned; emulator results do not prove production cryptographic verification or IAM.",
+      "No production or isolated deployed staging connection was tested.",
+      "102 seeded drafts remain pending; fixture approvals/publications are erased after tests."
+    ]
+  },
+  "content": {
+    "pending": 102,
+    "approved": 0,
+    "published": 0
+  },
+  "provenance": "Implementation/test sources unchanged after the successful full run; final additions are documentation/evidence only. Existing main and feature tests were not weakened or edited."
+}

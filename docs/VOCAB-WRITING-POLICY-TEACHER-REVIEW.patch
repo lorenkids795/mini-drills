@@ -1,0 +1,24 @@
+diff --git a/index.html b/index.html
+index 5a01a78..7cfeb04 100644
+--- a/index.html
++++ b/index.html
+@@ -2095,7 +2095,9 @@ function libTestHTML(bk,t,dm,stu){
+ // A lesson with status 'unpublished' is only shown to the admin (preview); lmVisible is the only gate, checked when listing AND when opening.
+ var LIBT=(function(){try{return lsGet('md-libt')==='lm'?'lm':'cam'}catch(e){return 'cam'}})(),LMV=null;
+ function lmData(){var d=window.MD_LM;return d&&d.lessons?d:{skills:[],modules:[],lessons:[]}}
+-function lmVisible(l){return !!(l&&(l.status==='published'||(U&&U.adm)))}
++function lmTester(){return !!(U&&U.role==='student'&&typeof allRoster==='function'&&allRoster().some(function(r){return r.role==='student'&&String(r.email||'').toLowerCase()===String(U.email||'').toLowerCase()&&r.tester===true}))}
++function lmSkillLocked(sk){return sk==='writing'&&(!U||(U.role==='student'&&!U.adm&&!lmTester()))}
++function lmVisible(l){return !!(l&&!lmSkillLocked(l.skill)&&(l.status==='published'||(U&&U.adm)||(l.skill==='writing'&&lmTester())))}
+ function lmLesson(id){return lmData().lessons.filter(function(l){return l.id===id})[0]||null}
+ // tree rows that are open ('s:<skill>' / 'm:<module>'), this session only; default = Writing open, its task groups closed
+ var LMO={'s:writing':true};
+@@ -2113,7 +2115,7 @@ function lmHTML(){
+   // 3-level tree (skill › task group › unit), no cards. A skill without task groups = dimmed, disabled, "Coming soon".
+   // Units go through lmVisible: students/teachers never see an unpublished unit (its group then says "No units yet").
+   var h=D.skills.map(function(sk){
+-    var G=D.modules.filter(function(m){return m.skill===sk.id}),k='s:'+sk.id,o=!!(LMO[k]&&G.length),id='lmt_'+esc(sk.id);
++    var G=lmSkillLocked(sk.id)?[]:D.modules.filter(function(m){return m.skill===sk.id}),k='s:'+sk.id,o=!!(LMO[k]&&G.length),id='lmt_'+esc(sk.id);
+     var head='<button type="button" class="lmhd"'+(G.length?' data-act="lm-tg" data-k="'+esc(k)+'" aria-expanded="'+o+'" aria-controls="'+id+'"':' disabled')+'><span class="lmic" aria-hidden="true">'+lmIco(sk.id)+'</span><span class="lmnm">'+esc(sk.title)+'</span>'+
+       (G.length?'<span class="lmchev">'+LM_CH+'</span>':'<span class="lmsoon">Coming soon</span>')+'</button>';
+     var body=o?'<div class="lmtw" id="'+id+'">'+G.map(function(m){var gk='m:'+m.id,go=!!LMO[gk],gid='lmg_'+esc(m.id);
