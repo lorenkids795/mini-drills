@@ -657,5 +657,14 @@ Deploy `index.html` + `md-backend.js` + `functions/` (Admin › My account › D
 9. [ ] Admin › Tools › Reading check › Scan: bài có giải thích "fine fine…" hiện ở danh sách; "Clear this explanation" hỏi trước rồi mới xóa đúng trường đó; học sinh mở 3.2 không còn chữ lặp (hoặc "Explanation unavailable.").
 10. [ ] Create › Reading tạo bài mới: nếu AI trả giải thích lặp, Review báo "Phrase n: the explanation … repeats …" và Fix with AI sửa được phần đó.
 
+## Homework Submitted / Completion + bài mẫu (11/2026)
+Deploy `index.html` (Diagnostics: "app 2026-11-04d").
+1. [ ] Classes › 21H › HW SUN 01.11: dòng BẢO AN có cột **Submitted** và **Completion**; nếu đã bấm I'm done mà 0/2 bài → "Submitted" + "! Incomplete (0/2)", % = 0. Không còn cột "TURNED IN".
+2. [ ] Học sinh làm xong 1 bài → "In progress (1/2)" / "Incomplete (1/2)"; làm đủ → "Complete (2/2)".
+3. [ ] Học sinh (BẢO AN) mở Home: thấy "You turned this in, but 2 of 2 exercises are not finished yet" và 2 bài cần làm; làm xong → All done.
+4. [ ] Bài có link ngoài: chỉ "Complete" khi đủ bài Library + ảnh chụp.
+5. [ ] Admin › Tools › Library samples: 9 bài mẫu, cột "Used by assignments" / "Student attempts". Gửi lại danh sách muốn ẩn để duyệt (chưa ẩn gì).
+6. [ ] Library › Learning Materials › Writing: hai nhóm "Task 1", "Task 2" (sau khi tải lại trang).
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

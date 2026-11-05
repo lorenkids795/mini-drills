@@ -8,7 +8,7 @@ let pass = 0, fail = 0; const out = [];
 async function t(name, fn) { try { await fn(); pass++; out.push('PASS ' + name); } catch (e) { fail++; out.push('FAIL ' + name + ' -> ' + e.message); } }
 const HOOKS = 'get AG(){return AG},get AS(){return AS},openForm:openForm,formHTML:formHTML,renderAsg:renderAsg,saveAsg:saveAsg,get localAsg(){return localAsg},setAsg:function(a){localAsg=a},' +
   'setHw:function(h){localHwdone=h},get localHwdone(){return localHwdone},homeworkHTML:homeworkHTML,hwRows:hwRows,hwStatus:hwStatus,hwMatrixHTML:hwMatrixHTML,asgState:asgState,normAsg:normAsg,allAsgs:allAsgs,' +
-  'setRoster:function(r){rosterDocs=r},imDone:imDone,pickIds:pickIds,agSel:agSel,asgSummary:asgSummary,setAttempts:function(a){localAtt=a}';
+  'setRoster:function(r){rosterDocs=r},imDone:imDone,pickIds:pickIds,agSel:agSel,asgSummary:asgSummary,setAttempts:function(a){localAttempts=a}';
 const DAY = 864e5, now = Date.now(), A22 = 'a'.repeat(22), B22 = 'b'.repeat(22);
 const ROSTER = [{ email: 'lan@x.com', name: 'Lan', cls: '7h30', role: 'student' }, { email: 'minh@x.com', name: 'Minh', cls: '7h30', role: 'student' }];
 const MIX = { id: 'm1', cls: '7h30', name: 'HW MIX', start: now - DAY, due: now + 2 * DAY, ex: ['l1', 'r1'], type: 'mixed',
@@ -65,7 +65,10 @@ const hasAtt = (B) => { try { return B.T.setAttempts; } catch (e) { return null;
     let S = B.T.asgState(a, 'lan@x.com'); assert.ok(S.extFin && !S.libFin && !S.fin, 'external done, Library not');
     let h = B.T.homeworkHTML(); assert.ok((h.match(/<span class="best">Submitted<\/span>/g) || []).length === 2 && !/score|correct/i.test(h) && !h.includes('All done ✓'));
     B.T.setHw([{ id: 'lan-x-com_m1', email: 'lan@x.com', asgId: 'm1', ts: now, done: true }]);
-    S = B.T.asgState(a, 'lan@x.com'); assert.ok(S.libFin && !S.extFin && !S.fin, 'Library turned in, external missing');
+    S = B.T.asgState(a, 'lan@x.com'); assert.ok(S.libSub && !S.libComp && !S.libFin && !S.fin, '"I\'m done" without the exercises = submitted, not complete');
+    assert.ok(/You turned this in<\/b>, but 2 of 2 exercises are not finished yet/.test(B.T.homeworkHTML()));
+    B.T.setAttempts([{ email: 'lan@x.com', ex: 'l1', score: 8, total: 10, ts: now }, { email: 'lan@x.com', ex: 'r1', score: 7, total: 10, ts: now }]);
+    S = B.T.asgState(a, 'lan@x.com'); assert.ok(S.libFin && !S.extFin && !S.fin, 'Library done + turned in, external missing');
     assert.ok(B.T.homeworkHTML().includes('Library exercises done ✓ Upload a screenshot for each external task to finish.'));
     B.T.setHw([{ id: 'lan-x-com_m1', email: 'lan@x.com', asgId: 'm1', ts: now, done: true, shots: { x1: { id: A22, url: '/api/image/' + A22, ts: now }, x2: { id: B22, url: '/api/image/' + B22, ts: now } } }]);
     assert.ok(B.T.asgState(a, 'lan@x.com').fin && B.T.homeworkHTML().includes('All done ✓'));
@@ -79,7 +82,7 @@ const hasAtt = (B) => { try { return B.T.setAttempts; } catch (e) { return null;
   await t('9. teacher: hwStatus counts parts; matrix shows exercise + task columns, screenshot link, "Complete" only when everything is in', () => {
     const B = tea(); B.T.setAsg([MIX]); B.T.setHw([{ email: 'lan@x.com', asgId: 'm1', ts: now, shots: { x1: { id: A22, url: '/api/image/' + A22, ts: now } } }]);
     const hs = B.T.hwStatus(MIX); assert.strictEqual(hs.pct, Math.round(1 / 8 * 100));
-    const h = B.T.hwMatrixHTML(MIX); assert.ok(h.includes('>Google Form<') && h.includes('>External task 2<') && h.includes('href="/api/image/' + A22 + '"') && !/finished everything|forms\.example\.com\/a<|Do part A/.test(h) && h.includes('>Complete<'));
+    const h = B.T.hwMatrixHTML(MIX); assert.ok(h.includes('>Google Form<') && h.includes('>External task 2<') && h.includes('href="/api/image/' + A22 + '"') && !/finished everything|forms\.example\.com\/a<|Do part A/.test(h) && h.includes('>Completion<') && h.includes('>Submitted<') && /Not started|In progress/.test(h));
     const R = B.T.hwRows(MIX).rows.find((r) => r.email === 'lan@x.com'); assert.ok(!R.all && !R.fin && R.cells.length === 4);
   });
   await t('9b. class view: Edit = pencil next to the status (same edit flow), no Edit button at the bottom; demo rows have none', () => {
@@ -94,7 +97,7 @@ const hasAtt = (B) => { try { return B.T.setAttempts; } catch (e) { return null;
     const n = B.T.allAsgs().find((a) => a.id === 'o1'); assert.ok(n.ext.length === 1 && n.ext[0].id === 'x1' && n.ext[0].link === 'https://old.example.com' && n.ext[0].note === 'Old note');
     B.T.setHw([{ email: 'lan@x.com', asgId: 'o1', ts: now, shot: { id: A22, url: '/api/image/' + A22, ts: now } }, { email: 'lan@x.com', asgId: 'o2', ts: now }]);
     assert.ok(B.T.asgState(n, 'lan@x.com').fin, 'old screenshot counts for x1');
-    const o2 = B.T.allAsgs().find((a) => a.id === 'o2'); assert.ok(B.T.asgState(o2, 'lan@x.com').libFin, 'old I\'m done record (no screenshot) = Library turned in');
+    const o2 = B.T.allAsgs().find((a) => a.id === 'o2'); assert.ok(B.T.asgState(o2, 'lan@x.com').libSub && !B.T.asgState(o2, 'lan@x.com').fin, 'old I\'m done record (no screenshot) = Library turned in, but not complete without the exercise');
     const T = tea(); T.T.setAsg([OLD]); T.T.AG.cur = '7h30'; T.T.openForm('7h30', T.T.allAsgs()[0]); T.T.renderAsg(); dates(T); fill(T); T.T.saveAsg();
     const r = T.T.localAsg.find((a) => a.id === 'o1'); assert.ok(r.ext.length === 1 && r.ext[0].id === 'x1' && r.ext[0].link === 'https://old.example.com' && r.type === 'external', 're-saved without losing the task');
   });

@@ -1387,6 +1387,9 @@ mark.wch.act,mark.wch:focus-visible{outline:2px solid var(--accent);outline-offs
 .rmtip{position:absolute;right:0;top:calc(100% + 8px);width:min(300px,calc(100vw - 32px));z-index:30;background:var(--elev);border:1px solid var(--line-strong);box-shadow:var(--elev-shadow,0 8px 24px rgba(0,0,0,.15));border-radius:var(--r-md);padding:14px 16px;text-align:left}
 .rmtip h4{margin:0 0 6px;font-size:var(--fs-md)}.rmtip p{margin:0 0 10px;font-size:var(--fs-body);line-height:1.6;color:var(--ink)}
 @media (max-width:640px){.rmpal{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}.rmqn{flex:none}}
+.hwst{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;font-size:var(--fs-sm);color:var(--muted)}.hwst.ok{color:var(--good)}.hwst.no{color:var(--bad)}.hwst.warn{color:var(--warn);font-weight:700}
+.mk.wn{display:inline-flex;align-items:center;justify-content:center;width:1.2em;height:1.2em;border:1.5px solid currentColor;border-radius:50%;font-size:.8em;font-weight:800}
+.hwinc{margin:10px 0 0;padding:10px 12px;border:1px solid var(--warn);border-radius:var(--r-sm);font-size:var(--fs-body);line-height:1.6}
 .rmslot{width:100%;margin-top:12px;text-align:left;border:1.5px dashed var(--accent);background:var(--surface);border-radius:var(--r-sm);padding:.7rem .85rem;min-height:48px;font:inherit;font-size:var(--fs-md);color:var(--accent);font-weight:600;display:flex;gap:8px;align-items:center}
 .rmslot.has{border-style:solid;color:var(--ink);font-weight:500}
 .rmslot .arr{margin-left:auto;color:var(--muted);flex:none}
@@ -1921,8 +1924,12 @@ var qOf=function(exId,qid){var e=exOf(exId);if(!e)return null;for(var i=0;i<e.qs
 var tagOf=function(exId,qid){var q=qOf(exId,qid);return q?q.tag:null};
 var graded=function(e){return e&&(e.kind==='list'||e.kind==='cloze'||e.kind==='lesson'||e.kind==='reading-ms')};
 var exSub=function(e){return e.kind==='lesson'?'5-stage lesson · '+e.qs.length+' items':e.kind==='reading-ms'?'Reading lesson · 4 stages · '+e.qs.length+' items':e.kind==='writing'?'Writing task · min '+e.minWords+' words':(e.kind==='speaking'?'Parts 1 and 2':e.qs.length+' questions')};
+/* The first sample exercises written with the app (in this file, not in Firestore): Cam 14 · Test 1. SAMPLE_IDS = the list for
+   Admin › Library samples (inventory). LIB_HIDE = the ones hidden from the Library on the real site; EMPTY until the owner approves
+   the list (then put the approved ids here). Hiding never deletes: EXS keeps them for old attempts / grades / assignments. */
+var SAMPLE_IDS=['l1','l2','l3','r1','r2','r3','w1','s1','ra1'],LIB_HIDE=[];
 function exIds(b,t,s){
-  var base=(LIBMAP[b]&&LIBMAP[b][t]&&LIBMAP[b][t][s])||[];
+  var base=((LIBMAP[b]&&LIBMAP[b][t]&&LIBMAP[b][t][s])||[]).filter(function(id){return DEMO||LIB_HIDE.indexOf(id)<0});
   return base.concat(customEx.filter(function(c){return c.bookId===b&&c.testId===t&&c.skill===s}).sort(function(x,y){return (x.part||99)-(y.part||99)}).map(function(c){return c.id}));
 }
 function locOf(id){
@@ -2122,12 +2129,17 @@ function allAsgs(){return asgDocs.concat(localAsg).concat(demoAsgs()).map(normAs
 function currentAsg(cls){var n=Date.now();return allAsgs().filter(function(a){return a.cls===cls&&a.start<=n&&a.due>=n}).sort(function(a,b){return b.start-a.start})[0]||null}
 // the Library part was turned in ("I'm done!"): done flag, or an old record without screenshots (written by I'm done before 10/2026)
 function hwDone(email,id){return hwdoneDocs.concat(localHwdone).some(function(d){return d.email===email&&d.asgId===id&&(d.done===true||(!d.shot&&!d.shots))})}
-// status of one student for one assignment: each part (Library exercises done before the deadline, a screenshot per external task)
-// and the whole (fin = Library turned in AND every external task has a screenshot). A screenshot = submitted, never "correct".
+// status of one student for one assignment. Two separate things (11/2026):
+//  - completion = the real work: each Library exercise done before the deadline + a screenshot per external task.
+//    fin = every part done (libComp && extFin). This alone decides "complete", the % and "finished everything".
+//  - submission = the student pressed "I'm done!" for the Library part (libSub, from hwdone; an old record without screenshots
+//    was written by I'm done too). It is shown on its own and NEVER makes the work complete.
+//  turned = complete and (no Library part, or turned in): "All done" on Home, the homework XP. A screenshot = submitted, never "correct".
 function asgState(a,email,now){a=normAsg(a);now=now||Date.now();var due=effDue(a,email),ids=a.ex.filter(exOf),dm=doneMap(email,a.start,due.getTime()),sh=hwShots(hwRec(email,a.id));
   var X=a.ext.map(function(x){var t=sh[x.id]||null;return {x:x,s:t,late:!!(t&&t.ts>due.getTime())}});
-  var libFin=!ids.length||hwDone(email,a.id),extFin=X.every(function(t){return !!t.s}),libN=ids.filter(function(i){return dm[i]}).length;
-  return {a:a,due:due,ids:ids,dm:dm,pr:prog(ids,dm),X:X,over:due.getTime()<now,libFin:libFin,extFin:extFin,fin:(ids.length+X.length)>0&&libFin&&extFin,done:libN+X.filter(function(t){return !!t.s}).length,n:ids.length+X.length}}
+  var libSub=!!ids.length&&hwDone(email,a.id),extFin=X.every(function(t){return !!t.s}),libN=ids.filter(function(i){return dm[i]}).length,libComp=libN===ids.length;
+  var fin=(ids.length+X.length)>0&&libComp&&extFin;
+  return {a:a,due:due,ids:ids,dm:dm,pr:prog(ids,dm),X:X,over:due.getTime()<now,libSub:libSub,libComp:libComp,libFin:libComp&&(!ids.length||libSub),extFin:extFin,fin:fin,turned:fin&&(!ids.length||libSub),done:libN+X.filter(function(t){return !!t.s}).length,n:ids.length+X.length}}
 
 
 
@@ -2160,7 +2172,7 @@ function homeworkHTML(){
     .filter(function(x){if(!x.n)return false;if(!x.over)return true;return !x.fin&&((x.ids.length&&x.pr.d<x.pr.t)||!x.extFin)})
     .sort(function(a,b){return ((a.over?1:0)-(b.over?1:0))||(a.due-b.due)});
   var h='<h1 class="lock">Let\'s lock in</h1>';
-  HWTODO=items.filter(function(x){return !x.fin}).length;
+  HWTODO=items.filter(function(x){return !x.turned}).length;
   if(!items.length)return h+'<div class="hw"><p class="empty">You are all caught up. Nothing is due.</p></div>';
   items.forEach(function(x){h+=hwCardHTML(x)});
   return h;
@@ -2174,7 +2186,7 @@ function hwCardHTML(x){var a=x.a,p=passFor(U.email,a.id),miss=x.over&&!x.fin,sho
       return '<button class="lrow" data-act="nav" data-book="'+l.book+'" data-test="'+l.test+'" data-skill="'+l.skill+'" data-ex="'+id+'"><span><b>'+esc(e.title)+'</b></span>'+pcHTML(e,d,bad,bad?'Missed':'Waiting')+'</button>';
     }).join('')+xs.map(function(o){return extHwHTML(x,o.t,o.i)}).join('')+'</div>';
   if(p)h+='<p class="due" style="margin:10px 0 0">Extended with your '+PASS[p.kind].label+'.</p>';
-  h+=x.ids.length?actionsHTML(x):(x.fin?'<p class="okline">All done ✓ Nice work.</p>':'');
+  h+=x.ids.length?actionsHTML(x):(x.turned?'<p class="okline">All done ✓ Nice work.</p>':'');
   return h+'</div>'}
 // one external task (student): instructions, Open link, its own screenshot = Submitted (not a mark of correctness)
 // one external task (student) = one row titled with its Source ("External task" when empty), status on the right like an exercise.
@@ -2207,12 +2219,12 @@ document.addEventListener('change',function(e){var f=e.target,aid=f&&f.getAttrib
   if(file.size>15*1024*1024){HWUP[key]={err:'This picture is too big. Take a smaller screenshot.'};return renderLib()}
   HWUP[key]={busy:true,pct:0};renderLib();
   hwShrink(file).then(function(b){if(b.size>5*1024*1024)throw new Error('The picture is too big (5 MB at most).');return hwShotUpload(b,function(p){HWUP[key].pct=p;var bt=document.querySelector('[data-act="hw-shot"][data-asg="'+aid+'"][data-x="'+xid+'"]');if(bt)bt.textContent='Uploading… '+p+'%'})})
-    .then(function(d){var now=Date.now(),old=hwRec(U.email,aid),did=slug(U.email)+'_'+aid,asg=allAsgs().filter(function(x){return x.id===aid})[0],was=asg?asgState(asg,U.email).fin:false;
+    .then(function(d){var now=Date.now(),old=hwRec(U.email,aid),did=slug(U.email)+'_'+aid,asg=allAsgs().filter(function(x){return x.id===aid})[0],was=asg?asgState(asg,U.email).turned:false;
       var shots=hwShots(old);shots[xid]={id:d.id,url:d.url,ts:now};
       var rec={email:U.email,asgId:aid,ts:old&&old.ts||now,status:'submitted',shots:shots,updatedAt:now};
       if(shots.x1)rec.shot=shots.x1; // older app versions read "shot"
       if(old&&(old.done===true||(!old.shot&&!old.shots)))rec.done=true; // the Library part stays turned in
-      var fin=function(){HWUP[key]={};var now2=asg?asgState(asg,U.email).fin:true;if(!was&&now2)onHwDone(aid);renderLib();toast(now2?'Screenshot uploaded. Your homework is submitted.':'Screenshot uploaded. Finish the other parts to complete this homework.')};
+      var fin=function(){HWUP[key]={};var now2=asg?asgState(asg,U.email).turned:true;if(!was&&now2)onHwDone(aid);renderLib();toast(now2?'Screenshot uploaded. Your homework is submitted.':'Screenshot uploaded. Finish the other parts to complete this homework.')};
       var loc=function(){localHwdone=localHwdone.filter(function(x){return x.id!==did});localHwdone.push(Object.assign({id:did},rec));fin()};
       if(dbh)dbh.doc('hwdone/'+did).set(rec).then(function(){localHwdone=localHwdone.filter(function(x){return x.id!==did});localHwdone.push(Object.assign({id:did},rec));fin()},loc);else loc()})
     .catch(function(er){HWUP[key]={err:(er&&er.message)||'Upload failed. Try again.'};renderLib()})});
@@ -2223,8 +2235,9 @@ function passUsed(email,kind){var mk=monthKey(Date.now());return passesOf(email)
 function effDue(a,email){var p=passFor(email,a.id);return new Date(a.due+(p?PASS[p.kind].days*864e5:0))}
 function actionsHTML(x){
   var a=x.a,p=passFor(U.email,a.id);
-  if(x.fin)return '<p class="okline">All done ✓ Nice work.</p>';
+  if(x.turned)return '<p class="okline">All done ✓ Nice work.</p>';
   if(x.libFin&&!x.extFin)return '<p class="okline">Library exercises done ✓ Upload a screenshot for each external task to finish.</p>';
+  if(x.libSub&&!x.libComp)return '<p class="hwinc" role="status"><b>You turned this in</b>, but '+(x.pr.t-x.pr.d)+' of '+x.pr.t+' exercise'+(x.pr.t>1?'s are':' is')+' not finished yet. Finish '+(x.pr.t-x.pr.d>1?'them':'it')+' to complete the homework.</p>';
   var ready=x.pr&&x.pr.d>=x.pr.t,h='<div class="hwact">';
   if(!x.over)h+=ready?'<button class="btn done" data-act="imdone" data-asg="'+a.id+'" type="button">I\'m done!</button>':'<span class="muted hwleft">'+(x.pr.t-x.pr.d)+' of '+x.pr.t+' exercise'+(x.pr.t>1?'s':'')+' to do. “I\'m done!” appears when they are finished.</span>';
   if(!p)h+='<button class="btn more'+(ready?'':' sec')+'" data-act="needtime" data-asg="'+a.id+'" type="button">I need more time</button>';
@@ -4156,7 +4169,7 @@ function hwRows(a,only){
   return {ids:ids,ext:a.ext,rows:students().filter(function(s){return s.cls===a.cls&&(!only||only==='all'||s.email===only)}).map(function(s){
     var S=asgState(a,s.email,now),p=passFor(s.email,a.id);
     var cells=ids.map(function(i){return S.dm[i]?1:(S.over?0:-1)}).concat(S.X.map(function(t){return t.s?1:(S.over?0:-1)}));
-    return {name:s.name,email:s.email,cells:cells,X:S.X,all:cells.length>0&&cells.every(function(c){return c===1}),none:cells.every(function(c){return c!==1}),over:S.over,pass:p?p.kind:null,fin:S.fin,shot:S.X[0]&&S.X[0].s||null,late:!!(S.X[0]&&S.X[0].late)};
+    return {name:s.name,email:s.email,cells:cells,X:S.X,all:cells.length>0&&cells.every(function(c){return c===1}),none:cells.every(function(c){return c!==1}),over:S.over,pass:p?p.kind:null,fin:S.fin,sub:S.libSub,hasLib:S.ids.length>0,done:S.done,n:S.n,shot:S.X[0]&&S.X[0].s||null,late:!!(S.X[0]&&S.X[0].late)};
   })};
 }
 var MKI={'1':'<span class="mk ok" aria-label="Done" title="Done">✓</span>','0':'<span class="mk no" aria-label="Not done" title="Not done">✕</span>','-1':'<span class="mk pd" aria-label="Not yet" title="Not yet">–</span>'};
@@ -4167,6 +4180,12 @@ function extSubsHTML(a){a=normAsg(a);var d=hwRows(a);if(!d.rows.length)return '<
     d.rows.sort(function(x,y){return (x.fin?1:0)-(y.fin?1:0)||x.name.localeCompare(y.name)}).map(function(r){var u=r.shot&&(/^\/api\/image\/[A-Za-z0-9_-]{22}$/.test(r.shot.url)||/^blob:/.test(r.shot.url))?r.shot.url:'';
       return '<tr><td>'+esc(r.name)+'</td><td>'+(r.fin?'<span class="pill ok">'+(r.late?'Submitted late':'Submitted')+'</span>':'<span class="pill'+(r.over?' bad':'')+'">'+(r.over?'Missing':'Not submitted')+'</span>')+'</td><td class="mono">'+(r.shot?esc(fmtDue(new Date(r.shot.ts))):'—')+'</td>'+
         '<td>'+(u?'<a class="hwthumb sm" href="'+esc(u)+'" target="_blank" rel="noopener" aria-label="Open the screenshot of '+esc(r.name)+'"><img src="'+esc(u)+'" alt=""></a>':'—')+'</td></tr>'}).join('')+'</tbody></table></div>'}
+// Submitted ("I'm done!") and Completion (n / m parts) of one row, in words with an icon, never by colour alone
+function hwSubCell(r){return r.sub?'<span class="hwst ok">'+MKI['1']+' Submitted</span>':'<span class="hwst">'+MKI['-1']+' Not submitted</span>'}
+function hwCompCell(r){var t=r.done+'/'+r.n;
+  if(r.fin)return '<span class="hwst ok">'+MKI['1']+' Complete ('+t+')</span>';
+  if(r.sub)return '<span class="hwst warn"><span class="mk wn" aria-hidden="true">!</span> Incomplete ('+t+')</span>';
+  return '<span class="hwst'+(r.over?' no':'')+'">'+(r.over?MKI['0']:MKI['-1'])+' '+(r.done?'In progress':r.over?'Not done':'Not started')+' ('+t+')</span>'}
 function hwMatrixHTML(a,only){
   a=normAsg(a);
   if(!a.ex.filter(exOf).length&&a.ext.length===1)return extSubsHTML(a);
@@ -4174,12 +4193,13 @@ function hwMatrixHTML(a,only){
   return '<div class="scroll"><table class="hmx"><thead><tr><th>Student</th>'+
     d.ids.map(function(id){var e=exOf(id);return '<th class="c" title="'+esc(e.title)+'">'+SKL[e.skill]+' · '+esc(e.title)+'</th>'}).join('')+
     a.ext.map(function(x,i){return '<th class="c" title="'+esc(x.link)+'">'+esc(x.src||'External task'+(a.ext.length>1?' '+(i+1):''))+'</th>'}).join('')+
-    '<th class="c" title="Every part done (Library turned in with I\'m done, every external task has a screenshot)">Complete</th></tr></thead><tbody>'+d.rows.map(function(r){
+    (d.ids.length?'<th class="c" title="The student pressed I\'m done! for the Library exercises. It does not mean every exercise is finished.">Submitted</th>':'')+
+    '<th class="c" title="Parts really done: Library exercises finished before the deadline + a screenshot for each external task">Completion</th></tr></thead><tbody>'+d.rows.map(function(r){
     var nl=d.ids.length;
     return '<tr><td>'+esc(r.name)+(r.pass?' <small style="display:inline;color:var(--muted)">'+PASS[r.pass].label+'</small>':'')+'</td>'+r.cells.map(function(c,j){
       if(j<nl)return '<td class="c">'+MKI[c]+'</td>';var t=r.X[j-nl],u=t&&t.s?hwImg(t.s.url):'';
       return '<td class="c">'+(t&&t.s?(u?'<a href="'+esc(u)+'" target="_blank" rel="noopener" aria-label="Screenshot of '+esc(r.name)+(t.late?', submitted late':'')+'" title="'+(t.late?'Submitted late · ':'Submitted · ')+esc(fmtDue(new Date(t.s.ts)))+'">'+MKI['1']+'</a>':MKI['1']):MKI[c])+'</td>'}).join('')+
-      '<td class="c">'+(r.fin?MKI['1']:MKI['-1'])+'</td></tr>';
+      (d.ids.length?'<td class="c">'+hwSubCell(r)+'</td>':'')+'<td class="c">'+hwCompCell(r)+'</td></tr>';
   }).join('')+'</tbody></table></div>';
 }
 function asgRow(a){
@@ -7061,7 +7081,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-11-04c'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-11-04d'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(uiAct(a,t))return true;
@@ -8435,6 +8455,19 @@ function atPracticeHTML(ai){
    learner sees no explanation there). A broken meaning / paraphrase / distractor cannot be emptied: open the lesson in Create and use
    Review › Fix with AI. */
 var RDC={rows:null,ts:0};
+function smpInventory(){var AS=asgDocs.concat(localAsg).map(normAsg),AT=realAttempts();
+  return SAMPLE_IDS.map(function(id){var e=EXS[id],l=null;for(var b in LIBMAP)for(var t in LIBMAP[b])for(var k in LIBMAP[b][t])if(LIBMAP[b][t][k].indexOf(id)>=0)l={book:b,test:t,skill:k};
+    var at=AT.filter(function(a){return a.ex===id}),seed=at.filter(function(a){return a.seeded||/^seed_/.test(a.id||'')}).length,asg=AS.filter(function(a){return a.ex.indexOf(id)>=0});
+    return {id:id,title:e?e.title:'(missing)',skill:e?e.skill:'',where:l?locLabel(l):'Not in the Library (demo / submissions only)',
+      src:'Written in index.html (EXS.'+id+(l?' + LIBMAP':'')+'), not stored in Firestore',asg:asg.map(function(a){return asgName(a)+' ('+a.cls+')'}),
+      att:at.length-seed,seed:seed,graded:at.filter(function(a){return !a.seeded&&a.grade}).length,hidden:LIB_HIDE.indexOf(id)>=0}})}
+function smpText(R){return R.map(function(r){return r.id+' · '+r.title+' · '+r.where+' · '+r.src+' · assignments: '+(r.asg.length?r.asg.join('; '):'none')+' · student attempts: '+r.att+' (graded '+r.graded+') · tester sample attempts: '+r.seed+(r.hidden?' · hidden':'')}).join('\n')}
+function adSamplesHTML(){var R=smpInventory(),ref=R.filter(function(r){return r.asg.length||r.att}).length;
+  return '<div class="card"><h3>Library samples</h3><p class="muted">The first sample exercises of the app. They are written in the code, so nothing is stored in Firestore and nothing reappears by itself. This page only reads. Nothing is hidden or deleted until you approve the list.</p>'+
+    '<p class="saved" aria-live="polite">'+R.length+' samples · '+ref+' used by real assignments or student work · '+(LIB_HIDE.length?LIB_HIDE.length+' hidden from the Library':'none hidden')+'</p>'+
+    '<div class="tscr"><table class="dtbl"><thead><tr><th>Id</th><th>Exercise</th><th>Library place</th><th>Used by assignments</th><th>Student attempts</th><th>Tester samples</th></tr></thead><tbody>'+R.map(function(r){
+      return '<tr><td class="mono">'+esc(r.id)+'</td><td>'+esc(r.title)+'</td><td>'+esc(r.where)+'</td><td>'+(r.asg.length?esc(r.asg.join(', ')):'—')+'</td><td class="mono">'+r.att+(r.graded?' ('+r.graded+' graded)':'')+'</td><td class="mono">'+r.seed+'</td></tr>'}).join('')+'</tbody></table></div>'+
+    '<label class="field" for="smpTxt">Inventory (to send for approval)<textarea id="smpTxt" rows="5" readonly>'+esc(smpText(R))+'</textarea></label></div>'}
 function rdcScan(){var rows=[];customDocs.concat(localCustom).forEach(function(d){if(!d||!d.rlesson)return;var lv=d.rlevels&&typeof d.rlevels==='object'?d.rlevels:{};
     [['medium',d.rlesson],['easy',lv.easy],['hard',lv.hard]].forEach(function(v){if(!v[1]||typeof v[1]!=='object')return;
       rmQualityItems(v[1]).forEach(function(x){rows.push({id:d.id,docId:d.docId||'',title:d.title||'(no title)',lv:v[0],f:x.f,m:x.m})})})});
@@ -8477,12 +8510,12 @@ function adAiTestRun(){
 }
 function renderAdmin(){
   adMenuClose(false);var el=$('#v-admin');if(!U||!U.adm){el.innerHTML='';return}
-  var subs=[['guide','Guide'],['users','Users'],['teachers','Teachers'],['students','Students'],['sheet','Google Sheet'],['xp','XP'],['season','Season'],['aitest','AI test'],['rdcheck','Reading check'],['assist','Assistants'],['me','My account']];
+  var subs=[['guide','Guide'],['users','Users'],['teachers','Teachers'],['students','Students'],['sheet','Google Sheet'],['xp','XP'],['season','Season'],['aitest','AI test'],['rdcheck','Reading check'],['samples','Library samples'],['assist','Assistants'],['me','My account']];
   var needList=AD.sub==='users'||AD.sub==='teachers';
   if(needList&&!AD.locked&&!AD.users&&!AD.loadErr)adLoad();
   if(AD.sub==='sheet'&&!AD.locked&&!AD.sheet&&!AD.shErr)adSheetLoad();
   // Students = the old Students tab (section #v-roster, shown under this one); XP = the old Settings tab. Neither needs the admin key.
-  var body=AD.sub==='guide'?adGuideHTML():AD.sub==='students'?'':AD.sub==='xp'?xpsHTML():AD.locked?adUnlockHTML():AD.sub==='teachers'?adTeachersHTML():AD.sub==='sheet'?adSheetHTML():AD.sub==='aitest'?adAiTestHTML():AD.sub==='rdcheck'?adRdCheckHTML():AD.sub==='season'?adSeasonHTML():AD.sub==='me'?adMeHTML():AD.sub==='assist'?adAssistHTML():adUsersHTML();
+  var body=AD.sub==='guide'?adGuideHTML():AD.sub==='students'?'':AD.sub==='xp'?xpsHTML():AD.locked?adUnlockHTML():AD.sub==='teachers'?adTeachersHTML():AD.sub==='sheet'?adSheetHTML():AD.sub==='aitest'?adAiTestHTML():AD.sub==='rdcheck'?adRdCheckHTML():AD.sub==='samples'?adSamplesHTML():AD.sub==='season'?adSeasonHTML():AD.sub==='me'?adMeHTML():AD.sub==='assist'?adAssistHTML():adUsersHTML();
   el.innerHTML='<div class="pad adm"><div class="sechead"><h2>Admin</h2></div>'+
     (DEMO?'<p class="adm-demo" role="note">Demo: changes are not saved.</p>':'')+
     adNavHTML(subs)+
@@ -8833,7 +8866,7 @@ function adMeHTML(){
     '<div class="actions" style="margin-top:6px"><button class="btn pri" data-act="ad-mypw" type="button">Change password</button></div></div>';
 }
 // Admin sub-pages grouped: People · Classes & data · Gamification · Tools (the ids and pages are the same as before)
-var AD_NAV=[['People',['users','teachers','assist','students']],['Classes & data',['sheet']],['Gamification',['xp','season','*prize']],['Tools',['aitest','rdcheck','guide','me']]];
+var AD_NAV=[['People',['users','teachers','assist','students']],['Classes & data',['sheet']],['Gamification',['xp','season','*prize']],['Tools',['aitest','rdcheck','samples','guide','me']]];
 function adNavHTML(subs){var nm={};subs.forEach(function(s){nm[s[0]]=s[1]});
   return '<nav class="adnav" aria-label="Admin sections">'+AD_NAV.map(function(g){return '<div class="adng"><span class="adngl">'+esc(g[0])+'</span><div class="subtabs" role="tablist" aria-label="'+esc(g[0])+'">'+g[1].map(function(k){
     if(k==='*prize')return '<button type="button" data-act="tab" data-tab="prize" title="Opens the Prizes page">Prizes</button>';
