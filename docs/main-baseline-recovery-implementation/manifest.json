@@ -1,0 +1,175 @@
+{
+  "main": "5a0c18b3fa35c6ae0f284cc2e5e7c7e5355152ed",
+  "feature": "9a6c095f271e5435f281d1d683d6f6a928434214",
+  "reference": "a5a2a5aca435706c96fe78eaf5e9d7eecb1016af",
+  "order": [
+    "admin",
+    "reading",
+    "homework",
+    "assistant",
+    "cleanup",
+    "writing"
+  ],
+  "patches": [
+    {
+      "group": "admin",
+      "sha256": "975ba30167b2c6c84df0fd7669341459b77e5620a66fb4604f05b529088b5d2b",
+      "noSourceChange": false,
+      "hashes": {
+        "functions/api/[[path]].js": "bab14f510ab995b6aad94ed3e6b4704476f22d985244aff4908d874afcb9b530",
+        "index.html": "f3e1c6d57cd68933026f43bfcb63abf58e1a5ef25257fd2b856abb3872bfd48e"
+      }
+    },
+    {
+      "group": "reading",
+      "sha256": "00db91f29989a240b1b6d2ff0b9104dd82bac4bbe10a56f14a4518cfe692c6c8",
+      "noSourceChange": false,
+      "hashes": {
+        "functions/api/[[path]].js": "e3f0e768d065339a212d482178fb6cf343bbb6e400b0424677dcd613fcb4e55b",
+        "index.html": "f3e1c6d57cd68933026f43bfcb63abf58e1a5ef25257fd2b856abb3872bfd48e"
+      }
+    },
+    {
+      "group": "homework",
+      "sha256": "7429943da75b02b5ca85f55b2e85fb920b880dc4aa8227900c948486a84124f0",
+      "noSourceChange": false,
+      "hashes": {
+        "functions/api/[[path]].js": "9006dd51d2411a6a294ae97be3422d4dc537500f14f1a59cc2f2ae2195ea141b",
+        "index.html": "c8f5cc5de951c266b04e6850c1054d24eda0e83d4ff2750d62a9d2d7668e7f2d"
+      }
+    },
+    {
+      "group": "assistant",
+      "sha256": "11d8fafab043ac5071a4757d7d040ee0137365a4664ce6157074ddcfb8ad6803",
+      "noSourceChange": false,
+      "hashes": {
+        "functions/api/[[path]].js": "3d56a5361c216341d044703e0dfff240861001204a1126c55a3bb2cc1cf65c49",
+        "index.html": "c8f5cc5de951c266b04e6850c1054d24eda0e83d4ff2750d62a9d2d7668e7f2d"
+      }
+    },
+    {
+      "group": "cleanup",
+      "sha256": "d32652cf86caeea22709bd34dba02d58355fe4b95cf34baa344dcc0a1f962c15",
+      "noSourceChange": false,
+      "hashes": {
+        "functions/api/[[path]].js": "fb2efde0b8568d6b33104942bca2ffab6a4a672100295c490a28fb0ca53d0737",
+        "index.html": "4e534b8095e3e9a873a48a772296fad655d3e75588ddaa6c45117da72d107670"
+      }
+    },
+    {
+      "group": "writing",
+      "sha256": "f6318f88dc4e0a8254ecc04b4d84b0c4645017cab07802049a2614bf920d7df1",
+      "noSourceChange": true,
+      "hashes": {
+        "functions/api/[[path]].js": "fb2efde0b8568d6b33104942bca2ffab6a4a672100295c490a28fb0ca53d0737",
+        "index.html": "4e534b8095e3e9a873a48a772296fad655d3e75588ddaa6c45117da72d107670"
+      }
+    }
+  ],
+  "runs": [
+    {
+      "label": "admin-1",
+      "commands": 28,
+      "passed": 16,
+      "counts": {
+        "passed": 406,
+        "total": 436
+      }
+    },
+    {
+      "label": "assistant-1",
+      "commands": 28,
+      "passed": 25,
+      "counts": {
+        "passed": 425,
+        "total": 436
+      }
+    },
+    {
+      "label": "baseline",
+      "commands": 28,
+      "passed": 13,
+      "counts": {
+        "passed": 402,
+        "total": 436
+      }
+    },
+    {
+      "label": "cleanup-1",
+      "commands": 28,
+      "passed": 25,
+      "counts": {
+        "passed": 426,
+        "total": 436
+      }
+    },
+    {
+      "label": "cleanup-2",
+      "commands": 28,
+      "passed": 25,
+      "counts": {
+        "passed": 426,
+        "total": 436
+      }
+    },
+    {
+      "label": "homework-1",
+      "commands": 28,
+      "passed": 21,
+      "counts": {
+        "passed": 415,
+        "total": 436
+      }
+    },
+    {
+      "label": "homework-2",
+      "commands": 28,
+      "passed": 22,
+      "counts": {
+        "passed": 416,
+        "total": 436
+      }
+    },
+    {
+      "label": "reading-1",
+      "commands": 28,
+      "passed": 16,
+      "counts": {
+        "passed": 406,
+        "total": 436
+      }
+    },
+    {
+      "label": "reading-2",
+      "commands": 28,
+      "passed": 20,
+      "counts": {
+        "passed": 414,
+        "total": 436
+      }
+    },
+    {
+      "label": "reading-3",
+      "commands": 28,
+      "passed": 21,
+      "counts": {
+        "passed": 415,
+        "total": 436
+      }
+    },
+    {
+      "label": "writing-1",
+      "commands": 28,
+      "passed": 25,
+      "counts": {
+        "passed": 426,
+        "total": 436
+      }
+    }
+  ],
+  "baselineClean": true,
+  "patchReplayExact": true,
+  "featureRuntimeUnchanged": true,
+  "writingRegionUnchanged": true,
+  "protectedAssetsUnchanged": true
+}

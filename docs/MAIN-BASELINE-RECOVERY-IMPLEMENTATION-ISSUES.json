@@ -1,0 +1,18 @@
+{
+  "main": "5a0c18b3fa35c6ae0f284cc2e5e7c7e5355152ed",
+  "featureBeforeDelivery": "9a6c095f271e5435f281d1d683d6f6a928434214",
+  "overall": "BLOCKED_FOR_INTEGRATION_RELEASE",
+  "approvedCandidateScopes": {"admin":"PASS","reading":"PASS","homework":"PASS","assistant":"PASS","cleanupPreview":"PASS","writing":"PASS_ALREADY_PRESENT"},
+  "finalMainQA": {"passedCommands":25,"totalCommands":28,"passedAssertions":426,"totalAssertions":436,"unchangedOriginalTests":true},
+  "additionalQA": {"passed":5,"total":5},
+  "vocabSmoke": {"unitPassed":129,"unitTotal":130,"unitStatus":"FAIL","batchBrowser":"PASS","screenshots":24},
+  "issues": [
+    {"id":"CLEANUP-DELETION","status":"BLOCKED_SCOPE","tests":["data-cleanup.test.js: 2 destructive expectations","server-purge.test.js: 8 expectations"],"decision":"Keep preview-only; deletion requires separate explicit authorization."},
+    {"id":"WRITING-EDITORIAL","status":"TEACHER_REVIEW","test":"lm-check.js --release","pending":{"unit0":206,"unit2":226},"decision":"Review content; do not bypass release gate."},
+    {"id":"VOCAB-INTEGRATION-BUILDER","status":"FAIL","test":"vocab-integration.test.js: readiness candidate preserves latest-main Writing region","cause":"Broad latest-main Learning Materials region replacement removes vocabMaterialsHTML from the generated candidate.","proposal":"Separate narrow integration-tool repair preserving main Writing and Vocab-specific Library helpers; retain all assertions.","runtimeChanged":false},
+    {"id":"VOCAB-EDITORIAL","status":"TEACHER_REVIEW","drafts":102,"automaticallyApproved":0,"automaticallyPublished":0},
+    {"id":"STAGING-REAL-AUTH","status":"NOT_TESTED","decision":"Separate authorized synthetic staging auth/IAM/storage verification; no production data."},
+    {"id":"REAL-SOURCE-APPLICATION","status":"AWAITING_AUTHORIZATION","decision":"Proposals applied only to detached candidate/replay; no application source committed."}
+  ],
+  "evidence": "main-baseline-recovery-implementation/manifest.json"
+}

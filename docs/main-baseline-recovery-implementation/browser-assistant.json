@@ -1,0 +1,46 @@
+{
+  "group": "assistant",
+  "status": "PASS",
+  "checks": [
+    {
+      "role": "student",
+      "width": 390,
+      "theme": "dark",
+      "status": "PASS"
+    },
+    {
+      "role": "student",
+      "width": 1280,
+      "theme": "light",
+      "status": "PASS"
+    },
+    {
+      "role": "tester",
+      "width": 390,
+      "theme": "dark",
+      "status": "PASS"
+    },
+    {
+      "role": "tester",
+      "width": 1280,
+      "theme": "light",
+      "status": "PASS"
+    },
+    {
+      "role": "admin",
+      "width": 390,
+      "theme": "dark",
+      "status": "PASS"
+    },
+    {
+      "role": "admin",
+      "width": 1280,
+      "theme": "light",
+      "status": "PASS"
+    }
+  ],
+  "limitations": [
+    "Demo identities and local demo writes only; browser smoke is not real-token proof.",
+    "Detailed API/Reading/Homework behavior is verified by original main scripts and candidate security tests."
+  ]
+}

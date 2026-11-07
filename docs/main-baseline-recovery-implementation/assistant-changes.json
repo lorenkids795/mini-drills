@@ -1,0 +1,20 @@
+{
+  "group": "assistant",
+  "source": "a5a2a5aca435706c96fe78eaf5e9d7eecb1016af",
+  "restored": [
+    "hwaData",
+    "hwaScope",
+    "hwaStudents",
+    "hwaKey",
+    "hwaNormAsg",
+    "hwaExt",
+    "hwaStatus",
+    "PASS_DAYS",
+    "hwaShots",
+    "hwaAsg",
+    "hwaNote",
+    "HWA_FOLLOW",
+    "adminAssistants"
+  ],
+  "method": "Selected top-level symbols + named dependencies; current functions preserved except explicitly listed function-sized changes. No whole-file restoration."
+}

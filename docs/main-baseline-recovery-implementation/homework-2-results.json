@@ -1,0 +1,402 @@
+{
+  "main": "5a0c18b3fa35c6ae0f284cc2e5e7c7e5355152ed",
+  "label": "homework-2",
+  "commands": 28,
+  "passedCommands": 22,
+  "failedCommands": 6,
+  "counts": {
+    "passed": 416,
+    "total": 436
+  },
+  "sourceUnchanged": true,
+  "changedPaths": [
+    "functions/api/[[path]].js",
+    "index.html"
+  ],
+  "testsUnmodified": true,
+  "results": [
+    {
+      "command": "tests/admin-actions.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 9,
+        "total": 9
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/admin-actions.test.js.txt",
+      "logSha256": "546b9ad3e06aacce5e9f9fbd6fb82c92d3e4ab436afda27fddf4276d2c9306cb"
+    },
+    {
+      "command": "tests/admin-kick.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 52,
+        "total": 52
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/admin-kick.test.js.txt",
+      "logSha256": "b7766c958b392365f25844fd9b6b962f5a6cf2922f91480f82bc38908015dd32"
+    },
+    {
+      "command": "tests/admin-users-groups.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 6,
+        "total": 6
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/admin-users-groups.test.js.txt",
+      "logSha256": "5ea0c14704a241ec5555f51c95ea5c6c73c948c45b0b0a4dae85f9c2ba13243f"
+    },
+    {
+      "command": "tests/chart-facts.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 56,
+        "total": 56
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/chart-facts.test.js.txt",
+      "logSha256": "f0890299de22c9dd67de45348545646c0e04238f273ddccc9746c1e27ad99600"
+    },
+    {
+      "command": "tests/create-reading-ui.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 9,
+        "total": 9
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/create-reading-ui.test.js.txt",
+      "logSha256": "a94e0c574161108c58dba7ce6d0ae337563ae04ed7adf8e66ae9371d7ccab311"
+    },
+    {
+      "command": "tests/dash-join-mark.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 11,
+        "total": 11
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/dash-join-mark.test.js.txt",
+      "logSha256": "9c9c3bd75fa7d5c2862b3ca635c1197776b772e2935d098ad7d22af96c54876e"
+    },
+    {
+      "command": "tests/data-cleanup.test.js",
+      "status": "FAIL",
+      "exitCode": 1,
+      "counts": {
+        "passed": 12,
+        "total": 15
+      },
+      "error": null,
+      "failures": [
+        "FAIL server preview (dry run): lists only emails without a roster row that are not staff; same name \"Cherry\" on a live student is kept; nothing deleted -> adminOrphans is not defined",
+        "FAIL server purge: deletes every spelling of that email in all learning collections + profile, writes an audit row; live student, tester and staff untouched; running again is refused (idempotent) -> adminOrphans is not defined",
+        "FAIL server purge refuses a live student, a tester, a teacher and a bad email -> adminOrphans is not defined"
+      ],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/data-cleanup.test.js.txt",
+      "logSha256": "d8e76b8046d92aba063e78be5060d2376b1a3bc9d83a81dd8519b96f9314bd06"
+    },
+    {
+      "command": "tests/hw-assistant.test.js",
+      "status": "FAIL",
+      "exitCode": 1,
+      "counts": {
+        "passed": 6,
+        "total": 13
+      },
+      "error": null,
+      "failures": [
+        "FAIL server: roleOf gives the assistant role (never student); only the assistant role opens /api/hwa -> hwaData is not defined",
+        "FAIL server: data = only the allowed classes; no emails; testers and removed students left out; statuses -> hwaData is not defined",
+        "FAIL server: statuses = on time / late / missing / pending / extended by a late pass -> hwaData is not defined",
+        "FAIL server: assignments only for own classes (forged class refused, other class assignment refused); cancel -> hwaData is not defined",
+        "FAIL server: revoking a class / removing / pausing works at once (next call) -> hwaData is not defined",
+        "FAIL server: notes only for students of own classes; follow-up status kept; stored by the server -> hwaData is not defined",
+        "FAIL server whoami: the role the server gives NOW (assistant / student / none), from the ID token, never from the request body -> hwaData is not defined"
+      ],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/hw-assistant.test.js.txt",
+      "logSha256": "e87d9f67466108c8fd5935791d1c58f178faedfba0c79f098b6f2be83ebf98a8"
+    },
+    {
+      "command": "tests/hw-external.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 7,
+        "total": 7
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/hw-external.test.js.txt",
+      "logSha256": "b750b50f923a13f4ed106da058e99fbee6dca12d4458c2363d5e57743a03936e"
+    },
+    {
+      "command": "tests/hw-mixed.test.js",
+      "status": "FAIL",
+      "exitCode": 1,
+      "counts": {
+        "passed": 13,
+        "total": 14
+      },
+      "error": null,
+      "failures": [
+        "FAIL server: assistant saves Library + several links for its own class; bad link refused by position; status needs every part -> hwaAsg is not defined"
+      ],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/hw-mixed.test.js.txt",
+      "logSha256": "71bbff8941657a1d62c25f9fa20054bb1d0f8f703f126435e71b9a60b1fd1a60"
+    },
+    {
+      "command": "tests/hw-submission.test.js",
+      "status": "FAIL",
+      "exitCode": 1,
+      "counts": {
+        "passed": 9,
+        "total": 10
+      },
+      "error": null,
+      "failures": [
+        "FAIL 8. aggregates agree: hwStatus %, hwRows \"all\" (Dashboard) and the Completion column use the same parts -> Homework Assistant counts real attempts, not the I'm done flag"
+      ],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/hw-submission.test.js.txt",
+      "logSha256": "ab0e0da7dcf9b2e421ac8fb50e76eac5fc6d96fc65678e43de5e1003c771d366"
+    },
+    {
+      "command": "tests/lm-access.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 9,
+        "total": 9
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/lm-access.test.js.txt",
+      "logSha256": "1be0a8158cb9523149c00a8d69a3521ba74f86ac10647ced5920f317778b536b"
+    },
+    {
+      "command": "tests/lm-meta.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 23,
+        "total": 23
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/lm-meta.test.js.txt",
+      "logSha256": "ed15cfc5b97a96427d3e792dcb8d7011ed5b7bad9a2590f14ccc25431c222c7e"
+    },
+    {
+      "command": "tests/lm-unit0.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 27,
+        "total": 27
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/lm-unit0.test.js.txt",
+      "logSha256": "1c6ba11b78aac14354fc37802c4fd5c4cec5310c81d5ec962e0e8ea6c4175c16"
+    },
+    {
+      "command": "tests/lm-unit2-ui.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 65,
+        "total": 65
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/lm-unit2-ui.test.js.txt",
+      "logSha256": "5fa5315567658cc5eace729aa94bc72d0fe268ee194ad6112fa09f21531f04d3"
+    },
+    {
+      "command": "tests/misc.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 6,
+        "total": 6
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/misc.test.js.txt",
+      "logSha256": "20213ef1a45792c7278648b84ffdb827ae0cbca1397698ccf7f8dbce314e7888"
+    },
+    {
+      "command": "tests/reading-gen.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 14,
+        "total": 14
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/reading-gen.test.js.txt",
+      "logSha256": "44ab0cec56e46013d605365c91d282a8f5fcf2fe4f8bc8dc3d035ec2345e0624"
+    },
+    {
+      "command": "tests/reading-import.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 10,
+        "total": 10
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/reading-import.test.js.txt",
+      "logSha256": "736a460542271becacdc62ddb3dd2614d705691c0ee1c0ba524207c51a00e387"
+    },
+    {
+      "command": "tests/reading-review.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 10,
+        "total": 10
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/reading-review.test.js.txt",
+      "logSha256": "41e3c02f8fda2030a05b3862a44485a1d8f897d9ebc2ebc59f1d0295d3c65c3f"
+    },
+    {
+      "command": "tests/reading-workspace.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 12,
+        "total": 12
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/reading-workspace.test.js.txt",
+      "logSha256": "2ef57ed129d982a69b5b680eb9bc14af98d606b4ddf4faaaa3a9249e8f2eb054"
+    },
+    {
+      "command": "tests/reading.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 12,
+        "total": 12
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/reading.test.js.txt",
+      "logSha256": "c2b4d984def8b2c3b655738faa96b5a16f0c2b4175fccf029e8c23b271eba61d"
+    },
+    {
+      "command": "tests/server-purge.test.js",
+      "status": "FAIL",
+      "exitCode": 1,
+      "counts": {
+        "passed": 0,
+        "total": 8
+      },
+      "error": null,
+      "failures": [
+        "FAIL purgeStudent deletes every learning doc of that email (6 collections + profile) -> purgeStudent is not defined",
+        "FAIL purgeStudent keeps other students, handed-out codes and the wins marquee -> purgeStudent is not defined",
+        "FAIL purge = one query per collection (stays far below the Workers sub-request limit) -> purgeStudent is not defined",
+        "FAIL adminKick of a student: account gone, off:=kicked, and all learning data deleted -> purgeStudent is not defined",
+        "FAIL adminKick of a teacher does NOT delete learning data (marking and assignments stay) -> purgeStudent is not defined",
+        "FAIL adminClassDel deletes the class assignments, names and settings, reports remaining roster rows -> purgeStudent is not defined",
+        "FAIL adminClassDel needs a class name -> purgeStudent is not defined",
+        "FAIL route admin/classdel is wired behind the admin key -> The expression evaluated to a falsy value:"
+      ],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/server-purge.test.js.txt",
+      "logSha256": "dcdc0d040224ea1a345b7d4e6b26bc3b8c8816b70ec8a9de8bfed68c98b4e7a1"
+    },
+    {
+      "command": "tests/sign-in.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 12,
+        "total": 12
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/sign-in.test.js.txt",
+      "logSha256": "5b88da94facd8ce7ca0805853fb6e0aba6db294d410f7f4098f1e610a8619f00"
+    },
+    {
+      "command": "tests/ui-audit.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 15,
+        "total": 15
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/ui-audit.test.js.txt",
+      "logSha256": "17c8e18ac7bff5df4025365af986314db2aa9caaa7eb03ba8739c627cded3f20"
+    },
+    {
+      "command": "tests/ui-pass.test.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": {
+        "passed": 11,
+        "total": 11
+      },
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/ui-pass.test.js.txt",
+      "logSha256": "07883ea466d0f38070627c9c8307a0e7bfd103d819db6be5f61a9dcf68078ef4"
+    },
+    {
+      "command": "tests/contrast.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": null,
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/contrast.js.txt",
+      "logSha256": "4d081042089e28a39949ab1a73d813535e5c2413aed1a669566fcaceb4d0d53f"
+    },
+    {
+      "command": "tests/contrast-rules.js",
+      "status": "PASS",
+      "exitCode": 0,
+      "counts": null,
+      "error": null,
+      "failures": [],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/contrast-rules.js.txt",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": "tests/lm-check.js --release",
+      "status": "FAIL",
+      "exitCode": 1,
+      "counts": null,
+      "error": null,
+      "failures": [
+        "  - 226 item(s) still waiting for owner review (pending).",
+        "  - 206 item(s) still waiting for owner review (pending)."
+      ],
+      "log": "qa-artifacts/recovery-implementation/homework-2-results/lm-check.js.txt",
+      "logSha256": "8ae44ee91f60328720075f3b4897b1e26a7f8b4b913e04c3913f9f9bd977816e"
+    }
+  ]
+}

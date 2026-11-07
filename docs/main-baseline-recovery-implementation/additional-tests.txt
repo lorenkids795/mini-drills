@@ -1,0 +1,13 @@
+✔ uploaded pending screenshot does not submit; explicit successful Submit persists once (58.3458ms)
+✔ failed database submission keeps pending screenshot and cannot mark turned in; retry succeeds (14.8064ms)
+✔ pending screenshot cannot be submitted by another account or class (11.6744ms)
+✔ signed synthetic ID tokens: signature, audience, issuer, expiry; assistant revocation and forged role (166.5164ms)
+✔ cleanup preview protects exact live/staff/tester/assistant emails and never writes; all purge operations denied (12.2305ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 314.7551

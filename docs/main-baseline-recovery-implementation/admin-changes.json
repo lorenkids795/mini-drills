@@ -1,0 +1,19 @@
+{
+  "group": "admin",
+  "source": "a5a2a5aca435706c96fe78eaf5e9d7eecb1016af",
+  "restored": [
+    "adminTester",
+    "seedTester",
+    "joinLookup",
+    "fsQueryDocs",
+    "whoami",
+    "idUser",
+    "firebaseKeys",
+    "FB_KEYS",
+    "needSignIn",
+    "newStaffKey",
+    "staffUnlock",
+    "assistMap"
+  ],
+  "method": "Selected top-level symbols + named dependencies; current functions preserved except explicitly listed function-sized changes. No whole-file restoration."
+}

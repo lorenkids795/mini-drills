@@ -1,0 +1,235 @@
+{
+  "schemaVersion": 1,
+  "timestampUTC": "2026-11-05T17:02:54.754Z",
+  "timestampLocal": "2026-11-06 00:02:54 GMT+7",
+  "branch": "feature/vocab-lab",
+  "sha": "9a6c095f271e5435f281d1d683d6f6a928434214",
+  "sourceFingerprint": "d0d30a3dd9c39fec052141f210b707132cf63ee2eba6b22d6adc72a74b28980a",
+  "dirty": true,
+  "session": "main-recovery-implementation",
+  "round": 1,
+  "mode": "focused",
+  "commandArgv": [
+    "node",
+    "tools/vocab-qa-runner.cjs",
+    "--session",
+    "main-recovery-implementation",
+    "--round",
+    "1",
+    "--focused",
+    "--suite",
+    "unit"
+  ],
+  "command": "node tools/vocab-qa-runner.cjs --session main-recovery-implementation --round 1 --focused --suite unit",
+  "environment": {
+    "node": "v24.22.1",
+    "platform": "win32",
+    "arch": "x64",
+    "browser": "msedge",
+    "playwright": "1.62.1"
+  },
+  "artifactDirectory": "qa-artifacts/main-recovery-implementation/round-1-focused-unit",
+  "counts": {
+    "node": 130,
+    "regression": 0
+  },
+  "steps": [
+    {
+      "id": "scope",
+      "status": "PASS",
+      "command": "scope",
+      "summary": "PASS"
+    },
+    {
+      "id": "visual-baseline-source",
+      "status": "PASS",
+      "command": "visual-baseline-source",
+      "summary": "PASS"
+    },
+    {
+      "id": "build-verify",
+      "status": "PASS",
+      "command": "build-verify",
+      "summary": "PASS"
+    },
+    {
+      "id": "browser-preflight",
+      "status": "PASS",
+      "command": "Playwright browser preflight"
+    },
+    {
+      "id": "unit",
+      "command": "node --test tests/vocab-batch.test.js tests/vocab-content-quality.test.js tests/vocab-editorial.test.js tests/vocab-highlight.test.js tests/vocab-integration.test.js tests/vocab-lab.test.js tests/vocab-mission-engine.test.js tests/vocab-mission-planner.test.js tests/vocab-mission-store.test.js tests/vocab-mission.test.js tests/vocab-qa-runner.test.js tests/vocab-reality.test.js tests/vocab-routes.test.js tests/vocab-staging.test.js tests/vocab-teacher-decisions.test.js tests/vocab-ui-preview.test.js tests/vocab-writing-policy.test.js",
+      "log": "logs/unit.txt",
+      "status": "FAIL",
+      "exitCode": 1,
+      "elapsedMs": 4360,
+      "counts": {
+        "kind": "node",
+        "passed": 129,
+        "total": 130
+      },
+      "summary": "✖ readiness candidate preserves latest-main Writing region and records conflicts without changing refs (3857.0843ms) ✖ failing tests: ✖ readiness candidate preserves latest-main Writing region and records conflicts without changing refs (3857.0843ms)"
+    },
+    {
+      "id": "network-verify",
+      "status": "PASS",
+      "command": "network-verify",
+      "summary": "PASS"
+    },
+    {
+      "id": "source-provenance",
+      "status": "PASS",
+      "command": "source-provenance",
+      "summary": "PASS"
+    },
+    {
+      "id": "final-artifact-verify",
+      "status": "PASS",
+      "command": "final-artifact-verify",
+      "summary": "PASS"
+    }
+  ],
+  "changes": [
+    "Initial QA run; no automatic code/content edits."
+  ],
+  "screenshots": [],
+  "failures": [
+    {
+      "id": "test:unit",
+      "severity": "HIGH",
+      "steps": [
+        "unit"
+      ],
+      "reproduction": "node --test tests/vocab-batch.test.js tests/vocab-content-quality.test.js tests/vocab-editorial.test.js tests/vocab-highlight.test.js tests/vocab-integration.test.js tests/vocab-lab.test.js tests/vocab-mission-engine.test.js tests/vocab-mission-planner.test.js tests/vocab-mission-store.test.js tests/vocab-mission.test.js tests/vocab-qa-runner.test.js tests/vocab-reality.test.js tests/vocab-routes.test.js tests/vocab-staging.test.js tests/vocab-teacher-decisions.test.js tests/vocab-ui-preview.test.js tests/vocab-writing-policy.test.js",
+      "detail": "✖ readiness candidate preserves latest-main Writing region and records conflicts without changing refs (3857.0843ms) ✖ failing tests: ✖ readiness candidate preserves latest-main Writing region and records conflicts without changing refs (3857.0843ms)"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "dependencies",
+      "status": "PASS",
+      "mandatory": true,
+      "detail": "Pinned Playwright and installed browser; missing browser fails preflight."
+    },
+    {
+      "id": "artifact-safety",
+      "status": "PASS",
+      "mandatory": true,
+      "detail": "Exact 26-file allowlist, byte manifest, CSP, no Firebase/backend/external URLs."
+    },
+    {
+      "id": "writing-scope",
+      "status": "PASS",
+      "mandatory": true,
+      "detail": "Normalized protected hashes + nested tree; app/Writing/auth/data untouched."
+    },
+    {
+      "id": "source-provenance",
+      "status": "PASS",
+      "mandatory": true,
+      "detail": "Exact repository, branch/SHA and working-source fingerprint unchanged throughout the run."
+    },
+    {
+      "id": "visual-baseline",
+      "status": "NOT_TESTED",
+      "mandatory": true,
+      "detail": "Committed style/markup hashes, explicit geometry/type metrics, screenshots; no automatic baseline updates."
+    },
+    {
+      "id": "network-isolation",
+      "status": "PASS",
+      "mandatory": true,
+      "detail": "Browser transport guard + fixture-only HTTPS origin simulation; no external transport or API writes."
+    },
+    {
+      "id": "core-vocab",
+      "status": "FAIL",
+      "mandatory": true,
+      "detail": "102 approved boundaries, 12/20/mixed, partial, review, sampling, evidence, idempotency."
+    },
+    {
+      "id": "core-regression-244",
+      "status": "NOT_TESTED",
+      "mandatory": true,
+      "detail": "All ten original regression scripts; assert count must remain at least 244."
+    },
+    {
+      "id": "writing-content",
+      "status": "NOT_TESTED",
+      "mandatory": true,
+      "detail": "Existing Unit 0/2 content validator; no editorial rewriting."
+    },
+    {
+      "id": "check-flow",
+      "status": "NOT_TESTED",
+      "mandatory": true,
+      "detail": "New 20/12, legacy12, undo/save/reload, A/B, pause, one wrong/duplicate input."
+    },
+    {
+      "id": "mission-prototype",
+      "status": "NOT_TESTED",
+      "mandatory": true,
+      "detail": "Actual classified eligible/empty flow, Case/Investigate/Decode/Morph/Final/Debrief/Sorting; Coast internal fixture only."
+    },
+    {
+      "id": "library-permissions",
+      "status": "NOT_TESTED",
+      "mandatory": true,
+      "detail": "Library LM, no standalone nav, ordinary students blocked, mocked admin/tester/UID account paths; UI privilege is not a rules bypass."
+    },
+    {
+      "id": "full-102-personalized-missions",
+      "status": "NOT_IMPLEMENTED",
+      "mandatory": true,
+      "detail": "0/102 published targets; 15 candidate targets; 5 context-only senses. Missing approved full-bank routes prevent readiness."
+    },
+    {
+      "id": "curated-engine",
+      "status": "FAIL",
+      "mandatory": true,
+      "detail": "Three candidates, actual classifications, identity/version persistence and independent forms; QA content is not publication."
+    },
+    {
+      "id": "editorial-workbench",
+      "status": "FAIL",
+      "mandatory": true,
+      "detail": "Local exact-version review, edits, audit, migration, role gates and draft rehearsal; no live AI/publication."
+    },
+    {
+      "id": "draft-102-routes",
+      "status": "FAIL",
+      "mandatory": true,
+      "detail": "102 independently assessable DRAFT senses: 15 pilot + 87 new routes, 4 explicit editorial blockers; 0 human-approved shipped, 0 published."
+    },
+    {
+      "id": "curriculum-editorial",
+      "status": "TEACHER_REVIEW",
+      "mandatory": true,
+      "detail": "IELTS sense/context quality and pending teaching content need teacher approval; automation is not the authority."
+    },
+    {
+      "id": "human-visual-ux",
+      "status": "TEACHER_REVIEW",
+      "mandatory": false,
+      "detail": "Teacher reviews screenshots/aesthetics; screenshot automation is not aesthetic approval."
+    },
+    {
+      "id": "staging-auth-security",
+      "status": "TEACHER_REVIEW",
+      "mandatory": true,
+      "detail": "This runner covers mocks/static contracts. Separate Phase 2.8 emulator evidence is in VOCAB-PHASE-2.8-HANDOFF.md; deployed staging, signed-token/IAM and human security review remain required. No live student data."
+    },
+    {
+      "id": "latest-main-reconciliation",
+      "status": "NOT_TESTED",
+      "mandatory": false,
+      "detail": "Offline run does not fetch/merge main. Writing baseline compatibility is checked; latest main divergence must be reconciled before a future approved merge."
+    }
+  ],
+  "qaPass": false,
+  "releaseReadiness": "BLOCKED",
+  "repositoryValid": true,
+  "manifestSha256": "aa1d4474e101245cf429864219d2762fb187d90e221f56016e894ecf546278ea",
+  "completedUTC": "2026-11-05T17:03:08.755Z"
+}
