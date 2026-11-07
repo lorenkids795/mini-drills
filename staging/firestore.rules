@@ -1,0 +1,9 @@
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+  // The staging adapter is the sole read/write path. Admin SDK bypasses rules;
+  // service.cjs enforces current Auth, roster, assignment and version checks.
+  // Denying all direct reads prevents stale-token revocation gaps and answer leakage.
+  match /{document=**} { allow read, write: if false; }
+ }
+}

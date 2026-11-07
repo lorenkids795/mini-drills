@@ -1,0 +1,16 @@
+PASS colour tokens: text 4.5:1, icons / control borders 3:1, light and dark (tests/contrast.js)
+PASS text on background inside the same CSS rule: 4.5:1 in both themes (tests/contrast-rules.js)
+PASS every button with only an icon / symbol has an aria-label
+PASS no emoji as a button icon (stroke SVG icons only; ▶ ⏸ media glyphs allowed)
+PASS form controls have a name for screen readers (label for / wrapping label / aria-label)
+PASS clickable elements that are not buttons are keyboard reachable (role="button" + tabindex) or are backdrops
+PASS focus is always visible; no outline removed without a replacement
+PASS tap targets: buttons 40px (small 34px), 44px on touch screens
+PASS reduced motion: one global rule stops every animation and transition
+PASS right / wrong is never shown by colour alone (✓ / ✗ marks, dashed wrong blank)
+PASS small uppercase labels always have letter-spacing
+PASS one font family (+ mono for numbers): no other font-family in the app
+PASS wide tables scroll inside their box on a 390px phone
+PASS phones: the sticky lesson action bar stops floating while typing
+PASS specific CTA labels (no bare "Submit" / "Use" / "Open it")
+---- 15/15 passed

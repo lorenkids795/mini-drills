@@ -1,0 +1,22 @@
+PASS server preview (dry run): lists only emails without a roster row that are not staff; same name "Cherry" on a live student is kept; nothing deleted
+FAIL server purge: deletes every spelling of that email in all learning collections + profile, writes an audit row; live student, tester and staff untouched; running again is refused (idempotent) -> The expression evaluated to a falsy value:
+
+  assert.ok(r.ok && !S.DB.attempts.a2 && !S.DB.attempts.a3 && !S.DB.errors.e1 && !S.DB.profiles['gone-x-com'])
+
+PASS server purge refuses a live student, a tester, a teacher and a bad email
+PASS one rule for staff views: live = roster student (by email), not removed from a class; testers are live
+PASS Marking: deleted and removed students' submissions are gone (cards, counts, class filter); the tester's is only under Tester
+PASS Marking filter: All / Tester / a class by email + tester flag (not the name), seeded results, stale class labels, counts = cards
+PASS Marking: an open submission whose student was removed closes with a message (no broken modal)
+PASS Dashboard: attempts, averages, classes and charts only from live students (tester still left out); nothing left -> no fake numbers
+PASS Dashboard clean-up: no Sample data switch, no extra labels, no empty-state sentences; no attempts = "–" (not a measured 0%)
+PASS Create: no "TEST 1 · READING" caption, no "Select a slot…" hint, none of the Reading helper sentences
+FAIL Admin › Users: "Clean up data of deleted students" previews first, deletes one email after a confirm -> The expression evaluated to a falsy value:
+
+  assert.ok(B.el('v-admin').innerHTML.includes('data-email="gone@x.com"'))
+
+PASS cover: card and editor use the same renderer and position; zoom / reset / cancel / save; remove clears the position
+PASS Create: the only Add button is at the top of "Pick a free slot"; previews draw none; disabled until a valid lesson + slot
+PASS Create: Hide editor / Show editor is a class switch only (no redraw, no AI call); Easy / Medium / Hard above the reading preview changes the preview only
+PASS Reading: one header (back, title, "Cam · Test · Reading" | step menu, timer, settings) + progress bar; level, text size, demo inside settings; no "Selected excerpts"
+---- 13/15 passed

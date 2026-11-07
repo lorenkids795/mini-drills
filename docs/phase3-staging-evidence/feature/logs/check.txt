@@ -1,0 +1,2 @@
+PASS browser: keyboard sort/undo, reload sorting and check retry, account isolation, 390px/1280px light/dark, root-app integration, offline draft/reload/retry via Firestore double, no page errors
+Screenshots: C:\Users\hnnhiii\Documents\Codex\2026-10-28\github-plugin-github-openai-curated-remote\work\mini-drills\qa-artifacts\phase3-feature\round-1-full\browser\check

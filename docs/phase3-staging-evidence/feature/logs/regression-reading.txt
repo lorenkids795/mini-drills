@@ -1,0 +1,13 @@
+PASS completion and TFNG items are put in passage order; NOT GIVEN keeps its slot; answers stay with their items
+PASS matching exercises are not reordered
+PASS paraphrase pairs: real matching parts are kept, invented ones dropped with a note
+PASS Stage 3 after Check: pairs shown as "q ≈ t" rows; a pair without segs keeps the old "par → ph" line
+PASS Deep reading shows selected excerpts (paragraphs used by Stage 1) with a button for the full passage
+PASS student gets the version of their level (beginner → Easy, advanced → Hard, none → Medium)
+PASS missing version falls back to Medium
+PASS teacher switches versions with Easy / Medium / Hard; student only sees a level pill
+PASS the finished attempt records the level that was played
+PASS teacher sets a student level in Class settings (saved on the roster row; student cannot)
+PASS Create: Easy / Hard versions made with the lesson are kept apart (rdLevels) and restored as rlv
+PASS server: ORDER rule, segs in prompt + schema, 3 level notes, level passed to the prompt
+---- 12/12 passed

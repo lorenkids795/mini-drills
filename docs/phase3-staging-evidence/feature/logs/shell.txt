@@ -1,0 +1,9 @@
+PASS actual app shell: tester sorting→mission→sorting, navigation away/back, hash reload/resume; 390/768/1280 light/dark and reduced motion
+PASS 60 real-shell screenshots; no horizontal overflow, local controls >=44px, inherited app fonts/theme/navigation
+PASS admin/tester allowed; ordinary student hidden and blocked by direct route and direct shell mount even with enabled=true
+PASS typed draft reload, read-only Check input, logout clears old DOM/controllers and a second account starts separately
+PASS in-flight save/account switch race: old account cannot append its report into the new account screen
+PASS two real tabs: stale mission save loads latest snapshot and does not overwrite the winner
+PASS non-demo shell with Firestore double: Check uses authenticated UID paths, Mission unavailable notice, no Mission/XP/Writing writes
+PASS unchanged Writing: ordinary student Coming Soon/direct unit blocked; tester opens existing unpublished Unit 2
+PASS real mode and remote-origin Mission remain blocked; no experimental cloud saves enabled

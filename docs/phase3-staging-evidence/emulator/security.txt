@@ -1,0 +1,52 @@
+(node:15940) MetadataLookupWarning: received unexpected error = All promises were rejected code = UNKNOWN
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ environment refuses production, non-loopback, missing emulator or cloud credential configuration (1093.8883ms)
+✔ real Auth emulator enforces roles, teacher assignment and anonymous denial (390.8705ms)
+[2026-11-07T12:53:06.269Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x8e63eeb3 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T12:53:06.295Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x8e63eeb4 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T12:53:06.316Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x8e63eeb5 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T12:53:06.336Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x8e63eeb6 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'delete' @ L7
+[2026-11-07T12:53:06.370Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x8e63eeb7 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T12:53:06.409Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x8e63eeb8 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T12:53:06.446Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x8e63eeb9 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T12:53:06.464Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x8e63eeba error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'delete' @ L7
+[2026-11-07T12:53:06.558Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x8e63eebb error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T12:53:06.578Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x8e63eebc error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T12:53:06.612Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x8e63eebd error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T12:53:06.635Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x8e63eebe error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'delete' @ L7
+✔ Firestore emulator rules deny private draft reads, writes and approval spoofing (981.2377ms)
+✔ review transitions are exact-version, append-only, idempotent and publication is a separate admin action (1022.0608ms)
+[2026-11-07T12:53:08.118Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x8e63eec1 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T12:53:08.135Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x8e63eec2 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'update' @ L7
+✔ student session isolation and direct progress writes are denied by actual rules (445.3995ms)
+✔ two devices use optimistic revisions; retrying an operation appends evidence only once (3796.1303ms)
+✔ independent versus hinted, retry and reveal evidence survive reload without mastery promotion (1851.594ms)
+✔ new draft invalidates approval and publication while existing sessions retain their pinned version (801.8505ms)
+✔ expired, revoked, disabled and no-longer-enrolled identities fail closed (1308.7285ms)
+✔ all 87 routes persist versioned evidence and recover through a fresh service instance (71772.3879ms)
+✔ corrupted stored content cannot be approved or served under an old hash (288.1849ms)
+✔ Phase 3 current roster revocation, class mismatch and stale role claims deny access immediately (211.0179ms)
+✔ Phase 3 origin, project and direct stale-token transports fail closed (318.1026ms)
+✔ Phase 3 class transfer cannot resume or mutate old-class sessions and hides old progress (331.3487ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 86573.267

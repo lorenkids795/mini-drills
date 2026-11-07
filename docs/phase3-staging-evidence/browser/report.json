@@ -1,0 +1,209 @@
+{
+  "status": "PASS",
+  "sourceUnchanged": true,
+  "indexSha256": "0531777087abb0b6067d11ce79a24a298e220240480b9fc5dcfc2897db1964ef",
+  "results": [
+    {
+      "id": "reality",
+      "command": "node --require C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\tools\\vocab-integration-preload.cjs tests/vocab-reality.browser.js",
+      "log": "logs/reality.txt",
+      "status": "PASS",
+      "exitCode": 0,
+      "elapsedMs": 95240,
+      "counts": {
+        "kind": "assertions",
+        "passed": 0,
+        "total": 0
+      },
+      "summary": "See log"
+    },
+    {
+      "id": "batch",
+      "command": "node --require C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\tools\\vocab-integration-preload.cjs tests/vocab-batch.browser.js",
+      "log": "logs/batch.txt",
+      "status": "PASS",
+      "exitCode": 0,
+      "elapsedMs": 90208,
+      "counts": {
+        "kind": "assertions",
+        "passed": 0,
+        "total": 0
+      },
+      "summary": "See log"
+    },
+    {
+      "id": "isolation",
+      "command": "node --require C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\tools\\vocab-integration-preload.cjs tests/vocab-ui-preview.browser.js",
+      "log": "logs/isolation.txt",
+      "status": "PASS",
+      "exitCode": 0,
+      "elapsedMs": 72317,
+      "counts": {
+        "kind": "assertions",
+        "passed": 0,
+        "total": 0
+      },
+      "summary": "See log"
+    },
+    {
+      "id": "visual",
+      "command": "node --require C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\tools\\vocab-integration-preload.cjs tests/vocab-ui-fidelity.browser.js",
+      "log": "logs/visual.txt",
+      "status": "PASS",
+      "exitCode": 0,
+      "elapsedMs": 14123,
+      "counts": {
+        "kind": "assertions",
+        "passed": 0,
+        "total": 0
+      },
+      "summary": "See log"
+    },
+    {
+      "id": "check",
+      "command": "node --require C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\tools\\vocab-integration-preload.cjs tests/vocab-lab.browser.js",
+      "log": "logs/check.txt",
+      "status": "PASS",
+      "exitCode": 0,
+      "elapsedMs": 14462,
+      "counts": {
+        "kind": "assertions",
+        "passed": 0,
+        "total": 0
+      },
+      "summary": "See log"
+    },
+    {
+      "id": "accessibility",
+      "command": "node --require C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\tools\\vocab-integration-preload.cjs tests/vocab-lab-ui.browser.js",
+      "log": "logs/accessibility.txt",
+      "status": "PASS",
+      "exitCode": 0,
+      "elapsedMs": 39981,
+      "counts": {
+        "kind": "assertions",
+        "passed": 0,
+        "total": 0
+      },
+      "summary": "See log"
+    },
+    {
+      "id": "mission",
+      "command": "node --require C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\tools\\vocab-integration-preload.cjs tests/vocab-mission.browser.js",
+      "log": "logs/mission.txt",
+      "status": "PASS",
+      "exitCode": 0,
+      "elapsedMs": 93156,
+      "counts": {
+        "kind": "assertions",
+        "passed": 0,
+        "total": 0
+      },
+      "summary": "See log"
+    },
+    {
+      "id": "shell",
+      "command": "node --require C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\tools\\vocab-integration-preload.cjs tests/vocab-shell.browser.js",
+      "log": "logs/shell.txt",
+      "status": "PASS",
+      "exitCode": 0,
+      "elapsedMs": 120014,
+      "counts": {
+        "kind": "assertions",
+        "passed": 0,
+        "total": 0
+      },
+      "summary": "See log"
+    },
+    {
+      "id": "engine",
+      "command": "node --require C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\tools\\vocab-integration-preload.cjs tests/vocab-mission-engine.browser.js",
+      "log": "logs/engine.txt",
+      "status": "PASS",
+      "exitCode": 0,
+      "elapsedMs": 206892,
+      "counts": {
+        "kind": "assertions",
+        "passed": 0,
+        "total": 0
+      },
+      "summary": "See log"
+    },
+    {
+      "id": "editorial",
+      "command": "node --require C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\tools\\vocab-integration-preload.cjs tests/vocab-editorial.browser.js",
+      "log": "logs/editorial.txt",
+      "status": "PASS",
+      "exitCode": 0,
+      "elapsedMs": 72678,
+      "counts": {
+        "kind": "assertions",
+        "passed": 0,
+        "total": 0
+      },
+      "summary": "See log"
+    }
+  ],
+  "network": [
+    {
+      "suite": "accessibility",
+      "violations": [],
+      "blockedExternalAssets": []
+    },
+    {
+      "suite": "batch",
+      "violations": [],
+      "blockedExternalAssets": []
+    },
+    {
+      "suite": "check",
+      "violations": [],
+      "blockedExternalAssets": [
+        {
+          "kind": "blocked external asset",
+          "url": "https://fonts.googleapis.com/css2"
+        }
+      ]
+    },
+    {
+      "suite": "editorial",
+      "violations": [],
+      "blockedExternalAssets": []
+    },
+    {
+      "suite": "engine",
+      "violations": [],
+      "blockedExternalAssets": []
+    },
+    {
+      "suite": "isolation",
+      "violations": [],
+      "blockedExternalAssets": []
+    },
+    {
+      "suite": "mission",
+      "violations": [],
+      "blockedExternalAssets": [
+        {
+          "kind": "blocked external asset",
+          "url": "https://fonts.googleapis.com/css2"
+        }
+      ]
+    },
+    {
+      "suite": "reality",
+      "violations": [],
+      "blockedExternalAssets": []
+    },
+    {
+      "suite": "shell",
+      "violations": [],
+      "blockedExternalAssets": []
+    },
+    {
+      "suite": "visual",
+      "violations": [],
+      "blockedExternalAssets": []
+    }
+  ]
+}

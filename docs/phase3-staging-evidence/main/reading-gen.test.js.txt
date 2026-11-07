@@ -1,0 +1,15 @@
+PASS 934-word / 7-paragraph passage: accepted as it is, no "shorter" advice; split into 3 smaller prompts
+PASS server: a cut-off answer (MAX_TOKENS) = code too_long with a "Retry failed part" message, never "shorter essay"; not saved
+PASS server: "pairs" with 0 / 1 items is rejected with the exact count; 2 and 6 pass; 7 passes to the app (only 6 used)
+PASS server: the daily limit counts 1 per version of a run (like before: 3 per lesson), at most 8 requests per version
+PASS app: Generate = 9 real requests in order (Medium, Easy, Hard x 3 parts); passage unchanged in every version; Add on at the end
+PASS app: Add stays off while parts are being written
+PASS app: a cut-off part is sent once more by itself; still cut off → stops; Retry failed part sends ONLY that part; finished parts kept
+PASS app: invalid "pairs" (0 / 1 / 7 items) — nothing broken is used; exact item-level message; 7 → first 6 with a note
+PASS app: "pairs" with 2 items and with 6 items pass (no false failure)
+PASS app: quota used up (429) stops at once, no more requests; the old preview is gone (no stale errors)
+PASS reload: finished parts come back (same passage); the part that failed is retried alone, no part written twice
+PASS relay: a passing relay failure (timeout / busy / HTML error) is retried by itself; only a setup problem stops the job
+PASS assembled-lesson problems are sent back to the right part
+PASS Advanced: pasted JSON goes through the same checks, with no AI call
+---- 14/14 passed

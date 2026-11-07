@@ -1,0 +1,3 @@
+24 app/static, 12/20, admin/tester, 390/768/1280 light/dark: one wrong, stable DOM/rectangles/scroll, same-point double click ignored, immediate deliberate correct retry assisted PASS
+Firestore doubles 12/20: one answer document, stable controls after watch/sync, same-operation retry writes nothing, no Writing/XP/Mission collections touched PASS
+40 input/restore cases: touch, Enter/repeat, event replay, legacy/reload, persisted terminal unchanged, explicit hint/reveal, 2 wrongs, fresh correct, stale activation, view/account switch PASS

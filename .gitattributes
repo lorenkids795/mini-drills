@@ -1,0 +1,2 @@
+# Preserve exact QA evidence bytes so SHA-256 manifests survive fresh checkouts.
+docs/phase3-staging-evidence/** -text

@@ -1,0 +1,9 @@
+{
+  "approved": false,
+  "projectId": "mini-drills-vocab-staging",
+  "origin": "https://vocab-staging.example.invalid",
+  "firestoreTarget": "projects/mini-drills-vocab-staging/databases/(default)",
+  "syntheticOnly": true,
+  "productionFallback": false,
+  "note": "Proposal only. Project and origin do not exist. Replace the origin only after owner approval and review. No provisioning is performed by this file."
+}

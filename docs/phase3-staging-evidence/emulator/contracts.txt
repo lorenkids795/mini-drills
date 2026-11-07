@@ -1,0 +1,11 @@
+✔ offline signed token: signature, issuer, audience, expiry, algorithm and subject (20.3448ms)
+✔ main teacher+adm maps only through current authoritative roster; browser tester flags ignored (0.6255ms)
+✔ environment blocks conflicting project/database configuration before SDK initialization (0.3489ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 260.3002

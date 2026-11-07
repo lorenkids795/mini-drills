@@ -1,0 +1,117 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "role": "student",
+      "width": 390,
+      "theme": "light",
+      "status": "PASS"
+    },
+    {
+      "role": "tester",
+      "width": 390,
+      "theme": "light",
+      "status": "PASS"
+    },
+    {
+      "role": "admin",
+      "width": 390,
+      "theme": "light",
+      "status": "PASS"
+    },
+    {
+      "role": "student",
+      "width": 390,
+      "theme": "dark",
+      "status": "PASS"
+    },
+    {
+      "role": "tester",
+      "width": 390,
+      "theme": "dark",
+      "status": "PASS"
+    },
+    {
+      "role": "admin",
+      "width": 390,
+      "theme": "dark",
+      "status": "PASS"
+    },
+    {
+      "role": "student",
+      "width": 768,
+      "theme": "light",
+      "status": "PASS"
+    },
+    {
+      "role": "tester",
+      "width": 768,
+      "theme": "light",
+      "status": "PASS"
+    },
+    {
+      "role": "admin",
+      "width": 768,
+      "theme": "light",
+      "status": "PASS"
+    },
+    {
+      "role": "student",
+      "width": 768,
+      "theme": "dark",
+      "status": "PASS"
+    },
+    {
+      "role": "tester",
+      "width": 768,
+      "theme": "dark",
+      "status": "PASS"
+    },
+    {
+      "role": "admin",
+      "width": 768,
+      "theme": "dark",
+      "status": "PASS"
+    },
+    {
+      "role": "student",
+      "width": 1280,
+      "theme": "light",
+      "status": "PASS"
+    },
+    {
+      "role": "tester",
+      "width": 1280,
+      "theme": "light",
+      "status": "PASS"
+    },
+    {
+      "role": "admin",
+      "width": 1280,
+      "theme": "light",
+      "status": "PASS"
+    },
+    {
+      "role": "student",
+      "width": 1280,
+      "theme": "dark",
+      "status": "PASS"
+    },
+    {
+      "role": "tester",
+      "width": 1280,
+      "theme": "dark",
+      "status": "PASS"
+    },
+    {
+      "role": "admin",
+      "width": 1280,
+      "theme": "dark",
+      "status": "PASS"
+    }
+  ],
+  "limitations": [
+    "Browser smoke covers existing Reading renderer, Homework card and Admin/Class navigation only; advanced main features are assessed by unmodified main scripts.",
+    "Synthetic demo roster, not signed-token security."
+  ]
+}

@@ -1,0 +1,3 @@
+24 app/static × 20/12 × 390/768/1280 × light/dark screenshots: default 20, no 6, progress, Undo, fixed size, next preference, focus and reload PASS
+Both sizes in both environments: real classifications → eligible linked Mission → Library → Finish for now → resume → mixed next batch PASS
+Legacy v1 raw progress unchanged and fixed 12 in both environments; A/B preferences and batch state isolated PASS

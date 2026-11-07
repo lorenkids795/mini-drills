@@ -1,0 +1,24 @@
+PASS content check: 0 problems, every item pending, ids unique, EN + VI everywhere, placeholders resolve
+PASS Chart A facts: coal falls steadily and is top every year; wind rises steadily; solar ends higher but fluctuates and is lowest every year
+PASS Chart B facts: change of leader (car → bicycle), tie bus = bicycle in 2022, no "highest throughout"; never a crossing fact
+PASS measure / unit, period, observed years and groups: the right option is recomputed from the chart JSON
+PASS wrong stored answers are caught: question, YES/NO/NOT GIVEN label, missing year treated as NOT GIVEN
+PASS salience keys are human keys (main / minor, leave out), never claimed as computed
+PASS no Chart B (title, place, labels, ids) in any Learn / Controlled / Guided content item
+PASS simulated data: fictional places, said once (Learn step 1), not under every chart
+PASS Learn: checklist of five steps shown first, Chart A beside it, Vietnamese by default
+PASS no Skip: Continue stays disabled until the step is done; a wrong answer twice shows the answer (no dead end)
+PASS Learn: tapping a line shows its verified start → end and shape; the question appears after every line is seen
+PASS Learn: all seven steps can be done; features are chosen first, main / minor + reasons only after Check; summary = Chart A notes
+PASS Controlled: 8 scored items; YES / NO / NOT GIVEN mapped to supported / contradicted / not_determinable; 5 / 8 keeps Guided closed, 6 / 8 opens it
+PASS Guided: 7 checklist selects (trend answers from the facts), 5 / 7 needed; then choices, observations, summary and revision before Independent
+PASS Independent: Chart B shown for the first time; hint = method only; no Chart B reference, feature or answer before Review
+PASS "I am done" needs every checklist field; then Review shows the verified reference, main features and "I included / I avoided" self-check (not a mark)
+PASS students: stages open in order (titles explain why); admin opens every stage
+PASS admin auto-fill: off by default, admin only, fills objective answers only, saves nothing; switching off restores the real answers
+PASS progress: stage, answers and notes restored for the same version; an older version is shown as such and only discarded on request
+PASS language switch keeps stage, answers and notes; English practice statements and options stay English
+PASS release controls: Unit 0 unpublished; students and teachers cannot see or open it (list, state or action)
+PASS accessibility basics: every action is a button / labelled control; selects and boxes have labels
+PASS lesson code: no database, XP or AI calls; index.html loads lm-unit0.js after lm-unit2.js and before the app
+---- 23/23 passed

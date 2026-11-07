@@ -1,0 +1,12 @@
+PASS owner rule: student / tester (any case, seeded) / staff / removed / unknown — from account records, not the name or class on the attempt
+PASS Marking All = real students only; counts = cards
+PASS Marking class = real students by their CURRENT class (a tester's old 67PM submission never leaks in)
+PASS Marking Tester accounts = every tester submission, whatever class the old record says; seeded samples too
+PASS an ordinary teacher (not admin) never sees tester submissions outside their classes
+PASS switching filters repeatedly gives the same results (no stale cards or counts)
+PASS Dashboard: All = real students only; "Tester accounts" scope shows tester attempts only; removed / unknown / staff never
+PASS join code: a guessable name-based code is not used; "Create join link" saves a random 8-character code; link = this site
+PASS signed-in check (?join=CODE): own class / other class / staff / invalid — told, nothing written
+PASS server GET /api/join: format, unknown, archived, ok; rate limited
+PASS sign-in page: a join link keeps the code and opens "First time here?" with the class chosen (name still from the class list)
+---- 11/11 passed

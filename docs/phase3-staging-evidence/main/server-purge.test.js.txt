@@ -1,0 +1,12 @@
+FAIL purgeStudent deletes every learning doc of that email (6 collections + profile) -> purgeStudent is not defined
+FAIL purgeStudent keeps other students, handed-out codes and the wins marquee -> purgeStudent is not defined
+FAIL purge = one query per collection (stays far below the Workers sub-request limit) -> purgeStudent is not defined
+FAIL adminKick of a student: account gone, off:=kicked, and all learning data deleted -> purgeStudent is not defined
+FAIL adminKick of a teacher does NOT delete learning data (marking and assignments stay) -> purgeStudent is not defined
+FAIL adminClassDel deletes the class assignments, names and settings, reports remaining roster rows -> purgeStudent is not defined
+FAIL adminClassDel needs a class name -> purgeStudent is not defined
+FAIL route admin/classdel is wired behind the admin key -> The expression evaluated to a falsy value:
+
+  assert.ok(/route === 'admin\/classdel'\) return await adminClassDel\(env, body\)/.test(SRC))
+
+---- 0/8 passed

@@ -1,0 +1,10 @@
+PASS root cause: no Easy / Hard yet → rdLevels() is null; the level switch and the preview no longer throw
+PASS Student View Preview of an unapproved Medium draft = the interactive lesson (passage, questions, step menu, dock), not the summary
+PASS Easy / Medium / Hard switch changes the real lesson content in the preview
+PASS workflow: review → derive (one "Generate Easy & Hard", review tools folded, Edit approved Medium) → ready (Add)
+PASS compact panel in Student View / Hide editor: status + main action only (no feedback box, no technical details)
+PASS Generate again on an existing Medium asks first (no accidental regeneration)
+PASS Reading lesson: no big passage header, list of headings not squeezed by the header class, groups and questions unframed
+PASS Admin › Users: Tester class cell shows —, the stored class stays (filters use it)
+PASS Homework Assistant: md-backend keeps the assistant role; rules give it no Firestore access; Boot opens no snapshots for it
+---- 9/9 passed

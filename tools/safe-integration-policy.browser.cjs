@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict'),{chromium}=require('playwright');
-const root=path.resolve(process.env.SAFE_FEATURE_CHECKOUT),dir=path.resolve(__dirname,'..'),out=path.join(root,'qa-artifacts/safe-integration/policy-browser');fs.mkdirSync(out,{recursive:true});
+const root=path.resolve(process.env.SAFE_FEATURE_CHECKOUT),dir=path.resolve(__dirname,'..'),out=path.resolve(process.env.SAFE_POLICY_OUTPUT||path.join(root,'qa-artifacts/safe-integration/policy-browser'));fs.mkdirSync(out,{recursive:true});
 const users={admin:'admin@demo.vn',tester:'policy-tester@local.invalid',student:'minhanh@demo.vn'};
 let html=fs.readFileSync(path.join(dir,'index.html'),'utf8').replace('var rosterDocs=[],localRoster=null;',"DEMO_ROSTER.push({email:'"+users.tester+"',name:'Policy Tester',role:'student',tester:true,cls:'Class 6.0-A'});var rosterDocs=[],localRoster=null;");
 const a=html.indexOf('<script>\n(function(){'),end=html.indexOf('</script>',a),close=html.lastIndexOf('})();',end);

@@ -1,0 +1,8 @@
+PASS 390 light: approve/edit invalidation, reload, fix/reject/history persistence, offline brief, empty/filter, keyboard, reviewer A/B
+PASS 390 dark: approve/edit invalidation, reload, fix/reject/history persistence, offline brief, empty/filter, keyboard, reviewer A/B
+PASS 768 light: approve/edit invalidation, reload, fix/reject/history persistence, offline brief, empty/filter, keyboard, reviewer A/B
+PASS 768 dark: approve/edit invalidation, reload, fix/reject/history persistence, offline brief, empty/filter, keyboard, reviewer A/B
+PASS 1280 light: approve/edit invalidation, reload, fix/reject/history persistence, offline brief, empty/filter, keyboard, reviewer A/B
+PASS 1280 dark: approve/edit invalidation, reload, fix/reject/history persistence, offline brief, empty/filter, keyboard, reviewer A/B
+PASS 87/87 new routes: browser completion, student access denied, zero localStorage writes (no student progress implementation)
+PASS actual Library admin + local teacher, ordinary tester/student denied, production mode blocked

@@ -1,0 +1,42 @@
+PASS stage learn: nothing from Chart B on screen (also fully done, every lens, auto-fill on)
+PASS stage controlled: nothing from Chart B on screen (also fully done, every lens, auto-fill on)
+PASS stage guided: nothing from Chart B on screen (also fully done, every lens, auto-fill on)
+PASS language switch reads ENG | VI; no long language note
+PASS feedback 10/2026: no caption under the chart; "made-up data" said once inside the Data table; titles without "(illustrative data)"; synthetic flag kept
+PASS feedback 10/2026: removed lines are gone from the screen (hints only for screen readers / tooltip)
+PASS feedback 10/2026: invented, natural series names everywhere; data, facts and answers unchanged
+PASS feedback 10/2026: linkers in the model overview ("also", "Notably,"), never a fixed formula
+PASS every stage uses the same layout: chart column left, activity right
+PASS Controlled labels: YES / NO / NOT GIVEN with the "data accuracy check, not IELTS Reading" note
+PASS Review self-check items read "I included …" (numbers / names from the facts)
+PASS the overview vs body section has its new title
+PASS no Skip anywhere; Continue is disabled with a hint until the step is done
+PASS all 7 steps can be finished by doing them (no deadlock); the last one leads to Controlled
+PASS step 2 explore: answers come from the facts; wrong answers can be retried
+PASS step 3 Trends covers ALL lines grouped Upward / Downward / Fluctuating; Corvale Museum is not dimmed; FAQ about Corvale Museum
+PASS step 3 Highest / lowest names Larkfield Museum on top and Corvale Museum at the bottom; all three lenses are needed
+PASS step 4: lines shown with each feature; Main / Optional and the explanation only after Check
+PASS step 5 frame: Overall / while highlighted; right lines = correct; two wrong tries show the answer (no deadlock)
+PASS step 6: samples hidden until "show"; then a concise paragraph (trends + highest) and the full paragraph coloured by group with a legend
+PASS FAQ: "Do I need all three?" answers No
+PASS Controlled: pass mark ceil(70 %) = 6 / 8 is shown; 5 right keeps Guided closed, 6 right opens it; retry clears
+PASS Controlled: a wrong answer shows the right label and the explanation
+PASS Guided: three small exercises with answers from the facts (trend verb, highest / lowest, what to leave out)
+PASS Guided: under 70 % stays closed (retry), 5 / 6 opens the pieces + writing box; Independent needs some text (student)
+PASS Independent: Chart B, a hint that opens only the Chart A sample; no B sample or feature
+PASS free writing is never scored: "not graded automatically", no 150 words / minimum / band
+PASS "I'm done" with an empty answer does nothing; with text it opens Review
+PASS students: stages open in order (titles say why); admin preview opens every stage
+PASS admin "Preview: auto-fill" is off by default, admin only, fills checkable answers only and saves nothing
+PASS language switch keeps stage, answers, Learn steps and drafts; IELTS sentences stay English
+PASS missing translation: the other language is shown with a visible note
+PASS no hard-coded English UI words left in Vietnamese mode
+PASS every UI text id used by the lesson code exists in the content; all content still pending, no problems
+PASS drafts: version-scoped key, restored; older version only offered for discard; Clear asks first
+PASS changed chart data: lesson refuses to show
+PASS feedback 10/2026: header = breadcrumb (way back) + ENG | VI + admin auto-fill on the right; no separate back button, no duplicate "Unpublished preview" line
+PASS pending content stays gated: students cannot open the unpublished lesson; content check still runs
+PASS lesson code: no database, XP or AI calls
+PASS index.html loads the content after md-chart.js and before the app
+PASS Unit 2 may be "published" only when the release check passes
+---- 41/41 passed

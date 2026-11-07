@@ -1,0 +1,7 @@
+PASS Leaderboard hero: exactly the 20 star layers of the spec, soft radial-gradients, opacity .8, twinkle .45 → .95
+PASS Leaderboard Top 3: #1 only in the hero, cards = #2 and #3; 2 users = one card; 0 and 1 user do not break
+PASS Library: the tab is named "Cambridge"
+PASS Admin › Users: no "Edit class" button any more (other buttons stay)
+PASS server sample data: 5 results + a marked Writing (w1) and Speaking (s1) submission; fixed ids so running again replaces them
+PASS server: sample data only for tester accounts (op seed checks roster.tester)
+---- 6/6 passed

@@ -1,0 +1,14 @@
+{
+  "name": "mini-drills-emulator-runtime",
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "firebase-tools": "15.34.2",
+    "firebase-admin": "14.5.0",
+    "@firebase/rules-unit-testing": "6.0.0",
+    "firebase": "13.1.0"
+  },
+  "version": "1.0.0",
+  "private": true
+}

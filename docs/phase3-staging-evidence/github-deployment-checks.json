@@ -1,0 +1,25 @@
+[
+  {
+    "endpoint": "actions/workflows",
+    "status": 200,
+    "count": 0,
+    "workflows": []
+  },
+  {
+    "endpoint": "hooks",
+    "status": 200,
+    "count": 0,
+    "hooks": []
+  },
+  {
+    "endpoint": "deployments?per_page=10",
+    "status": 200,
+    "count": 0,
+    "deployments": []
+  },
+  {
+    "endpoint": "pages",
+    "status": 404,
+    "message": "Not Found"
+  }
+]
