@@ -1,0 +1,10 @@
+PASS no click action is handled by two different branches (except shared guards / grouped buttons)
+PASS the tester and teacher forms use their own input ids
+PASS Add teacher: valid fields -> only admin/teachers {op:add}; no null error; list reloads
+PASS Add teacher: missing name / bad email / short password -> message, no request
+PASS Create tester still works: only admin/tester {op:create}
+PASS a form that is not on screen (other tab) cannot be read: message instead of a crash, no request
+PASS Generate fills the password box of its own form
+PASS a server error shows its message but never the password
+PASS other Admin actions still route to their own handlers (Kick, Change password, Remove teacher)
+---- 9/9 passed

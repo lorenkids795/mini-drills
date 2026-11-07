@@ -1,0 +1,14 @@
+PASS server: roleOf gives the assistant role (never student); only the assistant role opens /api/hwa
+PASS server: data = only the allowed classes; no emails; testers and removed students left out; statuses
+PASS server: statuses = on time / late / missing / pending / extended by a late pass
+PASS server: assignments only for own classes (forged class refused, other class assignment refused); cancel
+PASS server: revoking a class / removing / pausing works at once (next call)
+PASS server: notes only for students of own classes; follow-up status kept; stored by the server
+PASS server whoami: the role the server gives NOW (assistant / student / none), from the ID token, never from the request body
+PASS session: md-backend checks the token role with whoami (mismatch / unknown -> sign out with a reason, never the student UI)
+PASS client: an unknown role from the token is never treated as a student (no account, no Student Home)
+PASS client: assistant gets only the Homework tab
+PASS client: copy report = exact owner wording, sorted names, nothing private
+PASS client: follow-up label from the last 4 due assignments; honest when history is short
+PASS client: workspace renders without emails; Admin menu for an assistant = Change password only
+---- 13/13 passed

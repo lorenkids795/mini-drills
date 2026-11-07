@@ -1,0 +1,13 @@
+PASS layout: full-width workspace; passage 60% / questions 40% to start, divider 30–75%; demo helper and highlighting are in Settings
+PASS highlights: passage, instructions, question text and answer labels are highlightable; numbers and inputs are not text
+PASS highlights: saved per account + lesson + version; found again by their words when the text moves; dropped when the words are gone
+PASS highlight mode: Quick highlight by default; Off / Choose colors saved for this account; preview keeps highlights for the session only
+PASS first-time tip: shown once to a student ("Highlight while reading" … "Got it!"); Got it saves it; teachers do not get it automatically
+PASS paragraphs fold: label with a chevron button (aria-expanded / aria-controls); toggling hides only that paragraph
+PASS Pronouns: passage left + side panel (no sheet/modal); empty state; a word opens its question; answers kept when switching
+PASS Pronouns: paragraphs without a question word start folded (from the lesson data), once; the learner can open them
+PASS Vocabulary: "fine fine …" and other loops are found; normal explanations pass; broken text is never shown
+PASS Vocabulary: parseReading blocks a looping explanation and a distractor that equals a paraphrase; messages go to the right part
+PASS server: partProblems refuses looping explanations and duplicate paraphrases at generation
+PASS Admin › Reading check: scan reads saved lessons and changes nothing; clearing one explanation asks first, keeps a backup, changes only that field
+---- 12/12 passed

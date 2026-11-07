@@ -1,0 +1,74 @@
+{
+  "observedDate": "2026-11-07",
+  "github": [
+    {
+      "endpoint": "branches/main",
+      "error": null,
+      "sha": "5a0c18b3fa35c6ae0f284cc2e5e7c7e5355152ed",
+      "protected": false
+    },
+    {
+      "endpoint": "branches/feature/vocab-lab",
+      "error": null,
+      "sha": "318fdffc881e9727c5512b1cc387ac95431f88ae",
+      "protected": false
+    },
+    {
+      "endpoint": "actions/runs?per_page=5",
+      "error": null,
+      "total_count": 0
+    },
+    {
+      "endpoint": "rulesets",
+      "error": null,
+      "rulesets": 0
+    },
+    {
+      "endpoint": "commits/4d568ad805f6bace83cf5ced0fca3b5e9c493585/check-runs",
+      "error": null,
+      "total_count": 0
+    }
+  ],
+  "workflowFilesOnMain": [],
+  "cloudflareSettings": {
+    "source": "Owner confirmation in chat, 2026-11-07; settings saved",
+    "project": "myhomeworkmyfuture",
+    "productionBranch": "main",
+    "automaticProductionDeployments": true,
+    "previewBranches": "None"
+  },
+  "externalWebhooks": "GitHub repository hooks API: 200, zero hooks",
+  "commitPushGate": "AUTHORIZED_INTEGRATION_BRANCH_ONLY",
+  "ownerResponse": "Owner confirmed Cloudflare production main / preview None and explicitly requested commit/push only integration/vocab-lab-candidate-2026-11-07 with [CF-Pages-Skip].",
+  "decision": "Commit and push only the named integration branch. No main/feature push, merge, PR, deployment or production connection.",
+  "noDeployActionsPerformed": true,
+  "previousDecision": {
+    "commitPushGate": "BLOCKED_USER_CONFIRMED_KEEP_LOCAL",
+    "ownerResponse": "Chưa xác nhận — giữ branch cục bộ"
+  },
+  "githubServiceChecks": [
+    {
+      "endpoint": "actions/workflows",
+      "status": 200,
+      "count": 0,
+      "workflows": []
+    },
+    {
+      "endpoint": "hooks",
+      "status": 200,
+      "count": 0,
+      "hooks": []
+    },
+    {
+      "endpoint": "deployments?per_page=10",
+      "status": 200,
+      "count": 0,
+      "deployments": []
+    },
+    {
+      "endpoint": "pages",
+      "status": 404,
+      "message": "Not Found"
+    }
+  ]
+}

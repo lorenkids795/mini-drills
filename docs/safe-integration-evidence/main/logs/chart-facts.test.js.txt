@@ -1,0 +1,57 @@
+PASS invalid chart: no facts at all
+PASS missing id/version: no facts
+PASS duplicate series id rejected
+PASS duplicate x rejected
+PASS x out of time order rejected
+PASS endpoint increase / decrease / no_change
+PASS endpoint: one point = insufficient (not flat)
+PASS endpoint uses first/last VALID points (null skipped, not zero)
+PASS shape: monotonic / flat / fluctuating
+PASS shape with a gap = insufficient (never "steady")
+PASS overall rise with a dip is fluctuating, not monotonic
+PASS absolute and percent change
+PASS negative values: percent from |baseline|
+PASS zero baseline: no percent
+PASS largest value is not the largest increase
+PASS unique leader at every observed point
+PASS changing leader -> unsupported
+PASS tie for the top at the start -> no "highest throughout", tie fact at that x
+PASS tie for the top at the middle -> no "highest throughout", tie fact at that x
+PASS tie for the top at the end -> no "highest throughout", tie fact at that x
+PASS null at one point: no "highest throughout" claim
+PASS null is never 0 in ranking (no rank fact at that x)
+PASS lowest throughout
+PASS mismatched x sets: no cross-series facts
+PASS fewer than 2 comparable points: rank change unsupported
+PASS endpoint rank change detected / not detected
+PASS no crossing fact type is ever emitted, and no crossing year
+PASS fact ids are stable and scoped to chart id + version
+PASS real Unit 2 content: no problems
+PASS Chart A: unique leader at every observed point (owner rule)
+PASS Chart B: leader changes and a tie (owner rule)
+PASS both charts are marked synthetic and use made-up labels
+PASS all three Controlled labels are used
+PASS placeholders resolve to the chart numbers
+PASS pending items are counted; release gate fails while any is pending
+PASS release gate passes when every item is approved
+PASS stale fact id is caught
+PASS changed chart data is caught (expected result no longer true)
+PASS chart version bump makes old ids stale
+PASS wrong stored Controlled answer is caught
+PASS "not determinable" on an observed year is caught
+PASS EN/VI with different placeholders is caught
+PASS missing Vietnamese is caught
+PASS unfillable placeholder is caught
+PASS "throughout" without a verified throughout fact is caught
+PASS model sentence on an unsupported fact is caught
+PASS answer leak: Chart B fact before Independent is caught
+PASS answer leak: Chart B label in pre-Independent text is caught
+PASS answer leak: Chart B item placed in Guided is caught
+PASS duplicate content id is caught
+PASS general copy with a chart placeholder is caught
+PASS unknown review state is caught
+PASS English model sentences and statements: no Vietnamese letters
+PASS browser load: md-chart.js, lm-engine.js, lm-unit2.js as plain scripts
+PASS index.html loads md-chart.js before the app and no longer defines the analysis inline
+PASS old Unit 2 panel in exam Writing is off
+---- 56/56 passed

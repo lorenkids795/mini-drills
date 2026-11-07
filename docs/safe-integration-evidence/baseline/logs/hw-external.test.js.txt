@@ -1,0 +1,8 @@
+PASS form: Assignment details → Exercises from Library + External tasks (both addable, no type switch) → footer "Save assignment"
+PASS save External only: link required (http/https only); saved record = ext [{x1, link, note, source}], ex [], type external
+PASS old assignments (no type) still work as Mini Drills; a saved Mini Drills one gets type mini
+PASS student: external card = name, due, instructions, Open link (new tab, safe href), "Not submitted", Upload screenshot
+PASS after an upload (hwdone with a screenshot): Submitted + time + thumbnail + Replace; survives a reload (same record); late upload says so
+PASS teacher: per student Submitted / Not submitted / Missing, time, screenshot link; progress = submitted students
+FAIL server: /api/image needs a signed-in user, an image type and the hwshot kind; stores outside Firestore; serves it back -> imageUpload is not defined
+---- 6/7 passed

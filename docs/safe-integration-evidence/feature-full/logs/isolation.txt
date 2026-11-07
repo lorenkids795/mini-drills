@@ -1,0 +1,4 @@
+PASS 42 isolated-output screenshots: shell/Check + both missions briefing/Morph/Final at 390/768/1280, light/dark, reduced motion; 44px controls, no overflow, no real sign-in
+PASS complete real Check→Town mission→Sorting, first-wrong clue without key, retry/resume assisted, source Check unchanged, next batch
+PASS complete Save the Coast: five cumulative keyboard sentences, guided versus independent, three Morph rounds/per-form recall, Final free recall draft resume, separate A/B progress
+PASS hosted-origin HTTPS simulation from dist only: playable demo, secure local storage, fetch/API/config and WebSocket/XHR/EventSource/beacon denied before network; fixture fetch omits cookies even with include requested; redirect rejected without following API

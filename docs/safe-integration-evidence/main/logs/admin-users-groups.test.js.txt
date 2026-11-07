@@ -1,0 +1,7 @@
+PASS Users: one section per role in the order Admin, Teachers, Homework Assistants, Testers, Students, with counts
+PASS Users: no Role column; every account listed once, in its own group (assistant not a teacher, tester not a student)
+PASS Users: Class only for students; tester / staff show — (the tester keeps cls "Test")
+PASS Users: search across groups with "n of m" counts; the class filter narrows Students only; Role filter gone
+PASS Users: actions menu per row unchanged (tester sample data, teacher Kick, assistant password only, admin My account)
+PASS Students: only real students (no MD_CONFIG teacher placeholder, no role "teacher" row, no tester, no staff email); NAME | EMAIL | CLASS
+---- 6/6 passed

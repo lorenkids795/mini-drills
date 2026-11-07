@@ -1,0 +1,5 @@
+PASS 36 state/theme/viewport checks: 390/768/1280, no overflow, 44px targets, text contrast >=4.5:1, control boundaries >=3:1, sorting/undo above fold, first-error hint visible and neutral, quiet reveal
+PASS double click records once; reload during transition; keyboard sort/undo and retained word focus; separate accounts
+PASS prefers-reduced-motion disables card animation
+PASS zero Known: transparent skip to results and next batch
+PASS legacy wrong-attempt context/options pin across reload; old evidence retained; explicit revision starts v2 and records v2 task ID

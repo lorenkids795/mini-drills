@@ -1,0 +1,13 @@
+PASS UI is inserted before #loginForm in the .login box
+PASS no Student / Teacher tab buttons
+PASS state 1 (default): Email, Password, Sign in, First time…, link Teacher sign in
+PASS state 3 (teacher): Email, Password, Sign in, link Sign in as student; no teacher first-time link
+PASS state 2 (first time): Class, Your name, Your email, Choose a password, Create my password, I already have a password
+PASS name list: disabled "Choose a class first" until a class is chosen; changing class resets the name
+PASS sign in posts /api/login with email + password (unchanged)
+PASS first time posts /api/register with nameId (unchanged)
+PASS no teacher self sign-up anywhere: no setup key field, no "Create your teacher password"; no subtitle; student first time still there
+PASS server: a teacher email (TEACHERS or added by the admin) cannot create its own password, even with the old setup key
+PASS every input and select has an id and a name (autofill)
+PASS index.html: brand panel, slogan, theme button, body.lg
+---- 12/12 passed

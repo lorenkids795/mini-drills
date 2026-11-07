@@ -1,0 +1,12 @@
+(node:24832) MetadataLookupWarning: received unexpected error = All promises were rejected code = UNKNOWN
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ real emulator UI: teacher fix/reject/approve/revise history, separate admin publication (6988.2888ms)
+✔ real emulator UI: student reload restores assisted evidence, cross-account resume is denied (2937.3698ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12549.0897

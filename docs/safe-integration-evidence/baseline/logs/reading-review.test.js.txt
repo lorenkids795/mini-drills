@@ -1,0 +1,14 @@
+PASS Generate = Medium only (3 requests); Easy / Hard wait; Add off "Approve Medium first"; Review Medium panel in the preview
+PASS Apply feedback with AI: one revise request per part with the current part, passage and feedback; proposal with changes; Accept replaces Medium; Undo restores
+PASS Reject keeps the current Medium; a failed revision changes nothing and says so
+PASS a 3-word answer in a TWO WORDS question: listed as left out with Fix with AI; Approve off; fixed → revalidated → Approve on
+PASS an AI "fix" that changes nothing is not marked fixed and cannot be accepted (honest error state)
+PASS blocking problems: Approve stays off; the teacher may keep a lesson without items left out only by ticking the box
+PASS after approval: Generate Easy only → Easy requests carry the approved Medium part (base); Hard independent; Add on
+PASS a failed Easy part (relay) keeps the approved Medium and Hard; only the failed part is retried
+PASS editing Medium after Easy / Hard were made: they become Outdated (not used by Add), approval is needed again; Keep this version is explicit
+FAIL server: op revise = staff only, the current part + passage + teacher words + problems, same part schema, separate daily limit -> The expression evaluated to a falsy value:
+
+  assert.ok(/if \(body\.op === 'revise'\) return aiReadingRevise\(env, em, body, passage, title, P\);/.test(SRC) && SRC.indexOf("if (body.op === 'revise')") > SRC.indexOf('const em = await staffEmail(env, request);'))
+
+---- 9/10 passed

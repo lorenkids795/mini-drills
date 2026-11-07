@@ -1,0 +1,7 @@
+PASS 80 chapter/scenario/viewport/theme screenshots; no overflow, 44px controls, text contrast >=4.5:1, reduced motion/focus, live status, evidence-first discovery, contextual artifacts, one report paragraph, Final Report no word bank/answers, no Firebase SDK
+PASS complete authored game, five one-at-a-time sentences with keyboard/focus, reload, account isolation, replay
+PASS linked first-error neutral hint, reload/retry stays assisted, no verified-word interstitial
+PASS both missions: keyboard clue, progressive clue, explicit teaching only after attempt, assisted evidence and support resume
+PASS visible save-failure feedback and rollback without advancing unsaved mission
+PASS typed-answer draft resume and Continue Sorting navigation
+PASS real root-app demo integration from a completed 20-word batch, read-only Check input, Continue Sorting, no real APIs; real-mode/anonymous mission gating

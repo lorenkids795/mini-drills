@@ -1,0 +1,24 @@
+PASS metadata file loads in Node
+PASS lesson ids are unique
+PASS every lesson has the required metadata
+PASS Unit 2 exists and is unpublished
+PASS metadata only: no chart / practice / answer fields yet
+PASS no Cambridge book/test ids in lesson metadata
+PASS gate block found in index.html
+PASS student cannot see the unpublished lesson
+PASS teacher cannot see it either
+PASS admin sees it (preview)
+PASS student tree: Writing open, no clickable unit, other skills Coming soon
+PASS student forced into the lesson (state set directly) still gets the list
+PASS admin list shows Unit 2 marked as preview
+PASS admin opens the shell: no fake practice
+PASS unknown lesson id falls back to the list
+PASS Coming soon: an ordinary student sees no lesson of any skill, even a published one; teacher keeps published lessons
+PASS tabs: Cambridge IELTS + Learning Materials
+PASS tree: 4 skills in order; Writing open by default with 2 task groups (closed); skills without groups are disabled "Coming soon"
+PASS tree: open Task 1 shows the unit row (title, amber preview badge, chevron); empty Task 2 says "No units yet"
+PASS tree: an ordinary student sees Writing as "Coming soon" (disabled), never a unit, even with the group state open
+PASS tree: a teacher keeps the old view (Writing opens, unpublished units hidden)
+PASS tree: every unit title / skill name is escaped; toggles are buttons with aria-expanded
+PASS no Firestore use in the Learning Materials block
+---- 23/23 passed

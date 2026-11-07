@@ -1,0 +1,19 @@
+PASS p1-station-access 390 light all phases, draft reload, Check unchanged, A/B
+PASS p1-station-access 390 dark all phases, draft reload, Check unchanged, A/B
+PASS p1-station-access 768 light all phases, draft reload, Check unchanged, A/B
+PASS p1-station-access 768 dark all phases, draft reload, Check unchanged, A/B
+PASS p1-station-access 1280 light all phases, draft reload, Check unchanged, A/B
+PASS p1-station-access 1280 dark all phases, draft reload, Check unchanged, A/B
+PASS p1-community-room 390 light all phases, draft reload, Check unchanged, A/B
+PASS p1-community-room 390 dark all phases, draft reload, Check unchanged, A/B
+PASS p1-community-room 768 light all phases, draft reload, Check unchanged, A/B
+PASS p1-community-room 768 dark all phases, draft reload, Check unchanged, A/B
+PASS p1-community-room 1280 light all phases, draft reload, Check unchanged, A/B
+PASS p1-community-room 1280 dark all phases, draft reload, Check unchanged, A/B
+PASS p1-power-exhibit 390 light all phases, draft reload, Check unchanged, A/B
+PASS p1-power-exhibit 390 dark all phases, draft reload, Check unchanged, A/B
+PASS p1-power-exhibit 768 light all phases, draft reload, Check unchanged, A/B
+PASS p1-power-exhibit 768 dark all phases, draft reload, Check unchanged, A/B
+PASS p1-power-exhibit 1280 light all phases, draft reload, Check unchanged, A/B
+PASS p1-power-exhibit 1280 dark all phases, draft reload, Check unchanged, A/B
+PASS 126 curated mission screenshots

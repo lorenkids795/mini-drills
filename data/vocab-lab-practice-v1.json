@@ -1,0 +1,1838 @@
+[
+  {
+    "id": "sense-bc0aa7072ccf80cda2816871:context-v1",
+    "senseId": "sense-bc0aa7072ccf80cda2816871",
+    "sourceId": "C17-T1-R1-001",
+    "context": "The small charity attracted volunteers at an astonishing rate.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "Volunteers joined surprisingly quickly.",
+      "Volunteers joined at a predictable, steady pace.",
+      "Volunteers stopped joining entirely."
+    ],
+    "answer": 0,
+    "clue": "Consider what surprised the organisers about the speed.",
+    "explanation": "Volunteers joined surprisingly quickly.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-219d445bcdbc485e9d28488e:context-v1",
+    "senseId": "sense-219d445bcdbc485e9d28488e",
+    "sourceId": "C17-T1-R1-002",
+    "context": "The lake became increasingly polluted over several summers.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The pollution stayed at exactly the same level.",
+      "The pollution grew worse over time.",
+      "The pollution disappeared completely."
+    ],
+    "answer": 1,
+    "clue": "Compare the degree of pollution from one summer to the next.",
+    "explanation": "The pollution grew worse over time.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-e89a4b0bd00866e4982969c7:context-v1",
+    "senseId": "sense-e89a4b0bd00866e4982969c7",
+    "sourceId": "C17-T1-R1-003",
+    "context": "By noon, the narrow market lanes were congested.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The lanes had been permanently closed for repairs.",
+      "The lanes were almost empty.",
+      "People could barely move through the crowded lanes."
+    ],
+    "answer": 2,
+    "clue": "Think about how easily someone could move there.",
+    "explanation": "People could barely move through the crowded lanes.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-072cc7ecf79926dc8c3b4035:context-v1",
+    "senseId": "sense-072cc7ecf79926dc8c3b4035",
+    "sourceId": "C17-T1-R1-004",
+    "context": "The school planned an expansion of its science facilities.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It planned to make the facilities larger.",
+      "It planned to close all science facilities.",
+      "It planned to repaint them without changing their size."
+    ],
+    "answer": 0,
+    "clue": "Focus on the size of the facilities.",
+    "explanation": "It planned to make the facilities larger.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-97e16630481da84aaa89c941:context-v1",
+    "senseId": "sense-97e16630481da84aaa89c941",
+    "sourceId": "C17-T1-R1-005",
+    "context": "The planners chose an overground railway for the new district.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The trains would travel in deep tunnels.",
+      "The trains would travel above ground.",
+      "The trains would be replaced by buses."
+    ],
+    "answer": 1,
+    "clue": "Consider where the tracks would run.",
+    "explanation": "The trains would travel above ground.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-19e7303e091b6ad30d33099e:context-v1",
+    "senseId": "sense-19e7303e091b6ad30d33099e",
+    "sourceId": "C17-T1-R1-006",
+    "context": "A network of footpaths connects the villages.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "One isolated path serves a single house.",
+      "Every path is separate from all the others.",
+      "Several linked paths connect different places."
+    ],
+    "answer": 2,
+    "clue": "Look at how the paths relate to one another.",
+    "explanation": "Several linked paths connect different places.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-bc680ec538cbb220ab2a466d:context-v1",
+    "senseId": "sense-bc680ec538cbb220ab2a466d",
+    "sourceId": "C17-T1-R1-007",
+    "context": "Skipping maintenance may result in costly repairs.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "Skipping it may cause expensive repairs later.",
+      "Skipping it will prevent all repair costs.",
+      "The repairs have no connection to maintenance."
+    ],
+    "answer": 0,
+    "clue": "Look for a cause and its consequence.",
+    "explanation": "Skipping it may cause expensive repairs later.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-a62397cd8498372a644abfe4:context-v1",
+    "senseId": "sense-a62397cd8498372a644abfe4",
+    "sourceId": "C17-T1-R1-008",
+    "context": "Each passenger had to show a ticket before boarding.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "Only the vehicle's mechanic needed a ticket.",
+      "Each person travelling on the service needed a ticket.",
+      "Only the person selling tickets needed a ticket."
+    ],
+    "answer": 1,
+    "clue": "Focus on who is making the journey.",
+    "explanation": "Each person travelling on the service needed a ticket.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-040d2f06cfb57501b2f21289:context-v1",
+    "senseId": "sense-040d2f06cfb57501b2f21289",
+    "sourceId": "C17-T1-R1-009",
+    "context": "The delegation travelled to the capital to meet national officials.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It travelled to a factory's financial office.",
+      "It travelled to the country's smallest village.",
+      "It travelled to the country's main city."
+    ],
+    "answer": 2,
+    "clue": "Here the word names a place, rather than money.",
+    "explanation": "It travelled to the country's main city.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-eb0be8fa046a33efdda7d995:context-v1",
+    "senseId": "sense-eb0be8fa046a33efdda7d995",
+    "sourceId": "C17-T1-R1-011",
+    "context": "The agreement was a historic moment for the island.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It was important in the island's history.",
+      "It was a fictional story set in the past.",
+      "It was an ordinary event with no lasting significance."
+    ],
+    "answer": 0,
+    "clue": "Consider the event's importance, not simply its age.",
+    "explanation": "It was important in the island's history.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-febc630a67fef6e9872d2ba6:context-v1",
+    "senseId": "sense-febc630a67fef6e9872d2ba6",
+    "sourceId": "C17-T1-R1-012",
+    "context": "The audience stood around the performer to form a ring.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "They formed a straight line behind the stage.",
+      "They arranged themselves in a circle.",
+      "They all stood on one side of the performer."
+    ],
+    "answer": 1,
+    "clue": "Picture the audience's arrangement.",
+    "explanation": "They arranged themselves in a circle.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-d20fea662a1034c83894d16e:context-v1",
+    "senseId": "sense-d20fea662a1034c83894d16e",
+    "sourceId": "C17-T1-R1-013",
+    "context": "The toolkit consists of six basic instruments.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "Six instruments are missing from the toolkit.",
+      "The toolkit is used to manufacture six instruments.",
+      "Six instruments make up the toolkit."
+    ],
+    "answer": 2,
+    "clue": "Consider what is inside the complete set.",
+    "explanation": "Six instruments make up the toolkit.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-3eaf828d1dfa98a187fc8992:context-v1",
+    "senseId": "sense-3eaf828d1dfa98a187fc8992",
+    "sourceId": "C17-T1-R1-014",
+    "context": "The poorly built shed leaked during its first storm.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The shed's construction was of low quality.",
+      "The shed was expensive but carefully made.",
+      "The shed had simply become too old."
+    ],
+    "answer": 0,
+    "clue": "Its age is not the reason given for the leak.",
+    "explanation": "The shed's construction was of low quality.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-0565f5e877495423f1f8e0ea:context-v1",
+    "senseId": "sense-0565f5e877495423f1f8e0ea",
+    "sourceId": "C17-T1-R1-015",
+    "context": "The clinic's waiting room was overcrowded on Monday.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It had plenty of empty seats for everyone.",
+      "It held more people than it could comfortably accommodate.",
+      "Its opening hours were too short."
+    ],
+    "answer": 1,
+    "clue": "Think about people relative to the available space.",
+    "explanation": "It held more people than it could comfortably accommodate.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-9713aaa7c9984f2a0e5b19b9:context-v1",
+    "senseId": "sense-9713aaa7c9984f2a0e5b19b9",
+    "sourceId": "C17-T1-R1-016",
+    "context": "The housing survey examined conditions in a slum.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It examined an expensive residential estate.",
+      "It examined an uninhabited stretch of farmland.",
+      "It examined a poor urban area with crowded, inadequate housing."
+    ],
+    "answer": 2,
+    "clue": "Consider both housing conditions and the urban setting.",
+    "explanation": "It examined a poor urban area with crowded, inadequate housing.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-b0b8f112fe3686a19b5f7595:context-v1",
+    "senseId": "sense-b0b8f112fe3686a19b5f7595",
+    "sourceId": "C17-T1-R1-017",
+    "context": "Visitors toured the village in a horse-drawn cart.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "A horse pulled the cart.",
+      "A motor pushed the cart along a rail.",
+      "The visitors carried the cart themselves."
+    ],
+    "answer": 0,
+    "clue": "Identify what provides the pulling force.",
+    "explanation": "A horse pulled the cart.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-5cc1e31e90b4a98be6cb0447:context-v1",
+    "senseId": "sense-5cc1e31e90b4a98be6cb0447",
+    "sourceId": "C17-T1-R1-018",
+    "context": "The cancelled ferry turned their journey into a nightmare.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "They fell asleep and imagined the entire journey.",
+      "The journey became an extremely unpleasant experience.",
+      "The journey became unusually relaxing."
+    ],
+    "answer": 1,
+    "clue": "The expression is figurative in this travel context.",
+    "explanation": "The journey became an extremely unpleasant experience.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-7866d660a6098a5b1088424a:context-v1",
+    "senseId": "sense-7866d660a6098a5b1088424a",
+    "sourceId": "C17-T1-R1-019",
+    "context": "Passengers left their bags in the railway carriage.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "They left them in the station's ticket office.",
+      "They left them beside the track outside the train.",
+      "They left them in a compartment or coach of the train."
+    ],
+    "answer": 2,
+    "clue": "Here the setting is a train, rather than a horse-drawn vehicle.",
+    "explanation": "They left them in a compartment or coach of the train.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-9482629201408c09033f5c37:context-v1",
+    "senseId": "sense-9482629201408c09033f5c37",
+    "sourceId": "C17-T1-R1-020",
+    "context": "Numerous residents attended the safety meeting.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "A large number of residents attended.",
+      "Only one resident attended.",
+      "No residents attended."
+    ],
+    "answer": 0,
+    "clue": "Focus on the number of people.",
+    "explanation": "A large number of residents attended.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-2467417662518f2b65f17a66:context-v1",
+    "senseId": "sense-2467417662518f2b65f17a66",
+    "sourceId": "C17-T1-R1-021",
+    "context": "The council introduced a scheme to improve street lighting.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It reported an accidental failure of the lights.",
+      "It introduced an organised improvement plan.",
+      "It announced the completion of every planned repair."
+    ],
+    "answer": 1,
+    "clue": "Consider whether this describes a plan or an accident.",
+    "explanation": "It introduced an organised improvement plan.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-2ae0fa5c36a4e1d40ec501ff:context-v1",
+    "senseId": "sense-2ae0fa5c36a4e1d40ec501ff",
+    "sourceId": "C17-T1-R1-022",
+    "context": "The engineers will propose a safer crossing.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "They will reject every possible crossing.",
+      "They will confirm the crossing has already been built.",
+      "They will put forward an idea for consideration."
+    ],
+    "answer": 2,
+    "clue": "The decision has not yet been made.",
+    "explanation": "They will put forward an idea for consideration.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-bba0a06e975354255a715274:context-v1",
+    "senseId": "sense-bba0a06e975354255a715274",
+    "sourceId": "C17-T1-R1-023",
+    "context": "The new timetable should resolve the scheduling conflict.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It should solve the conflict.",
+      "It should create a new conflict deliberately.",
+      "It should hide the conflict without addressing it."
+    ],
+    "answer": 0,
+    "clue": "Think about the intended effect on the problem.",
+    "explanation": "It should solve the conflict.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-6ff6146fc5802fa1a7e9ebfc:context-v1",
+    "senseId": "sense-6ff6146fc5802fa1a7e9ebfc",
+    "sourceId": "C17-T1-R1-024",
+    "context": "With careful preparation, the team hoped to succeed.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It hoped to withdraw before starting.",
+      "It hoped to achieve its goal.",
+      "It hoped to change its name."
+    ],
+    "answer": 1,
+    "clue": "Focus on the desired result of its work.",
+    "explanation": "It hoped to achieve its goal.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-58b2376a8b0a1ccb3d997e4d:context-v1",
+    "senseId": "sense-58b2376a8b0a1ccb3d997e4d",
+    "sourceId": "C17-T1-R1-025",
+    "context": "Rina became a vocal advocate for safer playgrounds.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "She quietly opposed all playground improvements.",
+      "She was hired only to inspect playground equipment.",
+      "She spoke actively in support of safer playgrounds."
+    ],
+    "answer": 2,
+    "clue": "Consider her public position on the proposal.",
+    "explanation": "She spoke actively in support of safer playgrounds.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-27dd105458c68f03c45cc7a4:context-v1",
+    "senseId": "sense-27dd105458c68f03c45cc7a4",
+    "sourceId": "C17-T1-R1-026",
+    "context": "A buyer in England asked a solicitor to handle the property paperwork.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The buyer sought help from a legal professional.",
+      "The buyer hired a builder to repair the roof.",
+      "The buyer hired a reporter to publish the sale."
+    ],
+    "answer": 0,
+    "clue": "Think about the professional expertise needed for legal paperwork.",
+    "explanation": "The buyer sought help from a legal professional.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-5773df4e394a71bda9f5a149:context-v1",
+    "senseId": "sense-5773df4e394a71bda9f5a149",
+    "sourceId": "C17-T1-R1-027",
+    "context": "The report highlighted the social and economic advantages of the park.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It described only the park's colours and shapes.",
+      "It described benefits for the community and the economy.",
+      "It described only the project's social and financial costs."
+    ],
+    "answer": 1,
+    "clue": "Consider who or what benefits.",
+    "explanation": "It described benefits for the community and the economy.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-4eeaa167bcb7187c337891a2:context-v1",
+    "senseId": "sense-4eeaa167bcb7187c337891a2",
+    "sourceId": "C17-T1-R1-028",
+    "context": "The bridge will link together two walking trails.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It will remove both trails completely.",
+      "It will keep walkers permanently apart.",
+      "It will connect trails that were separate."
+    ],
+    "answer": 2,
+    "clue": "Think about the relationship between the trails after construction.",
+    "explanation": "It will connect trails that were separate.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-d25e72758cb00a430a2678dd:context-v1",
+    "senseId": "sense-d25e72758cb00a430a2678dd",
+    "sourceId": "C17-T1-R1-029",
+    "context": "The redevelopment plan aimed to clear slums.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It aimed to remove areas of poor-quality housing.",
+      "It aimed only to wash the streets without changing housing.",
+      "It aimed to build more overcrowded housing."
+    ],
+    "answer": 0,
+    "clue": "This refers to removing housing, rather than routine cleaning.",
+    "explanation": "It aimed to remove areas of poor-quality housing.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-3d666ffd6243e5eae8122ec5:context-v1",
+    "senseId": "sense-3d666ffd6243e5eae8122ec5",
+    "sourceId": "C17-T1-R1-030",
+    "context": "The studio will relocate to another district.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It will close permanently without reopening.",
+      "It will move to a different place.",
+      "It will remain at its current address."
+    ],
+    "answer": 1,
+    "clue": "Look for a change of location.",
+    "explanation": "It will move to a different place.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-aca45c8c33ce6d6b76305b9d:context-v1",
+    "senseId": "sense-aca45c8c33ce6d6b76305b9d",
+    "sourceId": "C17-T1-R1-031",
+    "context": "The charity opened an inner-city youth centre.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It opened a centre in remote countryside.",
+      "It opened a centre beyond the city's outer suburbs.",
+      "It opened a centre in a central urban area."
+    ],
+    "answer": 2,
+    "clue": "Consider the centre's location within the city.",
+    "explanation": "It opened a centre in a central urban area.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-1f0ba03ccd2713c05c437af7:context-v1",
+    "senseId": "sense-1f0ba03ccd2713c05c437af7",
+    "sourceId": "C17-T1-R1-032",
+    "context": "The team inspected a newly constructed bridge.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The bridge had been built recently.",
+      "The bridge was merely proposed on paper.",
+      "The bridge had stood unchanged for centuries."
+    ],
+    "answer": 0,
+    "clue": "Focus on when construction took place.",
+    "explanation": "The bridge had been built recently.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-671cec8bff9f6329a6dbfc5e:context-v1",
+    "senseId": "sense-671cec8bff9f6329a6dbfc5e",
+    "sourceId": "C17-T1-R1-033",
+    "context": "The family moved to a quiet suburb outside the busy centre.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It moved into the city's central business square.",
+      "It moved to an outlying residential area.",
+      "It moved to an isolated ocean island."
+    ],
+    "answer": 1,
+    "clue": "Consider its relationship to the city centre.",
+    "explanation": "It moved to an outlying residential area.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-d6d03481b171a5f596024d5b:context-v1",
+    "senseId": "sense-d6d03481b171a5f596024d5b",
+    "sourceId": "C17-T1-R1-034",
+    "context": "The centre will provide free helmets for the cycling course.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It will forbid participants from wearing helmets.",
+      "It will require participants to manufacture helmets.",
+      "It will make helmets available to participants."
+    ],
+    "answer": 2,
+    "clue": "Focus on what the centre supplies.",
+    "explanation": "It will make helmets available to participants.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-03936f62d7f90f8476e85cec:context-v1",
+    "senseId": "sense-03936f62d7f90f8476e85cec",
+    "sourceId": "C17-T1-R1-035",
+    "context": "The campaign began to gain support among local shopkeepers.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "More shopkeepers began backing it.",
+      "More shopkeepers began opposing it.",
+      "Shopkeepers stopped hearing about it entirely."
+    ],
+    "answer": 0,
+    "clue": "Consider the change in people's approval.",
+    "explanation": "More shopkeepers began backing it.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-7efabef9a0accea2e1cfc2c0:context-v1",
+    "senseId": "sense-7efabef9a0accea2e1cfc2c0",
+    "sourceId": "C17-T1-R1-036",
+    "context": "The architect must submit a plan before work starts.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The architect must destroy the plan.",
+      "The architect must officially present the plan for consideration.",
+      "The architect must complete the building without a plan."
+    ],
+    "answer": 1,
+    "clue": "Think about the approval process before construction.",
+    "explanation": "The architect must officially present the plan for consideration.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-3761adfe62a633a9b079f224:context-v1",
+    "senseId": "sense-3761adfe62a633a9b079f224",
+    "sourceId": "C17-T1-R1-037",
+    "context": "The committee decided to reject the application.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It approved the application immediately.",
+      "It asked the applicant to sign an already approved permit.",
+      "It refused to accept the application."
+    ],
+    "answer": 2,
+    "clue": "Focus on whether permission was given.",
+    "explanation": "It refused to accept the application.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-34cbfdc1ad4c82232245a368:context-v1",
+    "senseId": "sense-34cbfdc1ad4c82232245a368",
+    "sourceId": "C17-T1-R1-038",
+    "context": "The arts festival will coincide with the school holidays.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The two events will happen at the same time.",
+      "The festival will happen years before the holidays.",
+      "The festival will cause the holidays to be cancelled."
+    ],
+    "answer": 0,
+    "clue": "Compare the timing of the two events.",
+    "explanation": "The two events will happen at the same time.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-0a73406fb36bbdc0a962c882:context-v1",
+    "senseId": "sense-0a73406fb36bbdc0a962c882",
+    "sourceId": "C17-T1-R1-039",
+    "context": "The board discussed a proposal for a shared garden.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It inspected a garden already completed under a contract.",
+      "It discussed a suggested plan.",
+      "It counted the existing garden's flowers."
+    ],
+    "answer": 1,
+    "clue": "Consider whether the idea is still being considered.",
+    "explanation": "It discussed a suggested plan.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-a8cfea44fc823bc8c3e05ed6:context-v1",
+    "senseId": "sense-a8cfea44fc823bc8c3e05ed6",
+    "sourceId": "C17-T1-R1-040",
+    "context": "After the debate, the council voted to pass the proposal.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It refused to consider the proposal.",
+      "It accidentally lost the proposal's documents.",
+      "It officially approved the proposal."
+    ],
+    "answer": 2,
+    "clue": "Here pass refers to a formal decision.",
+    "explanation": "It officially approved the proposal.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-590d68f3f7f2ab429bf4f7ff:context-v1",
+    "senseId": "sense-590d68f3f7f2ab429bf4f7ff",
+    "sourceId": "C17-T1-R1-041",
+    "context": "The two community groups agreed to merge.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "They agreed to combine into one organisation.",
+      "They agreed to separate into smaller groups.",
+      "They agreed to compete without sharing resources."
+    ],
+    "answer": 0,
+    "clue": "Consider the number of organisations afterwards.",
+    "explanation": "They agreed to combine into one organisation.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-1db6ea0e855230f852907071:context-v1",
+    "senseId": "sense-1db6ea0e855230f852907071",
+    "sourceId": "C17-T1-R1-042",
+    "context": "The graduates hope to establish a research centre.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "They hope to close an existing centre.",
+      "They hope to formally set up a centre.",
+      "They hope to visit a centre for one afternoon."
+    ],
+    "answer": 1,
+    "clue": "Think about bringing an organisation into existence.",
+    "explanation": "They hope to formally set up a centre.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-58da02c350f91fff6e6e34d5:context-v1",
+    "senseId": "sense-58da02c350f91fff6e6e34d5",
+    "sourceId": "C17-T1-R1-043",
+    "context": "Volunteers will construct a shelter beside the trail.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "They will demolish the shelter.",
+      "They will draw a map of a distant shelter.",
+      "They will build the shelter."
+    ],
+    "answer": 2,
+    "clue": "Consider the physical work being planned.",
+    "explanation": "They will build the shelter.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-53c1926283a6c23d7721e7ac:context-v1",
+    "senseId": "sense-53c1926283a6c23d7721e7ac",
+    "sourceId": "C17-T1-R1-044",
+    "context": "The club held events to raise funding for a new roof.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It tried to obtain money for the roof.",
+      "It tried to spend all its remaining money elsewhere.",
+      "It tried to increase the roof's height."
+    ],
+    "answer": 0,
+    "clue": "Here raise concerns financial resources.",
+    "explanation": "It tried to obtain money for the roof.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-0a29f0dee6be68f5dfd749c0:context-v1",
+    "senseId": "sense-0a29f0dee6be68f5dfd749c0",
+    "sourceId": "C17-T1-R1-045",
+    "context": "The architect suggested a radical redesign of the library.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The redesign repeated the old layout exactly.",
+      "The redesign differed greatly from conventional approaches.",
+      "The redesign changed only one door handle."
+    ],
+    "answer": 1,
+    "clue": "Consider how far the idea departs from the familiar.",
+    "explanation": "The redesign differed greatly from conventional approaches.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-fd149cea3dbdfc54c35e06fd:context-v1",
+    "senseId": "sense-fd149cea3dbdfc54c35e06fd",
+    "sourceId": "C17-T1-R1-046",
+    "context": "The route was popular, not least because of its coastal views.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The views were irrelevant to its popularity.",
+      "The views were the least attractive feature of the route.",
+      "The views were a particularly important reason for its popularity."
+    ],
+    "answer": 2,
+    "clue": "The phrase emphasises a reason rather than dismissing it.",
+    "explanation": "The views were a particularly important reason for its popularity.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-19471529b466f86f173df25c:context-v1",
+    "senseId": "sense-19471529b466f86f173df25c",
+    "sourceId": "C17-T1-R1-047",
+    "context": "The review was critical of the plan's lack of wheelchair access.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It expressed disapproval of that omission.",
+      "It praised the plan's accessibility without reservation.",
+      "It described an emergency medical condition."
+    ],
+    "answer": 0,
+    "clue": "Here critical concerns the reviewer's opinion.",
+    "explanation": "It expressed disapproval of that omission.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-d939cc58fd4fed7d6ba7ab83:context-v1",
+    "senseId": "sense-d939cc58fd4fed7d6ba7ab83",
+    "sourceId": "C17-T1-R1-048",
+    "context": "The announcement attracted attention from the press.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "A printing machine physically moved towards it.",
+      "Newspapers and other news media paid attention.",
+      "A group of athletes pressed a button."
+    ],
+    "answer": 1,
+    "clue": "Consider who reports public announcements.",
+    "explanation": "Newspapers and other news media paid attention.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-29335f0b1ace74b04d15297e:context-v1",
+    "senseId": "sense-29335f0b1ace74b04d15297e",
+    "sourceId": "C17-T1-R1-049",
+    "context": "An objector spoke against the proposed car park.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "A person funding the plan promised more money.",
+      "A person officially approving the plan signed it.",
+      "A person opposing the plan spoke."
+    ],
+    "answer": 2,
+    "clue": "Focus on the speaker's position towards the plan.",
+    "explanation": "A person opposing the plan spoke.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-3b3c80ace1d7237cd7336645:context-v1",
+    "senseId": "sense-3b3c80ace1d7237cd7336645",
+    "sourceId": "C17-T1-R1-050",
+    "context": "Researchers argue that shaded streets improve comfort.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "They present reasons for that view.",
+      "They physically fight over ownership of the streets.",
+      "They refuse to express any view."
+    ],
+    "answer": 0,
+    "clue": "In this context, argue concerns reasoning.",
+    "explanation": "They present reasons for that view.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-b3b6c1b85697b8c56ecd6a1e:context-v1",
+    "senseId": "sense-b3b6c1b85697b8c56ecd6a1e",
+    "sourceId": "C17-T1-R1-051",
+    "context": "The weakened wall could collapse in strong winds.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It could gradually become taller.",
+      "It could suddenly fall down.",
+      "It could safely move to another site intact."
+    ],
+    "answer": 1,
+    "clue": "Consider the risk created by a weakened structure.",
+    "explanation": "It could suddenly fall down.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-846e89640f6cbd6630ab10fa:context-v1",
+    "senseId": "sense-846e89640f6cbd6630ab10fa",
+    "sourceId": "C17-T1-R1-052",
+    "context": "Workers checked the cables overhead.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "They checked cables buried under their feet.",
+      "They calculated their office's operating expenses.",
+      "They checked cables above them."
+    ],
+    "answer": 2,
+    "clue": "Here overhead describes a physical position.",
+    "explanation": "They checked cables above them.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-7c4f28067a86947ac414ea27:context-v1",
+    "senseId": "sense-7c4f28067a86947ac414ea27",
+    "sourceId": "C17-T1-R1-053",
+    "context": "Passing trucks made the windows shake.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The windows vibrated rapidly.",
+      "The windows opened and stayed motionless.",
+      "The windows became completely opaque."
+    ],
+    "answer": 0,
+    "clue": "Focus on movement caused by the trucks.",
+    "explanation": "The windows vibrated rapidly.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-44a36d798902fda8ec730199:context-v1",
+    "senseId": "sense-44a36d798902fda8ec730199",
+    "sourceId": "C17-T1-R1-054",
+    "context": "A chemical leak could poison the fish in the pond.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It could provide extra food safely.",
+      "It could harm the fish through a toxic substance.",
+      "It could move the fish to a new pond."
+    ],
+    "answer": 1,
+    "clue": "Consider the effect of a harmful chemical.",
+    "explanation": "It could harm the fish through a toxic substance.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-b9b6507069769c823a393841:context-v1",
+    "senseId": "sense-b9b6507069769c823a393841",
+    "sourceId": "C17-T1-R1-055",
+    "context": "The factory installed filters to reduce smoke emissions.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It aimed to employ fewer factory workers.",
+      "It aimed to increase the amount of raw material delivered.",
+      "It aimed to release less smoke into the air."
+    ],
+    "answer": 2,
+    "clue": "Think about substances leaving the factory.",
+    "explanation": "It aimed to release less smoke into the air.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-d4297b764592a4250bc065bf:context-v1",
+    "senseId": "sense-d4297b764592a4250bc065bf",
+    "sourceId": "C17-T1-R1-056",
+    "context": "Despite several failed trials, the inventors persisted.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "They continued trying despite difficulties.",
+      "They abandoned the project immediately.",
+      "They denied having started the project."
+    ],
+    "answer": 0,
+    "clue": "Consider their response to setbacks.",
+    "explanation": "They continued trying despite difficulties.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-83f09caaab41b9fc4710dd24:context-v1",
+    "senseId": "sense-83f09caaab41b9fc4710dd24",
+    "sourceId": "C17-T1-R1-057",
+    "context": "The ramp will enable wheelchair users to reach the stage.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It will prevent access.",
+      "It will make access possible.",
+      "It will remove the stage entirely."
+    ],
+    "answer": 1,
+    "clue": "Focus on what becomes possible.",
+    "explanation": "It will make access possible.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-107a92a8c8ae4ed9e0e21991:context-v1",
+    "senseId": "sense-107a92a8c8ae4ed9e0e21991",
+    "sourceId": "C17-T1-R1-058",
+    "context": "The cooperative decided to invest in better equipment.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It refused to spend any money on equipment.",
+      "It sold all equipment and stopped operating.",
+      "It put money into equipment for future benefit."
+    ],
+    "answer": 2,
+    "clue": "Consider how the money is being used.",
+    "explanation": "It put money into equipment for future benefit.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-c8a032bd669de4c70e00f5b7:context-v1",
+    "senseId": "sense-c8a032bd669de4c70e00f5b7",
+    "sourceId": "C17-T1-R1-059",
+    "context": "After months of repairs, the gallery eventually reopened.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It reopened in the end, after a period of time.",
+      "It reopened before any repairs began.",
+      "It reopened repeatedly every hour."
+    ],
+    "answer": 0,
+    "clue": "Look at its position in the sequence of events.",
+    "explanation": "It reopened in the end, after a period of time.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-68a92b316178a7ba875a347a:context-v1",
+    "senseId": "sense-68a92b316178a7ba875a347a",
+    "sourceId": "C17-T1-R1-060",
+    "context": "The driver checked the route to the campsite.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The driver checked the vehicle's ownership papers.",
+      "The driver checked which path to follow.",
+      "The driver checked the passengers' meals."
+    ],
+    "answer": 1,
+    "clue": "Think about navigation.",
+    "explanation": "The driver checked which path to follow.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-ca7812f339502f14f58a5cc7:context-v1",
+    "senseId": "sense-ca7812f339502f14f58a5cc7",
+    "sourceId": "C17-T1-R1-061",
+    "context": "A storage chamber lies beneath the main hall.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It is above the hall's roof.",
+      "It is beside the hall at the same height.",
+      "It is underneath the hall."
+    ],
+    "answer": 2,
+    "clue": "Compare the vertical positions.",
+    "explanation": "It is underneath the hall.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-76ab40715a668211f31eca6c:context-v1",
+    "senseId": "sense-76ab40715a668211f31eca6c",
+    "sourceId": "C17-T1-R1-062",
+    "context": "Reusable containers help minimise packaging waste.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "They help reduce waste as far as possible.",
+      "They help increase waste deliberately.",
+      "They guarantee waste is always exactly one kilogram."
+    ],
+    "answer": 0,
+    "clue": "The aim is reduction, without a fixed numerical promise.",
+    "explanation": "They help reduce waste as far as possible.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-f79cadd038f34b452e5ad8f5:context-v1",
+    "senseId": "sense-f79cadd038f34b452e5ad8f5",
+    "sourceId": "C17-T1-R1-063",
+    "context": "The additional expense made the repairs difficult to afford.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The extra income made everything free.",
+      "The extra cost caused difficulty.",
+      "The extra time had no financial effect."
+    ],
+    "answer": 1,
+    "clue": "Focus on money that must be paid.",
+    "explanation": "The extra cost caused difficulty.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-e314cef30ca9cc92777bf0cd:context-v1",
+    "senseId": "sense-e314cef30ca9cc92777bf0cd",
+    "sourceId": "C17-T1-R1-064",
+    "context": "The owners obtained permission to demolish the unsafe garage.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "They could preserve it without any changes.",
+      "They could move it intact to another street.",
+      "They could deliberately tear it down."
+    ],
+    "answer": 2,
+    "clue": "Consider what will happen to the structure itself.",
+    "explanation": "They could deliberately tear it down.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-1f802a62bd219cb98f97b548:context-v1",
+    "senseId": "sense-1f802a62bd219cb98f97b548",
+    "sourceId": "C17-T1-R1-065",
+    "context": "The concert was originally scheduled for Friday, then moved to Sunday.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "Friday was the first planned date.",
+      "Sunday had always been the only planned date.",
+      "The concert was never given a date."
+    ],
+    "answer": 0,
+    "clue": "Distinguish the initial plan from the revised one.",
+    "explanation": "Friday was the first planned date.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-65e03dcbc59a0b0769b2c3d7:context-v1",
+    "senseId": "sense-65e03dcbc59a0b0769b2c3d7",
+    "sourceId": "C17-T1-R1-066",
+    "context": "Construction of the health centre began in spring.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "Medical treatment began in the completed centre.",
+      "Building work began then.",
+      "Demolition of the completed centre ended then."
+    ],
+    "answer": 1,
+    "clue": "Focus on the building process.",
+    "explanation": "Building work began then.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-096561e3668afc16a1136ecc:context-v1",
+    "senseId": "sense-096561e3668afc16a1136ecc",
+    "sourceId": "C17-T1-R1-067",
+    "context": "The entrance is at street level.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It is on the roof several floors above the road.",
+      "It is deep below the road.",
+      "It is at the same height as the road surface."
+    ],
+    "answer": 2,
+    "clue": "Compare the entrance height with the road.",
+    "explanation": "It is at the same height as the road surface.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-5749d901734832afd6c460b6:context-v1",
+    "senseId": "sense-5749d901734832afd6c460b6",
+    "sourceId": "C17-T1-R1-068",
+    "context": "The gardener demonstrated a technique for planting seedlings.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The gardener showed a method.",
+      "The gardener listed only the plants' prices.",
+      "The gardener named the owner of the garden."
+    ],
+    "answer": 0,
+    "clue": "Consider how the task is performed.",
+    "explanation": "The gardener showed a method.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-dc79a02de8ffff16f46462ec:context-v1",
+    "senseId": "sense-dc79a02de8ffff16f46462ec",
+    "sourceId": "C17-T1-R1-069",
+    "context": "Engineers chose cut and cover for the shallow tunnel.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "They would bore a deep tunnel without opening the surface.",
+      "They would dig an open trench, build the tunnel, then cover it.",
+      "They would build only a bridge above the road."
+    ],
+    "answer": 1,
+    "clue": "Think about the sequence of opening and closing the ground.",
+    "explanation": "They would dig an open trench, build the tunnel, then cover it.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-52c3448f688e32aa1bd2bd43:context-v1",
+    "senseId": "sense-52c3448f688e32aa1bd2bd43",
+    "sourceId": "C17-T1-R1-070",
+    "context": "Workers dug a trench for the drainage pipe.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "They built a tall, solid tower.",
+      "They laid a flat sheet on untouched ground.",
+      "They dug a long, narrow excavation."
+    ],
+    "answer": 2,
+    "clue": "Picture the shape of the excavation.",
+    "explanation": "They dug a long, narrow excavation.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-94fd4a243ce8eef0fcd51b16:context-v1",
+    "senseId": "sense-94fd4a243ce8eef0fcd51b16",
+    "sourceId": "C17-T1-R1-071",
+    "context": "The library is temporarily using the school hall.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It is using the hall for a limited period.",
+      "It has bought the hall for permanent use.",
+      "It has never used the hall."
+    ],
+    "answer": 0,
+    "clue": "Consider whether this arrangement will last indefinitely.",
+    "explanation": "It is using the hall for a limited period.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-333d3bad11e49ba7de7ab3d2:context-v1",
+    "senseId": "sense-333d3bad11e49ba7de7ab3d2",
+    "sourceId": "C17-T1-R1-072",
+    "context": "Steel props hold up the damaged ceiling.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "They delay the start of a meeting.",
+      "They physically support the ceiling.",
+      "They pull the ceiling down deliberately."
+    ],
+    "answer": 1,
+    "clue": "Here hold up describes structural support.",
+    "explanation": "They physically support the ceiling.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-c2d007c35798620bcd0671fe:context-v1",
+    "senseId": "sense-c2d007c35798620bcd0671fe",
+    "sourceId": "C17-T1-R1-073",
+    "context": "A timber beam supports the roof above the doorway.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "A plastic pipe supplies water to the roof.",
+      "A loose fabric sheet covers the doorway.",
+      "A long wooden structural support carries the load."
+    ],
+    "answer": 2,
+    "clue": "Think about both the material and its structural job.",
+    "explanation": "A long wooden structural support carries the load.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-26ec251b0e3d685a3cf2bbd5:context-v1",
+    "senseId": "sense-26ec251b0e3d685a3cf2bbd5",
+    "sourceId": "C17-T1-R1-074",
+    "context": "A brick arch spans the entrance to the courtyard.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "A curved structure made of bricks crosses the entrance.",
+      "A flat wooden door blocks the courtyard.",
+      "A metal pipe runs below the entrance."
+    ],
+    "answer": 0,
+    "clue": "Consider the shape and building material.",
+    "explanation": "A curved structure made of bricks crosses the entrance.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-a6c2e97af752282096bddefb:context-v1",
+    "senseId": "sense-a6c2e97af752282096bddefb",
+    "sourceId": "C17-T1-R1-075",
+    "context": "The worker spread a thin layer of sand over the surface.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The worker removed the entire underlying surface.",
+      "The worker added a thickness of material on top.",
+      "The worker dug one deep hole in the centre."
+    ],
+    "answer": 1,
+    "clue": "Picture material covering a surface.",
+    "explanation": "The worker added a thickness of material on top.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-e7d2ee845dc352f184d68df2:context-v1",
+    "senseId": "sense-e7d2ee845dc352f184d68df2",
+    "sourceId": "C17-T1-R1-076",
+    "context": "After the storm, residents helped rebuild the community hall.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "They helped abandon it permanently.",
+      "They helped rename it without repairing it.",
+      "They helped construct it again."
+    ],
+    "answer": 2,
+    "clue": "The prefix indicates doing the building again.",
+    "explanation": "They helped construct it again.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-7c3cf07cd44fc2e6b46a6d83:context-v1",
+    "senseId": "sense-7c3cf07cd44fc2e6b46a6d83",
+    "sourceId": "C17-T1-R1-077",
+    "context": "The ferry returned to normal operation after repairs.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The transport service was functioning normally again.",
+      "A surgical procedure had begun on the ferry.",
+      "The ferry was only being designed on paper."
+    ],
+    "answer": 0,
+    "clue": "Here operation concerns a service functioning.",
+    "explanation": "The transport service was functioning normally again.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-a2e3f5d77f9765742fc2ba1e:context-v1",
+    "senseId": "sense-a2e3f5d77f9765742fc2ba1e",
+    "sourceId": "C17-T1-R1-078",
+    "context": "The planned railway extension would reach two more villages.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The existing line would become shorter.",
+      "An addition to the railway would serve more places.",
+      "The railway would close all existing stations."
+    ],
+    "answer": 1,
+    "clue": "Think about adding to an existing system.",
+    "explanation": "An addition to the railway would serve more places.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-85d0a9e321cb71f1c2aa168a:context-v1",
+    "senseId": "sense-85d0a9e321cb71f1c2aa168a",
+    "sourceId": "C17-T1-R1-079",
+    "context": "Only the manager can authorise the purchase.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "Only the manager can deliver the purchased goods.",
+      "Only the manager can object without making a decision.",
+      "Only the manager can give official permission."
+    ],
+    "answer": 2,
+    "clue": "Focus on the authority to approve.",
+    "explanation": "Only the manager can give official permission.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-10a3c19d3da3376f06c85142:context-v1",
+    "senseId": "sense-10a3c19d3da3376f06c85142",
+    "sourceId": "C17-T1-R1-080",
+    "context": "The museum restored a steam locomotive for demonstration runs.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It restored a train engine powered by steam.",
+      "It restored an electric bus.",
+      "It restored a train carriage with no engine."
+    ],
+    "answer": 0,
+    "clue": "Identify the vehicle and its power source.",
+    "explanation": "It restored a train engine powered by steam.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-cca21aed3e608f5b4ff5add2:context-v1",
+    "senseId": "sense-cca21aed3e608f5b4ff5add2",
+    "sourceId": "C17-T1-R1-081",
+    "context": "The boiler heats water to produce steam for the engine.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The equipment stores cold fuel without heating it.",
+      "The equipment turns heated water into steam.",
+      "The equipment cools steam into ice."
+    ],
+    "answer": 1,
+    "clue": "Focus on the equipment's heating function.",
+    "explanation": "The equipment turns heated water into steam.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-6caa2a9de3ab752700c0f4e1:context-v1",
+    "senseId": "sense-6caa2a9de3ab752700c0f4e1",
+    "sourceId": "C17-T1-R1-082",
+    "context": "The clinic will introduce a new booking system next month.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It will withdraw the system permanently.",
+      "It will simply mention an old system in a history lesson.",
+      "It will bring the system into use."
+    ],
+    "answer": 2,
+    "clue": "Consider the system entering practical use.",
+    "explanation": "It will bring the system into use.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-dc30bf3d9b5aff02efd75d6e:context-v1",
+    "senseId": "sense-dc30bf3d9b5aff02efd75d6e",
+    "sourceId": "C17-T1-R1-083",
+    "context": "The classrooms will be fitted with air filters.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "Air filters will be installed in them.",
+      "Air filters will be removed from them.",
+      "The classrooms will manufacture filters for sale."
+    ],
+    "answer": 0,
+    "clue": "Think about what equipment the rooms will have.",
+    "explanation": "Air filters will be installed in them.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-06c262095128f7725da31684:context-v1",
+    "senseId": "sense-06c262095128f7725da31684",
+    "sourceId": "C17-T1-R1-084",
+    "context": "Water vapour will condense on the cold glass.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The vapour will turn liquid water into gas.",
+      "The vapour will change into liquid.",
+      "The glass will turn into a gas."
+    ],
+    "answer": 1,
+    "clue": "Consider the direction of the change in state.",
+    "explanation": "The vapour will change into liquid.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-e1769236bf9b92698c134c42:context-v1",
+    "senseId": "sense-e1769236bf9b92698c134c42",
+    "sourceId": "C17-T1-R1-085",
+    "context": "Workers opened the doors to let paint fumes escape.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "They let solid paintbrushes leave on their own.",
+      "They let clean drinking water flow in.",
+      "They let strong vapours from the paint leave."
+    ],
+    "answer": 2,
+    "clue": "Think about what can remain in the air after painting.",
+    "explanation": "They let strong vapours from the paint leave.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-f467e6751813ca1470b09334:context-v1",
+    "senseId": "sense-f467e6751813ca1470b09334",
+    "sourceId": "C17-T1-R1-086",
+    "context": "A ventilation shaft brings fresh air into the underground room.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "A passage allows air to circulate.",
+      "A pipe supplies only drinking water.",
+      "A sealed pillar prevents all air movement."
+    ],
+    "answer": 0,
+    "clue": "Focus on airflow through a passage.",
+    "explanation": "A passage allows air to circulate.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-6e7e446589ed5f0d80e8a4a5:context-v1",
+    "senseId": "sense-6e7e446589ed5f0d80e8a4a5",
+    "sourceId": "C17-T1-R1-087",
+    "context": "The morning congestion added twenty minutes to the journey.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "An empty road allowed unusually fast travel.",
+      "Heavy traffic delayed the journey.",
+      "A lower ticket price delayed the journey."
+    ],
+    "answer": 1,
+    "clue": "Consider what slows road traffic.",
+    "explanation": "Heavy traffic delayed the journey.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-bb8dfc87d36bf93edfc537dd:context-v1",
+    "senseId": "sense-bb8dfc87d36bf93edfc537dd",
+    "sourceId": "C17-T1-R1-088",
+    "context": "The walking circuit returns hikers to the starting point.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The route ends far away and never returns.",
+      "The route is a single isolated step.",
+      "The route forms a loop."
+    ],
+    "answer": 2,
+    "clue": "Here circuit describes the shape of a route.",
+    "explanation": "The route forms a loop.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-9be946e9caf16f0abc73d55d:context-v1",
+    "senseId": "sense-9be946e9caf16f0abc73d55d",
+    "sourceId": "C17-T1-R1-089",
+    "context": "Cycling is an alternative to taking the bus.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "Cycling is another available option.",
+      "Cycling is the only compulsory choice.",
+      "Cycling is identical to riding the bus."
+    ],
+    "answer": 0,
+    "clue": "Think about having a choice between methods.",
+    "explanation": "Cycling is another available option.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-35bdd841a2a3d36cafc79bf0:context-v1",
+    "senseId": "sense-35bdd841a2a3d36cafc79bf0",
+    "sourceId": "C17-T1-R1-090",
+    "context": "The inspection took place in a confined space under the floor.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The area was a wide, open field.",
+      "The area was small and enclosed.",
+      "The area was crowded only because of a public festival."
+    ],
+    "answer": 1,
+    "clue": "Consider the physical limits of the area itself.",
+    "explanation": "The area was small and enclosed.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-43318f2677b3ab1e87f0c139:context-v1",
+    "senseId": "sense-43318f2677b3ab1e87f0c139",
+    "sourceId": "C17-T1-R1-091",
+    "context": "The rescue team needs reliable radios.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It needs radios that fail unpredictably.",
+      "It needs radios selected only for their colour.",
+      "It needs radios that work dependably."
+    ],
+    "answer": 2,
+    "clue": "Think about being able to depend on the equipment.",
+    "explanation": "It needs radios that work dependably.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-2799f04cb6bb3d9d8e7419ba:context-v1",
+    "senseId": "sense-2799f04cb6bb3d9d8e7419ba",
+    "sourceId": "C17-T1-R1-092",
+    "context": "An electric motor drives the small workshop lift.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "A motor powered by electricity moves it.",
+      "A horse pulls it using a rope.",
+      "A steam engine burns coal to move it."
+    ],
+    "answer": 0,
+    "clue": "Identify the source of the motor's power.",
+    "explanation": "A motor powered by electricity moves it.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-edd9de76d84d9d2159b628cd:context-v1",
+    "senseId": "sense-edd9de76d84d9d2159b628cd",
+    "sourceId": "C17-T1-R1-093",
+    "context": "The island receives supplies by means of a small boat.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The boat is the reason supplies are no longer needed.",
+      "A boat is the method used to deliver supplies.",
+      "The boat is the destination where all supplies stay."
+    ],
+    "answer": 1,
+    "clue": "Here means refers to a method, rather than a definition.",
+    "explanation": "A boat is the method used to deliver supplies.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-70a108ce0b4e5b80ed405c93:context-v1",
+    "senseId": "sense-70a108ce0b4e5b80ed405c93",
+    "sourceId": "C17-T1-R1-094",
+    "context": "The cable can transfer power from the battery to the lamp.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It can move the whole battery into the lamp.",
+      "It can remove the lamp's need for any energy.",
+      "It can transmit energy between the devices."
+    ],
+    "answer": 2,
+    "clue": "Distinguish moving energy from moving a physical device.",
+    "explanation": "It can transmit energy between the devices.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-d34dd630d6328faba29a8732:context-v1",
+    "senseId": "sense-d34dd630d6328faba29a8732",
+    "sourceId": "C17-T1-R1-095",
+    "context": "A portable generator kept the lights on during the outage.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "A device produced electricity.",
+      "A container stored drinking water.",
+      "A machine removed all electricity from the building."
+    ],
+    "answer": 0,
+    "clue": "Focus on the production of electrical power.",
+    "explanation": "A device produced electricity.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-e268013d4c8ff73e39502e09:context-v1",
+    "senseId": "sense-e268013d4c8ff73e39502e09",
+    "sourceId": "C17-T1-R1-096",
+    "context": "The city proposed a deep-level electric railway.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It proposed a horse-drawn line on the road.",
+      "It proposed an electric line far below the surface.",
+      "It proposed a steam railway on an elevated bridge."
+    ],
+    "answer": 1,
+    "clue": "Both the location and power source matter.",
+    "explanation": "It proposed an electric line far below the surface.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-fce02794dc77cc00b958f59e:context-v1",
+    "senseId": "sense-fce02794dc77cc00b958f59e",
+    "sourceId": "C17-T1-R1-097",
+    "context": "The display is made up of six separate panels.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "Six panels have been removed from the display.",
+      "The display manufactures six panels.",
+      "Six panels compose the display."
+    ],
+    "answer": 2,
+    "clue": "Consider the parts of the whole.",
+    "explanation": "Six panels compose the display.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-a0faf1768124f5a1231dc30f:context-v1",
+    "senseId": "sense-a0faf1768124f5a1231dc30f",
+    "sourceId": "C17-T1-R1-098",
+    "context": "The narrow doorway made furniture delivery difficult.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The doorway was not wide.",
+      "The doorway was unusually wide.",
+      "The doorway was far above the roof."
+    ],
+    "answer": 0,
+    "clue": "Focus on width.",
+    "explanation": "The doorway was not wide.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-1a95bb111e4aea4c24356619:context-v1",
+    "senseId": "sense-1a95bb111e4aea4c24356619",
+    "sourceId": "C17-T1-R1-099",
+    "context": "A damaged cable interrupted the building's power supply.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It interrupted the delivery of office furniture.",
+      "It interrupted the provision of electricity.",
+      "It interrupted the flow of drinking water."
+    ],
+    "answer": 1,
+    "clue": "Consider what the cable carries.",
+    "explanation": "It interrupted the provision of electricity.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-252384ca78958e91d88ad5e7:context-v1",
+    "senseId": "sense-252384ca78958e91d88ad5e7",
+    "sourceId": "C17-T1-R1-100",
+    "context": "The reusable spacecraft was described as a technical achievement.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It was only a change in ticket prices.",
+      "It was a natural event with no engineering involved.",
+      "It was a successful technological accomplishment."
+    ],
+    "answer": 2,
+    "clue": "Focus on successful technology or engineering.",
+    "explanation": "It was a successful technological accomplishment.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-3ff11e040f69cd12c1d4e710:context-v1",
+    "senseId": "sense-3ff11e040f69cd12c1d4e710",
+    "sourceId": "C17-T1-R1-101",
+    "context": "The bakery hopes to make a profit this year.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "It hopes to earn more than it spends.",
+      "It hopes its costs will exceed its income.",
+      "It hopes to give away every product without income."
+    ],
+    "answer": 0,
+    "clue": "Compare income with expenditure.",
+    "explanation": "It hopes to earn more than it spends.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-51dc82c9a17888e5dec61b34:context-v1",
+    "senseId": "sense-51dc82c9a17888e5dec61b34",
+    "sourceId": "C17-T1-R1-102",
+    "context": "A new safety procedure is now in place.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The procedure is merely an unapproved suggestion.",
+      "The procedure is established and functioning.",
+      "The procedure has been permanently abandoned."
+    ],
+    "answer": 1,
+    "clue": "Consider whether the arrangement is actually operating.",
+    "explanation": "The procedure is established and functioning.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  },
+  {
+    "id": "sense-a22ca1f6cc64ff2c60741af7:context-v1",
+    "senseId": "sense-a22ca1f6cc64ff2c60741af7",
+    "sourceId": "C17-T1-R1-103",
+    "context": "The talk ended, and the workshop began soon afterwards.",
+    "prompt": "Which interpretation best fits this context?",
+    "options": [
+      "The workshop began long before the talk.",
+      "The workshop began at an unspecified date years later.",
+      "The workshop began a short time after the talk."
+    ],
+    "answer": 2,
+    "clue": "Look at the order and the short interval.",
+    "explanation": "The workshop began a short time after the talk.",
+    "validation": "source-sense-aligned-v1",
+    "editorialStatus": "implementation_review",
+    "version": 1
+  }
+]

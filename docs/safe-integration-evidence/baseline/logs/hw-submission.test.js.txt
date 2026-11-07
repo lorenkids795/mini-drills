@@ -1,0 +1,11 @@
+PASS 1. nothing done, nothing submitted → Not submitted · Not started (0/2), not finished, 0%
+PASS 2. "I'm done!" record but 0/2 exercises (the reported case) → Submitted · Incomplete (0/2), not finished, 0%
+PASS 3. one of two exercises done → In progress (1/2), not finished, with or without "I'm done!"
+PASS 4. both exercises done → Complete (2/2), finished; Submitted still shows whether the student pressed I'm done
+PASS 5. two Library exercises + one external task: complete only with all three; a screenshot never completes the Library work
+PASS 6. student: I'm done! is refused while exercises are left (nothing written); after doing them it writes done, and that survives a reload
+PASS 7. legacy and late data: attempts before the send date do not count; an overdue unfinished, unsubmitted row says Not done
+FAIL 8. aggregates agree: hwStatus %, hwRows "all" (Dashboard) and the Completion column use the same parts -> Homework Assistant counts real attempts, not the I'm done flag
+PASS Library samples: inventory lists the 9 code samples with references; nothing hidden until approved; the hide switch keeps them for old data
+PASS Learning Materials › Writing: groups are "Task 1" and "Task 2" (no IELTS prefix), same ids
+---- 9/10 passed

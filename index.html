@@ -10,7 +10,10 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Mini Drills">
 <style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}#who[hidden]~#logoutBtn{display:none}
-</style></head><body>
+</style><link rel="stylesheet" href="vocab-lab.css">
+<link rel="stylesheet" href="vocab-mission.css">
+<link rel="stylesheet" href="vocab-editorial.css">
+</head><body>
 <title>Mini Drills IELTS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1750,6 +1753,7 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
   </section>
 
   <section id="v-set" hidden></section>
+  <section id="v-vocab" class="vocab-shell" hidden></section>
   <section id="v-cards" hidden></section>
   <section id="v-errors" hidden></section>
   <section id="v-ranks" hidden></section>
@@ -1805,6 +1809,14 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
   <p class="note-foot">Demo build. Passages, transcripts, tasks and students are made-up examples. Rows marked "sample" in the dashboard are fake data to show the statistics.</p>
 </div>
 
+<script src="vocab-lab-core.js"></script>
+<script src="vocab-mission-content.js"></script>
+<script src="vocab-mission-core.js"></script>
+<script src="vocab-mission-store.js"></script>
+<script src="vocab-mission-planner.js"></script><script src="vocab-mission-packs.js"></script><script src="vocab-mission-engine.js"></script><script src="vocab-mission-library.js"></script><script src="vocab-editorial-core.js"></script><script src="vocab-routes.js"></script><script src="vocab-retrieval.js"></script><script src="vocab-editorial.js"></script><script src="vocab-mission.js"></script>
+<script src="vocab-lab-store.js"></script>
+<script src="vocab-lab.js"></script>
+<script src="vocab-lab-shell.js"></script>
 <script src="md-config.js?v=2026-11-04b"></script>
 <script src="md-backend.js?v=2026-11-04b"></script>
 <script src="md-chart.js?v=2026-11-04b"></script>
@@ -2192,13 +2204,14 @@ function hwCardHTML(x){var a=x.a,p=passFor(U.email,a.id),miss=x.over&&!x.fin,sho
 // one external task (student) = one row titled with its Source ("External task" when empty), status on the right like an exercise.
 // Pressing the row opens its details: instructions, Open link, the screenshot and Upload / Replace (a screenshot = submitted, never "correct").
 var HWX={},HWUP={}; // HWX = open task rows, HWUP = upload state per 'assignment|task'
-function extHwHTML(x,t,i){var a=x.a,k=a.id+'|'+t.x.id,up=HWUP[k]||{},r=t.s,img=r?hwImg(r.url):'',open=!!(HWX[k]||up.busy||up.err),pid='hwxd_'+a.id+'_'+t.x.id,nm=t.x.src||'External task',bad=!r&&x.over;
+function extHwHTML(x,t,i){var a=x.a,k=a.id+'|'+t.x.id,up=HWUP[k]&&HWUP[k].owner===U.email?HWUP[k]:{},r=t.s,img=r?hwImg(r.url):'',open=!!(HWX[k]||up.busy||up.err||up.shot),pid='hwxd_'+a.id+'_'+t.x.id,nm=t.x.src||'External task',bad=!r&&x.over;
   var st=r?'<div class="pc"><div class="prog"><i style="width:100%;background:var(--good)"></i></div><span class="best">'+(t.late?'Submitted late':'Submitted')+'</span></div>':'<div class="pc'+(bad?' bad':'')+'"><div class="prog"><i style="width:0"></i></div><span>'+(bad?'Missed':'Waiting')+'</span></div>';
   var h='<button type="button" class="lrow hwxr'+(open?' open':'')+'" data-act="hw-xopen" data-k="'+esc(k)+'" aria-expanded="'+open+'" aria-controls="'+esc(pid)+'"><span><b>'+esc(nm)+'</b>'+(t.x.src?'<small>External task</small>':'')+'</span>'+st+'</button>';
   if(!open)return h;
   h+='<div class="hwxd" id="'+esc(pid)+'">'+(t.x.note?'<p class="hwnote">'+esc(t.x.note)+'</p>':'')+
     '<div class="hwxrow">'+(t.x.link?'<a class="btn" href="'+esc(t.x.link)+'" target="_blank" rel="noopener noreferrer">Open link ↗</a>':'<span class="err">The link is missing. Ask your teacher.</span>')+
     '<span class="pill'+(r?' ok':'')+'" role="status">'+(r?(t.late?'Submitted late':'Submitted')+' · '+esc(fmtDue(new Date(r.ts))):'Not submitted')+'</span></div>';
+  if(up.shot)h+='<p class="saved" role="status">Screenshot ready. Press Submit to turn it in.</p><button class="btn pri" type="button" data-act="hw-submit-shot" data-asg="'+esc(a.id)+'" data-x="'+esc(t.x.id)+'"'+(up.busy?' disabled':'')+'>Submit screenshot</button>';
   if(r&&img)h+='<a class="hwthumb" href="'+esc(img)+'" target="_blank" rel="noopener"><img src="'+esc(img)+'" alt="Your screenshot for '+esc(nm)+'"></a>';
   h+='<div class="hwact"><button class="btn'+(r?'':' pri')+'" type="button" data-act="hw-shot" data-asg="'+esc(a.id)+'" data-x="'+esc(t.x.id)+'"'+(up.busy?' disabled':'')+'>'+(up.busy?'Uploading… '+(up.pct||0)+'%':r?'Replace screenshot':'Upload screenshot')+'</button>'+
     '<input type="file" accept="image/*" hidden id="hwShot_'+esc(a.id)+'_'+esc(t.x.id)+'" data-hwshot="'+esc(a.id)+'" data-x="'+esc(t.x.id)+'" aria-label="Screenshot for '+esc(nm)+'"></div>'+
@@ -2214,20 +2227,31 @@ function hwShotUpload(blob,prog){return new Promise(function(ok,no){
     if(x.upload)x.upload.onprogress=function(e){if(e.lengthComputable&&prog)prog(Math.round(e.loaded/e.total*100))};
     x.onload=function(){var d={};try{d=JSON.parse(x.responseText)}catch(e){}if(x.status>=200&&x.status<300&&d.id&&d.url)ok(d);else no(new Error((d.error||'Upload failed.')+' (code: http'+x.status+')'))};
     x.onerror=function(){no(new Error('No connection. Check your internet and try again.'))};x.send(blob)},function(){no(new Error('Your sign-in has expired. Sign in again.'))})})}
-document.addEventListener('change',function(e){var f=e.target,aid=f&&f.getAttribute&&f.getAttribute('data-hwshot');if(!aid||!f.files||!f.files[0]||!U)return;var file=f.files[0],xid=f.getAttribute('data-x')||'x1',key=aid+'|'+xid;
-  if(!/^image\//.test(file.type)){HWUP[key]={err:'Choose a picture (PNG, JPG, WebP or GIF).'};return renderLib()}
-  if(file.size>15*1024*1024){HWUP[key]={err:'This picture is too big. Take a smaller screenshot.'};return renderLib()}
-  HWUP[key]={busy:true,pct:0};renderLib();
-  hwShrink(file).then(function(b){if(b.size>5*1024*1024)throw new Error('The picture is too big (5 MB at most).');return hwShotUpload(b,function(p){HWUP[key].pct=p;var bt=document.querySelector('[data-act="hw-shot"][data-asg="'+aid+'"][data-x="'+xid+'"]');if(bt)bt.textContent='Uploading… '+p+'%'})})
-    .then(function(d){var now=Date.now(),old=hwRec(U.email,aid),did=slug(U.email)+'_'+aid,asg=allAsgs().filter(function(x){return x.id===aid})[0],was=asg?asgState(asg,U.email).turned:false;
-      var shots=hwShots(old);shots[xid]={id:d.id,url:d.url,ts:now};
-      var rec={email:U.email,asgId:aid,ts:old&&old.ts||now,status:'submitted',shots:shots,updatedAt:now};
-      if(shots.x1)rec.shot=shots.x1; // older app versions read "shot"
-      if(old&&(old.done===true||(!old.shot&&!old.shots)))rec.done=true; // the Library part stays turned in
-      var fin=function(){HWUP[key]={};var now2=asg?asgState(asg,U.email).turned:true;if(!was&&now2)onHwDone(aid);renderLib();toast(now2?'Screenshot uploaded. Your homework is submitted.':'Screenshot uploaded. Finish the other parts to complete this homework.')};
-      var loc=function(){localHwdone=localHwdone.filter(function(x){return x.id!==did});localHwdone.push(Object.assign({id:did},rec));fin()};
-      if(dbh)dbh.doc('hwdone/'+did).set(rec).then(function(){localHwdone=localHwdone.filter(function(x){return x.id!==did});localHwdone.push(Object.assign({id:did},rec));fin()},loc);else loc()})
-    .catch(function(er){HWUP[key]={err:(er&&er.message)||'Upload failed. Try again.'};renderLib()})});
+function hwSubmitShot(aid,xid){
+  var key=aid+'|'+xid,p=HWUP[key],em=U&&U.email;
+  if(!p||!p.shot||p.owner!==em||p.busy)return Promise.resolve(false);
+  var asg=allAsgs().filter(function(x){return x.id===aid})[0];
+  if(!asg||U.role!=='student'||asg.cls!==U.cls)return Promise.resolve(false);
+  var now=Date.now(),old=hwRec(em,aid),did=slug(em)+'_'+aid,was=asgState(asg,em).turned,shots=hwShots(old);
+  shots[xid]={id:p.shot.id,url:p.shot.url,ts:now};
+  var rec={email:em,asgId:aid,ts:old&&old.ts||now,status:'submitted',shots:shots,updatedAt:now};
+  if(shots.x1)rec.shot=shots.x1;
+  if(old&&(old.done===true||(!old.shot&&!old.shots)))rec.done=true;
+  p.busy=true;p.err='';renderLib();
+  var save=dbh?dbh.doc('hwdone/'+did).set(rec):DEMO?Promise.resolve():Promise.reject(new Error('Your account is not connected. Sign in and retry.'));
+  return Promise.resolve(save).then(function(){
+    if(!U||U.email!==em)return false;
+    localHwdone=localHwdone.filter(function(x){return x.id!==did});localHwdone.push(Object.assign({id:did},rec));HWUP[key]={};
+    var turned=asgState(asg,em).turned;if(!was&&turned)onHwDone(aid);renderLib();toast('Screenshot submitted.');return true;
+  },function(er){if(U&&U.email===em){p.busy=false;p.err=er&&er.message||'Submission failed. Try again.';renderLib()}return false});
+}
+document.addEventListener('change',function(e){var f=e.target,aid=f&&f.getAttribute&&f.getAttribute('data-hwshot');if(!aid||!f.files||!f.files[0]||!U)return;var file=f.files[0],xid=f.getAttribute('data-x')||'x1',key=aid+'|'+xid,em=U.email;
+  if(!/^image\//.test(file.type)){HWUP[key]={owner:em,err:'Choose a picture (PNG, JPG, WebP or GIF).'};return renderLib()}
+  if(file.size>15*1024*1024){HWUP[key]={owner:em,err:'This picture is too big. Take a smaller screenshot.'};return renderLib()}
+  HWUP[key]={owner:em,busy:true,pct:0};renderLib();
+  hwShrink(file).then(function(b){if(b.size>5*1024*1024)throw new Error('The picture is too big (5 MB at most).');return hwShotUpload(b,function(p){if(HWUP[key]&&HWUP[key].owner===em)HWUP[key].pct=p})})
+    .then(function(d){if(!U||U.email!==em)return;HWUP[key]={owner:em,shot:{id:d.id,url:d.url}};renderLib()})
+    .catch(function(er){if(U&&U.email===em){HWUP[key]={owner:em,err:er&&er.message||'Upload failed. Try again.'};renderLib()}})});
 var PASS={day:{label:'1-day pass',days:1},week:{label:'1-week pass',days:7}};
 function passesOf(email){return passDocs.concat(localPass,samplePass).filter(function(p){return p.email===email})}
 function passFor(email,asgId){return passesOf(email).filter(function(p){return p.asgId===asgId})[0]||null}
@@ -3113,6 +3137,11 @@ document.addEventListener('input',function(e){var t=e.target,k=t&&t.getAttribute
   if(k==='gsum'){var rs=$('#u0RevSt');if(rs)rs.textContent=luU(u,u0RevState(U0S.gsum,U0S.gsum0)==='changed'?'u0.g.revChanged':'u0.g.revSame')}
   u0Save(u);var nb=document.querySelector('[data-act="u0-go"][data-s="independent"]');if(nb)nb.disabled=!u0Unlocked(u,'independent')});
 function renderLib(){
+  $('#v-vocab').hidden=true;
+  if(VOCAB_VIEW&&vocabAllowed()&&LIBT==='lm'){
+    $('#crumbs').innerHTML='';$('#libBody').innerHTML='<div class="sechead"><div><h2>Library</h2><span class="meta">Learning Materials</span></div></div>'+libTabsHTML();$('#v-vocab').hidden=false;vocabRender();return;
+  }
+  VOCAB_VIEW=false;
   stopAudio();clearTimer();WL.on=false;setLock(false);crumbs();
   if(!NAV.ex&&!NAV.daily){recClearAll();REC_EX=null} // left the exercise: drop its recorders (microphone off)
   if(NAV.daily)return renderDailyTask();
@@ -3123,7 +3152,7 @@ function renderLib(){
   if(stu){var hwh=homeworkHTML();h+=HWTODO?hwh+dailyHTML():dailyHTML()+hwh} // homework first while something is still to do
   if(stu)h+='<div class="sechead" style="margin-top:26px"><h2>Library</h2></div>'+libTabsHTML();
   else h+='<div class="sechead"><h2>Library</h2></div>'+libTabsHTML(); // the tabs below already say Cambridge / Learning Materials
-  if(LIBT==='lm'){h+=lmHTML();if(stu)h+=recentHTML();$('#libBody').innerHTML=h;return}
+  if(LIBT==='lm'){h+=vocabMaterialsHTML();if(stu)h+=recentHTML();$('#libBody').innerHTML=h;return}
   if(stu&&!BOOKS.some(function(b){return allIdsBook(b.id).length}))h+='<p class="lmempty"><b>No Cambridge books yet.</b><span>Books appear here when your teacher adds exercises to them.</span></p>';
   else if(stu)h+='<div class="tiles">'+BOOKS.filter(function(b){return allIdsBook(b.id).length}).map(function(b){
     var ids=allIdsBook(b.id),pr=prog(ids,dm);
@@ -5633,13 +5662,27 @@ function curDark(){var t=document.documentElement.getAttribute('data-theme');if(
 // Admin: everything (Students and XP live inside Admin). Teacher: only their classes (see myCls). Student: unchanged.
 var HWA_TABS={hwa:'overview','hwa-asg':'assign','hwa-miss':'missing','hwa-watch':'watch'};
 function tabsFor(){return U.role==='assistant'?[['hwa','Dashboard'],['hwa-asg','Assignments'],['hwa-miss','Missing homework'],['hwa-watch','Students to watch']]:U.adm?[['dash','Dashboard'],['asg','Classes'],['mark','Marking'],['library','Library'],['create','Create'],['prize','Prizes'],['admin','Admin']]:U.role==='teacher'?[['asg','Classes'],['mark','Marking'],['dash','Dashboard'],['library','Library']]:[['library','Home'],['cards','Flashcards'],['errors','Error Notebook'],['ranks','Leaderboard'],['wheel','Lucky Wheel'],['bag','Inventory'],['set','Settings']]}
+var VOCAB_VIEW=false,VOCAB_LIST_OPEN=false;
+function vocabReviewAllowed(){return !!(window.MD_VOCAB_SHELL&&window.MD_VOCAB_SHELL.reviewer&&window.MD_VOCAB_SHELL.reviewer(U))}
+function vocabCategoryHTML(){var player=!!(window.MD_VOCAB_SHELL&&window.MD_VOCAB_SHELL.allowed(U)),on=player||vocabReviewAllowed();return '<section class="lmmod lm-vocabulary'+(on?'':' dis')+'" aria-label="Vocabulary"><button type="button" class="lmhd"'+(on?' data-act="vocab-toggle" aria-expanded="'+VOCAB_LIST_OPEN+'" aria-controls="vocabDestinations"':' disabled')+'><span class="lmic" aria-hidden="true">'+lmIco('reading')+'</span><span class="lmnm">Vocabulary</span>'+(on?'<span class="lmchev">'+LM_CH+'</span>':'<span class="lmsoon">Coming soon</span>')+'</button>'+(on&&VOCAB_LIST_OPEN?'<div class="lmtw" id="vocabDestinations">'+(player?'<button type="button" class="lmu" data-act="vocab-open" data-view="check"><span>Vocab Check</span><span class="lmarr">'+LM_AR+'</span></button><button type="button" class="lmu" data-act="vocab-open" data-view="missions"><span>Personalized Missions</span><span class="lmarr">'+LM_AR+'</span></button>':'')+(vocabReviewAllowed()?'<button type="button" class="lmu" data-act="vocab-open" data-view="review"><span>Teacher Review</span><span class="lmarr">'+LM_AR+'</span></button>':'')+'</div>':'')+'</section>'}
+function vocabMaterialsHTML(){var h=lmHTML();return LMV?h:h.replace(/<\/div>$/,vocabCategoryHTML()+'</div>')}
+function vocabOpen(view){if(view==='review'?!vocabReviewAllowed():!(window.MD_VOCAB_SHELL&&window.MD_VOCAB_SHELL.allowed(U)))return false;VOCAB_VIEW=true;LIBT='lm';LMV=null;NAV={book:null,test:null,skill:null,ex:null};XED=null;showTab('library');window.MD_VOCAB_SHELL.navigate(view||'check');return true}
+function vocabBack(){VOCAB_VIEW=false;LIBT='lm';LMV=null;if(window.history)window.history.replaceState(null,'',window.location.pathname+window.location.search+'#library/learning-materials');renderLib();var b=document.querySelector('[data-act="vocab-toggle"]');if(b)b.focus({preventScroll:true})}
+function vocabInitialTab(){var h=window.location.hash||'';if(h==='#vocab'||h.indexOf('#library/vocab')===0){LIBT='lm';return 'vocab'}if(h.indexOf('#library/learning-materials')===0){LIBT='lm';return 'library'}return tabsFor()[0][0]}
+function vocabAllowed(){return !!(window.MD_VOCAB_SHELL&&(window.MD_VOCAB_SHELL.allowed(U)||vocabReviewAllowed()))}
+function vocabRender(){var el=document.getElementById('v-vocab');if(el&&vocabAllowed())window.MD_VOCAB_SHELL.mount(el,{user:U,db:dbh,demo:DEMO,getUser:function(){return U},isCurrent:function(){return TAB==='library'&&VOCAB_VIEW&&LIBT==='lm'&&vocabAllowed()},onLibraryBack:vocabBack,onView:function(){if(window.history)window.history.replaceState(null,'',window.location.pathname+window.location.search+'#library/vocab')}})}
 function showTab(t){
+  if(t==='vocab'){VOCAB_VIEW=vocabAllowed();if(VOCAB_VIEW){LIBT='lm';LMV=null;NAV={book:null,test:null,skill:null,ex:null}}t='library'}
+  if(t!=='library')VOCAB_VIEW=false;
+  if(window.MD_VOCAB_SHELL)window.MD_VOCAB_SHELL.guard(U);
+  $('#v-vocab').hidden=true;
   TAB=t;stopAudio();clearTimer();MK.open=false;recClearAll();
   if(t!=='admin'){AD.modal=null;var amr=document.getElementById('adModalRoot');if(amr)amr.innerHTML=''} // leaving Admin closes its confirm box
   ['login','lib','cards','errors','ranks','wheel','bag','set','prize','xps','dash','asg','mark','roster','create','admin','hwa'].forEach(function(n){$('#v-'+n).hidden=true});
   if(!U){var lv=$('#v-login');lv.hidden=false;if(!DEMO&&lsGet('md-email')&&!window.MD_USER){lv.setAttribute('data-wait','');setTimeout(function(){lv.removeAttribute('data-wait')},10000)}else lv.removeAttribute('data-wait');$('#tabs').hidden=true;$('#who').hidden=true;$('#sbBtn').hidden=true;document.body.classList.remove('nav-on');document.body.classList.add('lg');sbInit();return}
   $('#v-login').removeAttribute('data-wait');document.body.classList.remove('lg');
   if(t!=='library'&&!tabsFor().some(function(x){return x[0]===t})){t=tabsFor()[0][0];TAB=t} // a tab this role does not have
+  if(!VOCAB_VIEW&&(window.location.hash==='#vocab'||window.location.hash.indexOf('#library/vocab')===0)&&window.history)window.history.replaceState(null,'',window.location.pathname+window.location.search);
   $('#tabs').hidden=tabsFor().length<2;document.body.classList.toggle('nav-on',!$('#tabs').hidden);$('#sbBtn').hidden=$('#tabs').hidden;sbSet(SB.open);/* keeps the open / closed state */$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28,true)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b>'+(lmTester()?' <span class="pill tst" title="Tester account: hidden from class lists, Dashboard and Leaderboard. Work is still saved.">Tester mode</span>':'')+(U.adm||U.role==='student'?'':'<span class="rl"> · '+(U.role==='assistant'?'Homework Assistant':U.role)+'</span>');
   $('#tabs').innerHTML=tabsFor().map(function(x){return '<button role="tab" data-act="tab" data-tab="'+x[0]+'" aria-selected="'+(x[0]===t)+'">'+x[1]+'</button>'}).join('');
   var id={library:'lib',cards:'cards',errors:'errors',ranks:'ranks',wheel:'wheel',bag:'bag',set:'set',prize:'prize',xps:'xps',dash:'dash',asg:'asg',mark:'mark',roster:'roster',create:'create',admin:'admin',hwa:'hwa','hwa-asg':'hwa','hwa-miss':'hwa','hwa-watch':'hwa'}[t];$('#v-'+id).hidden=false;updMarq();
@@ -5662,10 +5705,11 @@ function signIn(email){
   var u=findUser(email),m=$('#lgMsg');
   if(!u){m.textContent=(dbh&&!dbReady)?'Still loading the class list. Try again in a moment.':'This email is not on your class list.';return false}
   m.textContent='';U=u;RP=0;lsSet('md-email',u.email);AD.sub='users';AD.users=null;AD.loadErr='';AD.err='';AD.modal=null;AD.locked=false;AD.sheet=null;AD.shErr='';NAV={book:null,test:null,skill:null,ex:null};PANE='q';
-  showTab(tabsFor()[0][0]);joinCheck();return true;
+  showTab(vocabInitialTab());joinCheck();return true;
 }
 function refreshLive(){
   if(!U)return;updMarq();
+  if(TAB==='library'&&VOCAB_VIEW){U=findUser(U.email)||U;showTab('library');return}
   if(TAB==='dash')renderDash();
   else if(TAB==='admin'&&AD.sub==='students')renderRoster();
   else if(TAB==='library'&&!NAV.ex&&!NAV.daily)renderLib();
@@ -5696,7 +5740,7 @@ document.addEventListener('click',function(e){
   if((a==='tab'||a==='nav'||a==='next'||a==='lx'||a==='daily')&&recUnsaved()&&uiGate(t,{title:'Leave without saving the recording?',text:REC_LEAVE,ok:'Leave',danger:true,cancel:'Stay'}))return;
   // an error inside a handler must never look like "the button does nothing": show it, keep it in the Console
   try{if(extAct(a,t))return}catch(err){actFail(a,err);return}
-  if(a==='tab'){if(SB.open&&!sbWide())sbSet(false,!!t.closest('#sideNav'));NAV.daily=null;DY=null;if(CV&&CV.where==='daily')CV=null;return showTab(t.dataset.tab)}
+  if(a==='tab'){VOCAB_VIEW=false;if(SB.open&&!sbWide())sbSet(false,!!t.closest('#sideNav'));NAV.daily=null;DY=null;if(CV&&CV.where==='daily')CV=null;return showTab(t.dataset.tab)}
   if(a==='nav'){XED=null;var nb=t.dataset.book||null,nt=t.dataset.test||null,ns=t.dataset.skill||null,ne=t.dataset.ex||null;LIBX={book:nb,test:nt,skill:ns};NAV={book:ne?nb:null,test:ne?nt:null,skill:ne?ns:null,ex:ne};PANE='q';return showTab('library')}
   if(a==='next'){NAV.ex=t.dataset.ex;PANE='q';renderLib();window.scrollTo&&window.scrollTo(0,0);return}
   if(a==='pane'){PANE=t.dataset.pane;var p=$('#player');if(p)p.setAttribute('data-pane',PANE);$$('.ptabs button').forEach(function(b){b.setAttribute('aria-selected',b.dataset.pane===PANE)});return}
@@ -5753,6 +5797,7 @@ document.addEventListener('click',function(e){
   if(a==='asg-open'){AG.open=AG.open===t.dataset.id?null:t.dataset.id;return renderAsg()}
   if(a==='asg-cancel'){AG.form=null;return renderAsg()}
   if(a==='hw-xopen'){var hk=t.dataset.k;HWX[hk]=!HWX[hk];renderLib();return true}
+  if(a==='hw-submit-shot'){hwSubmitShot(t.dataset.asg,t.dataset.x||'x1');return true}
   if(a==='hw-shot'){var hs=$('#hwShot_'+t.dataset.asg+'_'+(t.dataset.x||'x1'));if(hs){hs.value='';hs.click()}return true}
   // form sections: read the fields first, then change the content (live=false: the redraw must not read the old fields again)
   if(a==='pk-toggle'||a==='ax-add'||a==='ax-rm'||a==='pk-clear'){var F=AG.form;if(!F)return true;agCollect();
@@ -7090,7 +7135,9 @@ function extAct(a,t){
   if(adAct(a,t))return true;
   if(enAct(a,t))return true;
   if(mkAct(a,t))return true;
-  if(a==='lib-tab'){LIBT=t.dataset.v==='lm'?'lm':'cam';LMV=null;try{lsSet('md-libt',LIBT)}catch(e){}renderLib();return true}
+  if(a==='vocab-toggle'){if(vocabAllowed()){VOCAB_LIST_OPEN=!VOCAB_LIST_OPEN;renderLib();var vb=document.querySelector('[data-act="vocab-toggle"]');if(vb)vb.focus({preventScroll:true})}return true}
+  if(a==='vocab-open'){vocabOpen(t.dataset.view);return true}
+  if(a==='lib-tab'){VOCAB_VIEW=false;if(window.location.hash.indexOf('#library/vocab')===0&&window.history)window.history.replaceState(null,'',window.location.pathname+window.location.search+(t.dataset.v==='lm'?'#library/learning-materials':'#library'));LIBT=t.dataset.v==='lm'?'lm':'cam';LMV=null;try{lsSet('md-libt',LIBT)}catch(e){}renderLib();return true}
   if(a==='lm-open'){var lo=lmLesson(t.dataset.id);LMV=lmVisible(lo)?lo.id:null;if(LMV)LMY=window.scrollY||0;renderLib();if(LMV&&window.scrollTo)window.scrollTo(0,0);return true} // the lesson view starts at the top
   if(a==='lm-back'){var by=LMV?LMY:0;LMV=null;renderLib();if(window.scrollTo)window.scrollTo(0,by);return true} // back to where the list was
   if(a==='lm-tg'){var lk=t.dataset.k;LMO[lk]=!LMO[lk];renderLib();var nb=document.querySelector('[data-act="lm-tg"][data-k="'+lk+'"]');if(nb)nb.focus({preventScroll:true});return true}
@@ -8336,9 +8383,9 @@ function demoAdminRun(path,b){
   var err=function(m){throw new Error(m)},em=String(b.email||'').trim().toLowerCase(),all=demoUsers();
   var find=function(e){return all.filter(function(u){return u.email===e})[0]};
   if(path==='admin/users')return {users:all,me:'admin@demo.vn',ver:'demo'};
-  if(path==='admin/orphans'){var keep={};allRoster().forEach(function(r){keep[String(r.email||'').toLowerCase()]=1});var by={};
+  if(path==='admin/orphans'){var keep={};allRoster().forEach(function(r){keep[String(r.email||'').toLowerCase()]=1});all.forEach(function(u){if(u.role==='teacher'||u.role==='assistant'||u.tester)keep[String(u.email||'').toLowerCase()]=1});var by={};
     realAttempts().forEach(function(a){var e=String(a.email||'').toLowerCase();if(!e||keep[e])return;var o=by[e]||(by[e]={email:e,attempts:0,names:[],classes:[]});o.attempts++;if(a.student&&o.names.indexOf(a.student)<0)o.names.push(a.student);if(a.cls&&o.classes.indexOf(a.cls)<0)o.classes.push(a.cls)});
-    if(b.op==='purge'){if(!by[em])err('This email is not a leftover any more. Nothing was deleted.');localAttempts=localAttempts.filter(function(a){return String(a.email||'').toLowerCase()!==em});attemptDocs=attemptDocs.filter(function(a){return String(a.email||'').toLowerCase()!==em});return {ok:true,email:em,deleted:{attempts:by[em].attempts}}}
+    if(b.op&&b.op!=='preview')err('Cleanup is read-only. No data can be deleted.');
     return {ok:true,scanned:realAttempts().length,truncated:false,orphans:Object.keys(by).sort().map(function(k){return by[k]})}}
   if(path==='admin/aitest'){var tx=String(b.text||'');if(tx.trim().length<8)err('Paste an essay first.');var dc=demoCorrections(tx).map(function(c){return Object.assign({},c,{context:enSentence(tx,c.original_text),practice:[]})});return {ai:{corrections:dc,vocabulary_upgrades:DEMO_AI.vocabulary_upgrades,model:'demo'},ms:250,model:'demo (built-in rules, not Gemini)',raw:dc.length,dropped:[]}}
   if(path==='admin/sheet'){
@@ -8589,13 +8636,13 @@ function tSeed(){var n=Date.now(),D=864e5,WT='The table compares internet access
   {sid:'s1',ex:'s1',score:0,total:0,items:[],kind:'submission',notes:'Sample speaking submission (no recording).',ts:n-2*D,grade:{scores:[6,6,6.5,6],overall:6,feedback:'Sample feedback: speak a little longer in Part 2.',by:'Sample',ts:n-D}},{ex:'l1',score:8,total:10,items:[],ts:n-9*D},{ex:'r1',score:6,total:10,items:[],ts:n-7*D},{ex:'l2',score:9,total:10,items:[],ts:n-5*D},{ex:'r3',score:5,total:10,items:[],ts:n-3*D},{ex:'l3',score:7,total:10,items:[],ts:n-D}]}
 // values of one form's inputs by id; a missing input (form not on screen) -> a message, never a null error. Values are never logged.
 function adForm(ids){var o={};for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(!el){adSay('This form is not on the screen any more. Open it again and retry.');return null}o[ids[i]]=String(el.value||'')}return o}
-// leftovers of deleted students: preview (dry run) first, then delete one email at a time after a confirm (admin/orphans)
+// leftovers of deleted students: read-only preview; no cleanup mutations (admin/orphans)
 function adOrphansHTML(){var O=AD.orph;
-  var h='<details class="adm-tadd"'+(O?' open':'')+'><summary>Clean up data of deleted students</summary><p class="sub">Finds results of emails that are no longer students or staff. Preview deletes nothing; data is matched by email, never by name.</p>'+
+  var h='<details class="adm-tadd"'+(O?' open':'')+'><summary>Preview leftover student data</summary><p class="sub">Finds results of emails that are no longer students or staff. This preview is read-only; data is matched by email, never by name.</p>'+
     '<div class="actions"><button class="btn sm" type="button" data-act="ad-orph-prev">'+(O?'Preview again':'Preview')+'</button></div>';
-  if(O){h+='<p class="saved" role="status">'+O.scanned+' results checked'+(O.truncated?' (only the newest 3000; run again after a clean-up)':'')+' · '+O.orphans.length+' leftover email'+(O.orphans.length===1?'':'s')+'</p>';
+  if(O){h+='<p class="saved" role="status">'+O.scanned+' results checked'+(O.truncated?' (only the newest 3000; preview may be incomplete)':'')+' · '+O.orphans.length+' leftover email'+(O.orphans.length===1?'':'s')+'</p>';
     if(O.orphans.length)h+='<div class="scroll"><table><thead><tr><th scope="col">Email</th><th scope="col">Name in results</th><th scope="col">Class</th><th scope="col">Results</th><th scope="col"></th></tr></thead><tbody>'+O.orphans.map(function(o){
-        return '<tr><td>'+esc(o.email)+'</td><td>'+esc((o.names||[]).join(', '))+'</td><td>'+esc((o.classes||[]).join(', '))+'</td><td class="mono">'+(o.attempts|0)+'</td><td><button class="btn sm bad" type="button" data-act="ad-orph-del" data-email="'+esc(o.email)+'">Delete data</button></td></tr>'}).join('')+'</tbody></table></div>'}
+        return '<tr><td>'+esc(o.email)+'</td><td>'+esc((o.names||[]).join(', '))+'</td><td>'+esc((o.classes||[]).join(', '))+'</td><td class="mono">'+(o.attempts|0)+'</td><td><span class="saved">Preview only</span></td></tr>'}).join('')+'</tbody></table></div>'}
   return h+'</details>'}
 function adTesterAddHTML(){
   return '<details class="adm-tadd"><summary>Add a tester account</summary><p class="sub">A student login for testing (with the Demo helper). Hidden from Classes, Students, Dashboard and the Leaderboard; not in the Google Sheet. Sample results are added.</p>'+
@@ -8907,10 +8954,7 @@ function adAct(a,t){
   if(a==='ad-tester'){var on=t.dataset.on==='1';adBusy(t,true,on?'Turning on…':'Turning off…');
     adminApi('admin/tester',{op:'set',email:who,on:on}).then(function(){return adDone(nm+(on?' is now a tester: hidden from class lists, Dashboard and Leaderboard.':' is a normal student again.'),adSet(who,{tester:on}))},function(e){adBusy(t,false);adSay(e.message)});return true}
   if(a==='ad-orph-prev'){adBusy(t,true,'Checking…');adminApi('admin/orphans',{op:'preview'}).then(function(d){AD.orph={scanned:d.scanned|0,truncated:!!d.truncated,orphans:d.orphans||[]};renderAdmin()},function(e){adBusy(t,false);adSay(e.message)});return true}
-  if(a==='ad-orph-del'){var oe=t.dataset.email,oo=((AD.orph||{}).orphans||[]).filter(function(x){return x.email===oe})[0];if(!oo)return true;
-    if(uiGate(t,{title:'Delete ALL learning data left by '+oe+'?',text:oo.attempts+' result'+(oo.attempts===1?'':'s')+', plus their errors, cards, homework, passes, redeems and profile. This cannot be undone.',ok:'Delete data',danger:true}))return true;
-    adBusy(t,true,'Deleting…');adminApi('admin/orphans',{op:'purge',email:oe}).then(function(){AD.orph.orphans=AD.orph.orphans.filter(function(x){return x.email!==oe});
-      attemptDocs=attemptDocs.filter(function(x){return String(x.email||'').toLowerCase()!==oe});renderAdmin();toast('Data of '+oe+' deleted.')},function(e){adBusy(t,false);adSay(e.message)});return true}
+  if(a==='ad-orph-del'){adSay('Cleanup preview is read-only. No data can be deleted.');return true}
   if(a==='ad-tester-create'){var tf=adForm(['adTsName','adTsEm','adTsCls','adTsPw']);if(!tf)return true;
     var tn=tf.adTsName.trim()||'Tester',te=tf.adTsEm.trim().toLowerCase(),tc=tf.adTsCls.trim()||'Test',tp=tf.adTsPw.trim();
     if(!EMAIL_RE.test(te)){adSay('Enter a valid email.');return true}if(tp.length<6){adSay('The password needs at least 6 characters.');return true}

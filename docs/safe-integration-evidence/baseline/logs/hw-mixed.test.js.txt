@@ -1,0 +1,15 @@
+PASS 1. Library only: saved with ex, ext [], type mini
+PASS 2. nothing added → refused with a clear message, nothing saved, fields kept
+PASS 3. Library + one external link → one record, type mixed
+PASS 4. several Library exercises + several links; typed values survive adding a section; ids x1, x2, x3
+PASS 5. edit a mixed assignment: remove one task and one exercise, the rest (and the task ids) stay; new task gets a new id
+PASS 6. student: one card, one list like before: 2 Library rows + 1 row per external task (Source name, "External task" when empty); details on click
+PASS 7–8. completion: screenshots alone ≠ complete; Library alone ≠ complete; both = complete; a screenshot is "Submitted", never a score
+PASS 8b. "I'm done!" on a mixed assignment keeps the screenshots in the same record (no duplicate record)
+PASS 9. teacher: hwStatus counts parts; matrix shows exercise + task columns, screenshot link, "Complete" only when everything is in
+PASS 9b. class view: Edit = pencil next to the status (same edit flow), no Edit button at the bottom; demo rows have none
+PASS 10. legacy records: old external (top-level link) = task x1 with its old "shot"; old Library-only and old "I'm done" still work
+PASS 11. bulk select acts on the filtered exercises only; Remove all clears the whole selection (after confirm)
+PASS 12. layout: no inner scroll box in the picker, sticky footer, no type switch CSS hooks left in the form
+FAIL server: assistant saves Library + several links for its own class; bad link refused by position; status needs every part -> hwaAsg is not defined
+---- 13/14 passed

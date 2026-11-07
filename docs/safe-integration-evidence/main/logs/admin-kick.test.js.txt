@@ -1,0 +1,53 @@
+PASS Users: one ⋯ menu per row (no exposed action buttons); each menu holds only the actions of that account; admin has My account only, never Kick
+PASS Users: choosing Kick in the menu runs the same confirm + POST /api/admin/kick as before
+PASS Teachers: form card (Generate next to Password), ⋯ menu with Change password + Remove; the admin row is "Protected" with no menu
+PASS Kick opens the confirm box with the right name and email
+PASS the confirm box takes the keyboard focus (Cancel, because Kick is dangerous)
+PASS Cancel closes it and sends nothing
+PASS Escape closes it and sends nothing
+PASS confirm sends exactly one POST /api/admin/kick with X-Admin-Key, even when pressed twice
+PASS success: box closes, row leaves the list, list is re-read from the server, others untouched
+PASS 500 from the server: error shown in the box, row kept, Try again works
+PASS 403: error shown, row kept
+PASS 404 from an old server (no route): says to deploy functions/
+PASS HTML instead of JSON (old deploy): says to deploy
+PASS no connection: says so
+PASS 401 admin key expired: asks for the admin password again
+PASS an error inside a button handler is shown, never silent
+PASS the confirm box is drawn under <body> (#adModalRoot), not inside the Admin page
+PASS box visible on screen: no browser dialog, normal flow
+PASS box NOT visible (hidden by something on this device): browser dialog asks, then the account is kicked
+PASS browser dialog answered Cancel: nothing is sent
+PASS browser dialog + server error: the error is shown (alert + message), row kept
+PASS leaving Admin closes its confirm box
+PASS Change password: box opens with name/email and a password field
+PASS Change password: Save sends one POST /api/admin/password with the typed password
+PASS Change password: under 6 characters = message, nothing sent
+PASS Change password: Generate fills the field
+PASS Change password: server error stays in the box
+PASS Change password: box visible = no browser prompt
+PASS Change password: box NOT visible = browser prompt (prefilled), password changed, new password shown
+PASS Change password: prompt with a typed password
+PASS Change password: prompt Cancel = nothing sent
+PASS Change password: prompt with a short password = refused, nothing sent
+PASS Change password: prompt + server error = error shown
+PASS Kick box says ALL learning data are deleted for good; toast confirms
+PASS class status: classes with students are Active; Sheet-only classes are Pending
+PASS pending turns Active by itself when the first student joins
+PASS admin sets Archived in Class settings: the class folds into "Archived"
+PASS a teacher (not admin) has no Status and no Delete class
+PASS Delete class: type DELETE → kicks each non-tester student one by one, then admin/classdel
+PASS Delete class: anything but DELETE (or Cancel) sends nothing
+PASS Delete class: a failed kick stops and says how far it got
+PASS Live Avatar Preview: "Remove frame" next to Reset only when a frame exists; removing clears it
+PASS Prizes: Type has "Custom / Other…"; choosing it shows the custom name field
+PASS Prizes: add a custom prize (tier, name on the wheel, link, weight) → list + chance
+PASS Prizes: custom without its name is refused; wheel name falls back to the custom name
+PASS Prizes: Chance and tier total update while a weight is typed (no reload)
+PASS Prizes: removing a prize recalculates the tier
+PASS Change password opens its box
+PASS Edit class opens its box
+PASS Resume sends admin/active
+PASS Teachers and My account tabs render
+PASS versions are not on the Users page any more; Admin › My account › Diagnostics shows app + server
+---- 52/52 passed

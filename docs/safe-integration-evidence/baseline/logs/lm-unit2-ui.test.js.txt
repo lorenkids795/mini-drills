@@ -1,0 +1,66 @@
+PASS stage learn: nothing from Chart B on screen (also fully done, every lens, auto-fill on)
+PASS stage controlled: nothing from Chart B on screen (also fully done, every lens, auto-fill on)
+PASS stage guided: nothing from Chart B on screen (also fully done, every lens, auto-fill on)
+PASS language switch reads ENG | VI; no long language note
+PASS feedback 10/2026: no caption under the chart; "made-up data" said once inside the Data table; titles without "(illustrative data)"; synthetic flag kept
+PASS feedback 10/2026: removed lines are gone from the screen (hints only for screen readers / tooltip)
+PASS feedback 10/2026: invented, natural series names everywhere; data, facts and answers unchanged
+PASS feedback 10/2026: linkers in the model overview ("also", "Notably,"), never a fixed formula
+PASS every stage uses the same layout: chart column left, activity right
+PASS Controlled labels: YES / NO / NOT GIVEN with the "data accuracy check, not IELTS Reading" note
+PASS Review self-check items read "I included …" (numbers / names from the facts)
+PASS the overview vs body section has its new title
+PASS no Skip anywhere; Continue is disabled with a hint until the step is done
+PASS all 7 steps can be finished by doing them (no deadlock); the last one leads to Controlled
+PASS step 2 explore: answers come from the facts; wrong answers can be retried
+PASS step 3 Trends covers ALL lines grouped Upward / Downward / Fluctuating; Corvale Museum is not dimmed; FAQ about Corvale Museum
+PASS step 3 Highest / lowest names Larkfield Museum on top and Corvale Museum at the bottom; all three lenses are needed
+PASS step 4: lines shown with each feature; Main / Optional and the explanation only after Check
+PASS step 5 frame: Overall / while highlighted; right lines = correct; two wrong tries show the answer (no deadlock)
+PASS step 6: samples hidden until "show"; then a concise paragraph (trends + highest) and the full paragraph coloured by group with a legend
+PASS FAQ: "Do I need all three?" answers No
+PASS Controlled: pass mark ceil(70 %) = 6 / 8 is shown; 5 right keeps Guided closed, 6 right opens it; retry clears
+PASS Controlled: a wrong answer shows the right label and the explanation
+PASS Guided: three small exercises with answers from the facts (trend verb, highest / lowest, what to leave out)
+PASS Guided recognition: under 70 % stays closed (retry); 5 / 6 opens the writing steps; the two states are shown separately
+PASS P0: "dcd" as the Guided overview never opens Independent and never counts as writing
+PASS P0: "   " as the Guided overview never opens Independent and never counts as writing
+PASS P0: "Overall" as the Guided overview never opens Independent and never counts as writing
+PASS P0: "asdf qwer zxcv uiop hjkl bnmm " as the Guided overview never opens Independent and never counts as writing
+PASS P0: "Write a short overview of the " as the Guided overview never opens Independent and never counts as writing
+PASS P0: "Larkfield Museum Westmere Muse" as the Guided overview never opens Independent and never counts as writing
+PASS P0: copying the Learn sample is refused ("write it in your own words")
+PASS P0: each sentence is prechecked; the trends sentence is needed, the others are optional
+PASS P0: a real two-sentence overview is saved as a practice attempt: "not assessed", never "passed"; Independent opens as "continue practising"
+PASS P0: editing the saved overview into rubbish closes Independent again (one source of truth)
+PASS P0: admin preview opens every stage but says so; it never makes a student attempt or a pass
+PASS P0: language switch keeps sentences, overview and the "saved for practice" state
+PASS Independent: Chart B, a hint that opens only the Chart A sample; students see no B sample or feature
+PASS Independent (admin preview): the reviewed sample is grammatical, chart-grounded, shown apart and never put into the box
+PASS "I'm done": empty, "dcd" or a fragment does nothing (with a reason); a real overview opens Review and keeps the first version
+PASS Review: first version kept for comparison, editable revision, extra self-checks, one full sample "not the only answer" with why + checked facts
+PASS free writing is never scored: "not graded automatically", no 150 words / minimum / band
+PASS students: stages open in order (titles say why); admin preview opens every stage
+PASS admin "Preview: auto-fill" is off by default, admin only, fills checkable answers only and saves nothing
+PASS Demo helper for a shadow tester: visible, opens every stage, fills every answer and writing box; Check/Continue use them; nothing saved; ordinary student never
+PASS language switch keeps stage, answers, Learn steps and drafts; IELTS sentences stay English
+PASS missing translation: the other language is shown with a visible note
+PASS no hard-coded English UI words left in Vietnamese mode
+PASS every UI text id used by the lesson code exists in the content; all content still pending, no problems
+PASS drafts: version-scoped key, restored; older version only offered for discard; Clear asks first
+PASS changed chart data: lesson refuses to show
+PASS feedback 10/2026: header = breadcrumb (way back) + ENG | VI + admin auto-fill on the right; no separate back button, no duplicate "Unpublished preview" line
+PASS pending content stays gated: students cannot open the unpublished lesson; content check still runs
+PASS lesson code: no database, XP or AI calls
+PASS index.html loads the content after md-chart.js and before the app
+PASS Unit 2 may be "published" only when the release check passes
+PASS fresh Demo samples use the current Chart B names (Chatora / Pixlo / Notivo) and bound facts, never App X / Y / Z
+PASS stale draft: saved for an older chart (cv) → notice, "I'm done" blocked, text untouched; Keep editing / Start fresh keep the old text
+PASS legacy draft without metadata: soft notice only when it names no current line; a normal draft is stamped with the chart version
+PASS Demo helper: never overwrites text the tester typed; off = the real draft is back; ordinary students have no Demo helper
+PASS Guided: ideas are checked evidence (no full model sentences), 2 needed; model sentences only inside "Need help?" (closed); Combine fills the overview box
+PASS precheck is an attempt guard, not a grader: dcd / gfg / frf rejected; long nonsense with chart words may pass but is still only "not assessed"
+PASS Independent draft survives stage changes and language switches (versioned key); Chart B text never shows before Independent
+PASS Review: frozen first draft, self-check note, examples closed, revision box starts from the draft; Save → Before / After "not automatically assessed"; unchanged → no improvement claimed
+PASS every new UI id exists in EN + VI and is pending (no automatic approval)
+---- 65/65 passed

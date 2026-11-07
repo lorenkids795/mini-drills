@@ -1,0 +1,49 @@
+(node:31184) MetadataLookupWarning: received unexpected error = All promises were rejected code = UNKNOWN
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ environment refuses production, non-loopback, missing emulator or cloud credential configuration (10781.5581ms)
+✔ real Auth emulator enforces roles, teacher assignment and anonymous denial (609.9297ms)
+[2026-11-07T06:23:11.954Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x279ae99a error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L8, false for 'create' @ L18, false for 'update' @ L8, false for 'update' @ L18
+[2026-11-07T06:23:11.988Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x279ae99b error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L10, false for 'create' @ L18, false for 'update' @ L10, false for 'update' @ L18
+[2026-11-07T06:23:12.010Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x279ae99c error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L13, false for 'create' @ L18, false for 'update' @ L13, false for 'update' @ L18
+[2026-11-07T06:23:12.021Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x279ae99d error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'delete' @ L9, false for 'delete' @ L18
+[2026-11-07T06:23:12.047Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x279ae99e error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L8, false for 'create' @ L18, false for 'update' @ L8, false for 'update' @ L18
+[2026-11-07T06:23:12.067Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x279ae99f error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L10, false for 'create' @ L18, false for 'update' @ L10, false for 'update' @ L18
+[2026-11-07T06:23:12.096Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x279ae9a0 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L13, false for 'create' @ L18, false for 'update' @ L13, false for 'update' @ L18
+[2026-11-07T06:23:12.126Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x279ae9a1 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'delete' @ L9, false for 'delete' @ L18
+[2026-11-07T06:23:12.192Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x279ae9a2 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L8, false for 'create' @ L18, false for 'update' @ L8, false for 'update' @ L18
+[2026-11-07T06:23:12.215Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x279ae9a3 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L10, false for 'create' @ L18, false for 'update' @ L10, false for 'update' @ L18
+[2026-11-07T06:23:12.232Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x279ae9a4 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L13, false for 'create' @ L18, false for 'update' @ L13, false for 'update' @ L18
+[2026-11-07T06:23:12.249Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x279ae9a5 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'delete' @ L9, false for 'delete' @ L18
+✔ Firestore emulator rules deny private draft reads, writes and approval spoofing (1458.2859ms)
+✔ review transitions are exact-version, append-only, idempotent and publication is a separate admin action (873.1352ms)
+[2026-11-07T06:23:13.488Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x279ae9a8 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L16, false for 'create' @ L18, false for 'update' @ L16, false for 'update' @ L18
+[2026-11-07T06:23:13.515Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x279ae9a9 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'update' @ L16, false for 'update' @ L18
+✔ student session isolation and direct progress writes are denied by actual rules (381.206ms)
+✔ two devices use optimistic revisions; retrying an operation appends evidence only once (3884.4903ms)
+✔ independent versus hinted, retry and reveal evidence survive reload without mastery promotion (1553.0798ms)
+✔ new draft invalidates approval and publication while existing sessions retain their pinned version (779.018ms)
+✔ expired, revoked, disabled and no-longer-enrolled identities fail closed (1256.0163ms)
+✔ all 87 routes persist versioned evidence and recover through a fresh service instance (58546.1129ms)
+✔ corrupted stored content cannot be approved or served under an old hash (273.9561ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 98767.3966

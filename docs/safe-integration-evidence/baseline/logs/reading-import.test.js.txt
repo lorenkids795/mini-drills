@@ -1,0 +1,11 @@
+PASS sample files: valid one has medium / easy / hard; invalid one has a 1-item "pairs" in Easy and no Hard
+PASS valid 3-version file: all 3 checked, preview has Easy / Medium / Hard, passage unchanged in each, Add on, no AI call
+PASS invalid file: Easy "pairs" has 1 item -> Easy not used, exact message; Hard "not in the file"; Medium still addable
+PASS Medium with problems (0 / 1 / 7 pairs) -> Add off for 0 and 1 (nothing can be saved); 7 -> first 6 used
+PASS no "medium" version, broken JSON, or a version with a different passage text are rejected
+PASS one-lesson JSON (old way) still works = Medium only
+PASS Add saves Medium + Easy + Hard to the chosen slot (book, test, passage); reload keeps them
+PASS occupied slot: Add asks first; Cancel keeps the old lesson untouched
+FAIL server: "Copy prompt (3 versions)" asks for {medium, easy, hard} with the 3 level notes; the 1-version prompt is unchanged -> readingPrompt3 is not defined
+PASS UI: Upload JSON file + Copy prompt in Advanced; a file over 1 MB is refused; students have no Create tab
+---- 9/10 passed

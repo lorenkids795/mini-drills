@@ -1,0 +1,12 @@
+PASS confirm box: alertdialog with title, text and two clear buttons; Cancel / Esc do nothing; "type DELETE" is checked
+PASS browser dialogs only where the browser must answer at once (unsaved recording, sign out with unsaved work, Admin fallback)
+PASS Home: homework comes first while something is still to do; "I'm done!" only appears when the exercises are finished
+PASS Homework Assistant: the 4 pages are sidebar tabs; opening one sets the page (no small tabs inside)
+PASS Admin: sub-pages in 4 labelled groups; Prizes linked from Gamification
+PASS Tester: "Tester mode" pill in the header; an ordinary student has none
+PASS Library (teacher): the same book tiles as students; empty books faded "No exercises yet"
+PASS Class settings: section links; Delete class folded; no made-up join link
+PASS design tokens: one type scale and one radius scale; the old near-duplicate sizes are gone (Leaderboard / sign-in keep theirs)
+PASS marking boxes keep their layout; header and save bar stay visible while scrolling; Writing says "Save grade" before the first save
+PASS Writing AI result: Corrections open; Corrected essay and Vocabulary upgrades folded with their counts
+---- 11/11 passed

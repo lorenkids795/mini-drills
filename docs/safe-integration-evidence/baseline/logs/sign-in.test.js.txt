@@ -1,0 +1,16 @@
+PASS UI is inserted before #loginForm in the .login box
+PASS no Student / Teacher tab buttons
+PASS state 1 (default): Email, Password, Sign in, First time…, link Teacher sign in
+PASS state 3 (teacher): Email, Password, Sign in, link Sign in as student; no teacher first-time link
+PASS state 2 (first time): Class, Your name, Your email, Choose a password, Create my password, I already have a password
+PASS name list: disabled "Choose a class first" until a class is chosen; changing class resets the name
+PASS sign in posts /api/login with email + password (unchanged)
+PASS first time posts /api/register with nameId (unchanged)
+PASS no teacher self sign-up anywhere: no setup key field, no "Create your teacher password"; no subtitle; student first time still there
+FAIL server: a teacher email (TEACHERS or added by the admin) cannot create its own password, even with the old setup key -> The expression evaluated to a falsy value:
+
+  assert.ok(/if \(teachers\(env\)\.indexOf\(email\) >= 0 \|\| \(await staffMap\(env\)\)\[email\] \|\| \(await assistMap\(env\)\)\[email\]\) \{\s*return fail\('Teacher accounts are set up by the admin/.test(S))
+
+PASS every input and select has an id and a name (autofill)
+PASS index.html: brand panel, slogan, theme button, body.lg
+---- 11/12 passed
