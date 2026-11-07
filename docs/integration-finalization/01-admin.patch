@@ -1,0 +1,207 @@
+diff --git a/functions/api/[[path]].js b/functions/api/[[path]].js
+index 060329e..0e6d7b4 100644
+--- a/functions/api/[[path]].js
++++ b/functions/api/[[path]].js
+@@ -465,6 +465,7 @@ async function login(env, body) {
+   if (!who) return fail('This email is not on the class list. Ask your teacher.', 403);
+   const res = { token: await customToken(env, email, who), user: { email, name: who.name, role: who.role, adm: !!who.adm } };
+   if (who.adm) res.adminKey = await newAdminKey(env, email);
++  if (who.role === 'teacher') res.staffKey = await newStaffKey(env, email);
+   return json(res);
+ }
+ 
+@@ -479,14 +480,10 @@ async function register(env, body, ip) {
+   const off = await offState(env, email);
+   if (off && off !== 'kicked') return fail(OFF_MSG[off], 403); // a kicked student may register again
+ 
+-  if (teachers(env).indexOf(email) >= 0) {
+-    const key = String(body.setupKey || '');
+-    if ((await bump(env, 'setup:' + ip, 3600)) > 10) return fail('Too many tries. Try again later.', 429);
+-    if (!env.ADMIN_SETUP_KEY || String(env.ADMIN_SETUP_KEY).length < 8 || !timingEq(key, String(env.ADMIN_SETUP_KEY))) {
+-      return fail('Wrong teacher setup key.', 403);
+-    }
+-    await savePassword(env, email, pw);
+-    return json({ token: await customToken(env, email, { role: 'teacher', name: 'Teacher' }), user: { email, name: 'Teacher', role: 'teacher' } });
++  // Teacher accounts are set up by the admin only (Admin › Teachers / Users › Change password). A teacher email can never
++  // create its own password here (the old ADMIN_SETUP_KEY route is gone) and never falls through to a student sign-up.
++  if (teachers(env).indexOf(email) >= 0 || (await staffMap(env))[email] || (await assistMap(env))[email]) {
++    return fail('Teacher accounts are set up by the admin. Ask the admin for your password, then use Teacher sign in.', 403);
+   }
+ 
+   let name = '';
+@@ -1211,6 +1208,150 @@ async function adminAiTest(env, body) {
+   return json({ ai, ms: Date.now() - t0, model: g.model + (g.via === 'relay' ? ' via Apps Script relay' : ' direct'), raw: raw.length, dropped });
+ }
+ 
++let FB_KEYS = null, FB_KEYS_AT = 0;
++
++async function firebaseKeys() {
++  if (FB_KEYS && Date.now() - FB_KEYS_AT < 3600000) return FB_KEYS;
++  const r = await fetch('https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com');
++  if (!r.ok) throw new Error('firebase keys ' + r.status);
++  const d = await r.json();
++  FB_KEYS = Array.isArray(d.keys) ? d.keys : [];
++  FB_KEYS_AT = Date.now();
++  return FB_KEYS;
++}
++
++async function idUser(env, request) {
++  const m = /^Bearer\s+([A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+)$/.exec(request.headers.get('Authorization') || '');
++  if (!m) return null;
++  const parts = m[1].split('.');
++  let head, pay;
++  try {
++    head = JSON.parse(new TextDecoder().decode(fromB64(parts[0])));
++    pay = JSON.parse(new TextDecoder().decode(fromB64(parts[1])));
++  } catch (e) { return null; }
++  const pid = env.FIREBASE_PROJECT_ID, now = Math.floor(Date.now() / 1000);
++  if (!head || head.alg !== 'RS256' || !head.kid || !pay || !pid) return null;
++  if (pay.aud !== pid || pay.iss !== 'https://securetoken.google.com/' + pid || !pay.sub) return null;
++  if (!(Number(pay.exp) > now - 30) || !(Number(pay.iat) < now + 300)) return null;
++  let keys;
++  try { keys = await firebaseKeys(); } catch (e) { console.log('[auth] keys', String(e && e.message)); return null; }
++  let jwk = keys.find((k) => k.kid === head.kid);
++  if (!jwk && FB_KEYS_AT < Date.now() - 60000) { FB_KEYS = null; try { jwk = (await firebaseKeys()).find((k) => k.kid === head.kid); } catch (e) { jwk = null; } } // keys rotate
++  if (!jwk) return null;
++  try {
++    const key = await crypto.subtle.importKey('jwk', { kty: jwk.kty, n: jwk.n, e: jwk.e, alg: 'RS256', ext: true }, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['verify']);
++    const ok = await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, fromB64(parts[2]), enc.encode(parts[0] + '.' + parts[1]));
++    if (!ok) return null;
++  } catch (e) { return null; }
++  const em = normEmail(pay.em);
++  if (!emailOk(em)) return null;
++  return { em, role: String(pay.role || ''), uid: String(pay.sub) };
++}
++
++const needSignIn = () => json({ error: 'Your sign-in has expired. Reload the page and sign in again.', code: 'auth' }, 401);
++
++async function newStaffKey(env, email) {
++  const k = b64url(crypto.getRandomValues(new Uint8Array(32)));
++  await env.MD_KV.put('stf:' + k, email, { expirationTtl: 43200 });
++  return k;
++}
++
++async function staffUnlock(env, body) {
++  const email = normEmail(body.email);
++  if (!emailOk(email)) return fail('Enter a valid email.');
++  await seedAdmin(env, email);
++  const st = await checkPassword(env, email, String(body.password || ''));
++  if (st === 'locked') return fail('Too many tries. Wait 15 minutes and try again.', 429);
++  if (st !== 'ok') return fail('Wrong password.', 401);
++  const off = await offState(env, email);
++  if (off) return fail(OFF_MSG[off], 403);
++  const who = await roleOf(env, email);
++  if (!who || who.role !== 'teacher') return fail('Only teachers can do this.', 403);
++  return json({ staffKey: await newStaffKey(env, email) });
++}
++
++async function adminTester(env, body) {
++  const email = normEmail(body.email);
++  if (!emailOk(email)) return fail('Enter a valid email.');
++  if (email === adminEmail(env)) return fail('This is the admin account.');
++  if (body.op === 'create') {
++    const pw = String(body.password || '');
++    if (pw.length < 6) return fail('The password needs at least 6 characters.');
++    if ((await roleOf(env, email)) || (await rosterRow(env, email))) return fail('This email already has an account. Use the Tester switch in the list instead.');
++    const name = String(body.name || 'Tester').replace(/\s+/g, ' ').trim().slice(0, 80) || 'Tester';
++    const cls = String(body.cls || 'Test').replace(/\s+/g, ' ').trim().slice(0, 40) || 'Test';
++    await fsPut(env, 'roster', email, { email, name, cls, course: '', role: 'student', tester: true, ts: Date.now() });
++    await savePassword(env, email, pw);
++    await env.MD_KV.delete('off:' + email);
++    const added = await seedTester(env, email, name, cls);
++    return json({ ok: true, email, name, cls, added });
++  }
++  if (body.op === 'seed') {
++    const row = await rosterRow(env, email);
++    if (!row || row.data.tester !== true) return fail('Sample data is only for tester accounts.', 404);
++    return json({ ok: true, added: await seedTester(env, email, row.data.name || 'Tester', row.data.cls || 'Test') });
++  }
++  if (body.op === 'set') {
++    const row = await rosterRow(env, email);
++    if (!row || row.data.role === 'teacher') return fail('Only student accounts can be testers.', 404);
++    const ok = await fsUpdate(env, 'roster', row.id, { tester: body.on === true });
++    if (!ok) return fail('Could not save. Try again.', 500);
++    return json({ ok: true, tester: body.on === true });
++  }
++  return fail('Unknown action.');
++}
++
++async function seedTester(env, email, name, cls) {
++  const now = Date.now(), D = 86400000;
++  const L = [['l1', 8, 9], ['r1', 6, 7], ['l2', 9, 5], ['r3', 5, 3], ['l3', 7, 1]];
++  for (const [ex, score, ago] of L) {
++    await fsPut(env, 'attempts', 'seed_' + slug(email) + '_' + ex, { email, student: name, cls, course: '', ex, score, total: 10, items: [], ts: now - ago * D, seeded: true });
++  }
++  // Writing (w1) + Speaking (s1) submissions, already marked, so Recent results / Open feedback have something to show.
++  // Fixed ids: pressing "Add sample data" again replaces them instead of adding copies.
++  const WT = 'The table compares internet access in four countries in 2005 and 2020. Overall, access rose everywhere, and Country C stayed the highest in both years.';
++  const sub = [
++    ['w1', { kind: 'submission', text: WT, words: WT.split(/\s+/).length, ts: now - 4 * D, grade: { scores: [6, 6.5, 6, 6], overall: 6, feedback: 'Sample feedback: clear overview; add one comparison with numbers.', by: 'Sample', ts: now - 3 * D } }],
++    ['s1', { kind: 'submission', notes: 'Sample speaking submission (no recording).', ts: now - 2 * D, grade: { scores: [6, 6, 6.5, 6], overall: 6, feedback: 'Sample feedback: speak a little longer in Part 2.', by: 'Sample', ts: now - D } }],
++  ];
++  for (const [ex, rec] of sub) {
++    await fsPut(env, 'attempts', 'seed_' + slug(email) + '_' + ex, Object.assign({ email, student: name, cls, course: '', ex, score: 0, total: 0, items: [], seeded: true }, rec));
++  }
++  const pid = slug(email), cur = await fsGet(env, 'profiles', pid), xp = Math.max(Number(cur && cur.data.xp) || 0, 160);
++  await fsUpdate(env, 'profiles', pid, { email, xp, xpLife: Math.max(Number(cur && cur.data.xpLife) || 0, xp), xpAt: now });
++  return L.length + sub.length;
++}
++
++async function fsQueryDocs(env, col, field, value) {
++  const r = await fs(env, 'POST', ':runQuery', { structuredQuery: { from: [{ collectionId: col }], where: { fieldFilter: { field: { fieldPath: field }, op: 'EQUAL', value: { stringValue: String(value) } } }, limit: 3000 } });
++  if (!r.ok) throw new Error('firestore query ' + col + ' ' + r.status);
++  const rows = await r.json();
++  return (Array.isArray(rows) ? rows : []).filter((x) => x && x.document).map((x) => Object.assign({ id: decodeURIComponent(x.document.name.split('/').pop()) }, fromFields(x.document.fields)));
++}
++
++async function joinLookup(env, request, url) {
++  const code = String(url.searchParams.get('code') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
++  if (!/^[A-HJ-NP-Z2-9]{8}$/.test(code)) return fail('This join link is not valid. Ask your teacher for the current link.', 400);
++  const ip = request.headers.get('CF-Connecting-IP') || 'x';
++  if ((await bump(env, 'jn:' + ip, 3600)) > 60) return fail('Too many tries. Wait an hour and try again.', 429);
++  const c = (await fsQueryDocs(env, 'classes', 'code', code)).filter((d) => d && d.cls)[0];
++  if (!c) return fail('This join code does not match any class. Ask your teacher for the current link.', 404);
++  if (c.status === 'archived') return fail('This class is closed. Ask your teacher.', 410);
++  return json({ cls: String(c.cls), title: String(c.title || c.cls) });
++}
++
++async function whoami(env, request) {
++  const who = await idUser(env, request);
++  if (!who) return needSignIn();
++  const r = await roleOf(env, who.em);
++  if (!r) return json({ role: '', adm: false, code: 'norole' });
++  return json({ role: r.role, adm: !!r.adm });
++}
++
++async function assistMap(env) {
++  return (await env.MD_KV.get('assist', 'json')) || {};
++}
++
+ export async function onRequest(ctx) {
+   const { request, env } = ctx;
+   const url = new URL(request.url);
+@@ -1218,6 +1359,7 @@ export async function onRequest(ctx) {
+   try {
+     if (!env.MD_KV || !env.FIREBASE_PROJECT_ID || !env.FIREBASE_PRIVATE_KEY) return fail('Server is not configured yet.', 500);
+     if (route === 'names' && request.method === 'GET') return json(await listNames(env));
++    if (route === 'join' && request.method === 'GET') return await joinLookup(env, request, url);
+     if (route === 'status' && request.method === 'GET') {
+       const em = normEmail(url.searchParams.get('em'));
+       const s = emailOk(em) ? await offState(env, em) : '';
+@@ -1228,6 +1370,8 @@ export async function onRequest(ctx) {
+     let body = {};
+     try { body = await request.json(); } catch (e) { return fail('Bad request.'); }
+     const ip = request.headers.get('CF-Connecting-IP') || 'x';
++    if (route === 'whoami') return await whoami(env, request);
++    if (route === 'staff/unlock') return await staffUnlock(env, body);
+     if (route === 'login') return await login(env, body);
+     if (route === 'register') return await register(env, body, ip);
+     if (route === 'reset') return await resetPassword(env, body);
+@@ -1242,6 +1386,7 @@ export async function onRequest(ctx) {
+       if (route === 'admin/password') return await adminPassword(env, body);
+       if (route === 'admin/active') return await adminActive(env, body);
+       if (route === 'admin/teachers') return await adminTeachers(env, body);
++      if (route === 'admin/tester') return await adminTester(env, body);
+       if (route === 'admin/sheet') return await adminSheet(env, body);
+       if (route === 'admin/class') return await adminClass(env, body);
+       if (route === 'admin/kick') return await adminKick(env, body);

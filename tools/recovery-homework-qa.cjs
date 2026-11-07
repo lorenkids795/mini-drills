@@ -1,6 +1,8 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),path=require('node:path');
-const {boot}=require(path.join(__dirname,'../qa-artifacts/recovery-implementation/candidate/tests/app-harness.js'));
+const candidate=path.resolve(process.env.RECOVERY_QA_CANDIDATE||path.join(__dirname,'../qa-artifacts/recovery-implementation/candidate'));
+if(!candidate.startsWith(path.resolve(__dirname,'../qa-artifacts')+path.sep))throw Error('Disposable QA candidate required');
+const {boot}=require(path.join(candidate,'tests/app-harness.js'));
 const user={email:'learner@local.invalid',name:'Fixture',role:'student',cls:'QA'};
 function fixture(){const b=boot({demo:true,user,hooks:"hwSubmitShot:hwSubmitShot,asgState:asgState,homeworkHTML:homeworkHTML,get rows(){return localHwdone},get pending(){return HWUP},get awards(){return window.__awards||0},setup:function(a){localAsg=[a];localHwdone=[];HWUP[a.id+'|x1']={owner:U.email,shot:{id:'fixture',url:'/api/image/aaaaaaaaaaaaaaaaaaaaaa'}};onHwDone=function(){window.__awards=(window.__awards||0)+1}},database:function(v){dbh=v}"});const a={id:'qa-submit',cls:'QA',name:'Fixture',start:Date.now()-1000,due:Date.now()+600000,ex:[],ext:[{id:'x1',src:'Practice source',link:'https://example.invalid/task'}],type:'external'};b.T.setup(a);return {b,a}}
 test('uploaded pending screenshot does not submit; explicit successful Submit persists once',async()=>{const {b,a}=fixture();assert.equal(b.T.asgState(a,user.email).turned,false);assert.equal(b.T.rows.length,0);assert.match(b.T.homeworkHTML(),/Screenshot ready|Submit/);assert.equal(await b.T.hwSubmitShot(a.id,'x1'),true);assert.equal(b.T.rows.length,1);assert.equal(b.T.asgState(a,user.email).turned,true);assert.equal(b.T.awards,1);assert.equal(await b.T.hwSubmitShot(a.id,'x1'),false);assert.equal(b.T.rows.length,1)});

@@ -1,0 +1,129 @@
+diff --git a/functions/api/[[path]].js b/functions/api/[[path]].js
+index aa6d915..5d3b29e 100644
+--- a/functions/api/[[path]].js
++++ b/functions/api/[[path]].js
+@@ -1775,6 +1775,39 @@ async function aiReading(env, request, body) {
+ 
+ 
+ 
++const IMG_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
++
++const IMG_MAX = 5 * 1024 * 1024;
++
++async function imageUpload(env, request, url, ip) {
++  if (String(url.searchParams.get('kind') || '') !== 'hwshot') return fail('Unknown image kind.');
++  const who = await idUser(env, request);
++  if (!who) return needSignIn();
++  const type = String(request.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase();
++  if (IMG_TYPES.indexOf(type) < 0) return fail('Use a PNG, JPG, WebP or GIF picture.', 415);
++  if (Number(request.headers.get('Content-Length') || 0) > IMG_MAX) return fail('The picture is too big (5 MB at most).', 413);
++  if ((await bump(env, 'iup:' + ip, 3600)) > 30) return fail('Too many uploads from this network. Try again in an hour.', 429);
++  if ((await bump(env, 'iue:' + who.em, 3600)) > 20) return fail('Too many uploads in one hour. Try again later.', 429);
++  const buf = await request.arrayBuffer();
++  if (buf.byteLength > IMG_MAX) return fail('The picture is too big (5 MB at most).', 413);
++  if (buf.byteLength < 100) return fail('The picture is empty.');
++  const id = b64url(crypto.getRandomValues(new Uint8Array(16)));
++  const meta = { type, size: buf.byteLength, by: who.em, kind: 'hwshot', ts: Date.now() };
++  if (env.MD_AUDIO) {
++    const cm = {}; Object.keys(meta).forEach((k) => { cm[k] = String(meta[k]); });
++    await env.MD_AUDIO.put('img/' + id, buf, { httpMetadata: { contentType: type }, customMetadata: cm });
++  } else await env.MD_KV.put('img:' + id, buf, { metadata: meta, expirationTtl: 400 * 86400 });
++  return json({ id, url: '/api/image/' + id, size: buf.byteLength });
++}
++
++async function imageServe(env, request, id) {
++  let buf = null, type = 'image/jpeg';
++  if (env.MD_AUDIO) { const o = await env.MD_AUDIO.get('img/' + id); if (o) { buf = await o.arrayBuffer(); type = (o.httpMetadata && o.httpMetadata.contentType) || type; } }
++  else { const r = await env.MD_KV.getWithMetadata('img:' + id, 'arrayBuffer'); if (r && r.value) { buf = r.value; type = (r.metadata && r.metadata.type) || type; } }
++  if (!buf) return new Response('Not found', { status: 404, headers: { 'Cache-Control': 'no-store' } });
++  return new Response(request.method === 'HEAD' ? null : buf, { status: 200, headers: { 'Content-Type': type, 'Content-Length': String(buf.byteLength), 'Cache-Control': 'private, max-age=31536000, immutable', 'X-Content-Type-Options': 'nosniff' } });
++}
++
+ export async function onRequest(ctx) {
+   const { request, env } = ctx;
+   const url = new URL(request.url);
+@@ -1789,7 +1822,10 @@ export async function onRequest(ctx) {
+       const st = {}; st[s || 'ok'] = true; // { ok } | { off } | { moved } | { kicked }
+       return json(st);
+     }
++    const im = /^image\/([A-Za-z0-9_-]{22})$/.exec(route);
++    if (im && (request.method === 'GET' || request.method === 'HEAD')) return await imageServe(env, request, im[1]);
+     if (request.method !== 'POST') return fail('Not found.', 404);
++    if (route === 'image') return await imageUpload(env, request, url, request.headers.get('CF-Connecting-IP') || 'x');
+     let body = {};
+     try { body = await request.json(); } catch (e) { return fail('Bad request.'); }
+     const ip = request.headers.get('CF-Connecting-IP') || 'x';
+diff --git a/index.html b/index.html
+index 818a32b..4a4b9f2 100644
+--- a/index.html
++++ b/index.html
+@@ -2192,13 +2192,14 @@ function hwCardHTML(x){var a=x.a,p=passFor(U.email,a.id),miss=x.over&&!x.fin,sho
+ // one external task (student) = one row titled with its Source ("External task" when empty), status on the right like an exercise.
+ // Pressing the row opens its details: instructions, Open link, the screenshot and Upload / Replace (a screenshot = submitted, never "correct").
+ var HWX={},HWUP={}; // HWX = open task rows, HWUP = upload state per 'assignment|task'
+-function extHwHTML(x,t,i){var a=x.a,k=a.id+'|'+t.x.id,up=HWUP[k]||{},r=t.s,img=r?hwImg(r.url):'',open=!!(HWX[k]||up.busy||up.err),pid='hwxd_'+a.id+'_'+t.x.id,nm=t.x.src||'External task',bad=!r&&x.over;
++function extHwHTML(x,t,i){var a=x.a,k=a.id+'|'+t.x.id,up=HWUP[k]&&HWUP[k].owner===U.email?HWUP[k]:{},r=t.s,img=r?hwImg(r.url):'',open=!!(HWX[k]||up.busy||up.err||up.shot),pid='hwxd_'+a.id+'_'+t.x.id,nm=t.x.src||'External task',bad=!r&&x.over;
+   var st=r?'<div class="pc"><div class="prog"><i style="width:100%;background:var(--good)"></i></div><span class="best">'+(t.late?'Submitted late':'Submitted')+'</span></div>':'<div class="pc'+(bad?' bad':'')+'"><div class="prog"><i style="width:0"></i></div><span>'+(bad?'Missed':'Waiting')+'</span></div>';
+   var h='<button type="button" class="lrow hwxr'+(open?' open':'')+'" data-act="hw-xopen" data-k="'+esc(k)+'" aria-expanded="'+open+'" aria-controls="'+esc(pid)+'"><span><b>'+esc(nm)+'</b>'+(t.x.src?'<small>External task</small>':'')+'</span>'+st+'</button>';
+   if(!open)return h;
+   h+='<div class="hwxd" id="'+esc(pid)+'">'+(t.x.note?'<p class="hwnote">'+esc(t.x.note)+'</p>':'')+
+     '<div class="hwxrow">'+(t.x.link?'<a class="btn" href="'+esc(t.x.link)+'" target="_blank" rel="noopener noreferrer">Open link ↗</a>':'<span class="err">The link is missing. Ask your teacher.</span>')+
+     '<span class="pill'+(r?' ok':'')+'" role="status">'+(r?(t.late?'Submitted late':'Submitted')+' · '+esc(fmtDue(new Date(r.ts))):'Not submitted')+'</span></div>';
++  if(up.shot)h+='<p class="saved" role="status">Screenshot ready. Press Submit to turn it in.</p><button class="btn pri" type="button" data-act="hw-submit-shot" data-asg="'+esc(a.id)+'" data-x="'+esc(t.x.id)+'"'+(up.busy?' disabled':'')+'>Submit screenshot</button>';
+   if(r&&img)h+='<a class="hwthumb" href="'+esc(img)+'" target="_blank" rel="noopener"><img src="'+esc(img)+'" alt="Your screenshot for '+esc(nm)+'"></a>';
+   h+='<div class="hwact"><button class="btn'+(r?'':' pri')+'" type="button" data-act="hw-shot" data-asg="'+esc(a.id)+'" data-x="'+esc(t.x.id)+'"'+(up.busy?' disabled':'')+'>'+(up.busy?'Uploading… '+(up.pct||0)+'%':r?'Replace screenshot':'Upload screenshot')+'</button>'+
+     '<input type="file" accept="image/*" hidden id="hwShot_'+esc(a.id)+'_'+esc(t.x.id)+'" data-hwshot="'+esc(a.id)+'" data-x="'+esc(t.x.id)+'" aria-label="Screenshot for '+esc(nm)+'"></div>'+
+@@ -2214,20 +2215,31 @@ function hwShotUpload(blob,prog){return new Promise(function(ok,no){
+     if(x.upload)x.upload.onprogress=function(e){if(e.lengthComputable&&prog)prog(Math.round(e.loaded/e.total*100))};
+     x.onload=function(){var d={};try{d=JSON.parse(x.responseText)}catch(e){}if(x.status>=200&&x.status<300&&d.id&&d.url)ok(d);else no(new Error((d.error||'Upload failed.')+' (code: http'+x.status+')'))};
+     x.onerror=function(){no(new Error('No connection. Check your internet and try again.'))};x.send(blob)},function(){no(new Error('Your sign-in has expired. Sign in again.'))})})}
+-document.addEventListener('change',function(e){var f=e.target,aid=f&&f.getAttribute&&f.getAttribute('data-hwshot');if(!aid||!f.files||!f.files[0]||!U)return;var file=f.files[0],xid=f.getAttribute('data-x')||'x1',key=aid+'|'+xid;
+-  if(!/^image\//.test(file.type)){HWUP[key]={err:'Choose a picture (PNG, JPG, WebP or GIF).'};return renderLib()}
+-  if(file.size>15*1024*1024){HWUP[key]={err:'This picture is too big. Take a smaller screenshot.'};return renderLib()}
+-  HWUP[key]={busy:true,pct:0};renderLib();
+-  hwShrink(file).then(function(b){if(b.size>5*1024*1024)throw new Error('The picture is too big (5 MB at most).');return hwShotUpload(b,function(p){HWUP[key].pct=p;var bt=document.querySelector('[data-act="hw-shot"][data-asg="'+aid+'"][data-x="'+xid+'"]');if(bt)bt.textContent='Uploading… '+p+'%'})})
+-    .then(function(d){var now=Date.now(),old=hwRec(U.email,aid),did=slug(U.email)+'_'+aid,asg=allAsgs().filter(function(x){return x.id===aid})[0],was=asg?asgState(asg,U.email).turned:false;
+-      var shots=hwShots(old);shots[xid]={id:d.id,url:d.url,ts:now};
+-      var rec={email:U.email,asgId:aid,ts:old&&old.ts||now,status:'submitted',shots:shots,updatedAt:now};
+-      if(shots.x1)rec.shot=shots.x1; // older app versions read "shot"
+-      if(old&&(old.done===true||(!old.shot&&!old.shots)))rec.done=true; // the Library part stays turned in
+-      var fin=function(){HWUP[key]={};var now2=asg?asgState(asg,U.email).turned:true;if(!was&&now2)onHwDone(aid);renderLib();toast(now2?'Screenshot uploaded. Your homework is submitted.':'Screenshot uploaded. Finish the other parts to complete this homework.')};
+-      var loc=function(){localHwdone=localHwdone.filter(function(x){return x.id!==did});localHwdone.push(Object.assign({id:did},rec));fin()};
+-      if(dbh)dbh.doc('hwdone/'+did).set(rec).then(function(){localHwdone=localHwdone.filter(function(x){return x.id!==did});localHwdone.push(Object.assign({id:did},rec));fin()},loc);else loc()})
+-    .catch(function(er){HWUP[key]={err:(er&&er.message)||'Upload failed. Try again.'};renderLib()})});
++function hwSubmitShot(aid,xid){
++  var key=aid+'|'+xid,p=HWUP[key],em=U&&U.email;
++  if(!p||!p.shot||p.owner!==em||p.busy)return Promise.resolve(false);
++  var asg=allAsgs().filter(function(x){return x.id===aid})[0];
++  if(!asg||U.role!=='student'||asg.cls!==U.cls)return Promise.resolve(false);
++  var now=Date.now(),old=hwRec(em,aid),did=slug(em)+'_'+aid,was=asgState(asg,em).turned,shots=hwShots(old);
++  shots[xid]={id:p.shot.id,url:p.shot.url,ts:now};
++  var rec={email:em,asgId:aid,ts:old&&old.ts||now,status:'submitted',shots:shots,updatedAt:now};
++  if(shots.x1)rec.shot=shots.x1;
++  if(old&&(old.done===true||(!old.shot&&!old.shots)))rec.done=true;
++  p.busy=true;p.err='';renderLib();
++  var save=dbh?dbh.doc('hwdone/'+did).set(rec):DEMO?Promise.resolve():Promise.reject(new Error('Your account is not connected. Sign in and retry.'));
++  return Promise.resolve(save).then(function(){
++    if(!U||U.email!==em)return false;
++    localHwdone=localHwdone.filter(function(x){return x.id!==did});localHwdone.push(Object.assign({id:did},rec));HWUP[key]={};
++    var turned=asgState(asg,em).turned;if(!was&&turned)onHwDone(aid);renderLib();toast('Screenshot submitted.');return true;
++  },function(er){if(U&&U.email===em){p.busy=false;p.err=er&&er.message||'Submission failed. Try again.';renderLib()}return false});
++}
++document.addEventListener('change',function(e){var f=e.target,aid=f&&f.getAttribute&&f.getAttribute('data-hwshot');if(!aid||!f.files||!f.files[0]||!U)return;var file=f.files[0],xid=f.getAttribute('data-x')||'x1',key=aid+'|'+xid,em=U.email;
++  if(!/^image\//.test(file.type)){HWUP[key]={owner:em,err:'Choose a picture (PNG, JPG, WebP or GIF).'};return renderLib()}
++  if(file.size>15*1024*1024){HWUP[key]={owner:em,err:'This picture is too big. Take a smaller screenshot.'};return renderLib()}
++  HWUP[key]={owner:em,busy:true,pct:0};renderLib();
++  hwShrink(file).then(function(b){if(b.size>5*1024*1024)throw new Error('The picture is too big (5 MB at most).');return hwShotUpload(b,function(p){if(HWUP[key]&&HWUP[key].owner===em)HWUP[key].pct=p})})
++    .then(function(d){if(!U||U.email!==em)return;HWUP[key]={owner:em,shot:{id:d.id,url:d.url}};renderLib()})
++    .catch(function(er){if(U&&U.email===em){HWUP[key]={owner:em,err:er&&er.message||'Upload failed. Try again.'};renderLib()}})});
+ var PASS={day:{label:'1-day pass',days:1},week:{label:'1-week pass',days:7}};
+ function passesOf(email){return passDocs.concat(localPass,samplePass).filter(function(p){return p.email===email})}
+ function passFor(email,asgId){return passesOf(email).filter(function(p){return p.asgId===asgId})[0]||null}
+@@ -5753,6 +5765,7 @@ document.addEventListener('click',function(e){
+   if(a==='asg-open'){AG.open=AG.open===t.dataset.id?null:t.dataset.id;return renderAsg()}
+   if(a==='asg-cancel'){AG.form=null;return renderAsg()}
+   if(a==='hw-xopen'){var hk=t.dataset.k;HWX[hk]=!HWX[hk];renderLib();return true}
++  if(a==='hw-submit-shot'){hwSubmitShot(t.dataset.asg,t.dataset.x||'x1');return true}
+   if(a==='hw-shot'){var hs=$('#hwShot_'+t.dataset.asg+'_'+(t.dataset.x||'x1'));if(hs){hs.value='';hs.click()}return true}
+   // form sections: read the fields first, then change the content (live=false: the redraw must not read the old fields again)
+   if(a==='pk-toggle'||a==='ax-add'||a==='ax-rm'||a==='pk-clear'){var F=AG.form;if(!F)return true;agCollect();

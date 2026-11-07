@@ -1,0 +1,87 @@
+diff --git a/functions/api/[[path]].js b/functions/api/[[path]].js
+index ee59ffc..8a0f8b2 100644
+--- a/functions/api/[[path]].js
++++ b/functions/api/[[path]].js
+@@ -1990,6 +1990,28 @@ async function hwaNote(env, request, body) {
+   return json({ ok: true, status: rec.status, notes: rec.notes.slice(-20) });
+ }
+ 
++async function orphanScan(env) {
++  const roster = await fsList(env, 'roster'), keep = new Set();
++  roster.forEach((r) => { const e = normEmail(r.email || r.id); if (e) keep.add(e); });
++  Object.keys(await staffMap(env)).forEach((e) => keep.add(normEmail(e)));
++  Object.keys(await assistMap(env)).forEach((e) => keep.add(normEmail(e)));
++  teachers(env).forEach((e) => keep.add(e)); keep.add(adminEmail(env));
++  const att = await fsList(env, 'attempts'), by = {};
++  att.forEach((a) => { const raw = String(a.email || ''), e = normEmail(raw); if (!e || keep.has(e)) return;
++    const o = by[e] || (by[e] = { email: e, raw: [], attempts: 0, names: [], classes: [], last: 0 });
++    o.attempts++; if (raw && o.raw.indexOf(raw) < 0) o.raw.push(raw);
++    if (a.student && o.names.indexOf(a.student) < 0) o.names.push(String(a.student).slice(0, 80));
++    if (a.cls && o.classes.indexOf(a.cls) < 0) o.classes.push(String(a.cls).slice(0, 40));
++    o.last = Math.max(o.last, Number(a.ts) || 0); });
++  return { scanned: att.length, truncated: att.length >= 3000, orphans: Object.keys(by).sort().map((k) => by[k]) };
++}
++
++async function adminOrphans(env, body) {
++  if (body.op && body.op !== 'preview') return fail('Cleanup is read-only in this candidate. No data was deleted.', 403);
++  const r = await orphanScan(env);
++  return json({ ok: true, readOnly: true, scanned: r.scanned, truncated: r.truncated, orphans: r.orphans.map((o) => ({ email: o.email, attempts: o.attempts, names: o.names, classes: o.classes, last: o.last })) });
++}
++
+ export async function onRequest(ctx) {
+   const { request, env } = ctx;
+   const url = new URL(request.url);
+@@ -2032,6 +2054,7 @@ export async function onRequest(ctx) {
+       if (route === 'admin/active') return await adminActive(env, body);
+       if (route === 'admin/teachers') return await adminTeachers(env, body);
+       if (route === 'admin/tester') return await adminTester(env, body);
++      if (route === 'admin/orphans') return await adminOrphans(env, body);
+       if (route === 'admin/assistants') return await adminAssistants(env, body);
+       if (route === 'admin/sheet') return await adminSheet(env, body);
+       if (route === 'admin/class') return await adminClass(env, body);
+diff --git a/index.html b/index.html
+index 4a4b9f2..a364431 100644
+--- a/index.html
++++ b/index.html
+@@ -8349,9 +8349,9 @@ function demoAdminRun(path,b){
+   var err=function(m){throw new Error(m)},em=String(b.email||'').trim().toLowerCase(),all=demoUsers();
+   var find=function(e){return all.filter(function(u){return u.email===e})[0]};
+   if(path==='admin/users')return {users:all,me:'admin@demo.vn',ver:'demo'};
+-  if(path==='admin/orphans'){var keep={};allRoster().forEach(function(r){keep[String(r.email||'').toLowerCase()]=1});var by={};
++  if(path==='admin/orphans'){var keep={};allRoster().forEach(function(r){keep[String(r.email||'').toLowerCase()]=1});all.forEach(function(u){if(u.role==='teacher'||u.role==='assistant'||u.tester)keep[String(u.email||'').toLowerCase()]=1});var by={};
+     realAttempts().forEach(function(a){var e=String(a.email||'').toLowerCase();if(!e||keep[e])return;var o=by[e]||(by[e]={email:e,attempts:0,names:[],classes:[]});o.attempts++;if(a.student&&o.names.indexOf(a.student)<0)o.names.push(a.student);if(a.cls&&o.classes.indexOf(a.cls)<0)o.classes.push(a.cls)});
+-    if(b.op==='purge'){if(!by[em])err('This email is not a leftover any more. Nothing was deleted.');localAttempts=localAttempts.filter(function(a){return String(a.email||'').toLowerCase()!==em});attemptDocs=attemptDocs.filter(function(a){return String(a.email||'').toLowerCase()!==em});return {ok:true,email:em,deleted:{attempts:by[em].attempts}}}
++    if(b.op&&b.op!=='preview')err('Cleanup is read-only. No data can be deleted.');
+     return {ok:true,scanned:realAttempts().length,truncated:false,orphans:Object.keys(by).sort().map(function(k){return by[k]})}}
+   if(path==='admin/aitest'){var tx=String(b.text||'');if(tx.trim().length<8)err('Paste an essay first.');var dc=demoCorrections(tx).map(function(c){return Object.assign({},c,{context:enSentence(tx,c.original_text),practice:[]})});return {ai:{corrections:dc,vocabulary_upgrades:DEMO_AI.vocabulary_upgrades,model:'demo'},ms:250,model:'demo (built-in rules, not Gemini)',raw:dc.length,dropped:[]}}
+   if(path==='admin/sheet'){
+@@ -8602,13 +8602,13 @@ function tSeed(){var n=Date.now(),D=864e5,WT='The table compares internet access
+   {sid:'s1',ex:'s1',score:0,total:0,items:[],kind:'submission',notes:'Sample speaking submission (no recording).',ts:n-2*D,grade:{scores:[6,6,6.5,6],overall:6,feedback:'Sample feedback: speak a little longer in Part 2.',by:'Sample',ts:n-D}},{ex:'l1',score:8,total:10,items:[],ts:n-9*D},{ex:'r1',score:6,total:10,items:[],ts:n-7*D},{ex:'l2',score:9,total:10,items:[],ts:n-5*D},{ex:'r3',score:5,total:10,items:[],ts:n-3*D},{ex:'l3',score:7,total:10,items:[],ts:n-D}]}
+ // values of one form's inputs by id; a missing input (form not on screen) -> a message, never a null error. Values are never logged.
+ function adForm(ids){var o={};for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(!el){adSay('This form is not on the screen any more. Open it again and retry.');return null}o[ids[i]]=String(el.value||'')}return o}
+-// leftovers of deleted students: preview (dry run) first, then delete one email at a time after a confirm (admin/orphans)
++// leftovers of deleted students: read-only preview; no cleanup mutations (admin/orphans)
+ function adOrphansHTML(){var O=AD.orph;
+-  var h='<details class="adm-tadd"'+(O?' open':'')+'><summary>Clean up data of deleted students</summary><p class="sub">Finds results of emails that are no longer students or staff. Preview deletes nothing; data is matched by email, never by name.</p>'+
++  var h='<details class="adm-tadd"'+(O?' open':'')+'><summary>Preview leftover student data</summary><p class="sub">Finds results of emails that are no longer students or staff. This preview is read-only; data is matched by email, never by name.</p>'+
+     '<div class="actions"><button class="btn sm" type="button" data-act="ad-orph-prev">'+(O?'Preview again':'Preview')+'</button></div>';
+-  if(O){h+='<p class="saved" role="status">'+O.scanned+' results checked'+(O.truncated?' (only the newest 3000; run again after a clean-up)':'')+' · '+O.orphans.length+' leftover email'+(O.orphans.length===1?'':'s')+'</p>';
++  if(O){h+='<p class="saved" role="status">'+O.scanned+' results checked'+(O.truncated?' (only the newest 3000; preview may be incomplete)':'')+' · '+O.orphans.length+' leftover email'+(O.orphans.length===1?'':'s')+'</p>';
+     if(O.orphans.length)h+='<div class="scroll"><table><thead><tr><th scope="col">Email</th><th scope="col">Name in results</th><th scope="col">Class</th><th scope="col">Results</th><th scope="col"></th></tr></thead><tbody>'+O.orphans.map(function(o){
+-        return '<tr><td>'+esc(o.email)+'</td><td>'+esc((o.names||[]).join(', '))+'</td><td>'+esc((o.classes||[]).join(', '))+'</td><td class="mono">'+(o.attempts|0)+'</td><td><button class="btn sm bad" type="button" data-act="ad-orph-del" data-email="'+esc(o.email)+'">Delete data</button></td></tr>'}).join('')+'</tbody></table></div>'}
++        return '<tr><td>'+esc(o.email)+'</td><td>'+esc((o.names||[]).join(', '))+'</td><td>'+esc((o.classes||[]).join(', '))+'</td><td class="mono">'+(o.attempts|0)+'</td><td><span class="saved">Preview only</span></td></tr>'}).join('')+'</tbody></table></div>'}
+   return h+'</details>'}
+ function adTesterAddHTML(){
+   return '<details class="adm-tadd"><summary>Add a tester account</summary><p class="sub">A student login for testing (with the Demo helper). Hidden from Classes, Students, Dashboard and the Leaderboard; not in the Google Sheet. Sample results are added.</p>'+
+@@ -8920,10 +8920,7 @@ function adAct(a,t){
+   if(a==='ad-tester'){var on=t.dataset.on==='1';adBusy(t,true,on?'Turning on…':'Turning off…');
+     adminApi('admin/tester',{op:'set',email:who,on:on}).then(function(){return adDone(nm+(on?' is now a tester: hidden from class lists, Dashboard and Leaderboard.':' is a normal student again.'),adSet(who,{tester:on}))},function(e){adBusy(t,false);adSay(e.message)});return true}
+   if(a==='ad-orph-prev'){adBusy(t,true,'Checking…');adminApi('admin/orphans',{op:'preview'}).then(function(d){AD.orph={scanned:d.scanned|0,truncated:!!d.truncated,orphans:d.orphans||[]};renderAdmin()},function(e){adBusy(t,false);adSay(e.message)});return true}
+-  if(a==='ad-orph-del'){var oe=t.dataset.email,oo=((AD.orph||{}).orphans||[]).filter(function(x){return x.email===oe})[0];if(!oo)return true;
+-    if(uiGate(t,{title:'Delete ALL learning data left by '+oe+'?',text:oo.attempts+' result'+(oo.attempts===1?'':'s')+', plus their errors, cards, homework, passes, redeems and profile. This cannot be undone.',ok:'Delete data',danger:true}))return true;
+-    adBusy(t,true,'Deleting…');adminApi('admin/orphans',{op:'purge',email:oe}).then(function(){AD.orph.orphans=AD.orph.orphans.filter(function(x){return x.email!==oe});
+-      attemptDocs=attemptDocs.filter(function(x){return String(x.email||'').toLowerCase()!==oe});renderAdmin();toast('Data of '+oe+' deleted.')},function(e){adBusy(t,false);adSay(e.message)});return true}
++  if(a==='ad-orph-del'){adSay('Cleanup preview is read-only. No data can be deleted.');return true}
+   if(a==='ad-tester-create'){var tf=adForm(['adTsName','adTsEm','adTsCls','adTsPw']);if(!tf)return true;
+     var tn=tf.adTsName.trim()||'Tester',te=tf.adTsEm.trim().toLowerCase(),tc=tf.adTsCls.trim()||'Test',tp=tf.adTsPw.trim();
+     if(!EMAIL_RE.test(te)){adSay('Enter a valid email.');return true}if(tp.length<6){adSay('The password needs at least 6 characters.');return true}

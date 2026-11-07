@@ -1,0 +1,96 @@
+{
+  "date": "2026-11-07",
+  "main": "5a0c18b3fa35c6ae0f284cc2e5e7c7e5355152ed",
+  "featureSource": "f6555c2c2e6fe7a4c849d95a8133b21eeaca73d2",
+  "status": "READY_FOR_PATCH_REVIEW",
+  "release": "BLOCKED",
+  "builder": "PASS: original integration tests 4/4; fail-closed anchor checks 7/7",
+  "baseline": {
+    "assertionsPass": 402,
+    "commandsFail": 15,
+    "assertionsTotal": 436,
+    "commandsPass": 13
+  },
+  "candidate": {
+    "testsUnchanged": true,
+    "assertionsPass": 426,
+    "commandsFail": 3,
+    "assertionsTotal": 436,
+    "commandsPass": 25
+  },
+  "featureQA": {
+    "status": "PASS",
+    "screenshots": 443,
+    "node": 130,
+    "regressions": 244,
+    "browserSuites": 10,
+    "sourceFingerprint": "2f7ec53dd0092be2394156994ebeb3ec15aee909716e1f6c1f27a1671152ba2f"
+  },
+  "candidateBrowser": {
+    "status": "PASS",
+    "networkViolations": 0,
+    "indexSha256": "0531777087abb0b6067d11ce79a24a298e220240480b9fc5dcfc2897db1964ef",
+    "suites": 6,
+    "policyScenarios": 18,
+    "sourceUnchanged": true
+  },
+  "additionalTests": {
+    "total": 5,
+    "passed": 5
+  },
+  "emulator": {
+    "status": "PASS",
+    "newRoutes": 87,
+    "teardown": "102 DRAFT, 0 retained approvals/publications; test emulator stopped",
+    "browserTests": 2,
+    "securityTests": 11,
+    "project": "demo-mini-drills-vocab-test",
+    "sourceUnchanged": true
+  },
+  "protection": {
+    "manifest": "integration-finalization/manifest.json",
+    "writingSha256": "f1ca085ca655b2c6e8fe7c83650787b4997f45f20ee5bdf49c955ce0747d7946",
+    "patchReplayExact": true,
+    "candidateTestsUnchanged": true,
+    "featureRuntimeUnchanged": true,
+    "baselineClean": true
+  },
+  "remaining": [
+    {
+      "status": "BLOCKED_SCOPE",
+      "detail": "data-cleanup 13/15; server-purge 0/8; preserve preview-only policy",
+      "id": "destructive-cleanup"
+    },
+    {
+      "status": "TEACHER_REVIEW",
+      "unit2Pending": 226,
+      "id": "writing-editorial",
+      "unit0Pending": 206
+    },
+    {
+      "realPublications": 0,
+      "status": "TEACHER_REVIEW",
+      "realApprovals": 0,
+      "drafts": 102,
+      "id": "vocab-editorial"
+    },
+    {
+      "status": "NOT_TESTED",
+      "detail": "Synthetic emulator/local RSA checks do not prove deployed staging security or real-data migration",
+      "id": "deployed-auth-IAM"
+    },
+    {
+      "status": "AWAITING_AUTHORIZATION",
+      "detail": "Review six ordered proposals before actual integration source changes; merge/PR/deploy not authorized",
+      "id": "apply-to-source"
+    }
+  ],
+  "evidence": "integration-finalization/",
+  "boundedHistory": {
+    "note": "Candidate round 1: 5/6, versioned config URL did not match old demo fixture. QA-only loader fix; round 2: 6/6, all assertions retained.",
+    "builderChecks": 2,
+    "candidateBrowserRounds": 2,
+    "emulatorRounds": 1,
+    "featureFullRounds": 1
+  }
+}

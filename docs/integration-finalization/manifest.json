@@ -1,0 +1,217 @@
+{
+  "main": "5a0c18b3fa35c6ae0f284cc2e5e7c7e5355152ed",
+  "feature": "f6555c2c2e6fe7a4c849d95a8133b21eeaca73d2",
+  "candidateDir": "C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\qa-artifacts\\integration-finalization\\candidate",
+  "baselineDir": "C:\\Users\\hnnhiii\\Documents\\Codex\\2026-10-28\\github-plugin-github-openai-curated-remote\\work\\mini-drills\\qa-artifacts\\integration-finalization\\baseline",
+  "applied": [
+    {
+      "group": "admin",
+      "sha256": "975ba30167b2c6c84df0fd7669341459b77e5620a66fb4604f05b529088b5d2b"
+    },
+    {
+      "group": "reading",
+      "sha256": "00db91f29989a240b1b6d2ff0b9104dd82bac4bbe10a56f14a4518cfe692c6c8"
+    },
+    {
+      "group": "homework",
+      "sha256": "7429943da75b02b5ca85f55b2e85fb920b880dc4aa8227900c948486a84124f0"
+    },
+    {
+      "group": "assistant",
+      "sha256": "11d8fafab043ac5071a4757d7d040ee0137365a4664ce6157074ddcfb8ad6803"
+    },
+    {
+      "group": "cleanup",
+      "sha256": "d32652cf86caeea22709bd34dba02d58355fe4b95cf34baa344dcc0a1f962c15"
+    }
+  ],
+  "addedAssets": [
+    "data/vocab-lab-import-audit.json",
+    "data/vocab-lab-p1.json",
+    "data/vocab-lab-practice-v1.json",
+    "data/vocab-lab-practice.json",
+    "vocab-editorial-core.js",
+    "vocab-editorial.css",
+    "vocab-editorial.js",
+    "vocab-lab-core.js",
+    "vocab-lab-shell.js",
+    "vocab-lab-store.js",
+    "vocab-lab.css",
+    "vocab-lab.js",
+    "vocab-mission-content.js",
+    "vocab-mission-core.js",
+    "vocab-mission-engine.js",
+    "vocab-mission-library.js",
+    "vocab-mission-packs.js",
+    "vocab-mission-planner.js",
+    "vocab-mission-store.js",
+    "vocab-mission.css",
+    "vocab-mission.js",
+    "vocab-retrieval.js",
+    "vocab-routes.js"
+  ],
+  "protectedHashes": {
+    "CLAUDE.md": "94bec7b8e4eacd682e0da0a506a211205e2282eed717683deda15c81483698d2",
+    "PROMPT-error-notebook.md": "022b0676f39d54f68d83b8adbe9580d93398ad86ca3e9e49e008beee86180d80",
+    "README.md": "0ae5ca70c6e3220f59c0c296595c30e4901043c3107c860ee060840c58464a56",
+    "TESTING.md": "9311e90c6663bc3b5d0ed0ca35889fd8a119173e1f89e4cf189443c95ec94420",
+    "_headers": "75bbf03cc67b92e7fd9db27dd99ad2db12d8df09b724826e740b219bc25b128b",
+    "ai-worker.js": "6dfd654e76d2640bc77ddee09ba50b477839cc3944dc40527df1d70cfdf133af",
+    "assets/android-chrome-192x192.png": "2cd41d6efeaa4eaefd8d28a054621b6d5bd73d6d3202b694b84ce23e45e3710e",
+    "assets/android-chrome-512x512.png": "23875a235540b9920297d4cdb34e0b07ba3bb8a97837c3db7733898b7733e295",
+    "assets/apple-touch-icon.png": "727c8b89b30c6f270e8451218cb4c9c1a1b38e9fb1209551b92fb240c5612229",
+    "assets/favicon-16x16.png": "ebe4cbd8cfcc66b4a1fb78ca928071cad52c40db860076c4fe7ea9075cd30fcd",
+    "assets/favicon-32x32.png": "a5dfbf19b37cd287f62f0fd0c3007863cb0d5521ee5528642f75c7b24474effd",
+    "assets/favicon.ico": "5583aa45ed814791aa45e5af19b38912c3705f1c02e9a6a14cee27a3decebc78",
+    "firestore.rules": "71046042c13d47130475db4192bdde4a5bbeb02eac7a34ebe60ad856b8cf99b1",
+    "gemini-relay.gs": "9276b8b749b2417599929cd589fa87296640a813fc40ceb79d1fbd5c6ecb4b9a",
+    "lm-content.js": "f2b148f225247da9755021cf2a542ed27840159987970789c3e17a2faec13d2f",
+    "lm-engine.js": "198eef1accd08b676704b04a78b85bd51d5de3c70e44e41ca27b583b3fa1e601",
+    "lm-unit0.js": "d484e93ca93c52d0897c8731f2cc33c7034122fb4bf9766f4000b7460d8cb7e1",
+    "lm-unit2.js": "d95f121c1195515e5158a8d67c4421235bf7a69404e28257600b5451b711096f",
+    "md-backend.js": "05c7e600287989002f0f167369f3118236c092eeb968b9232f66180851809da7",
+    "md-chart.js": "83e546c1eb8edaa3fabb1a33b2d04c017169a6f7fded37c7f0bf7c53abad6e47",
+    "md-config.js": "70338be529194ca499c98cfa657b58555d74425bfd13c0ee7f45c5fc75a28f43",
+    "pchk.js": "d58c8f5a89f9ffc32ddeb28317d5cb6c586af6b52bb0336fc74af6b3133b030d",
+    "site.webmanifest": "1b7edcb80d19b0540e8ae7d824ab1eb28aaa03ab4563e6dc100a4467e6437a2f",
+    "tests/admin-actions.test.js": "8c0c1843352809c8296646ee9ae359c18e1dc2ee81496c60dde14a7e00bf7374",
+    "tests/admin-kick.test.js": "d9028c6382959068fb2b9be69068fd9a30f46210d5af1636fcece78206272266",
+    "tests/admin-users-groups.test.js": "2ed5eab5fb04768be0c520c23b10016a286c92b6c5a154675b4c5911fa216f4a",
+    "tests/app-harness.js": "85dba197314bf1bac1d2c5eb7ed193729c68c9fc4eae81c33122352ec4b852a2",
+    "tests/chart-facts.test.js": "2af3963603264907460f9eebf8d882eb9754aa471af6172cc3cb057ba66f3ed1",
+    "tests/contrast-rules.js": "d5a721b1747c8e4c292910db317d350ff1b5903b4143b574d8abd4a242fe28c7",
+    "tests/contrast.js": "46530b297c15c116c453c5086414fe7d7a970eb343e93aa6535f1c83d08f8ec7",
+    "tests/create-reading-ui.test.js": "4c5760ee378b0f93e26cb3544e1bf800735a63862679098d2ae67269e7f7070d",
+    "tests/dash-join-mark.test.js": "3913956b8f64a8fbc922060b8330891d69b2e2b3b22238609f19d5dd8f4e0392",
+    "tests/data-cleanup.test.js": "6e2a8f0cae63acff772b5f91e44cce76e89f133b5eb754a629c5f58fa3ae44a0",
+    "tests/fixtures/reading-import-invalid.json": "4c38546f35b60e6d959df9b371751f0ca6d119860607ee28fb4d39d18f91a159",
+    "tests/fixtures/reading-import-valid.json": "082c1ed9e830d4a5c287b8f15d9715ef8f4a90bcf29ae0227cbe3edc7a9c3594",
+    "tests/hw-assistant.test.js": "309de27d9e6cca3b4a47da05edb7e945ab4dbd68149299362f2384971b015798",
+    "tests/hw-external.test.js": "f0371a4d0e289ec102420d7b93d703768074dddd7d89ef6dfb30954611939cd6",
+    "tests/hw-mixed.test.js": "3a8387ccac5e39a16735788ed5ba35ed2aa2ded335f636f6b6a13b6412240717",
+    "tests/hw-submission.test.js": "4ccb3bef0357cad917d70d20799aa026a77217473a09835bcaca0f4e7d99ce81",
+    "tests/lm-access.test.js": "575213ad6ef5837ee1569bae79b81e4f5fab7fd7ce340b0971e1738be68a1267",
+    "tests/lm-check.js": "4b3f3501f33f5409ac704214d9aadd2e2a703e29bfbf567d00edc37dc8e6e3ec",
+    "tests/lm-meta.test.js": "591fdc200635fdfa8b5170ea4a6fa44fb3b4fc6c873d34505681a3d62b33b21c",
+    "tests/lm-review-u0.html": "11d9306e062d55eb47bd0c548ae4a8319e5e902543ae39f81516a6c086e9551a",
+    "tests/lm-review.html": "59b925efbcde375ad6d0bfc29708ef4ae890639ec5b1076835d6a2acc99934e2",
+    "tests/lm-unit0.test.js": "b2526d7328a826647e8024e5cbad9768ddbc089c071c917a8a0038b613f32418",
+    "tests/lm-unit2-ui.test.js": "2f8532d8c26610f14f31211df4d292b52c28d8c1e269f1a84c1c3ba30df9b834",
+    "tests/misc.test.js": "f7510924e6181a503ffa7badc813825aedcd0bb2616dd91c1e97a96341fe4ff3",
+    "tests/reading-gen.test.js": "ac830ee6c894b6470d509ffe3d0f08812d5331936ce0564cc3e4a963e06f68cf",
+    "tests/reading-import.test.js": "f34e8d0e9301ffca5091a30750fa2b6162bd48fc82cba76d10ad32147d6e0283",
+    "tests/reading-review.test.js": "b5818deff0f19c18e2cc11e79e83609c8d8f5cceafda69570b564c0287c59489",
+    "tests/reading-workspace.test.js": "626b3e250d43dc03267cc3708c97d747bd20ba44a3661cc04f29a825db1dc323",
+    "tests/reading.test.js": "929ff7ab68de69437f33c2b0ea35dc8a269dae94ab623a000d1e8f678eb13876",
+    "tests/server-purge.test.js": "b4b09bd94df99aa00fa94f1a5f6fb45fcc2ff2f17f2b8f19932b63552d30bca4",
+    "tests/sign-in.test.js": "a858e00840239718bb41bc63c30f1e8d2d7ac6c49799c84c7c38de81e50be55f",
+    "tests/ui-audit.test.js": "065b0cf85710b07b52698d2c38cc81c9eaf0d9578a2754dfd97ea8ed76b5626f",
+    "tests/ui-pass.test.js": "40689ff25bedc789684b5a80363096d9a89f277c26c2c2dcfda25e1c6dde987d"
+  },
+  "writingRegionSha256": "f1ca085ca655b2c6e8fe7c83650787b4997f45f20ee5bdf49c955ce0747d7946",
+  "indexSha256": "0531777087abb0b6067d11ce79a24a298e220240480b9fc5dcfc2897db1964ef",
+  "apiSha256": "fb2efde0b8568d6b33104942bca2ffab6a4a672100295c490a28fb0ca53d0737",
+  "assetSource": "f6555c2c2e6fe7a4c849d95a8133b21eeaca73d2",
+  "assets": [
+    {
+      "path": "data/vocab-lab-import-audit.json",
+      "sha256": "4aa4168dc095a51661e5df7dfd13e0a6063f66496aa21b9cc77ad6ccb4d907e2"
+    },
+    {
+      "path": "data/vocab-lab-p1.json",
+      "sha256": "cd2b9e9f331207082aed4e6c73066746ecfaf84416eb4e09294c19534c44e489"
+    },
+    {
+      "path": "data/vocab-lab-practice-v1.json",
+      "sha256": "50c0769c4db161e3b58aa7d636dd3deac8aaa4357476c7ed91bd0a2b7f91e207"
+    },
+    {
+      "path": "data/vocab-lab-practice.json",
+      "sha256": "391a782fdbc5f7c397f9489f61ae1fb86bcf51d88596fa4011724a4d2c05912a"
+    },
+    {
+      "path": "vocab-editorial-core.js",
+      "sha256": "1038b75da09a1ed1e5ad55521475142b059ab6ef8ec4c243c1e14a14a74f2b13"
+    },
+    {
+      "path": "vocab-editorial.css",
+      "sha256": "d887d520ca492f570fa3087cd6885a33e5a2b4a8e25a0ce653eb72a0abe83778"
+    },
+    {
+      "path": "vocab-editorial.js",
+      "sha256": "34fd84f127708f3a8b37fd4d69e35cdf0438178f9d5bf7d9200efd642547e6af"
+    },
+    {
+      "path": "vocab-lab-core.js",
+      "sha256": "e1b71291f1e3e62f5fbcf71204cae19ac1061ebb3de95acaee4a4c73aff6d445"
+    },
+    {
+      "path": "vocab-lab-shell.js",
+      "sha256": "3da5bdea1db6aa59e44eca34c56a715633862c1dba554a119f66e8a6d1a74148"
+    },
+    {
+      "path": "vocab-lab-store.js",
+      "sha256": "7bdbdfbffdcea350d7cfda6abba37fef3dc08ee8b5b4ef357ca43df0815cb79a"
+    },
+    {
+      "path": "vocab-lab.css",
+      "sha256": "3ce51ae536a96975b403d13a01dd9e39172256aa18d65ae64511fa980bc9171d"
+    },
+    {
+      "path": "vocab-lab.js",
+      "sha256": "4a06e55f19e4dc8d5ab060b626f89203ff45bf191fdcf066e0e6090ad64d3619"
+    },
+    {
+      "path": "vocab-mission-content.js",
+      "sha256": "dafa902173a277763292fce3ec35f0cdda0f8305818c2e0e3c6891a386967094"
+    },
+    {
+      "path": "vocab-mission-core.js",
+      "sha256": "df6ae3261cb920e8e11188f51a8333df79b0d53b2a53bcfab9559a4b4e2bd1ca"
+    },
+    {
+      "path": "vocab-mission-engine.js",
+      "sha256": "b5ba75f5fcb1d7563dea93c49fb0de6665a867a61c99603a5496b06b43c59956"
+    },
+    {
+      "path": "vocab-mission-library.js",
+      "sha256": "115367ef5e1fe8a085c076d1b56bbf128a66e68def75b97b7f8b09411e68e63e"
+    },
+    {
+      "path": "vocab-mission-packs.js",
+      "sha256": "ed35ae0071b689cd126aa6e9fb667b8ff09f96e73164f99e6b6a8aa74c79a66e"
+    },
+    {
+      "path": "vocab-mission-planner.js",
+      "sha256": "bc8ff03b81c134e84952fffdf7986eb0b8f401e633e27aa28092406138575745"
+    },
+    {
+      "path": "vocab-mission-store.js",
+      "sha256": "5fcfbd2cc21e21b6cc87e6321411641c3b11478e0a25c7af5f1515a2cf645b3a"
+    },
+    {
+      "path": "vocab-mission.css",
+      "sha256": "9630b868c94cf1293750beb782b30aef405d0383fb220dae5e33e0d4ba1f32ec"
+    },
+    {
+      "path": "vocab-mission.js",
+      "sha256": "7eb71ea60794efe3949b9632abbf44b4f91903968535645c90c3eabed599227c"
+    },
+    {
+      "path": "vocab-retrieval.js",
+      "sha256": "bb92298c339a2adacc9317e3e97c1992d39bddb63a9ee68a31d5bd6c5c9af677"
+    },
+    {
+      "path": "vocab-routes.js",
+      "sha256": "cd3a022ee24a1238faff33a5bf065d24ec4bdb130154abbfd89b8e457dd5c86e"
+    }
+  ],
+  "patchReplayExact": true,
+  "featureRuntimeUnchanged": true,
+  "baselineClean": true,
+  "candidateTestsUnchanged": true,
+  "candidateChangedTrackedPaths": [
+    "functions/api/[[path]].js",
+    "index.html"
+  ]
+}
