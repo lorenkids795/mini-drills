@@ -1,0 +1,16 @@
+# Codex — Phase 3.0: Safe Firebase Staging Readiness (NO DEPLOY)
+
+Work on `integration/vocab-lab-candidate-2026-11-07` only; verify fresh main/branch SHAs and clean checkout. Read `docs/VOCAB-INTEGRATION-CANDIDATE-FINALIZATION.md`, Phase 2.8 emulator/staging docs and Teacher Decisions. Teacher also has a downloadable `CODEX-PHASE-3-SAFE-FIREBASE-STAGING.md` with the full acceptance checklist.
+
+**Authorization**: Build minimal adapters and local/emulator tests plus an explicit staged deployment plan. **NOT authorized**: modify/push main, merge/PR, deploy or provision Firebase/Cloudflare, use cloud secrets or real student data, send production requests, auto Approve/Publish, enable cleanup delete.
+
+1. Audit actual Mini Drills Auth/roles/Worker token verification/Firestore rules; distinguish UI fixtures from signed staging tokens. Design isolated *separate Firebase staging project* and origin with synthetic accounts, least-privilege IAM, no production data. Produce manual configuration checklist; do NOT provision.
+2. No staging-to-production fallback: verify allowlisted project IDs, origins and Firestore targets; fail closed. No committed secrets or production config changes.
+3. Implement secure Teacher Review adapter: backend/rules enforced teacher/admin, exact immutable version/hash approvals, audit log, Request Fix, Reject and separate Publish. Browser role flags/localStorage approvals are never trusted or migrated.
+4. Integrate 87 new route progress with versioned idempotent writes and resume, distinction first attempt vs hints/retries, authorization isolation/revocation and safe conflict handling. Students cannot fetch unpublished drafts. Keep **102 PENDING, 0 APPROVED, 0 PUBLISHED**.
+5. Preserve latest main Writing + Coming Soon ordinary student, Admin/roster Tester access, Homework/Assistant and read-only Cleanup. Vocab under Library→Learning Materials; 20/12, Reality Check, Missions; Save the Coast demo not published.
+6. Run main/feature QA, full browser integration and Firebase Emulator security. Add tests for forged roles, draft reads, stale approval, cross-class/student access, revoked accounts, cross-device save and prevented production transports. Staging smoke test is disabled by default and must require explicit human-triggered staging-only configuration; do not execute against live cloud now.
+7. Write `docs/VOCAB-STAGING-READINESS-HANDOFF.md` and `docs/VOCAB-STAGING-READINESS-QA.json`: exact project/branch provenance, architecture, rules/security, proposed console steps, costs, rollback, PASS/FAIL/BLOCKED/NOT_TESTED, and remaining human authorizations. Emulator PASS does not equal deployed staging auth PASS; editorial gates stay BLOCKED.
+8. Commit/push ONLY this integration branch with `[CF-Pages-Skip]` after independently reconfirming Cloudflare Preview None and no other deploy hooks; otherwise stop and ask. No PR/merge/deploy/provisioning or real data actions.
+
+Do not claim release-ready while actual deployed staging auth/IAM and 102 editorial approvals remain unverified.
