@@ -1,0 +1,35 @@
+{
+  "status": "PROPOSED_NOT_APPLIED",
+  "projectId": "mini-drills-vocab-staging",
+  "runtime": {
+    "serviceAccount": "vocab-spark-runtime@mini-drills-vocab-staging.iam.gserviceaccount.com",
+    "permissions": [
+      "firebaseauth.users.get",
+      "datastore.databases.get",
+      "datastore.databases.getMetadata",
+      "datastore.entities.get",
+      "datastore.entities.list",
+      "datastore.entities.create",
+      "datastore.entities.update",
+      "datastore.entities.delete"
+    ]
+  },
+  "operator": {
+    "separateIdentity": true,
+    "additionalPermissions": [
+      "firebaseauth.users.create",
+      "firebaseauth.users.update"
+    ],
+    "deleteUsers": false
+  },
+  "impersonation": {
+    "grant": "roles/iam.serviceAccountTokenCreator",
+    "scope": "exact target service account only",
+    "privateKeys": false
+  },
+  "limitations": [
+    "IAM cannot isolate a collection: use a dedicated project/database",
+    "Application roles are server roster plus verified Auth claims, not Google Cloud IAM roles",
+    "Permissions and Node ADC compatibility require later live preflight"
+  ]
+}

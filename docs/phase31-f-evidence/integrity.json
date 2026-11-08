@@ -1,0 +1,105 @@
+{
+  "baseCommit": "0970e954f7b96e3d909d5b56ee73624196cec8fc",
+  "branch": "integration/vocab-lab-candidate-2026-11-07",
+  "trackedFileCount": 354,
+  "changedTracked": [
+    "staging/domain.cjs",
+    "staging/identity.cjs",
+    "staging/phase31/fixtures.cjs",
+    "staging/phase31/runtime.cjs"
+  ],
+  "sourceFiles": [
+    {
+      "path": "staging/domain-core.cjs",
+      "sha256": "c91f5ada1a6b687eb9a5de7ba10ed4423b4ee7dd54dce7e002e97fd92c4b21e6"
+    },
+    {
+      "path": "staging/domain.cjs",
+      "sha256": "88031b3c5cb5ad8d8588d72da5dee561e8a565277148a51856d372bd916a5f9f"
+    },
+    {
+      "path": "staging/identity.cjs",
+      "sha256": "89ed47a49b527049573e5c36564e305d54782b40fe359ed0e15c83bbec1f982f"
+    },
+    {
+      "path": "staging/phase31/fixtures.cjs",
+      "sha256": "25d0591ad6f4bc3e2d06d7dd313cfc97b660fe7027f1a22575ca53305a1f2616"
+    },
+    {
+      "path": "staging/phase31/runtime.cjs",
+      "sha256": "fb73819727ac9a99bb159d2c9ab3ab4c9915111d5a92ae9d48477f622ed6b7b8"
+    },
+    {
+      "path": "staging/phase31/schema.cjs",
+      "sha256": "a1cb53542b4f45700991a1c27db34ebdc61db64bd964f31f8df7ac2a0ccecfa6"
+    },
+    {
+      "path": "staging/spark-local/adapter.cjs",
+      "sha256": "d383d38d4a82c4176bd5c77d5c882a974c9f29dfba034f4a98b74a860b6b4516"
+    },
+    {
+      "path": "staging/spark-local/auth-check.html",
+      "sha256": "61c1beabac016e3a81f84b2a9b0a8610e3bbe6ab9b96dd7d2844af9a58af0f31"
+    },
+    {
+      "path": "staging/spark-local/auth-check.mjs",
+      "sha256": "109a6b4b993d7bc76edabb4081452264ee65bb430b5fb7bae0c7f22404b6fa1f"
+    },
+    {
+      "path": "staging/spark-local/auth-client.mjs",
+      "sha256": "105fa68981273e1bfd319f75cc0215d5c9d45fa9de2efd10aff9426c7d432f7e"
+    },
+    {
+      "path": "staging/spark-local/emulator-qa.cjs",
+      "sha256": "017b8d5c33eaad44efd8fc7a8d28c5b2106555ea14e048b1c310faed6e96af1f"
+    },
+    {
+      "path": "staging/spark-local/emulator-web.cjs",
+      "sha256": "4c30e6312078a875b274c132107b30121e2a7a204c708353c8b34a73b300f923"
+    },
+    {
+      "path": "staging/spark-local/iam-plan.json",
+      "sha256": "e851897771bb78c1fdbe9b47e84ff06f3f812e32fde9c7cdb08dec16d7faa9b4"
+    },
+    {
+      "path": "staging/spark-local/live-qa.cjs",
+      "sha256": "b730244afd40e8bbf33860f15abcab0ac290ed4977fefdec317b1442332cebc6"
+    },
+    {
+      "path": "staging/spark-local/offline-preload.cjs",
+      "sha256": "728b258a14bbd17036a12d194cadbccd6846924a9e2d391b4780525f1557d128"
+    },
+    {
+      "path": "staging/spark-local/offline.test.cjs",
+      "sha256": "4b8ab33723475be72eaaf96ad4985033159a52c586fe106c70ea894ff81c594b"
+    },
+    {
+      "path": "staging/spark-local/policy.cjs",
+      "sha256": "9bf5131c22207131e2caa1923bfa5134f813e75c85a0fdbaebd58f972f1c3d86"
+    },
+    {
+      "path": "staging/spark-local/preflight.cjs",
+      "sha256": "3f7d02d83ffac8e9f173be167f5b757d564233ba7488fe85b55d88a9925ef2c0"
+    },
+    {
+      "path": "staging/spark-local/scenarios.cjs",
+      "sha256": "d7b975c8810080568a7ba75526a7d088d49664d7a46a1f5fc07361915595e98b"
+    },
+    {
+      "path": "staging/spark-local/server.cjs",
+      "sha256": "1639cc6a67d08fbc1be7dbc3e00b98a5c4e5ca3e2d327db565d9e8026d96df25"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "docs/phase31-f-evidence/offline-contracts.tap",
+      "sha256": "6965a6093c5ede5b6bd7acb05dc98f8c115fc5ba93f58e102756a2ac7ca9d27a"
+    },
+    {
+      "path": "docs/phase31-f-evidence/emulator-browser.tap",
+      "sha256": "987f24903eb04efd4c6f1e011457391f9ec71a2afe85cef4ab2fa5c415233819"
+    }
+  ],
+  "credentialPatternScan": "PASS; no private-key/API-key/JWT literals detected; source also reviewed",
+  "sourceHashEncoding": "UTF-8 with CRLF normalized to LF; evidence hashes remain raw bytes"
+}

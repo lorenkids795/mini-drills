@@ -1,7 +1,7 @@
 'use strict';
 const {guard}=require('../environment.cjs'),{service}=require('../service.cjs'),{domain,LESSONS}=require('./fixtures.cjs');
-const {hash}=require('../domain.cjs');
-const COLLECTIONS=['vocab30_accounts','vocab28_staff','vocab28_enrollments','vocab28_items','vocab28_versions','vocab28_decisions','vocab28_publications','vocab28_public','vocab28_students'];
+const {hash}=require('../domain-core.cjs');
+const {COLLECTIONS}=require('./schema.cjs');
 function runRef(c,id){
  guard();
  require('../loopback-only.cjs').install();

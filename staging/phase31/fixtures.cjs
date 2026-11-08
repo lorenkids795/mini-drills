@@ -1,6 +1,6 @@
 'use strict';
 // Synthetic authoring only. No real catalog content or identifiers are copied.
-const base=require('../domain.cjs');
+const base=require('../domain-core.cjs');
 const LESSONS=['fx31_alpha','fx31_beta'];
 function domain(lesson){
  if(!LESSONS.includes(lesson))throw Error('Unknown fixture lesson');

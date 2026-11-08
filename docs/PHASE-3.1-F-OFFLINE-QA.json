@@ -1,0 +1,87 @@
+{
+  "phase": "3.1-F Step 2 — Offline Implementation",
+  "status": "PASS_OFFLINE_ONLY",
+  "branch": "integration/vocab-lab-candidate-2026-11-07",
+  "baseCommit": "0970e954f7b96e3d909d5b56ee73624196cec8fc",
+  "committed": false,
+  "pushed": false,
+  "qa": [
+    {
+      "suite": "offline-security-and-extraction",
+      "pass": 15,
+      "fail": 0
+    },
+    {
+      "suite": "existing-contracts",
+      "pass": 3,
+      "fail": 0
+    },
+    {
+      "suite": "focused-emulator-and-browser",
+      "pass": 11,
+      "fail": 0
+    }
+  ],
+  "total": {
+    "pass": 29,
+    "fail": 0
+  },
+  "evidence": [
+    "phase31-f-evidence/offline-contracts.tap",
+    "phase31-f-evidence/emulator-browser.tap",
+    "phase31-f-evidence/integrity.json"
+  ],
+  "isolation": {
+    "syntheticItems": 8,
+    "syntheticLessons": 2,
+    "realCatalogLoadedBySyntheticPath": false,
+    "realCatalogSeeded": false,
+    "sparkNamespace": "vocab31_spark_fixture_runs",
+    "emulatorNamespace": "vocab31_fixture_runs",
+    "browserExternalApplicationRequests": 0,
+    "network": "Node outbound TCP blocked; TLS/fetch/HTTP2 negative tests PASS; browser context origin allowlist. Not an OS-wide packet capture.",
+    "cloudTransport": "HARD_LOCKED",
+    "credentialsReadOrCreated": false,
+    "serviceAccountKeyCreated": false
+  },
+  "preservation": {
+    "trackedFiles": 354,
+    "unchangedTrackedFiles": 350,
+    "changedTrackedFiles": 4,
+    "writingLibraryVocabProductionSource": "UNCHANGED",
+    "catalog": {
+      "lastVerifiedPending": 102,
+      "lastVerifiedApproved": 0,
+      "lastVerifiedPublished": 0,
+      "baseline": "PHASE-3.1-LOCAL-QA.json",
+      "currentStep": "No content changes or data operations; no new production/cloud query"
+    }
+  },
+  "notTested": [
+    "Firebase Spark live Auth",
+    "Google Cloud IAM and impersonated ADC authentication",
+    "Spark project/billing/location/Rules deployed configuration",
+    "Live quotas",
+    "Natural one-hour token expiry",
+    "Two physical devices",
+    "OS-wide egress capture",
+    "Full historical QA suites (not rerun)"
+  ],
+  "remaining": [
+    "Owner Console setup and project/IAM approval",
+    "Reviewed live transport and SDK impersonation compatibility preflight",
+    "Approved synthetic provisioning and bounded live run"
+  ],
+  "finalState": {
+    "emulatorsStopped": true,
+    "workingTree": "UNCOMMITTED changes only; no commit/push/merge/deploy"
+  },
+  "resolvedDuringQA": [
+    "Sandbox localhost EACCES: rerun authorized localhost QA with outbound preload",
+    "Startup race: waited for Auth and Firestore readiness",
+    "Test import ordering and fetch Host override corrected",
+    "Namespace assertion accepts only both dedicated synthetic roots on rerun",
+    "Used installed Edge rather than downloading missing Playwright Chromium"
+  ],
+  "gitStateRecorded": "Before finalization; use Git history and remote refs for current commit/push state"
+}

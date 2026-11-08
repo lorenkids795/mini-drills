@@ -1,0 +1,86 @@
+TAP version 13
+# (node:36340) MetadataLookupWarning: received unexpected error = All promises were rejected code = UNKNOWN
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: synthetic-only seed: 8 items / 2 lessons; real root collections absent
+ok 1 - synthetic-only seed: 8 items / 2 lessons; real root collections absent
+  ---
+  duration_ms: 819.5503
+  type: 'test'
+  ...
+# Subtest: Web SDK refresh against Auth emulator and verified API identity
+ok 2 - Web SDK refresh against Auth emulator and verified API identity
+  ---
+  duration_ms: 27.8412
+  type: 'test'
+  ...
+# Subtest: Teacher review/approve; Admin separate publish; Student starts published fixture
+ok 3 - Teacher review/approve; Admin separate publish; Student starts published fixture
+  ---
+  duration_ms: 345.5074
+  type: 'test'
+  ...
+# Subtest: conflict, same-operation retry and Independent Recall
+ok 4 - conflict, same-operation retry and Independent Recall
+  ---
+  duration_ms: 457.5933
+  type: 'test'
+  ...
+# Subtest: browser Web Auth login/refresh/logout uses only localhost and no persisted auth
+ok 5 - browser Web Auth login/refresh/logout uses only localhost and no persisted auth
+  ---
+  duration_ms: 2630.9264
+  type: 'test'
+  ...
+# Subtest: cross-student, cross-lesson and Tester access denied
+ok 6 - cross-student, cross-lesson and Tester access denied
+  ---
+  duration_ms: 78.6636
+  type: 'test'
+  ...
+# Subtest: Auth revokeRefreshTokens and disabled account deny subsequent verified requests
+ok 7 - Auth revokeRefreshTokens and disabled account deny subsequent verified requests
+  ---
+  duration_ms: 1177.2598
+  type: 'test'
+  ...
+# [2026-11-08T10:34:05.970Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x7330ea95 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+# false for 'create' @ L7, false for 'update' @ L7
+# [2026-11-08T10:34:06.051Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x7330ea97 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+# false for 'create' @ L7, false for 'update' @ L7
+# [2026-11-08T10:34:06.137Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x7330ea99 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+# false for 'create' @ L7, false for 'update' @ L7
+# [2026-11-08T10:34:06.217Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x7330ea9b error. Code: 7 Message: 7 PERMISSION_DENIED: 
+# false for 'create' @ L7, false for 'update' @ L7
+# Subtest: Firestore Rules deny direct reads/writes for every synthetic role in Spark namespace
+ok 8 - Firestore Rules deny direct reads/writes for every synthetic role in Spark namespace
+  ---
+  duration_ms: 762.8178
+  type: 'test'
+  ...
+# Subtest: roster revocation denies next request despite refreshed Auth token
+ok 9 - roster revocation denies next request despite refreshed Auth token
+  ---
+  duration_ms: 42.453
+  type: 'test'
+  ...
+# Subtest: write lock and checksum restore preserve all synthetic subcollections
+ok 10 - write lock and checksum restore preserve all synthetic subcollections
+  ---
+  duration_ms: 1567.1299
+  type: 'test'
+  ...
+# Subtest: spark-local mock namespace, write lock and fixed-origin HTTP API
+ok 11 - spark-local mock namespace, write lock and fixed-origin HTTP API
+  ---
+  duration_ms: 366.5164
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9591.5297

@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synthetic Auth check</title><body>
+<h1>Synthetic Auth check</h1><p>Emulator only. Spark access is locked.</p>
+<form id="login"><label>Synthetic email <input id="email" type="email" autocomplete="username" required></label>
+<label>Password <input id="password" type="password" autocomplete="current-password" required></label><button>Sign in</button></form>
+<button id="refresh" disabled>Refresh identity</button><button id="progress" disabled>Read progress</button><button id="logout" disabled>Sign out</button>
+<pre id="status" role="status">Signed out</pre>
+<script src="/sdk-app.js"></script><script src="/sdk-auth.js"></script><script type="module" src="/auth-check.mjs"></script></body></html>

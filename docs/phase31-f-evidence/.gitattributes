@@ -1,0 +1,4 @@
+# Preserve raw TAP evidence bytes across checkouts.
+* -text
+# Raw SDK diagnostics may contain trailing spaces; do not rewrite evidence.
+*.tap -whitespace

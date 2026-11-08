@@ -1,0 +1,118 @@
+TAP version 13
+# Subtest: fixed project/database/origin/namespace/identity reject overrides and omissions
+ok 1 - fixed project/database/origin/namespace/identity reject overrides and omissions
+  ---
+  duration_ms: 2.9601
+  type: 'test'
+  ...
+# Subtest: mixed emulator/cloud environment fails closed
+ok 2 - mixed emulator/cloud environment fails closed
+  ---
+  duration_ms: 0.5096
+  type: 'test'
+  ...
+# Subtest: default selects emulator; missing emulator config never falls back
+ok 3 - default selects emulator; missing emulator config never falls back
+  ---
+  duration_ms: 107.942
+  type: 'test'
+  ...
+# Subtest: offline preflight does not verify billing/IAM; rejects private-key metadata
+ok 4 - offline preflight does not verify billing/IAM; rejects private-key metadata
+  ---
+  duration_ms: 0.4909
+  type: 'test'
+  ...
+# Subtest: live runner locked even with approval-looking environment flags
+ok 5 - live runner locked even with approval-looking environment flags
+  ---
+  duration_ms: 201.3223
+  type: 'test'
+  ...
+# Subtest: synthetic import graph never loads real domain/catalog/seed or legacy QA
+ok 6 - synthetic import graph never loads real domain/catalog/seed or legacy QA
+  ---
+  duration_ms: 134.2726
+  type: 'test'
+  ...
+# Subtest: adapter rejects foreign audience/issuer/UID before roster lookup
+ok 7 - adapter rejects foreign audience/issuer/UID before roster lookup
+  ---
+  duration_ms: 4.227
+  type: 'test'
+  ...
+# Subtest: server denies forged role, revoked roster and foreign email
+ok 8 - server denies forged role, revoked roster and foreign email
+  ---
+  duration_ms: 3.1093
+  type: 'test'
+  ...
+# Subtest: TCP TLS fetch HTTP2 outbound blocked before socket connection
+ok 9 - TCP TLS fetch HTTP2 outbound blocked before socket connection
+  ---
+  duration_ms: 156.7564
+  type: 'test'
+  ...
+# Subtest: Web SDK login memory persistence and SDK refresh per API request
+ok 10 - Web SDK login memory persistence and SDK refresh per API request
+  ---
+  duration_ms: 7.4333
+  type: 'test'
+  ...
+# Subtest: 401/403 clears auth without replaying writes; 409 permits explicit retry
+ok 11 - 401/403 clears auth without replaying writes; 409 permits explicit retry
+  ---
+  duration_ms: 1.7166
+  type: 'test'
+  ...
+# Subtest: browser rejects foreign identities, absolute URL and Spark mode before SDK
+ok 12 - browser rejects foreign identities, absolute URL and Spark mode before SDK
+  ---
+  duration_ms: 0.7229
+  type: 'test'
+  ...
+# Subtest: refresh failure clears session
+ok 13 - refresh failure clears session
+  ---
+  duration_ms: 0.5721
+  type: 'test'
+  ...
+# Subtest: impersonated ADC shape pins target and rejects keys, redirects and delegates
+ok 14 - impersonated ADC shape pins target and rejects keys, redirects and delegates
+  ---
+  duration_ms: 4.2116
+  type: 'test'
+  ...
+# Subtest: pure grading extraction preserves pre-change behavior without catalog dependencies
+ok 15 - pure grading extraction preserves pre-change behavior without catalog dependencies
+  ---
+  duration_ms: 75.4298
+  type: 'test'
+  ...
+# Subtest: offline signed token: signature, issuer, audience, expiry, algorithm and subject
+ok 16 - offline signed token: signature, issuer, audience, expiry, algorithm and subject
+  ---
+  duration_ms: 17.5992
+  type: 'test'
+  ...
+# Subtest: main teacher+adm maps only through current authoritative roster; browser tester flags ignored
+ok 17 - main teacher+adm maps only through current authoritative roster; browser tester flags ignored
+  ---
+  duration_ms: 0.5589
+  type: 'test'
+  ...
+# Subtest: environment blocks conflicting project/database configuration before SDK initialization
+ok 18 - environment blocks conflicting project/database configuration before SDK initialization
+  ---
+  duration_ms: 0.2997
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 879.8321
