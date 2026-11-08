@@ -1,0 +1,27 @@
+{
+  "checkedDate": "2026-11-08",
+  "branch": "integration/vocab-lab-candidate-2026-11-07",
+  "localCommit": "AUTHORIZED",
+  "push": "BLOCKED",
+  "reason": "Current Cloudflare settings could not be verified: dashboard redirects to login. Prior owner-confirmed Preview=None is historical and is not substituted for this request to recheck before pushing.",
+  "cloudflare": {
+    "project": "myhomeworkmyfuture",
+    "observedUrl": "https://dash.cloudflare.com/login",
+    "currentPreviewBranches": "NOT_VERIFIED",
+    "currentProductionBranch": "NOT_VERIFIED",
+    "settingsChanged": false
+  },
+  "github": {
+    "remoteBranchHead": "279372743dba002a2d764ee30df712979672ef06",
+    "remoteMainHead": "5a0c18b3fa35c6ae0f284cc2e5e7c7e5355152ed",
+    "actionsRuns": 0,
+    "workflowListing": "Connector endpoint unavailable",
+    "hooksAndOtherDeploymentProviders": "NOT_REVERIFIED"
+  },
+  "repository": {
+    "newDeploymentConfig": false,
+    "activeLocalHooks": 0
+  },
+  "pushAttempted": false,
+  "noDeploy": true
+}

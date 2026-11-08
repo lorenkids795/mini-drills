@@ -1,0 +1,55 @@
+{
+  "branch": "integration/vocab-lab-candidate-2026-11-07",
+  "baseCommit": "279372743dba002a2d764ee30df712979672ef06",
+  "at": "2026-11-07T15:25:54.814Z",
+  "projectId": "demo-mini-drills-vocab-test",
+  "steps": [
+    {
+      "id": "phase31",
+      "tests": 15,
+      "exitCode": 0,
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "id": "contracts",
+      "tests": 3,
+      "exitCode": 0,
+      "status": "PASS",
+      "error": null
+    }
+  ],
+  "sourceHashes": {
+    "staging/phase31/backup.cjs": "b9a70c309dab8d8ab36e0d5ee386f88a48f7a6db9e833282d0ad89f4a42d9ef3",
+    "staging/phase31/fixtures.cjs": "864560ca579852d191054468a15a289d3405cd419ca2cf6759f9a57eefffc3d6",
+    "staging/phase31/operator.cjs": "e7983769f7db34054e1868be01005f28cc44a8225e86dbf83dab66d6d525f69c",
+    "staging/phase31/qa.cjs": "5af20bc580e65f377ad9084900adb01abf24c6af70e604aae2cde332e0c4e51f",
+    "staging/phase31/runtime.cjs": "72e86f02978e41e9602addd024cbd1d792cb5ce175f8b12f94e52e72f5ad37f2",
+    "staging/phase31/server.cjs": "a5f6f10e56297d877398cc00b453b0f293d05fbb9fafbc1d30239fb760c4b2d4",
+    "staging/phase31/ui/app.js": "02fc3d287b8a9b18aa4fd5bef20e23a245e1c57e7ff71c213ab91ba9cc9a2e91",
+    "staging/phase31/ui/index.html": "713d031df87049e641da814541bd06d6b8278cf861395bf25280df9b28c9d67e",
+    "staging/phase31/ui/style.css": "38d486fa3cbd237a5675cb6d26aa556e7fcfe4ef1d94475c3f5b15ae0f8b0baa",
+    "tools/phase31-qa.cjs": "fba31809b29a312d4f57164fe2d2c8a7715faf0972567e3019c65ff0f4ad17bc",
+    "staging/README.md": "f79cc7bd59434e2ace377ce39fa6875c6fd5a3f3e0a8d92db35fb54d7659e000",
+    "staging/create-fixtures.cjs": "332ca707301a272a043f4951cf9cd4e43d1597e5730298c8c931cdd220e03f07",
+    "staging/domain.cjs": "9cfe524692b97a7f33fc1d3ec3b362b214c9ee966cfac2992283438cbb6d0917",
+    "staging/environment.cjs": "1596b73c06240007eedcbe441df2a504d3535c43c545bd148a62ebd2b6c1097e",
+    "staging/firebase.json": "8b52e2ee5586b810e79bc60f4c0598a0340f0f95e3fbc829c14fe7550c3cd4d6",
+    "staging/firestore.rules": "d5e22d19255c7b1a96554697dc7a57154e7e7061a77606df9f925ffc79a7aec8",
+    "staging/identity.cjs": "c170d35eab66d34a4c7104b920aa607f41356b9406fa92c8c9bf25d98eebf03e",
+    "staging/loopback-only.cjs": "3dbe7b32ad6ce154c382b8ba6c3198fc0244acbabe810d637fc16db15b05e491",
+    "staging/server.cjs": "8fb546adc720e34b3e7887526a3c513635a25ec49ab39f418af03fa0793b640b",
+    "staging/service.cjs": "80918ba39cdcb481729cd75055d9969db214595149290b23a0da7ca9d835bf03",
+    "staging/signed-token-contract.cjs": "dfc6ceececc30350b24dc719b5dcb1ed8009492db51d045d8f3f879f6e59409a",
+    "staging/start-emulators.ps1": "57ff0d48efc391d26d31d7a3eb39cfec0769186ba7e91b369b25421e90e503b3",
+    "staging/tests/browser.cjs": "7b4e06759253aceddf259ebd827facf67a993bef65aa74dbf2dc28d12814532b",
+    "staging/tests/contracts.cjs": "db6fcbd1c93aaaaa982f9a4d4b1bc260f8dc9181fa4233e2032058fb40e8c91e",
+    "staging/tests/fixtures.cjs": "a3832a06cc7299f7deede2c9da8a7377e344be40125d97928cda6bbeb070e5bb",
+    "staging/tests/integration.cjs": "b34a37ce27f63c3468880a21e3180a81d55139a7a9b576ce72a7ea11bab35c5d",
+    "staging/ui/app.js": "c134fb28e9a4516208389eba40e9416bf6ad4e7e0bab0c74c6f11d88e0c85f9e",
+    "staging/ui/index.html": "b37c687f59437ac3b585a4ed167dabcfeb583904e565be7ff250fe55a319579c",
+    "staging/ui/style.css": "38d486fa3cbd237a5675cb6d26aa556e7fcfe4ef1d94475c3f5b15ae0f8b0baa"
+  },
+  "sourceUnchangedDuringQA": true,
+  "status": "PASS"
+}

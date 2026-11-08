@@ -1,6 +1,5 @@
 'use strict';
-const D=require('./domain.cjs');
-function service({db,auth}){
+function service({db,auth},D=require('./domain.cjs')){
  const ref=(collection,id)=>db.collection(collection).doc(D.key(id));
  async function identity(token){if(!token)D.fail(401,'Sign in required');let decoded,user;try{decoded=await auth.verifyIdToken(token,true);user=await auth.getUser(decoded.uid)}catch{D.fail(401,'Session expired or revoked')}if(!decoded.exp||decoded.exp*1000<=Date.now()||user.disabled)D.fail(401,'Session expired or disabled');const account=await ref('vocab30_accounts',user.uid).get();return require('./identity.cjs').principal(decoded,user,account.exists?account.data():null);}
  async function staff(who){if(who.role==='admin')return;if(who.role!=='teacher')D.fail(403,'Teacher permission required');const s=await ref('vocab28_staff',who.uid).get();if(!s.exists||s.data().active!==true||!s.data().lessons?.includes(D.LESSON)||!s.data().classes?.includes(who.classId))D.fail(403,'Lesson assignment required');}

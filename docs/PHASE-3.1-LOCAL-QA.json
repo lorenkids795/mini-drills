@@ -1,0 +1,114 @@
+{
+  "phase": "3.1-A through 3.1-E",
+  "status": "PASS",
+  "branch": "integration/vocab-lab-candidate-2026-11-07",
+  "baseCommit": "279372743dba002a2d764ee30df712979672ef06",
+  "git": "Packaged in a local commit on the integration branch only; push BLOCKED pending current auto-deploy verification",
+  "qa": [
+    {
+      "id": "phase31",
+      "tests": 15,
+      "exitCode": 0,
+      "status": "PASS",
+      "error": null
+    },
+    {
+      "id": "contracts",
+      "tests": 3,
+      "exitCode": 0,
+      "status": "PASS",
+      "error": null
+    }
+  ],
+  "sourceUnchangedDuringQA": true,
+  "catalog": {
+    "pending": 102,
+    "approved": 0,
+    "published": 0,
+    "unchanged": true
+  },
+  "fixtureItems": 8,
+  "fixtureLessons": 2,
+  "snapshot": {
+    "count": 180,
+    "checksum": "593a4f9ab6411ed5a83f0014517e0ba5ae109ffaf31147eb1bbfa2ba3848fd76"
+  },
+  "restore": {
+    "runId": "fx31_1794065116529_restored",
+    "count": 180,
+    "documentsHash": "8b4ac0567066ef4e873f4ae865ae5e596054f52491d4ae51a13f8e951bde11cb",
+    "writeLocked": true
+  },
+  "browser": {
+    "contexts": 3,
+    "twoStudentSessions": true,
+    "externalRequests": [],
+    "pageErrors": []
+  },
+  "preservation": {
+    "originalTrackedFiles": 329,
+    "unchangedOriginalFiles": 328,
+    "changedOriginalFiles": [
+      "staging/service.cjs"
+    ],
+    "qaSourcesStillMatch": true
+  },
+  "network": {
+    "mode": "emulator/loopback only",
+    "nodeExternalTcpBlocked": true,
+    "browserExternalRequests": 0,
+    "negativeTransportTests": "Firebase Auth, Firestore and metadata targets rejected before TCP connection",
+    "packetCapturePerformed": false
+  },
+  "notTested": [
+    "Spark live Auth/IAM",
+    "Cloud backend or deployment",
+    "Two physical devices",
+    "Full Firebase Auth disaster recovery"
+  ],
+  "shutdown": {
+    "portsClosed": [
+      14400,
+      18080,
+      19099,
+      18788,
+      18789
+    ]
+  },
+  "evidenceHashes": {
+    "browser-mobile.png": "1080c0e68bee3815630b0c871e7327e979f3f9fd2c0ae59c661abe70e3abb684",
+    "browser-progress.png": "6c2d3619b3ce754f4fed30d0219b5ad34e8fb19706ae3ce875b26451a10f6310",
+    "contracts.txt": "b6480b1fd821d1ce7196a5d03bec5678f68bbc61f58b4fc3607418ec2af6c410",
+    "phase31.txt": "45823cafb61f0fa5e435a13c742c09ad4a036ae0685118454ee773db0c2276f3",
+    "preservation.json": "d0a0f8cb991214bf6418e2af0b47ce6bf7792bfd2c61d1ddc9d79708eb6e60de",
+    "report.json": "47d61e427b764f765cb7eb63f7b3b4b8caf7743244c5ba7232a6338eeeb6821c",
+    "round1-failure.txt": "da46af5754e37a84d0f4400dd6760e4de9c5d6e9052695a28430a9b470678452",
+    "round2-pass.txt": "a2537dd9cf2e14522bf8e521253d4a0dcfba0b7cdc2b88318e710d0312405f39",
+    "snapshot.json": "fa0fd1064b778528a37f800cb18e13b5e0a4b49343bb76f27282af40347d1482",
+    "state.json": "9803019234a028c83172fbee312185f3d30fa58eba69a7322e074ad2cc41d9ae"
+  },
+  "commitGate": "PHASE-3.1-LOCAL-COMMIT-GATE.json",
+  "precommitAudit": {
+    "reviewedFiles": 25,
+    "scope": "PASS",
+    "credentialsScan": "PASS",
+    "snapshot": {
+      "documents": 180,
+      "emailFields": 12,
+      "syntheticOnly": true,
+      "credentialFields": 0,
+      "checksum": "PASS"
+    },
+    "sourceHashes": "PASS",
+    "evidenceHashes": "PASS",
+    "qa": "15/15 PASS",
+    "contracts": "3/3 PASS",
+    "catalog": {
+      "pending": 102,
+      "approved": 0,
+      "published": 0,
+      "unchanged": true
+    },
+    "activeHooks": []
+  }
+}

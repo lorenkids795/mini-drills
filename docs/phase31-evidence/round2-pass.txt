@@ -1,0 +1,32 @@
+(node:28636) MetadataLookupWarning: received unexpected error = All promises were rejected code = UNKNOWN
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ 01 guards reject cloud config, scope traversal and outbound transports (1072.8905ms)
+✔ 02 health, static allowlist, host/origin and no client namespace selection (83.1234ms)
+✔ 03 eight fixtures / two lessons are disjoint from actual catalog; role gates (370.8857ms)
+[2026-11-07T15:24:00.500Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x31e84603 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T15:24:00.555Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x31e84605 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T15:24:00.610Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x31e84607 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T15:24:00.643Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x31e84609 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+✔ 04 direct Firestore reads/writes denied for all application roles (243.9913ms)
+✔ 05 fixture lifecycle, exact hash, separate publish, audit and idempotent review (907.1278ms)
+✔ 06 two sessions conflict; duplicate retry yields one evidence event (3323.1646ms)
+✔ 07 independent recall, hints, retries and reveals preserve honest evidence (2093.1434ms)
+✔ 08 roster/claims/assignment/class changes and Auth revocation fail closed (1538.8413ms)
+✔ 09 revision invalidates publication; pinned sessions retain prior version (872.6829ms)
+✔ 10 write lock rejects mutations while reads and health remain available (254.3431ms)
+✔ 11 browser review/publish and two isolated contexts save/reload fixture progress (4509.5008ms)
+✔ 10b both lessons and all eight synthetic routes recover through fresh services (4334.9229ms)
+✔ 12 recursive logical snapshot and atomic restore to a fresh locked run (6555.281ms)
+✔ 13 the 102 retained catalog items and all prior content bytes are unchanged (79.9312ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 26994.629

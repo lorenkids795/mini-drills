@@ -1,0 +1,31 @@
+{
+  "runId": "fx31_1794065116529",
+  "projectId": "demo-mini-drills-vocab-test",
+  "at": "2026-11-07T15:25:16.530Z",
+  "physicalDevices": "NOT_TESTED",
+  "spark": "NOT_TESTED",
+  "cloud": "NOT_TESTED",
+  "browser": {
+    "contexts": 3,
+    "twoStudentSessions": true,
+    "externalRequests": [],
+    "pageErrors": []
+  },
+  "catalog": {
+    "pending": 102,
+    "approved": 0,
+    "published": 0,
+    "unchanged": true
+  },
+  "catalogHash": "c9c38a131fc28ca5691f0872e10219c9a8e8587dafb625a68e3100a302ef530f",
+  "fixtureSnapshot": {
+    "count": 180,
+    "checksum": "593a4f9ab6411ed5a83f0014517e0ba5ae109ffaf31147eb1bbfa2ba3848fd76"
+  },
+  "restore": {
+    "runId": "fx31_1794065116529_restored",
+    "count": 180,
+    "documentsHash": "8b4ac0567066ef4e873f4ae865ae5e596054f52491d4ae51a13f8e951bde11cb",
+    "writeLocked": true
+  }
+}

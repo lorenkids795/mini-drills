@@ -1,0 +1,4301 @@
+{
+  "format": "phase31-logical-v1",
+  "synthetic": true,
+  "sourceRun": "fx31_1794065116529",
+  "count": 180,
+  "documents": [
+    {
+      "path": "lessons/fx31_alpha",
+      "data": {
+        "synthetic": true,
+        "lessonId": "fx31_alpha"
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_decisions/29500b1c3bbb00e4df609416aad2cce1c6adb9013a31e87ee12435cd88538371",
+      "data": {
+        "itemId": "fx31_alpha_1",
+        "action": "request_fix",
+        "reviewerUid": "fx31_1794065116529_teacher",
+        "at": 1794065118678,
+        "note": "Synthetic fixture only",
+        "fromVersion": 1,
+        "fromHash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "status": "REQUEST_FIX",
+        "bodyHash": "b7e997360fef4b778d2ad21e84571564c9c0365fcb157426137f6f35ae9a2f5c",
+        "result": {
+          "id": "fx31_alpha_1",
+          "sourceId": "fx31_alpha_1",
+          "senseId": "fx31_alpha_1",
+          "term": "lantern",
+          "lessonId": "fx31_alpha",
+          "kind": "contextual-challenge",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "status": "REQUEST_FIX",
+          "approval": null
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_decisions/44700e23a8aa6e11a74f4674545e2455226a5df54a6e12d956078482538d7785",
+      "data": {
+        "itemId": "fx31_alpha_2",
+        "action": "approve",
+        "reviewerUid": "fx31_1794065116529_teacher",
+        "at": 1794065119086,
+        "note": "Fixture idempotency",
+        "fromVersion": 1,
+        "fromHash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "status": "APPROVED",
+        "bodyHash": "7938c40f30d3964f58f6f625eef06d57be10ac08c3833f0f74587af339225a8f",
+        "result": {
+          "id": "fx31_alpha_2",
+          "sourceId": "fx31_alpha_2",
+          "senseId": "fx31_alpha_2",
+          "term": "basket",
+          "lessonId": "fx31_alpha",
+          "kind": "micro-review",
+          "version": 1,
+          "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+          "status": "APPROVED",
+          "approval": {
+            "uid": "fx31_1794065116529_teacher",
+            "version": 1,
+            "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+            "at": 1794065119086
+          }
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_decisions/4ed01916b02c07b426722687e74bca173650ccc7b8506a0e7af09178eeb7b534",
+      "data": {
+        "itemId": "fx31_alpha_1",
+        "action": "publish",
+        "reviewerUid": "fx31_1794065116529_admin",
+        "at": 1794065118908,
+        "note": "Synthetic fixture only",
+        "fromVersion": 1,
+        "fromHash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "status": "PUBLISHED",
+        "bodyHash": "43a60b69c813a7f33e2c3605c29a7819e1a61d875e466bb366e3693c8244fcc9",
+        "result": {
+          "id": "fx31_alpha_1",
+          "sourceId": "fx31_alpha_1",
+          "senseId": "fx31_alpha_1",
+          "term": "lantern",
+          "lessonId": "fx31_alpha",
+          "kind": "contextual-challenge",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "status": "PUBLISHED",
+          "approval": {
+            "uid": "fx31_1794065116529_teacher",
+            "version": 1,
+            "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+            "at": 1794065118835
+          }
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_decisions/5426b172c6167751cc6bc4447585639d8b5a0c508570e1b1b138269f8d85bb4d",
+      "data": {
+        "itemId": "fx31_alpha_2",
+        "action": "publish",
+        "reviewerUid": "fx31_1794065116529_admin",
+        "at": 1794065139283,
+        "note": "Synthetic route coverage",
+        "fromVersion": 1,
+        "fromHash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "status": "PUBLISHED",
+        "bodyHash": "ab3a8fa9a2f2ab41c65aaee9b560661e455c933fff5c79ad65560985d8060023",
+        "result": {
+          "id": "fx31_alpha_2",
+          "sourceId": "fx31_alpha_2",
+          "senseId": "fx31_alpha_2",
+          "term": "basket",
+          "lessonId": "fx31_alpha",
+          "kind": "micro-review",
+          "version": 1,
+          "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+          "status": "PUBLISHED",
+          "approval": {
+            "uid": "fx31_1794065116529_teacher",
+            "version": 1,
+            "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+            "at": 1794065119086
+          }
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_decisions/7e68d77fcca6cb501d72ded5fbfc35a790ae21d8a82d379179f329d84f9b0a85",
+      "data": {
+        "itemId": "fx31_alpha_1",
+        "action": "revise",
+        "reviewerUid": "fx31_1794065116529_teacher",
+        "at": 1794065133221,
+        "note": "Synthetic revision",
+        "fromVersion": 1,
+        "fromHash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "version": 2,
+        "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+        "status": "DRAFT",
+        "bodyHash": "b4a86b4ad060e668591f2fbe38326ccad8384a8fb86db32e41eb3892884c0ad6",
+        "result": {
+          "id": "fx31_alpha_1",
+          "sourceId": "fx31_alpha_1",
+          "senseId": "fx31_alpha_1",
+          "term": "lantern",
+          "lessonId": "fx31_alpha",
+          "kind": "contextual-challenge",
+          "version": 2,
+          "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+          "status": "DRAFT",
+          "approval": null
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_decisions/816ee4b69555fca57108dd866bc7c0a05248a9510b46971eda5218da69efbd36",
+      "data": {
+        "itemId": "fx31_alpha_1",
+        "action": "approve",
+        "reviewerUid": "fx31_1794065116529_teacher",
+        "at": 1794065133823,
+        "note": "Synthetic fixture only",
+        "fromVersion": 2,
+        "fromHash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+        "version": 2,
+        "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+        "status": "APPROVED",
+        "bodyHash": "67634fb9abba6db966bf5e050c4c60d0a40f6173e840cd8701bd4bf2c3298c46",
+        "result": {
+          "id": "fx31_alpha_1",
+          "sourceId": "fx31_alpha_1",
+          "senseId": "fx31_alpha_1",
+          "term": "lantern",
+          "lessonId": "fx31_alpha",
+          "kind": "contextual-challenge",
+          "version": 2,
+          "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+          "status": "APPROVED",
+          "approval": {
+            "uid": "fx31_1794065116529_teacher",
+            "version": 2,
+            "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+            "at": 1794065133822
+          }
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_decisions/ae548d94dea2880e91679056958c4fe1240e7f391b2183deab6aecbf7ed7e9c7",
+      "data": {
+        "itemId": "fx31_alpha_1",
+        "action": "reject",
+        "reviewerUid": "fx31_1794065116529_teacher",
+        "at": 1794065118756,
+        "note": "Synthetic fixture only",
+        "fromVersion": 1,
+        "fromHash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "status": "REJECTED",
+        "bodyHash": "54f0f636f40802e283f470dd042fd4ef75b800655db794e74b56e93909f756df",
+        "result": {
+          "id": "fx31_alpha_1",
+          "sourceId": "fx31_alpha_1",
+          "senseId": "fx31_alpha_1",
+          "term": "lantern",
+          "lessonId": "fx31_alpha",
+          "kind": "contextual-challenge",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "status": "REJECTED",
+          "approval": null
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_decisions/b256ea26a04ae63361b3409955e7ffa4ddbabfbb7521949e8f4904447e1a137d",
+      "data": {
+        "itemId": "fx31_alpha_3",
+        "action": "publish",
+        "reviewerUid": "fx31_1794065116529_admin",
+        "at": 1794065135933,
+        "note": "Synthetic browser publication",
+        "fromVersion": 1,
+        "fromHash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "status": "PUBLISHED",
+        "bodyHash": "c5a4010a68be50dcee9350a709cbf93afd81b71035168a908accae354d99835a",
+        "result": {
+          "id": "fx31_alpha_3",
+          "sourceId": "fx31_alpha_3",
+          "senseId": "fx31_alpha_3",
+          "term": "ribbon",
+          "lessonId": "fx31_alpha",
+          "kind": "contextual-challenge",
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "status": "PUBLISHED",
+          "approval": {
+            "uid": "fx31_1794065116529_admin",
+            "version": 1,
+            "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+            "at": 1794065135651
+          }
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_decisions/b8c94711d16dd3cc06ab162b1ea5c528290e8ecf48f7bb3c960464c931c51775",
+      "data": {
+        "itemId": "fx31_alpha_4",
+        "action": "publish",
+        "reviewerUid": "fx31_1794065116529_admin",
+        "at": 1794065140117,
+        "note": "Synthetic route coverage",
+        "fromVersion": 1,
+        "fromHash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "status": "PUBLISHED",
+        "bodyHash": "dedb2648694769b16aa680d8c51e350c675552693ee20e4dde415008a92d250b",
+        "result": {
+          "id": "fx31_alpha_4",
+          "sourceId": "fx31_alpha_4",
+          "senseId": "fx31_alpha_4",
+          "term": "button",
+          "lessonId": "fx31_alpha",
+          "kind": "micro-review",
+          "version": 1,
+          "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+          "status": "PUBLISHED",
+          "approval": {
+            "uid": "fx31_1794065116529_teacher",
+            "version": 1,
+            "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+            "at": 1794065140069
+          }
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_decisions/ca049dbc48b81ddd1be5a94e1571fc71e380464f2dc9230788b50763a43f7913",
+      "data": {
+        "itemId": "fx31_alpha_4",
+        "action": "approve",
+        "reviewerUid": "fx31_1794065116529_teacher",
+        "at": 1794065140069,
+        "note": "Synthetic route coverage",
+        "fromVersion": 1,
+        "fromHash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "status": "APPROVED",
+        "bodyHash": "79d0e4a63a20fa3134b1d2c794c980aba9bb6153724c35fe92000bb0274d32b6",
+        "result": {
+          "id": "fx31_alpha_4",
+          "sourceId": "fx31_alpha_4",
+          "senseId": "fx31_alpha_4",
+          "term": "button",
+          "lessonId": "fx31_alpha",
+          "kind": "micro-review",
+          "version": 1,
+          "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+          "status": "APPROVED",
+          "approval": {
+            "uid": "fx31_1794065116529_teacher",
+            "version": 1,
+            "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+            "at": 1794065140069
+          }
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_decisions/cc5386a91db128d64f26d6b93fa5ab218c30bf47044d34fbda86ecda3196c988",
+      "data": {
+        "itemId": "fx31_alpha_1",
+        "action": "approve",
+        "reviewerUid": "fx31_1794065116529_teacher",
+        "at": 1794065118835,
+        "note": "Synthetic fixture only",
+        "fromVersion": 1,
+        "fromHash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "status": "APPROVED",
+        "bodyHash": "88067135bf8a6fd4ca81af625d6ffc59611e287eff102053a6c6c673b076217f",
+        "result": {
+          "id": "fx31_alpha_1",
+          "sourceId": "fx31_alpha_1",
+          "senseId": "fx31_alpha_1",
+          "term": "lantern",
+          "lessonId": "fx31_alpha",
+          "kind": "contextual-challenge",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "status": "APPROVED",
+          "approval": {
+            "uid": "fx31_1794065116529_teacher",
+            "version": 1,
+            "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+            "at": 1794065118835
+          }
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_decisions/fb4fa157a47428483bc76a25f28b0bfb7666bc187cd8246b894c27a3dd12a3b7",
+      "data": {
+        "itemId": "fx31_alpha_1",
+        "action": "publish",
+        "reviewerUid": "fx31_1794065116529_admin",
+        "at": 1794065133900,
+        "note": "Synthetic fixture only",
+        "fromVersion": 2,
+        "fromHash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+        "version": 2,
+        "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+        "status": "PUBLISHED",
+        "bodyHash": "343f12cf33facb15a6d115a2315d7c02eae870b31cc823e86ac21385de75730b",
+        "result": {
+          "id": "fx31_alpha_1",
+          "sourceId": "fx31_alpha_1",
+          "senseId": "fx31_alpha_1",
+          "term": "lantern",
+          "lessonId": "fx31_alpha",
+          "kind": "contextual-challenge",
+          "version": 2,
+          "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+          "status": "PUBLISHED",
+          "approval": {
+            "uid": "fx31_1794065116529_teacher",
+            "version": 2,
+            "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+            "at": 1794065133822
+          }
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_decisions/ffd21d597abfbdce629452a0d4b1d260e634f9d6147ec4a2c1f385ce385776f6",
+      "data": {
+        "itemId": "fx31_alpha_3",
+        "action": "approve",
+        "reviewerUid": "fx31_1794065116529_admin",
+        "at": 1794065135651,
+        "note": "Synthetic browser approval",
+        "fromVersion": 1,
+        "fromHash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "status": "APPROVED",
+        "bodyHash": "06abcbb686696e94a769a9e13ce472c48066c4a53c624a06bbf31c3a9eeca39d",
+        "result": {
+          "id": "fx31_alpha_3",
+          "sourceId": "fx31_alpha_3",
+          "senseId": "fx31_alpha_3",
+          "term": "ribbon",
+          "lessonId": "fx31_alpha",
+          "kind": "contextual-challenge",
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "status": "APPROVED",
+          "approval": {
+            "uid": "fx31_1794065116529_admin",
+            "version": 1,
+            "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+            "at": 1794065135651
+          }
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_enrollments/fx31_1794065116529_disabled",
+      "data": {
+        "active": true,
+        "lessons": [
+          "fx31_alpha"
+        ],
+        "classId": "fx31_class_a"
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_enrollments/fx31_1794065116529_ordinary",
+      "data": {
+        "active": true,
+        "lessons": [
+          "fx31_alpha"
+        ],
+        "classId": "fx31_class_a"
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_enrollments/fx31_1794065116529_other",
+      "data": {
+        "active": true,
+        "lessons": [
+          "fx31_alpha"
+        ],
+        "classId": "fx31_class_a"
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_enrollments/fx31_1794065116529_revoked",
+      "data": {
+        "active": true,
+        "lessons": [
+          "fx31_alpha"
+        ],
+        "classId": "fx31_class_a"
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_enrollments/fx31_1794065116529_student",
+      "data": {
+        "active": true,
+        "lessons": [
+          "fx31_alpha"
+        ],
+        "classId": "fx31_class_a"
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_items/fx31_alpha_1",
+      "data": {
+        "id": "fx31_alpha_1",
+        "sourceId": "fx31_alpha_1",
+        "senseId": "fx31_alpha_1",
+        "term": "lantern",
+        "lessonId": "fx31_alpha",
+        "kind": "contextual-challenge",
+        "version": 2,
+        "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+        "status": "PUBLISHED",
+        "approval": {
+          "uid": "fx31_1794065116529_teacher",
+          "version": 2,
+          "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+          "at": 1794065133822
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_items/fx31_alpha_2",
+      "data": {
+        "id": "fx31_alpha_2",
+        "sourceId": "fx31_alpha_2",
+        "senseId": "fx31_alpha_2",
+        "term": "basket",
+        "lessonId": "fx31_alpha",
+        "kind": "micro-review",
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "status": "PUBLISHED",
+        "approval": {
+          "uid": "fx31_1794065116529_teacher",
+          "version": 1,
+          "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+          "at": 1794065119086
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_items/fx31_alpha_3",
+      "data": {
+        "id": "fx31_alpha_3",
+        "sourceId": "fx31_alpha_3",
+        "senseId": "fx31_alpha_3",
+        "term": "ribbon",
+        "lessonId": "fx31_alpha",
+        "kind": "contextual-challenge",
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "status": "PUBLISHED",
+        "approval": {
+          "uid": "fx31_1794065116529_admin",
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "at": 1794065135651
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_items/fx31_alpha_4",
+      "data": {
+        "id": "fx31_alpha_4",
+        "sourceId": "fx31_alpha_4",
+        "senseId": "fx31_alpha_4",
+        "term": "button",
+        "lessonId": "fx31_alpha",
+        "kind": "micro-review",
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "status": "PUBLISHED",
+        "approval": {
+          "uid": "fx31_1794065116529_teacher",
+          "version": 1,
+          "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+          "at": 1794065140069
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_public/fx31_alpha_1",
+      "data": {
+        "itemId": "fx31_alpha_1",
+        "sourceId": "fx31_alpha_1",
+        "senseId": "fx31_alpha_1",
+        "lessonId": "fx31_alpha",
+        "term": "lantern",
+        "version": 2,
+        "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+        "kind": "contextual-challenge"
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_public/fx31_alpha_2",
+      "data": {
+        "itemId": "fx31_alpha_2",
+        "sourceId": "fx31_alpha_2",
+        "senseId": "fx31_alpha_2",
+        "lessonId": "fx31_alpha",
+        "term": "basket",
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "kind": "micro-review"
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_public/fx31_alpha_3",
+      "data": {
+        "itemId": "fx31_alpha_3",
+        "sourceId": "fx31_alpha_3",
+        "senseId": "fx31_alpha_3",
+        "lessonId": "fx31_alpha",
+        "term": "ribbon",
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "kind": "contextual-challenge"
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_public/fx31_alpha_4",
+      "data": {
+        "itemId": "fx31_alpha_4",
+        "sourceId": "fx31_alpha_4",
+        "senseId": "fx31_alpha_4",
+        "lessonId": "fx31_alpha",
+        "term": "button",
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "kind": "micro-review"
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_publications/fx31_alpha_1__1",
+      "data": {
+        "itemId": "fx31_alpha_1",
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "approval": {
+          "uid": "fx31_1794065116529_teacher",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "at": 1794065118835
+        },
+        "publishedBy": "fx31_1794065116529_admin",
+        "at": 1794065118908
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_publications/fx31_alpha_1__2",
+      "data": {
+        "itemId": "fx31_alpha_1",
+        "version": 2,
+        "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+        "approval": {
+          "uid": "fx31_1794065116529_teacher",
+          "version": 2,
+          "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+          "at": 1794065133822
+        },
+        "publishedBy": "fx31_1794065116529_admin",
+        "at": 1794065133900
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_publications/fx31_alpha_2__1",
+      "data": {
+        "itemId": "fx31_alpha_2",
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "approval": {
+          "uid": "fx31_1794065116529_teacher",
+          "version": 1,
+          "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+          "at": 1794065119086
+        },
+        "publishedBy": "fx31_1794065116529_admin",
+        "at": 1794065139283
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_publications/fx31_alpha_3__1",
+      "data": {
+        "itemId": "fx31_alpha_3",
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "approval": {
+          "uid": "fx31_1794065116529_admin",
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "at": 1794065135651
+        },
+        "publishedBy": "fx31_1794065116529_admin",
+        "at": 1794065135932
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_publications/fx31_alpha_4__1",
+      "data": {
+        "itemId": "fx31_alpha_4",
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "approval": {
+          "uid": "fx31_1794065116529_teacher",
+          "version": 1,
+          "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+          "at": 1794065140069
+        },
+        "publishedBy": "fx31_1794065116529_admin",
+        "at": 1794065140117
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_staff/fx31_1794065116529_teacher",
+      "data": {
+        "lessons": [
+          "fx31_alpha"
+        ],
+        "classes": [
+          "fx31_class_a"
+        ],
+        "active": true
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_staff/fx31_1794065116529_unassigned",
+      "data": {
+        "active": true,
+        "lessons": [
+          "fx31_alpha"
+        ],
+        "classes": [
+          "fx31_class_b"
+        ]
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/events/0c0477367ddd2468f37a8fb9774362b9a720c09d0b7ce44c31997c8b821cf056",
+      "data": {
+        "phase": "context",
+        "taskId": "fx31_alpha_4@1:context",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": false,
+        "assisted": false,
+        "revealed": false,
+        "answer": 0,
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_4",
+        "form": null,
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "sessionId": "20448f85-4bff-4150-9771-f8a09d06640d",
+        "operationId": "9da74712-e467-4cbf-868b-69d2448cdce9",
+        "revision": 1,
+        "at": 1794065140296
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/events/326219c2aedde5047fc4e35fe97195c57179e62edd91959dd587f4cdb6b7fbde",
+      "data": {
+        "phase": "context",
+        "taskId": "fx31_alpha_2@1:context",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": false,
+        "assisted": false,
+        "revealed": false,
+        "answer": 0,
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_2",
+        "form": null,
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "sessionId": "7604e945-32cc-4b91-ad60-ce2788fdf6b3",
+        "operationId": "9e720a71-242c-4610-bf8f-0ae311ae151f",
+        "revision": 1,
+        "at": 1794065139468
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/events/3c5932ec1478b2a9b06a10c77239f87a0fb026f32b82f9d7c50556397293060e",
+      "data": {
+        "phase": "retrieval",
+        "taskId": "fx31_alpha_1@2:retrieval",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": true,
+        "assisted": false,
+        "revealed": false,
+        "answer": "lantern",
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 2,
+        "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+        "sessionId": "c53cc219-ef7d-4b28-be83-152393118fc4",
+        "operationId": "bab705af-b59f-4dcf-826e-22b2eea32044",
+        "revision": 3,
+        "at": 1794065139197
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/events/4b8aded0e815a85ae26106e97c565b19e459a3a7159f52ddb08ae20fbc69a95f",
+      "data": {
+        "phase": "retrieval",
+        "taskId": "fx31_alpha_4@1:retrieval",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": true,
+        "assisted": false,
+        "revealed": false,
+        "answer": "button",
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_4",
+        "form": null,
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "sessionId": "20448f85-4bff-4150-9771-f8a09d06640d",
+        "operationId": "88b07342-149e-4a41-8df3-cd48397d3310",
+        "revision": 3,
+        "at": 1794065140397
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/events/64dbe2a9161152c27ac9f138017ac6e4fcd29ccc853dbd5fb04f557f061f1ab8",
+      "data": {
+        "phase": "retrieval",
+        "taskId": "fx31_alpha_2@1:retrieval",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": true,
+        "assisted": false,
+        "revealed": false,
+        "answer": "basket",
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_2",
+        "form": null,
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "sessionId": "7604e945-32cc-4b91-ad60-ce2788fdf6b3",
+        "operationId": "da45aa87-e587-463f-aeae-6a51e8f53c73",
+        "revision": 3,
+        "at": 1794065139590
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/events/8d98052b47bd2ab584cb6e94a38b1178861944f14945afc6916c3a84515c0815",
+      "data": {
+        "phase": "context",
+        "taskId": "fx31_alpha_3@1:context",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": false,
+        "assisted": false,
+        "revealed": false,
+        "answer": 0,
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_3",
+        "form": null,
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "sessionId": "702ba2d0-fdd6-4959-b6be-4f424219fee3",
+        "operationId": "65b6f551-8749-4a8f-bfd6-cb3b63dbfc7e",
+        "revision": 1,
+        "at": 1794065139870
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/events/b3eeff15f2886ba8a1382797f3a4d8371f9b0f0fda4e81c801fd8823cde3b65f",
+      "data": {
+        "phase": "retrieval",
+        "taskId": "fx31_alpha_3@1:retrieval",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": true,
+        "assisted": false,
+        "revealed": false,
+        "answer": "ribbon",
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_3",
+        "form": null,
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "sessionId": "702ba2d0-fdd6-4959-b6be-4f424219fee3",
+        "operationId": "c3750f96-a71b-4170-914b-e2afaf8a4174",
+        "revision": 3,
+        "at": 1794065139972
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/events/bfc5bdb4d77c63d786fcc405694ef96293d762ffa2387193b3fbeeba95ed6be0",
+      "data": {
+        "phase": "context",
+        "taskId": "fx31_alpha_1@2:context",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": false,
+        "assisted": false,
+        "revealed": false,
+        "answer": 0,
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 2,
+        "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+        "sessionId": "c53cc219-ef7d-4b28-be83-152393118fc4",
+        "operationId": "85c1a71f-4243-4a93-8a73-d55d61a8db44",
+        "revision": 1,
+        "at": 1794065139034
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/operations/0c0477367ddd2468f37a8fb9774362b9a720c09d0b7ce44c31997c8b821cf056",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "e52b61d9d8526eb1e2bf6a884754621e06d9f3cca4c7fbb96d5457662ca766a4",
+        "result": {
+          "id": "20448f85-4bff-4150-9771-f8a09d06640d",
+          "itemId": "fx31_alpha_4",
+          "version": 1,
+          "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+          "revision": 1,
+          "phase": "pause",
+          "feedback": "",
+          "prompt": "Which date is later?",
+          "options": [
+            "2 June",
+            "6 June"
+          ]
+        },
+        "at": 1794065140296
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/operations/1de6554149f761f8fe19a6a27ba2bfbdd43a6fdca2ca4c8af46da8017b2993cf",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "eaf5239c209e8d65a73f6e2e0fcefb00cfb5ba020f99b383f7b9c6c1afa680a1",
+        "result": {
+          "id": "7604e945-32cc-4b91-ad60-ce2788fdf6b3",
+          "itemId": "fx31_alpha_2",
+          "version": 1,
+          "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+          "revision": 2,
+          "phase": "retrieval",
+          "feedback": "",
+          "prompt": "Recall the object labelled number 2 in the workshop."
+        },
+        "at": 1794065139529
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/operations/326219c2aedde5047fc4e35fe97195c57179e62edd91959dd587f4cdb6b7fbde",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "d80ba135fbfab05d87a9452fc12500c06a40062a9a69af0b288dd6e73aa9a240",
+        "result": {
+          "id": "7604e945-32cc-4b91-ad60-ce2788fdf6b3",
+          "itemId": "fx31_alpha_2",
+          "version": 1,
+          "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+          "revision": 1,
+          "phase": "pause",
+          "feedback": "",
+          "prompt": "Which date is later?",
+          "options": [
+            "2 June",
+            "6 June"
+          ]
+        },
+        "at": 1794065139468
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/operations/3c5932ec1478b2a9b06a10c77239f87a0fb026f32b82f9d7c50556397293060e",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "4f6cfc46661a40e973022a8523461317fe023838acd8b819f98dbdcb3ec36c43",
+        "result": {
+          "id": "c53cc219-ef7d-4b28-be83-152393118fc4",
+          "itemId": "fx31_alpha_1",
+          "version": 2,
+          "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+          "revision": 3,
+          "phase": "done",
+          "feedback": "",
+          "correct": true,
+          "independent": true,
+          "answer": "lantern",
+          "explanation": "This is a synthetic recall exercise."
+        },
+        "at": 1794065139197
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/operations/4b8aded0e815a85ae26106e97c565b19e459a3a7159f52ddb08ae20fbc69a95f",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "4a2dd129387128b2975c6bd2cbc1d547dbcd41d4ffd1aba832ec2caf9d7ae7b5",
+        "result": {
+          "id": "20448f85-4bff-4150-9771-f8a09d06640d",
+          "itemId": "fx31_alpha_4",
+          "version": 1,
+          "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+          "revision": 3,
+          "phase": "done",
+          "feedback": "",
+          "correct": true,
+          "independent": true,
+          "answer": "button",
+          "explanation": "This is a synthetic recall exercise."
+        },
+        "at": 1794065140397
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/operations/64dbe2a9161152c27ac9f138017ac6e4fcd29ccc853dbd5fb04f557f061f1ab8",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "81c1d5954990a6aa42305e478fefcd9a188ea15daa43fa631f806089a4474237",
+        "result": {
+          "id": "7604e945-32cc-4b91-ad60-ce2788fdf6b3",
+          "itemId": "fx31_alpha_2",
+          "version": 1,
+          "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+          "revision": 3,
+          "phase": "done",
+          "feedback": "",
+          "correct": true,
+          "independent": true,
+          "answer": "basket",
+          "explanation": "This is a synthetic recall exercise."
+        },
+        "at": 1794065139590
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/operations/8373c122e47430dd785b6d3b9d36930026bdab3d22ee05cc2dca251d47daec40",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "00aee275f9ef2da61ffd6a41e8253e2028aac19e7a630a4b86d2c89efd82045d",
+        "result": {
+          "id": "20448f85-4bff-4150-9771-f8a09d06640d",
+          "itemId": "fx31_alpha_4",
+          "version": 1,
+          "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+          "revision": 2,
+          "phase": "retrieval",
+          "feedback": "",
+          "prompt": "Recall the object labelled number 4 in the workshop."
+        },
+        "at": 1794065140334
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/operations/8d98052b47bd2ab584cb6e94a38b1178861944f14945afc6916c3a84515c0815",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "94143e26e815d306a344daa9666597a7201c5f4866d58f5a99bf60f53176eb17",
+        "result": {
+          "id": "702ba2d0-fdd6-4959-b6be-4f424219fee3",
+          "itemId": "fx31_alpha_3",
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "revision": 1,
+          "phase": "pause",
+          "feedback": "",
+          "prompt": "Which date is later?",
+          "options": [
+            "2 June",
+            "6 June"
+          ]
+        },
+        "at": 1794065139870
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/operations/b3eeff15f2886ba8a1382797f3a4d8371f9b0f0fda4e81c801fd8823cde3b65f",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "4f180d4b0ea478b83290bba2072ccdc0d738e3c5800eaa6b3a8c899fc737518b",
+        "result": {
+          "id": "702ba2d0-fdd6-4959-b6be-4f424219fee3",
+          "itemId": "fx31_alpha_3",
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "revision": 3,
+          "phase": "done",
+          "feedback": "",
+          "correct": true,
+          "independent": true,
+          "answer": "ribbon",
+          "explanation": "This is a synthetic recall exercise."
+        },
+        "at": 1794065139972
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/operations/bfc5bdb4d77c63d786fcc405694ef96293d762ffa2387193b3fbeeba95ed6be0",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "9baf58364b1b4be6569d3cab33665f54152a9be7888897d98534e645f43fcd73",
+        "result": {
+          "id": "c53cc219-ef7d-4b28-be83-152393118fc4",
+          "itemId": "fx31_alpha_1",
+          "version": 2,
+          "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+          "revision": 1,
+          "phase": "pause",
+          "feedback": "",
+          "prompt": "Which date is later?",
+          "options": [
+            "2 June",
+            "6 June"
+          ]
+        },
+        "at": 1794065139034
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/operations/cd829af03ec5f0ee33ae3cae523f0dd1c2801827b0175fb516a2ca0d478bb9f4",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "bef4a86735de923dfc0d16774aee9426c7fe1a281137ed27a3e9ead6ea142e72",
+        "result": {
+          "id": "702ba2d0-fdd6-4959-b6be-4f424219fee3",
+          "itemId": "fx31_alpha_3",
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "revision": 2,
+          "phase": "retrieval",
+          "feedback": "",
+          "prompt": "Recall the object labelled number 3 in the workshop."
+        },
+        "at": 1794065139916
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/operations/ea91a3487f05b8cd3c6f0cc2cc76eb94fab7abece731d939f92c669b9d53206c",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "b7b28a29bcb713a2e5bb99b59c669526b60a2b979ec2166b52fa2aaa28af552d",
+        "result": {
+          "id": "c53cc219-ef7d-4b28-be83-152393118fc4",
+          "itemId": "fx31_alpha_1",
+          "version": 2,
+          "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+          "revision": 2,
+          "phase": "retrieval",
+          "feedback": "",
+          "prompt": "Recall the object labelled number 1 in the workshop. Remember the workshop."
+        },
+        "at": 1794065139110
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/progress/fx31_class_a__fx31_alpha__fx31_alpha_1__2",
+      "data": {
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 2,
+        "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+        "lastSessionId": "c53cc219-ef7d-4b28-be83-152393118fc4",
+        "lastTaskId": "fx31_alpha_1@2:retrieval",
+        "lastEvent": {
+          "phase": "retrieval",
+          "taskId": "fx31_alpha_1@2:retrieval",
+          "type": "answer",
+          "tries": 1,
+          "correct": true,
+          "independent": true,
+          "assisted": false,
+          "revealed": false,
+          "answer": "lantern",
+          "classId": "fx31_class_a",
+          "uid": "fx31_1794065116529_other",
+          "lessonId": "fx31_alpha",
+          "senseId": "fx31_alpha_1",
+          "form": null,
+          "version": 2,
+          "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+          "sessionId": "c53cc219-ef7d-4b28-be83-152393118fc4",
+          "operationId": "bab705af-b59f-4dcf-826e-22b2eea32044",
+          "revision": 3,
+          "at": 1794065139197
+        },
+        "updatedAt": 1794065139197,
+        "eventCount": 2,
+        "independentEvidence": true,
+        "status": "ready_for_review"
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/progress/fx31_class_a__fx31_alpha__fx31_alpha_2__1",
+      "data": {
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_2",
+        "form": null,
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "lastSessionId": "7604e945-32cc-4b91-ad60-ce2788fdf6b3",
+        "lastTaskId": "fx31_alpha_2@1:retrieval",
+        "lastEvent": {
+          "phase": "retrieval",
+          "taskId": "fx31_alpha_2@1:retrieval",
+          "type": "answer",
+          "tries": 1,
+          "correct": true,
+          "independent": true,
+          "assisted": false,
+          "revealed": false,
+          "answer": "basket",
+          "classId": "fx31_class_a",
+          "uid": "fx31_1794065116529_other",
+          "lessonId": "fx31_alpha",
+          "senseId": "fx31_alpha_2",
+          "form": null,
+          "version": 1,
+          "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+          "sessionId": "7604e945-32cc-4b91-ad60-ce2788fdf6b3",
+          "operationId": "da45aa87-e587-463f-aeae-6a51e8f53c73",
+          "revision": 3,
+          "at": 1794065139590
+        },
+        "updatedAt": 1794065139590,
+        "eventCount": 2,
+        "independentEvidence": true,
+        "status": "ready_for_review"
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/progress/fx31_class_a__fx31_alpha__fx31_alpha_3__1",
+      "data": {
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_3",
+        "form": null,
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "lastSessionId": "702ba2d0-fdd6-4959-b6be-4f424219fee3",
+        "lastTaskId": "fx31_alpha_3@1:retrieval",
+        "lastEvent": {
+          "phase": "retrieval",
+          "taskId": "fx31_alpha_3@1:retrieval",
+          "type": "answer",
+          "tries": 1,
+          "correct": true,
+          "independent": true,
+          "assisted": false,
+          "revealed": false,
+          "answer": "ribbon",
+          "classId": "fx31_class_a",
+          "uid": "fx31_1794065116529_other",
+          "lessonId": "fx31_alpha",
+          "senseId": "fx31_alpha_3",
+          "form": null,
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "sessionId": "702ba2d0-fdd6-4959-b6be-4f424219fee3",
+          "operationId": "c3750f96-a71b-4170-914b-e2afaf8a4174",
+          "revision": 3,
+          "at": 1794065139972
+        },
+        "updatedAt": 1794065139972,
+        "eventCount": 2,
+        "independentEvidence": true,
+        "status": "ready_for_review"
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/progress/fx31_class_a__fx31_alpha__fx31_alpha_4__1",
+      "data": {
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_4",
+        "form": null,
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "lastSessionId": "20448f85-4bff-4150-9771-f8a09d06640d",
+        "lastTaskId": "fx31_alpha_4@1:retrieval",
+        "lastEvent": {
+          "phase": "retrieval",
+          "taskId": "fx31_alpha_4@1:retrieval",
+          "type": "answer",
+          "tries": 1,
+          "correct": true,
+          "independent": true,
+          "assisted": false,
+          "revealed": false,
+          "answer": "button",
+          "classId": "fx31_class_a",
+          "uid": "fx31_1794065116529_other",
+          "lessonId": "fx31_alpha",
+          "senseId": "fx31_alpha_4",
+          "form": null,
+          "version": 1,
+          "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+          "sessionId": "20448f85-4bff-4150-9771-f8a09d06640d",
+          "operationId": "88b07342-149e-4a41-8df3-cd48397d3310",
+          "revision": 3,
+          "at": 1794065140397
+        },
+        "updatedAt": 1794065140397,
+        "eventCount": 2,
+        "independentEvidence": true,
+        "status": "ready_for_review"
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/sessions/20448f85-4bff-4150-9771-f8a09d06640d",
+      "data": {
+        "id": "20448f85-4bff-4150-9771-f8a09d06640d",
+        "uid": "fx31_1794065116529_other",
+        "itemId": "fx31_alpha_4",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_4",
+        "form": null,
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "phase": "done",
+        "revision": 3,
+        "records": {
+          "context": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          },
+          "retrieval": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          }
+        },
+        "createdAt": 1794065140174,
+        "classId": "fx31_class_a",
+        "feedback": "",
+        "updatedAt": 1794065140381
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/sessions/702ba2d0-fdd6-4959-b6be-4f424219fee3",
+      "data": {
+        "id": "702ba2d0-fdd6-4959-b6be-4f424219fee3",
+        "uid": "fx31_1794065116529_other",
+        "itemId": "fx31_alpha_3",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_3",
+        "form": null,
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "phase": "done",
+        "revision": 3,
+        "records": {
+          "context": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          },
+          "retrieval": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          }
+        },
+        "createdAt": 1794065139716,
+        "classId": "fx31_class_a",
+        "feedback": "",
+        "updatedAt": 1794065139967
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/sessions/7604e945-32cc-4b91-ad60-ce2788fdf6b3",
+      "data": {
+        "id": "7604e945-32cc-4b91-ad60-ce2788fdf6b3",
+        "uid": "fx31_1794065116529_other",
+        "itemId": "fx31_alpha_2",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_2",
+        "form": null,
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "phase": "done",
+        "revision": 3,
+        "records": {
+          "context": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          },
+          "retrieval": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          }
+        },
+        "createdAt": 1794065139359,
+        "classId": "fx31_class_a",
+        "feedback": "",
+        "updatedAt": 1794065139573
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_other/sessions/c53cc219-ef7d-4b28-be83-152393118fc4",
+      "data": {
+        "id": "c53cc219-ef7d-4b28-be83-152393118fc4",
+        "uid": "fx31_1794065116529_other",
+        "itemId": "fx31_alpha_1",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 2,
+        "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+        "phase": "done",
+        "revision": 3,
+        "records": {
+          "context": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          },
+          "retrieval": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          }
+        },
+        "createdAt": 1794065138915,
+        "classId": "fx31_class_a",
+        "feedback": "",
+        "updatedAt": 1794065139181
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/events/0e316346e8db3cc8545f669f15377ffaa8d8a7c52d01a2e4b32a7ae60906dbef",
+      "data": {
+        "phase": "retrieval",
+        "taskId": "fx31_alpha_1@1:retrieval",
+        "type": "answer",
+        "tries": 2,
+        "correct": true,
+        "independent": false,
+        "assisted": true,
+        "revealed": false,
+        "answer": " LANTERN ",
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_student",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "sessionId": "ef00809e-b657-4e3b-a811-779b3a50593e",
+        "operationId": "f92e1b12-1b3e-49b0-a98a-1c4fa663a4e3",
+        "revision": 4,
+        "at": 1794065130838
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/events/1cf7c3e8cf4174a3123ca9a9ca55237f22302047c7481ee0376607a3317b466c",
+      "data": {
+        "phase": "retrieval",
+        "taskId": "fx31_alpha_1@1:retrieval",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": true,
+        "assisted": false,
+        "revealed": false,
+        "answer": "lantern",
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_student",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "sessionId": "f85a3e74-38b2-427f-a06a-b78cb2b966ab",
+        "operationId": "9136a81b-b21d-4b78-bc89-b236fc73024a",
+        "revision": 3,
+        "at": 1794065133662
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/events/1d2cb820900dea32fc60e648166a02241816f28a193ef3e014c1162c62b9a13e",
+      "data": {
+        "phase": "retrieval",
+        "taskId": "fx31_alpha_1@1:retrieval",
+        "type": "answer",
+        "tries": 1,
+        "correct": false,
+        "independent": false,
+        "assisted": false,
+        "revealed": false,
+        "answer": "wrong",
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_student",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "sessionId": "ef00809e-b657-4e3b-a811-779b3a50593e",
+        "operationId": "686c7bb3-076d-4617-91b5-ad6bbd45bdf0",
+        "revision": 3,
+        "at": 1794065130739
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/events/240e361ce10471d99f8b74292df856ab46052c7c90a0bbeb0394088017c8aba4",
+      "data": {
+        "phase": "retrieval",
+        "taskId": "fx31_alpha_3@1:retrieval",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": true,
+        "assisted": false,
+        "revealed": false,
+        "answer": "ribbon",
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_student",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_3",
+        "form": null,
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "sessionId": "a4aa3293-42a2-4373-ab91-39737da3c032",
+        "operationId": "fa6beb45-873e-4da7-a01f-a33d08cd398c",
+        "revision": 3,
+        "at": 1794065137821
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/events/2cde82f31676f65a417c325d07f89184b7246d4e6ada724f9d5ca188ee714db5",
+      "data": {
+        "phase": "context",
+        "taskId": "fx31_alpha_1@1:context",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": false,
+        "assisted": false,
+        "revealed": false,
+        "answer": 0,
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_student",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "sessionId": "7377df2c-2289-4d32-9960-87908ffda252",
+        "operationId": "06931371-690a-4545-81aa-4b339bbd7c0d",
+        "revision": 1,
+        "at": 1794065130055
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/events/46f021293a148fb87a3fa2f1f76e6c7fb24582593ee34c95252ce496e47073d2",
+      "data": {
+        "phase": "context",
+        "taskId": "fx31_alpha_1@1:context",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": false,
+        "assisted": false,
+        "revealed": false,
+        "answer": 0,
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_student",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "sessionId": "722f2158-c7e4-45a8-82c9-24c5e7a848c5",
+        "operationId": "e89450e1-53d9-40e8-8722-d78f7baf7fd7",
+        "revision": 1,
+        "at": 1794065129513
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/events/57f9c53bbcb1c29ee9e45b3cee22ba1e6c2027592c84a38e8a29113e89142a23",
+      "data": {
+        "phase": "retrieval",
+        "taskId": "fx31_alpha_1@1:retrieval",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": false,
+        "assisted": true,
+        "revealed": false,
+        "answer": " LANTERN ",
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_student",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "sessionId": "7377df2c-2289-4d32-9960-87908ffda252",
+        "operationId": "52c51c72-749b-4e63-a7c9-875af130a60d",
+        "revision": 4,
+        "at": 1794065130385
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/events/8006f2a99ae6ebb461e651527c7257998497133aadda15ea594a745b681a761b",
+      "data": {
+        "phase": "context",
+        "taskId": "fx31_alpha_3@1:context",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": false,
+        "assisted": false,
+        "revealed": false,
+        "answer": 0,
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_student",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_3",
+        "form": null,
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "sessionId": "a4aa3293-42a2-4373-ab91-39737da3c032",
+        "operationId": "05f0b08c-8ff0-4b80-95eb-a68fffabdce7",
+        "revision": 1,
+        "at": 1794065137228
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/events/85aa84d5222b1d7c0fdece3290c151f8b8fa3aeadbd64fdd8010a00f5c05cbd2",
+      "data": {
+        "phase": "retrieval",
+        "taskId": "fx31_alpha_1@1:retrieval",
+        "type": "reveal",
+        "tries": 0,
+        "correct": false,
+        "independent": false,
+        "assisted": true,
+        "revealed": true,
+        "answer": null,
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_student",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "sessionId": "e82a7ed0-325b-4059-9376-c698699861bc",
+        "operationId": "4990ee29-9e6d-4329-9078-ee525ac48420",
+        "revision": 3,
+        "at": 1794065131272
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/events/87bbd29fbe8f5afeb170935bddfb9032a8846928d014aa9f889237d1f9b00183",
+      "data": {
+        "phase": "context",
+        "taskId": "fx31_alpha_1@1:context",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": false,
+        "assisted": false,
+        "revealed": false,
+        "answer": 0,
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_student",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "sessionId": "ef00809e-b657-4e3b-a811-779b3a50593e",
+        "operationId": "6fbeaa2d-20bc-4513-8ed2-9965345d85d4",
+        "revision": 1,
+        "at": 1794065130645
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/events/89e51468917924a24326dfbf789a53da1b46c4f815218bcba24fb43e001ee763",
+      "data": {
+        "phase": "retrieval",
+        "taskId": "fx31_alpha_1@1:retrieval",
+        "type": "hint",
+        "tries": 0,
+        "correct": false,
+        "independent": false,
+        "assisted": true,
+        "revealed": false,
+        "answer": null,
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_student",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "sessionId": "7377df2c-2289-4d32-9960-87908ffda252",
+        "operationId": "7d02c555-ff35-41d3-b8dc-b29792dc597d",
+        "revision": 3,
+        "at": 1794065130273
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/events/9854ea9eed5378654f9c6b4c06bf1db3a2e350d062e4cb6fc02c870bf848f8bb",
+      "data": {
+        "phase": "retrieval",
+        "taskId": "fx31_alpha_1@1:retrieval",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": true,
+        "assisted": false,
+        "revealed": false,
+        "answer": " LANTERN ",
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_student",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "sessionId": "722f2158-c7e4-45a8-82c9-24c5e7a848c5",
+        "operationId": "66198605-46e9-4dd6-958a-bfdd222d4363",
+        "revision": 3,
+        "at": 1794065129722
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/events/bac5a40d4bf53c2402efb5bbb27a86e3a30d4d1aff3b17a305df93a356581dea",
+      "data": {
+        "phase": "context",
+        "taskId": "fx31_alpha_1@1:context",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": false,
+        "assisted": false,
+        "revealed": false,
+        "answer": 0,
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_student",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "sessionId": "f85a3e74-38b2-427f-a06a-b78cb2b966ab",
+        "operationId": "00138370-3910-42f8-8554-8ec073398905",
+        "revision": 1,
+        "at": 1794065133501
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/events/cdf9de951e3a68f27eda2c465b10b597694dca9294093a8c6d41297dee3fb388",
+      "data": {
+        "phase": "context",
+        "taskId": "fx31_alpha_1@1:context",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": false,
+        "assisted": false,
+        "revealed": false,
+        "answer": 0,
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_student",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "sessionId": "e82a7ed0-325b-4059-9376-c698699861bc",
+        "operationId": "151615ab-09b8-4ec9-9442-67fa485e953b",
+        "revision": 1,
+        "at": 1794065131068
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/events/e7ed18115faa35dbe0633c91b9e00d52b410c99c4c8bbd5fbfad8a95cc1795bc",
+      "data": {
+        "phase": "context",
+        "taskId": "fx31_alpha_1@1:context",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": false,
+        "assisted": false,
+        "revealed": false,
+        "answer": 0,
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_student",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "sessionId": "0bde1c3d-19f3-412f-ae87-f8e41fe17dc0",
+        "operationId": "bea101ae-ba15-426b-9288-07c5a2502ab2",
+        "revision": 1,
+        "at": 1794065122465
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/097d7abb78c49f2b7889f41f47f8934e9fe5dea107519106c542452c19924fe3",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "ecf3b5d07478c65d5c7419ad9337f9d3c83a6a02e234bdad681935a3da1649cc",
+        "result": {
+          "id": "7377df2c-2289-4d32-9960-87908ffda252",
+          "itemId": "fx31_alpha_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 2,
+          "phase": "retrieval",
+          "feedback": "",
+          "prompt": "Recall the object labelled number 1 in the workshop."
+        },
+        "at": 1794065130153
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/0e316346e8db3cc8545f669f15377ffaa8d8a7c52d01a2e4b32a7ae60906dbef",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "6b2be82f23c073b0dd4f9e0a1f8a37e1c54252ae4ecef057e3de3125cf4f5db4",
+        "result": {
+          "id": "ef00809e-b657-4e3b-a811-779b3a50593e",
+          "itemId": "fx31_alpha_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 4,
+          "phase": "done",
+          "feedback": "",
+          "correct": true,
+          "independent": false,
+          "answer": "lantern",
+          "explanation": "This is a synthetic recall exercise."
+        },
+        "at": 1794065130838
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/1cf7c3e8cf4174a3123ca9a9ca55237f22302047c7481ee0376607a3317b466c",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "90901486777c4883bb49fa51be2e5d9ef51a928bada9ed6b5ec83bcc8315b562",
+        "result": {
+          "id": "f85a3e74-38b2-427f-a06a-b78cb2b966ab",
+          "itemId": "fx31_alpha_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 3,
+          "phase": "done",
+          "feedback": "",
+          "correct": true,
+          "independent": true,
+          "answer": "lantern",
+          "explanation": "This is a synthetic recall exercise."
+        },
+        "at": 1794065133662
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/1d2cb820900dea32fc60e648166a02241816f28a193ef3e014c1162c62b9a13e",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "d5c08b3a2f21ac0ac18c59443148e608f209202b5f7c9c19a00fd310d46209f6",
+        "result": {
+          "id": "ef00809e-b657-4e3b-a811-779b3a50593e",
+          "itemId": "fx31_alpha_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 3,
+          "phase": "retrieval",
+          "feedback": "It begins with l.",
+          "prompt": "Recall the object labelled number 1 in the workshop."
+        },
+        "at": 1794065130739
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/1ed4d278c34edac7cca9ffd6fd427fd5f2a207034d9243c9cb281bef98425187",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "b96d59428e10bcea13c5953909543329ddfccdafb0c2d91a2d77940985518e96",
+        "result": {
+          "id": "a4aa3293-42a2-4373-ab91-39737da3c032",
+          "itemId": "fx31_alpha_3",
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "revision": 2,
+          "phase": "retrieval",
+          "feedback": "",
+          "prompt": "Recall the object labelled number 3 in the workshop."
+        },
+        "at": 1794065137649
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/240e361ce10471d99f8b74292df856ab46052c7c90a0bbeb0394088017c8aba4",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "9329b9beebdbbab964136185abfbaf67cf6bd901ea2453fa4b62e79cd382f0f4",
+        "result": {
+          "id": "a4aa3293-42a2-4373-ab91-39737da3c032",
+          "itemId": "fx31_alpha_3",
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "revision": 3,
+          "phase": "done",
+          "feedback": "",
+          "correct": true,
+          "independent": true,
+          "answer": "ribbon",
+          "explanation": "This is a synthetic recall exercise."
+        },
+        "at": 1794065137821
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/2b48ed3acd6fda33cf9421249bc38c4d06f385cd4c7b03c89d7039d971829368",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "6413fe1d2bc74aa09efc994bf0538fefbba501de45e5c432c3b0c7b9f41c7204",
+        "result": {
+          "id": "ef00809e-b657-4e3b-a811-779b3a50593e",
+          "itemId": "fx31_alpha_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 2,
+          "phase": "retrieval",
+          "feedback": "",
+          "prompt": "Recall the object labelled number 1 in the workshop."
+        },
+        "at": 1794065130691
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/2cde82f31676f65a417c325d07f89184b7246d4e6ada724f9d5ca188ee714db5",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "49b46ddb9905badc4dcdddb9ee0a2194f75c0d6d8b7974dfe981bc8e75a5f4c1",
+        "result": {
+          "id": "7377df2c-2289-4d32-9960-87908ffda252",
+          "itemId": "fx31_alpha_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 1,
+          "phase": "pause",
+          "feedback": "",
+          "prompt": "Which date is later?",
+          "options": [
+            "2 June",
+            "6 June"
+          ]
+        },
+        "at": 1794065130055
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/3f17a28f7235ad507f7fab2b8fdf17b134565ecdf5b51e91c6cba088a06b226e",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "fcfa31c9bf9830f8b98bdaa54e5d95889996d2b13cc7729145d07b0dbb67fb38",
+        "result": {
+          "id": "e82a7ed0-325b-4059-9376-c698699861bc",
+          "itemId": "fx31_alpha_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 2,
+          "phase": "retrieval",
+          "feedback": "",
+          "prompt": "Recall the object labelled number 1 in the workshop."
+        },
+        "at": 1794065131171
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/46f021293a148fb87a3fa2f1f76e6c7fb24582593ee34c95252ce496e47073d2",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "dad2c7413c3f308d1dca982f9e0e7f38c27b16b43bd17354744e4a251cb893a7",
+        "result": {
+          "id": "722f2158-c7e4-45a8-82c9-24c5e7a848c5",
+          "itemId": "fx31_alpha_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 1,
+          "phase": "pause",
+          "feedback": "",
+          "prompt": "Which date is later?",
+          "options": [
+            "2 June",
+            "6 June"
+          ]
+        },
+        "at": 1794065129513
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/48db66d0a5ce68deba9fff335ce83d7f1c8c1e63af5b13b518258468b13dc37f",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "927efcc73e8b564c3e97ddf13153a09bc93cd23fb80c729a9c7adafa0276b03e",
+        "result": {
+          "id": "722f2158-c7e4-45a8-82c9-24c5e7a848c5",
+          "itemId": "fx31_alpha_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 2,
+          "phase": "retrieval",
+          "feedback": "",
+          "prompt": "Recall the object labelled number 1 in the workshop."
+        },
+        "at": 1794065129600
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/50c6193b85179640e0a3c371933a02d9f60d140eca3c45d82088ef37a3a1dff7",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "de1dab00a270ef85d57598a7fb9353ba647e6102f49e7662bcbefb57aed70e3b",
+        "result": {
+          "id": "f85a3e74-38b2-427f-a06a-b78cb2b966ab",
+          "itemId": "fx31_alpha_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 2,
+          "phase": "retrieval",
+          "feedback": "",
+          "prompt": "Recall the object labelled number 1 in the workshop."
+        },
+        "at": 1794065133558
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/57f9c53bbcb1c29ee9e45b3cee22ba1e6c2027592c84a38e8a29113e89142a23",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "a1a341a3d827938fe58c42ec9ce10e5d7a038139805a69ef94aa4e5dd18f0f0a",
+        "result": {
+          "id": "7377df2c-2289-4d32-9960-87908ffda252",
+          "itemId": "fx31_alpha_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 4,
+          "phase": "done",
+          "feedback": "",
+          "correct": true,
+          "independent": false,
+          "answer": "lantern",
+          "explanation": "This is a synthetic recall exercise."
+        },
+        "at": 1794065130385
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/8006f2a99ae6ebb461e651527c7257998497133aadda15ea594a745b681a761b",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "e79adc4a0291e9235a1e3b502a1e0cb353975f0d332e4e6d8b823045716b233a",
+        "result": {
+          "id": "a4aa3293-42a2-4373-ab91-39737da3c032",
+          "itemId": "fx31_alpha_3",
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "revision": 1,
+          "phase": "pause",
+          "feedback": "",
+          "prompt": "Which date is later?",
+          "options": [
+            "2 June",
+            "6 June"
+          ]
+        },
+        "at": 1794065137228
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/85aa84d5222b1d7c0fdece3290c151f8b8fa3aeadbd64fdd8010a00f5c05cbd2",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "80cdface4a087832079a6045adceec302e59dfe828ca6db23c0c92d85ca4ee89",
+        "result": {
+          "id": "e82a7ed0-325b-4059-9376-c698699861bc",
+          "itemId": "fx31_alpha_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 3,
+          "phase": "done",
+          "feedback": "",
+          "correct": false,
+          "independent": false,
+          "answer": "lantern",
+          "explanation": "This is a synthetic recall exercise."
+        },
+        "at": 1794065131271
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/87bbd29fbe8f5afeb170935bddfb9032a8846928d014aa9f889237d1f9b00183",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "997c31b129edb019a092cc14ab699351bce5d3067b1f00159e601e8b369dfbd2",
+        "result": {
+          "id": "ef00809e-b657-4e3b-a811-779b3a50593e",
+          "itemId": "fx31_alpha_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 1,
+          "phase": "pause",
+          "feedback": "",
+          "prompt": "Which date is later?",
+          "options": [
+            "2 June",
+            "6 June"
+          ]
+        },
+        "at": 1794065130645
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/89e51468917924a24326dfbf789a53da1b46c4f815218bcba24fb43e001ee763",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "9c0df5e9da1b0aedc43944d6d71ea583b09d52048178cb0f4cfd3c9d9a0a6d09",
+        "result": {
+          "id": "7377df2c-2289-4d32-9960-87908ffda252",
+          "itemId": "fx31_alpha_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 3,
+          "phase": "retrieval",
+          "feedback": "It begins with l.",
+          "prompt": "Recall the object labelled number 1 in the workshop."
+        },
+        "at": 1794065130273
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/9854ea9eed5378654f9c6b4c06bf1db3a2e350d062e4cb6fc02c870bf848f8bb",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "9979b900c65a9c98d3bfd2a036c76bdc344e45de238bcd29e575e4a4df17d685",
+        "result": {
+          "id": "722f2158-c7e4-45a8-82c9-24c5e7a848c5",
+          "itemId": "fx31_alpha_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 3,
+          "phase": "done",
+          "feedback": "",
+          "correct": true,
+          "independent": true,
+          "answer": "lantern",
+          "explanation": "This is a synthetic recall exercise."
+        },
+        "at": 1794065129722
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/bac5a40d4bf53c2402efb5bbb27a86e3a30d4d1aff3b17a305df93a356581dea",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "4cc4a9dac026124a99b70e7d2ba3c8b1c0694afe455cc08e8da904054a1ed3ed",
+        "result": {
+          "id": "f85a3e74-38b2-427f-a06a-b78cb2b966ab",
+          "itemId": "fx31_alpha_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 1,
+          "phase": "pause",
+          "feedback": "",
+          "prompt": "Which date is later?",
+          "options": [
+            "2 June",
+            "6 June"
+          ]
+        },
+        "at": 1794065133501
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/cdf9de951e3a68f27eda2c465b10b597694dca9294093a8c6d41297dee3fb388",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "17c2fc3a5d6281009be830b3ec70045b81a6fab3376676fdf9e98ac2a23a4bcb",
+        "result": {
+          "id": "e82a7ed0-325b-4059-9376-c698699861bc",
+          "itemId": "fx31_alpha_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 1,
+          "phase": "pause",
+          "feedback": "",
+          "prompt": "Which date is later?",
+          "options": [
+            "2 June",
+            "6 June"
+          ]
+        },
+        "at": 1794065131068
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/operations/e7ed18115faa35dbe0633c91b9e00d52b410c99c4c8bbd5fbfad8a95cc1795bc",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "c15124ce065493ddc78c2fb2acc0cfb763bb752242a0acd0226146fdf236fe2d",
+        "result": {
+          "id": "0bde1c3d-19f3-412f-ae87-f8e41fe17dc0",
+          "itemId": "fx31_alpha_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 1,
+          "phase": "pause",
+          "feedback": "",
+          "prompt": "Which date is later?",
+          "options": [
+            "2 June",
+            "6 June"
+          ]
+        },
+        "at": 1794065122465
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/progress/fx31_class_a__fx31_alpha__fx31_alpha_1__1",
+      "data": {
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_student",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "lastSessionId": "f85a3e74-38b2-427f-a06a-b78cb2b966ab",
+        "lastTaskId": "fx31_alpha_1@1:retrieval",
+        "lastEvent": {
+          "phase": "retrieval",
+          "taskId": "fx31_alpha_1@1:retrieval",
+          "type": "answer",
+          "tries": 1,
+          "correct": true,
+          "independent": true,
+          "assisted": false,
+          "revealed": false,
+          "answer": "lantern",
+          "classId": "fx31_class_a",
+          "uid": "fx31_1794065116529_student",
+          "lessonId": "fx31_alpha",
+          "senseId": "fx31_alpha_1",
+          "form": null,
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "sessionId": "f85a3e74-38b2-427f-a06a-b78cb2b966ab",
+          "operationId": "9136a81b-b21d-4b78-bc89-b236fc73024a",
+          "revision": 3,
+          "at": 1794065133662
+        },
+        "updatedAt": 1794065133662,
+        "eventCount": 13,
+        "independentEvidence": true,
+        "status": "ready_for_review"
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/progress/fx31_class_a__fx31_alpha__fx31_alpha_3__1",
+      "data": {
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_student",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_3",
+        "form": null,
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "lastSessionId": "a4aa3293-42a2-4373-ab91-39737da3c032",
+        "lastTaskId": "fx31_alpha_3@1:retrieval",
+        "lastEvent": {
+          "phase": "retrieval",
+          "taskId": "fx31_alpha_3@1:retrieval",
+          "type": "answer",
+          "tries": 1,
+          "correct": true,
+          "independent": true,
+          "assisted": false,
+          "revealed": false,
+          "answer": "ribbon",
+          "classId": "fx31_class_a",
+          "uid": "fx31_1794065116529_student",
+          "lessonId": "fx31_alpha",
+          "senseId": "fx31_alpha_3",
+          "form": null,
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "sessionId": "a4aa3293-42a2-4373-ab91-39737da3c032",
+          "operationId": "fa6beb45-873e-4da7-a01f-a33d08cd398c",
+          "revision": 3,
+          "at": 1794065137821
+        },
+        "updatedAt": 1794065137821,
+        "eventCount": 2,
+        "independentEvidence": true,
+        "status": "ready_for_review"
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/sessions/0bde1c3d-19f3-412f-ae87-f8e41fe17dc0",
+      "data": {
+        "id": "0bde1c3d-19f3-412f-ae87-f8e41fe17dc0",
+        "uid": "fx31_1794065116529_student",
+        "itemId": "fx31_alpha_1",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "phase": "pause",
+        "revision": 1,
+        "records": {
+          "context": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          },
+          "retrieval": {
+            "tries": 0,
+            "hinted": false,
+            "revealed": false
+          }
+        },
+        "createdAt": 1794065119289,
+        "classId": "fx31_class_a",
+        "feedback": "",
+        "updatedAt": 1794065122449
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/sessions/62f5f55a-cb15-4090-8f1e-7019d07d498b",
+      "data": {
+        "id": "62f5f55a-cb15-4090-8f1e-7019d07d498b",
+        "uid": "fx31_1794065116529_student",
+        "itemId": "fx31_alpha_1",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "phase": "context",
+        "revision": 0,
+        "records": {
+          "context": {
+            "tries": 0,
+            "hinted": false,
+            "revealed": false
+          },
+          "retrieval": {
+            "tries": 0,
+            "hinted": false,
+            "revealed": false
+          }
+        },
+        "createdAt": 1794065131483,
+        "classId": "fx31_class_a"
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/sessions/722f2158-c7e4-45a8-82c9-24c5e7a848c5",
+      "data": {
+        "id": "722f2158-c7e4-45a8-82c9-24c5e7a848c5",
+        "uid": "fx31_1794065116529_student",
+        "itemId": "fx31_alpha_1",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "phase": "done",
+        "revision": 3,
+        "records": {
+          "context": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          },
+          "retrieval": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          }
+        },
+        "createdAt": 1794065129434,
+        "classId": "fx31_class_a",
+        "feedback": "",
+        "updatedAt": 1794065129700
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/sessions/7377df2c-2289-4d32-9960-87908ffda252",
+      "data": {
+        "id": "7377df2c-2289-4d32-9960-87908ffda252",
+        "uid": "fx31_1794065116529_student",
+        "itemId": "fx31_alpha_1",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "phase": "done",
+        "revision": 4,
+        "records": {
+          "context": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          },
+          "retrieval": {
+            "tries": 1,
+            "hinted": true,
+            "revealed": false,
+            "correct": true
+          }
+        },
+        "createdAt": 1794065129922,
+        "classId": "fx31_class_a",
+        "feedback": "",
+        "updatedAt": 1794065130379
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/sessions/a4aa3293-42a2-4373-ab91-39737da3c032",
+      "data": {
+        "id": "a4aa3293-42a2-4373-ab91-39737da3c032",
+        "uid": "fx31_1794065116529_student",
+        "itemId": "fx31_alpha_3",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_3",
+        "form": null,
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "phase": "done",
+        "revision": 3,
+        "records": {
+          "context": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          },
+          "retrieval": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          }
+        },
+        "createdAt": 1794065137044,
+        "classId": "fx31_class_a",
+        "feedback": "",
+        "updatedAt": 1794065137803
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/sessions/e82a7ed0-325b-4059-9376-c698699861bc",
+      "data": {
+        "id": "e82a7ed0-325b-4059-9376-c698699861bc",
+        "uid": "fx31_1794065116529_student",
+        "itemId": "fx31_alpha_1",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "phase": "done",
+        "revision": 3,
+        "records": {
+          "context": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          },
+          "retrieval": {
+            "tries": 0,
+            "hinted": true,
+            "revealed": true,
+            "correct": false
+          }
+        },
+        "createdAt": 1794065130951,
+        "classId": "fx31_class_a",
+        "feedback": "",
+        "updatedAt": 1794065131259
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/sessions/ef00809e-b657-4e3b-a811-779b3a50593e",
+      "data": {
+        "id": "ef00809e-b657-4e3b-a811-779b3a50593e",
+        "uid": "fx31_1794065116529_student",
+        "itemId": "fx31_alpha_1",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "phase": "done",
+        "revision": 4,
+        "records": {
+          "context": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          },
+          "retrieval": {
+            "tries": 2,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          }
+        },
+        "createdAt": 1794065130573,
+        "classId": "fx31_class_a",
+        "feedback": "",
+        "updatedAt": 1794065130833
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_students/fx31_1794065116529_student/sessions/f85a3e74-38b2-427f-a06a-b78cb2b966ab",
+      "data": {
+        "id": "f85a3e74-38b2-427f-a06a-b78cb2b966ab",
+        "uid": "fx31_1794065116529_student",
+        "itemId": "fx31_alpha_1",
+        "lessonId": "fx31_alpha",
+        "senseId": "fx31_alpha_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "phase": "done",
+        "revision": 3,
+        "records": {
+          "context": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          },
+          "retrieval": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          }
+        },
+        "createdAt": 1794065132999,
+        "classId": "fx31_class_a",
+        "feedback": "",
+        "updatedAt": 1794065133646
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_versions/fx31_alpha_1__1",
+      "data": {
+        "id": "fx31_alpha_1",
+        "sourceId": "fx31_alpha_1",
+        "senseId": "fx31_alpha_1",
+        "term": "lantern",
+        "lessonId": "fx31_alpha",
+        "kind": "contextual-challenge",
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "status": "DRAFT",
+        "approval": null,
+        "content": {
+          "sentence": "In this invented workshop, a lantern carries a blue tag.",
+          "investigate": {
+            "prompt": "Which tag belongs to the object?",
+            "options": [
+              "blue",
+              "red"
+            ],
+            "answer": 0,
+            "clue": "Read the tag colour.",
+            "why": "The invented record specifies blue."
+          },
+          "final": {
+            "prompt": "Recall the object labelled number 1 in the workshop.",
+            "answers": [
+              "lantern"
+            ],
+            "clue": "It begins with l.",
+            "why": "This is a synthetic recall exercise."
+          }
+        },
+        "createdBy": "offline-catalog-import",
+        "createdAt": 1794065117139
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_versions/fx31_alpha_1__2",
+      "data": {
+        "id": "fx31_alpha_1",
+        "sourceId": "fx31_alpha_1",
+        "senseId": "fx31_alpha_1",
+        "term": "lantern",
+        "lessonId": "fx31_alpha",
+        "kind": "contextual-challenge",
+        "version": 2,
+        "hash": "866ffd5464a33352d7a1ee5892ab02d1aaafdd6c8beaff43c4848ec160763ea7",
+        "status": "DRAFT",
+        "approval": null,
+        "content": {
+          "sentence": "In this invented workshop, a lantern carries a blue tag.",
+          "investigate": {
+            "prompt": "Which tag belongs to the object?",
+            "options": [
+              "blue",
+              "red"
+            ],
+            "answer": 0,
+            "clue": "Read the tag colour.",
+            "why": "The invented record specifies blue."
+          },
+          "final": {
+            "prompt": "Recall the object labelled number 1 in the workshop. Remember the workshop.",
+            "answers": [
+              "lantern"
+            ],
+            "clue": "It begins with l.",
+            "why": "This is a synthetic recall exercise."
+          }
+        },
+        "createdBy": "fx31_1794065116529_teacher",
+        "createdAt": 1794065133220
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_versions/fx31_alpha_2__1",
+      "data": {
+        "id": "fx31_alpha_2",
+        "sourceId": "fx31_alpha_2",
+        "senseId": "fx31_alpha_2",
+        "term": "basket",
+        "lessonId": "fx31_alpha",
+        "kind": "micro-review",
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "status": "DRAFT",
+        "approval": null,
+        "content": {
+          "sentence": "In this invented workshop, a basket carries a blue tag.",
+          "investigate": {
+            "prompt": "Which tag belongs to the object?",
+            "options": [
+              "blue",
+              "red"
+            ],
+            "answer": 0,
+            "clue": "Read the tag colour.",
+            "why": "The invented record specifies blue."
+          },
+          "final": {
+            "prompt": "Recall the object labelled number 2 in the workshop.",
+            "answers": [
+              "basket"
+            ],
+            "clue": "It begins with b.",
+            "why": "This is a synthetic recall exercise."
+          }
+        },
+        "createdBy": "offline-catalog-import",
+        "createdAt": 1794065117139
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_versions/fx31_alpha_3__1",
+      "data": {
+        "id": "fx31_alpha_3",
+        "sourceId": "fx31_alpha_3",
+        "senseId": "fx31_alpha_3",
+        "term": "ribbon",
+        "lessonId": "fx31_alpha",
+        "kind": "contextual-challenge",
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "status": "DRAFT",
+        "approval": null,
+        "content": {
+          "sentence": "In this invented workshop, a ribbon carries a blue tag.",
+          "investigate": {
+            "prompt": "Which tag belongs to the object?",
+            "options": [
+              "blue",
+              "red"
+            ],
+            "answer": 0,
+            "clue": "Read the tag colour.",
+            "why": "The invented record specifies blue."
+          },
+          "final": {
+            "prompt": "Recall the object labelled number 3 in the workshop.",
+            "answers": [
+              "ribbon"
+            ],
+            "clue": "It begins with r.",
+            "why": "This is a synthetic recall exercise."
+          }
+        },
+        "createdBy": "offline-catalog-import",
+        "createdAt": 1794065117139
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab28_versions/fx31_alpha_4__1",
+      "data": {
+        "id": "fx31_alpha_4",
+        "sourceId": "fx31_alpha_4",
+        "senseId": "fx31_alpha_4",
+        "term": "button",
+        "lessonId": "fx31_alpha",
+        "kind": "micro-review",
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "status": "DRAFT",
+        "approval": null,
+        "content": {
+          "sentence": "In this invented workshop, a button carries a blue tag.",
+          "investigate": {
+            "prompt": "Which tag belongs to the object?",
+            "options": [
+              "blue",
+              "red"
+            ],
+            "answer": 0,
+            "clue": "Read the tag colour.",
+            "why": "The invented record specifies blue."
+          },
+          "final": {
+            "prompt": "Recall the object labelled number 4 in the workshop.",
+            "answers": [
+              "button"
+            ],
+            "clue": "It begins with b.",
+            "why": "This is a synthetic recall exercise."
+          }
+        },
+        "createdBy": "offline-catalog-import",
+        "createdAt": 1794065117139
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab30_accounts/fx31_1794065116529_admin",
+      "data": {
+        "uid": "fx31_1794065116529_admin",
+        "email": "fx31_1794065116529_admin@local.invalid",
+        "role": "admin",
+        "active": true,
+        "tester": true,
+        "classId": "fx31_class_a",
+        "revokedAfter": 0
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab30_accounts/fx31_1794065116529_disabled",
+      "data": {
+        "uid": "fx31_1794065116529_disabled",
+        "email": "fx31_1794065116529_disabled@local.invalid",
+        "role": "student",
+        "active": true,
+        "tester": true,
+        "classId": "fx31_class_a",
+        "revokedAfter": 0
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab30_accounts/fx31_1794065116529_ordinary",
+      "data": {
+        "uid": "fx31_1794065116529_ordinary",
+        "email": "fx31_1794065116529_ordinary@local.invalid",
+        "role": "student",
+        "active": true,
+        "tester": false,
+        "classId": "fx31_class_a",
+        "revokedAfter": 0
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab30_accounts/fx31_1794065116529_other",
+      "data": {
+        "uid": "fx31_1794065116529_other",
+        "email": "fx31_1794065116529_other@local.invalid",
+        "role": "student",
+        "active": true,
+        "tester": true,
+        "classId": "fx31_class_a",
+        "revokedAfter": 0
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab30_accounts/fx31_1794065116529_revoked",
+      "data": {
+        "uid": "fx31_1794065116529_revoked",
+        "email": "fx31_1794065116529_revoked@local.invalid",
+        "role": "student",
+        "active": true,
+        "tester": true,
+        "classId": "fx31_class_a",
+        "revokedAfter": 0
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab30_accounts/fx31_1794065116529_student",
+      "data": {
+        "uid": "fx31_1794065116529_student",
+        "email": "fx31_1794065116529_student@local.invalid",
+        "role": "student",
+        "active": true,
+        "tester": true,
+        "classId": "fx31_class_a",
+        "revokedAfter": 0
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab30_accounts/fx31_1794065116529_teacher",
+      "data": {
+        "uid": "fx31_1794065116529_teacher",
+        "email": "fx31_1794065116529_teacher@local.invalid",
+        "role": "teacher",
+        "active": true,
+        "tester": true,
+        "classId": "fx31_class_a",
+        "revokedAfter": 0
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab30_accounts/fx31_1794065116529_tester",
+      "data": {
+        "uid": "fx31_1794065116529_tester",
+        "email": "fx31_1794065116529_tester@local.invalid",
+        "role": "tester",
+        "active": true,
+        "tester": true,
+        "classId": "fx31_class_a",
+        "revokedAfter": 0
+      }
+    },
+    {
+      "path": "lessons/fx31_alpha/vocab30_accounts/fx31_1794065116529_unassigned",
+      "data": {
+        "uid": "fx31_1794065116529_unassigned",
+        "email": "fx31_1794065116529_unassigned@local.invalid",
+        "role": "teacher",
+        "active": true,
+        "tester": true,
+        "classId": "fx31_class_a",
+        "revokedAfter": 0
+      }
+    },
+    {
+      "path": "lessons/fx31_beta",
+      "data": {
+        "synthetic": true,
+        "lessonId": "fx31_beta"
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_decisions/02cd1ff5dc41edb35bbe2c0c0785af7a11e5ba0284061939b877a914d2f10286",
+      "data": {
+        "itemId": "fx31_beta_2",
+        "action": "approve",
+        "reviewerUid": "fx31_1794065116529_teacher",
+        "at": 1794065140981,
+        "note": "Synthetic route coverage",
+        "fromVersion": 1,
+        "fromHash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "status": "APPROVED",
+        "bodyHash": "8f9cf59eacf562c43029e67df48b33c7411cd61fbf1e50cdeb2e4e359ca535c1",
+        "result": {
+          "id": "fx31_beta_2",
+          "sourceId": "fx31_beta_2",
+          "senseId": "fx31_beta_2",
+          "term": "basket",
+          "lessonId": "fx31_beta",
+          "kind": "micro-review",
+          "version": 1,
+          "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+          "status": "APPROVED",
+          "approval": {
+            "uid": "fx31_1794065116529_teacher",
+            "version": 1,
+            "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+            "at": 1794065140981
+          }
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_decisions/0437f13414744a1e44a2a19f7c7d8a0d8001f21c86803bd6f2c057b3a854d2f1",
+      "data": {
+        "itemId": "fx31_beta_3",
+        "action": "publish",
+        "reviewerUid": "fx31_1794065116529_admin",
+        "at": 1794065141522,
+        "note": "Synthetic route coverage",
+        "fromVersion": 1,
+        "fromHash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "status": "PUBLISHED",
+        "bodyHash": "41bd4e6b5aa727f59dfd6b14809c1b83ee71399c3b7fdbb9ccc4208c9c3e795b",
+        "result": {
+          "id": "fx31_beta_3",
+          "sourceId": "fx31_beta_3",
+          "senseId": "fx31_beta_3",
+          "term": "ribbon",
+          "lessonId": "fx31_beta",
+          "kind": "contextual-challenge",
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "status": "PUBLISHED",
+          "approval": {
+            "uid": "fx31_1794065116529_teacher",
+            "version": 1,
+            "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+            "at": 1794065141466
+          }
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_decisions/0dfdf64b78ac39bbde586c067c62b1728666d5c39647d2b26a1ef9d54651b994",
+      "data": {
+        "itemId": "fx31_beta_1",
+        "action": "approve",
+        "reviewerUid": "fx31_1794065116529_teacher",
+        "at": 1794065140533,
+        "note": "Synthetic route coverage",
+        "fromVersion": 1,
+        "fromHash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "status": "APPROVED",
+        "bodyHash": "297763e384cea6feba6e62aaae982faf07087fe6c288a215f4227cb447304ece",
+        "result": {
+          "id": "fx31_beta_1",
+          "sourceId": "fx31_beta_1",
+          "senseId": "fx31_beta_1",
+          "term": "lantern",
+          "lessonId": "fx31_beta",
+          "kind": "contextual-challenge",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "status": "APPROVED",
+          "approval": {
+            "uid": "fx31_1794065116529_teacher",
+            "version": 1,
+            "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+            "at": 1794065140533
+          }
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_decisions/27de683bc580a1d51d6d0517e0bf64ffcaf3677b808293c41832986b478177d9",
+      "data": {
+        "itemId": "fx31_beta_1",
+        "action": "publish",
+        "reviewerUid": "fx31_1794065116529_admin",
+        "at": 1794065140576,
+        "note": "Synthetic route coverage",
+        "fromVersion": 1,
+        "fromHash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "status": "PUBLISHED",
+        "bodyHash": "23f5eee43655a2d4b88e7c80b1b00a8caa70d76c82d03948fd394ecc3486cc1d",
+        "result": {
+          "id": "fx31_beta_1",
+          "sourceId": "fx31_beta_1",
+          "senseId": "fx31_beta_1",
+          "term": "lantern",
+          "lessonId": "fx31_beta",
+          "kind": "contextual-challenge",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "status": "PUBLISHED",
+          "approval": {
+            "uid": "fx31_1794065116529_teacher",
+            "version": 1,
+            "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+            "at": 1794065140533
+          }
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_decisions/82dd158cd4fcd2ba790608e5e7fd7a40177f4d96dfeb83fe316e637da65c26a9",
+      "data": {
+        "itemId": "fx31_beta_4",
+        "action": "publish",
+        "reviewerUid": "fx31_1794065116529_admin",
+        "at": 1794065141986,
+        "note": "Synthetic route coverage",
+        "fromVersion": 1,
+        "fromHash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "status": "PUBLISHED",
+        "bodyHash": "094b39504f9b82985948b674e0ac9eea12b37f43e3cec2055b2c9cb789d58e1b",
+        "result": {
+          "id": "fx31_beta_4",
+          "sourceId": "fx31_beta_4",
+          "senseId": "fx31_beta_4",
+          "term": "button",
+          "lessonId": "fx31_beta",
+          "kind": "micro-review",
+          "version": 1,
+          "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+          "status": "PUBLISHED",
+          "approval": {
+            "uid": "fx31_1794065116529_teacher",
+            "version": 1,
+            "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+            "at": 1794065141935
+          }
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_decisions/c285f74d20d36e4c3ffb5201a0d569b811c5e6cafa3eea757c6ecebde1958886",
+      "data": {
+        "itemId": "fx31_beta_4",
+        "action": "approve",
+        "reviewerUid": "fx31_1794065116529_teacher",
+        "at": 1794065141935,
+        "note": "Synthetic route coverage",
+        "fromVersion": 1,
+        "fromHash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "status": "APPROVED",
+        "bodyHash": "2201aacf83d48b01b91274540a944ce7372935de3ef928254b6d775d08657ffd",
+        "result": {
+          "id": "fx31_beta_4",
+          "sourceId": "fx31_beta_4",
+          "senseId": "fx31_beta_4",
+          "term": "button",
+          "lessonId": "fx31_beta",
+          "kind": "micro-review",
+          "version": 1,
+          "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+          "status": "APPROVED",
+          "approval": {
+            "uid": "fx31_1794065116529_teacher",
+            "version": 1,
+            "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+            "at": 1794065141935
+          }
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_decisions/d30a7fed803e8f502eb13910868079454c6fbadd654f7897b175523b6f44a484",
+      "data": {
+        "itemId": "fx31_beta_3",
+        "action": "approve",
+        "reviewerUid": "fx31_1794065116529_teacher",
+        "at": 1794065141466,
+        "note": "Synthetic route coverage",
+        "fromVersion": 1,
+        "fromHash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "status": "APPROVED",
+        "bodyHash": "9a8e32b51cd4f72dfef66feacb134c309e48f47e528e5593c7ded7f9bc0121df",
+        "result": {
+          "id": "fx31_beta_3",
+          "sourceId": "fx31_beta_3",
+          "senseId": "fx31_beta_3",
+          "term": "ribbon",
+          "lessonId": "fx31_beta",
+          "kind": "contextual-challenge",
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "status": "APPROVED",
+          "approval": {
+            "uid": "fx31_1794065116529_teacher",
+            "version": 1,
+            "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+            "at": 1794065141466
+          }
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_decisions/ff42c13e8b76c4426305935529b5d78a2a52af14a9ded57e60eeabf150172493",
+      "data": {
+        "itemId": "fx31_beta_2",
+        "action": "publish",
+        "reviewerUid": "fx31_1794065116529_admin",
+        "at": 1794065141023,
+        "note": "Synthetic route coverage",
+        "fromVersion": 1,
+        "fromHash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "status": "PUBLISHED",
+        "bodyHash": "ca6317b127b2a80b3cc3b2d2814318246fb8486852e235ab9a2959ef1f6ace87",
+        "result": {
+          "id": "fx31_beta_2",
+          "sourceId": "fx31_beta_2",
+          "senseId": "fx31_beta_2",
+          "term": "basket",
+          "lessonId": "fx31_beta",
+          "kind": "micro-review",
+          "version": 1,
+          "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+          "status": "PUBLISHED",
+          "approval": {
+            "uid": "fx31_1794065116529_teacher",
+            "version": 1,
+            "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+            "at": 1794065140981
+          }
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_enrollments/fx31_1794065116529_other",
+      "data": {
+        "active": true,
+        "lessons": [
+          "fx31_beta"
+        ],
+        "classId": "fx31_class_a"
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_items/fx31_beta_1",
+      "data": {
+        "id": "fx31_beta_1",
+        "sourceId": "fx31_beta_1",
+        "senseId": "fx31_beta_1",
+        "term": "lantern",
+        "lessonId": "fx31_beta",
+        "kind": "contextual-challenge",
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "status": "PUBLISHED",
+        "approval": {
+          "uid": "fx31_1794065116529_teacher",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "at": 1794065140533
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_items/fx31_beta_2",
+      "data": {
+        "id": "fx31_beta_2",
+        "sourceId": "fx31_beta_2",
+        "senseId": "fx31_beta_2",
+        "term": "basket",
+        "lessonId": "fx31_beta",
+        "kind": "micro-review",
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "status": "PUBLISHED",
+        "approval": {
+          "uid": "fx31_1794065116529_teacher",
+          "version": 1,
+          "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+          "at": 1794065140981
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_items/fx31_beta_3",
+      "data": {
+        "id": "fx31_beta_3",
+        "sourceId": "fx31_beta_3",
+        "senseId": "fx31_beta_3",
+        "term": "ribbon",
+        "lessonId": "fx31_beta",
+        "kind": "contextual-challenge",
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "status": "PUBLISHED",
+        "approval": {
+          "uid": "fx31_1794065116529_teacher",
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "at": 1794065141466
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_items/fx31_beta_4",
+      "data": {
+        "id": "fx31_beta_4",
+        "sourceId": "fx31_beta_4",
+        "senseId": "fx31_beta_4",
+        "term": "button",
+        "lessonId": "fx31_beta",
+        "kind": "micro-review",
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "status": "PUBLISHED",
+        "approval": {
+          "uid": "fx31_1794065116529_teacher",
+          "version": 1,
+          "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+          "at": 1794065141935
+        }
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_public/fx31_beta_1",
+      "data": {
+        "itemId": "fx31_beta_1",
+        "sourceId": "fx31_beta_1",
+        "senseId": "fx31_beta_1",
+        "lessonId": "fx31_beta",
+        "term": "lantern",
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "kind": "contextual-challenge"
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_public/fx31_beta_2",
+      "data": {
+        "itemId": "fx31_beta_2",
+        "sourceId": "fx31_beta_2",
+        "senseId": "fx31_beta_2",
+        "lessonId": "fx31_beta",
+        "term": "basket",
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "kind": "micro-review"
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_public/fx31_beta_3",
+      "data": {
+        "itemId": "fx31_beta_3",
+        "sourceId": "fx31_beta_3",
+        "senseId": "fx31_beta_3",
+        "lessonId": "fx31_beta",
+        "term": "ribbon",
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "kind": "contextual-challenge"
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_public/fx31_beta_4",
+      "data": {
+        "itemId": "fx31_beta_4",
+        "sourceId": "fx31_beta_4",
+        "senseId": "fx31_beta_4",
+        "lessonId": "fx31_beta",
+        "term": "button",
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "kind": "micro-review"
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_publications/fx31_beta_1__1",
+      "data": {
+        "itemId": "fx31_beta_1",
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "approval": {
+          "uid": "fx31_1794065116529_teacher",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "at": 1794065140533
+        },
+        "publishedBy": "fx31_1794065116529_admin",
+        "at": 1794065140576
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_publications/fx31_beta_2__1",
+      "data": {
+        "itemId": "fx31_beta_2",
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "approval": {
+          "uid": "fx31_1794065116529_teacher",
+          "version": 1,
+          "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+          "at": 1794065140981
+        },
+        "publishedBy": "fx31_1794065116529_admin",
+        "at": 1794065141022
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_publications/fx31_beta_3__1",
+      "data": {
+        "itemId": "fx31_beta_3",
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "approval": {
+          "uid": "fx31_1794065116529_teacher",
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "at": 1794065141466
+        },
+        "publishedBy": "fx31_1794065116529_admin",
+        "at": 1794065141522
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_publications/fx31_beta_4__1",
+      "data": {
+        "itemId": "fx31_beta_4",
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "approval": {
+          "uid": "fx31_1794065116529_teacher",
+          "version": 1,
+          "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+          "at": 1794065141935
+        },
+        "publishedBy": "fx31_1794065116529_admin",
+        "at": 1794065141986
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_staff/fx31_1794065116529_teacher",
+      "data": {
+        "active": true,
+        "lessons": [
+          "fx31_beta"
+        ],
+        "classes": [
+          "fx31_class_a"
+        ]
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/events/0e85a712b0d952edcf722a7ac8e12f18880553ee646302c6838d921f6778d53c",
+      "data": {
+        "phase": "context",
+        "taskId": "fx31_beta_3@1:context",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": false,
+        "assisted": false,
+        "revealed": false,
+        "answer": 0,
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_beta",
+        "senseId": "fx31_beta_3",
+        "form": null,
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "sessionId": "e95c6177-ec45-42b0-9028-46fe21b8c4a0",
+        "operationId": "8c2e17a2-c7b7-49ad-a494-181e1e411f60",
+        "revision": 1,
+        "at": 1794065141669
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/events/0f1e4d302e0be286e3877642574f271f99761876ba4c2b5bdebc45a4d5a14342",
+      "data": {
+        "phase": "retrieval",
+        "taskId": "fx31_beta_1@1:retrieval",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": true,
+        "assisted": false,
+        "revealed": false,
+        "answer": "lantern",
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_beta",
+        "senseId": "fx31_beta_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "sessionId": "aa3ea933-c00f-4e4a-b4f9-06fdb43a8991",
+        "operationId": "69a4634b-02a7-462f-b888-871dd9fa5485",
+        "revision": 3,
+        "at": 1794065140858
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/events/3e51f4696cbebf2692384631a70b2808596b5e7bb6fd2908baa12a4e3afbe9f4",
+      "data": {
+        "phase": "context",
+        "taskId": "fx31_beta_1@1:context",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": false,
+        "assisted": false,
+        "revealed": false,
+        "answer": 0,
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_beta",
+        "senseId": "fx31_beta_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "sessionId": "aa3ea933-c00f-4e4a-b4f9-06fdb43a8991",
+        "operationId": "a17c8494-35f7-4621-aaac-cf64cebe9688",
+        "revision": 1,
+        "at": 1794065140716
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/events/570437467a8c1d87eb6cc70eb577be36d1117d342ed0a028ee95fae744eb85cb",
+      "data": {
+        "phase": "retrieval",
+        "taskId": "fx31_beta_4@1:retrieval",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": true,
+        "assisted": false,
+        "revealed": false,
+        "answer": "button",
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_beta",
+        "senseId": "fx31_beta_4",
+        "form": null,
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "sessionId": "55ae8a2e-7794-4c23-ac4f-cbb03c11a040",
+        "operationId": "1f62cd85-2654-4594-b318-c19da3d6d4ef",
+        "revision": 3,
+        "at": 1794065142290
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/events/5e4b8f205c54525d69d643ac9fb184e8a8afb421a9d892543007c05599ead155",
+      "data": {
+        "phase": "retrieval",
+        "taskId": "fx31_beta_3@1:retrieval",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": true,
+        "assisted": false,
+        "revealed": false,
+        "answer": "ribbon",
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_beta",
+        "senseId": "fx31_beta_3",
+        "form": null,
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "sessionId": "e95c6177-ec45-42b0-9028-46fe21b8c4a0",
+        "operationId": "2da68691-d257-4658-97d2-214b31ad2f58",
+        "revision": 3,
+        "at": 1794065141831
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/events/6cae67af614bb950155875f84de62843d029382e8066d59af031db1f8fedc80b",
+      "data": {
+        "phase": "context",
+        "taskId": "fx31_beta_2@1:context",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": false,
+        "assisted": false,
+        "revealed": false,
+        "answer": 0,
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_beta",
+        "senseId": "fx31_beta_2",
+        "form": null,
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "sessionId": "7b1261d9-012d-41bb-bf29-592eb928bfcb",
+        "operationId": "38e69ecb-85cc-46ea-871c-2a3234869b02",
+        "revision": 1,
+        "at": 1794065141242
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/events/d762c2c95e6822b09710bf69edff4a59474352e7013f4adda153c2c980b839e4",
+      "data": {
+        "phase": "context",
+        "taskId": "fx31_beta_4@1:context",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": false,
+        "assisted": false,
+        "revealed": false,
+        "answer": 0,
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_beta",
+        "senseId": "fx31_beta_4",
+        "form": null,
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "sessionId": "55ae8a2e-7794-4c23-ac4f-cbb03c11a040",
+        "operationId": "857998dd-271b-4358-bc1e-7adfc37da518",
+        "revision": 1,
+        "at": 1794065142171
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/events/ffa91f158543c736b200792b04693422c1af111b64d452cdfcf3bf41c33ea8fb",
+      "data": {
+        "phase": "retrieval",
+        "taskId": "fx31_beta_2@1:retrieval",
+        "type": "answer",
+        "tries": 1,
+        "correct": true,
+        "independent": true,
+        "assisted": false,
+        "revealed": false,
+        "answer": "basket",
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_beta",
+        "senseId": "fx31_beta_2",
+        "form": null,
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "sessionId": "7b1261d9-012d-41bb-bf29-592eb928bfcb",
+        "operationId": "b9ec6674-4620-4f65-a179-e68d241586e1",
+        "revision": 3,
+        "at": 1794065141380
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/operations/0e85a712b0d952edcf722a7ac8e12f18880553ee646302c6838d921f6778d53c",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "ed9aa38fdcf9ddabcb7d048c6e916d33d6411f5ced26f4b4572371b49f914c0c",
+        "result": {
+          "id": "e95c6177-ec45-42b0-9028-46fe21b8c4a0",
+          "itemId": "fx31_beta_3",
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "revision": 1,
+          "phase": "pause",
+          "feedback": "",
+          "prompt": "Which date is later?",
+          "options": [
+            "2 June",
+            "6 June"
+          ]
+        },
+        "at": 1794065141669
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/operations/0f1e4d302e0be286e3877642574f271f99761876ba4c2b5bdebc45a4d5a14342",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "ac189ab27c1d14c1043efba61331455495c0b989c5324c638198ab8c4d69bd83",
+        "result": {
+          "id": "aa3ea933-c00f-4e4a-b4f9-06fdb43a8991",
+          "itemId": "fx31_beta_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 3,
+          "phase": "done",
+          "feedback": "",
+          "correct": true,
+          "independent": true,
+          "answer": "lantern",
+          "explanation": "This is a synthetic recall exercise."
+        },
+        "at": 1794065140858
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/operations/3a370e645381593fd9b4edc8dee015289109ef98ee089a4733a3a7d63aec4c86",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "3bfb2e067dd4cc1711be765d128a4f9e7acec3f1b6c355dc10c16c95ec12d332",
+        "result": {
+          "id": "e95c6177-ec45-42b0-9028-46fe21b8c4a0",
+          "itemId": "fx31_beta_3",
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "revision": 2,
+          "phase": "retrieval",
+          "feedback": "",
+          "prompt": "Recall the object labelled number 3 in the workshop."
+        },
+        "at": 1794065141726
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/operations/3e51f4696cbebf2692384631a70b2808596b5e7bb6fd2908baa12a4e3afbe9f4",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "eba56379adcbdb39d6afd6b103f025b130bf7218ce83339d6ba9a3689a58909c",
+        "result": {
+          "id": "aa3ea933-c00f-4e4a-b4f9-06fdb43a8991",
+          "itemId": "fx31_beta_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 1,
+          "phase": "pause",
+          "feedback": "",
+          "prompt": "Which date is later?",
+          "options": [
+            "2 June",
+            "6 June"
+          ]
+        },
+        "at": 1794065140716
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/operations/570437467a8c1d87eb6cc70eb577be36d1117d342ed0a028ee95fae744eb85cb",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "e9d71f4d857604b90f4531187aab6fa9425a4976d00850bc1e547c218e231086",
+        "result": {
+          "id": "55ae8a2e-7794-4c23-ac4f-cbb03c11a040",
+          "itemId": "fx31_beta_4",
+          "version": 1,
+          "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+          "revision": 3,
+          "phase": "done",
+          "feedback": "",
+          "correct": true,
+          "independent": true,
+          "answer": "button",
+          "explanation": "This is a synthetic recall exercise."
+        },
+        "at": 1794065142290
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/operations/5e4b8f205c54525d69d643ac9fb184e8a8afb421a9d892543007c05599ead155",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "e4d5a80166c49ad2cabdf9d8d1597efa17212e7c4b5cee3f6e1d8718e553e3aa",
+        "result": {
+          "id": "e95c6177-ec45-42b0-9028-46fe21b8c4a0",
+          "itemId": "fx31_beta_3",
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "revision": 3,
+          "phase": "done",
+          "feedback": "",
+          "correct": true,
+          "independent": true,
+          "answer": "ribbon",
+          "explanation": "This is a synthetic recall exercise."
+        },
+        "at": 1794065141831
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/operations/6cae67af614bb950155875f84de62843d029382e8066d59af031db1f8fedc80b",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "a32841b39e93ca7a5e17582e1c42035b347345b107f720c9343b8aa6fd490fb4",
+        "result": {
+          "id": "7b1261d9-012d-41bb-bf29-592eb928bfcb",
+          "itemId": "fx31_beta_2",
+          "version": 1,
+          "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+          "revision": 1,
+          "phase": "pause",
+          "feedback": "",
+          "prompt": "Which date is later?",
+          "options": [
+            "2 June",
+            "6 June"
+          ]
+        },
+        "at": 1794065141242
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/operations/7eedf469fe688f7c3db2e8aaf56ea2dbd57d70570932d7566615ccb8fba5beb4",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "b573fec27cb9b5f8c9684bc9f5fa568016dea4e12c04388680bf2094c79c6101",
+        "result": {
+          "id": "7b1261d9-012d-41bb-bf29-592eb928bfcb",
+          "itemId": "fx31_beta_2",
+          "version": 1,
+          "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+          "revision": 2,
+          "phase": "retrieval",
+          "feedback": "",
+          "prompt": "Recall the object labelled number 2 in the workshop."
+        },
+        "at": 1794065141317
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/operations/814ad14b81f73672e48a8e0036465fa27f50f098340a58fed0f595442a9281fe",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "5a50b7cd84330d867028c4d0fedf0e2bd9e7a42f6bd7106e5ecb5bde57445a7c",
+        "result": {
+          "id": "aa3ea933-c00f-4e4a-b4f9-06fdb43a8991",
+          "itemId": "fx31_beta_1",
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "revision": 2,
+          "phase": "retrieval",
+          "feedback": "",
+          "prompt": "Recall the object labelled number 1 in the workshop."
+        },
+        "at": 1794065140799
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/operations/c172c5cba714d4650580b6d4db2bfada4dcf6d0a24f5e570b2f8099f77d25bb0",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "2e1bf6345e76ca506bced67c53cbf215eb094b4d03996190058e2b7034fa9be5",
+        "result": {
+          "id": "55ae8a2e-7794-4c23-ac4f-cbb03c11a040",
+          "itemId": "fx31_beta_4",
+          "version": 1,
+          "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+          "revision": 2,
+          "phase": "retrieval",
+          "feedback": "",
+          "prompt": "Recall the object labelled number 4 in the workshop."
+        },
+        "at": 1794065142233
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/operations/d762c2c95e6822b09710bf69edff4a59474352e7013f4adda153c2c980b839e4",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "fb199ec88da7a4554ad126e0271af5b1d33594590f2559846bd39e3945ece227",
+        "result": {
+          "id": "55ae8a2e-7794-4c23-ac4f-cbb03c11a040",
+          "itemId": "fx31_beta_4",
+          "version": 1,
+          "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+          "revision": 1,
+          "phase": "pause",
+          "feedback": "",
+          "prompt": "Which date is later?",
+          "options": [
+            "2 June",
+            "6 June"
+          ]
+        },
+        "at": 1794065142171
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/operations/ffa91f158543c736b200792b04693422c1af111b64d452cdfcf3bf41c33ea8fb",
+      "data": {
+        "classId": "fx31_class_a",
+        "bodyHash": "70eaab72e382c3f3ce42f1836252bf054010963d5a479643dc5050266f97d1cf",
+        "result": {
+          "id": "7b1261d9-012d-41bb-bf29-592eb928bfcb",
+          "itemId": "fx31_beta_2",
+          "version": 1,
+          "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+          "revision": 3,
+          "phase": "done",
+          "feedback": "",
+          "correct": true,
+          "independent": true,
+          "answer": "basket",
+          "explanation": "This is a synthetic recall exercise."
+        },
+        "at": 1794065141380
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/progress/fx31_class_a__fx31_beta__fx31_beta_1__1",
+      "data": {
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_beta",
+        "senseId": "fx31_beta_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "lastSessionId": "aa3ea933-c00f-4e4a-b4f9-06fdb43a8991",
+        "lastTaskId": "fx31_beta_1@1:retrieval",
+        "lastEvent": {
+          "phase": "retrieval",
+          "taskId": "fx31_beta_1@1:retrieval",
+          "type": "answer",
+          "tries": 1,
+          "correct": true,
+          "independent": true,
+          "assisted": false,
+          "revealed": false,
+          "answer": "lantern",
+          "classId": "fx31_class_a",
+          "uid": "fx31_1794065116529_other",
+          "lessonId": "fx31_beta",
+          "senseId": "fx31_beta_1",
+          "form": null,
+          "version": 1,
+          "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+          "sessionId": "aa3ea933-c00f-4e4a-b4f9-06fdb43a8991",
+          "operationId": "69a4634b-02a7-462f-b888-871dd9fa5485",
+          "revision": 3,
+          "at": 1794065140858
+        },
+        "updatedAt": 1794065140858,
+        "eventCount": 2,
+        "independentEvidence": true,
+        "status": "ready_for_review"
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/progress/fx31_class_a__fx31_beta__fx31_beta_2__1",
+      "data": {
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_beta",
+        "senseId": "fx31_beta_2",
+        "form": null,
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "lastSessionId": "7b1261d9-012d-41bb-bf29-592eb928bfcb",
+        "lastTaskId": "fx31_beta_2@1:retrieval",
+        "lastEvent": {
+          "phase": "retrieval",
+          "taskId": "fx31_beta_2@1:retrieval",
+          "type": "answer",
+          "tries": 1,
+          "correct": true,
+          "independent": true,
+          "assisted": false,
+          "revealed": false,
+          "answer": "basket",
+          "classId": "fx31_class_a",
+          "uid": "fx31_1794065116529_other",
+          "lessonId": "fx31_beta",
+          "senseId": "fx31_beta_2",
+          "form": null,
+          "version": 1,
+          "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+          "sessionId": "7b1261d9-012d-41bb-bf29-592eb928bfcb",
+          "operationId": "b9ec6674-4620-4f65-a179-e68d241586e1",
+          "revision": 3,
+          "at": 1794065141380
+        },
+        "updatedAt": 1794065141380,
+        "eventCount": 2,
+        "independentEvidence": true,
+        "status": "ready_for_review"
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/progress/fx31_class_a__fx31_beta__fx31_beta_3__1",
+      "data": {
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_beta",
+        "senseId": "fx31_beta_3",
+        "form": null,
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "lastSessionId": "e95c6177-ec45-42b0-9028-46fe21b8c4a0",
+        "lastTaskId": "fx31_beta_3@1:retrieval",
+        "lastEvent": {
+          "phase": "retrieval",
+          "taskId": "fx31_beta_3@1:retrieval",
+          "type": "answer",
+          "tries": 1,
+          "correct": true,
+          "independent": true,
+          "assisted": false,
+          "revealed": false,
+          "answer": "ribbon",
+          "classId": "fx31_class_a",
+          "uid": "fx31_1794065116529_other",
+          "lessonId": "fx31_beta",
+          "senseId": "fx31_beta_3",
+          "form": null,
+          "version": 1,
+          "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+          "sessionId": "e95c6177-ec45-42b0-9028-46fe21b8c4a0",
+          "operationId": "2da68691-d257-4658-97d2-214b31ad2f58",
+          "revision": 3,
+          "at": 1794065141831
+        },
+        "updatedAt": 1794065141831,
+        "eventCount": 2,
+        "independentEvidence": true,
+        "status": "ready_for_review"
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/progress/fx31_class_a__fx31_beta__fx31_beta_4__1",
+      "data": {
+        "classId": "fx31_class_a",
+        "uid": "fx31_1794065116529_other",
+        "lessonId": "fx31_beta",
+        "senseId": "fx31_beta_4",
+        "form": null,
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "lastSessionId": "55ae8a2e-7794-4c23-ac4f-cbb03c11a040",
+        "lastTaskId": "fx31_beta_4@1:retrieval",
+        "lastEvent": {
+          "phase": "retrieval",
+          "taskId": "fx31_beta_4@1:retrieval",
+          "type": "answer",
+          "tries": 1,
+          "correct": true,
+          "independent": true,
+          "assisted": false,
+          "revealed": false,
+          "answer": "button",
+          "classId": "fx31_class_a",
+          "uid": "fx31_1794065116529_other",
+          "lessonId": "fx31_beta",
+          "senseId": "fx31_beta_4",
+          "form": null,
+          "version": 1,
+          "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+          "sessionId": "55ae8a2e-7794-4c23-ac4f-cbb03c11a040",
+          "operationId": "1f62cd85-2654-4594-b318-c19da3d6d4ef",
+          "revision": 3,
+          "at": 1794065142290
+        },
+        "updatedAt": 1794065142290,
+        "eventCount": 2,
+        "independentEvidence": true,
+        "status": "ready_for_review"
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/sessions/55ae8a2e-7794-4c23-ac4f-cbb03c11a040",
+      "data": {
+        "id": "55ae8a2e-7794-4c23-ac4f-cbb03c11a040",
+        "uid": "fx31_1794065116529_other",
+        "itemId": "fx31_beta_4",
+        "lessonId": "fx31_beta",
+        "senseId": "fx31_beta_4",
+        "form": null,
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "phase": "done",
+        "revision": 3,
+        "records": {
+          "context": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          },
+          "retrieval": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          }
+        },
+        "createdAt": 1794065142038,
+        "classId": "fx31_class_a",
+        "feedback": "",
+        "updatedAt": 1794065142275
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/sessions/7b1261d9-012d-41bb-bf29-592eb928bfcb",
+      "data": {
+        "id": "7b1261d9-012d-41bb-bf29-592eb928bfcb",
+        "uid": "fx31_1794065116529_other",
+        "itemId": "fx31_beta_2",
+        "lessonId": "fx31_beta",
+        "senseId": "fx31_beta_2",
+        "form": null,
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "phase": "done",
+        "revision": 3,
+        "records": {
+          "context": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          },
+          "retrieval": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          }
+        },
+        "createdAt": 1794065141097,
+        "classId": "fx31_class_a",
+        "feedback": "",
+        "updatedAt": 1794065141364
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/sessions/aa3ea933-c00f-4e4a-b4f9-06fdb43a8991",
+      "data": {
+        "id": "aa3ea933-c00f-4e4a-b4f9-06fdb43a8991",
+        "uid": "fx31_1794065116529_other",
+        "itemId": "fx31_beta_1",
+        "lessonId": "fx31_beta",
+        "senseId": "fx31_beta_1",
+        "form": null,
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "phase": "done",
+        "revision": 3,
+        "records": {
+          "context": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          },
+          "retrieval": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          }
+        },
+        "createdAt": 1794065140633,
+        "classId": "fx31_class_a",
+        "feedback": "",
+        "updatedAt": 1794065140843
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_students/fx31_1794065116529_other/sessions/e95c6177-ec45-42b0-9028-46fe21b8c4a0",
+      "data": {
+        "id": "e95c6177-ec45-42b0-9028-46fe21b8c4a0",
+        "uid": "fx31_1794065116529_other",
+        "itemId": "fx31_beta_3",
+        "lessonId": "fx31_beta",
+        "senseId": "fx31_beta_3",
+        "form": null,
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "phase": "done",
+        "revision": 3,
+        "records": {
+          "context": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          },
+          "retrieval": {
+            "tries": 1,
+            "hinted": false,
+            "revealed": false,
+            "correct": true
+          }
+        },
+        "createdAt": 1794065141555,
+        "classId": "fx31_class_a",
+        "feedback": "",
+        "updatedAt": 1794065141816
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_versions/fx31_beta_1__1",
+      "data": {
+        "id": "fx31_beta_1",
+        "sourceId": "fx31_beta_1",
+        "senseId": "fx31_beta_1",
+        "term": "lantern",
+        "lessonId": "fx31_beta",
+        "kind": "contextual-challenge",
+        "version": 1,
+        "hash": "eb92f41ed2de49295f7dc6a63524399a2bccea207e633320aa82737cd6b93eae",
+        "status": "DRAFT",
+        "approval": null,
+        "content": {
+          "sentence": "In this invented workshop, a lantern carries a blue tag.",
+          "investigate": {
+            "prompt": "Which tag belongs to the object?",
+            "options": [
+              "blue",
+              "red"
+            ],
+            "answer": 0,
+            "clue": "Read the tag colour.",
+            "why": "The invented record specifies blue."
+          },
+          "final": {
+            "prompt": "Recall the object labelled number 1 in the workshop.",
+            "answers": [
+              "lantern"
+            ],
+            "clue": "It begins with l.",
+            "why": "This is a synthetic recall exercise."
+          }
+        },
+        "createdBy": "offline-catalog-import",
+        "createdAt": 1794065117163
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_versions/fx31_beta_2__1",
+      "data": {
+        "id": "fx31_beta_2",
+        "sourceId": "fx31_beta_2",
+        "senseId": "fx31_beta_2",
+        "term": "basket",
+        "lessonId": "fx31_beta",
+        "kind": "micro-review",
+        "version": 1,
+        "hash": "75fc23e706db4960633d334372d8e549f6dd9bc8d1cfdaccf0232885acdd004a",
+        "status": "DRAFT",
+        "approval": null,
+        "content": {
+          "sentence": "In this invented workshop, a basket carries a blue tag.",
+          "investigate": {
+            "prompt": "Which tag belongs to the object?",
+            "options": [
+              "blue",
+              "red"
+            ],
+            "answer": 0,
+            "clue": "Read the tag colour.",
+            "why": "The invented record specifies blue."
+          },
+          "final": {
+            "prompt": "Recall the object labelled number 2 in the workshop.",
+            "answers": [
+              "basket"
+            ],
+            "clue": "It begins with b.",
+            "why": "This is a synthetic recall exercise."
+          }
+        },
+        "createdBy": "offline-catalog-import",
+        "createdAt": 1794065117163
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_versions/fx31_beta_3__1",
+      "data": {
+        "id": "fx31_beta_3",
+        "sourceId": "fx31_beta_3",
+        "senseId": "fx31_beta_3",
+        "term": "ribbon",
+        "lessonId": "fx31_beta",
+        "kind": "contextual-challenge",
+        "version": 1,
+        "hash": "eea5b3ba00e5f02f8a9e144b16e967f7514f170b5cac171c2052e48b09b45f36",
+        "status": "DRAFT",
+        "approval": null,
+        "content": {
+          "sentence": "In this invented workshop, a ribbon carries a blue tag.",
+          "investigate": {
+            "prompt": "Which tag belongs to the object?",
+            "options": [
+              "blue",
+              "red"
+            ],
+            "answer": 0,
+            "clue": "Read the tag colour.",
+            "why": "The invented record specifies blue."
+          },
+          "final": {
+            "prompt": "Recall the object labelled number 3 in the workshop.",
+            "answers": [
+              "ribbon"
+            ],
+            "clue": "It begins with r.",
+            "why": "This is a synthetic recall exercise."
+          }
+        },
+        "createdBy": "offline-catalog-import",
+        "createdAt": 1794065117163
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab28_versions/fx31_beta_4__1",
+      "data": {
+        "id": "fx31_beta_4",
+        "sourceId": "fx31_beta_4",
+        "senseId": "fx31_beta_4",
+        "term": "button",
+        "lessonId": "fx31_beta",
+        "kind": "micro-review",
+        "version": 1,
+        "hash": "89811e02bb0db48e61d828de46f73533c9aefbf33ac1492749ba33fc55006e59",
+        "status": "DRAFT",
+        "approval": null,
+        "content": {
+          "sentence": "In this invented workshop, a button carries a blue tag.",
+          "investigate": {
+            "prompt": "Which tag belongs to the object?",
+            "options": [
+              "blue",
+              "red"
+            ],
+            "answer": 0,
+            "clue": "Read the tag colour.",
+            "why": "The invented record specifies blue."
+          },
+          "final": {
+            "prompt": "Recall the object labelled number 4 in the workshop.",
+            "answers": [
+              "button"
+            ],
+            "clue": "It begins with b.",
+            "why": "This is a synthetic recall exercise."
+          }
+        },
+        "createdBy": "offline-catalog-import",
+        "createdAt": 1794065117163
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab30_accounts/fx31_1794065116529_admin",
+      "data": {
+        "uid": "fx31_1794065116529_admin",
+        "email": "fx31_1794065116529_admin@local.invalid",
+        "role": "admin",
+        "active": true,
+        "tester": false,
+        "classId": "fx31_class_a",
+        "revokedAfter": 0
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab30_accounts/fx31_1794065116529_other",
+      "data": {
+        "uid": "fx31_1794065116529_other",
+        "email": "fx31_1794065116529_other@local.invalid",
+        "role": "student",
+        "active": true,
+        "tester": true,
+        "classId": "fx31_class_a",
+        "revokedAfter": 0
+      }
+    },
+    {
+      "path": "lessons/fx31_beta/vocab30_accounts/fx31_1794065116529_teacher",
+      "data": {
+        "uid": "fx31_1794065116529_teacher",
+        "email": "fx31_1794065116529_teacher@local.invalid",
+        "role": "teacher",
+        "active": true,
+        "tester": false,
+        "classId": "fx31_class_a",
+        "revokedAfter": 0
+      }
+    }
+  ],
+  "checksum": "593a4f9ab6411ed5a83f0014517e0ba5ae109ffaf31147eb1bbfa2ba3848fd76"
+}

@@ -1,0 +1,3 @@
+# Keep raw QA evidence bytes, including original terminal whitespace.
+* -text
+*.txt -whitespace

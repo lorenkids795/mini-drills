@@ -1,0 +1,51 @@
+(node:26888) MetadataLookupWarning: received unexpected error = All promises were rejected code = UNKNOWN
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ 01 guards reject cloud config, scope traversal and outbound transports (4353.2128ms)
+✖ 02 health, static allowlist, host/origin and no client namespace selection (127.8601ms)
+✔ 03 eight fixtures / two lessons are disjoint from actual catalog; role gates (516.8748ms)
+[2026-11-07T15:22:44.378Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x6e95eaf0 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T15:22:44.462Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x6e95eaf2 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T15:22:44.538Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x6e95eaf4 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T15:22:44.618Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x6e95eaf6 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+✔ 04 direct Firestore reads/writes denied for all application roles (980.7177ms)
+✔ 05 fixture lifecycle, exact hash, separate publish, audit and idempotent review (1202.0128ms)
+✔ 06 two sessions conflict; duplicate retry yields one evidence event (3285.4433ms)
+✔ 07 independent recall, hints, retries and reveals preserve honest evidence (2316.1266ms)
+✔ 08 roster/claims/assignment/class changes and Auth revocation fail closed (1579.9413ms)
+✔ 09 revision invalidates publication; pinned sessions retain prior version (1129.1958ms)
+✔ 10 write lock rejects mutations while reads and health remain available (330.0193ms)
+✔ 11 browser review/publish and two isolated contexts save/reload fixture progress (4633.0991ms)
+✔ 12 recursive logical snapshot and atomic restore to a fresh locked run (3650.5066ms)
+✔ 13 the 102 retained catalog items and all prior content bytes are unchanged (114.0306ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 12
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 25240.9944
+
+✖ failing tests:
+
+test at staging\phase31\qa.cjs:40:1
+✖ 02 health, static allowlist, host/origin and no client namespace selection (127.8601ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  200 !== 403
+  
+      at TestContext.<anonymous> (C:\Users\hnnhiii\Documents\Codex\2026-10-28\github-plugin-github-openai-curated-remote\work\mini-drills\qa-artifacts\safe-integration\branch\staging\phase31\qa.cjs:44:9)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 403,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

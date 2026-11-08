@@ -1,0 +1,45 @@
+(node:36912) MetadataLookupWarning: received unexpected error = All promises were rejected code = UNKNOWN
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ 01 guards reject cloud config, scope traversal and outbound transports (889.4152ms)
+✔ 02 health, static allowlist, host/origin and no client namespace selection (70.1197ms)
+✔ 03 eight fixtures / two lessons are disjoint from actual catalog; role gates (438.1701ms)
+[2026-11-07T15:25:18.317Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x318cd832 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T15:25:18.379Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x318cd834 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T15:25:18.431Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x318cd836 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+[2026-11-07T15:25:18.470Z]  @firebase/firestore: Firestore (13.1.0): GrpcConnection RPC 'Write' stream 0x318cd838 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L7, false for 'update' @ L7
+✔ 04 direct Firestore reads/writes denied for all application roles (244.3723ms)
+✔ 05 fixture lifecycle, exact hash, separate publish, audit and idempotent review (718.6904ms)
+✔ 06 two sessions conflict; duplicate retry yields one evidence event (10161.6959ms)
+✔ 07 independent recall, hints, retries and reveals preserve honest evidence (2036.696ms)
+✔ 08 roster/claims/assignment/class changes and Auth revocation fail closed (1542.4201ms)
+✔ 09 revision invalidates publication; pinned sessions retain prior version (975.9425ms)
+✔ 10 write lock rejects mutations while reads and health remain available (221.9753ms)
+✔ 11 browser review/publish and two isolated contexts save/reload fixture progress (4544.2968ms)
+✔ 10b both lessons and all eight synthetic routes recover through fresh services (3652.4209ms)
+✔ 12 recursive logical snapshot and atomic restore to a fresh locked run (6141.8152ms)
+(node:14560) MetadataLookupWarning: received unexpected error = All promises were rejected code = UNKNOWN
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35848) MetadataLookupWarning: received unexpected error = All promises were rejected code = UNKNOWN
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37660) MetadataLookupWarning: received unexpected error = All promises were rejected code = UNKNOWN
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38196) MetadataLookupWarning: received unexpected error = All promises were rejected code = UNKNOWN
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36552) MetadataLookupWarning: received unexpected error = All promises were rejected code = UNKNOWN
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35804) MetadataLookupWarning: received unexpected error = All promises were rejected code = UNKNOWN
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ 13 the 102 retained catalog items and all prior content bytes are unchanged (84.3993ms)
+✔ 14 explicit operator CLI init/lock/snapshot/restore works without exposing credentials in evidence (5766.3659ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 38188.8246
