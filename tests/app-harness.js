@@ -37,7 +37,7 @@ function boot(opt) {
   const T = W.__T; T.setU(Object.assign({ cls: '' }, user));
   // press({act, ...}) = a click on a button with these data-*; btn.click() clicks it again (used by the app's confirm box, uiGate)
   const clickOn = (btn) => { const ev = { target: btn, preventDefault() {}, stopPropagation() {}, stopImmediatePropagation() { ev._stop = true; } }; (handlers.click || []).forEach((h) => { if (!ev._stop) h.f(ev); }); };
-  const press = (dataset) => { const btn = { tagName: 'BUTTON', id: '', dataset, disabled: false, attrs: {}, setAttribute(k, v) { this.attrs[k] = v; }, getAttribute(k) { return this.attrs[k] || null; }, closest(s) { return s === '[data-act]' ? this : null; } };
+  const press = (dataset) => { const btn = { tagName: 'BUTTON', id: '', dataset, disabled: false, attrs: {}, setAttribute(k, v) { this.attrs[k] = v; }, getAttribute(k) { return this.attrs[k] || null; }, closest(s) { return s === '[data-act]' || (dataset._in && String(s).split(',').some((x) => dataset._in.indexOf(x.trim()) >= 0)) ? this : null; } }; // dataset._in = selectors the button is inside (e.g. ['.adnav'])
     btn.click = () => clickOn(btn); clickOn(btn); return btn; };
   const fire = (ty) => (target) => { const ev = { target, preventDefault() {} }; (handlers[ty] || []).forEach((h) => h.f(ev)); };
   const flush = async () => { for (let k = 0; k < 3; k++) { await new Promise((r) => setTimeout(r, 5)); for (let i = 0; i < 12; i++) await new Promise((r) => setImmediate(r)); } };

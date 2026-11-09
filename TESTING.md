@@ -666,5 +666,13 @@ Deploy `index.html` (Diagnostics: "app 2026-11-04d").
 5. [ ] Admin › Tools › Library samples: 9 bài mẫu, cột "Used by assignments" / "Student attempts". Gửi lại danh sách muốn ẩn để duyệt (chưa ẩn gì).
 6. [ ] Library › Learning Materials › Writing: hai nhóm "Task 1", "Task 2" (sau khi tải lại trang).
 
+## Reading settings + Admin nav + Assistants (11/2026)
+Deploy `index.html` **và** `functions/` (Diagnostics: "app 2026-11-06b · server 2026-11-04c" trở lên).
+1. [ ] Học sinh / tester mở bài Reading › bánh răng: "Reading settings" chỉ có Text size (A− · tên · A+), Highlighting, Remove all my highlights; **không** có Your level / Easy / Medium / Hard. Giáo viên / admin: thêm Version.
+2. [ ] Double-click hoặc bôi một từ (vd. "dreadful") trong bài đọc: chỉ tô màu, không mở hộp từ điển; bấm "Look up" trên thanh nhỏ mới mở. Điện thoại: nhấn giữ chọn chữ → thanh Highlight + Look up.
+3. [ ] Deep reading › Matching information: cuộn khung Questions tới Q14, "Choose a name" → chọn → khung vẫn ở Q14 (bài đọc cũng không nhảy). Đổi đáp án lần nữa: vẫn vậy. Bấm số 3 trên thanh dưới: chỉ lúc đó mới cuộn tới Q3.
+4. [ ] Admin: một hàng 4 nút People / Classes & data / Gamification / Tools; bấm mở menu, chọn Assistants → nút People ghi "People · Assistants"; tải lại trang vẫn ở Assistants. Esc, bấm ra ngoài đóng menu; điện thoại 2 × 2.
+5. [ ] Admin › Assistants › Add: nếu vẫn báo "does not know this action", câu báo ghi "server …" = số phiên bản server: nhỏ hơn 2026-10-30b ⇒ `functions/` chưa được deploy (xem Cloudflare › Deployments › Functions). Thêm được thì đăng nhập bằng tài khoản đó: vào trang Homework, không phải Home học sinh; chỉ thấy lớp được giao.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

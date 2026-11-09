@@ -129,8 +129,8 @@ const kicks = (B) => B.W.calls.filter((c) => /\/api\/admin\/kick$/.test(c.url));
   });
   await failCase('500 from the server: error shown in the box, row kept, Try again works', { status: 500, body: { error: 'Firestore write failed.' } }, /Firestore write failed/);
   await failCase('403: error shown, row kept', { status: 403, body: { error: 'The admin account cannot be kicked.' } }, /cannot be kicked/);
-  await failCase('404 from an old server (no route): says to deploy functions/', { status: 404, body: { error: 'Not found.' } }, /Deploy the latest version/);
-  await failCase('HTML instead of JSON (old deploy): says to deploy', { status: 200, body: 'html' }, /Deploy the latest version/);
+  await failCase('404 from an old server (no route): says to deploy functions/', { status: 404, body: { error: 'Not found.' } }, /functions\/ folder of this version was not deployed\. Deploy it/);
+  await failCase('HTML instead of JSON (old deploy): says to deploy', { status: 200, body: 'html' }, /functions\/ folder of this version was not deployed\. Deploy it/);
   await failCase('no connection: says so', 'offline', /No connection/);
   await failCase('401 admin key expired: asks for the admin password again', { status: 401, body: { error: 'Enter your admin password to continue.', needUnlock: true } }, { lock: true });
   await t('an error inside a button handler is shown, never silent', async () => {

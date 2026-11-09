@@ -5,7 +5,7 @@ const assert = require('assert'), fs = require('fs'), path = require('path');
 const { boot, ROOT } = require('./app-harness.js');
 let pass = 0, fail = 0; const out = [];
 async function t(name, fn) { try { await fn(); pass++; out.push('PASS ' + name); } catch (e) { fail++; out.push('FAIL ' + name + ' -> ' + e.message); } }
-const HOOKS = 'parseReading:parseReading,EXAMPLE_R:EXAMPLE_R,renderRLesson:renderRLesson,rmDraw:rmDraw,get RM(){return RM},rlPick:rlPick,rmExIdx:rmExIdx,rmPsgExHTML:rmPsgExHTML,rmToolsHTML:rmToolsHTML,' +
+const HOOKS = 'parseReading:parseReading,EXAMPLE_R:EXAMPLE_R,renderRLesson:renderRLesson,rmDraw:rmDraw,get RM(){return RM},rlPick:rlPick,rmExIdx:rmExIdx,rmPsgExHTML:rmPsgExHTML,rmToolsHTML:rmToolsHTML,rmHeadHTML:rmHeadHTML,' +
   'setRoster:function(r){rosterDocs=r},setStuLevel:setStuLevel,allRoster:allRoster,get RD(){return RD},rdLevels:rdLevels,rdLvHTML:rdLvHTML,setTLV:function(v){RM_TLV=v},rebuildCustom:rebuildCustom,setCustom:function(d){customDocs=d},get customMap(){return customMap}';
 const SRV = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8');
 const clone = (o) => JSON.parse(JSON.stringify(o));
@@ -67,11 +67,12 @@ const base = (B) => JSON.parse(B.T.EXAMPLE_R);
     const B = boot({ hooks: HOOKS, user: STU() }); B.T.setRoster([{ email: 's@x.com', name: 'S', cls: 'A', role: 'student', level: 'advanced' }]);
     const ex = lvEx(B); delete ex.rlv.hard; const p = B.T.rlPick(ex); assert.strictEqual(p.lv, 'medium'); assert.strictEqual(p.D, ex.rl);
   });
-  await t('teacher switches versions with Easy / Medium / Hard; student only sees a level pill', () => {
+  await t('teacher switches versions with Easy / Medium / Hard; student sees no level (still gets their version)', () => {
     const B = boot({ hooks: HOOKS }), ex = lvEx(B); B.T.renderRLesson(ex, '', '', null); assert.ok(!/data-act="rm-lv"/.test(B.T.rmToolsHTML()), 'inside the settings panel'); B.T.RM.fsOpen = true; let h = B.T.rmToolsHTML();
     assert.ok(/data-act="rm-lv" data-v="easy"/.test(h) && /data-act="rm-lv" data-v="hard"/.test(h)); B.T.setTLV('hard'); assert.strictEqual(B.T.rlPick(ex).D.title, 'HARD');
     const S = boot({ hooks: HOOKS, user: STU() }); S.T.setRoster([{ email: 's@x.com', name: 'S', cls: 'A', role: 'student', level: 'beginner' }]); S.T.renderRLesson(lvEx(S), '', '', null);
-    S.T.RM.fsOpen = true; h = S.T.rmToolsHTML(); assert.ok(!/data-act="rm-lv"/.test(h) && /class="pill rmlvp"[^>]*>Easy</.test(h));
+    S.T.RM.fsOpen = true; h = S.T.rmToolsHTML(); assert.ok(!/data-act="rm-lv"/.test(h) && !/rmlvp|Your level|<h4>Version<|>Easy<|>Hard<|reading level/i.test(h + S.T.rmHeadHTML()), 'learners see no level at all');
+    assert.strictEqual(S.T.rlPick(lvEx(S)).D.title, 'EASY', 'but still get the version of their level');
   });
   await t('the finished attempt records the level that was played', () => { const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'); assert.ok(/readSec:RM\.t,level:RM\.lv,output:/.test(src)); });
   await t('teacher sets a student level in Class settings (saved on the roster row; student cannot)', () => {

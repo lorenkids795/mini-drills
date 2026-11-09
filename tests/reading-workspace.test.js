@@ -26,7 +26,7 @@ t('layout: full-width workspace; passage 60% / questions 40% to start, divider 3
   assert.ok(/class="pane single rm rmwide"/.test(h) && /--rmp:60%/.test(h) && /aria-valuemin="30" aria-valuemax="75" aria-valuenow="60"/.test(h));
   assert.ok(!/<div id="rmBody"><div class="lsdemo"/.test(h), 'no demo strip in the lesson body');
   B.T.RM.fsOpen = true; const s = B.T.rmToolsHTML();
-  assert.ok(/aria-label="Text highlighting"/.test(s) && /data-v="off"/.test(s) && /data-v="quick" aria-checked|aria-checked="true" data-act="rm-hlm" data-v="quick"/.test(s) && /data-v="choose"/.test(s) && /id="dmBar"/.test(s));
+  assert.ok(/role="radiogroup" aria-labelledby="rmHlH"/.test(s) && /<h3 id="rmSetH">Reading settings<\/h3>/.test(s) && /data-v="off"/.test(s) && /data-v="quick" aria-checked|aria-checked="true" aria-pressed="true" data-act="rm-hlm" data-v="quick"/.test(s) && /data-v="choose"/.test(s) && /id="dmBar"/.test(s));
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   assert.ok(/\.pane\.single\.rm\{max-width:none;width:100%/.test(html) && /\.rm \.rmp\{max-width:72ch\}/.test(html));
   ['--mk-b:#bfdbfe', '--mk-b:#1f3d73'].forEach((c) => assert.ok(html.includes(c), c));
@@ -128,6 +128,43 @@ t('Admin › Reading check: scan reads saved lessons and changes nothing; cleari
   const d = B.T.customDocs[0]; assert.strictEqual(d.rlesson.pairs[0].why, ''); assert.strictEqual(d.rlevels.easy.pairs[0].why, FINE, 'only the chosen version');
   assert.strictEqual(d.rlesson.pairs[0].par, rl.pairs[0].par, 'other fields unchanged');
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'); assert.ok(/localStorage\.setItem\('md-rdfix:'/.test(html), 'backup before the change');
+});
+
+t('settings (11/2026): learners (student, tester) see no level; staff keep Version; text size is a stepper; one hint for the mode', () => {
+  const S = lesson({ name: 'Minh', email: 'stu@x.com', role: 'student' }); S.B.T.RM.fsOpen = true; const h = S.B.T.rmToolsHTML();
+  assert.ok(!/Your level|<h4>Version<|rmlvp|data-act="rm-lv"/.test(h), 'no level for learners');
+  assert.ok(/<h3 id="rmSetH">Reading settings<\/h3>/.test(h) && /aria-label="Close settings"/.test(h) && /aria-label="Smaller text"/.test(h) && /aria-label="Larger text"/.test(h));
+  assert.strictEqual((h.match(/class="muted rmhlhelp"/g) || []).length, 1);
+  assert.ok(/data-act="rm-hlclr">Remove all my highlights</.test(h) && !/Show the highlighting tip|id="dmBar"/.test(h), 'learner: no staff tools');
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  assert.ok(/if\(a==='rm-lv'\)\{if\(RM\.student\)return true;/.test(html) && /function rlPick\(ex\)\{var want=U&&U\.role==='student'\?\(SLV\[stuLevel\(U\.email\)\]/.test(html), 'a learner cannot switch versions (the level comes from the roster row)');
+});
+t('selecting text never opens the dictionary inside Reading; "Look up" is a separate button', () => {
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  assert.ok(/function vocabTarget\(el\)\{return [^}]*\.vpop,\.abar,\.rm'\)\}/.test(html), 'the global double-click / long-press lookup skips .rm');
+  assert.ok(/data-act="rm-look" data-w="/.test(html) && /if\(a==='rm-look'\)\{[\s\S]{0,200}openVocab\(lw2\)/.test(html));
+  assert.ok(!/rmHlAfter[\s\S]{0,400}openVocab/.test(html), 'highlighting itself never calls the dictionary');
+});
+t('choosing an answer from a list keeps the Questions and Passage panes where they were (no jump to Q1)', () => {
+  const { B } = lesson(); const panes = {};
+  const mk = (q) => (panes[q] = { scrollTop: 0 });
+  const qs0 = B.W.document.querySelector; B.W.document.querySelector = (q) => (q === '.rm .rmdeep>.rmqs' || q === '.rm .rmdeep>.rmpsg' ? panes[q] || mk(q) : qs0(q));
+  panes['.rm .rmdeep>.rmqs'] = { scrollTop: 900 }; panes['.rm .rmdeep>.rmpsg'] = { scrollTop: 250 };
+  const D = B.T.RM.D; assert.ok(D.deep && D.deep.info, 'example has Matching information');
+  B.press({ act: 'rm-mi', i: '0' });
+  // the redraw makes new pane elements that start at the top; the old code restored only the window
+  const old = B.T.rmDraw; B.T.RM.D = D;
+  B.W.document.querySelector = (q) => (q === '.rm .rmdeep>.rmqs' || q === '.rm .rmdeep>.rmpsg' ? panes[q] : qs0(q));
+  const before = { q: panes['.rm .rmdeep>.rmqs'].scrollTop, p: panes['.rm .rmdeep>.rmpsg'].scrollTop };
+  // like a browser: redrawing the lesson (rmDraw sets innerHTML) makes new panes that start at the top
+  const host = B.el('libBody'); let ih = host.innerHTML;
+  Object.defineProperty(host, 'innerHTML', { get: () => ih, set: (v) => { ih = v; Object.keys(panes).forEach((k) => { panes[k] = { scrollTop: 0 }; }); }, configurable: true });
+  B.press({ act: 'rm-spick', o: '0' });
+  assert.ok(B.T.RM.mi[0] != null, 'answer saved');
+  assert.ok(/class="pane single rm/.test(B.el('libBody').innerHTML), 'the lesson was redrawn'); assert.strictEqual(panes['.rm .rmdeep>.rmqs'].scrollTop, before.q); assert.strictEqual(panes['.rm .rmdeep>.rmpsg'].scrollTop, before.p);
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  assert.ok(/function rmKeep\(fn\)\{var y=window\.pageYOffset\|\|0,sc=RM_PANES\.map/.test(html) && /RM_PANES=\['\.rm \.rmdeep>\.rmpsg','\.rm \.rmdeep>\.rmqs'\]/.test(html));
+  void old;
 });
 
 out.forEach((l) => console.log(l)); console.log('---- ' + pass + '/' + (pass + fail) + ' passed'); if (fail) process.exitCode = 1;

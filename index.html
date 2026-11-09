@@ -699,7 +699,6 @@ button.lsstep{background:none;font:inherit;font-size:var(--fs-sm);cursor:pointer
 .mtile .mst{grid-column:1/-1;display:flex;align-items:center;gap:8px}
 .modal{position:fixed;inset:0;background:rgba(10,15,30,.55);display:grid;place-items:center;padding:16px;z-index:50;overflow:auto}
 .hwleft{flex:1 1 220px;align-self:center;font-size:var(--fs-body)}.hwact .btn.more.sec{flex:0 1 auto;background:transparent;color:var(--ink);border:1px solid var(--line-2)}
-.adnav{display:flex;flex-wrap:wrap;gap:10px 22px;margin:0 0 16px}.adng{display:flex;flex-direction:column;gap:4px;min-width:0}.adngl{font-size:var(--fs-xs);font-weight:700;color:var(--muted)}.adng .subtabs{margin:0}
 .flame{display:inline-grid;place-items:center;color:var(--muted)}.flame.on{color:var(--warn)}
 .csnav{display:flex;flex-wrap:wrap;gap:4px 16px;margin:4px 0 2px}.csnav .linkish{min-height:40px}
 .csdanger>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;min-height:44px}.csdanger>summary::-webkit-details-marker{display:none}.csdanger>summary h3{margin:0;color:var(--bad)}.csdanger>summary::after{content:'›';color:var(--muted);transition:transform .15s}.csdanger[open]>summary::after{transform:rotate(90deg)}
@@ -1390,6 +1389,40 @@ mark.wch.act,mark.wch:focus-visible{outline:2px solid var(--accent);outline-offs
 .hwst{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;font-size:var(--fs-sm);color:var(--muted)}.hwst.ok{color:var(--good)}.hwst.no{color:var(--bad)}.hwst.warn{color:var(--warn);font-weight:700}
 .mk.wn{display:inline-flex;align-items:center;justify-content:center;width:1.2em;height:1.2em;border:1.5px solid currentColor;border-radius:50%;font-size:.8em;font-weight:800}
 .hwinc{margin:10px 0 0;padding:10px 12px;border:1px solid var(--warn);border-radius:var(--r-sm);font-size:var(--fs-body);line-height:1.6}
+/* Reading settings (11/2026): one calm panel; phones = sheet at the bottom with its own scroll */
+.rmsetp{width:300px;max-width:calc(100vw - 24px);max-height:min(70vh,560px);overflow-y:auto;padding:4px 16px 10px;z-index:60}
+.rmseth{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0 4px}
+.rmseth h3{margin:0;font-size:var(--fs-md)}
+.rmfsm .rmsetx{width:36px;height:36px;min-height:36px;padding:0;display:inline-flex;align-items:center;justify-content:center;text-align:center;color:var(--muted)}
+.rmfst{display:flex;align-items:center;gap:8px}
+.rmfsm .rmfsx{flex:none;width:52px;min-height:40px;text-align:center;border:1px solid var(--line-2);border-radius:var(--r-sm);font-weight:700}
+.rmfsm .rmfsx:disabled{opacity:var(--dis-op);cursor:default}
+.rmfst .rmfsn{flex:1;text-align:center;font-size:var(--fs-sm);font-weight:700}
+.rmfsm .rmhlm{display:grid;grid-template-columns:1fr 1.4fr 1.4fr;gap:0;border:1px solid var(--line-2);border-radius:var(--r-sm);overflow:hidden}
+.rmfsm .rmhlm button{border:0;border-radius:0;min-height:40px;text-align:center;padding:4px 6px;font-size:var(--fs-sm);background:var(--surface)}
+.rmfsm .rmhlm button+button{border-left:1px solid var(--line-2)}
+.rmfsm .rmhlm button[aria-checked="true"]{background:var(--accent);color:var(--accent-ink);font-weight:700}
+.rmhlhelp{margin:2px 0 0;font-size:var(--fs-sm);line-height:1.5}
+.rmfsm .rmhlclr{color:var(--bad);align-self:flex-start;padding:6px 0;min-height:0}
+.rmfsm .linkish{text-align:left;padding:6px 0;min-height:0}
+.rmlook{margin-left:4px}
+@media (max-width:640px){.rmsetp{position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;max-width:none;max-height:75dvh;border-radius:var(--r-lg) var(--r-lg) 0 0;padding-bottom:calc(12px + env(safe-area-inset-bottom))}}
+/* Admin navigation (11/2026): one row of four group menus */
+.adnav{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px;padding:0 0 10px;border-bottom:1px solid var(--line)}
+.adng{position:relative}
+.adngb{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:6px 12px;border:1px solid transparent;border-radius:var(--r-sm);background:transparent;color:var(--ink);font:inherit;font-size:var(--fs-body);font-weight:600;cursor:pointer}
+.adngb:hover{background:var(--line)}.adngb:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.adng.on .adngb{background:var(--hl-soft);border-color:var(--accent);color:var(--ink)}
+.adngc{font-weight:500;color:var(--muted)}.adng.on .adngc{color:var(--ink)}
+.adngb[aria-expanded="true"] .adngv{transform:rotate(180deg)}
+.adngm{position:absolute;left:0;top:calc(100% + 4px);z-index:40;min-width:200px;margin:0;padding:6px;list-style:none;background:var(--elev);border:1px solid var(--line-strong);border-radius:var(--r-md);box-shadow:var(--elev-shadow)}
+.adngm[hidden]{display:none}
+.adngm button{display:flex;align-items:center;gap:8px;width:100%;min-height:40px;padding:8px 10px;border:0;border-radius:var(--r-sm);background:none;color:var(--ink);font:inherit;font-size:var(--fs-body);text-align:left;cursor:pointer}
+.adngm button:hover,.adngm button:focus-visible{background:var(--line);outline:none}
+.adngm button.on{font-weight:700;color:var(--accent)}
+.adngk{width:1em}
+@media (pointer:coarse){.adngb,.adngm button{min-height:44px}}
+@media (max-width:640px){.adnav{display:grid;grid-template-columns:1fr 1fr}.adngb{width:100%;justify-content:space-between}.adngc{display:none}.adng:nth-child(2n) .adngm{left:auto;right:0}.adngm{min-width:min(220px,calc(100vw - 40px))}}
 .rmslot{width:100%;margin-top:12px;text-align:left;border:1.5px dashed var(--accent);background:var(--surface);border-radius:var(--r-sm);padding:.7rem .85rem;min-height:48px;font:inherit;font-size:var(--fs-md);color:var(--accent);font-weight:600;display:flex;gap:8px;align-items:center}
 .rmslot.has{border-style:solid;color:var(--ink);font-weight:500}
 .rmslot .arr{margin-left:auto;color:var(--muted);flex:none}
@@ -2279,7 +2312,11 @@ var RP=0;
 /* ---------- Recent results by skill (4 cells: L, R, W, S) ----------
    Pass rule: Listening/Reading >= RS_PASS_PCT % correct; Writing/Speaking band >= RS_PASS_BAND (scaled to /9).
    Ungraded Writing/Speaking submissions count as exercises but are neither passed nor averaged. */
-var RS_PASS_PCT=70,RS_PASS_BAND=6,RS_BARS=12;
+/* PASS = at least PASS_PCT % correct, the same for everyone; nobody can change it in the app (students, teachers, admin).
+   Blank answers count as wrong (the total is every question), so skipping questions cannot help a pass. */
+var PASS_PCT=70;
+function passPct(score,total){score=+score||0;total=+total||0;return total>0&&score*100>=PASS_PCT*total}
+var RS_PASS_PCT=PASS_PCT,RS_PASS_BAND=6,RS_BARS=12;
 var SKORDER=['listening','reading','writing','speaking'];
 var fmtDM=function(ts){var d=new Date(ts);return d.getDate()+' '+MONTHS[d.getMonth()]};
 function rsInfo(a){
@@ -3459,6 +3496,12 @@ function renderPlayer(){
   $('#libBody').innerHTML='<div class="ptabs" role="tablist"><button role="tab" data-act="pane" data-pane="m" aria-selected="'+(PANE==='m')+'">Passage</button><button role="tab" data-act="pane" data-pane="q" aria-selected="'+(PANE==='q')+'">Questions</button></div>'+
   '<div class="player" id="player" data-pane="'+PANE+'"><div class="pane mat">'+passageHTML(ex.material)+'</div><div class="pane qpane">'+head+ban+demoBarHTML('qs')+qHTML(ex)+tail+'</div></div>';
 }
+// questions of the open auto-graded exercise that have no answer yet (same fields gradeNow reads)
+function blankCount(){var ex=NAV.ex&&exOf(NAV.ex),n=0;if(!ex||!ex.qs)return {n:0,t:0};
+  ex.qs.forEach(function(q){var el;if(q.type==='gap'){el=$('[data-id="'+q.id+'"]');if(!el||!String(el.value||'').trim())n++}
+    else if(q.type==='match'){el=$('[data-id="'+q.id+'"]');if(!el||el.value===''||el.value==='-1')n++}
+    else if(!$('input[name="'+q.id+'"]:checked'))n++});
+  return {n:n,t:ex.qs.length}}
 function gradeNow(){
   if(done)return;
   var ex=exOf(NAV.ex),score=0;
@@ -4087,7 +4130,7 @@ function renderDash(){
     h+=dCard('By question type','Share of wrong answers. Darker means more mistakes.',tagList.length?'<div class="dg4">'+tagList.slice(0,12).map(function(x){var r=Math.round(x.r*100);return '<div class="dht" style="--x:'+Math.min(60,r*2)+'%"><b>'+r+'%</b><span>'+esc(x.t)+'</span></div>'}).join('')+'</div>':'<p class="saved">Not enough data yet (each type needs at least 4 answers).</p>');
     h+=dCard('Hardest exercises','Share of answers that were wrong.',hardEx.length?hardEx.slice(0,6).map(function(x){return dBar(x.label,x.wrong,'var(--bad)')}).join(''):'<p class="saved">Not enough data yet.</p>');
   }
-  $('#v-dash').innerHTML=h;
+  $('#v-dash').innerHTML=attCapHTML()+h;
 }
 
 /* ---------- Assignments (teacher) ---------- */
@@ -4186,8 +4229,11 @@ function hwCompCell(r){var t=r.done+'/'+r.n;
   if(r.fin)return '<span class="hwst ok">'+MKI['1']+' Complete ('+t+')</span>';
   if(r.sub)return '<span class="hwst warn"><span class="mk wn" aria-hidden="true">!</span> Incomplete ('+t+')</span>';
   return '<span class="hwst'+(r.over?' no':'')+'">'+(r.over?MKI['0']:MKI['-1'])+' '+(r.done?'In progress':r.over?'Not done':'Not started')+' ('+t+')</span>'}
+var ATT_CAP=500;
+function attCapHTML(){return !DEMO&&U&&U.role==='teacher'&&attemptDocs.length>=ATT_CAP?'<p class="banner" role="note">Showing the newest '+ATT_CAP+' attempts only. Older work may show as not done here. It is not lost.</p>':''}
 function hwMatrixHTML(a,only){
-  a=normAsg(a);
+  a=normAsg(a);var cap=attCapHTML();if(cap)return cap+hwMatrixBody(a,only);return hwMatrixBody(a,only)}
+function hwMatrixBody(a,only){
   if(!a.ex.filter(exOf).length&&a.ext.length===1)return extSubsHTML(a);
   var d=hwRows(a,only);if(!d.rows.length)return '<p class="saved">No students in this class.</p>';
   return '<div class="scroll"><table class="hmx"><thead><tr><th>Student</th>'+
@@ -4675,7 +4721,7 @@ function renderMark(){
   var a=MK.open?L.filter(function(x){return x.id===MK.sel})[0]:null;
   if(MK.open&&!a&&!subsAll().some(function(x){return x.id===MK.sel})){MK.open=false;MK.sel=null;toast('That submission is no longer available: the student was removed.')}
   if(a)h+=modalHTML(a);
-  $('#v-mark').innerHTML=h;
+  $('#v-mark').innerHTML=attCapHTML()+h;
   if(a)setStk();
 }
 function setStk(){var b=$('#stkBox');if(b)b.innerHTML=safeImg(MK.sticker)?'<img src="'+esc(safeImg(MK.sticker))+'" alt="Sticker">':'<span>Click, then paste an image (Ctrl+V)</span>'}
@@ -5703,7 +5749,7 @@ document.addEventListener('click',function(e){
   if(a==='aplay'){if(au){if(au.paused)au.play().catch(function(){});else au.pause()}return}
   if(a==='aback'){if(au)au.currentTime=Math.max(0,au.currentTime-5);return}
   if(a==='afwd'){if(au)au.currentTime=Math.min(isFinite(au.duration)?au.duration:au.currentTime+5,au.currentTime+5);return}
-  if(a==='submit')return gradeNow();
+  if(a==='submit'){var bl=blankCount();if(bl.n&&uiGate(t,{title:'Submit with '+bl.n+' blank answer'+(bl.n>1?'s':'')+'?',text:'You answered '+(bl.t-bl.n)+' of '+bl.t+' questions. Blank answers are marked wrong.',ok:'Submit anyway',cancel:'Keep working'}))return true;return gradeNow()}
   if(a==='sub-w')return submitWriting();
   if(a==='ai-retry'){aiRun();return}
   if(a==='w-new'){var wsub=mySubs(t.dataset.ex).filter(function(x){return x.id===t.dataset.id})[0]||mySub(t.dataset.ex),wk='md-draft-'+U.email+'-'+t.dataset.ex;WNEW=t.dataset.ex;if(wsub&&(!lsGet(wk)||wsub!==mySub(t.dataset.ex)))lsSet(wk,wsub.text||''); /* from an older version: start from that text */renderPlayer();window.scrollTo&&window.scrollTo(0,0);return}
@@ -5973,7 +6019,7 @@ function wordAtPoint(x,y){
   while(a>0&&/[A-Za-z'’-]/.test(t[a-1]))a--;while(b<t.length&&/[A-Za-z'’-]/.test(t[b]))b++;
   return t.slice(a,b);
 }
-function vocabTarget(el){return el&&el.closest&&el.closest('#libBody')&&!el.closest('input,textarea,select,button,.vpop,.abar')}
+function vocabTarget(el){return el&&el.closest&&el.closest('#libBody')&&!el.closest('input,textarea,select,button,.vpop,.abar,.rm')} // Reading: selecting is for highlighting; look up with the bar's "Look up" button
 var LPT=null,LPXY=null;
 document.addEventListener('dblclick',function(e){
   if(!U||!vocabTarget(e.target))return;
@@ -6444,7 +6490,7 @@ function onAttemptSaved(ex,score,total,firstTry){
   if(!U||U.role!=='student')return;
   // Every attempt earns XP (xpForExercise). A Writing/Speaking submission (also a new version) counts as a pass.
   // Under 70% gives its XP once per exercise per week (p.wk.low), so pressing Try again cannot farm XP.
-  var p=myProf(),sub=!graded(ex),passed=sub||(total>0&&score/total>=.7),g=xpGroup(ex),n=0;
+  var p=myProf(),sub=!graded(ex),passed=sub||passPct(score,total),g=xpGroup(ex),n=0;
   p.exdone[ex.id]=1;
   if(passed)n=xpForExercise(g,true);
   else{var lw=thisWk();if(!p.wk||p.wk.w!==lw)p.wk={w:lw};p.wk.low=p.wk.low||[];if(p.wk.low.indexOf(ex.id)<0){p.wk.low.push(ex.id);n=xpForExercise(g,false)}}
@@ -6706,6 +6752,8 @@ function matList(){var d=cfgGet('materials');if(d&&d.list&&d.list.length)return 
 function imgMap(){var d=cfgGet('images');return Object.assign({},(d&&d.map)||{},localImg)}
 function iconOf(kind){var m=safeImg(imgMap()[kind]);return m?'<img src="'+esc(m)+'" alt="">':(PZ[kind]?PZ[kind].i:'🎁')}
 var allCodes=function(){return sampleCodes.concat(codeDocs,localCodes)};
+// the voucher code of an Inventory item: from codes (only my own codes are loaded), or an old item that still carries the code
+function invCode(it){if(!it)return '';if(it.code)return String(it.code);if(!it.codeId)return '';var c=allCodes().filter(function(x){return x.docId===it.codeId||x.id===it.codeId})[0];return c&&c.code?String(c.code):''}
 function takeCode(kind,email){
   var c=allCodes().filter(function(x){return x.kind===kind&&!x.to})[0];if(!c)return '';
   c.to=email;if(!c.sample&&dbh&&c.docId)dbh.doc('codes/'+c.docId).update({to:email}).then(function(){},function(){});
@@ -6862,7 +6910,7 @@ function doSpin(useXP){
   var rid=spinRid();
   authHdr().then(function(ah){return adPost('spin',{useXP:!!useXP,rid:rid},'',ah)}).then(function(d){
     if(d._status===401)return fail('Your sign-in has expired. Reload the page and sign in again.');
-    if(!d._ok)return fail(d.error);go(d);
+    if(!d._ok)return fail(d.error);if(d.code&&d.item)d.item=Object.assign({},d.item,{code:d.code});go(d);
   },function(){fail('No connection. Check your internet and try again.')});
 }
 function nameOf(email){var p=profFor(email);if(p&&p.dname)return p.dname;var r=allRoster().filter(function(x){return x.email===email})[0];return r?r.name:email}
@@ -6883,7 +6931,7 @@ function renderBag(){
     else if(it.kind==='ext'){act=it.used?'<span class="saved">Used</span>':(BAG.ext===it.id?extPick():'<button class="btn pri sm" data-act="bag-ext" data-id="'+it.id+'" type="button">Use extension</button>')}
     else if(it.kind==='vip'){act=it.used?'<span class="saved">Sent to your teacher</span>':(BAG.vip===it.id?vipPick(it):'<button class="btn pri sm" data-act="bag-vip" data-id="'+it.id+'" type="button">Use VIP correction</button>')}
     else act=it.used?'<span class="saved">'+(it.kind==='peek'?'Used':'Claimed')+'</span>':'<button class="btn pri sm" data-act="bag-use" data-id="'+it.id+'" type="button">'+(it.kind==='peek'?'Use':'Claim')+'</button>';
-    return '<div class="item'+(it.used?' used':'')+'"><span class="ii">'+iconOf(it.kind)+'</span><span><b><span class="tb t'+it.tier+'">'+TIERNAME[it.tier]+'</span>'+esc(prizeName(it))+'</b><small>'+esc(it.kind==='mat'?d.d:(d?d.d:''))+'</small>'+(it.code?'<small class="mono">Code: <b>'+esc(it.code)+'</b></small>':((it.tier===4)?'<small>Your teacher will send the code.</small>':''))+'</span><div class="ia">'+act+'</div></div>';
+    return '<div class="item'+(it.used?' used':'')+'"><span class="ii">'+iconOf(it.kind)+'</span><span><b><span class="tb t'+it.tier+'">'+TIERNAME[it.tier]+'</span>'+esc(prizeName(it))+'</b><small>'+esc(it.kind==='mat'?d.d:(d?d.d:''))+'</small>'+(invCode(it)?'<small class="mono">Code: <b>'+esc(invCode(it))+'</b></small>':((it.tier===4)?'<small>Your teacher will send the code.</small>':''))+'</span><div class="ia">'+act+'</div></div>';
   }).join('')+'</div>':'<p class="saved">Nothing here yet. Win prizes on the Lucky Wheel.</p>';
   if(p.peek)h+='<p class="dsum">👀 Answer Peek is ready for your next failed submit ('+p.peek+').</p>';
   h+='<div class="notif"><label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="checkbox" data-act="notif-toggle"'+(p.notify?' checked':'')+' style="margin-top:.3rem"><span><b>Daily reminder at 20:00</b><br><span class="saved">An email to '+esc(U.email)+' only if you have not practised yet. Off unless you turn it on.</span></span></label><div class="pv"><b>Preview</b> 🔥 CHUỖI CHUỖI CHUỖI CHUỖI CHUỖI 🔥</div></div></div>';
@@ -7081,7 +7129,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-11-04d'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-11-08a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(uiAct(a,t))return true;
@@ -7410,7 +7458,7 @@ function lsCheck(){
   $$('#lsBody input.gap').forEach(function(i){LS.ans[i.dataset.id]=i.value});
   lsIds(st).forEach(function(id){LS.res[id]=!!lsGrade(id)});
   var ids=lsIds(st),sc=ids.filter(function(x){return LS.res[x]}).length;
-  if(sc/ids.length<.7){LS.fail=st;lsDraw();return}
+  if(!passPct(sc,ids.length)){LS.fail=st;lsDraw();return}
   LS.fail=-1;LS.chk[st]=1;
   if(st===4)lsFinish();
   lsDraw();
@@ -7874,18 +7922,22 @@ function rmStepSelHTML(){var pv=!!RM.root;
 document.addEventListener('change',function(e){var t=e.target;if(!t||t.id!=='rmStepSel'||!RM)return;var i=+t.value;if(!RM.root&&i!==RM.st){t.value=RM.st;return}if(i===RM.st)return;RM.st=i;RM.fail=-1;RM.fin=false;rmSheetClose();rmDraw();rmTop()});
 function rmToolsHTML(){
   var k=rmFsIdx(),v=RM.ex&&RM.ex.rlv,hasLv=v&&(v.easy||v.hard);
-  var lvh=!hasLv?'':RM.student?'<span class="pill rmlvp" title="Your reading level">'+RLV_NAME[RM.lv]+'</span>':
+  var lvh=!hasLv||RM.student?'':
     '<div class="seg rmlv" role="group" aria-label="Version">'+RLV.map(function(l){var has=l==='medium'||v[l];return '<button type="button" data-act="rm-lv" data-v="'+l+'" aria-pressed="'+(RM.lv===l)+'"'+(has?'':' disabled title="No '+RLV_NAME[l]+' version"')+'>'+RLV_NAME[l]+'</button>'}).join('')+'</div>';
   var chk=RM.chk[RM.st],demo=!chk&&RM.fail!==RM.st&&!RM.fin?demoBarHTML('rm'):'';
-  // settings (gear): version / level, text size, and the demo helper (teachers, admins and testers only, as before)
-  var panel=RM.fsOpen?'<div class="rmfsm rmsetp" role="dialog" aria-label="Lesson settings">'+(lvh?'<section class="rmsetg"><h4>'+(RM.student?'Your level':'Version')+'</h4>'+lvh+'</section>':'')+
-      '<section class="rmsetg"><h4>Text size <span class="rmfsn">'+esc(RFS[k][0])+'</span></h4><div class="rmfsl" role="radiogroup" aria-label="Text size">'+RFS.map(function(x,i){return '<button type="button" role="radio" aria-checked="'+(i===k)+'" data-act="rm-fsv" data-i="'+i+'" aria-label="'+x[0]+'" title="'+x[0]+'"><span style="font-size:'+(.7+i*.14)+'rem">A</span></button>'}).join('')+'</div></section>'+
-      '<section class="rmsetg"><h4>Text highlighting</h4><div class="rmhlm" role="radiogroup" aria-label="Text highlighting">'+[['off','Off'],['quick','Quick highlight'],['choose','Choose colors']].map(function(m){var on=rdPref().hl===m[0];return '<button type="button" role="radio" aria-checked="'+on+'" data-act="rm-hlm" data-v="'+m[0]+'">'+m[1]+'</button>'}).join('')+'</div>'+
-        '<p class="muted rmhlhelp">'+({off:'Selecting text does nothing.',quick:'Select words to highlight them yellow. Select them again to remove.',choose:'Select words, then pick a colour.'})[rdPref().hl]+'</p>'+
-        '<button type="button" class="linkish" data-act="rm-hlclr">Remove all my highlights in this lesson</button>'+(lmDemoOk()?' <button type="button" class="linkish" data-act="rm-tipshow">Show the highlighting tip</button>':'')+'</section>'+
-      (demo?'<section class="rmsetg"><h4>Demo helper</h4>'+demo+'</section>':'')+'</div>':'';
+  // Reading settings (gear). Learners: text size + highlighting only. Staff: + Version. Staff / testers: + tools (tip, demo helper).
+  var hm=rdPref().hl,HM=[['off','Off'],['quick','Quick highlight'],['choose','Choose colors']],tools=lmDemoOk()||demo;
+  var panel=RM.fsOpen?'<div class="rmfsm rmsetp" id="rmSet" role="dialog" aria-labelledby="rmSetH"><div class="rmseth"><h3 id="rmSetH">Reading settings</h3><button type="button" class="iconbtn rmsetx" data-act="rm-fs" aria-label="Close settings">✕</button></div>'+
+      (lvh?'<section class="rmsetg"><h4>Version</h4>'+lvh+'</section>':'')+
+      '<section class="rmsetg"><h4 id="rmFsH">Text size</h4><div class="rmfst" role="group" aria-labelledby="rmFsH">'+
+        '<button type="button" class="rmfsx" data-act="rm-fsv" data-i="'+(k-1)+'" aria-label="Smaller text"'+(k<=0?' disabled':'')+'>A−</button><output class="rmfsn" aria-live="polite">'+esc(RFS[k][0])+'</output>'+
+        '<button type="button" class="rmfsx" data-act="rm-fsv" data-i="'+(k+1)+'" aria-label="Larger text"'+(k>=RFS.length-1?' disabled':'')+'>A+</button></div></section>'+
+      '<section class="rmsetg"><h4 id="rmHlH">Highlighting</h4><div class="seg rmhlm" role="radiogroup" aria-labelledby="rmHlH">'+HM.map(function(m){var on=hm===m[0];return '<button type="button" role="radio" aria-checked="'+on+'" aria-pressed="'+on+'" data-act="rm-hlm" data-v="'+m[0]+'">'+m[1]+'</button>'}).join('')+'</div>'+
+        '<p class="muted rmhlhelp" aria-live="polite">'+({off:'Selecting text does nothing.',quick:'Select words to highlight them. Select them again to remove.',choose:'Select words, then pick a colour.'})[hm]+'</p>'+
+        '<button type="button" class="linkish rmhlclr" data-act="rm-hlclr">Remove all my highlights</button></section>'+
+      (tools?'<section class="rmsetg"><h4>Tools</h4>'+(lmDemoOk()?'<button type="button" class="linkish" data-act="rm-tipshow">Show the highlighting tip</button>':'')+(demo||'')+'</section>':'')+'</div>':'';
   var tip=RM.tipOpen&&rdPref().hl!=='off'?'<div class="rmtip" role="dialog" aria-labelledby="rmTipH" aria-describedby="rmTipT"><h4 id="rmTipH">Highlight while reading</h4><p id="rmTipT">Select words or sentences to highlight them. You can change highlight modes or turn highlighting off anytime in Settings.</p><button type="button" class="btn sm pri" data-act="rm-tipok">Got it!</button></div>':'';
-  return '<div class="rmtools">'+rmStepSelHTML()+rmTimerHTML()+'<div class="rmfsw"><button type="button" class="rmfsb rmgear" data-act="rm-fs" aria-haspopup="dialog" aria-expanded="'+!!RM.fsOpen+'" aria-label="Lesson settings (level, text size, highlighting)" title="Settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg></button>'+panel+tip+'</div></div>';
+  return '<div class="rmtools">'+rmStepSelHTML()+rmTimerHTML()+'<div class="rmfsw"><button type="button" class="rmfsb rmgear" data-act="rm-fs" aria-haspopup="dialog" aria-expanded="'+!!RM.fsOpen+'" aria-label="Reading settings" title="Reading settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg></button>'+panel+tip+'</div></div>';
 }
 function rmToolsDraw(){var t=$('.rm .rmtools');if(t)t.outerHTML=rmToolsHTML()}
 /* ---- highlights: Off · Quick (yellow at once; select highlighted words again to remove) · Choose colors (yellow green pink blue, remove).
@@ -7932,21 +7984,24 @@ function hlApply(o,c){if(!o||!RM)return;var L=hlFix(o.key,o.plain).filter(functi
 function rmHlHide(){var b=$('#rmHlBar');if(b)b.remove();RHL=null}
 function hlTouch(){return !!(window.matchMedia&&window.matchMedia('(hover: none)').matches)}
 // the small bar: Choose colors = 4 colours + remove; Quick on a touch screen = "Highlight" (+ remove when it overlaps one)
-function rmHlShow(o){RHL=o;rmHlHide();RHL=o;var q=rmHlMode()==='quick',ov=hlOver(o);
+function rmOneWord(o){var w=String(o&&o.q||'').trim();return /^[A-Za-z][A-Za-z'’-]*$/.test(w)&&w.length>1?w:''}
+function rmHlShow(o,lookOnly){RHL=o;rmHlHide();RHL=o;var q=rmHlMode()==='quick',ov=hlOver(o),lw=rmOneWord(o);if(lookOnly&&!lw)return;
   document.body.insertAdjacentHTML('beforeend','<div id="rmHlBar" class="rmhlbar" role="toolbar" aria-label="Highlight">'+
-    (q?'<button type="button" class="btn sm" data-act="rm-hl" data-c="y">Highlight</button>':RHC.map(function(c){return '<button type="button" class="rmhlc '+c[0]+'" data-act="rm-hl" data-c="'+c[0]+'" aria-label="Highlight '+c[1]+'" title="'+c[1]+'"></button>'}).join(''))+
-    (ov||!q?'<button type="button" class="rmhlx" data-act="rm-hl" data-c="x" aria-label="Remove highlight" title="Remove highlight">✕</button>':'')+'</div>');
+    (lookOnly?'':(q?'<button type="button" class="btn sm" data-act="rm-hl" data-c="y">Highlight</button>':RHC.map(function(c){return '<button type="button" class="rmhlc '+c[0]+'" data-act="rm-hl" data-c="'+c[0]+'" aria-label="Highlight '+c[1]+'" title="'+c[1]+'"></button>'}).join(''))+
+    (ov||!q?'<button type="button" class="rmhlx" data-act="rm-hl" data-c="x" aria-label="Remove highlight" title="Remove highlight">✕</button>':''))+
+    (lw?'<button type="button" class="btn sm rmlook" data-act="rm-look" data-w="'+esc(lw)+'">Look up</button>':'')+'</div>');
   var b=$('#rmHlBar');if(!b)return;var touch=hlTouch(),w=b.offsetWidth||190,x=Math.max(8,Math.min(window.innerWidth-w-8,o.rect.left+o.rect.width/2-w/2)),y=touch?o.rect.bottom+10:o.rect.top-48;
   if(y<8)y=o.rect.bottom+10;if(y>window.innerHeight-56)y=Math.max(8,o.rect.top-48);b.style.left=x+'px';b.style.top=y+'px'}
 // mouse: Quick applies (or removes) at once; Choose shows the bar. Touch: the bar after the selection settles (native handles keep working).
-function rmHlAfter(touch){if(!RM||rmHlMode()==='off')return;var o=hlSel();if(!o){if(!touch)rmHlHide();return}
-  if(rmHlMode()==='quick'&&!touch)hlApply(o,hlOver(o)?'x':'y');else rmHlShow(o)}
+function rmHlAfter(touch){if(!RM)return;var o=hlSel();if(!o){if(!touch)rmHlHide();return}
+  if(rmHlMode()==='off'){rmHlShow(o,true);return}
+  if(rmHlMode()==='quick'&&!touch){var r=o.rect;hlApply(o,hlOver(o)?'x':'y');if(rmOneWord(o)){o.rect=r;rmHlShow(o,true)}}else rmHlShow(o)}
 document.addEventListener('mousedown',function(e){if(e.target.closest&&e.target.closest('#rmHlBar'))e.preventDefault()}); // keep the selection
 document.addEventListener('mouseup',function(e){if(!RM||(e.target.closest&&e.target.closest('#rmHlBar')))return;setTimeout(function(){rmHlAfter(false)},10)});
-document.addEventListener('keyup',function(e){if(RM&&e.shiftKey&&/Arrow|Home|End/.test(e.key))setTimeout(function(){var o=hlSel();if(o&&rmHlMode()!=='off')rmHlShow(o)},10)});
+document.addEventListener('keyup',function(e){if(RM&&e.shiftKey&&/Arrow|Home|End/.test(e.key))setTimeout(function(){var o=hlSel();if(o)rmHlShow(o,rmHlMode()==='off')},10)});
 var rmSelT=null;document.addEventListener('selectionchange',function(){if(!RM||!hlTouch())return;clearTimeout(rmSelT);rmSelT=setTimeout(function(){rmHlAfter(true)},500)}); // phones: long press, then the handles
 // a drag-selection that ends on an answer label must not also choose that answer
-document.addEventListener('click',function(e){if(!RM||rmHlMode()==='off')return;var s=window.getSelection&&window.getSelection(),h=e.target.closest&&e.target.closest('.rm [data-hl]');
+document.addEventListener('click',function(e){if(!RM)return;var s=window.getSelection&&window.getSelection(),h=e.target.closest&&e.target.closest('.rm [data-hl]');
   if(h&&s&&!s.isCollapsed&&s.anchorNode&&h.contains(s.anchorNode)&&!(e.target.closest('input,textarea,select'))){e.preventDefault();e.stopPropagation()}},true);
 window.addEventListener('scroll',function(e){if(RHL&&!(e.target&&e.target.closest&&e.target.closest('#rmHlBar')))rmHlHide()},true);
 document.addEventListener('click',function(e){if(RM&&RM.fsOpen&&!(e.target.closest&&e.target.closest('.rmfsw'))){RM.fsOpen=false;rmToolsDraw()}});
@@ -8108,7 +8163,10 @@ function rmPreview(d){
 }
 // back to the top of the stage (page top, or the top of the preview box)
 function rmTop(){var el=RM&&RM.root&&document.getElementById(RM.root);if(el){if(el.scrollIntoView)el.scrollIntoView({block:'start'})}else if(window.scrollTo)window.scrollTo(0,0)}
-function rmKeep(fn){var y=window.pageYOffset||0;fn();window.scrollTo(0,y)}
+var RM_PANES=['.rm .rmdeep>.rmpsg','.rm .rmdeep>.rmqs'];
+function rmKeep(fn){var y=window.pageYOffset||0,sc=RM_PANES.map(function(q){var el=document.querySelector(q);return el?el.scrollTop:null});fn();
+  RM_PANES.forEach(function(q,i){var el=document.querySelector(q);if(el&&sc[i]!=null)el.scrollTop=sc[i]});window.scrollTo(0,y);
+  var fb=RM&&RM.focusBack;if(fb){RM.focusBack=null;var b=document.querySelector('.rm [data-act="'+fb.a+'"][data-i="'+fb.i+'"]');if(b&&b.focus){try{b.focus({preventScroll:true})}catch(x){}}}}
 // radio answers of Stage 3 are read when needed (choosing does not redraw the page)
 function rmCollect(){
   if(RM.st===0){$$('#rmBody .rmk').forEach(function(el){RM.k[+el.getAttribute('data-i')]=el.value});
@@ -8122,7 +8180,7 @@ function rmCheck(){
   if(!RM.root&&!rmAnswered(st)){var m=$('#rmMsg');if(m)m.textContent='Answer every item first.';return} // preview: unanswered = wrong, answers shown
   rmIds(RM.D,st).forEach(function(id){RM.res[id]=!!rmGrade(id)});
   var a=rmIds(RM.D,st),sc=a.filter(function(x){return RM.res[x]}).length;
-  if(!RM.root&&sc/a.length<.7){RM.fail=st;rmKeep(rmDraw);return}
+  if(!RM.root&&!passPct(sc,a.length)){RM.fail=st;rmKeep(rmDraw);return}
   RM.fail=-1;RM.chk[st]=1;rmKeep(rmDraw);
 }
 function rmFinish(){
@@ -8214,7 +8272,7 @@ function rmAct(a,t){
   if(a==='rm-mi'){var It=D.deep.info.items[i],L=It.k==='p'?D.paras.map(function(x,k){return k}):D.deep.info.ents.map(function(x,k){return k});
     rmSheet(It.k==='p'?'Choose a paragraph':'Choose a name',L.map(function(k){return {t:It.k==='p'?rmPL(k):D.deep.info.ents[k],sel:RM.mi[i]===k}}),function(n){RM.mi[i]=L[n];rmKeep(rmDraw)},t);return true}
   if(a==='rm-pn'){rmPnPick(i,!t.classList||!t.classList.contains('rmpn'));return true} // side panel (no modal); also after checking, to read the answer
-  if(a==='rm-spick'){var cb=RM.sheetCb;RM.sheetFrom=null;rmSheetClose();if(cb)cb(+t.dataset.o);return true}
+  if(a==='rm-spick'){var cb=RM.sheetCb,sf=RM.sheetFrom;RM.sheetFrom=null;if(sf&&sf.dataset)RM.focusBack={a:sf.dataset.act,i:sf.dataset.i};rmSheetClose();if(cb)cb(+t.dataset.o);RM.focusBack=null;return true}
   if(a==='rm-sclose'){rmSheetClose();return true}
   if(a==='rm-chip'){if(Date.now()-RM.justDragged<400)return true;var bi=+t.dataset.b;RM.sel=RM.sel===bi?null:bi;rmDrawCloze('#rmCloze .rmchip[data-b="'+bi+'"]');return true}
   if(a==='rm-blank'){if(Date.now()-RM.justDragged<400)return true;var nb=+t.getAttribute('data-n');
@@ -8236,9 +8294,10 @@ function rmAct(a,t){
   if(a==='rm-qn'&&RM.st===1&&/^n\d+$/.test(t.dataset.q||'')){rmPnPick(+t.dataset.q.slice(1),true);return true}
   if(a==='rm-qn'){RM.qcur=t.dataset.q;var qe=document.querySelector('.rm [data-rmq="'+t.dataset.q+'"]');if(qe){if(qe.scrollIntoView)qe.scrollIntoView({block:'center',behavior:reducedMotion()?'auto':'smooth'});
       var fo=qe.matches&&qe.matches('button,input,select')?qe:qe.querySelector('input,select,button');if(fo&&fo.focus)fo.focus({preventScroll:true})}return true}
-  if(a==='rm-fs'){RM.fsOpen=!RM.fsOpen;rmToolsDraw();var fm=RM.fsOpen?$('.rm .rmsetp button'):$('.rm .rmgear');if(fm)fm.focus();return true}
-  if(a==='rm-fsv'){var fi=+t.dataset.i;lsSet('md-rmfs',String(fi));var pn=$('.pane.rm');if(pn)pn.style.setProperty('--rmfs',RFS[fi][1]);rmToolsDraw();rmFit();var fb2=$('.rm .rmfsl [data-i="'+fi+'"]');if(fb2)fb2.focus();return true}
+  if(a==='rm-fs'){RM.fsOpen=!RM.fsOpen;rmToolsDraw();var fm=RM.fsOpen?$('.rm .rmsetp .rmsetx'):$('.rm .rmgear');if(fm)fm.focus();return true}
+  if(a==='rm-fsv'){var fi=Math.max(0,Math.min(RFS.length-1,+t.dataset.i));lsSet('md-rmfs',String(fi));var pn=$('.pane.rm');if(pn)pn.style.setProperty('--rmfs',RFS[fi][1]);rmToolsDraw();rmFit();var fb2=$('.rm .rmfst [aria-label="'+(t.getAttribute&&t.getAttribute('aria-label')||'')+'"]:not([disabled])')||$('.rm .rmfst button:not([disabled])');if(fb2)fb2.focus();return true}
   if(a==='rm-hl'){hlApply(RHL,t.dataset.c);return true}
+  if(a==='rm-look'){var lw2=t.dataset.w;rmHlHide();try{window.getSelection().removeAllRanges()}catch(x){}openVocab(lw2);return true}
   if(a==='rm-pc'){rmPcToggle(+t.dataset.pi,true);return true}
   if(a==='rm-hlm'){rdPrefSet({hl:t.dataset.v});if(t.dataset.v==='off')rmHlHide();rmToolsDraw();var hb=$('.rm .rmhlm [data-v="'+t.dataset.v+'"]');if(hb)hb.focus();return true}
   if(a==='rm-hlclr'){if(uiGate(t,{title:'Remove every highlight in this lesson?',text:'Only your highlights change. Your answers stay.',ok:'Remove highlights',danger:true}))return true;RM.hl={};var hk2=RM.root?'pv:'+RM.ex.id+':'+RM.lv:RM.ex.id+':'+RM.lv;RMH[hk2]=RM.hl;rmHlSave();rmKeep(rmDraw);toast('Highlights removed.');return true}
@@ -8307,7 +8366,7 @@ var ADMIN_GUIDE=[
 ];
 // Sheet template shown in the Guide (header row is copyable)
 var SHEET_TPL=[['STT','Giáo viên','Lớp','Họ và tên','Khối'],['1','Cô Nhi','7H30','NGUYỄN MAI TRANG','11'],['2','Cô Nhi','15H','TRẦN GIA HUY','12'],['3','Cô Nhi','17PM','LÊ KHÁNH NAM','10']];
-var AD={sub:'users',users:null,me:'',loadErr:'',err:'',modal:null,locked:false,q:'',role:'all',cls:'all',sheet:null,shErr:''};
+var AD={sub:(function(){var v='';try{v=localStorage.getItem('md-adsub')||''}catch(e){}return /^(users|teachers|assist|students|sheet|xp|season|aitest|rdcheck|samples|vouchers|guide|me)$/.test(v)?v:'users'})(),users:null,me:'',loadErr:'',err:'',modal:null,locked:false,q:'',role:'all',cls:'all',sheet:null,shErr:''};
 var SHEET_COLNAME={name:'Name',cls:'Class',id:'ID',course:'Course',grade:'Grade',grade2:'Grade (backup)',teacher:'Teacher'};
 var EMAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]+$/,API_BASE=CFG.api||'/api';
 var PWW=['apple','river','mango','tiger','lemon','cloud','ocean','piano','maple','coral','eagle','forest','garden','honey','island','koala','lotus','melon','olive','panda','pearl','robin','tulip','violet','willow','zebra','amber','bamboo','daisy','ginger'];
@@ -8406,7 +8465,7 @@ function adminApi(path,body){
   return adPost(path,body,key).then(function(d){
     if(d._status===401&&d.needUnlock){AD.locked=true;AD.modal=null;if(TAB==='admin')renderAdmin();throw new Error(d.error)}
     // no JSON / unknown route = the site was deployed without the latest functions/ folder
-    if(d._nojson||(d._status===404&&d.error==='Not found.'))throw new Error('The server does not know this action yet ('+path+', code: http'+d._status+'). Deploy the latest version of the site (with the functions/ folder) and try again.');
+    if(d._nojson||(d._status===404&&d.error==='Not found.'))throw new Error('The server does not know this action yet ('+path+', code: http'+d._status+'). The site runs server '+(AD.ver||'(older, no version number)')+' and app '+APP_VERSION+': the functions/ folder of this version was not deployed. Deploy it and try again.');
     if(!d._ok)throw new Error(d.error||'Something went wrong. Try again.');
     return d;
   });
@@ -8454,6 +8513,11 @@ function atPracticeHTML(ai){
    the old lesson is first copied to this browser (localStorage md-rdfix:<lesson>:<time>), then only that one field becomes '' (the
    learner sees no explanation there). A broken meaning / paraphrase / distractor cannot be emptied: open the lesson in Create and use
    Review › Fix with AI. */
+var VCH={rows:null,busy:false,msg:''};
+function adVouchersHTML(){var R=VCH.rows,h='<div class="card"><h3>Voucher check</h3><p class="muted">Older Lucky Wheel prizes kept the voucher code inside the student profile, which every signed-in user can read. Check finds them (codes are never shown here). Moving copies the old list to an audit backup first, then keeps the code only where the winner and the admin can read it.</p>'+
+    '<div class="row"><button type="button" class="btn pri" data-act="ad-vch-prev"'+(VCH.busy?' disabled':'')+'>'+(R?'Check again':'Check profiles')+'</button></div><p class="saved" aria-live="polite">'+esc(VCH.msg||'')+'</p>';
+  if(R){h+=R.length?'<div class="tscr"><table class="dtbl"><thead><tr><th>Student</th><th>Codes in profile</th><th></th></tr></thead><tbody>'+R.map(function(r,i){return '<tr><td>'+esc(r.email||r.id)+'</td><td class="mono">'+r.items+'</td><td><button type="button" class="btn sm" data-act="ad-vch-move" data-i="'+i+'"'+(VCH.busy?' disabled':'')+'>Move codes</button></td></tr>'}).join('')+'</tbody></table></div>':'<p>No profile holds a voucher code. Nothing to move.</p>'}
+  return h+'</div>'}
 var RDC={rows:null,ts:0};
 function smpInventory(){var AS=asgDocs.concat(localAsg).map(normAsg),AT=realAttempts();
   return SAMPLE_IDS.map(function(id){var e=EXS[id],l=null;for(var b in LIBMAP)for(var t in LIBMAP[b])for(var k in LIBMAP[b][t])if(LIBMAP[b][t][k].indexOf(id)>=0)l={book:b,test:t,skill:k};
@@ -8510,12 +8574,12 @@ function adAiTestRun(){
 }
 function renderAdmin(){
   adMenuClose(false);var el=$('#v-admin');if(!U||!U.adm){el.innerHTML='';return}
-  var subs=[['guide','Guide'],['users','Users'],['teachers','Teachers'],['students','Students'],['sheet','Google Sheet'],['xp','XP'],['season','Season'],['aitest','AI test'],['rdcheck','Reading check'],['samples','Library samples'],['assist','Assistants'],['me','My account']];
+  var subs=[['guide','Guide'],['users','Users'],['teachers','Teachers'],['students','Students'],['sheet','Google Sheet'],['xp','XP'],['season','Season'],['aitest','AI test'],['rdcheck','Reading check'],['samples','Library samples'],['vouchers','Voucher check'],['assist','Assistants'],['me','My account']];
   var needList=AD.sub==='users'||AD.sub==='teachers';
   if(needList&&!AD.locked&&!AD.users&&!AD.loadErr)adLoad();
   if(AD.sub==='sheet'&&!AD.locked&&!AD.sheet&&!AD.shErr)adSheetLoad();
   // Students = the old Students tab (section #v-roster, shown under this one); XP = the old Settings tab. Neither needs the admin key.
-  var body=AD.sub==='guide'?adGuideHTML():AD.sub==='students'?'':AD.sub==='xp'?xpsHTML():AD.locked?adUnlockHTML():AD.sub==='teachers'?adTeachersHTML():AD.sub==='sheet'?adSheetHTML():AD.sub==='aitest'?adAiTestHTML():AD.sub==='rdcheck'?adRdCheckHTML():AD.sub==='samples'?adSamplesHTML():AD.sub==='season'?adSeasonHTML():AD.sub==='me'?adMeHTML():AD.sub==='assist'?adAssistHTML():adUsersHTML();
+  var body=AD.sub==='guide'?adGuideHTML():AD.sub==='students'?'':AD.sub==='xp'?xpsHTML():AD.locked?adUnlockHTML():AD.sub==='teachers'?adTeachersHTML():AD.sub==='sheet'?adSheetHTML():AD.sub==='aitest'?adAiTestHTML():AD.sub==='rdcheck'?adRdCheckHTML():AD.sub==='samples'?adSamplesHTML():AD.sub==='vouchers'?adVouchersHTML():AD.sub==='season'?adSeasonHTML():AD.sub==='me'?adMeHTML():AD.sub==='assist'?adAssistHTML():adUsersHTML();
   el.innerHTML='<div class="pad adm"><div class="sechead"><h2>Admin</h2></div>'+
     (DEMO?'<p class="adm-demo" role="note">Demo: changes are not saved.</p>':'')+
     adNavHTML(subs)+
@@ -8866,11 +8930,28 @@ function adMeHTML(){
     '<div class="actions" style="margin-top:6px"><button class="btn pri" data-act="ad-mypw" type="button">Change password</button></div></div>';
 }
 // Admin sub-pages grouped: People · Classes & data · Gamification · Tools (the ids and pages are the same as before)
-var AD_NAV=[['People',['users','teachers','assist','students']],['Classes & data',['sheet']],['Gamification',['xp','season','*prize']],['Tools',['aitest','rdcheck','samples','guide','me']]];
-function adNavHTML(subs){var nm={};subs.forEach(function(s){nm[s[0]]=s[1]});
-  return '<nav class="adnav" aria-label="Admin sections">'+AD_NAV.map(function(g){return '<div class="adng"><span class="adngl">'+esc(g[0])+'</span><div class="subtabs" role="tablist" aria-label="'+esc(g[0])+'">'+g[1].map(function(k){
-    if(k==='*prize')return '<button type="button" data-act="tab" data-tab="prize" title="Opens the Prizes page">Prizes</button>';
-    return nm[k]?'<button type="button" role="tab" data-act="ad-sub" data-v="'+k+'" aria-selected="'+(AD.sub===k)+'">'+esc(nm[k])+'</button>':''}).join('')+'</div></div>'}).join('')+'</nav>'}
+var AD_NAV=[['People',['users','teachers','assist','students']],['Classes & data',['sheet']],['Gamification',['xp','season','*prize']],['Tools',['aitest','rdcheck','samples','vouchers','guide','me']]];
+var ADN=-1,ADNKB=false; // index of the open group menu (-1 = none); ADNKB = the last press came from the keyboard
+function e2kb(){var k=ADNKB;ADNKB=false;return k}
+document.addEventListener('keydown',function(e){if((e.key==='Enter'||e.key===' ')&&e.target&&e.target.classList&&e.target.classList.contains('adngb'))ADNKB=true},true);
+function adNavHTML(subs){var nm={};subs.forEach(function(s){nm[s[0]]=s[1]});nm['*prize']='Prizes';
+  return '<nav class="adnav" aria-label="Admin sections">'+AD_NAV.map(function(g,gi){var it=g[1].filter(function(k){return nm[k]}),cur=it.indexOf(AD.sub)>=0,op=ADN===gi;
+    return '<div class="adng'+(cur?' on':'')+'"><button type="button" class="adngb" id="adngb'+gi+'" data-act="ad-nav" data-g="'+gi+'" aria-haspopup="menu" aria-expanded="'+op+'" aria-controls="adngm'+gi+'">'+
+      '<span class="adngl">'+esc(g[0])+'</span>'+(cur?'<span class="adngc"> · '+esc(nm[AD.sub])+'</span>':'')+'<svg class="adngv" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg></button>'+
+      '<ul class="adngm" id="adngm'+gi+'" role="menu" aria-labelledby="adngb'+gi+'"'+(op?'':' hidden')+'>'+it.map(function(k){
+        var on=AD.sub===k,at=k==='*prize'?'data-act="tab" data-tab="prize"':'data-act="ad-sub" data-v="'+k+'"';
+        return '<li role="none"><button type="button" role="menuitem" '+at+(on?' aria-current="page" class="on"':'')+'>'+(on?'<span class="adngk" aria-hidden="true">✓</span>':'')+esc(nm[k])+'</button></li>'}).join('')+'</ul></div>'}).join('')+'</nav>'}
+function adNavSet(gi,focusItem){ADN=gi;$$('.adnav .adngb').forEach(function(b){var g=+b.getAttribute('data-g'),o=g===gi;b.setAttribute('aria-expanded',String(o));var m=document.getElementById('adngm'+g);if(m)m.hidden=!o});
+  if(gi>=0&&focusItem){var m=document.getElementById('adngm'+gi),L=m?m.querySelectorAll('[role="menuitem"]'):[],c=m&&m.querySelector('[aria-current]');var f=focusItem==='last'?L[L.length-1]:(c||L[0]);if(f)f.focus()}}
+document.addEventListener('click',function(e){if(ADN>=0&&!(e.target.closest&&e.target.closest('.adnav')))adNavSet(-1)});
+document.addEventListener('keydown',function(e){if(ADN<0)return;var m=document.getElementById('adngm'+ADN);if(!m)return;
+  if(e.key==='Escape'){var g=ADN;adNavSet(-1);var b=document.getElementById('adngb'+g);if(b)b.focus();e.preventDefault();return}
+  var L=[].slice.call(m.querySelectorAll('[role="menuitem"]')),i=L.indexOf(document.activeElement);
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();if(!L.length)return;i=e.key==='ArrowDown'?(i+1)%L.length:(i<=0?L.length-1:i-1);L[i].focus()}
+  else if(e.key==='Home'||e.key==='End'){e.preventDefault();if(L.length)L[e.key==='Home'?0:L.length-1].focus()}
+  else if(e.key==='Tab')adNavSet(-1);
+  else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&(i>=0||document.activeElement===document.getElementById('adngb'+ADN))){e.preventDefault();var n=AD_NAV.length,g2=(ADN+(e.key==='ArrowRight'?1:n-1))%n;adNavSet(g2,true)}});
+document.addEventListener('keydown',function(e){var b=e.target&&e.target.closest&&e.target.closest('.adnav .adngb');if(!b||(e.key!=='ArrowDown'&&e.key!=='ArrowUp'))return;e.preventDefault();adNavSet(+b.getAttribute('data-g'),e.key==='ArrowUp'?'last':true)});
 function adModalHTML(){
   var m=AD.modal;if(!m)return '';
   return '<div class="modal" id="adModal" role="dialog" aria-modal="true" aria-labelledby="adMT"><div class="mbox" style="width:min(520px,100%)"><h3 id="adMT" style="font-size:var(--fs-lg);margin-bottom:10px">'+esc(m.title)+'</h3><p>'+esc(m.text)+'</p>'+(m.body||'')+
@@ -8891,13 +8972,18 @@ function adModalCheck(){var m0=AD.modal;setTimeout(function(){if(!m0||AD.modal!=
   m0.pending=true;toast(m0.busy||'Saving…');m0.run(val).then(function(){if(m0.done)m0.done(val)},function(e){m0.pending=false;var msg=(e&&e.message)||'Something went wrong.';adSay(msg);alert(msg)});
 },150)}
 function adAct(a,t){
+  if(a==='ad-vch-prev'){VCH.busy=true;VCH.msg='Checking…';renderAdmin();adminApi('admin/vouchers',{op:'preview'}).then(function(d){VCH.busy=false;VCH.rows=d.rows||[];VCH.msg=d.profiles+' of '+d.scanned+' profiles hold '+d.items+' code'+(d.items===1?'':'s')+'.';renderAdmin()},function(e){VCH.busy=false;VCH.msg=e.message;renderAdmin()});return true}
+  if(a==='ad-vch-move'){var vr=VCH.rows&&VCH.rows[+t.dataset.i];if(!vr)return true;
+    uiAsk({title:'Move the voucher codes of '+(vr.email||vr.id)+'?',text:vr.items+' code'+(vr.items===1?'':'s')+' will leave the public profile. A backup of the old list is saved first (audit). Type MOVE to continue.',ok:'Move codes',must:'MOVE',onOk:function(){
+      VCH.busy=true;VCH.msg='Moving…';renderAdmin();adminApi('admin/vouchers',{op:'migrate',id:vr.id}).then(function(d){VCH.busy=false;VCH.rows=VCH.rows.filter(function(x){return x!==vr});VCH.msg='Moved '+d.changed+' code'+(d.changed===1?'':'s')+'. Backup saved.';renderAdmin()},function(e){VCH.busy=false;VCH.msg=e.message;renderAdmin()})}});return true}
   if(a==='ad-rdc-scan'){rdcScan();renderAdmin();return true}
   if(a==='ad-rdc-fix'){var rr=RDC.rows&&RDC.rows[+t.dataset.i];if(!rr)return true;if(uiGate(t,{title:'Clear this explanation?',text:'“'+rr.title+'” · '+(RLV_NAME[rr.lv]||rr.lv)+': '+rr.m+' Students will see no explanation there. A copy of the lesson is kept in this browser first.',ok:'Clear explanation'}))return true;rdcFix(rr);return true}
   if(a.indexOf('ad-')!==0)return false;
   var who=t.dataset.email||'',u=adUser(who),nm=u.name||who;
   if(adAsAct(a,t))return true;
   if(a==='ad-menu'){if(ADM&&ADM.btn===t)adMenuClose(true);else adMenuOpen(t);return true}
-  if(a==='ad-sub'){if(AD.sub==='aitest'){var atx=$('#atText'),atk=$('#atTask');if(atx)AT.text=atx.value;if(atk)AT.task=atk.value}AD.sub=t.dataset.v;AD.err='';renderAdmin();return true}
+  if(a==='ad-nav'){var g=+t.dataset.g;adNavSet(ADN===g?-1:g,ADN!==g&&e2kb(t));return true}
+  if(a==='ad-sub'){ADN=-1;try{localStorage.setItem('md-adsub',t.dataset.v)}catch(x){}if(AD.sub==='aitest'){var atx=$('#atText'),atk=$('#atTask');if(atx)AT.text=atx.value;if(atk)AT.task=atk.value}AD.sub=t.dataset.v;AD.err='';renderAdmin();return true}
   if(a==='ad-aitest'){adAiTestRun();return true}
   if(a==='ad-sea-prev'){SEA.busy=true;SEA.err='';renderAdmin();adminApi('admin/season',{op:'preview'}).then(function(d){SEA.busy=false;SEA.prev=d;renderAdmin()},function(e){SEA.busy=false;SEA.err=e.message;renderAdmin()});return true}
   if(a==='ad-sea-start'){adSeasonStart();return true}
@@ -9022,7 +9108,7 @@ populateBookTest();
     var toDocs=function(snap){return snap.docs.map(function(d){return Object.assign({id:d.id,docId:d.id},d.data())})};
     var myEm=String((window.MD_USER&&window.MD_USER.email)||lsGet('md-email')||'').toLowerCase(),isT=DEMO||!!(window.MD_USER&&window.MD_USER.role==='teacher');
     var own=function(c){return isT?db.collection(c):db.collection(c).where('email','==',myEm)};
-    var attQ=function(){return isT?db.collection('attempts').orderBy('ts','desc').limit(500):db.collection('attempts').where('email','==',myEm).limit(500)};
+    var attQ=function(){return isT?db.collection('attempts').orderBy('ts','desc').limit(ATT_CAP):db.collection('attempts').where('email','==',myEm).limit(500)};
     db.collection('roster').onSnapshot(function(s){rosterDocs=toDocs(s);dbReady=true;if(!U&&lsGet('md-email')){if(findUser(lsGet('md-email')))signIn(lsGet('md-email'));}refreshLive()},function(){dbReady=true;if(!U&&window.MD_USER)signIn(window.MD_USER.email)});
     db.collection('exercises').onSnapshot(function(s){customDocs=toDocs(s);rebuildCustom();refreshLive()},function(){});
     db.collection('assignments').onSnapshot(function(s){asgDocs=toDocs(s);refreshLive()},function(){});
@@ -9032,7 +9118,7 @@ populateBookTest();
     own('cards').onSnapshot(function(s){cardDocs=toDocs(s);refreshLive()},function(){});
     if(!isT)own('errors').onSnapshot(function(s){errorDocs=toDocs(s);refreshLive()},function(){});
     db.collection('wins').onSnapshot(function(s){winDocs=toDocs(s);updMarq()},function(){});
-    db.collection('codes').onSnapshot(function(s){codeDocs=toDocs(s);if(TAB==='prize')refreshLive()},function(){});
+    (window.MD_USER&&window.MD_USER.adm?db.collection('codes'):db.collection('codes').where('to','==',myEm)).onSnapshot(function(s){codeDocs=toDocs(s);if(TAB==='prize')refreshLive()},function(){});
     own('redeems').onSnapshot(function(s){redDocs=toDocs(s);if(TAB==='prize')refreshLive()},function(){});
     db.collection('config').onSnapshot(function(s){cfgDocs=toDocs(s);refreshLive()},function(){});
     own('passes').onSnapshot(function(s){passDocs=toDocs(s);refreshLive()},function(){});
