@@ -12,7 +12,7 @@ function t(name, fn) { try { fn(); pass++; out.push('PASS ' + name); } catch (e)
 
 function walk(d, acc) { for (const f of fs.readdirSync(d)) { if (f === '.git' || f === 'node_modules') continue; const p = path.join(d, f); fs.statSync(p).isDirectory() ? walk(p, acc) : acc.push('/' + path.relative(ROOT, p).split(path.sep).join('/')); } return acc; }
 const FILES = walk(ROOT, []);
-const PUBLIC = (f) => /^\/(index\.html|md-(config|backend|chart)\.js|lm-(content|engine|unit\d+)\.js|site\.webmanifest)$/.test(f) || /^\/assets\//.test(f);
+const PUBLIC = (f) => /^\/(index\.html|md-(config|backend|chart|hw)\.js|lm-(content|engine|unit\d+)\.js|site\.webmanifest)$/.test(f) || /^\/assets\//.test(f);
 
 t('every file the app needs is served', () => {
   const need = FILES.filter(PUBLIC); assert.ok(need.length >= 14, need.length);

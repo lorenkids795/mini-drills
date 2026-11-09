@@ -5,7 +5,7 @@
 
 const ALLOW = new Set([
   '/', '/index', '/index.html',
-  '/md-config.js', '/md-backend.js', '/md-chart.js',
+  '/md-config.js', '/md-backend.js', '/md-chart.js', '/md-hw.js',
   '/lm-content.js', '/lm-engine.js', '/lm-unit2.js', '/lm-unit0.js',
   '/site.webmanifest', '/favicon.ico', '/robots.txt',
 ]);
