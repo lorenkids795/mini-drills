@@ -15,6 +15,7 @@ Upload cả thư mục này (index.html, md-config.js, md-backend.js, README.md,
 3. Project settings → **Service accounts** → **Generate new private key** → tải file JSON (giữ bí mật, KHÔNG upload lên GitHub). Cần 2 giá trị: `client_email` và `private_key`.
 
 ## 3. Cloudflare Pages
+0. (11/2026) Pages project → Settings → **Build** (Builds & deployments) → Build configuration: **Build command** `node build.js`, **Build output directory** `dist`. Chỉ file công khai được xuất bản; CLAUDE.md, tests/, firestore.rules… ở lại trên GitHub. Không có 2 dòng này thì cả repo bị xuất bản.
 1. Workers & Pages → Storage & Databases → **KV** → tạo namespace (vd. `md-kv`).
 2. Pages project → Settings → **Bindings** → Add → KV namespace → Variable name: `MD_KV` → chọn namespace vừa tạo.
 3. Pages project → Settings → **Variables and Secrets** → thêm:
