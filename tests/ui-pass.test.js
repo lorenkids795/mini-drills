@@ -51,9 +51,9 @@ t('Tester: "Tester mode" pill in the header; an ordinary student has none', () =
   const S = boot({ hooks: HOOKS, user: { name: 'S', email: 's@x.com', role: 'student', cls: 'A' } }); S.T.setRoster([{ email: 's@x.com', name: 'S', cls: 'A', role: 'student' }]); S.T.showTab('library');
   assert.ok(!/Tester mode/.test(S.el('whoName').innerHTML));
 });
-t('Library (teacher): the same book tiles as students; empty books faded "No exercises yet"', () => {
+t('Library (teacher): coloured book covers, one per book; empty books grey "Empty"', () => {
   const B = boot({ hooks: HOOKS }); B.T.showTab('library'); const h = B.el('libBody').innerHTML;
-  assert.ok(h.includes('<div class="tiles">') && !h.includes('class="covers"') && /class="tile e"[^>]*>[\s\S]*?No exercises yet/.test(h));
+  assert.ok(h.includes('<div class="covers">') && /class="bk[^"]*"[^>]*style="--h:\d+"><small>CAMBRIDGE IELTS<\/small><b>14<\/b>/.test(h) && /class="bk e"[^>]*>[\s\S]*?Empty</.test(h));
 });
 t('Class settings: section links; Delete class folded; no made-up join link', () => {
   const B = boot({ hooks: HOOKS }); const h = B.T.settingsHTML('7h30');

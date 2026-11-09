@@ -3166,10 +3166,10 @@ function renderLib(){
     var ids=allIdsBook(b.id),pr=prog(ids,dm);
     return '<button class="tile'+(LIBX.book===b.id?' sel':'')+'" data-act="lx" data-l="book" data-v="'+b.id+'" aria-expanded="'+(LIBX.book===b.id)+'"><div><b>'+b.short+'</b><small>'+ids.length+' exercises</small></div><div class="prog'+(pr.p===100?' done':'')+'"><i style="width:'+pr.p+'%"></i></div><small>'+pr.p+'% completed</small></button>';
   }).join('')+'</div>';
-  // teachers and admin: the same book tiles as students (every book; a book without exercises is shown faded as "No exercises yet")
-  else h+='<div class="tiles">'+BOOKS.map(function(b){
-    var n=allIdsBook(b.id).length,on=LIBX.book===b.id;
-    return '<button class="tile'+(n?'':' e')+(on?' sel':'')+'" type="button" data-act="lx" data-l="book" data-v="'+b.id+'" aria-expanded="'+on+'"><div><b>'+b.short+'</b><small>'+(n?n+' exercise'+(n>1?'s':''):'No exercises yet')+'</small></div></button>';
+  // teachers and admin: book covers (each book its own colour; grey = no exercises yet)
+  else h+='<div class="covers">'+BOOKS.map(function(b){
+    var n=allIdsBook(b.id).length,num=b.id.replace(/\D/g,''),on=LIBX.book===b.id;
+    return '<button class="bk'+(n?'':' e')+(on?' sel':'')+'" type="button" data-act="lx" data-l="book" data-v="'+b.id+'" aria-expanded="'+on+'" aria-label="'+esc(b.title)+', '+(n?n+' exercise'+(n>1?'s':''):'no exercises yet')+'" style="--h:'+(num*47%360)+'"><small>CAMBRIDGE IELTS</small><b>'+num+'</b><span class="bkn">'+(n?n+' exercise'+(n>1?'s':''):'Empty')+'</span></button>';
   }).join('')+'</div>';
   var bk=LIBX.book&&BOOKS.filter(function(b){return b.id===LIBX.book})[0];
   if(bk)h+='<div class="lpanel"><h3>'+esc(bk.title)+'</h3><div class="lts">'+TESTS.filter(function(t){return !stu||allIdsTest(bk.id,t).length}).map(function(t){return libTestHTML(bk,t,dm,stu)}).join('')+'</div></div>';
@@ -7129,7 +7129,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-11-08a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-11-09a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(uiAct(a,t))return true;
