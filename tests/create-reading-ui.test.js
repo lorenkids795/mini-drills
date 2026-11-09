@@ -11,7 +11,7 @@ const HOOKS = 'get RD(){return RD},get CP(){return CP},get RV(){return RV},get R
 const PARTS = { deep: ['deep'], vocab: ['title', 'prons', 'words'], output: ['pairs', 'pdist', 'cloze', 'wprompt', 'wguide'] };
 const clone = (o) => JSON.parse(JSON.stringify(o));
 function app() {
-  const B = boot({ hooks: HOOKS }), ex = JSON.parse(B.T.EXAMPLE_R), seen = [];
+  const B = boot({ samples: true, hooks: HOOKS }), ex = JSON.parse(B.T.EXAMPLE_R), seen = [];
   B.T.CP.skill = 'reading'; B.T.CP.slot = 1; B.T.RD.tx = B.T.rdBuildDemoTx(); B.T.RD.title = '';
   const good = (k) => { const r = {}; PARTS[k].forEach((f) => { if (ex[f] !== undefined) r[f] = clone(ex[f]); }); return r; };
   B.W.reply = (url, o) => { const b = JSON.parse(o.body); if (!/ai\/reading$/.test(url)) return { status: 200, body: {} }; seen.push(b); return { status: 200, body: { part: b.part, level: b.level, out: good(b.part), model: 'fake' } }; };
@@ -71,7 +71,7 @@ const gen = async (A) => { A.T.rdGen(); await settle(A); const J = A.T.RD.job, I
     assert.ok(/\.ls \.lsc \.opt,\.rm \.lsc \.opt\{min-height:48px;padding:\.6rem \.85rem;border:1px solid var\(--line\)/.test(src), 'answer options keep their borders');
   });
   await t('Admin › Users: Tester class cell shows —, the stored class stays (filters use it)', () => {
-    const B = boot({ hooks: HOOKS }); B.T.AD.users = [{ email: 'cherry@x.com', name: 'Cherry', role: 'student', cls: 'Test', tester: true, status: 'active' }, { email: 'lan@x.com', name: 'Lan', role: 'student', cls: '7h30', status: 'active' }];
+    const B = boot({ samples: true, hooks: HOOKS }); B.T.AD.users = [{ email: 'cherry@x.com', name: 'Cherry', role: 'student', cls: 'Test', tester: true, status: 'active' }, { email: 'lan@x.com', name: 'Lan', role: 'student', cls: '7h30', status: 'active' }];
     const h = B.T.adListHTML(); assert.ok(/Cherry[\s\S]*?data-l="Class" class="c-sm">—</.test(h) && /data-l="Class" class="c-sm">7h30/.test(h) && B.T.AD.users[0].cls === 'Test');
   });
   await t('Homework Assistant: md-backend keeps the assistant role; rules give it no Firestore access; Boot opens no snapshots for it', () => {

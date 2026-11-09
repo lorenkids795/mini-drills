@@ -13,8 +13,8 @@ const DAY = 864e5, now = Date.now(), A22 = 'a'.repeat(22), B22 = 'b'.repeat(22);
 const ROSTER = [{ email: 'lan@x.com', name: 'Lan', cls: '7h30', role: 'student' }, { email: 'minh@x.com', name: 'Minh', cls: '7h30', role: 'student' }];
 const MIX = { id: 'm1', cls: '7h30', name: 'HW MIX', start: now - DAY, due: now + 2 * DAY, ex: ['l1', 'r1'], type: 'mixed',
   ext: [{ id: 'x1', link: 'https://forms.example.com/a', src: 'Google Form', note: 'Do part A.' }, { id: 'x2', link: 'https://quizlet.example.com/b', src: '', note: '' }] };
-const tea = () => { const B = boot({ hooks: HOOKS }); B.T.setRoster(ROSTER); return B; };
-const stu = () => { const B = boot({ hooks: HOOKS, user: { name: 'Lan', email: 'lan@x.com', role: 'student', cls: '7h30' } }); B.T.setRoster(ROSTER); return B; };
+const tea = () => { const B = boot({ samples: true, hooks: HOOKS }); B.T.setRoster(ROSTER); return B; };
+const stu = () => { const B = boot({ samples: true, hooks: HOOKS, user: { name: 'Lan', email: 'lan@x.com', role: 'student', cls: '7h30' } }); B.T.setRoster(ROSTER); return B; };
 const dates = (B) => { B.el('fSd').value = '2026-11-01'; B.el('fDd').value = '2026-11-08'; B.el('fDt').value = '22:00'; B.el('fNm').value = 'HW'; };
 const newForm = (B) => { B.T.AG.cur = '7h30'; B.T.openForm('7h30'); B.T.renderAsg(); dates(B); };
 // the fake DOM does not read value="…" from the HTML: copy the form state into the fields, like a real browser shows them

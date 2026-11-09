@@ -10,8 +10,8 @@ const HOOKS = 'get AG(){return AG},get AS(){return AS},openForm:openForm,formHTM
 const DAY = 864e5, now = Date.now();
 const ROSTER = [{ email: 'lan@x.com', name: 'Lan', cls: '7h30', role: 'student' }, { email: 'minh@x.com', name: 'Minh', cls: '7h30', role: 'student' }];
 const EXT = { id: 'e1', cls: '7h30', name: 'HW SUN', start: now - DAY, due: now + 2 * DAY, ex: [], type: 'external', link: 'https://forms.example.com/abc', src: 'Google Form', note: 'Do all 20 questions.' };
-const stu = (em) => { const B = boot({ hooks: HOOKS, user: { name: 'Lan', email: em || 'lan@x.com', role: 'student', cls: '7h30' } }); B.T.setRoster(ROSTER); return B; };
-const tea = () => { const B = boot({ hooks: HOOKS }); B.T.setRoster(ROSTER); return B; };
+const stu = (em) => { const B = boot({ samples: true, hooks: HOOKS, user: { name: 'Lan', email: em || 'lan@x.com', role: 'student', cls: '7h30' } }); B.T.setRoster(ROSTER); return B; };
+const tea = () => { const B = boot({ samples: true, hooks: HOOKS }); B.T.setRoster(ROSTER); return B; };
 
 (async () => {
   await t('form: Assignment details → Exercises from Library + External tasks (both addable, no type switch) → footer "Save assignment"', () => {

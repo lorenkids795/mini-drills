@@ -12,7 +12,8 @@ const STATIC_IDS = new Set((html.slice(0, a0).match(/id="([\w-]+)"/g) || []).map
 function boot(opt) {
   opt = opt || {};
   const hooks = opt.hooks || '';
-  const SRC = BASE.slice(0, END) + ';window.__T={setU:function(u){U=u},showTab:showTab' + (hooks ? ',' + hooks : '') + '};\n' + BASE.slice(END);
+  // opt.samples: the 8 hidden Cambridge 14 samples are back in the Library (UI tests that need exercises to pick)
+  const SRC = BASE.slice(0, END) + ';' + (opt.samples ? 'LIB_HIDE=[];' : '') + 'window.__T={setU:function(u){U=u},showTab:showTab' + (hooks ? ',' + hooks : '') + '};\n' + BASE.slice(END);
   const els = {}, handlers = {}, store = {};
   const el = (id) => els[id] || (els[id] = { id, innerHTML: '', textContent: '', hidden: false, value: '', style: { setProperty() {} }, dataset: {},
     classList: { add() {}, remove() {}, toggle() {}, contains() { return false; } }, setAttribute() {}, getAttribute() { return null; }, removeAttribute() {}, appendChild() {}, remove() {},
