@@ -1840,7 +1840,7 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
 </div>
 
 <script src="md-config.js?v=2026-11-04b"></script>
-<script src="md-backend.js?v=2026-11-04b"></script>
+<script src="md-backend.js?v=2026-11-09d"></script>
 <script src="md-chart.js?v=2026-11-04b"></script><script src="md-hw.js?v=2026-11-09b"></script>
 <script src="lm-content.js?v=2026-11-04b"></script>
 <script src="lm-engine.js?v=2026-11-04b"></script>
@@ -7167,7 +7167,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-11-09c'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-11-09d'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(uiAct(a,t))return true;
@@ -8964,7 +8964,7 @@ function adSeasonStart(){
   renderAdmin();var si=$('#seaId');if(si)si.focus();
 }
 function adMeHTML(){
-  return '<div class="sec" style="max-width:720px"><h3>Diagnostics</h3><p class="sub mono" id="adVer">app '+esc(APP_VERSION)+(DEMO?' · demo':' · server '+esc(AD.ver||'unknown (older server or list not loaded yet)'))+'</p></div>'+
+  return '<div class="sec" style="max-width:720px"><h3>Diagnostics</h3><p class="sub mono" id="adVer">app '+esc(APP_VERSION)+(DEMO?' · demo':' · server '+esc(AD.ver||'unknown (older server or list not loaded yet)'))+'</p>'+envDiagHTML()+'</div>'+
     '<div class="sec" style="max-width:720px"><h3>Change my password</h3><p class="sub">Signed in as <b>'+esc(U.email)+'</b>. After this, sign in with the new password. ADMIN_PASSWORD on Cloudflare is only used for the very first sign-in.</p>'+
     '<div class="form-row" style="padding-block:8px"><label class="field" for="pwOld">Current password<input type="password" id="pwOld" autocomplete="current-password"></label>'+
     '<label class="field" for="pwNew">New password<input type="password" id="pwNew" autocomplete="new-password" placeholder="At least 6 characters"></label>'+
@@ -9013,7 +9013,20 @@ function adModalCheck(){var m0=AD.modal;setTimeout(function(){if(!m0||AD.modal!=
   var val;if(m0.ask){val=m0.ask();if(val===null)return}else if(!confirm(m0.title+'\n\n'+m0.text))return; // ask() = boxes with an input (password)
   m0.pending=true;toast(m0.busy||'Saving…');m0.run(val).then(function(){if(m0.done)m0.done(val)},function(e){m0.pending=false;var msg=(e&&e.message)||'Something went wrong.';adSay(msg);alert(msg)});
 },150)}
+/* ---------- Environment (11/2026): production / staging, from GET /api/env (md-backend.js keeps it in window.MD_ENV) ----------
+   Admin › My account › Diagnostics shows which environment and Firebase project the server uses. On a STAGING site only, the
+   admin can create the made-up test data (admin/staging); the passwords of new test accounts are shown once, here, never saved. */
+var STGS={busy:false,msg:'',acc:null};
+function envDiagHTML(){var e=window.MD_ENV;if(DEMO)return '';if(!e)return '<p class="sub mono">environment: not checked yet</p>';
+  var stg=e.env==='staging',h='<p class="sub mono">environment '+esc(e.env||'?')+(e.branch?' · branch '+esc(e.branch):'')+(e.sha?' · '+esc(e.sha):'')+' · Firebase '+esc(e.serverProject||'?')+(stg?' · KV '+esc(e.kv||'?')+' · AI '+esc(e.ai||'off')+' · uploads '+esc(e.uploads||'kv'):'')+'</p>';
+  if(e.problems&&e.problems.length)h+='<p class="banner" role="alert">'+esc(e.problems.join('; '))+'</p>';
+  if(!stg)return h;
+  h+='<h4>Staging test data</h4><p class="sub">Made-up accounts and records for testing on this staging site only.</p><div class="actions"><button type="button" class="btn pri" data-act="ad-stg-seed"'+(STGS.busy||!e.ok?' disabled':'')+'>Create staging test data</button> <button type="button" class="btn" data-act="ad-stg-bulk"'+(STGS.busy||!e.ok?' disabled':'')+'>Add 620 attempts (large data)</button></div><p class="saved" aria-live="polite">'+esc(STGS.msg)+'</p>';
+  if(STGS.acc)h+='<p class="sub">New passwords are shown only now. Copy them to a safe place; they are not stored anywhere you can read again.</p><div class="tscr"><table class="dtbl"><thead><tr><th>Account</th><th>Role</th><th>Class</th><th>Password</th></tr></thead><tbody>'+STGS.acc.map(function(x){return '<tr><td>'+esc(x.email)+'</td><td>'+esc(x.role)+'</td><td>'+esc(x.cls||'—')+'</td><td class="mono">'+esc(x.password)+'</td></tr>'}).join('')+'</tbody></table></div>';
+  return h}
 function adAct(a,t){
+  if(a==='ad-stg-seed'||a==='ad-stg-bulk'){var bulk=a==='ad-stg-bulk';if(uiGate(t,{title:bulk?'Add 620 made-up attempts?':'Create the staging test data?',text:'Only on this STAGING site: made-up accounts on example.test, classes STG-A / STG-B, assignments and attempts, all marked staging. Running it again updates the same records. Production is never touched.',ok:bulk?'Add 620 attempts':'Create test data',cancel:'Cancel'}))return true;
+    STGS={busy:true,msg:'Working…',acc:STGS.acc};renderAdmin();adminApi('admin/staging',{op:bulk?'bulk':'seed'}).then(function(d){STGS={busy:false,acc:d.accounts||STGS.acc,msg:bulk?'Added '+d.attempts+' attempts.':'Done: '+(d.accounts||[]).length+' accounts, '+(d.assignments||[]).length+' assignments, '+(d.attempts||[]).length+' attempts.'};renderAdmin()},function(e){STGS={busy:false,acc:STGS.acc,msg:(e&&e.message)||'Could not create the test data.'};renderAdmin()});return true}
   if(a==='ad-vch-prev'){VCH.busy=true;VCH.msg='Checking…';renderAdmin();adminApi('admin/vouchers',{op:'preview'}).then(function(d){VCH.busy=false;VCH.rows=d.rows||[];VCH.msg=d.profiles+' of '+d.scanned+' profiles hold '+d.items+' code'+(d.items===1?'':'s')+'.';renderAdmin()},function(e){VCH.busy=false;VCH.msg=e.message;renderAdmin()});return true}
   if(a==='ad-vch-move'){var vr=VCH.rows&&VCH.rows[+t.dataset.i];if(!vr)return true;
     uiAsk({title:'Move the voucher codes of '+(vr.email||vr.id)+'?',text:vr.items+' code'+(vr.items===1?'':'s')+' will leave the public profile. A backup of the old list is saved first (audit). Type MOVE to continue.',ok:'Move codes',must:'MOVE',onOk:function(){

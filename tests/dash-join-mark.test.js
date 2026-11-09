@@ -83,7 +83,7 @@ const counts = (h) => (h.match(/(\d+) submitted · (\d+) marked/) || []).slice(1
     assert.ok(!B.W.calls || !B.W.calls.some((c) => c.opt && c.opt.method === 'POST'), 'no write');
   });
   await t('server GET /api/join: format, unknown, archived, ok; rate limited', async () => {
-    const SRC = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(__dirname, '..', 'md-hw.js'), 'utf8'));
+    const SRC = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest').replace(/^import BUILD from .*$/m, 'const BUILD = {};').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(__dirname, '..', 'md-hw.js'), 'utf8'));
     const KV = {}, env = { MD_KV: { get: async (k) => (k in KV ? KV[k] : null), put: async (k, v) => { KV[k] = v; } } };
     const ctx = vm.createContext({ console: { log() {} }, Response: class { constructor(b, o) { this.body = b; this.status = (o && o.status) || 200; } }, URL, TextEncoder, TextDecoder, crypto: globalThis.crypto, atob, btoa, setTimeout, Date, Math, JSON, Uint8Array, ArrayBuffer });
     vm.runInContext(SRC + ';this.T={joinLookup};var DOCS=[];this.setDocs=function(d){DOCS=d};fsQueryDocs=async function(e,col,f,v){return DOCS.filter(function(d){return d[f]===v})};', ctx);

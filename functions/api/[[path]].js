@@ -1,3 +1,4 @@
+import BUILD from '../../build-info.js'; // what this deployment is (production / staging), written by build.js
 import MDHW from '../../md-hw.js'; // the homework rules shared with the app (one source, 11/2026)
 // Mini Drills auth API (Cloudflare Pages Function, served at /api/*).
 // Everyone signs in with email + password. Students pick class + name the first time;
@@ -1127,7 +1128,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-11-09a';
+const API_VERSION = '2026-11-09b';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -2502,11 +2503,153 @@ async function whoami(env, request) {
   return json({ role: r.role, adm: !!r.adm });
 }
 
+/* ---------- Environments (11/2026): staging must never touch production ----------
+   BUILD (build-info.js, written by build.js during the Cloudflare build) says what this deployment is:
+   'production' (branch main), 'staging' (any other branch = Preview), '' (not a Cloudflare build: tests, local copies).
+   A staging deployment answers ONLY when every check passes; otherwise every route except GET /api/env refuses (503):
+   - Preview variable MD_ENV = 'staging';
+   - FIREBASE_PROJECT_ID set, NOT the production project, and the same project the app (dist/md-config.js) was built with;
+   - the service account is not from the production project;
+   - MD_KV bound and carrying the marker env:marker = 'staging:<project>'. A brand-new EMPTY namespace gets the marker on first
+     use; a namespace that already holds data without the marker is refused (it may be the production namespace).
+   On staging, AI (Gemini) is off unless STAGING_AI = 'on', and R2 (MD_AUDIO) is not used unless STAGING_R2 = 'isolated'
+   (uploads then go to the staging KV). A production deployment refuses MD_ENV = 'staging' or a staging-marked KV. */
+const PROD_PROJECT = 'mini-drills';
+let ENVC = null;
+async function envState(env) {
+  const B = BUILD || {};
+  const out = { env: B.env || 'local', branch: B.branch || '', sha: B.sha || '', frontendProject: B.fbProject || '', serverProject: String(env.FIREBASE_PROJECT_ID || ''), kv: '', ai: aiReady(env) ? 'on' : 'off', uploads: env.MD_AUDIO ? 'r2' : 'kv', problems: [] };
+  const P = out.problems;
+  if (out.env === 'staging') {
+    if (B.fbError) P.push('App build: ' + B.fbError);
+    if (env.MD_ENV !== 'staging') P.push('Preview variable MD_ENV is not "staging"');
+    if (!out.serverProject) P.push('FIREBASE_PROJECT_ID is missing');
+    else if (out.serverProject === PROD_PROJECT) P.push('FIREBASE_PROJECT_ID is the production project');
+    if (out.serverProject && out.frontendProject && out.serverProject !== out.frontendProject) P.push('the app and the server use different Firebase projects');
+    if (String(env.FIREBASE_CLIENT_EMAIL || '').toLowerCase().indexOf('@' + PROD_PROJECT + '.iam.gserviceaccount.com') > 0) P.push('FIREBASE_CLIENT_EMAIL is a service account of the production project');
+    if (!env.FIREBASE_PRIVATE_KEY || !env.FIREBASE_CLIENT_EMAIL) P.push('FIREBASE_CLIENT_EMAIL / FIREBASE_PRIVATE_KEY (staging service account) missing');
+    if (!env.MD_KV) P.push('MD_KV (the staging KV namespace) is not bound');
+    else {
+      const want = 'staging:' + out.serverProject;
+      let mark = await env.MD_KV.get('env:marker');
+      if (mark == null && !P.length) {
+        const l = await env.MD_KV.list({ limit: 5 });
+        if ((l.keys || []).length) P.push('the KV namespace already holds data and has no staging marker: it may be the production namespace');
+        else { await env.MD_KV.put('env:marker', want); mark = want; }
+      }
+      if (mark != null && mark !== want) P.push('the KV namespace belongs to another environment');
+      out.kv = mark === want ? 'staging-marked' : 'not-marked';
+    }
+    out.ai = env.STAGING_AI === 'on' && aiReady(env) ? 'on' : 'off';
+    out.uploads = env.MD_AUDIO && env.STAGING_R2 === 'isolated' ? 'r2' : 'kv';
+  } else if (out.env === 'production') {
+    if (env.MD_ENV === 'staging') P.push('this production deployment has MD_ENV = staging');
+    const mark = env.MD_KV ? await env.MD_KV.get('env:marker') : null;
+    if (mark && String(mark).indexOf('staging:') === 0) P.push('this production deployment is bound to a staging KV namespace');
+    out.kv = mark ? 'marked' : 'production';
+  }
+  out.ok = !P.length;
+  return out;
+}
+// cached for 5 minutes once it passes (one KV read per isolate, not per request); a failure is checked again every time
+async function envGate(env) {
+  if (ENVC && ENVC.res.ok && Date.now() - ENVC.at < 300000) return ENVC.res;
+  const res = await envState(env); ENVC = { at: Date.now(), res }; return res;
+}
+// what a staging request may use: no AI unless switched on, no R2 unless declared isolated
+function envScope(env, st) {
+  if (st.env !== 'staging') return env;
+  const e = Object.assign({}, env);
+  if (st.ai !== 'on') { e.GEMINI_KEY = ''; e.GEMINI_PROXY_URL = ''; e.GEMINI_PROXY_SECRET = ''; }
+  if (st.uploads !== 'r2') delete e.MD_AUDIO;
+  return e;
+}
+// GET /api/env: safe labels only (project IDs are public web settings; no keys, no namespace IDs)
+function envPublic(st) {
+  return { env: st.env, branch: st.branch, sha: st.sha, api: API_VERSION, frontendProject: st.frontendProject, serverProject: st.serverProject, kv: st.kv, ai: st.ai, uploads: st.uploads, ok: st.ok, problems: st.problems };
+}
+
+/* ---------- Staging test data (admin, staging only, idempotent) ----------
+   Made-up accounts on example.test (a reserved domain: no real mailbox), classes STG-A / STG-B, assignments and attempts
+   with fixed ids (running again overwrites the same documents), every record staging:true. Nothing from production is copied.
+   A password is made only for an account that has none, and shown once in the reply (Admin › My account), never stored here. */
+const STG_PEOPLE = [
+  { email: 'stg.teacher@example.test', role: 'teacher', name: 'STG Teacher' },
+  { email: 'stg.assistant@example.test', role: 'assistant', name: 'STG Assistant' },
+  { email: 'stg.student@example.test', role: 'student', name: 'STG Student An', cls: 'STG-A' },
+  { email: 'stg.late@example.test', role: 'student', name: 'STG Student Binh', cls: 'STG-A' },
+  { email: 'stg.mover@example.test', role: 'student', name: 'STG Student Chi (moved from STG-B)', cls: 'STG-A' },
+  { email: 'stg.other@example.test', role: 'student', name: 'STG Student Dung', cls: 'STG-B' },
+  { email: 'stg.tester@example.test', role: 'tester', name: 'STG Tester', cls: 'Test' },
+];
+function stgPassword() {
+  const A = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789', r = crypto.getRandomValues(new Uint8Array(14));
+  return Array.from(r, (b) => A[b % A.length]).join('');
+}
+async function fsBatchPut(env, col, rows) {
+  const base = 'projects/' + env.FIREBASE_PROJECT_ID + '/databases/(default)/documents/' + col + '/';
+  for (let i = 0; i < rows.length; i += 400) {
+    const part = rows.slice(i, i + 400);
+    const r = await fs(env, 'POST', ':batchWrite', { writes: part.map((x) => ({ update: { name: base + encodeURIComponent(x.id), fields: toFields(x.data) } })) });
+    if (!r.ok) throw new Error('firestore batch ' + r.status);
+  }
+  return rows.length;
+}
+async function adminStaging(env, body) {
+  const st = await envState(env);
+  if (st.env !== 'staging' || !st.ok) return fail('Staging test data can only be made on a correctly set up staging deployment. Nothing was written.', 403);
+  const now = Date.now(), D = 864e5, op = String(body.op || '');
+  if (op === 'bulk') { // 620 attempts for one made-up student: checks there is no 500 cap anywhere
+    const rows = [];
+    for (let i = 0; i < 620; i++) rows.push({ id: 'stg_bulk_' + i, data: { email: 'stg.student@example.test', student: 'STG Student An', cls: 'STG-A', ex: i % 2 ? 'l2' : 'r2', score: 3, total: 5, answered: 5, required: 5, items: [], ts: now - (i % 150) * D - i * 1000, staging: true } });
+    return json({ ok: true, attempts: await fsBatchPut(env, 'attempts', rows) });
+  }
+  if (op !== 'seed') return fail('Unknown action.');
+  const out = [], staff = (await env.MD_KV.get('staff', 'json')) || {}, am = await assistMap(env);
+  for (const p of STG_PEOPLE) {
+    if (p.role === 'teacher') staff[p.email] = staff[p.email] || { name: p.name, ts: now };
+    if (p.role === 'assistant') am[p.email] = { name: p.name, classes: ['STG-A'], ts: (am[p.email] && am[p.email].ts) || now };
+    if (p.role === 'student' || p.role === 'tester') await fsPut(env, 'roster', p.email, { email: p.email, name: p.name, cls: p.cls, course: '', role: 'student', teacher: 'STG Teacher', tester: p.role === 'tester', ts: now - 120 * D, staging: true });
+    let password = '(unchanged: it already has one)';
+    if (!(await env.MD_KV.get('acct:' + p.email))) { password = stgPassword(); await savePassword(env, p.email, password); }
+    await env.MD_KV.delete('off:' + p.email);
+    out.push({ email: p.email, role: p.role, name: p.name, cls: p.cls || '', password });
+  }
+  await env.MD_KV.put('staff', JSON.stringify(staff));
+  await env.MD_KV.put('assist', JSON.stringify(am));
+  await fsPut(env, 'classes', 'stg-a', { title: 'STAGING · Class A', staging: true });
+  await fsPut(env, 'classes', 'stg-b', { title: 'STAGING · Class B', staging: true });
+  const asg = [
+    ['stg_old', { cls: 'STG-A', name: 'STG old homework (100 days ago)', start: now - 100 * D, due: now - 94 * D, ex: ['l1', 'r1'], ext: [], type: 'mini' }],
+    ['stg_late', { cls: 'STG-A', name: 'STG last week (Library + external)', start: now - 10 * D, due: now - 3 * D, ex: ['l1'], ext: [{ id: 'x1', link: 'https://example.com/staging-form', src: 'Staging form', note: 'Made-up task for testing.' }], type: 'mixed' }],
+    ['stg_now', { cls: 'STG-A', name: 'STG this week', start: now - D, due: now + 5 * D, ex: ['l1', 'r1', 'w1'], ext: [], type: 'mini' }],
+  ];
+  for (const [id, a] of asg) await fsPut(env, 'assignments', id, Object.assign({ ts: now, by: 'staging-seed', staging: true }, a));
+  const A = (id, o) => ({ id, data: Object.assign({ items: [], staging: true }, o) });
+  const at = [
+    A('stg_a_legacy', { email: 'stg.student@example.test', student: 'STG Student An', cls: 'STG-A', ex: 'l1', score: 3, total: 5, ts: now - 97 * D }), // old, cannot prove answered → Legacy · Unverified
+    A('stg_a_full', { email: 'stg.student@example.test', student: 'STG Student An', cls: 'STG-A', ex: 'r1', score: 5, total: 5, ts: now - 96 * D }), // old, full score → Completed
+    A('stg_a_late', { email: 'stg.late@example.test', student: 'STG Student Binh', cls: 'STG-A', ex: 'l1', score: 4, total: 5, answered: 5, required: 5, ts: now - 2 * D }), // after the deadline → late
+    A('stg_a_inc', { email: 'stg.student@example.test', student: 'STG Student An', cls: 'STG-A', ex: 'l1', score: 2, total: 5, answered: 3, required: 5, ts: now - D / 2 }), // blanks → Incomplete 3/5
+    A('stg_a_move', { email: 'stg.mover@example.test', student: 'STG Student Chi', cls: 'STG-B', ex: 'l1', score: 5, total: 5, answered: 5, required: 5, ts: now - D / 2 }), // written in the old class
+    A('stg_w_old', { email: 'stg.student@example.test', student: 'STG Student An', cls: 'STG-A', ex: 'w1', kind: 'submission', score: 0, total: 0, text: 'A made-up staging essay that nobody has marked yet. It is two hundred days old.', words: 16, ts: now - 200 * D }),
+    A('stg_w_new', { email: 'stg.late@example.test', student: 'STG Student Binh', cls: 'STG-A', ex: 'w1', kind: 'submission', score: 0, total: 0, text: 'A made-up staging essay for marking tests.', words: 8, ts: now - 2 * D }),
+  ];
+  await fsBatchPut(env, 'attempts', at);
+  return json({ ok: true, accounts: out, classes: ['STG-A', 'STG-B'], assignments: asg.map((x) => x[0]), attempts: at.map((x) => x.id) });
+}
+
 export async function onRequest(ctx) {
-  const { request, env } = ctx;
+  const { request } = ctx;
+  let env = ctx.env;
   const url = new URL(request.url);
   const route = url.pathname.replace(/^\/api\/?/, '').replace(/\/$/, '');
   try {
+    // environment first: a staging deployment that could reach production answers nothing but its diagnosis
+    const est = await envGate(env);
+    if (route === 'env' && request.method === 'GET') return json(envPublic(est));
+    if (!est.ok) return json({ error: (est.env === 'staging' ? 'Staging is not set up safely, so nothing runs: ' : 'Environment problem: ') + est.problems.join('; ') + '.', code: 'env', env: est.env }, 503);
+    env = envScope(env, est);
     if (!env.MD_KV || !env.FIREBASE_PROJECT_ID || !env.FIREBASE_PRIVATE_KEY) return fail('Server is not configured yet.', 500);
     if (route === 'names' && request.method === 'GET') return json(await listNames(env));
     if (route === 'join' && request.method === 'GET') return await joinLookup(env, request, url);
@@ -2546,6 +2689,7 @@ export async function onRequest(ctx) {
       if (!(await adminKeyOk(env, request))) {
         return json({ error: 'Your admin session ended. Enter your admin password to continue.', needUnlock: true }, 401);
       }
+      if (route === 'admin/staging') return await adminStaging(env, body);
       if (route === 'admin/users') return await adminUsers(env);
       if (route === 'admin/password') return await adminPassword(env, body);
       if (route === 'admin/active') return await adminActive(env, body);

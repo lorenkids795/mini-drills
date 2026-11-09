@@ -21,7 +21,7 @@ function mkEl(tag) {
 const walk = (e, f) => { f(e); e.children.forEach((c) => walk(c, f)); };
 const text = (e) => { let s = e.textContent || ''; e.children.forEach((c) => { s += text(c); }); return s; };
 
-function boot(fetchFn) {
+function boot(fetchFn, cfg, envReply) { // cfg = MD_CONFIG (default production), envReply = what GET /api/env answers
   const card = mkEl('div'), host = mkEl('form'); host.setAttribute('id', 'loginForm'); card.appendChild(host);
   const byId = (id) => { let f = null; walk(card, (e) => { if (!f && e.id === id) f = e; }); return f; };
   const doc = { readyState: 'complete', head: mkEl('head'), createElement: mkEl, createTextNode: (s) => { const n = mkEl('#text'); n.textContent = s; return n; },
@@ -29,15 +29,15 @@ function boot(fetchFn) {
   const calls = [];
   const W = { document: doc, console, Promise, JSON, Object, Array, String, Error, encodeURIComponent, setInterval: () => 0, location: { reload() {} },
     sessionStorage: { getItem: () => null, setItem() {}, removeItem() {} }, localStorage: { getItem: () => null, setItem() {}, removeItem() {} },
-    MD_CONFIG: { demo: false, api: '/api', firebase: {} },
-    fetch: (url, opt) => { calls.push({ url, opt }); return fetchFn ? fetchFn(url, opt) : new Promise(() => {}); } };
+    MD_CONFIG: cfg || { demo: false, api: '/api', firebase: {} },
+    fetch: (url, opt) => { if (url === '/api/env') return Promise.resolve({ ok: true, json: () => Promise.resolve(envReply || { env: 'production', ok: true, problems: [] }) }); calls.push({ url, opt }); return fetchFn ? fetchFn(url, opt) : new Promise(() => {}); } };
   W.window = W;
   vm.runInContext(fs.readFileSync(path.join(ROOT, 'md-backend.js'), 'utf8'), vm.createContext(W), { filename: 'md-backend.js' });
   const root = byId('mdAuth');
   const visible = () => { const v = []; root.children.forEach((c) => { if (!c.hidden) v.push(c); }); return v; };
   const btn = (label) => { let f = null; walk(root, (e) => { if (!f && e.tagName === 'BUTTON' && e.textContent === label) f = e; }); assert.ok(f, 'no button ' + label); return f; };
   const shown = () => visible().map((c) => (c.tagName === 'FORM' ? 'form:' + c.children.filter((x) => x.attrs.class === 'field').map((x) => x.children[0].textContent).join('|') : c.tagName === 'BUTTON' ? c.attrs.class + ':' + c.textContent : c.tagName));
-  return { card, root, byId, btn, shown, calls, W };
+  return { card, root, byId, btn, shown, calls, W, doc };
 }
 const flush = async () => { for (let i = 0; i < 20; i++) await new Promise((r) => setImmediate(r)); };
 
@@ -69,6 +69,28 @@ const flush = async () => { for (let i = 0; i < 20; i++) await new Promise((r) =
     c.value = '7h30'; c.listeners.change[0](); assert.strictEqual(n.disabled, false); assert.deepStrictEqual(n.children.map((o) => o.textContent), ['Choose your name', 'An', 'Bình']);
     n.value = 'n2'; c.value = '17h'; c.listeners.change[0](); assert.strictEqual(n.value, ''); assert.deepStrictEqual(n.children.map((o) => o.textContent), ['Choose your name', 'Chi']);
     c.value = '__email'; c.listeners.change[0](); assert.strictEqual(n.disabled, true);
+  });
+  // ---- environment guard (staging never reaches production)
+  const STGCFG = (fb, err) => ({ demo: false, env: 'staging', api: '/api', teachers: [], firebase: fb, envError: err || '' });
+  const FB = { apiKey: 'AIzaSyB000000000000000000000000000000', authDomain: 'md-stg.firebaseapp.com', projectId: 'md-stg', appId: '1:5:web:ab' };
+  const tryLogin = async (B) => { B.byId('sEmail').value = 'a@b.c'; B.byId('sPass').value = 'secret1'; B.root.children.find((c) => c.tagName === 'FORM').onsubmit({ preventDefault() {} }); await flush(); };
+  await t('staging without its own Firebase settings: Firebase never loads, sign-in refused with the reason, STAGING badge', async () => {
+    const B = boot(() => Promise.resolve({ ok: true, json: () => Promise.resolve({ token: 'x' }) }), STGCFG(null, 'missing Preview variable(s): FIREBASE_PROJECT_ID'), { env: 'staging', ok: false, problems: ['x'] });
+    await flush(); assert.strictEqual(B.doc.head.children.length, 0, 'no Firebase script added');
+    await tryLogin(B); assert.strictEqual(B.calls.filter((c) => c.url === '/api/login').length, 0, 'nothing posted');
+    assert.ok(/STAGING site and it is not set up yet \(missing Preview variable/.test(B.byId('authMsg').textContent), B.byId('authMsg').textContent);
+  });
+  await t('staging app + a server that is production / another project / not ok → sign-in refused, nothing posted', async () => {
+    for (const rep of [{ env: 'production', ok: true, problems: [] }, { env: 'staging', ok: true, serverProject: 'other', problems: [] }, { env: 'staging', ok: false, serverProject: 'md-stg', problems: ['the KV namespace already holds data and has no staging marker'] }]) {
+      const B = boot(() => Promise.resolve({ ok: true, json: () => Promise.resolve({}) }), STGCFG(FB), rep); await tryLogin(B);
+      assert.strictEqual(B.calls.filter((c) => c.url === '/api/login').length, 0, JSON.stringify(rep)); assert.ok(/Sign-in is off/.test(B.byId('authMsg').textContent));
+    }
+  });
+  await t('staging app + safe staging server on the same project → sign-in works; production app refuses a staging server', async () => {
+    let B = boot((url) => (url === '/api/login' ? Promise.resolve({ ok: false, json: () => Promise.resolve({ error: 'Wrong email or password.' }) }) : new Promise(() => {})), STGCFG(FB), { env: 'staging', ok: true, serverProject: 'md-stg', problems: [] });
+    await tryLogin(B); assert.strictEqual(B.calls.filter((c) => c.url === '/api/login').length, 1);
+    B = boot(() => new Promise(() => {}), null, { env: 'staging', ok: true, serverProject: 'md-stg', problems: [] }); await tryLogin(B);
+    assert.strictEqual(B.calls.filter((c) => c.url === '/api/login').length, 0); assert.ok(/set up for production but the server is a staging server/.test(B.byId('authMsg').textContent));
   });
   await t('sign in posts /api/login with email + password (unchanged)', async () => {
     const B = boot((url) => (url === '/api/login' ? Promise.resolve({ ok: false, json: () => Promise.resolve({ error: 'Wrong email or password.' }) }) : new Promise(() => {})));

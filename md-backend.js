@@ -8,6 +8,31 @@
   if (C.demo !== false) return;
   var V = '10.12.2', base = 'https://www.gstatic.com/firebasejs/' + V + '/';
   var API = C.api || '/api';
+  /* ---------- environment guard (11/2026) ----------
+     A STAGING site (a Cloudflare Preview build, C.env = 'staging', written by build.js) never uses production: without its own
+     Firebase settings it does not load Firebase at all, and it signs nobody in unless the server (GET /api/env) says it is a
+     correctly set up staging deployment on the SAME Firebase project. A production site refuses a server that says staging.
+     ENVB = the reason sign-in is refused (shown on the sign-in page). */
+  var ENVB = '', STG = C.env === 'staging';
+  if (STG && (!C.firebase || C.envError)) ENVB = 'This is the STAGING site and it is not set up yet (' + (C.envError || 'no staging Firebase project') + '). Nothing runs here until the staging setup is finished.';
+  var envOk = fetch(API + '/env', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
+    window.MD_ENV = d;
+    if (ENVB) return;
+    if (STG && (d.env !== 'staging' || !d.ok || d.serverProject !== C.firebase.projectId)) ENVB = 'This is the STAGING site, but the server is not a safe staging server' + (d.problems && d.problems.length ? ': ' + d.problems.join('; ') : ' (environment ' + d.env + ', project ' + (d.serverProject || 'none') + ')') + '. Sign-in is off.';
+    if (!STG && d.env === 'staging') ENVB = 'This site is set up for production but the server is a staging server. Sign-in is off.';
+  }, function () { if (STG && !ENVB) ENVB = 'This is the STAGING site and its server could not be checked. Sign-in is off.'; })
+    .then(function () { envShow(); });
+  function envShow() {
+    if (STG && document.body && !document.getElementById('mdStg')) {
+      var b = document.createElement('div');
+      b.id = 'mdStg'; b.setAttribute('role', 'status');
+      b.style.cssText = 'position:fixed;left:50%;bottom:8px;transform:translateX(-50%);z-index:90;background:#8a5512;color:#fff;font:600 12px/1.4 system-ui,sans-serif;padding:6px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.25);pointer-events:none;max-width:calc(100vw - 24px);text-align:center';
+      b.textContent = 'STAGING · ' + ((C.firebase && C.firebase.projectId) || 'not set up') + ' · made-up test data only';
+      document.body.appendChild(b);
+    }
+    var m = document.getElementById('authMsg');
+    if (ENVB && m) { m.textContent = ENVB; m.setAttribute('role', 'alert'); }
+  }
   function load(src) {
     return new Promise(function (ok, no) {
       var s = document.createElement('script');
@@ -15,7 +40,8 @@
       document.head.appendChild(s);
     });
   }
-  var ready = load('firebase-app-compat.js')
+  // a staging site without its own Firebase settings never loads Firebase (it waits for ever: nothing signs in, nothing is read)
+  var ready = (STG && ENVB) ? new Promise(function () {}) : load('firebase-app-compat.js')
     .then(function () { return Promise.all([load('firebase-auth-compat.js'), load('firebase-firestore-compat.js')]); })
     .then(function () { firebase.initializeApp(C.firebase); return firebase; });
 
@@ -28,6 +54,9 @@
   };
 
   function post(path, body) {
+    return envOk.then(function () { if (ENVB) throw new Error(ENVB); return postNow(path, body); });
+  }
+  function postNow(path, body) {
     return fetch(API + '/' + path, {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
     }).then(function (r) {
@@ -221,7 +250,10 @@
   function start() {
     ui();
     resetUi();
-    ready.then(function (fb) {
+    envShow();
+    // a saved session is only used once the environment check passed (staging: same project, safe server)
+    Promise.all([ready, envOk]).then(function (r) { var fb = r[0];
+      if (ENVB) { try { fb.auth().signOut(); } catch (e) {} envShow(); return; }
       var first = true, timer = null;
       fb.auth().onAuthStateChanged(function (u) {
         if (u) {
