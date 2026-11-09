@@ -69,13 +69,13 @@ t('8. aggregates agree: hwStatus %, hwRows "all" (Dashboard) and the Completion 
   const hw = fs.readFileSync(path.join(ROOT, 'md-hw.js'), 'utf8');
   assert.ok(/function hwaStatus[\s\S]{0,500}MDHW\.asgEval\(/.test(srv) && !/hwaStatus[\s\S]{0,700}\.done === true/.test(srv) && !/\.done ?=== ?true/.test(hw), 'Homework Assistant uses the shared rules (md-hw.js), which count real attempts, not the I\'m done flag');
 });
-t('Library samples: inventory lists the 9 code samples with references; nothing hidden until approved; the hide switch keeps them for old data', () => {
+t('Library samples: inventory lists the 9 code samples with references; the 8 approved ones are hidden; the hide switch keeps them for old data', () => {
   const B = tea(); B.T.setAttempts([att('l1'), { email: 'x@x.com', ex: 'l1', id: 'seed_x_l1', seeded: true, score: 1, total: 10, ts: now }]);
   const R = B.T.smpInventory(); assert.deepStrictEqual(R.map((r) => r.id).join(), 'l1,l2,l3,r1,r2,r3,w1,s1,ra1');
   const l1 = R[0]; assert.ok(l1.title === 'Gap-fill the transcript' && /Cam 14 · Test 1 · Listening/.test(l1.where) && /not stored in Firestore/.test(l1.src) && l1.att === 1 && l1.seed === 1 && l1.asg.length === 1);
-  assert.strictEqual(B.T.LIB_HIDE.length, 0, 'nothing hidden before approval');
-  assert.deepStrictEqual(B.T.exIds('cam14', 't1', 'listening').slice(0, 3).join(), 'l1,l2,l3');
-  B.T.hideSet(['l1', 'l2', 'l3']); assert.ok(B.T.exIds('cam14', 't1', 'listening').indexOf('l1') < 0, 'hidden from the Library list');
+  assert.deepStrictEqual(B.T.LIB_HIDE.join(), 'l1,l2,l3,r1,r2,r3,w1,s1', 'the 8 approved samples (owner, 11/2026); ra1 is not in the Library anyway');
+  assert.deepStrictEqual(B.T.exIds('cam14', 't1', 'listening').join(), '', 'hidden from the Library list');
+  B.T.hideSet([]); assert.deepStrictEqual(B.T.exIds('cam14', 't1', 'listening').slice(0, 3).join(), 'l1,l2,l3', 'undo = empty the list');
   assert.ok(row(B, HW).n === 2, 'an assignment that uses a hidden sample still counts it (EXS keeps it)');
   assert.ok(/Library samples/.test(B.T.adSamplesHTML()) && /readonly/.test(B.T.adSamplesHTML()));
 });

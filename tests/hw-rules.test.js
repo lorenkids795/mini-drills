@@ -116,6 +116,38 @@ const CASES = [
     const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'); const m = html.match(/var SAMPLE_IDS=(\[[^\]]*\])/);
     assert.deepStrictEqual(JSON.parse(m[1].replace(/'/g, '"')), H.BUILTIN, 'md-hw BUILTIN = the app\'s built-in exercises');
   });
+  // the same student seen by the teacher (app) and the assistant (server), with screenshots (hwdone) and a roster
+  async function both(asg, atts, hw, roster) {
+    roster = roster || [{ email: 'lan@x.com', name: 'Lan', cls: '7h30', role: 'student' }];
+    const B = boot({ hooks: HOOKS }); B.T.setRoster(roster); B.T.setAsg([asg]); B.T.setAttempts(atts); if (hw) B.T.setHw([Object.assign({ id: 'h_' + asg.id, asgId: asg.id }, hw)]);
+    const S = server(); S.KV.assist = JSON.stringify({ 'as@x.com': { name: 'As', classes: ['7h30'] } });
+    roster.forEach((r) => { S.DB.roster[r.email] = r; }); S.DB.assignments[asg.id] = asg; atts.forEach((x, i) => { S.DB.attempts['q' + i] = x; }); if (hw) S.DB.hwdone.h1 = Object.assign({ asgId: asg.id }, hw);
+    S.ctx.setWho({ em: 'as@x.com', role: 'assistant' }); const d = await S.data();
+    return { B, d, srv: (name) => { const s = d.students.filter((x) => x.name === name)[0]; return s ? d.status[asg.id][s.key] : null; } };
+  }
+  await t('mixed Library + external task: both parts needed; a late screenshot = late on both sides', async () => {
+    const M = Object.assign({}, A, { id: 'm1', ext: [{ id: 'x1', link: 'https://f.example.com/a', src: 'Google Form' }], type: 'mixed' });
+    const ok = [{ email: 'lan@x.com', ex: 'l1', score: 5, total: 5, answered: 5, required: 5, ts: now - 2 * DAY }];
+    let r = await both(M, ok, null); assert.strictEqual(r.B.T.asgState(M, 'lan@x.com', now).st, 'missing'); assert.strictEqual(r.srv('Lan').st, 'missing', 'Library alone is not enough');
+    const shot = { email: 'lan@x.com', shots: { x1: { id: 'a'.repeat(22), url: '/api/image/' + 'a'.repeat(22), ts: now - 0.5 * DAY } } };
+    r = await both(M, ok, shot); assert.strictEqual(r.B.T.asgState(M, 'lan@x.com', now).st, 'late'); assert.strictEqual(r.srv('Lan').st, 'late');
+    r = await both(M, [], shot); assert.strictEqual(r.B.T.asgState(M, 'lan@x.com', now).st, 'missing'); assert.strictEqual(r.srv('Lan').st, 'missing', 'a screenshot never completes the Library work');
+  });
+  await t('kicked account (no roster row) and testers: in neither list; their attempts never count for anyone', async () => {
+    const roster = [{ email: 'lan@x.com', name: 'Lan', cls: '7h30', role: 'student' }, { email: 'tt@x.com', name: 'Tess', cls: '7h30', role: 'student', tester: true }];
+    const atts = [{ email: 'gone@x.com', cls: '7h30', ex: 'l1', score: 5, total: 5, ts: now - 2 * DAY }, { email: 'tt@x.com', cls: '7h30', ex: 'l1', score: 5, total: 5, ts: now - 2 * DAY }];
+    const r = await both(A, atts, null, roster);
+    assert.deepStrictEqual(r.d.students.map((s) => s.name), ['Lan'], 'server: no kicked, no tester'); assert.strictEqual(r.srv('Lan').st, 'missing');
+    assert.strictEqual(r.B.T.asgState(A, 'lan@x.com', now).st, 'missing', 'app: Lan does not get the work of others');
+  });
+  await t('cross-class: the assistant of 7h30 never gets a 9h assignment or student, whatever the request says', async () => {
+    const B9 = Object.assign({}, A, { id: 'b9', cls: '9h' });
+    const S = server(); S.KV.assist = JSON.stringify({ 'as@x.com': { name: 'As', classes: ['7h30'] } });
+    S.DB.roster['lan@x.com'] = { email: 'lan@x.com', name: 'Lan', cls: '7h30', role: 'student' }; S.DB.roster['hoa@x.com'] = { email: 'hoa@x.com', name: 'Hoa', cls: '9h', role: 'student' };
+    S.DB.assignments.a1 = A; S.DB.assignments.b9 = B9; S.ctx.setWho({ em: 'as@x.com', role: 'assistant' });
+    const d = JSON.parse((await S.ctx.T.hwaData(S.env, {}, { days: 60, classes: ['9h'], cls: '9h' })).body);
+    assert.deepStrictEqual(d.classes, ['7h30']); assert.ok(!d.status.b9 && d.students.every((s) => s.cls === '7h30'));
+  });
   await t('assistant lists: overdue blanks are in the missing report, blanks before the deadline in the reminder', () => {
     const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
     assert.ok(/function hwaOwe\(r\)\{[^}]*r\.st==='incomplete'\)return r\.due</.test(html) && /hwaOwe\(m\[s\.key\]\)===\(mode==='reminder'\?'soon':'over'\)/.test(html));

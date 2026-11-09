@@ -1961,7 +1961,10 @@ var exSub=function(e){return e.kind==='lesson'?'5-stage lesson · '+e.qs.length+
 /* The first sample exercises written with the app (in this file, not in Firestore): Cam 14 · Test 1. SAMPLE_IDS = the list for
    Admin › Library samples (inventory). LIB_HIDE = the ones hidden from the Library on the real site; EMPTY until the owner approves
    the list (then put the approved ids here). Hiding never deletes: EXS keeps them for old attempts / grades / assignments. */
-var SAMPLE_IDS=['l1','l2','l3','r1','r2','r3','w1','s1','ra1'],LIB_HIDE=[];
+// (11/2026) the owner approved hiding the 8 Cambridge 14 · Test 1 samples. Hidden = left out of the Library, the assignment picker and
+// the Create slot map (exIds) on the real site; EXS keeps them, so old attempts, marks, feedback and old assignments still show the title.
+// Nothing is deleted. Undo = take the id out of LIB_HIDE. Demo mode still shows them.
+var SAMPLE_IDS=['l1','l2','l3','r1','r2','r3','w1','s1','ra1'],LIB_HIDE=['l1','l2','l3','r1','r2','r3','w1','s1'];
 function exIds(b,t,s){
   var base=((LIBMAP[b]&&LIBMAP[b][t]&&LIBMAP[b][t][s])||[]).filter(function(id){return DEMO||LIB_HIDE.indexOf(id)<0});
   return base.concat(customEx.filter(function(c){return c.bookId===b&&c.testId===t&&c.skill===s}).sort(function(x,y){return (x.part||99)-(y.part||99)}).map(function(c){return c.id}));
