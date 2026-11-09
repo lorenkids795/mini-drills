@@ -60,7 +60,7 @@ const app = (withPassage) => { const B = boot({ hooks: HOOKS }); B.T.CP.skill = 
     assert.ok(/Replace/.test(asked)); assert.strictEqual(JSON.stringify(B.T.localCustom), first, 'cancel = no change');
   });
   await t('server: "Copy prompt (3 versions)" asks for {medium, easy, hard} with the 3 level notes; the 1-version prompt is unchanged', () => {
-    const SRC = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest');
+    const SRC = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(__dirname, '..', 'md-hw.js'), 'utf8'));
     const ctx = vm.createContext({ console: { log() {} }, URL, TextEncoder, TextDecoder, crypto: globalThis.crypto, atob, btoa, setTimeout, Date, Math, JSON });
     vm.runInContext(SRC + ';this.T={readingPrompt3,RPROMPT};', ctx); const p = ctx.T.readingPrompt3();
     assert.ok(p.startsWith(ctx.T.RPROMPT) && /"medium": \{…the whole lesson…\}, "easy": \{…\}, "hard": \{…\}/.test(p) && /VERSION: EASY/.test(p) && /VERSION: HARD/.test(p) && /PASSAGE:\n$/.test(p));

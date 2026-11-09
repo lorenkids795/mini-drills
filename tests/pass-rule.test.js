@@ -1,4 +1,4 @@
-// PASS = 70 % correct for everyone (one rule), blank answers asked about before Submit, the 500-attempt cap said out loud.
+// PASS = 70 % correct for everyone (one rule), blank answers asked about before Submit, (the old 500-attempt cap: see attempts-scope.test.js).
 // Real app code (tests/app-harness.js), no network.
 // Run: node tests/pass-rule.test.js
 'use strict';
@@ -6,7 +6,7 @@ const assert = require('assert'), fs = require('fs'), path = require('path');
 const { boot, ROOT } = require('./app-harness.js');
 let pass = 0, fail = 0; const out = [];
 function t(name, fn) { try { fn(); pass++; out.push('PASS ' + name); } catch (e) { fail++; out.push('FAIL ' + name + ' -> ' + e.message); } }
-const HOOKS = 'passPct:passPct,PASS_PCT:PASS_PCT,blankCount:blankCount,get NAV(){return NAV},attCapHTML:attCapHTML,setAtt:function(a){attemptDocs=a},ATT_CAP:ATT_CAP';
+const HOOKS = 'passPct:passPct,PASS_PCT:PASS_PCT,blankCount:blankCount,get NAV(){return NAV},attCapHTML:attCapHTML,setAtt:function(a){attemptDocs=a}';
 const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 
 t('PASS is 70 % for every auto-graded score: 69 % no, 70 % yes, 78 % yes; no answers / no questions = no pass', () => {
@@ -31,14 +31,6 @@ t('Submit with blank answers asks first (Keep working / Submit anyway)', () => {
   B.cancel(); assert.strictEqual(B.asking(), '');
   assert.ok(/if\(a==='submit'\)\{var bl=blankCount\(\);if\(bl\.n&&uiGate\(t,/.test(html));
 });
-t('teachers: when the 500 newest attempts are all that is loaded, Marking / Dashboard / Homework say so', () => {
-  const B = boot({ hooks: HOOKS });
-  B.T.setAtt([]); assert.strictEqual(B.T.attCapHTML(), '');
-  B.T.setAtt(Array.from({ length: B.T.ATT_CAP }, (_, i) => ({ id: 'a' + i, email: 'x@x.com', ex: 'l1', ts: i })));
-  assert.ok(/Showing the newest 500 attempts only\. Older work may show as not done here\. It is not lost\./.test(B.T.attCapHTML()));
-  assert.ok(/\$\('#v-mark'\)\.innerHTML=attCapHTML\(\)\+h/.test(html) && /\$\('#v-dash'\)\.innerHTML=attCapHTML\(\)\+h/.test(html) && /orderBy\('ts','desc'\)\.limit\(ATT_CAP\)/.test(html));
-  const S = boot({ hooks: HOOKS, user: { name: 'S', email: 's@x.com', role: 'student', cls: 'A' } });
-  S.T.setAtt(Array.from({ length: 500 }, (_, i) => ({ id: 'a' + i, email: 's@x.com', ex: 'l1', ts: i }))); assert.strictEqual(S.T.attCapHTML(), '', 'students never see it');
-});
+// (the 500-attempt cap is gone, D5: tests/attempts-scope.test.js)
 
 out.forEach((l) => console.log(l)); console.log('---- ' + pass + '/' + (pass + fail) + ' passed'); if (fail) process.exitCode = 1;

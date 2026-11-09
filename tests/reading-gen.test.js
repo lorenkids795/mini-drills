@@ -34,7 +34,7 @@ const sigOf = (A) => A.B.T.rdMedSig(A.B.T.RD.job);
 const st = (A, l, k) => A.B.T.RD.job.pt[l][k].st;
 
 // server: real aiReadingPart with a fake Gemini
-const SRC = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest');
+const SRC = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(__dirname, '..', 'md-hw.js'), 'utf8'));
 function server(gem) {
   const KV = {}, calls = [];
   const res = (status, body) => ({ ok: status < 400, status, json: async () => body, text: async () => JSON.stringify(body) });

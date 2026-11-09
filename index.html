@@ -744,6 +744,7 @@ button.lsstep{background:none;font:inherit;font-size:var(--fs-sm);cursor:pointer
 .xchip button{border:0;background:none;color:var(--muted);font-size:var(--fs-md);line-height:1;padding:0 .35rem}
 .mk{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;font-weight:700;font-size:var(--fs-sm)}
 .mk.ok{background:var(--good-bg);color:var(--good)}
+.mk.lt{width:auto;padding:0 6px;border-radius:var(--r-pill);gap:3px;grid-auto-flow:column}.mk.lt small{font-size:var(--fs-xs);font-weight:600}.hwan{display:block;color:var(--muted);font-size:var(--fs-xs)}
 .mk.no{background:var(--bad-bg);color:var(--bad)}
 .mk.pd{background:var(--bg);color:var(--muted)}
 .hmx{min-width:0}
@@ -1840,7 +1841,7 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
 
 <script src="md-config.js?v=2026-11-04b"></script>
 <script src="md-backend.js?v=2026-11-04b"></script>
-<script src="md-chart.js?v=2026-11-04b"></script>
+<script src="md-chart.js?v=2026-11-04b"></script><script src="md-hw.js?v=2026-11-09b"></script>
 <script src="lm-content.js?v=2026-11-04b"></script>
 <script src="lm-engine.js?v=2026-11-04b"></script>
 <script src="lm-unit2.js?v=2026-11-04b"></script>
@@ -2113,13 +2114,15 @@ function makeSample(){
 }
 
 /* ---------- Attempts and progress ---------- */
-function attemptsOf(email){var a=realAttempts().filter(function(x){return x.email===email});if(isDemoStudent(email))a=a.concat(sampleData.filter(function(x){return x.email===email}));return a}
+function attemptsOf(email){var me=nEm(email),a=realAttempts().filter(function(x){return nEm(x.email)===me});if(isDemoStudent(email))a=a.concat(sampleData.filter(function(x){return x.email===email}));return a}
 function doneMap(email,since,until){var m={};attemptsOf(email).forEach(function(a){if(since&&a.ts<since)return;if(until&&a.ts>until)return;var o=m[a.ex]||(m[a.ex]={best:0,total:a.total,n:0,band:null});o.best=Math.max(o.best,a.score);o.total=a.total;o.n++;var g=gradeOf(a);if(g)o.band=g.overall});return m}
 function prog(ids,dm){var d=ids.filter(function(i){return dm[i]}).length;return {d:d,t:ids.length,p:ids.length?Math.round(d/ids.length*100):0}}
 function allIdsBook(b){var o=[];TESTS.forEach(function(t){SKILLS.forEach(function(s){o=o.concat(exIds(b,t,s))})});return o}
 function allIdsTest(b,t){var o=[];SKILLS.forEach(function(s){o=o.concat(exIds(b,t,s))});return o}
 function progHTML(pr){return '<div class="pc"><div class="prog'+(pr.p===100?' done':'')+'"><i style="width:'+pr.p+'%"></i></div><span>'+(pr.t?pr.p+'% completed':'No exercises yet')+'</span></div>'}
 function scoreColor(p){return p<50?'var(--bad)':(p<70?'var(--more)':'var(--good)')}
+// the words for a part that is not complete (shared rules md-hw.js): blank answers, an older attempt, or nothing yet
+function partLabel(q,bad){q=q||{};if(q.st==='incomplete')return 'Incomplete · '+q.answered+'/'+q.required+' answered';if(q.st==='unverified')return 'Legacy · Unverified';return bad?'Missed':'Waiting'}
 function pcHTML(e,d,bad,todo){
   if(!d)return '<div class="pc'+(bad?' bad':'')+'"><div class="prog"><i style="width:0"></i></div><span>'+todo+'</span></div>';
   if(e.kind==='writing'||e.kind==='speaking')return '<div class="pc"><div class="prog"><i style="width:100%;background:var(--good)"></i></div><span class="best">'+doneLabel(e,d)+'</span></div>';
@@ -2168,11 +2171,14 @@ function hwDone(email,id){return hwdoneDocs.concat(localHwdone).some(function(d)
 //  - submission = the student pressed "I'm done!" for the Library part (libSub, from hwdone; an old record without screenshots
 //    was written by I'm done too). It is shown on its own and NEVER makes the work complete.
 //  turned = complete and (no Library part, or turned in): "All done" on Home, the homework XP. A screenshot = submitted, never "correct".
-function asgState(a,email,now){a=normAsg(a);now=now||Date.now();var due=effDue(a,email),ids=a.ex.filter(exOf),dm=doneMap(email,a.start,due.getTime()),sh=hwShots(hwRec(email,a.id));
-  var X=a.ext.map(function(x){var t=sh[x.id]||null;return {x:x,s:t,late:!!(t&&t.ts>due.getTime())}});
-  var libSub=!!ids.length&&hwDone(email,a.id),extFin=X.every(function(t){return !!t.s}),libN=ids.filter(function(i){return dm[i]}).length,libComp=libN===ids.length;
-  var fin=(ids.length+X.length)>0&&libComp&&extFin;
-  return {a:a,due:due,ids:ids,dm:dm,pr:prog(ids,dm),X:X,over:due.getTime()<now,libSub:libSub,libComp:libComp,libFin:libComp&&(!ids.length||libSub),extFin:extFin,fin:fin,turned:fin&&(!ids.length||libSub),done:libN+X.filter(function(t){return !!t.s}).length,n:ids.length+X.length}}
+function asgState(a,email,now){a=normAsg(a);now=now||Date.now();var p=passFor(email,a.id),ids=a.ex.filter(exOf),sc=doneMap(email,a.start,0),sh=hwShots(hwRec(email,a.id));
+  // the parts and their states come from the shared rules (md-hw.js), the same ones the Homework Assistant's server uses:
+  // done (complete on time) · late (complete after the deadline, still counted) · incomplete (blank answers) · unverified (older attempt) · none
+  var E=MDHW.asgEval({start:a.start,due:a.due,ext:a.ext},{attempts:attemptsOf(email),hw:{shot:null,shots:sh},pass:p,now:now,ex:ids}),due=new Date(E.due),P={},dm={};
+  E.parts.forEach(function(q){if(q.kind==='ex'){P[q.id]=q;if(q.st==='done'||q.st==='late')dm[q.id]=sc[q.id]||{best:0,total:0,n:1,band:null}}});
+  var X=a.ext.map(function(x){var q=E.parts.filter(function(o){return o.kind==='ext'&&o.id===x.id})[0]||{st:'none'};return {x:x,s:q.shot||null,late:q.st==='late',st:q.st}});
+  var libSub=!!ids.length&&hwDone(email,a.id),extFin=X.every(function(t){return !!t.s}),libComp=ids.every(function(i){return !!dm[i]}),fin=E.fin;
+  return {a:a,due:due,ids:ids,dm:dm,P:P,pr:prog(ids,dm),X:X,over:E.over,st:E.st,late:E.late,unverified:E.unverified,incomplete:E.incomplete,libSub:libSub,libComp:libComp,libFin:libComp&&(!ids.length||libSub),extFin:extFin,fin:fin,turned:fin&&(!ids.length||libSub),done:E.done,n:E.n}}
 
 
 
@@ -2215,8 +2221,8 @@ function hwCardHTML(x){var a=x.a,p=passFor(U.email,a.id),miss=x.over&&!x.fin,sho
   var xs=x.X.map(function(t,i){return {t:t,i:i}}).filter(function(o){return !x.over||!o.t.s}); // after the deadline: only what is still missing (like the exercises)
   var h='<div class="hw'+(x.X.length?' hwext':'')+(miss?' late':'')+'"><div class="sechead"><span class="chips2"><span class="chip">'+esc(asgName(a))+'</span>'+(miss?'<span class="chip" style="background:var(--bad-bg);color:var(--bad)">Missing</span>':'')+'</span><span class="meta hwdue">'+(x.over?'<span class="hwdate">Was due </span><b>'+fmtDue(x.due)+'</b>':'<span class="hwdate">Due '+fmtDue(x.due)+' · </span><b>'+leftOf(x.due)+'</b>')+'</span></div>';
   if(shown.length||xs.length)h+='<div class="lrows">'+shown.map(function(id){
-      var e=exOf(id),l=locOf(id),d=x.dm[id],bad=!d&&x.over;
-      return '<button class="lrow" data-act="nav" data-book="'+l.book+'" data-test="'+l.test+'" data-skill="'+l.skill+'" data-ex="'+id+'"><span><b>'+esc(e.title)+'</b></span>'+pcHTML(e,d,bad,bad?'Missed':'Waiting')+'</button>';
+      var e=exOf(id),l=locOf(id),d=x.dm[id],q=x.P&&x.P[id]||{},bad=!d&&x.over;
+      return '<button class="lrow" data-act="nav" data-book="'+l.book+'" data-test="'+l.test+'" data-skill="'+l.skill+'" data-ex="'+id+'"><span><b>'+esc(e.title)+'</b></span>'+pcHTML(e,d,bad,partLabel(q,bad))+'</button>';
     }).join('')+xs.map(function(o){return extHwHTML(x,o.t,o.i)}).join('')+'</div>';
   if(p)h+='<p class="due" style="margin:10px 0 0">Extended with your '+PASS[p.kind].label+'.</p>';
   h+=x.ids.length?actionsHTML(x):(x.turned?'<p class="okline">All done ✓ Nice work.</p>':'');
@@ -3497,6 +3503,9 @@ function renderPlayer(){
   '<div class="player" id="player" data-pane="'+PANE+'"><div class="pane mat">'+passageHTML(ex.material)+'</div><div class="pane qpane">'+head+ban+demoBarHTML('qs')+qHTML(ex)+tail+'</div></div>';
 }
 // questions of the open auto-graded exercise that have no answer yet (same fields gradeNow reads)
+// result line (D3 + PASS 70%): Completed (every question answered + submitted) and Passed (score >= 70%) are shown apart
+function resultStateHTML(score,total,answered,required){var full=answered>=required,ps=passPct(score,total);
+  return '<p class="rstate"><span class="pill'+(full?' ok':' pend')+'">'+(full?'Completed':'Submitted · Incomplete ('+answered+'/'+required+' answered)')+'</span> <span class="pill'+(ps?' ok':' bad')+'">'+(ps?'Passed':'Not passed')+'</span> <span class="muted">You need at least '+PASS_PCT+'% correct to pass.</span></p>'}
 function blankCount(){var ex=NAV.ex&&exOf(NAV.ex),n=0;if(!ex||!ex.qs)return {n:0,t:0};
   ex.qs.forEach(function(q){var el;if(q.type==='gap'){el=$('[data-id="'+q.id+'"]');if(!el||!String(el.value||'').trim())n++}
     else if(q.type==='match'){el=$('[data-id="'+q.id+'"]');if(!el||el.value===''||el.value==='-1')n++}
@@ -3504,7 +3513,7 @@ function blankCount(){var ex=NAV.ex&&exOf(NAV.ex),n=0;if(!ex||!ex.qs)return {n:0
   return {n:n,t:ex.qs.length}}
 function gradeNow(){
   if(done)return;
-  var ex=exOf(NAV.ex),score=0;
+  var ex=exOf(NAV.ex),score=0,bl=blankCount(),answered=bl.t-bl.n; // D3: answered / required are saved with the attempt
   var res=ex.qs.map(function(q){
     var ok,given;
     if(q.type==='gap'){given=$('[data-id="'+q.id+'"]').value;ok=gapOk(q,given)}
@@ -3513,7 +3522,7 @@ function gradeNow(){
     if(ok)score++;return {q:q,ok:ok,given:given};
   });
   done=true;var dmb=$('#dmBar');if(dmb)dmb.remove();
-  var pct0=Math.round(score/res.length*100),gate=U.role==='student'&&pct0<70&&!peekUse();
+  var gate=U.role==='student'&&!passPct(score,res.length)&&!peekUse();
   (gate?[]:res).forEach(function(r){
     var q=r.q;
     if(q.type==='mcq'||q.type==='tfng'){$$('input[name="'+q.id+'"]').forEach(function(i,k){var l=i.closest('.opt');i.disabled=true;if(k===q.ans)l.classList.add('good');else if(k===r.given)l.classList.add('bad')})}
@@ -3526,9 +3535,10 @@ function gradeNow(){
   else $('#result').innerHTML='<div class="result"><div class="score"><b>'+score+'/'+res.length+'</b><span class="muted">'+pct+'%</span></div>'+
   (wk.length?'<div class="tags"><span>Review:</span>'+wk.map(function(t){return '<span class="tag">'+esc(t)+(wrong[t]>1?' ×'+wrong[t]:'')+'</span>'}).join('')+'</div>':'<p style="margin:0">No mistakes. Nice work.</p>')+nextBtns()+'</div>';
   $('#submit').disabled=true;
+  var rb=$('#result .result');if(rb)rb.insertAdjacentHTML('afterbegin',resultStateHTML(score,res.length,answered,res.length));
   if(U.role==='teacher')return;
   var ft=!attemptsOf(U.email).some(function(a){return a.ex===ex.id});$('#saveMsg').textContent='Saving…';
-  saveAttempt({email:U.email,student:U.name,course:U.course,cls:U.cls,ex:ex.id,score:score,total:res.length,items:res.map(function(r){return {i:r.q.id,ok:r.ok?1:0}}),ts:Date.now()}).then(function(how){var m=$('#saveMsg');if(m)m.textContent=how==='db'?'Saved to your class history.':'Kept for this session only (no data store).'});onAttemptSaved(ex,score,res.length,ft);
+  saveAttempt({email:U.email,student:U.name,course:U.course,cls:U.cls,ex:ex.id,score:score,total:res.length,answered:answered,required:res.length,items:res.map(function(r){return {i:r.q.id,ok:r.ok?1:0}}),ts:Date.now()}).then(function(how){var m=$('#saveMsg');if(m)m.textContent=how==='db'?'Saved to your class history.':'Kept for this session only (no data store).'});onAttemptSaved(ex,score,res.length,ft);
 }
 function peekUse(){var p=myProf();if(p.peek>0){p.peek--;putProf(p);toast('👀 Answer Peek used');return true}return false}
 function nextBtns(noRetry){
@@ -4211,11 +4221,13 @@ function hwRows(a,only){
   a=normAsg(a);var ids=a.ex.filter(exOf),now=Date.now();
   return {ids:ids,ext:a.ext,rows:students().filter(function(s){return s.cls===a.cls&&(!only||only==='all'||s.email===only)}).map(function(s){
     var S=asgState(a,s.email,now),p=passFor(s.email,a.id);
-    var cells=ids.map(function(i){return S.dm[i]?1:(S.over?0:-1)}).concat(S.X.map(function(t){return t.s?1:(S.over?0:-1)}));
-    return {name:s.name,email:s.email,cells:cells,X:S.X,all:cells.length>0&&cells.every(function(c){return c===1}),none:cells.every(function(c){return c!==1}),over:S.over,pass:p?p.kind:null,fin:S.fin,sub:S.libSub,hasLib:S.ids.length>0,done:S.done,n:S.n,shot:S.X[0]&&S.X[0].s||null,late:!!(S.X[0]&&S.X[0].late)};
+    // 1 done · 2 late · 3 incomplete (blank answers) · 4 unverified (older attempt) · 0 missing · -1 not yet
+    var cell=function(st){return st==='done'?1:st==='late'?2:st==='incomplete'?3:st==='unverified'?4:(S.over?0:-1)},inn=function(c){return c===1||c===2};
+    var cells=ids.map(function(i){return cell((S.P[i]||{}).st)}).concat(S.X.map(function(t){return cell(t.st)}));
+    return {name:s.name,email:s.email,cells:cells,P:ids.map(function(i){return S.P[i]||{}}),X:S.X,all:cells.length>0&&cells.every(inn),none:cells.every(function(c){return !inn(c)}),st:S.st,lateAny:S.late,over:S.over,pass:p?p.kind:null,fin:S.fin,sub:S.libSub,hasLib:S.ids.length>0,done:S.done,n:S.n,shot:S.X[0]&&S.X[0].s||null,late:!!(S.X[0]&&S.X[0].late)};
   })};
 }
-var MKI={'1':'<span class="mk ok" aria-label="Done" title="Done">✓</span>','0':'<span class="mk no" aria-label="Not done" title="Not done">✕</span>','-1':'<span class="mk pd" aria-label="Not yet" title="Not yet">–</span>'};
+var MKI={'2':'<span class="mk ok lt" aria-label="Done late" title="Done late">✓<small>late</small></span>','3':'<span class="mk wn" aria-label="Incomplete: blank answers" title="Submitted with blank answers">!</span>','4':'<span class="mk pd" aria-label="Legacy, unverified" title="Older attempt: cannot check every question was answered">?</span>','1':'<span class="mk ok" aria-label="Done" title="Done">✓</span>','0':'<span class="mk no" aria-label="Not done" title="Not done">✕</span>','-1':'<span class="mk pd" aria-label="Not yet" title="Not yet">–</span>'};
 // an assignment with one external task and no Library exercise: one row per student with the screenshot
 // (link, Source and instructions are in the Edit form, not repeated here)
 function extSubsHTML(a){a=normAsg(a);var d=hwRows(a);if(!d.rows.length)return '<p class="saved">No students in this class.</p>';
@@ -4226,13 +4238,36 @@ function extSubsHTML(a){a=normAsg(a);var d=hwRows(a);if(!d.rows.length)return '<
 // Submitted ("I'm done!") and Completion (n / m parts) of one row, in words with an icon, never by colour alone
 function hwSubCell(r){return r.sub?'<span class="hwst ok">'+MKI['1']+' Submitted</span>':'<span class="hwst">'+MKI['-1']+' Not submitted</span>'}
 function hwCompCell(r){var t=r.done+'/'+r.n;
-  if(r.fin)return '<span class="hwst ok">'+MKI['1']+' Complete ('+t+')</span>';
-  if(r.sub)return '<span class="hwst warn"><span class="mk wn" aria-hidden="true">!</span> Incomplete ('+t+')</span>';
+  if(r.fin)return '<span class="hwst ok">'+MKI['1']+' Complete'+(r.lateAny?' · late':'')+' ('+t+')</span>';
+  if(r.st==='unverified')return '<span class="hwst">'+MKI['4']+' Legacy · Unverified ('+t+')</span>';
+  if(r.st==='incomplete'||r.sub)return '<span class="hwst warn"><span class="mk wn" aria-hidden="true">!</span> '+(r.st==='incomplete'?'Submitted · Incomplete':'Incomplete')+' ('+t+')</span>';
   return '<span class="hwst'+(r.over?' no':'')+'">'+(r.over?MKI['0']:MKI['-1'])+' '+(r.done?'In progress':r.over?'Not done':'Not started')+' ('+t+')</span>'}
-var ATT_CAP=500;
-function attCapHTML(){return !DEMO&&U&&U.role==='teacher'&&attemptDocs.length>=ATT_CAP?'<p class="banner" role="note">Showing the newest '+ATT_CAP+' attempts only. Older work may show as not done here. It is not lost.</p>':''}
+/* ---------- Attempts loaded by need (D5, 11/2026) ----------
+   Teachers no longer get "the newest 500 attempts of the whole centre". Three parts, merged into attemptDocs (newest first, one copy each):
+   live = every attempt of the last ATT_DAYS days (live snapshot, no cap) · subs = every Writing / Speaking submission (live, any age:
+   Marking never misses one) · old = older attempts, read page by page (ATT_PAGE, newest first, cursor) when a teacher opens an
+   older assignment (attNeed) or presses "Load older work". Single-field queries only: no composite index to create.
+   Students read all of their own attempts (no cap). */
+var ATT={live:[],subs:[],old:[],since:0,lo:0,cur:null,more:true,busy:false,db:null,err:''},ATT_DAYS=60,ATT_PAGE=500;
+function attMerge(){var m={},L=[];[ATT.live,ATT.subs,ATT.old].forEach(function(a){a.forEach(function(x){var k=x.id||x.docId;if(k){if(m[k])return;m[k]=1}L.push(x)})});L.sort(function(x,y){return (y.ts||0)-(x.ts||0)});attemptDocs=L}
+function attDrop(fn){ATT.live=ATT.live.filter(fn);ATT.subs=ATT.subs.filter(fn);ATT.old=ATT.old.filter(fn);attMerge()}
+// is every attempt made at or after ts loaded? (students and demo: always)
+function attHas(ts){return !ATT.db||!ATT.more||ts>=ATT.lo}
+// one more page of older attempts; then again until ts is covered (an older assignment opened) or nothing is left
+function attNeed(ts,cb){if(attHas(ts)||ATT.busy){if(cb&&attHas(ts))cb();return}ATT.busy=true;ATT.err='';
+  var q=ATT.db.collection('attempts').where('ts','<',ATT.since).orderBy('ts','desc');if(ATT.cur)q=q.startAfter(ATT.cur);
+  q.limit(ATT_PAGE).get().then(function(s){var d=s.docs||[];ATT.busy=false;
+    ATT.old=ATT.old.concat(d.map(function(x){return Object.assign({id:x.id,docId:x.id},x.data())}));
+    if(d.length)ATT.cur=d[d.length-1];
+    if(d.length<ATT_PAGE){ATT.more=false;ATT.lo=0}else ATT.lo=+(d[d.length-1].data().ts)||0;
+    attMerge();refreshLive();if(ts!=null&&!attHas(ts))attNeed(ts,cb);else if(cb)cb()},
+    function(){ATT.busy=false;ATT.err='Older work could not be loaded. Check the connection and try again.';refreshLive()})}
+// teacher note: what is loaded, and a way to load older work (nothing is lost, it is only not read yet)
+function attCapHTML(){if(DEMO||!U||U.role!=='teacher'||!ATT.db||!ATT.more)return '';
+  return '<p class="banner" role="note">'+(ATT.busy?'Loading older work…':'Showing work since '+esc(fmtShort(ATT.lo))+'. Older work is not lost.')+(ATT.err?' '+esc(ATT.err):'')+
+    (ATT.busy?'':' <button type="button" class="btn sm" data-act="att-older">Load older work</button>')+'</p>'}
 function hwMatrixHTML(a,only){
-  a=normAsg(a);var cap=attCapHTML();if(cap)return cap+hwMatrixBody(a,only);return hwMatrixBody(a,only)}
+  a=normAsg(a);if(!attHas(a.start)){attNeed(a.start);return '<p class="banner" role="status">Loading the work for this assignment…</p>'}return hwMatrixBody(a,only)}
 function hwMatrixBody(a,only){
   if(!a.ex.filter(exOf).length&&a.ext.length===1)return extSubsHTML(a);
   var d=hwRows(a,only);if(!d.rows.length)return '<p class="saved">No students in this class.</p>';
@@ -4243,8 +4278,8 @@ function hwMatrixBody(a,only){
     '<th class="c" title="Parts really done: Library exercises finished before the deadline + a screenshot for each external task">Completion</th></tr></thead><tbody>'+d.rows.map(function(r){
     var nl=d.ids.length;
     return '<tr><td>'+esc(r.name)+(r.pass?' <small style="display:inline;color:var(--muted)">'+PASS[r.pass].label+'</small>':'')+'</td>'+r.cells.map(function(c,j){
-      if(j<nl)return '<td class="c">'+MKI[c]+'</td>';var t=r.X[j-nl],u=t&&t.s?hwImg(t.s.url):'';
-      return '<td class="c">'+(t&&t.s?(u?'<a href="'+esc(u)+'" target="_blank" rel="noopener" aria-label="Screenshot of '+esc(r.name)+(t.late?', submitted late':'')+'" title="'+(t.late?'Submitted late · ':'Submitted · ')+esc(fmtDue(new Date(t.s.ts)))+'">'+MKI['1']+'</a>':MKI['1']):MKI[c])+'</td>'}).join('')+
+      if(j<nl){var q=r.P[j]||{};return '<td class="c">'+MKI[c]+(c===3?'<small class="hwan">'+q.answered+'/'+q.required+'</small>':'')+'</td>'}var t=r.X[j-nl],u=t&&t.s?hwImg(t.s.url):'';
+      return '<td class="c">'+(t&&t.s?(u?'<a href="'+esc(u)+'" target="_blank" rel="noopener" aria-label="Screenshot of '+esc(r.name)+(t.late?', submitted late':'')+'" title="'+(t.late?'Submitted late · ':'Submitted · ')+esc(fmtDue(new Date(t.s.ts)))+'">'+MKI[c===2?'2':'1']+'</a>':MKI[c===2?'2':'1']):MKI[c])+'</td>'}).join('')+
       (d.ids.length?'<td class="c">'+hwSubCell(r)+'</td>':'')+'<td class="c">'+hwCompCell(r)+'</td></tr>';
   }).join('')+'</tbody></table></div>';
 }
@@ -5749,7 +5784,7 @@ document.addEventListener('click',function(e){
   if(a==='aplay'){if(au){if(au.paused)au.play().catch(function(){});else au.pause()}return}
   if(a==='aback'){if(au)au.currentTime=Math.max(0,au.currentTime-5);return}
   if(a==='afwd'){if(au)au.currentTime=Math.min(isFinite(au.duration)?au.duration:au.currentTime+5,au.currentTime+5);return}
-  if(a==='submit'){var bl=blankCount();if(bl.n&&uiGate(t,{title:'Submit with '+bl.n+' blank answer'+(bl.n>1?'s':'')+'?',text:'You answered '+(bl.t-bl.n)+' of '+bl.t+' questions. Blank answers are marked wrong.',ok:'Submit anyway',cancel:'Keep working'}))return true;return gradeNow()}
+  if(a==='submit'){var bl=blankCount();if(bl.n&&uiGate(t,{title:'Submit with '+bl.n+' blank answer'+(bl.n>1?'s':'')+'?',text:'You answered '+(bl.t-bl.n)+' of '+bl.t+' questions. Blank answers are marked wrong, and this exercise will show as Submitted · Incomplete, not Completed.',ok:'Submit anyway',cancel:'Keep working'}))return true;return gradeNow()}
   if(a==='sub-w')return submitWriting();
   if(a==='ai-retry'){aiRun();return}
   if(a==='w-new'){var wsub=mySubs(t.dataset.ex).filter(function(x){return x.id===t.dataset.id})[0]||mySub(t.dataset.ex),wk='md-draft-'+U.email+'-'+t.dataset.ex;WNEW=t.dataset.ex;if(wsub&&(!lsGet(wk)||wsub!==mySub(t.dataset.ex)))lsSet(wk,wsub.text||''); /* from an older version: start from that text */renderPlayer();window.scrollTo&&window.scrollTo(0,0);return}
@@ -7129,10 +7164,11 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-11-09a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-11-09b'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(uiAct(a,t))return true;
+  if(a==='att-older'){attNeed(ATT.lo-1);refreshLive();return true} // teachers: one more page of older attempts
   if(audAct(a,t))return true;
   if(hwaAct(a,t))return true;
   if(adAct(a,t))return true;
@@ -7472,7 +7508,8 @@ function lsFinish(){
   (wk.length?'<div class="tags"><span>Review:</span>'+wk.map(function(t){return '<span class="tag">'+esc(t)+(wrong[t]>1?' ×'+wrong[t]:'')+'</span>'}).join('')+'</div>':'<p style="margin:0">No mistakes. Nice work.</p>')+'<span class="saved" id="saveMsg"></span>'+nextBtns()+'</div>';
   if(!U||U.role==='teacher')return;
   var ft=!attemptsOf(U.email).some(function(a){return a.ex===ex.id});
-  saveAttempt({email:U.email,student:U.name,course:U.course,cls:U.cls,ex:ex.id,score:score,total:total,items:ex.qs.map(function(q){return {i:q.id,ok:LS.res[q.id]?1:0}}),ts:Date.now()}).then(function(how){var m=$('#saveMsg');if(m)m.textContent=how==='db'?'Saved to your class history.':'Kept for this session only (no data store).'});
+  var ansd=all.filter(function(x){var v=LS.ans[x];return v!=null&&v!==-1&&String(v).trim()!==''}).length;
+  saveAttempt({email:U.email,student:U.name,course:U.course,cls:U.cls,ex:ex.id,score:score,total:total,answered:ansd,required:total,items:ex.qs.map(function(q){return {i:q.id,ok:LS.res[q.id]?1:0}}),ts:Date.now()}).then(function(how){var m=$('#saveMsg');if(m)m.textContent=how==='db'?'Saved to your class history.':'Kept for this session only (no data store).'});
   onAttemptSaved(ex,score,total,ft);
 }
 DFILL.ls=function(g,wr){
@@ -8192,7 +8229,7 @@ function rmFinish(){
   var score=all.filter(function(x){return RM.res[x]}).length,total=all.length;
   if(!U||U.role==='teacher')return;
   var ft=!attemptsOf(U.email).some(function(a){return a.ex===ex.id});
-  saveAttempt({email:U.email,student:U.name,course:U.course,cls:U.cls,ex:ex.id,skill:'reading',score:score,total:total,items:all.map(function(x){return {i:x,ok:RM.res[x]?1:0}}),
+  saveAttempt({email:U.email,student:U.name,course:U.course,cls:U.cls,ex:ex.id,skill:'reading',score:score,total:total,answered:all.filter(function(x){return rmIdAns(x)}).length,required:total,items:all.map(function(x){return {i:x,ok:RM.res[x]?1:0}}),
     stages:stages,tags:tags,readSec:RM.t,level:RM.lv,output:{prompt:D.wprompt,text:RM.wtext.trim(),used:rmUsed(RM.wtext)},ts:Date.now()}).then(function(how){var m=$('#saveMsg');if(m)m.textContent=how==='db'?'Saved to your class history.':'Kept for this session only (no data store).'});
   onAttemptSaved(ex,score,total,ft);
 }
@@ -8397,7 +8434,7 @@ function demoAdminRun(path,b){
   if(path==='admin/users')return {users:all,me:'admin@demo.vn',ver:'demo'};
   if(path==='admin/orphans'){var keep={};allRoster().forEach(function(r){keep[String(r.email||'').toLowerCase()]=1});var by={};
     realAttempts().forEach(function(a){var e=String(a.email||'').toLowerCase();if(!e||keep[e])return;var o=by[e]||(by[e]={email:e,attempts:0,names:[],classes:[]});o.attempts++;if(a.student&&o.names.indexOf(a.student)<0)o.names.push(a.student);if(a.cls&&o.classes.indexOf(a.cls)<0)o.classes.push(a.cls)});
-    if(b.op==='purge'){if(!by[em])err('This email is not a leftover any more. Nothing was deleted.');localAttempts=localAttempts.filter(function(a){return String(a.email||'').toLowerCase()!==em});attemptDocs=attemptDocs.filter(function(a){return String(a.email||'').toLowerCase()!==em});return {ok:true,email:em,deleted:{attempts:by[em].attempts}}}
+    if(b.op==='purge'){if(!by[em])err('This email is not a leftover any more. Nothing was deleted.');localAttempts=localAttempts.filter(function(a){return String(a.email||'').toLowerCase()!==em});attDrop(function(a){return String(a.email||'').toLowerCase()!==em});return {ok:true,email:em,deleted:{attempts:by[em].attempts}}}
     return {ok:true,scanned:realAttempts().length,truncated:false,orphans:Object.keys(by).sort().map(function(k){return by[k]})}}
   if(path==='admin/aitest'){var tx=String(b.text||'');if(tx.trim().length<8)err('Paste an essay first.');var dc=demoCorrections(tx).map(function(c){return Object.assign({},c,{context:enSentence(tx,c.original_text),practice:[]})});return {ai:{corrections:dc,vocabulary_upgrades:DEMO_AI.vocabulary_upgrades,model:'demo'},ms:250,model:'demo (built-in rules, not Gemini)',raw:dc.length,dropped:[]}}
   if(path==='admin/sheet'){
@@ -8759,7 +8796,9 @@ function adTeachersHTML(){
 function hwaDue(d){d=new Date(+d);return DAYS[d.getDay()]+' '+fmtD(+d)+' '+pad(d.getHours())+':'+pad(d.getMinutes())}
 function hwaDay(ts){return fmtD(ts)}
 var HWA={data:null,loading:false,err:'',view:'overview',cls:'all',asg:'',st:'all',rep:{asg:'',mode:'overdue'},stu:null,msg:'',newCls:''};
-var HWA_ST={done:'Submitted on time',late:'Submitted late',missing:'Missing — overdue',pending:'Not submitted — before deadline',upcoming:'Not sent yet',none:'No exercises'};
+var HWA_ST={done:'Submitted on time',late:'Submitted late',incomplete:'Submitted · Incomplete',unverified:'Legacy · Unverified',missing:'Missing — overdue',pending:'Not submitted — before deadline',upcoming:'Not sent yet',none:'No exercises'};
+// still owed (shared rule md-hw.js): 'over' = missing, or blank answers after the deadline; 'soon' = not in yet, or blank answers before it
+function hwaOwe(r){if(!r)return '';if(r.st==='missing')return 'over';if(r.st==='pending')return 'soon';if(r.st==='incomplete')return r.due<(HWA.data?HWA.data.now:Date.now())?'over':'soon';return ''}
 var HWA_FU=[['none','Not contacted'],['sent','Reminder sent'],['waiting','Awaiting reply'],['resolved','Resolved']];
 function hwaApi(path,body){if(DEMO)return Promise.reject(new Error('The Homework Assistant workspace needs the live site (demo mode).'));
   return authHdr().then(function(h){return adPost(path,body,'',h)}).then(function(d){if(!d._ok){var e=new Error(d.error||'Something went wrong. Try again.');e.status=d._status;throw e}return d})}
@@ -8768,12 +8807,12 @@ function hwaStu(k){var D=HWA.data;return D?(D.students.filter(function(s){return
 function hwaA(id){var D=HWA.data;return D?(D.assignments.filter(function(a){return a.id===id})[0]||null):null}
 function hwaSel(cls){return function(x){return cls==='all'||x.cls===cls}}
 // assignment-level numbers for one assignment
-function hwaCnt(a){var m=(HWA.data.status||{})[a.id]||{},c={done:0,late:0,missing:0,pending:0,n:0};Object.keys(m).forEach(function(k){c.n++;if(c[m[k].st]!=null)c[m[k].st]++});return c}
+function hwaCnt(a){var m=(HWA.data.status||{})[a.id]||{},c={done:0,late:0,missing:0,pending:0,incomplete:0,unverified:0,n:0};Object.keys(m).forEach(function(k){var r=m[k],o=hwaOwe(r);c.n++;if(c[r.st]!=null&&r.st!=='missing'&&r.st!=='pending')c[r.st]++;if(o==='over')c.missing++;if(o==='soon')c.pending++});return c}
 // follow-up priority from the last 4 assignments of the student's class whose deadline has passed (homework facts only)
 function hwaWatch(s){var D=HWA.data,now=D.now;
-  var L=D.assignments.filter(function(a){return a.cls===s.cls}).map(function(a){var r=((D.status||{})[a.id]||{})[s.key];return r&&(r.st==='done'||r.st==='late'||r.st==='missing')?{a:a,r:r}:null}).filter(Boolean)
+  var L=D.assignments.filter(function(a){return a.cls===s.cls}).map(function(a){var r=((D.status||{})[a.id]||{})[s.key];return r&&a.due<=now&&(r.st==='done'||r.st==='late'||r.st==='missing'||r.st==='incomplete'||r.st==='unverified')?{a:a,r:r}:null}).filter(Boolean)
     .sort(function(x,y){return y.r.due-x.r.due}).slice(0,4);
-  var miss=L.filter(function(x){return x.r.st==='missing'}).length,late=L.filter(function(x){return x.r.st==='late'}).length,n=L.length;
+  var miss=L.filter(function(x){return hwaOwe(x.r)==='over'}).length,late=L.filter(function(x){return x.r.st==='late'}).length,n=L.length;
   var last=D.assignments.map(function(a){var r=((D.status||{})[a.id]||{})[s.key];return r&&r.at?r.at:0}).reduce(function(x,y){return Math.max(x,y)},0);
   var lab=n<4?'history':miss>=3?'attention':(miss>=2||late>=2)?'watch':'ok';
   var why=n<4?'Only '+n+' due assignment'+(n===1?'':'s')+' so far: not enough history ('+miss+' missing, '+late+' late)':
@@ -8782,7 +8821,7 @@ function hwaWatch(s){var D=HWA.data,now=D.now;
 var HWA_LAB={attention:['bad','Needs attention'],watch:['pend','Watch'],ok:['ok','On track'],history:['','Not enough history']};
 // the group report: exact owner wording, data from the selected assignment, nothing private
 function hwaReport(id,mode){var D=HWA.data,a=hwaA(id);if(!D||!a)return null;var m=(D.status||{})[a.id]||{};
-  var names=D.students.filter(function(s){return s.cls===a.cls&&m[s.key]&&m[s.key].st===(mode==='reminder'?'pending':'missing')}).map(function(s){return s.name}).sort(function(x,y){return x.localeCompare(y,'vi')});
+  var names=D.students.filter(function(s){return s.cls===a.cls&&hwaOwe(m[s.key])===(mode==='reminder'?'soon':'over')}).map(function(s){return s.name}).sort(function(x,y){return x.localeCompare(y,'vi')});
   if(!names.length)return {empty:true,a:a};
   var head='LỚP '+String(a.cls).toUpperCase()+' — '+asgName(a);
   var lead=mode==='reminder'?'Nhắc trước hạn nộp — các bạn chưa nộp bài (hạn '+hwaDue(new Date(a.due))+'):':'Danh sách các bạn còn thiếu bài:';
@@ -8810,9 +8849,9 @@ function hwaMissingHTML(){var D=HWA.data,cs=hwaSel(HWA.cls),A=D.assignments.filt
   A.forEach(function(a){var m=(D.status||{})[a.id]||{};D.students.filter(function(s){return s.cls===a.cls}).forEach(function(s){var r=m[s.key];if(!r||r.st==='upcoming'||r.st==='none')return;if(HWA.st!=='all'&&r.st!==HWA.st)return;rows.push({s:s,a:a,r:r})})});
   var aopts=D.assignments.filter(cs).sort(function(x,y){return y.due-x.due});
   var h='<div class="hwa-bar"><label class="field" for="hwaAsg">Assignment<select id="hwaAsg"><option value="">All assignments</option>'+aopts.map(function(a){return '<option value="'+esc(a.id)+'"'+(a.id===HWA.asg?' selected':'')+'>'+esc(asgName(a)+' · '+a.cls)+'</option>'}).join('')+'</select></label>'+
-    '<label class="field" for="hwaSt">Status<select id="hwaSt">'+[['all','All']].concat(['missing','pending','late','done'].map(function(k){return [k,HWA_ST[k]]})).map(function(o){return '<option value="'+o[0]+'"'+(o[0]===HWA.st?' selected':'')+'>'+esc(o[1])+'</option>'}).join('')+'</select></label></div>';
-  h+=rows.length?'<div class="scroll"><table class="hwa-t"><thead><tr><th scope="col">Student</th><th scope="col">Homework</th><th scope="col">Due</th><th scope="col">Status</th><th scope="col">Submitted</th></tr></thead><tbody>'+rows.map(function(x){var r=x.r,bad=r.st==='missing';
-    return '<tr><td>'+esc(x.s.name)+' <span class="muted">· '+esc(x.s.cls)+'</span></td><td>'+esc(asgName(x.a))+'</td><td class="mono">'+esc(hwaDue(new Date(r.due)))+(r.ext?' <span class="muted">(extended)</span>':'')+'</td><td><span class="pill'+(bad?' bad':r.st==='done'?' ok':r.st==='late'?' pend':'')+'">'+esc(HWA_ST[r.st])+'</span></td><td class="mono">'+(r.at?esc(hwaDue(new Date(r.at))):'—')+
+    '<label class="field" for="hwaSt">Status<select id="hwaSt">'+[['all','All']].concat(['missing','pending','incomplete','late','done','unverified'].map(function(k){return [k,HWA_ST[k]]})).map(function(o){return '<option value="'+o[0]+'"'+(o[0]===HWA.st?' selected':'')+'>'+esc(o[1])+'</option>'}).join('')+'</select></label></div>';
+  h+=rows.length?'<div class="scroll"><table class="hwa-t"><thead><tr><th scope="col">Student</th><th scope="col">Homework</th><th scope="col">Due</th><th scope="col">Status</th><th scope="col">Submitted</th></tr></thead><tbody>'+rows.map(function(x){var r=x.r,bad=hwaOwe(r)==='over';
+    return '<tr><td>'+esc(x.s.name)+' <span class="muted">· '+esc(x.s.cls)+'</span></td><td>'+esc(asgName(x.a))+'</td><td class="mono">'+esc(hwaDue(new Date(r.due)))+(r.ext?' <span class="muted">(extended)</span>':'')+'</td><td><span class="pill'+(bad?' bad':r.st==='done'?' ok':r.st==='late'||r.st==='incomplete'?' pend':'')+'">'+esc(HWA_ST[r.st]||r.st)+(r.st==='incomplete'&&r.n?' ('+r.done+'/'+r.n+' parts complete)':'')+'</span></td><td class="mono">'+(r.at?esc(hwaDue(new Date(r.at))):'—')+
       (r.shots||(r.shot?[r.shot]:[])).map(function(u,j,L){return ' <a href="'+esc(u)+'" target="_blank" rel="noopener">screenshot'+(L.length>1?' '+(j+1):'')+'</a>'}).join('')+'</td></tr>'}).join('')+'</tbody></table></div>':'<p class="muted">Nothing matches these filters.</p>';
   // group report (copy, never sent)
   var rp=HWA.rep,due=aopts.filter(function(a){return a.start<=D.now}),cur=rp.asg||(due[0]&&due[0].id)||'',R=cur?hwaReport(cur,rp.mode):null;
@@ -8996,7 +9035,7 @@ function adAct(a,t){
   if(a==='ad-orph-del'){var oe=t.dataset.email,oo=((AD.orph||{}).orphans||[]).filter(function(x){return x.email===oe})[0];if(!oo)return true;
     if(uiGate(t,{title:'Delete ALL learning data left by '+oe+'?',text:oo.attempts+' result'+(oo.attempts===1?'':'s')+', plus their errors, cards, homework, passes, redeems and profile. This cannot be undone.',ok:'Delete data',danger:true}))return true;
     adBusy(t,true,'Deleting…');adminApi('admin/orphans',{op:'purge',email:oe}).then(function(){AD.orph.orphans=AD.orph.orphans.filter(function(x){return x.email!==oe});
-      attemptDocs=attemptDocs.filter(function(x){return String(x.email||'').toLowerCase()!==oe});renderAdmin();toast('Data of '+oe+' deleted.')},function(e){adBusy(t,false);adSay(e.message)});return true}
+      attDrop(function(x){return String(x.email||'').toLowerCase()!==oe});renderAdmin();toast('Data of '+oe+' deleted.')},function(e){adBusy(t,false);adSay(e.message)});return true}
   if(a==='ad-tester-create'){var tf=adForm(['adTsName','adTsEm','adTsCls','adTsPw']);if(!tf)return true;
     var tn=tf.adTsName.trim()||'Tester',te=tf.adTsEm.trim().toLowerCase(),tc=tf.adTsCls.trim()||'Test',tp=tf.adTsPw.trim();
     if(!EMAIL_RE.test(te)){adSay('Enter a valid email.');return true}if(tp.length<6){adSay('The password needs at least 6 characters.');return true}
@@ -9108,7 +9147,6 @@ populateBookTest();
     var toDocs=function(snap){return snap.docs.map(function(d){return Object.assign({id:d.id,docId:d.id},d.data())})};
     var myEm=String((window.MD_USER&&window.MD_USER.email)||lsGet('md-email')||'').toLowerCase(),isT=DEMO||!!(window.MD_USER&&window.MD_USER.role==='teacher');
     var own=function(c){return isT?db.collection(c):db.collection(c).where('email','==',myEm)};
-    var attQ=function(){return isT?db.collection('attempts').orderBy('ts','desc').limit(ATT_CAP):db.collection('attempts').where('email','==',myEm).limit(500)};
     db.collection('roster').onSnapshot(function(s){rosterDocs=toDocs(s);dbReady=true;if(!U&&lsGet('md-email')){if(findUser(lsGet('md-email')))signIn(lsGet('md-email'));}refreshLive()},function(){dbReady=true;if(!U&&window.MD_USER)signIn(window.MD_USER.email)});
     db.collection('exercises').onSnapshot(function(s){customDocs=toDocs(s);rebuildCustom();refreshLive()},function(){});
     db.collection('assignments').onSnapshot(function(s){asgDocs=toDocs(s);refreshLive()},function(){});
@@ -9122,7 +9160,11 @@ populateBookTest();
     own('redeems').onSnapshot(function(s){redDocs=toDocs(s);if(TAB==='prize')refreshLive()},function(){});
     db.collection('config').onSnapshot(function(s){cfgDocs=toDocs(s);refreshLive()},function(){});
     own('passes').onSnapshot(function(s){passDocs=toDocs(s);refreshLive()},function(){});
-    attQ().onSnapshot(function(s){attemptDocs=toDocs(s);setStatus('saved');refreshLive()},function(){dbh=null;setStatus('local');dbReady=true});
+    var attFail=function(){dbh=null;setStatus('local');dbReady=true};
+    if(isT){ATT.db=db;ATT.since=Date.now()-ATT_DAYS*864e5;ATT.lo=ATT.since;
+      db.collection('attempts').where('ts','>=',ATT.since).onSnapshot(function(s){ATT.live=toDocs(s);attMerge();setStatus('saved');refreshLive()},attFail);
+      db.collection('attempts').where('kind','==','submission').onSnapshot(function(s){ATT.subs=toDocs(s);attMerge();refreshLive()},function(){})}
+    else db.collection('attempts').where('email','==',myEm).onSnapshot(function(s){ATT.live=toDocs(s);attMerge();setStatus('saved');refreshLive()},attFail);
   },function(){setStatus('local');dbReady=true});
 })();
 })();

@@ -16,7 +16,7 @@ function lesson(user) {
   B.T.renderRLesson({ id: 'r1', skill: 'reading', title: 'Cycling in the City', kind: 'reading-ms', rl: r.data.rlesson, qs: r.data.qs }, '', '', null);
   return { B, ex, D: r.data.rlesson };
 }
-const SRC = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest');
+const SRC = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(__dirname, '..', 'md-hw.js'), 'utf8'));
 const srv = () => { const ctx = vm.createContext({ console: { log() {}, error() {} }, URL, TextEncoder, TextDecoder, crypto: globalThis.crypto, atob, btoa, fetch: async () => ({}) });
   vm.runInContext(SRC + '\n;this.T={partProblems,textIssue};', ctx, { filename: 'server.js' }); return ctx.T; };
 const FINE = Array(40).fill('fine').join(' ');

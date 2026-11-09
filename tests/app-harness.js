@@ -28,11 +28,11 @@ function boot(opt) {
     localStorage: { getItem: (k) => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = String(v); }, removeItem: (k) => { delete store[k]; }, key: () => null, length: 0 },
     sessionStorage: { getItem: () => 'key', setItem() {}, removeItem() {} }, matchMedia: () => ({ matches: false, addEventListener() {}, addListener() {} }), addEventListener() {},
     location: { reload() {}, hash: '', search: '' }, navigator: { userAgent: 'node' }, confirm: () => true, alert() {}, prompt: () => null, scrollTo() {}, scrollY: 0, innerWidth: 1280, innerHeight: 800, getComputedStyle: () => ({}),
-    MD_CONFIG: { demo: !!opt.demo, teachers: [], api: '/api' }, MD_USER: { name: user.name, email: user.email, role: user.role, adm: !!user.adm }, claude: { use: () => new Promise(() => {}) } };
+    MD_CONFIG: { demo: !!opt.demo, teachers: [], api: '/api' }, MD_USER: { name: user.name, email: user.email, role: user.role, adm: !!user.adm }, claude: { use: () => (opt.db ? Promise.resolve(opt.db) : new Promise(() => {})) } }; // opt.db = a fake Firestore (tests/attempts-scope.test.js)
   W.window = W; W.calls = []; W.reply = () => ({ status: 200, body: { ok: true } });
   W.fetch = (url, o) => { W.calls.push({ url, opt: o }); const r = W.reply(url, o); return Promise.resolve({ ok: r.status < 400, status: r.status, json: () => Promise.resolve(JSON.parse(JSON.stringify(r.body))) }); };
   const ctx = vm.createContext(W);
-  ['md-chart.js', 'lm-content.js', 'lm-engine.js', 'lm-unit2.js', 'lm-unit0.js'].forEach((f) => vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), ctx));
+  ['md-chart.js', 'md-hw.js', 'lm-content.js', 'lm-engine.js', 'lm-unit2.js', 'lm-unit0.js'].forEach((f) => vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), ctx));
   vm.runInContext(SRC, ctx, { filename: 'index.html#app' });
   const T = W.__T; T.setU(Object.assign({ cls: '' }, user));
   // press({act, ...}) = a click on a button with these data-*; btn.click() clicks it again (used by the app's confirm box, uiGate)

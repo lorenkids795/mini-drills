@@ -53,7 +53,7 @@ const tea = () => { const B = boot({ hooks: HOOKS }); B.T.setRoster(ROSTER); ret
     const over = Object.assign({}, EXT, { due: now - DAY }); assert.ok(/Minh<\/td><td><span class="pill bad">Missing</.test(B.T.extSubsHTML(over)));
   });
   await t('server: /api/image needs a signed-in user, an image type and the hwshot kind; stores outside Firestore; serves it back', async () => {
-    const SRC = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest');
+    const SRC = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(__dirname, '..', 'md-hw.js'), 'utf8'));
     const KV = {}, env = { MD_KV: { get: async (k) => (k in KV ? KV[k].v : null), put: async (k, v, o) => { KV[k] = { v, m: o && o.metadata }; }, delete: async (k) => { delete KV[k]; }, getWithMetadata: async (k) => (k in KV ? { value: KV[k].v, metadata: KV[k].m } : null) } };
     const ctx = vm.createContext({ console: { log() {} }, Response: class { constructor(b, o) { this.body = b; this.status = (o && o.status) || 200; this.headers = (o && o.headers) || {}; } }, URL, TextEncoder, TextDecoder, crypto: globalThis.crypto, atob, btoa, setTimeout, Date, Math, JSON, Uint8Array, ArrayBuffer });
     vm.runInContext(SRC + ';this.T={imageUpload,imageServe};this.setWho=function(w){idUser=async function(){return w}};', ctx);

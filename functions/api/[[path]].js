@@ -1,3 +1,4 @@
+import MDHW from '../../md-hw.js'; // the homework rules shared with the app (one source, 11/2026)
 // Mini Drills auth API (Cloudflare Pages Function, served at /api/*).
 // Everyone signs in with email + password. Students pick class + name the first time;
 // teacher passwords are set by the admin (Admin › Teachers / Users). Teachers reset forgotten student passwords.
@@ -660,7 +661,7 @@ async function hwaStudents(env, classes) {
   const removed = {};
   await Promise.all(classes.map(async (c) => { const d = await fsGet(env, 'classes', slug(c)); ((d && d.data && d.data.removed) || []).forEach((e) => { removed[normEmail(e)] = 1; }); }));
   const rows = (await fsList(env, 'roster')).filter((r) => r.role !== 'teacher' && r.tester !== true && classes.indexOf(r.cls) >= 0 && !removed[normEmail(r.email || r.id)]);
-  return Promise.all(rows.map(async (r) => { const em = normEmail(r.email || r.id); return { em, key: await hwaKey(em), name: r.name || '', cls: r.cls }; }));
+  return Promise.all(rows.map(async (r) => { const em = normEmail(r.email || r.id), raw = String(r.email || r.id || '').trim(); return { em, raw, key: await hwaKey(em), name: r.name || '', cls: r.cls }; }));
 }
 // external tasks of an assignment: ext[{id, link, src, note}]; an old type 'external' record = one task 'x1' (link / src / note at the top level)
 function hwaExt(a) {
@@ -685,23 +686,16 @@ function hwaNormAsg(a) {
   return x;
 }
 const PASS_DAYS = { day: 1, week: 7 };
-// status of one student for one assignment (same rules as the app): extension = late pass. The assignment is submitted only when
-// EVERY part is: each Library exercise has an attempt since the send date AND each external task has its screenshot in hwdone
-// (a screenshot = submitted, never "correct"). done | late | missing | pending | none (+ at = when the last part came in)
-function hwaStatus(a, atts, hw, pass, now) {
-  const due = a.due + (pass && PASS_DAYS[pass.kind] ? PASS_DAYS[pass.kind] * 864e5 : 0);
-  const ex = a.ex || [], X = Array.isArray(a.ext) ? a.ext : hwaExt(a), sh = hwaShots(hw);
-  if (!ex.length && !X.length) return { st: 'none', due };
-  let at = 0, ok = true;
-  for (const id of ex) {
-    const ts = atts.filter((t) => t.ex === id && t.ts >= a.start).map((t) => t.ts).sort((x, y) => x - y)[0];
-    if (!ts) { ok = false; break; }
-    at = Math.max(at, ts);
-  }
-  if (ok) for (const x of X) { const t = sh[x.id] && Number(sh[x.id].ts); if (!t) { ok = false; break; } at = Math.max(at, t); }
-  if (!ok) at = 0;
-  if (at) return { st: at <= due ? 'done' : 'late', at, due, ext: !!pass };
-  return { st: now > due ? 'missing' : 'pending', due, ext: !!pass };
+// status of one student for one assignment: the SAME rules as the app (md-hw.js, imported at the top). Every part counts
+// from the send date; complete after the deadline = 'late' (shown apart, still in); blank answers = 'incomplete';
+// older attempts that cannot prove every answer = 'unverified'. done | late | unverified | incomplete | missing | pending | upcoming | none
+function hwaStatus(a, atts, hw, pass, now, exIds) {
+  const r = MDHW.asgEval({ start: a.start, due: a.due, ext: Array.isArray(a.ext) ? a.ext : hwaExt(a) }, { attempts: atts, hw, pass, now, ex: exIds || a.ex || [] });
+  const out = { st: r.st, due: r.due, ext: !!pass, done: r.done, n: r.n };
+  if (r.at) out.at = r.at;
+  if (r.incomplete) out.inc = r.incomplete;
+  if (r.unverified) out.unv = r.unverified;
+  return out;
 }
 async function hwaData(env, request, body) {
   const sc = await hwaScope(env, request);
@@ -711,10 +705,21 @@ async function hwaData(env, request, body) {
   const asg = (await fsList(env, 'assignments')).map(hwaNormAsg).filter((a) => sc.classes.indexOf(a.cls) >= 0 && (a.due >= from || a.start >= from));
   const byEm = {};
   stu.forEach((s) => { byEm[s.em] = s; });
+  // attempts by STUDENT (their email), not by the class written on the attempt: a student who changed class keeps the work
+  // they did for this class. Only the fields the rules need.
   const atts = {};
-  await Promise.all(sc.classes.map(async (c) => {
-    (await fsQueryDocs(env, 'attempts', 'cls', c)).forEach((t) => { const em = normEmail(t.email); if (byEm[em] && Number(t.ts) >= from - 30 * 864e5) (atts[em] = atts[em] || []).push({ ex: t.ex, ts: Number(t.ts) }); });
+  await Promise.all(stu.map(async (s) => {
+    const ems = [s.em].concat(s.raw && s.raw !== s.em ? [s.raw] : []);
+    for (const e of ems) (await fsQueryDocs(env, 'attempts', 'email', e)).forEach((t) => {
+      if (Number(t.ts) < from - 30 * 864e5) return;
+      (atts[s.em] = atts[s.em] || []).push({ ex: t.ex, ts: Number(t.ts), kind: t.kind || '', score: Number(t.score) || 0, total: Number(t.total) || 0,
+        answered: t.answered == null ? null : Number(t.answered), required: t.required == null ? null : Number(t.required), stages: Array.isArray(t.stages) && t.stages.length ? [1] : null });
+    });
   }));
+  // exercises that still exist (same as the app: built-in + custom 'c_' + id); a deleted exercise is not a part
+  const exHave = {};
+  MDHW.BUILTIN.forEach((id) => { exHave[id] = 1; });
+  (await fsList(env, 'exercises')).forEach((e) => { exHave['c_' + e.id] = 1; });
   const status = {};
   await Promise.all(asg.map(async (a) => {
     const hw = {}, ps = {};
@@ -722,7 +727,7 @@ async function hwaData(env, request, body) {
     (await fsQueryDocs(env, 'passes', 'asgId', a.id)).forEach((d) => { ps[normEmail(d.email)] = d; });
     const m = {};
     stu.filter((s) => s.cls === a.cls).forEach((s) => {
-      const r = a.start > now ? { st: 'upcoming', due: a.due } : hwaStatus(a, atts[s.em] || [], hw[s.em], ps[s.em], now);
+      const r = a.start > now ? { st: 'upcoming', due: a.due } : hwaStatus(a, atts[s.em] || [], hw[s.em], ps[s.em], now, MDHW.liveEx(a.ex, (id) => !!exHave[id]));
       const sh = hwaShots(hw[s.em]), us = a.ext.map((x) => sh[x.id] && String(sh[x.id].url || '')).filter((u) => /^\/api\/image\/[A-Za-z0-9_-]{22}$/.test(u || ''));
       if (us.length) { r.shots = us; r.shot = us[0]; }
       m[s.key] = r;
@@ -1122,7 +1127,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-11-08a';
+const API_VERSION = '2026-11-09a';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);

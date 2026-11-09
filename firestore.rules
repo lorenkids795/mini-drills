@@ -49,6 +49,8 @@ service cloud.firestore {
       allow create: if ownsNew()
         && !('grade' in request.resource.data) && !('ai' in request.resource.data)
         && numIn('score', 0, 1000) && numIn('total', 0, 1000)
+        && numIn('answered', 0, 1000) && numIn('required', 0, 1000)
+        && request.resource.data.get('answered', 0) <= request.resource.data.get('required', 1000)
         && request.resource.data.get('score', 0) <= request.resource.data.get('total', 0);
       // giáo viên chấm (grade, nhận xét Writing); học sinh chỉ thêm gợi ý sửa lỗi (fixes); admin mọi trường
       allow update: if admin()

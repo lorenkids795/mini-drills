@@ -58,6 +58,8 @@ const { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, query, w
   await t('teacher cannot delete an attempt', assertFails(deleteDoc(doc(T, 'attempts/a1'))));
   await t('admin can delete an attempt', assertSucceeds(deleteDoc(doc(A, 'attempts/a1'))));
   await t('student creates own attempt', assertSucceeds(addDoc(collection(S, 'attempts'), { email: 's@x.com', ex: 'l1', score: 4, total: 5 })));
+  await t('student saves answered / required (Phase B)', assertSucceeds(addDoc(collection(S, 'attempts'), { email: 's@x.com', ex: 'l1', score: 3, total: 5, answered: 4, required: 5 })));
+  await t('answered can never be more than required', assertFails(addDoc(collection(S, 'attempts'), { email: 's@x.com', ex: 'l1', score: 3, total: 5, answered: 6, required: 5 })));
   await t('student cannot give self a grade', assertFails(addDoc(collection(S, 'attempts'), { email: 's@x.com', ex: 'l1', score: 4, total: 5, grade: { overall: 9 } })));
   await t('student cannot write for another student', assertFails(addDoc(collection(S, 'attempts'), { email: 'other@x.com', ex: 'l1', score: 1, total: 5 })));
   await t('teacher cannot delete a profile', assertFails(deleteDoc(doc(T, 'profiles/s'))));

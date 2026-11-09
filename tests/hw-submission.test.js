@@ -13,7 +13,7 @@ const ROSTER = [{ email: 'an@x.com', name: 'BẢO AN', cls: '21h', role: 'studen
 const HW = { id: 'h1', cls: '21h', name: 'HW SUN 01.11', start: now - DAY, due: now + DAY, ex: ['l1', 'r1'] };
 const OVER = Object.assign({}, HW, { id: 'h2', due: now - 1000 });
 const MIX = Object.assign({}, HW, { id: 'h3', ext: [{ id: 'x1', link: 'https://f.example.com/a', src: 'Google Form' }], type: 'mixed' });
-const att = (ex, ts) => ({ email: 'an@x.com', ex, score: 8, total: 10, ts: ts || now });
+const att = (ex, ts) => ({ email: 'an@x.com', ex, score: 8, total: 10, answered: 10, required: 10, ts: ts || now });
 const done = (asgId, extra) => Object.assign({ id: 'an-x-com_' + asgId, email: 'an@x.com', asgId, ts: now, done: true }, extra || {});
 function tea(asgs) { const B = boot({ hooks: HOOKS }); B.T.setRoster(ROSTER); B.T.setAsg(asgs || [HW]); return B; }
 const row = (B, a) => B.T.hwRows(a).rows[0];
@@ -66,7 +66,8 @@ t('8. aggregates agree: hwStatus %, hwRows "all" (Dashboard) and the Completion 
   const B = tea(); B.T.setHw([done('h1')]); B.T.setAttempts([att('l1')]);
   const r = row(B, HW), hs = B.T.hwStatus(HW); assert.strictEqual(hs.pct, 50); assert.ok(!r.all && !r.fin && !hs.rows[0].fin);
   const srv = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8');
-  assert.ok(/function hwaStatus[\s\S]{0,700}atts\.filter\(\(t\) => t\.ex === id/.test(srv) && !/hwaStatus[\s\S]{0,700}\.done === true/.test(srv), 'Homework Assistant counts real attempts, not the I\'m done flag');
+  const hw = fs.readFileSync(path.join(ROOT, 'md-hw.js'), 'utf8');
+  assert.ok(/function hwaStatus[\s\S]{0,500}MDHW\.asgEval\(/.test(srv) && !/hwaStatus[\s\S]{0,700}\.done === true/.test(srv) && !/\.done ?=== ?true/.test(hw), 'Homework Assistant uses the shared rules (md-hw.js), which count real attempts, not the I\'m done flag');
 });
 t('Library samples: inventory lists the 9 code samples with references; nothing hidden until approved; the hide switch keeps them for old data', () => {
   const B = tea(); B.T.setAttempts([att('l1'), { email: 'x@x.com', ex: 'l1', id: 'seed_x_l1', seeded: true, score: 1, total: 10, ts: now }]);

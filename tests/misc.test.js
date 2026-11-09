@@ -5,7 +5,7 @@ const assert = require('assert'), fs = require('fs'), path = require('path'), vm
 const { boot, html, ROOT } = require('./app-harness.js');
 let pass = 0, fail = 0; const out = [];
 async function t(name, fn) { try { await fn(); pass++; out.push('PASS ' + name); } catch (e) { fail++; out.push('FAIL ' + name + ' -> ' + e.message); } }
-const SRV = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest');
+const SRV = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(__dirname, '..', 'md-hw.js'), 'utf8'));
 
 (async () => {
   await t('Leaderboard hero: exactly the 20 star layers of the spec, soft radial-gradients, opacity .8, twinkle .45 → .95', () => {

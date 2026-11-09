@@ -674,5 +674,15 @@ Deploy `index.html` **và** `functions/` (Diagnostics: "app 2026-11-06b · serve
 4. [ ] Admin: một hàng 4 nút People / Classes & data / Gamification / Tools; bấm mở menu, chọn Assistants → nút People ghi "People · Assistants"; tải lại trang vẫn ở Assistants. Esc, bấm ra ngoài đóng menu; điện thoại 2 × 2.
 5. [ ] Admin › Assistants › Add: nếu vẫn báo "does not know this action", câu báo ghi "server …" = số phiên bản server: nhỏ hơn 2026-10-30b ⇒ `functions/` chưa được deploy (xem Cloudflare › Deployments › Functions). Thêm được thì đăng nhập bằng tài khoản đó: vào trang Homework, không phải Home học sinh; chỉ thấy lớp được giao.
 
+## Phase B — Completed / Late / bỏ giới hạn 500 bài (11/2026)
+
+- [ ] Học sinh làm một bài tự chấm, bỏ trống 2 câu, bấm Submit → hộp hỏi ghi "… will show as Submitted · Incomplete"; Submit anyway → kết quả có "Submitted · Incomplete (n/m answered)" và riêng "Passed"/"Not passed".
+- [ ] Làm lại đủ câu → "Completed"; bài giao của tuần đó: giáo viên thấy ✓, học sinh thấy điểm.
+- [ ] Làm một bài sau hạn → giáo viên thấy ✓ "late", cột Completion "Complete · late"; trợ lý thấy "Submitted late" — **cùng kết quả**.
+- [ ] Bài làm cũ (trước bản này), điểm chưa tuyệt đối → "Legacy · Unverified" (dấu ?), không phải Complete; điểm tuyệt đối → Complete.
+- [ ] Học sinh đổi lớp: trợ lý vẫn thấy bài đã làm trước khi đổi.
+- [ ] Giáo viên mở một bài giao cũ hơn 60 ngày → "Loading the work for this assignment…" rồi hiện đúng; Marking / Dashboard có "Showing work since … · Load older work".
+- [ ] Marking vẫn có bài Writing/Speaking cũ chưa chấm.
+
 ## Giai đoạn 3 — Đổi email (chưa làm)
 - [ ] Email cũ bị từ chối; email mới đăng nhập bằng **mật khẩu cũ**; XP, bài làm, flashcard còn nguyên.

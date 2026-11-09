@@ -9,7 +9,7 @@ const DAY = 864e5, now = Date.now();
 
 // ---------- server ----------
 function server() {
-  const SRC = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest');
+  const SRC = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(__dirname, '..', 'md-hw.js'), 'utf8'));
   const KV = {}, DB = { roster: {}, assignments: {}, attempts: {}, hwdone: {}, passes: {}, classes: {}, hwnotes: {} };
   const env = { MD_KV: { get: async (k, ty) => (k in KV ? (ty === 'json' ? JSON.parse(KV[k]) : KV[k]) : null), put: async (k, v) => { KV[k] = v; }, delete: async (k) => { delete KV[k]; } } };
   const ctx = vm.createContext({ console: { log() {} }, Response: class { constructor(b, o) { this.body = b; this.status = (o && o.status) || 200; this.headers = (o && o.headers) || {}; } }, URL, TextEncoder, TextDecoder, crypto: globalThis.crypto, atob, btoa, setTimeout, Date, Math, JSON, Uint8Array, ArrayBuffer });
@@ -41,7 +41,7 @@ function seed(S) {
     b1: { cls: '9h', name: 'HW B1', start: now - 9 * DAY, due: now - 2 * DAY, ex: ['l1'] },
   });
   Object.assign(S.DB.attempts, {
-    t1: { email: 'lan@x.com', cls: '7h30', ex: 'l1', ts: now - 5 * DAY }, // on time
+    t1: { email: 'lan@x.com', cls: '7h30', ex: 'l1', score: 3, total: 5, answered: 5, required: 5, ts: now - 5 * DAY }, // on time
     t2: { email: 'hoa@x.com', cls: '9h', ex: 'l1', ts: now - 5 * DAY },
   });
   S.DB.hwdone.h1 = { email: 'minh@x.com', asgId: 'a2', shot: { id: 'a'.repeat(22), url: '/api/image/' + 'a'.repeat(22), ts: now - DAY } };
@@ -67,8 +67,8 @@ function seed(S) {
   });
   await t('server: statuses = on time / late / missing / pending / extended by a late pass', () => {
     const S = server(), st = S.ctx.T.hwaStatus, a = { start: 0, due: 1000, ex: ['l1'] };
-    assert.strictEqual(st(a, [{ ex: 'l1', ts: 900 }], null, null, 2000).st, 'done');
-    assert.strictEqual(st(a, [{ ex: 'l1', ts: 1500 }], null, null, 2000).st, 'late');
+    assert.strictEqual(st(a, [{ ex: 'l1', ts: 900, answered: 1, required: 1 }], null, null, 2000).st, 'done');
+    assert.strictEqual(st(a, [{ ex: 'l1', ts: 1500, answered: 1, required: 1 }], null, null, 2000).st, 'late');
     assert.strictEqual(st(a, [], null, null, 2000).st, 'missing');
     assert.strictEqual(st(a, [], null, null, 500).st, 'pending');
     const e = st(a, [], null, { kind: 'day' }, 2000); assert.ok(e.st === 'pending' && e.ext, 'extension moves the deadline');
