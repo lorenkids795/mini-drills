@@ -174,7 +174,7 @@ Prompt AI (`AI_PROMPT`) và schema (`AI_SCHEMA`) nằm ở server, không ở cl
 | `hwdone`, `passes`, `cards`, `redeems` | dữ liệu riêng của HS (có trường `email`) | chỉ chủ sở hữu; GV đọc |
 | `profiles` | XP, streak, inv, title, avatar… | mọi người đã đăng nhập đọc được; chỉ chủ ghi |
 | `errors` | sổ lỗi, **mỗi lần mắc lỗi một doc** (không gộp), id `{slug(email)}_{attemptId}_{i}` (`i` = thứ tự lỗi trong bài): `{email, student, cls, original, corrected, category, explanation, type, context, practice[], attemptId, ex, exTitle, box, due, reviews, lapses, mastered, createdAt, lastPractice}`. `practice` = tối đa 2 bài `{sentence (một ___ + (gợi ý)), answers[], clue_type, own}`: [0] câu của HS, [1] câu mới. Doc cũ (id `{slug(email)}_{hash}`, có `count`/`lastSeen`) vẫn hiện bình thường | chỉ server tạo; HS đọc, xóa lỗi của mình và chỉ sửa `box/due/reviews/lapses/mastered/lastPractice`; GV đọc/xóa |
-| `wins` | marquee "vừa quay trúng" | đã đăng nhập: đọc và tạo |
+| `wins` | marquee "vừa quay trúng" | đã đăng nhập: đọc; **chỉ server tạo** (`/api/spin`), mục 91 |
 | `codes` | voucher `{code, kind, to}` | (11/2026, D1a) chỉ admin đọc/ghi; HS chỉ đọc mã có `to` = email của mình; **chỉ server** cấp mã (`/api/spin`) |
 | `names` | tên chờ HS nhận | chỉ GV và server |
 | `roster`, `exercises`, `assignments`, `classes`, `config` | dữ liệu do GV quản lý | đọc: đã đăng nhập; ghi: `exercises`/`assignments`/`classes` = GV; `roster` = admin (GV chỉ sửa `level`); `config` = admin (GV chỉ `config/goals_*`) — mục 89 |
@@ -707,6 +707,8 @@ Các thay đổi đã có trong code. **Không đảo ngược** nếu không đ
    - `APP_VERSION` = `API_VERSION` = `2026-11-08a`. Test mới `tests/vouchers.test.js` (9).
 
 90. **Library giáo viên/admin: trả lại bìa sách màu (11/2026)**: mục 82 đã thay lưới bìa `.covers > button.bk` bằng thẻ `.tile` của học sinh, làm mất "biểu tượng cuốn sách" của từng bộ. Khôi phục đúng bản trước (`renderLib`): mỗi bộ Cambridge một bìa màu `hsl(số sách × 47)`, chữ "CAMBRIDGE IELTS" + số sách + số bài; bộ chưa có bài = bìa xám `.bk.e` "Empty"; đang mở = `.bk.sel`; `aria-label` "Cambridge IELTS 14, 8 exercises". CSS `.covers`/`.bk` vẫn còn từ trước. Học sinh giữ thẻ `.tile` (chưa bao giờ có bìa). `APP_VERSION` = `2026-11-09a`. Test `ui-pass` cập nhật.
+
+91. **Rules `wins` chỉ server tạo (11/2026)**: sau khi dán rules mục 89, rà lại thấy `wins` vẫn cho mọi người đã đăng nhập `create` (5 trường), trong khi app không còn ghi `wins` (server `spinWheel` ghi bằng service account khi tier ≥ 3) → học sinh tạo được dòng "vừa trúng voucher" giả trên marquee. `allow create: if false`. **Phải dán lại `firestore.rules`**. `tests/rules.emu.js` 50/50, chạy được ở cổng khác bằng `EMU_PORT` (máy chủ dự án có Burp Suite giữ cổng 8080).
 
 ## 8. Giới hạn đã biết / chưa làm
 

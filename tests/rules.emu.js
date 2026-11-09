@@ -8,7 +8,7 @@ const { initializeTestEnvironment, assertSucceeds, assertFails } = require('@fir
 const { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, query, where, addDoc } = require('firebase/firestore');
 
 (async () => {
-  const env = await initializeTestEnvironment({ projectId: 'demo-md', firestore: { rules: fs.readFileSync(path.join(__dirname, '..', 'firestore.rules'), 'utf8'), host: '127.0.0.1', port: 8080 } });
+  const env = await initializeTestEnvironment({ projectId: 'demo-md', firestore: { rules: fs.readFileSync(path.join(__dirname, '..', 'firestore.rules'), 'utf8'), host: '127.0.0.1', port: +(process.env.EMU_PORT || 8080) } });
   const as = (uid, claims) => env.authenticatedContext(uid, claims).firestore();
   const A = as('admin', { em: 'admin@x.com', role: 'teacher', adm: true }), T = as('t', { em: 't@x.com', role: 'teacher' }),
     S = as('s', { em: 's@x.com', role: 'student' }), X = as('x', { em: 'tester@x.com', role: 'student' }), H = as('h', { em: 'a@x.com', role: 'assistant' }),
@@ -69,6 +69,11 @@ const { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, query, w
   await t('teacher saves assignments', assertSucceeds(setDoc(doc(T, 'assignments/as1'), { cls: '7h', ex: ['l1'] })));
   await t('teacher saves class settings', assertSucceeds(setDoc(doc(T, 'classes/7h'), { title: '7h' }, { merge: true })));
   await t('student cannot write exercises', assertFails(setDoc(doc(S, 'exercises/e1'), { title: 'x' })));
+  // ---- wins: only the server writes (fake "just won" lines are refused)
+  await t('student cannot post a fake win', assertFails(addDoc(collection(S, 'wins'), { name: 'S', cls: '7h', prize: 'Mock test', tier: 4, ts: 1 })));
+  await t('teacher cannot post a win', assertFails(addDoc(collection(T, 'wins'), { name: 'T', cls: '', prize: 'x', tier: 4, ts: 1 })));
+  await t('admin cannot post a win from the app either', assertFails(addDoc(collection(A, 'wins'), { name: 'A', cls: '', prize: 'x', tier: 4, ts: 1 })));
+  await t('everyone signed in still reads wins (marquee)', assertSucceeds(getDocs(collection(S, 'wins'))));
   // ---- assistant: nothing in Firestore; anonymous: nothing
   await t('assistant cannot read roster', assertFails(getDoc(doc(H, 'roster/s@x.com'))));
   await t('assistant cannot read profiles', assertFails(getDoc(doc(H, 'profiles/s'))));
