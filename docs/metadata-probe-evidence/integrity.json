@@ -1,0 +1,37 @@
+{
+  "baseCommit": "5d3707c253310f006974fcdef1c5df13da1d304f",
+  "sourceHashEncoding": "UTF-8 normalized CRLF to LF",
+  "evidenceHashEncoding": "Raw bytes",
+  "sources": [
+    {
+      "path": "staging/metadata-probe/cli.cjs",
+      "sha256": "34bc39f9083f76a1ea2ff0e094b5517b25c773d136ed6a96461f894b726ecb4b"
+    },
+    {
+      "path": "staging/metadata-probe/core.cjs",
+      "sha256": "7344ace0a92e420e8f5935a75b03d47bc6e4451493ead94a458ff57e70b6be05"
+    },
+    {
+      "path": "staging/metadata-probe/offline.test.cjs",
+      "sha256": "d9871b2fe7e68c19e6bb2566eb40c264f33a9d3146fd81bacb269a5f2cd1c237"
+    },
+    {
+      "path": "staging/metadata-probe/policy.cjs",
+      "sha256": "c440682df917b1a106121bded05d1ca7c75f0a7fbde33fc22670795ffdda3944"
+    },
+    {
+      "path": "staging/metadata-probe/transport.cjs",
+      "sha256": "e008872a09e33866d1fadb079a8e45faf0b20abe132c6975fe4c4db8fe2393ec"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "docs/metadata-probe-evidence/offline.tap",
+      "sha256": "58d4daecc1cff414db47b15b78fcf3949987b24b3ddef36b5ee149d5e66b8edd"
+    },
+    {
+      "path": "docs/metadata-probe-evidence/source.patch",
+      "sha256": "7ed5fc020101f3df4ea87baf0221f20cb62a513a2e65b7d8fa329a0e32baeeaf"
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+TAP version 13
+# Subtest: HTTPS mock validates exact TLS metadata GET without following redirects
+ok 1 - HTTPS mock validates exact TLS metadata GET without following redirects
+  ---
+  duration_ms: 1.7982
+  type: 'test'
+  ...
+# Subtest: HTTPS mock success returns bounded JSON for later safe-summary filtering
+ok 2 - HTTPS mock success returns bounded JSON for later safe-summary filtering
+  ---
+  duration_ms: 0.4124
+  type: 'test'
+  ...
+# Subtest: HTTPS mock refuses malformed and oversized response without echoing payload
+ok 3 - HTTPS mock refuses malformed and oversized response without echoing payload
+  ---
+  duration_ms: 0.8114
+  type: 'test'
+  ...
+# Subtest: HTTPS mock network exception redacted and request destroyed
+ok 4 - HTTPS mock network exception redacted and request destroyed
+  ---
+  duration_ms: 0.2665
+  type: 'test'
+  ...
+# Subtest: success: pinned mint provenance; source user token never sent to Firestore
+ok 5 - success: pinned mint provenance; source user token never sent to Firestore
+  ---
+  duration_ms: 1.933
+  type: 'test'
+  ...
+# Subtest: wrong project database resource or service account rejected before credential exchange
+ok 6 - wrong project database resource or service account rejected before credential exchange
+  ---
+  duration_ms: 0.325
+  type: 'test'
+  ...
+# Subtest: reject direct user ADC, private key, foreign impersonation URL and delegated chain
+ok 7 - reject direct user ADC, private key, foreign impersonation URL and delegated chain
+  ---
+  duration_ms: 0.3653
+  type: 'test'
+  ...
+# Subtest: missing/empty credential fields rejected without transport
+ok 8 - missing/empty credential fields rejected without transport
+  ---
+  duration_ms: 0.2486
+  type: 'test'
+  ...
+# Subtest: 401 at every stage stops with redacted authentication failure and no fallback
+ok 9 - 401 at every stage stops with redacted authentication failure and no fallback
+  ---
+  duration_ms: 0.4149
+  type: 'test'
+  ...
+# Subtest: 403 at every stage stops without adding permissions, retries or user fallback
+ok 10 - 403 at every stage stops without adding permissions, retries or user fallback
+  ---
+  duration_ms: 0.343
+  type: 'test'
+  ...
+# Subtest: redirect/quota/server errors never follow or retry
+ok 11 - redirect/quota/server errors never follow or retry
+  ---
+  duration_ms: 0.3893
+  type: 'test'
+  ...
+# Subtest: transport exceptions containing credentials are not returned or logged
+ok 12 - transport exceptions containing credentials are not returned or logged
+  ---
+  duration_ms: 0.4106
+  type: 'test'
+  ...
+# Subtest: invalid/expired/overlong mint response rejected; source token never reused
+ok 13 - invalid/expired/overlong mint response rejected; source token never reused
+  ---
+  duration_ms: 0.3909
+  type: 'test'
+  ...
+# Subtest: wrong response project database location type or edition fails closed
+ok 14 - wrong response project database location type or edition fails closed
+  ---
+  duration_ms: 0.6211
+  type: 'test'
+  ...
+# Subtest: no document collection query write Auth user or IAM-policy transport route
+ok 15 - no document collection query write Auth user or IAM-policy transport route
+  ---
+  duration_ms: 0.3809
+  type: 'test'
+  ...
+# Subtest: credential overrides debug/proxy/unsafe TLS environment rejected before auth
+ok 16 - credential overrides debug/proxy/unsafe TLS environment rejected before auth
+  ---
+  duration_ms: 0.6449
+  type: 'test'
+  ...
+# Subtest: default/plan mode does not load credentials or initialize transport
+ok 17 - default/plan mode does not load credentials or initialize transport
+  ---
+  duration_ms: 0.3029
+  type: 'test'
+  ...
+# Subtest: CLI prints no caller token even on malformed token arguments
+ok 18 - CLI prints no caller token even on malformed token arguments
+  ---
+  duration_ms: 91.7664
+  type: 'test'
+  ...
+# Subtest: credential loader rejects repository paths and never discovers global ADC
+ok 19 - credential loader rejects repository paths and never discovers global ADC
+  ---
+  duration_ms: 3.6763
+  type: 'test'
+  ...
+# Subtest: safe summary drops arbitrary response secrets instead of serializing Google payload
+ok 20 - safe summary drops arbitrary response secrets instead of serializing Google payload
+  ---
+  duration_ms: 0.203
+  type: 'test'
+  ...
+# Subtest: existing spark-local and synthetic runner locks unchanged at approved commit
+ok 21 - existing spark-local and synthetic runner locks unchanged at approved commit
+  ---
+  duration_ms: 106.3249
+  type: 'test'
+  ...
+# Subtest: probe import graph has no Firebase SDK, catalog, seed or application service
+ok 22 - probe import graph has no Firebase SDK, catalog, seed or application service
+  ---
+  duration_ms: 53.141
+  type: 'test'
+  ...
+1..22
+# tests 22
+# suites 0
+# pass 22
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 353.4431

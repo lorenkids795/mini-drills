@@ -1,0 +1,370 @@
+diff --git a/staging/metadata-probe/cli.cjs b/staging/metadata-probe/cli.cjs
+new file mode 100644
+--- /dev/null
++++ b/staging/metadata-probe/cli.cjs
+@@ -0,0 +1,34 @@
++'use strict';
++const fs=require('node:fs'),path=require('node:path');
++const {PIN,ProbeError,fail,validateEnvironment}=require('./policy.cjs');
++const CONFIRM='READ_METADATA_ONLY:'+PIN.resource;
++function parse(args){
++ if(args.length===0||args.length===1&&args[0]==='--plan')return {mode:'plan'};
++ if(args.length!==5||args[0]!=='--live-metadata-read'||args[1]!=='--credential-file'||args[3]!=='--confirm'||args[4]!==CONFIRM)fail('ARGUMENTS_DENIED');
++ if(!path.isAbsolute(args[2]))fail('CREDENTIAL_PATH_DENIED');
++ return {mode:'live',credentialFile:args[2]};
++}
++function loadCredential(filename){
++ try{
++  const actual=fs.realpathSync(filename),root=fs.realpathSync(path.resolve(__dirname,'../..'));
++  const relative=path.relative(root,actual);
++  if(!relative||!relative.startsWith('..'+path.sep)&&relative!=='..'&&!path.isAbsolute(relative))fail('CREDENTIAL_PATH_DENIED');
++  const stat=fs.statSync(actual);
++  if(!stat.isFile()||stat.size>16384)fail('CREDENTIAL_FILE_DENIED');
++  return JSON.parse(fs.readFileSync(actual,'utf8'));
++ }catch(e){if(e instanceof ProbeError)throw e;fail('CREDENTIAL_FILE_DENIED')}
++}
++async function main(args=process.argv.slice(2),env=process.env){
++ const options=parse(args);
++ if(options.mode==='plan')return {status:'OFFLINE_PLAN',resource:PIN.resource,serviceAccount:PIN.serviceAccount,cloudRequests:0,live:'NOT_TESTED',requiredApproval:'Explicit manual credential preparation, token minting and one metadata GET'};
++ validateEnvironment(env); // Before credential reads, auth exchange or network initialization.
++ const credential=loadCredential(options.credentialFile);
++ const {probe}=require('./core.cjs'),{transport}=require('./transport.cjs');
++ return probe({target:{projectId:PIN.projectId,databaseId:PIN.databaseId,resource:PIN.resource,serviceAccount:PIN.serviceAccount},credential,environment:env},transport);
++}
++if(require.main===module)main().then(result=>process.stdout.write(JSON.stringify(result)+'\n')).catch(error=>{
++ // Never print raw errors, stacks, paths, response bodies, tokens or ADC.
++ const code=error instanceof ProbeError?error.code:'PROBE_FAILED';
++ process.stderr.write(JSON.stringify({status:'FAIL',code})+'\n');process.exitCode=1;
++});
++module.exports={parse,loadCredential,main};
+diff --git a/staging/metadata-probe/core.cjs b/staging/metadata-probe/core.cjs
+new file mode 100644
+--- /dev/null
++++ b/staging/metadata-probe/core.cjs
+@@ -0,0 +1,43 @@
++'use strict';
++const {PIN,ENDPOINTS,ProbeError,fail,validateTarget,validateEnvironment,validateCredential,validateToken,metadataResult}=require('./policy.cjs');
++// Test seam: trusted transport supplied by CLI, replaced with a closed mock in tests.
++// No caller-supplied access token, endpoint, HTTP method or auth-provider fallback.
++async function probe({target,credential,environment},transport){
++ validateTarget(target);validateEnvironment(environment);
++ const source=validateCredential(credential);
++ let sourceToken,targetToken;
++ async function call(stage,request){
++  let result;
++  try{result=await transport(stage,request)}catch{fail(stage.toUpperCase()+'_TRANSPORT_FAILED')}
++  if(result?.status!==200){
++   const status=result?.status;
++   if(status===401)fail(stage.toUpperCase()+'_UNAUTHENTICATED');
++   if(status===403)fail(stage.toUpperCase()+'_PERMISSION_DENIED');
++   if(status===429)fail(stage.toUpperCase()+'_QUOTA_EXCEEDED');
++   if(status>=300&&status<400)fail(stage.toUpperCase()+'_REDIRECT_DENIED');
++   fail(stage.toUpperCase()+'_HTTP_FAILED');
++  }
++  return result.data;
++ }
++ try{
++  const oauth=await call('oauth',{url:ENDPOINTS.oauth,method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'refresh_token',client_id:source.clientId,client_secret:source.clientSecret,refresh_token:source.refreshToken}).toString()});
++  sourceToken=validateToken(oauth?.access_token);
++  if(oauth.token_type?.toLowerCase()!=='bearer'||!Number.isFinite(oauth.expires_in)||oauth.expires_in<=0)fail('TOKEN_RESPONSE_INVALID');
++  const minted=await call('impersonation',{url:ENDPOINTS.impersonation,method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+sourceToken},body:JSON.stringify({delegates:[],scope:[PIN.scope],lifetime:'600s'})});
++  targetToken=validateToken(minted?.accessToken);
++  const expires=Date.parse(minted?.expireTime);
++  if(!Number.isFinite(expires)||expires<=Date.now()||expires>Date.now()+660000||targetToken===sourceToken)fail('TOKEN_RESPONSE_INVALID');
++  // The human/source token is used only at IAMCredentials, never at Firestore.
++  sourceToken=undefined;
++  const metadata=await call('metadata',{url:ENDPOINTS.metadata,method:'GET',headers:{Authorization:'Bearer '+targetToken}});
++  return metadataResult(metadata);
++ }catch(e){
++  if(e instanceof ProbeError)throw e;
++  fail('PROBE_FAILED');
++ }finally{
++  sourceToken=undefined;targetToken=undefined;
++  source.clientSecret=undefined;source.refreshToken=undefined;
++  // JS strings cannot be guaranteed zeroized. No token/credential is written to disk.
++ }
++}
++module.exports={probe};
+diff --git a/staging/metadata-probe/offline.test.cjs b/staging/metadata-probe/offline.test.cjs
+new file mode 100644
+--- /dev/null
++++ b/staging/metadata-probe/offline.test.cjs
+@@ -0,0 +1,180 @@
++'use strict';
++// All credentials/tokens below are invented sentinels. Never contact cloud in this suite.
++require('../loopback-only.cjs').install();
++const {test}=require('node:test'),assert=require('node:assert/strict'),{spawnSync,execFileSync}=require('node:child_process');
++const {PIN,ENDPOINTS,validateEnvironment}=require('./policy.cjs');
++const {probe}=require('./core.cjs'),{parse,main,loadCredential}=require('./cli.cjs'),{transport}=require('./transport.cjs');
++const target=()=>({projectId:PIN.projectId,databaseId:PIN.databaseId,resource:PIN.resource,serviceAccount:PIN.serviceAccount});
++const adc=()=>({type:'impersonated_service_account',service_account_impersonation_url:ENDPOINTS.impersonation,quota_project_id:PIN.projectId,delegates:[],source_credentials:{type:'authorized_user',client_id:'synthetic-client',client_secret:'synthetic-secret',refresh_token:'synthetic-refresh'}});
++const metadata=()=>({name:PIN.resource,locationId:'asia-southeast1',type:'FIRESTORE_NATIVE',databaseEdition:'STANDARD'});
++const SOURCE='synthetic-source-access-token',IMPERSONATED='synthetic-impersonated-access-token';
++
++test('HTTPS mock validates exact TLS metadata GET without following redirects',async t=>{
++ const https=require('node:https'),{EventEmitter}=require('node:events'),original=https.request;let calls=0;
++ t.after(()=>{https.request=original});
++ https.request=(url,opts,onResponse)=>{
++  calls++;assert.equal(url,ENDPOINTS.metadata);assert.equal(opts.method,'GET');assert.equal(opts.rejectUnauthorized,true);assert.equal(opts.agent,false);
++  const req=new EventEmitter();req.destroy=()=>{};req.write=()=>assert.fail('GET must not write a body');req.end=()=>queueMicrotask(()=>{
++   const res=new EventEmitter();res.statusCode=302;res.headers={location:'https://evil.invalid'};res.destroy=()=>{};onResponse(res);
++  });return req;
++ };
++ const result=await transport('metadata',{url:ENDPOINTS.metadata,method:'GET',headers:{Authorization:'Bearer '+IMPERSONATED}});
++ assert.deepEqual(result,{status:302});assert.equal(calls,1);
++});
++test('HTTPS mock success returns bounded JSON for later safe-summary filtering',async t=>{
++ const https=require('node:https'),{EventEmitter}=require('node:events'),original=https.request;t.after(()=>{https.request=original});
++ https.request=(_url,_opts,onResponse)=>{
++  const req=new EventEmitter();req.destroy=()=>{};req.end=()=>queueMicrotask(()=>{
++   const res=new EventEmitter();res.statusCode=200;res.destroy=()=>{};onResponse(res);res.emit('data',Buffer.from(JSON.stringify(metadata())));res.emit('end');
++  });return req;
++ };
++ assert.deepEqual((await transport('metadata',{url:ENDPOINTS.metadata,method:'GET',headers:{Authorization:'Bearer '+IMPERSONATED}})).data,metadata());
++});
++test('HTTPS mock refuses malformed and oversized response without echoing payload',async t=>{
++ const https=require('node:https'),{EventEmitter}=require('node:events'),original=https.request;t.after(()=>{https.request=original});
++ for(const payload of [IMPERSONATED,IMPERSONATED.repeat(2000)]){
++  https.request=(_url,_opts,onResponse)=>{
++   const req=new EventEmitter();req.destroy=()=>{};req.end=()=>queueMicrotask(()=>{
++    const res=new EventEmitter();res.statusCode=200;res.destroy=()=>{};onResponse(res);res.emit('data',Buffer.from(payload));res.emit('end');
++   });return req;
++  };
++  await assert.rejects(transport('metadata',{url:ENDPOINTS.metadata,method:'GET',headers:{Authorization:'Bearer '+IMPERSONATED}}),{message:'Transport failed'});
++ }
++});
++test('HTTPS mock network exception redacted and request destroyed',async t=>{
++ const https=require('node:https'),{EventEmitter}=require('node:events'),original=https.request;t.after(()=>{https.request=original});let destroyed=false;
++ https.request=()=>{
++  const req=new EventEmitter();req.destroy=()=>{destroyed=true};req.end=()=>queueMicrotask(()=>req.emit('error',Error(IMPERSONATED)));return req;
++ };
++ await assert.rejects(transport('metadata',{url:ENDPOINTS.metadata,method:'GET',headers:{Authorization:'Bearer '+IMPERSONATED}}),{message:'Transport failed'});
++ assert.equal(destroyed,true);
++});
++const options=()=>({target:target(),credential:adc(),environment:{}});
++function mock(overrides={}){
++ const calls=[];
++ const run=async(stage,request)=>{
++  calls.push({stage,request});
++  if(overrides[stage])return overrides[stage](request);
++  if(stage==='oauth')return {status:200,data:{access_token:SOURCE,token_type:'Bearer',expires_in:3600}};
++  if(stage==='impersonation')return {status:200,data:{accessToken:IMPERSONATED,expireTime:new Date(Date.now()+600000).toISOString()}};
++  if(stage==='metadata')return {status:200,data:metadata()};
++  throw Error('Unexpected route');
++ };
++ return {calls,run};
++}
++test('success: pinned mint provenance; source user token never sent to Firestore',async()=>{
++ const m=mock(),result=await probe(options(),m.run);
++ assert.deepEqual(m.calls.map(c=>c.stage),['oauth','impersonation','metadata']);
++ assert.equal(m.calls[0].request.url,ENDPOINTS.oauth);
++ assert.equal(m.calls[0].request.headers.Authorization,undefined);
++ assert.equal(m.calls[1].request.url,ENDPOINTS.impersonation);
++ assert.equal(m.calls[1].request.headers.Authorization,'Bearer '+SOURCE);
++ assert.deepEqual(JSON.parse(m.calls[1].request.body),{delegates:[],scope:[PIN.scope],lifetime:'600s'});
++ assert.equal(m.calls[2].request.url,ENDPOINTS.metadata);
++ assert.equal(m.calls[2].request.method,'GET');
++ assert.equal(m.calls[2].request.body,undefined);
++ assert.equal(m.calls[2].request.headers.Authorization,'Bearer '+IMPERSONATED);
++ assert.equal(result.status,'PASS_METADATA_ONLY');assert.equal(result.editionVerification,'PASS');
++ assert.ok(!JSON.stringify(result).includes('access-token'));
++});
++test('wrong project database resource or service account rejected before credential exchange',async()=>{
++ for(const key of Object.keys(target())){
++  const m=mock(),o=options();o.target[key]='production';
++  await assert.rejects(probe(o,m.run),{code:'TARGET_DENIED'});assert.equal(m.calls.length,0);
++ }
++ const m=mock(),o=options();o.target.extra='override';await assert.rejects(probe(o,m.run),{code:'TARGET_DENIED'});assert.equal(m.calls.length,0);
++});
++test('reject direct user ADC, private key, foreign impersonation URL and delegated chain',async()=>{
++ const bad=[{type:'authorized_user',...adc().source_credentials},{type:'service_account',private_key:'synthetic-key'},{...adc(),service_account_impersonation_url:'https://evil.invalid/token'},{...adc(),quota_project_id:'production'},{...adc(),delegates:['other']},{...adc(),access_token:SOURCE},{...adc(),source_credentials:{...adc().source_credentials,token_uri:'https://evil.invalid'}}];
++ for(const credential of bad){const m=mock();await assert.rejects(probe({...options(),credential},m.run),{code:'CREDENTIAL_DENIED'});assert.equal(m.calls.length,0)}
++});
++test('missing/empty credential fields rejected without transport',async()=>{
++ for(const key of ['client_id','client_secret','refresh_token']){
++  const o=options(),m=mock();delete o.credential.source_credentials[key];
++  await assert.rejects(probe(o,m.run),{code:'CREDENTIAL_DENIED'});assert.equal(m.calls.length,0);
++ }
++});
++test('401 at every stage stops with redacted authentication failure and no fallback',async()=>{
++ for(const [stage,n]of [['oauth',1],['impersonation',2],['metadata',3]]){
++  const m=mock({[stage]:async()=>({status:401,data:{message:SOURCE+' '+IMPERSONATED}})});
++  await assert.rejects(probe(options(),m.run),{code:stage.toUpperCase()+'_UNAUTHENTICATED'});assert.equal(m.calls.length,n);
++ }
++});
++test('403 at every stage stops without adding permissions, retries or user fallback',async()=>{
++ for(const [stage,n]of [['oauth',1],['impersonation',2],['metadata',3]]){
++  const m=mock({[stage]:async()=>({status:403,data:{message:SOURCE}})});
++  await assert.rejects(probe(options(),m.run),{code:stage.toUpperCase()+'_PERMISSION_DENIED'});assert.equal(m.calls.length,n);
++ }
++});
++test('redirect/quota/server errors never follow or retry',async()=>{
++ for(const status of [301,302,307,429,500,503]){
++  const m=mock({metadata:async()=>({status,data:{access_token:IMPERSONATED}})});
++  await assert.rejects(probe(options(),m.run),e=>!e.message.includes(IMPERSONATED));assert.equal(m.calls.length,3);
++ }
++});
++test('transport exceptions containing credentials are not returned or logged',async()=>{
++ for(const stage of ['oauth','impersonation','metadata']){
++  const m=mock({[stage]:async()=>{throw Error(SOURCE+' '+IMPERSONATED+' synthetic-refresh')}});
++  await assert.rejects(probe(options(),m.run),{code:stage.toUpperCase()+'_TRANSPORT_FAILED'});
++ }
++});
++test('invalid/expired/overlong mint response rejected; source token never reused',async()=>{
++ for(const data of [
++  {accessToken:SOURCE,expireTime:new Date(Date.now()+60000).toISOString()},
++  {accessToken:IMPERSONATED,expireTime:'invalid'},
++  {accessToken:IMPERSONATED,expireTime:new Date(Date.now()-1).toISOString()},
++  {accessToken:IMPERSONATED,expireTime:new Date(Date.now()+3600000).toISOString()},
++  {accessToken:'bad\r\nheader',expireTime:new Date(Date.now()+60000).toISOString()}
++ ]){
++  const m=mock({impersonation:async()=>({status:200,data})});
++  await assert.rejects(probe(options(),m.run),{code:'TOKEN_RESPONSE_INVALID'});assert.equal(m.calls.length,2);
++ }
++});
++test('wrong response project database location type or edition fails closed',async()=>{
++ for(const [key,value]of [['name','projects/prod/databases/(default)'],['name','projects/mini-drills-vocab-staging/databases/other'],['locationId','us-central1'],['type','DATASTORE_MODE'],['databaseEdition','ENTERPRISE']]){
++  const m=mock({metadata:async()=>({status:200,data:{...metadata(),[key]:value}})});
++  await assert.rejects(probe(options(),m.run),{code:'METADATA_MISMATCH'});
++ }
++ const m=mock({metadata:async()=>{const data=metadata();delete data.databaseEdition;return {status:200,data}}});
++ assert.equal((await probe(options(),m.run)).editionVerification,'NOT_VERIFIED');
++});
++test('no document collection query write Auth user or IAM-policy transport route',()=>{
++ for(const stage of ['documents','query','createUser','setIamPolicy','enableApi']){
++  assert.throws(()=>transport(stage,{url:ENDPOINTS.metadata,method:'GET',headers:{}}),{code:'TRANSPORT_ROUTE_DENIED'});
++ }
++ for(const request of [{url:ENDPOINTS.metadata+'/documents',method:'GET',headers:{}},{url:ENDPOINTS.metadata,method:'POST',headers:{}},{url:ENDPOINTS.metadata,method:'GET',headers:{},body:'data'}])assert.throws(()=>transport('metadata',request));
++});
++test('credential overrides debug/proxy/unsafe TLS environment rejected before auth',async()=>{
++ for(const key of ['GOOGLE_APPLICATION_CREDENTIALS','GOOGLE_OAUTH_ACCESS_TOKEN','CLOUDSDK_AUTH_ACCESS_TOKEN','FIRESTORE_EMULATOR_HOST','NODE_OPTIONS','NODE_DEBUG','NODE_TLS_REJECT_UNAUTHORIZED','NODE_EXTRA_CA_CERTS','SSLKEYLOGFILE','HTTPS_PROXY']){
++  const m=mock();await assert.rejects(probe({...options(),environment:{[key]:'synthetic'}},m.run),{code:'ENVIRONMENT_DENIED'});assert.equal(m.calls.length,0);
++ }
++ assert.doesNotThrow(()=>validateEnvironment({PATH:'local',SystemRoot:'Windows'}));
++});
++test('default/plan mode does not load credentials or initialize transport',async()=>{
++ assert.equal((await main([],{})).cloudRequests,0);assert.equal((await main(['--plan'],{})).live,'NOT_TESTED');
++ for(const args of [['--token',IMPERSONATED],['--live-metadata-read'],['--live-metadata-read','--credential-file','relative.json','--confirm','READ_METADATA_ONLY:'+PIN.resource],['--project','production']])assert.throws(()=>parse(args),{code:args.includes('relative.json')?'CREDENTIAL_PATH_DENIED':'ARGUMENTS_DENIED'});
++});
++test('CLI prints no caller token even on malformed token arguments',()=>{
++ const r=spawnSync(process.execPath,['cli.cjs','--token',IMPERSONATED],{cwd:__dirname,encoding:'utf8'});
++ assert.equal(r.status,1);assert.ok(!(r.stdout+r.stderr).includes(IMPERSONATED));assert.deepEqual(JSON.parse(r.stderr),{status:'FAIL',code:'ARGUMENTS_DENIED'});
++ const plan=spawnSync(process.execPath,['cli.cjs'],{cwd:__dirname,encoding:'utf8'});assert.equal(plan.status,0);assert.equal(JSON.parse(plan.stdout).cloudRequests,0);
++});
++test('credential loader rejects repository paths and never discovers global ADC',()=>{
++ const path=require('node:path');assert.throws(()=>loadCredential(path.join(__dirname,'policy.cjs')),{code:'CREDENTIAL_PATH_DENIED'});
++ assert.throws(()=>loadCredential(path.join(__dirname,'missing.json')),{code:'CREDENTIAL_FILE_DENIED'});
++});
++test('safe summary drops arbitrary response secrets instead of serializing Google payload',async()=>{
++ const m=mock({metadata:async()=>({status:200,data:{...metadata(),access_token:IMPERSONATED,debug:{refresh_token:'synthetic-refresh'}}})});
++ const text=JSON.stringify(await probe(options(),m.run));assert.ok(!text.includes(IMPERSONATED));assert.ok(!text.includes('synthetic-refresh'));assert.ok(!text.includes('debug'));
++});
++test('existing spark-local and synthetic runner locks unchanged at approved commit',()=>{
++ for(const file of ['staging/spark-local/adapter.cjs','staging/spark-local/live-qa.cjs','staging/spark-local/auth-client.mjs']){
++  const fs=require('node:fs'),path=require('node:path'),root=path.resolve(__dirname,'../..');
++  const old=execFileSync('git',['show','5d3707c253310f006974fcdef1c5df13da1d304f:'+file],{cwd:root,encoding:'utf8'}).replace(/\r\n/g,'\n');
++  assert.equal(fs.readFileSync(path.join(root,file),'utf8').replace(/\r\n/g,'\n'),old);
++ }
++});
++test('probe import graph has no Firebase SDK, catalog, seed or application service',()=>{
++ const code="const M=require('module'),old=M._load;M._load=function(id,...args){if(/firebase|domain|fixtures|service\\.cjs|google-auth-library/.test(id))throw Error('Forbidden dependency');return old.call(this,id,...args)};require('./policy.cjs');require('./core.cjs');require('./transport.cjs');require('./cli.cjs');";
++ const r=spawnSync(process.execPath,['-e',code],{cwd:__dirname,encoding:'utf8'});assert.equal(r.status,0,r.stderr);
++});
+diff --git a/staging/metadata-probe/policy.cjs b/staging/metadata-probe/policy.cjs
+new file mode 100644
+--- /dev/null
++++ b/staging/metadata-probe/policy.cjs
+@@ -0,0 +1,54 @@
++'use strict';
++const PIN=Object.freeze({
++ projectId:'mini-drills-vocab-staging',
++ databaseId:'(default)',
++ resource:'projects/mini-drills-vocab-staging/databases/(default)',
++ serviceAccount:'vocab-spark-runtime@mini-drills-vocab-staging.iam.gserviceaccount.com',
++ locationId:'asia-southeast1',
++ scope:'https://www.googleapis.com/auth/datastore'
++});
++const ENDPOINTS=Object.freeze({
++ oauth:'https://oauth2.googleapis.com/token',
++ impersonation:'https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/'+PIN.serviceAccount+':generateAccessToken',
++ metadata:'https://firestore.googleapis.com/v1/'+PIN.resource
++});
++class ProbeError extends Error{
++ constructor(code){super(code);this.name='ProbeError';this.code=code}
++}
++const fail=code=>{throw new ProbeError(code)};
++function validateTarget(target){
++ if(!target||Object.keys(target).length!==4||target.projectId!==PIN.projectId||target.databaseId!==PIN.databaseId||target.resource!==PIN.resource||target.serviceAccount!==PIN.serviceAccount)fail('TARGET_DENIED');
++}
++function validateEnvironment(env){
++ for(const [key,value] of Object.entries(env)){
++  if(!value)continue;
++  if(/^(GOOGLE_|GCLOUD_|FIREBASE_|FIRESTORE_|CLOUDSDK_)/.test(key)||['HTTP_PROXY','HTTPS_PROXY','ALL_PROXY','http_proxy','https_proxy','all_proxy','NODE_OPTIONS','NODE_DEBUG','NODE_DEBUG_NATIVE','NODE_TLS_REJECT_UNAUTHORIZED','NODE_EXTRA_CA_CERTS','SSLKEYLOGFILE'].includes(key))fail('ENVIRONMENT_DENIED');
++ }
++}
++function validateCredential(adc){
++ const object=x=>x&&typeof x==='object'&&!Array.isArray(x);
++ if(!object(adc)||adc.type!=='impersonated_service_account'||adc.service_account_impersonation_url!==ENDPOINTS.impersonation||adc.quota_project_id!==PIN.projectId)fail('CREDENTIAL_DENIED');
++ if(Object.keys(adc).some(k=>!['type','service_account_impersonation_url','quota_project_id','source_credentials','delegates'].includes(k)))fail('CREDENTIAL_DENIED');
++ if(adc.delegates!==undefined&&(!Array.isArray(adc.delegates)||adc.delegates.length))fail('CREDENTIAL_DENIED');
++ const source=adc.source_credentials;
++ if(!object(source)||source.type!=='authorized_user'||Object.keys(source).some(k=>!['type','client_id','client_secret','refresh_token'].includes(k)))fail('CREDENTIAL_DENIED');
++ for(const key of ['client_id','client_secret','refresh_token'])if(typeof source[key]!=='string'||!source[key]||source[key].length>8192)fail('CREDENTIAL_DENIED');
++ // Return only the exact source fields needed for the OAuth refresh exchange.
++ return {clientId:source.client_id,clientSecret:source.client_secret,refreshToken:source.refresh_token};
++}
++function validateToken(token){
++ if(typeof token!=='string'||token.length<8||token.length>16384||!/^[A-Za-z0-9._~+/-]+={0,2}$/.test(token))fail('TOKEN_RESPONSE_INVALID');
++ return token;
++}
++function metadataResult(data){
++ if(!data||data.name!==PIN.resource||data.locationId!==PIN.locationId||data.type!=='FIRESTORE_NATIVE')fail('METADATA_MISMATCH');
++ if(data.databaseEdition!==undefined&&data.databaseEdition!=='STANDARD')fail('METADATA_MISMATCH');
++ return {
++  status:'PASS_METADATA_ONLY',resource:PIN.resource,locationId:PIN.locationId,type:'FIRESTORE_NATIVE',
++  databaseEdition:data.databaseEdition??'NOT_RETURNED',editionVerification:data.databaseEdition==='STANDARD'?'PASS':'NOT_VERIFIED',
++  credentialProvenance:'IAM_GENERATE_ACCESS_TOKEN_FOR_PINNED_SERVICE_ACCOUNT',
++  serviceAccount:PIN.serviceAccount,dataRead:false,dataWritten:false,
++  liveFirebaseAuth:'NOT_TESTED',billing:'NOT_VERIFIED',rules:'NOT_VERIFIED'
++ };
++}
++module.exports={PIN,ENDPOINTS,ProbeError,fail,validateTarget,validateEnvironment,validateCredential,validateToken,metadataResult};
+diff --git a/staging/metadata-probe/transport.cjs b/staging/metadata-probe/transport.cjs
+new file mode 100644
+--- /dev/null
++++ b/staging/metadata-probe/transport.cjs
+@@ -0,0 +1,34 @@
++'use strict';
++const https=require('node:https');
++const {ENDPOINTS,fail}=require('./policy.cjs');
++// Exactly three possible routes: two credential exchanges and one metadata GET.
++// No redirects, retries, documents, queries, writes, IAM-policy mutations or API enabling.
++function transport(stage,request){
++ const expectedMethod=stage==='metadata'?'GET':'POST';
++ if(!Object.hasOwn(ENDPOINTS,stage)||request.url!==ENDPOINTS[stage]||request.method!==expectedMethod)fail('TRANSPORT_ROUTE_DENIED');
++ if(stage==='metadata'&&request.body!==undefined)fail('TRANSPORT_BODY_DENIED');
++ if(Object.keys(request.headers).some(k=>!['Authorization','Content-Type'].includes(k)))fail('TRANSPORT_HEADERS_DENIED');
++ return new Promise((resolve,reject)=>{
++  let req,settled=false;
++  const stop=()=>{if(settled)return;settled=true;clearTimeout(timer);req?.destroy();reject(Error('Transport failed'))};
++  const timer=setTimeout(stop,15000);
++  try{
++   req=https.request(request.url,{method:request.method,headers:request.headers,agent:false,rejectUnauthorized:true},res=>{
++    res.on('error',stop);
++    // Discard all non-200 payloads: Google errors may include sensitive request details.
++    if(res.statusCode!==200){settled=true;clearTimeout(timer);res.destroy();resolve({status:res.statusCode});return}
++    let bytes=0;const chunks=[];
++    res.on('data',chunk=>{bytes+=chunk.length;if(bytes>32768)stop();else chunks.push(chunk)});
++    res.on('aborted',stop);
++    res.on('end',()=>{
++     if(settled)return;
++     try{const data=JSON.parse(Buffer.concat(chunks).toString('utf8'));settled=true;clearTimeout(timer);resolve({status:200,data})}catch{stop()}
++    });
++   });
++   req.on('error',stop);
++   if(request.body!==undefined)req.write(request.body);
++   req.end();
++  }catch{stop()}
++ });
++}
++module.exports={transport};

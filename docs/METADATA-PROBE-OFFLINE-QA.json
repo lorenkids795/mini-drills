@@ -1,0 +1,27 @@
+{
+  "phase": "Firebase Spark Metadata-Only Probe — Offline Implementation",
+  "branch": "integration/vocab-lab-candidate-2026-11-07",
+  "baseCommit": "5d3707c253310f006974fcdef1c5df13da1d304f",
+  "status": "PASS_OFFLINE_ONLY",
+  "tests": {
+    "pass": 22,
+    "fail": 0
+  },
+  "realCloudRequests": 0,
+  "liveMetadata": "NOT_TESTED",
+  "liveIAM": "NOT_TESTED",
+  "realADCCompatibility": "NOT_TESTED",
+  "committed": false,
+  "pushed": false,
+  "existingTrackedFilesUnchanged": 378,
+  "applicationCloudLocks": "UNCHANGED",
+  "credentials": "Only synthetic in-memory test sentinels; no real ADC read or created",
+  "tokens": "No real token minted, printed or stored",
+  "network": "HTTPS mocked; loopback guard installed in focused suite; default CLI offline plan exercised",
+  "nextApproval": "Explicit ADC impersonation preparation (change from earlier no-ADC CLI proposal), IAM/API prerequisites and one live run",
+  "evidence": [
+    "metadata-probe-evidence/offline.tap",
+    "metadata-probe-evidence/source.patch",
+    "metadata-probe-evidence/integrity.json"
+  ]
+}
