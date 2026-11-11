@@ -64,8 +64,10 @@ async function answer(page, ex, right, blanks) {
     else await page.check('input[name="' + q.id + '"][value="' + (good ? q.ans : (q.ans + 1) % q.opts.length) + '"]');
   }
 }
+// back to Home first (the Library tab button keeps an open exercise open), then open the exercise row of the homework card
 async function openEx(page, exId) {
-  await tab(page, 'library'); await page.click('[data-act="nav"][data-ex="' + exId + '"] >> nth=0'); await page.waitForTimeout(1500);
+  await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(2500);
+  await page.click('[data-act="nav"][data-ex="' + exId + '"] >> nth=0'); await page.waitForTimeout(1500);
 }
 
 (async () => {
@@ -109,9 +111,9 @@ async function openEx(page, exId) {
     await envGate(page, 'password rotation');
     let rot = 0; for (const a of ACC) { const r = await api(page, 'admin/password', { email: a, newPassword: PW[a] }, true); if (r.status === 200) rot++; else rec('Admin', 'rotate password ' + a, '200', r.status + ' ' + clean(JSON.stringify(r.d)), false); }
     rec('Admin', 'made-up accounts get new random passwords (old ones seen in screenshots stop working)', '7 of 7', rot + ' of 7', rot === 7);
-    await page.reload({ waitUntil: 'networkidle' }); await page.waitForTimeout(2500);
+    await page.reload({ waitUntil: 'load' }); await page.waitForTimeout(2500);
     await tab(page, 'admin');
-    await page.evaluate(() => { const b = document.querySelector('[data-act="ad-sub"][data-sub="me"]'); if (b) b.click(); }); await page.waitForTimeout(1500);
+    await page.evaluate(() => { const b = document.querySelector('[data-act="ad-sub"][data-v="me"]'); if (b) b.click(); }); await page.waitForTimeout(1500);
     const diag = await page.locator('#adVer').textContent().catch(() => '');
     const envl = await page.locator('#v-admin').textContent();
     rec('Admin', 'Diagnostics: app + server versions, environment staging, project', 'app 2026-11-11a · server 2026-11-11a · staging · mini-drills-staging', clean(diag) + ' | ' + (/environment staging/.test(envl) ? 'env staging' : 'env ?') + (/mini-drills-staging/.test(envl) ? ' · project ok' : ''), /app 2026-11-11a/.test(diag) && /server 2026-11-11a/.test(diag) && /environment staging/.test(envl) && /mini-drills-staging/.test(envl), await shot(page, 'admin-diagnostics'));
@@ -140,7 +142,7 @@ async function openEx(page, exId) {
     await page.click('#uiDlg [data-act="ui-ok"]'); await page.waitForTimeout(2500);
     let res = await page.locator('#result').textContent();
     rec('Tester', '3/5 answered → Submitted · Incomplete (3/5), and Passed / Not passed shown apart', 'Submitted · Incomplete (3/5 answered) + Not passed', clean(res).slice(0, 200), /Submitted · Incomplete \(3\/5 answered\)/.test(res) && /Not passed/.test(res), await shot(page, 'tester-r5-incomplete'));
-    await page.reload({ waitUntil: 'networkidle' }); await page.waitForTimeout(3000); await tab(page, 'library'); home = await page.locator('#libBody').textContent();
+    await page.reload({ waitUntil: 'load' }); await page.waitForTimeout(3000); await tab(page, 'library'); home = await page.locator('#libBody').textContent();
     rec('Tester', 'after reload: still Incomplete 3/5, not silently complete', 'Incomplete · 3/5 answered', clean(home).match(/Incomplete · \d\/\d answered/) || 'not found', /Incomplete · 3\/5 answered/.test(home), await shot(page, 'tester-home-after-reload'));
     // 10 questions: 7 right = exactly 70 % = Passed + Completed
     await openEx(page, 'c_qa_r10'); await answer(page, EX.qa_r10, 7, []); await page.click('#submit'); await page.waitForTimeout(2500);
@@ -160,8 +162,11 @@ async function openEx(page, exId) {
     await page.fill('#wText', 'STAGING QA essay. The library lent 120 items in January, then 180 in February, which was the highest month. In March the number fell to 150. Overall, lending rose in February and then dropped, but it stayed above the January figure.');
     await page.click('#submit'); await page.waitForTimeout(3000); res = await page.locator('#result').textContent().catch(() => '');
     rec('Tester', 'Writing Task 1 submits', 'Submitted', clean(res).slice(0, 120), /Submitted/.test(res), await shot(page, 'tester-writing'));
+    res = await page.locator('#result').textContent().catch(() => '');
+    rec('Tester', 'AI is off on staging: Writing still saved, clear message (no broken screen)', '"not available right now. Your answer is saved"', clean(res).slice(0, 160), /Your answer is saved/.test(res));
+    page.bad = page.bad.filter((x) => !/\/api\/ai\/correct/.test(x)); page.errs = page.errs.filter((x) => !/status of 502/.test(x)); // expected: AI switched off on staging
     // external task screenshot (mixed, overdue) → late
-    await tab(page, 'library');
+    await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(2500);
     const k = 'qa_hw_mixed|x1'; await page.click('[data-act="hw-xopen"][data-k="' + k + '"]').catch(() => {}); await page.waitForTimeout(600);
     const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
     const inp = page.locator('input#hwShot_qa_hw_mixed_x1'); let upOk = false;
@@ -169,7 +174,7 @@ async function openEx(page, exId) {
     rec('Tester', 'external task screenshot after the deadline = Submitted late', 'Submitted late', upOk ? 'uploaded, status shown' : 'upload input not found / failed', upOk, await shot(page, 'tester-external'));
     rec('Tester', 'no console errors / failed requests (tester session)', '0', JSON.stringify({ errs: page.errs, http: page.bad }), !page.errs.length && !page.bad.length);
     // mobile dark, signed in
-    await page.setViewportSize({ width: 390, height: 844 }); await page.emulateMedia({ colorScheme: 'dark' }); await page.reload({ waitUntil: 'networkidle' }); await page.waitForTimeout(2500);
+    await page.setViewportSize({ width: 390, height: 844 }); await page.emulateMedia({ colorScheme: 'dark' }); await page.reload({ waitUntil: 'load' }); await page.waitForTimeout(2500);
     const hs = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
     rec('Tester', 'Home at 390 px, dark: no sideways scroll', 'no h-scroll', hs ? 'h-scroll' : 'ok', !hs, await shot(page, 'tester-mobile-dark'));
     await ctx.close();
@@ -200,7 +205,7 @@ async function openEx(page, exId) {
     rec('Teacher', 'STG-A QA homework table: STG Student An has 3/5 (incomplete) for the 5-question exercise', '! 3/5 · Submitted · Incomplete', clean(mtx).slice(0, 300), /3\/5/.test(mtx), await shot(page, 'teacher-stga-matrix'));
     const old = page.locator('[data-act="asg-open"]').filter({ hasText: 'STG old homework' }); await old.click().catch(() => {}); await page.waitForTimeout(4000);
     const om = await page.locator('#v-asg').textContent();
-    rec('Teacher', 'assignment older than 60 days loads (Loading… then statuses), Legacy · Unverified shown', 'Legacy · Unverified', clean(om).match(/Legacy · Unverified[^·]*/) || 'not found', /Legacy · Unverified/.test(om), await shot(page, 'teacher-old-asg'));
+    rec('Teacher', 'assignment older than 60 days loads its older work (✓ late, 3/5 incomplete, Completion column), no "Loading…" left', 'late + 3/5 + Completion', clean(om).match(/STG old homework[\s\S]{0,40}/) ? 'table shown' : 'not found', /late/.test(om) && /3\/5/.test(om) && /Completion|COMPLETION/i.test(om) && !/Loading the work/.test(om), await shot(page, 'teacher-old-asg'));
     rec('Teacher', 'no console errors / failed requests (teacher session)', '0', JSON.stringify({ errs: page.errs, http: page.bad }), !page.errs.length && !page.bad.length);
     await ctx.close();
   }
@@ -216,7 +221,8 @@ async function openEx(page, exId) {
     const st = an && qa ? d.d.status[qa.id][an.key] : null;
     rec('Assistant', 'same student + homework as the teacher table: partial (not complete), parts listed', 'incomplete or pending, done < n, parts', JSON.stringify(st), !!st && st.st !== 'done' && st.done < st.n && Array.isArray(st.parts));
     const mv = (d.d.students || []).find((s) => /Chi/.test(s.name)), lt = (d.d.assignments || []).find((a) => a.id === 'stg_late');
-    rec('Assistant', 'student who changed class: work done in the old class still counts', 'stg_late for Chi not missing', JSON.stringify(mv && lt ? d.d.status[lt.id][mv.key] : null), !!(mv && lt && d.d.status[lt.id][mv.key] && d.d.status[lt.id][mv.key].st !== 'missing'));
+    const cs = mv && lt ? d.d.status[lt.id][mv.key] : null, cp = cs && (cs.parts || []).find((p) => p.k === 'ex');
+    rec('Assistant', 'student who changed class: the Library exercise done in the old class counts (the external task is still missing)', 'Library part done/late, 1/2 parts', JSON.stringify(cs), !!cp && (cp.st === 'late' || cp.st === 'done') && cs.done === 1);
     await page.click('#tabs [data-act="tab"][data-tab="hwa-miss"]').catch(() => {}); await page.waitForTimeout(1500);
     rec('Assistant', 'Missing homework page shows partial progress text', '"parts done · missing"', /parts done/.test(await page.locator('#v-hwa').textContent()) ? 'shown' : 'not shown', /parts done/.test(await page.locator('#v-hwa').textContent()), await shot(page, 'hwa-missing'));
     rec('Assistant', 'no console errors / failed requests (assistant session)', '0', JSON.stringify({ errs: page.errs, http: page.bad }), !page.errs.length && !page.bad.length);

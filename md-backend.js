@@ -26,7 +26,8 @@
     if (STG && document.body && !document.getElementById('mdStg')) {
       var b = document.createElement('div');
       b.id = 'mdStg'; b.setAttribute('role', 'status');
-      b.style.cssText = 'position:fixed;left:50%;bottom:8px;transform:translateX(-50%);z-index:90;background:#8a5512;color:#fff;font:600 12px/1.4 system-ui,sans-serif;padding:6px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.25);pointer-events:none;max-width:calc(100vw - 24px);text-align:center';
+      b.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:90;background:#8a5512;color:#fff;font:600 11px/1.4 system-ui,sans-serif;padding:4px 10px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.25);pointer-events:none;max-width:calc(100vw - 16px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+      document.body.style.paddingBottom = '40px'; // room under the page so the badge never covers a button or text
       b.textContent = 'STAGING · ' + ((C.firebase && C.firebase.projectId) || 'not set up') + ' · made-up test data only';
       document.body.appendChild(b);
     }
