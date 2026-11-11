@@ -692,7 +692,7 @@ const PASS_DAYS = { day: 1, week: 7 };
 // older attempts that cannot prove every answer = 'unverified'. done | late | unverified | incomplete | missing | pending | upcoming | none
 function hwaStatus(a, atts, hw, pass, now, exIds) {
   const r = MDHW.asgEval({ start: a.start, due: a.due, ext: Array.isArray(a.ext) ? a.ext : hwaExt(a) }, { attempts: atts, hw, pass, now, ex: exIds || a.ex || [] });
-  const out = { st: r.st, due: r.due, ext: !!pass, done: r.done, n: r.n };
+  const out = { st: r.st, due: r.due, ext: !!pass, done: r.done, n: r.n, parts: r.parts.map((p) => ({ k: p.kind, st: p.st })) };
   if (r.at) out.at = r.at;
   if (r.incomplete) out.inc = r.incomplete;
   if (r.unverified) out.unv = r.unverified;
@@ -1128,7 +1128,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-11-09b';
+const API_VERSION = '2026-11-11a';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -2595,10 +2595,68 @@ async function fsBatchPut(env, col, rows) {
   }
   return rows.length;
 }
+/* ---------- Staging QA fixture (admin, staging only): real exercises a learner can open, answer and submit ----------
+   Original made-up content (no Cambridge text), every title starts "STAGING/QA", every record qa:true + staging:true, fixed ids.
+   Placed in Cam 21 · Test 4 of the STAGING Firestore only (production never has these documents).
+   Substitution: no reliable free audio file exists, so the 5-question "partial submit" exercise is a Reading exercise, not a
+   Listening one (a Listening exercise without audio would be mislabelled).
+   A document with one of these ids that was NOT made by this fixture (no qa:true) is never overwritten: it is reported.
+   op 'qa-preview' = dry run (what would be created / updated / skipped), op 'qa' = write. Attempts are never touched. */
+const QA_TFN = ['True', 'False', 'Not Given'];
+const QA_PASSAGE = 'STAGING/QA passage — made up for testing only.\n\nThe town of Elmvale opened a small library on Harbour Street in 2019. At first it opened only on Saturdays, but since 2021 it has been open five days a week.\n\nThe library lends books, board games and a few bicycles. Members can borrow up to six items at a time. Bicycles must be returned on the same day.\n\nA survey in 2023 found that most visitors were under twenty-five. The library now plans a quiet reading room for older visitors, which should open next spring.';
+function qaExercises() {
+  const g = (id, q, ans) => ({ id, type: 'gap', tag: 'Completion', label: q.slice(0, 57), q, ans });
+  const t = (id, q, ans) => ({ id, type: 'tfng', tag: 'True / False / Not Given', label: q.slice(0, 57), q, opts: QA_TFN, ans });
+  const m = (id, q, opts, ans) => ({ id, type: 'mcq', tag: 'Multiple choice', label: q.slice(0, 57), q, opts, ans });
+  const base = { bookId: 'cam21', testId: 't4', qa: true, staging: true };
+  return [
+    ['qa_r5', Object.assign({}, base, { skill: 'reading', part: 1, title: 'STAGING/QA · Reading · 5 questions (blank-answer test)', material: QA_PASSAGE, qs: [
+      g('q1', 'The library is on ___ Street.', ['Harbour']),
+      g('q2', 'Since 2021 it has been open ___ days a week.', ['five', '5']),
+      t('q3', 'The library first opened in 2019.', 0),
+      t('q4', 'Members can borrow up to ten items at a time.', 1),
+      m('q5', 'Bicycles must be returned', ['the same day', 'within a week', 'after a month'], 0)] })],
+    ['qa_r10', Object.assign({}, base, { skill: 'reading', part: 2, title: 'STAGING/QA · Reading · 10 questions (60 / 70 / 80 % test)', material: QA_PASSAGE, qs: [
+      g('q1', 'The town is called ___.', ['Elmvale']),
+      g('q2', 'The library opened in ___.', ['2019']),
+      g('q3', 'At first it opened only on ___.', ['Saturdays', 'Saturday']),
+      g('q4', 'Members can borrow up to ___ items.', ['six', '6']),
+      t('q5', 'The library lends board games.', 0),
+      t('q6', 'Bicycles can be kept for a week.', 1),
+      t('q7', 'The survey was carried out by the town council.', 2),
+      t('q8', 'Most visitors in 2023 were under twenty-five.', 0),
+      m('q9', 'The library plans a new', ['quiet reading room', 'car park', 'cafe'], 0),
+      m('q10', 'The new room should open', ['next spring', 'this winter', 'in 2019'], 0)] })],
+    ['qa_w1', Object.assign({}, base, { skill: 'writing', kind: 'writing', part: 1, title: 'STAGING/QA · Writing Task 1 (submit and mark test)', minWords: 40,
+      prompt: 'STAGING/QA. The library in Elmvale lent 120 items in January, 180 in February and 150 in March. Summarise the information by selecting and reporting the main features. Write at least 40 words (QA test only).' })],
+  ];
+}
+function qaAssignments(now) {
+  const D = 864e5, b = { qa: true, staging: true, by: 'staging-qa' };
+  return [
+    ['qa_hw_now', Object.assign({ cls: 'Test', name: 'STAGING/QA this week (tester)', start: now - D, due: now + 6 * D, ex: ['c_qa_r5', 'c_qa_r10', 'c_qa_w1'], ext: [], type: 'mini' }, b)],
+    ['qa_hw_late', Object.assign({ cls: 'Test', name: 'STAGING/QA overdue (tester)', start: now - 9 * D, due: now - 2 * D, ex: ['c_qa_r5'], ext: [], type: 'mini' }, b)],
+    ['qa_hw_mixed', Object.assign({ cls: 'Test', name: 'STAGING/QA mixed: Library + external (tester, overdue)', start: now - 9 * D, due: now - D, ex: ['c_qa_r10'], ext: [{ id: 'x1', link: 'https://example.com/staging-qa-form', src: 'STAGING/QA form', note: 'Made-up task: open the link, then upload any screenshot.' }], type: 'mixed' }, b)],
+    ['qa_hw_stga', Object.assign({ cls: 'STG-A', name: 'STAGING/QA this week (STG-A)', start: now - D, due: now + 6 * D, ex: ['c_qa_r5', 'c_qa_r10'], ext: [{ id: 'x1', link: 'https://example.com/staging-qa-form', src: 'STAGING/QA form', note: 'Made-up task.' }], type: 'mixed' }, b)],
+  ];
+}
+async function adminStagingQa(env, op) {
+  const now = Date.now(), plan = [];
+  const all = [].concat(qaExercises().map((x) => ['exercises'].concat(x)), qaAssignments(now).map((x) => ['assignments'].concat(x)));
+  for (const [col, id, data] of all) {
+    const cur = await fsGet(env, col, id);
+    const act = !cur ? 'create' : cur.data && cur.data.qa === true ? 'update' : 'skip (exists, not a QA fixture)';
+    plan.push({ col, id, title: data.title || data.name, act });
+    if (op === 'qa' && act !== 'skip (exists, not a QA fixture)') await fsPut(env, col, id, Object.assign({ ts: now }, data));
+  }
+  const n = (a) => plan.filter((p) => p.act === a).length;
+  return json({ ok: true, dry: op !== 'qa', plan, created: n('create'), updated: n('update'), skipped: plan.length - n('create') - n('update') });
+}
 async function adminStaging(env, body) {
   const st = await envState(env);
   if (st.env !== 'staging' || !st.ok) return fail('Staging test data can only be made on a correctly set up staging deployment. Nothing was written.', 403);
   const now = Date.now(), D = 864e5, op = String(body.op || '');
+  if (op === 'qa' || op === 'qa-preview') return await adminStagingQa(env, op);
   if (op === 'bulk') { // 620 attempts for one made-up student: checks there is no 500 cap anywhere
     const rows = [];
     for (let i = 0; i < 620; i++) rows.push({ id: 'stg_bulk_' + i, data: { email: 'stg.student@example.test', student: 'STG Student An', cls: 'STG-A', ex: i % 2 ? 'l2' : 'r2', score: 3, total: 5, answered: 5, required: 5, items: [], ts: now - (i % 150) * D - i * 1000, staging: true } });
