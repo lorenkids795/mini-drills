@@ -77,3 +77,12 @@ Bài giao: `stg_old` (100 ngày trước), `stg_late` (tuần trước, Library 
 - Cloudflare KV miễn phí: 100.000 lượt đọc, **1.000 lượt ghi** mỗi ngày. Mỗi lần đăng nhập ghi vài khóa.
 - Dữ liệu lớn: 620 lượt ghi Firestore một lần bấm.
 - Dọn staging: xóa cả dự án Firebase staging và namespace `md-kv-staging`. Production không bị ảnh hưởng.
+
+## Kiểm thử trên trình duyệt (Claude tự chạy)
+- Kịch bản: `tests/browser-qa.js` (Playwright, Chrome chạy ẩn). Không thuộc bộ `*.test.js`; cần `playwright-core` cài **ngoài repo**.
+- Cần một file **trên máy**, không bao giờ commit: `.qa.env` ở thư mục gốc repo (đã có trong `.gitignore`):
+  ```
+  STG_ADMIN_EMAIL=<ADMIN_EMAIL của Preview>
+  STG_ADMIN_PASSWORD=<ADMIN_PASSWORD của Preview>
+  ```
+- Kịch bản kiểm `/api/env` trước mỗi nhóm thao tác ghi; không phải staging an toàn thì dừng. Nó tạo / cập nhật bộ QA, **đổi mật khẩu** 7 tài khoản `@example.test` sang giá trị ngẫu nhiên chỉ giữ trong bộ nhớ (mật khẩu cũ lộ trong ảnh chụp hết dùng được), rồi đăng nhập từng vai trò. Ảnh và `report.json` lưu ngoài repo, không chứa mật khẩu.
