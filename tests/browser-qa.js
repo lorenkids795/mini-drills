@@ -12,7 +12,8 @@ const { chromium } = require('playwright-core');
 const BASE = process.env.QA_BASE || 'https://phase-b.myhomeworkmyfuture.pages.dev', PROJECT = 'mini-drills-staging';
 const OUT = process.argv[2] || path.join(__dirname, '..', 'qa-artifacts'); fs.mkdirSync(OUT, { recursive: true });
 const ENVF = path.join(__dirname, '..', '.qa.env');
-const R = []; let TEACHER_A = {}; // results: {id, role, test, expected, observed, result, evidence}
+const R = []; let TEACHER_A = {};
+const VER = (fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8').match(/var APP_VERSION='([^']+)'/) || [])[1], SVER = (fs.readFileSync(path.join(__dirname, '..', 'functions', 'api', '[[path]].js'), 'utf8').match(/const API_VERSION = '([^']+)'/) || [])[1]; // results: {id, role, test, expected, observed, result, evidence}
 const rec = (role, test, expected, observed, ok, evidence) => { R.push({ role, test, expected, observed: String(observed).slice(0, 300), result: ok === null ? 'NOT TESTED' : ok ? 'PASS' : 'FAIL', evidence: evidence || '' }); console.log((ok === null ? 'SKIP' : ok ? 'PASS' : 'FAIL') + ' [' + role + '] ' + test + (ok ? '' : ' -> ' + String(observed).slice(0, 200))); };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const secretWords = [];
@@ -120,7 +121,7 @@ async function openEx(page, exId) {
     rec('Admin', 'admin signs in on staging', 'role teacher + adm', JSON.stringify({ role: me.role, adm: me.adm }), me.role === 'teacher' && me.adm === true);
     await envGate(page, 'QA fixture');
     const pv = await api(page, 'admin/staging', { op: 'qa-preview' }, true);
-    rec('Admin', 'QA fixture dry run writes nothing and lists the plan', '200, dry, 7 records', pv.status + ' ' + JSON.stringify({ dry: pv.d.dry, n: (pv.d.plan || []).length, c: pv.d.created, u: pv.d.updated, s: pv.d.skipped }), pv.status === 200 && pv.d.dry === true && (pv.d.plan || []).length === 7);
+    rec('Admin', 'QA fixture dry run writes nothing and lists the plan', '200, dry, 11 records', pv.status + ' ' + JSON.stringify({ dry: pv.d.dry, n: (pv.d.plan || []).length, c: pv.d.created, u: pv.d.updated, s: pv.d.skipped }), pv.status === 200 && pv.d.dry === true && (pv.d.plan || []).length === 11);
     const qa = await api(page, 'admin/staging', { op: 'qa' }, true); FIX = qa.d;
     rec('Admin', 'QA fixture created / updated (idempotent)', '200, 0 skipped', qa.status + ' ' + JSON.stringify({ c: qa.d.created, u: qa.d.updated, s: qa.d.skipped }), qa.status === 200 && qa.d.skipped === 0);
     await envGate(page, 'password rotation');
@@ -131,7 +132,7 @@ async function openEx(page, exId) {
     await page.evaluate(() => { const b = document.querySelector('[data-act="ad-sub"][data-v="me"]'); if (b) b.click(); }); await page.waitForTimeout(1500);
     const diag = await page.locator('#adVer').textContent().catch(() => '');
     const envl = await page.locator('#v-admin').textContent();
-    rec('Admin', 'Diagnostics: app + server versions, environment staging, project', 'app 2026-11-11a · server 2026-11-11a · staging · mini-drills-staging', clean(diag) + ' | ' + (/environment staging/.test(envl) ? 'env staging' : 'env ?') + (/mini-drills-staging/.test(envl) ? ' · project ok' : ''), /app 2026-11-11a/.test(diag) && /server 2026-11-11a/.test(diag) && /environment staging/.test(envl) && /mini-drills-staging/.test(envl), await shot(page, 'admin-diagnostics'));
+    rec('Admin', 'Diagnostics: app + server versions, environment staging, project', 'app ' + VER + ' · server ' + SVER + ' · staging · mini-drills-staging', clean(diag) + ' | ' + (/environment staging/.test(envl) ? 'env staging' : 'env ?') + (/mini-drills-staging/.test(envl) ? ' · project ok' : ''), diag.indexOf('app ' + VER) >= 0 && diag.indexOf('server ' + SVER) >= 0 && /environment staging/.test(envl) && /mini-drills-staging/.test(envl), await shot(page, 'admin-diagnostics'));
     await tab(page, 'library');
     const cam14 = await page.locator('button.bk[data-v="cam14"]').getAttribute('class').catch(() => '');
     const cam21 = await page.locator('button.bk[data-v="cam21"]').textContent().catch(() => '');
@@ -259,7 +260,7 @@ async function openEx(page, exId) {
       if (lpOpen) { await answer(page, EX.qa_r5, 5, []); await page.click('#submit'); await page.waitForTimeout(3500);
         await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(2500);
         const lc = clean(await page.locator('.hw').filter({ hasText: 'STAGING/QA overdue (tester)' }).first().textContent().catch(() => '(card gone)'));
-        rec('Tester', 'work done inside the late pass is counted as late for that homework', 'late', lc.slice(0, 200), /late/i.test(lc) && !/Missed/.test(lc), await shot(page, 'scope-latepass-done'));
+        rec('Tester', 'work done inside the late pass is counted as late for that homework', '"Done late (late pass)"', lc.slice(0, 200), /Done late \(late pass\)/.test(lc) && !/Missed/.test(lc), await shot(page, 'scope-latepass-done'));
       }
     }
     // mobile dark, signed in
@@ -297,8 +298,8 @@ async function openEx(page, exId) {
     rec('Teacher', 'assignment older than 60 days loads its older work (Legacy · Unverified, Completion column); recent work is NOT counted as late', 'Unverified + Completion, no "late", no Loading', clean(om).match(/STG old homework[\s\S]{0,40}/) ? 'table shown' : 'not found', /Unverified/.test(om) && !/✓ late|Complete · late/.test(om) && /Completion|COMPLETION/i.test(om) && !/Loading the work/.test(om), await shot(page, 'teacher-old-asg'));
     const opA = page.locator('[data-act="asg-open"]').filter({ hasText: 'STAGING/QA scenario A (STG-A)' }); await opA.click().catch(() => {}); await page.waitForTimeout(3000);
     const am = clean(await page.locator('#v-asg').textContent()); const anRow = (am.match(/STG Student An[\s\S]{0,120}/) || [''])[0];
-    TEACHER_A.an = /Complete|✓/.test(anRow) ? 'complete' : anRow ? 'not done' : '(row not found)';
-    rec('Teacher', 'A (STG-A, closed 100 days): An is not credited with work done for the open homework', 'not done', TEACHER_A.an + ' · ' + anRow.slice(0, 100), TEACHER_A.an === 'not done', await shot(page, 'scope-teacher-A'));
+    TEACHER_A.an = /Complete/.test(anRow) ? 'complete' : /Unverified/.test(anRow) ? 'unverified' : /Not started|Not done/.test(anRow) ? 'missing' : '(row not found)';
+    rec('Teacher', 'A (STG-A, closed 100 days): An is not credited with work done for the open homework', 'missing or unverified (flagged older work), never complete', TEACHER_A.an + ' · ' + anRow.slice(0, 120), TEACHER_A.an === 'missing' || TEACHER_A.an === 'unverified', await shot(page, 'scope-teacher-A'));
     rec('Teacher', 'no console errors / failed requests (teacher session)', '0', JSON.stringify({ errs: page.errs, http: page.bad }), !page.errs.length && !page.bad.length);
     await fsCheck(page, 'Teacher');
     await ctx.close();
@@ -319,8 +320,8 @@ async function openEx(page, exId) {
     const nw = (d.d.assignments || []).find((a) => a.id === 'stg_now'), ns = mv && nw ? d.d.status[nw.id][mv.key] : null, np = ns && (ns.parts || [])[0];
     rec('Assistant', 'student who changed class: work done (in the old class) during "this week" counts for this week, not for last week\'s closed homework', 'stg_now part done; stg_late Library part not credited', JSON.stringify({ now: ns, last: cs }), !!np && np.st === 'done' && !!cp && cp.st !== 'done' && cp.st !== 'late');
     const sa = (d.d.assignments || []).find((a) => a.id === 'qa_sc_A_stga'), sas = an && sa ? d.d.status[sa.id][an.key] : null;
-    rec('Assistant', 'A (STG-A, closed 100 days) for An: missing, although An works on the same exercise in the open homework', 'missing', JSON.stringify(sas), !!sas && sas.st === 'missing');
-    TEACHER_A = TEACHER_A || {}; rec('Teacher + Assistant', 'same answer for An on A (STG-A)', 'teacher "not done" = assistant "missing"', JSON.stringify({ teacher: TEACHER_A.an, assistant: sas && sas.st }), !!sas && sas.st === 'missing' && TEACHER_A.an === 'not done');
+    rec('Assistant', 'A (STG-A, closed 100 days) for An: not credited, although An works on the same exercise in the open homework', 'missing or unverified, done 0', JSON.stringify(sas), !!sas && (sas.st === 'missing' || sas.st === 'unverified') && sas.done === 0);
+    rec('Teacher + Assistant', 'same answer for An on A (STG-A)', 'teacher = assistant', JSON.stringify({ teacher: TEACHER_A.an, assistant: sas && sas.st }), !!sas && sas.st === TEACHER_A.an);
     await page.click('#tabs [data-act="tab"][data-tab="hwa-miss"]').catch(() => {}); await page.waitForTimeout(1500);
     rec('Assistant', 'Missing homework page shows partial progress text', '"parts done · missing"', /parts done/.test(await page.locator('#v-hwa').textContent()) ? 'shown' : 'not shown', /parts done/.test(await page.locator('#v-hwa').textContent()), await shot(page, 'hwa-missing'));
     rec('Assistant', 'no console errors / failed requests (assistant session)', '0', JSON.stringify({ errs: page.errs, http: page.bad }), !page.errs.length && !page.bad.length);

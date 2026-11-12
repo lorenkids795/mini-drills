@@ -2229,7 +2229,7 @@ function hwCardHTML(x){var a=x.a,p=passFor(U.email,a.id),miss=x.over&&!x.fin,sho
   var h='<div class="hw'+(x.X.length?' hwext':'')+(miss?' late':'')+'"><div class="sechead"><span class="chips2"><span class="chip">'+esc(asgName(a))+'</span>'+(miss?'<span class="chip" style="background:var(--bad-bg);color:var(--bad)">Missing</span>':'')+'</span><span class="meta hwdue">'+(x.over?'<span class="hwdate">Was due </span><b>'+fmtDue(x.due)+'</b>':'<span class="hwdate">Due '+fmtDue(x.due)+' · </span><b>'+leftOf(x.due)+'</b>')+'</span></div>';
   if(shown.length||xs.length)h+='<div class="lrows">'+shown.map(function(id){
       var e=exOf(id),l=locOf(id),d=x.dm[id],q=x.P&&x.P[id]||{},bad=!d&&x.over;
-      return '<button class="lrow" data-act="nav" data-book="'+l.book+'" data-test="'+l.test+'" data-skill="'+l.skill+'" data-ex="'+id+'" data-asg="'+esc(a.id)+'"><span><b>'+esc(e.title)+'</b></span>'+pcHTML(e,d,bad,partLabel(q,bad))+'</button>';
+      return '<button class="lrow" data-act="nav" data-book="'+l.book+'" data-test="'+l.test+'" data-skill="'+l.skill+'" data-ex="'+id+'" data-asg="'+esc(a.id)+'"><span><b>'+esc(e.title)+'</b>'+(q.st==='late'?'<small>Done late (late pass)</small>':'')+'</span>'+pcHTML(e,d,bad,partLabel(q,bad))+'</button>';
     }).join('')+xs.map(function(o){return extHwHTML(x,o.t,o.i)}).join('')+'</div>';
   if(p)h+='<p class="due" style="margin:10px 0 0">Extended with your '+PASS[p.kind].label+'.</p>';
   h+=x.ids.length?actionsHTML(x):(x.turned?'<p class="okline">All done ✓ Nice work.</p>':'');
