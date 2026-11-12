@@ -208,7 +208,7 @@ async function openEx(page, exId) {
     await page.click('[data-act="nav"][data-asg="qa_sc_A"][data-ex="c_qa_r5"]').catch(() => {}); await page.waitForTimeout(1200);
     let body = await page.locator('#libBody').textContent();
     rec('Tester', 'opening A after its deadline (no late pass) = Locked, even though B with the same exercise is open', 'Locked + offer to do it for B', clean(body).slice(0, 260),
-      /Locked\./.test(body) && /scenario A/.test(body) && /Do it for STAGING\/QA this week \(tester\)/.test(body) && !(await page.locator('#submit').count()), await shot(page, 'scope-A-locked'));
+      /Locked\./.test(body) && /scenario A/.test(body) && /Do it for STAGING\/QA this week \(tester\)/.test(body) && (await page.locator('[data-act="ctx-pick"][data-asg="qa_sc_A"]').count()) === 0 && !(await page.locator('#submit').count()), await shot(page, 'scope-A-locked'));
     await page.click('[data-act="ctx-pick"][data-asg="qa_hw_now"]').catch(() => {}); await page.waitForTimeout(1200);
     body = await page.locator('#libBody').textContent();
     rec('Tester', 'switching to B: the bar says the work counts for B', '"Counts for STAGING/QA this week (tester)"', clean(body).slice(0, 160), /Counts for STAGING\/QA this week \(tester\)/.test(body) && (await page.locator('#submit').count()) > 0, await shot(page, 'scope-B-context'));
@@ -232,9 +232,12 @@ async function openEx(page, exId) {
       await tr('attempt for an assignment that does not exist', () => db.collection('attempts').add(att({ asg: 'qa_nope' })));
       await tr('late pass for A (would end 93 days ago)', () => db.doc('passes/' + sl + '_qa_sc_A').set({ email: me, asgId: 'qa_sc_A', kind: 'week', month: '2026-11', ts: Date.now() }));
       await tr('change the ended late pass to a week', () => db.doc('passes/' + sl + '_qa_sc_ended').set({ email: me, asgId: 'qa_sc_ended', kind: 'week', month: '2026-11', ts: Date.now() }));
+      const bt = (o) => { const b = db.batch(), m = o.month; b.set(db.doc('passes/' + sl + '_qa_hw_now'), { email: me, asgId: 'qa_hw_now', kind: 'day', month: m, ts: Date.now() }); if (o.marker) b.set(db.doc('passq/' + sl + '_' + m + '_day'), { email: me, asgId: 'qa_hw_now', kind: 'day', month: m, ts: Date.now() }); return b.commit(); };
+      await tr('late pass without the month marker', () => bt({ month: new Date(Date.now() + 7 * 36e5).toISOString().slice(0, 7) }));
+      await tr('late pass + marker with a made-up month', () => bt({ month: '2001-01', marker: true }));
       await tr('screenshot record for closed A', () => db.doc('hwdone/' + sl + '_qa_sc_A').set({ email: me, asgId: 'qa_sc_A', done: true, ts: Date.now() }));
       return r; });
-    rec('Tester', 'direct Firestore writes cannot unlock or credit A (rules refuse every one)', 'all permission-denied', rulesNew ? JSON.stringify(tamper) : 'not run: the staging project still has the old rules (would write junk and use up the tester late pass)', rulesNew ? Object.keys(tamper).length === 7 && Object.values(tamper).every((v) => v === 'permission-denied') : null);
+    rec('Tester', 'direct Firestore writes cannot unlock or credit A (rules refuse every one)', 'all permission-denied', rulesNew ? JSON.stringify(tamper) : 'not run: the staging project still has the old rules (would write junk and use up the tester late pass)', rulesNew ? Object.keys(tamper).length === 9 && Object.values(tamper).every((v) => v === 'permission-denied') : null);
     page.errs = page.errs.filter((x) => !/PERMISSION_DENIED|Missing or insufficient permissions/i.test(x)); // the refusals above log on purpose
     // a late pass that has already ended: still locked
     await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(2500);

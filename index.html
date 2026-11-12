@@ -2279,7 +2279,9 @@ document.addEventListener('change',function(e){var f=e.target,aid=f&&f.getAttrib
 var PASS={day:{label:'1-day pass',days:1},week:{label:'1-week pass',days:7}};
 function passesOf(email){return passDocs.concat(localPass,samplePass).filter(function(p){return p.email===email})}
 function passFor(email,asgId){return passesOf(email).filter(function(p){return p.asgId===asgId})[0]||null}
-function passUsed(email,kind){var mk=monthKey(Date.now());return passesOf(email).some(function(p){return p.kind===kind&&p.month===mk})}
+// (11/2026) the late-pass month is Vietnam time (UTC+7), the same month the Firestore rules compute from the server's clock
+function vnMonth(ts){var d=new Date(ts+7*36e5);return d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)}
+function passUsed(email,kind){var mk=vnMonth(Date.now());return passesOf(email).some(function(p){return p.kind===kind&&p.month===mk})}
 function effDue(a,email){var p=passFor(email,a.id);return new Date(a.due+(p?PASS[p.kind].days*864e5:0))}
 function actionsHTML(x){
   var a=x.a,p=passFor(U.email,a.id);
@@ -2296,18 +2298,27 @@ function actionsHTML(x){
     if(!avail.length)return h+'<p class="muted" style="margin:10px 0 0;font-size:var(--fs-body)">No late passes left this month.</p>';
     if(PASSCONF&&PASSCONF.asg===a.id){
       var nd=new Date(a.due+PASS[PASSCONF.kind].days*864e5);
-      return h+'<div class="pconf"><span>Use your <b>'+PASS[PASSCONF.kind].label+'</b>? The new deadline is <b>'+fmtDue(nd)+'</b>. This cannot be undone.</span><div class="prow"><button class="btn pri sm" data-act="pass-use" type="button">Confirm</button><button class="btn sm" data-act="pass-cancel" type="button">Cancel</button></div></div>';
+      return h+'<div class="pconf"><span>Use your <b>'+PASS[PASSCONF.kind].label+'</b>? The new deadline is <b>'+fmtDue(nd)+'</b>. This cannot be undone.</span><div class="prow"><button class="btn pri sm" data-act="pass-use" type="button"'+(PASSCONF.busy?' disabled':'')+'>'+(PASSCONF.busy?'Saving…':'Confirm')+'</button><button class="btn sm" data-act="pass-cancel" type="button">Cancel</button></div></div>';
     }
     h+='<div class="passes"><span class="muted">Pick a late pass. '+avail.length+' of 2 left this month (one 1-day, one 1-week).</span><div class="prow">'+avail.map(function(k){var nd=new Date(a.due+PASS[k].days*864e5),ok=nd>new Date();return '<button class="btn sm" data-act="pass-ask" data-asg="'+a.id+'" data-kind="'+k+'" type="button"'+(ok?'':' disabled')+'>'+PASS[k].label+(ok?' · until '+fmtDue(nd):' · too late')+'</button>'}).join('')+'</div></div>';
   }
   return h;
 }
+// (11/2026) one batch = the pass + the month marker passq/<slug>_<YYYY-MM>_<kind>; the rules refuse a second pass of the same
+// kind in the same month (also from another tab / device / a changed app). A refused or lost write never gives a local pass:
+// it reads back (a retry after a lost answer finds its own pass = done) or says why.
 function usePass(){
-  var c=PASSCONF;if(!c)return;
-  var rec={email:U.email,asgId:c.asg,kind:c.kind,month:monthKey(Date.now()),ts:Date.now()},id=slug(U.email)+'_'+c.asg;
-  var fin=function(){PASSCONF=null;NEEDTIME[c.asg]=false;renderLib()};
-  var loc=function(){localPass.push(Object.assign({id:id},rec));fin()};
-  if(dbh)dbh.doc('passes/'+id).set(rec).then(fin,loc);else loc();
+  var c=PASSCONF;if(!c||c.busy)return;
+  var em=String(U.email).toLowerCase(),mk=vnMonth(Date.now()),rec={email:em,asgId:c.asg,kind:c.kind,month:mk,ts:Date.now()},id=slug(em)+'_'+c.asg,qid=slug(em)+'_'+mk+'_'+c.kind;
+  var fin=function(r){passDocs=passDocs.filter(function(x){return x.id!==id}).concat([Object.assign({id:id,docId:id},r||rec)]);PASSCONF=null;NEEDTIME[c.asg]=false;DONEMSG[c.asg]='';renderLib()};
+  var no=function(m){PASSCONF=null;DONEMSG[c.asg]=m;renderLib()};
+  if(!dbh){localPass.push(Object.assign({id:id},rec));return fin()}
+  c.busy=true;renderLib();
+  var b=dbh.batch();b.set(dbh.doc('passes/'+id),rec);b.set(dbh.doc('passq/'+qid),{email:em,asgId:c.asg,kind:c.kind,month:mk,ts:rec.ts});
+  b.commit().then(function(){fin()},function(){
+    dbh.doc('passes/'+id).get().then(function(d){if(d.exists)return fin(d.data());
+      return dbh.doc('passq/'+qid).get().then(function(q){no(q.exists?'You have already used your '+PASS[c.kind].label+' this month.':'The late pass could not be used: the new deadline has passed, or the homework changed. Reload and try again.')})})
+    .catch(function(){no('No connection. Check your internet and try again.')})});
 }
 function imDone(id){
   var a=allAsgs().filter(function(x){return x.id===id})[0];if(!a)return;
@@ -3503,8 +3514,8 @@ function lockInfo(id){return exCtx(id,NAV&&NAV.ex===id?NAV.asg:null).lock}
 function ctxBarHTML(C,id){
   if(C.lock){var alt=C.open.filter(function(a){return a.id!==C.lock.id});
     return '<div class="banner ctxlock" role="alert" style="background:var(--bad-bg);color:var(--bad)"><b>Locked.</b> This exercise belongs to <b>'+esc(asgName(C.lock))+'</b>, which was due '+fmtDue(effDue(C.lock,U.email))+'. After the deadline it can only be opened with a late pass.'+
-      (alt.length?' It is also in <b>'+esc(asgName(alt[0]))+'</b> (due '+fmtDue(effDue(alt[0],U.email))+'). Work there counts for that homework only.':'')+'</div>'+
-      (alt.length?'<div class="actions"><button class="btn pri" data-act="ctx-pick" data-asg="'+esc(alt[0].id)+'" type="button">Do it for '+esc(asgName(alt[0]))+'</button></div>':'');
+      (alt.length?' It is also in '+alt.map(function(o){return '<b>'+esc(asgName(o))+'</b> (due '+fmtDue(effDue(o,U.email))+')'}).join(', ')+'. Work there counts for that homework only.':'')+'</div>'+
+      (alt.length?'<div class="actions">'+alt.map(function(o,i){return '<button class="btn'+(i?'':' pri')+'" data-act="ctx-pick" data-asg="'+esc(o.id)+'" type="button">Do it for '+esc(asgName(o))+'</button>'}).join('')+'</div>':'');
   }
   if(!C.ctx)return '';
   var a=C.ctx,late=Date.now()>a.due,h='<div class="ctxbar" role="status">Counts for <b>'+esc(asgName(a))+'</b> · due '+fmtDue(effDue(a,U.email))+(late?' · <b>late pass</b>: this work counts as late':'')+'</div>';
@@ -7025,12 +7036,18 @@ function claimItem(it,note){
   toast('Sent to your teacher.');renderBag();
 }
 function itemById(id){return myProf().inv.filter(function(x){return x.id===id})[0]}
+// (11/2026) a won 1-day Extension becomes a late pass on the server (POST /api/pass): the server checks the item it recorded
+// when the wheel gave it, marks it used and creates the pass (students cannot write such passes themselves)
 function giveExtPass(asgId){
-  var it=itemById(BAG.ext);if(!it||it.used)return;
-  var rec={email:U.email,asgId:asgId,kind:'day',month:'item-'+Date.now(),ts:Date.now(),item:true},id=slug(U.email)+'_'+asgId;
-  if(dbh)dbh.doc('passes/'+id).set(rec).then(function(){},function(){localPass.push(Object.assign({id:id},rec))});else localPass.push(Object.assign({id:id},rec));
-  if(dbh)passDocs.push(Object.assign({id:id,docId:id},rec));
-  var p=myProf();it.used=true;putProf(p);BAG.ext=null;toast('Deadline extended by 1 day.');renderBag();
+  var it=itemById(BAG.ext);if(!it||it.used||BAG.busy)return;
+  var id=slug(U.email)+'_'+asgId;
+  var done=function(rec){passDocs=passDocs.filter(function(x){return x.id!==id}).concat([Object.assign({id:id,docId:id},rec)]);var p=myProf();it.used=true;putProf(p);BAG.ext=null;BAG.busy=false;toast('Deadline extended by 1 day.');renderBag()};
+  if(DEMO||!dbh){var rl={email:U.email,asgId:asgId,kind:'day',month:'item-'+it.id,item:it.id,ts:Date.now()};localPass.push(Object.assign({id:id},rl));return done(rl)}
+  BAG.busy=true;renderBag();
+  authHdr().then(function(ah){return adPost('pass',{asgId:asgId,itemId:it.id},'',ah)}).then(function(d){
+    if(d._ok&&d.pass)return done(d.pass);BAG.busy=false;toast(d._status===401?'Your sign-in has expired. Reload the page and sign in again.':(d.error||'The extension could not be used.'));renderBag()},
+    function(){BAG.busy=false;toast('No connection. Check your internet and try again.');renderBag()});
+  return;
 }
 function imgFrom(kind,file){
   if(!file||!/^image\//.test(file.type))return;
@@ -7202,7 +7219,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-11-12a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-11-12b'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(uiAct(a,t))return true;

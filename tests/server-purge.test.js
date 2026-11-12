@@ -49,9 +49,9 @@ const student = (em) => ({
 });
 
 (async () => {
-  await t('purgeStudent deletes every learning doc of that email (6 collections + profile)', async () => {
+  await t('purgeStudent deletes every learning doc of that email (8 collections + profile)', async () => {
     const DB = student('3667@gmail.com'), B = boot(DB), r = await B.T.purgeStudent(B.env, '3667@gmail.com');
-    assert.strictEqual(JSON.stringify(r), JSON.stringify({ attempts: 2, errors: 1, cards: 1, hwdone: 1, passes: 1, redeems: 1, profiles: 1 }));
+    assert.strictEqual(JSON.stringify(r), JSON.stringify({ attempts: 2, errors: 1, cards: 1, hwdone: 1, passes: 1, passq: 0, extitems: 0, redeems: 1, profiles: 1 }));
     ['attempts', 'errors', 'cards', 'hwdone', 'passes', 'redeems'].forEach((c) => assert.ok(!Object.values(DB[c]).some((d) => d.email === '3667@gmail.com'), c));
     assert.ok(!DB.profiles['3667-gmail-com']);
   });

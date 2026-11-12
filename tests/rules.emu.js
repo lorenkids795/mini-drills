@@ -5,11 +5,14 @@
 'use strict';
 const fs = require('fs'), path = require('path');
 const { initializeTestEnvironment, assertSucceeds, assertFails } = require('@firebase/rules-unit-testing');
-const { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, query, where, addDoc, serverTimestamp } = require('firebase/firestore');
+const { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, query, where, addDoc, serverTimestamp, writeBatch } = require('firebase/firestore');
 const D = 864e5, NOW = Date.now(), ST = () => serverTimestamp();
+// the late-pass month the rules compute: Vietnam time (UTC+7) of the server clock
+const VM = (() => { const d = new Date(Date.now() + 7 * 36e5); return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0'); })();
 
 (async () => {
   const env = await initializeTestEnvironment({ projectId: 'demo-md', firestore: { rules: fs.readFileSync(path.join(__dirname, '..', 'firestore.rules'), 'utf8'), host: '127.0.0.1', port: +(process.env.EMU_PORT || 8080) } });
+  await env.clearFirestore(); // every run starts from the same data
   const as = (uid, claims) => env.authenticatedContext(uid, claims).firestore();
   const A = as('admin', { em: 'admin@x.com', role: 'teacher', adm: true }), T = as('t', { em: 't@x.com', role: 'teacher' }),
     S = as('s', { em: 's@x.com', role: 'student' }), X = as('x', { em: 'tester@x.com', role: 'student' }), H = as('h', { em: 'a@x.com', role: 'assistant' }),
@@ -24,7 +27,7 @@ const D = 864e5, NOW = Date.now(), ST = () => serverTimestamp();
     await setDoc(doc(d, 'names/n1'), { name: 'S', cls: '7h' }); await setDoc(doc(d, 'exercises/e1'), { title: 'E' });
     // (11/2026) assignment windows: A closed 100 days ago, B open, L closed but a week pass is active, D closed 3 h ago + day pass,
     // E closed 2 days ago + day pass (ended), old = legacy weekStart only
-    const as = { asgA: [-120, -100], asgB: [-1, 6], asgL: [-10, -2], asgD: [-5, -0.125], asgE: [-9, -2], asgF: [1, 8] };
+    const as = { asgG: [-1, 6], asgH: [-1, 6], asgI: [-1, 6], asgA: [-120, -100], asgB: [-1, 6], asgL: [-10, -2], asgD: [-5, -0.125], asgE: [-9, -2], asgF: [1, 8] };
     for (const k of Object.keys(as)) await setDoc(doc(d, 'assignments/' + k), { cls: '7h', ex: ['x1'], start: NOW + as[k][0] * D, due: NOW + as[k][1] * D });
     await setDoc(doc(d, 'assignments/old'), { cls: '7h', ex: ['x1'], weekStart: '2025-01-06' });
     await setDoc(doc(d, 'passes/s-x-com_asgL'), { email: 's@x.com', asgId: 'asgL', kind: 'week' });
@@ -85,8 +88,35 @@ const D = 864e5, NOW = Date.now(), ST = () => serverTimestamp();
   await t('assignment not sent yet: refused', assertFails(att({ asg: 'asgF' })));
   await t('an assignment that does not exist: refused', assertFails(att({ asg: 'nope' })));
   await t('legacy assignment without a deadline: not blocked', assertSucceeds(att({ asg: 'old' })));
-  await t('late pass for an open assignment: accepted', assertSucceeds(setDoc(doc(S, 'passes/s-x-com_asgB'), { email: 's@x.com', asgId: 'asgB', kind: 'day', month: '2026-11', ts: NOW })));
-  await t('late pass cannot be changed afterwards (day → week)', assertFails(setDoc(doc(S, 'passes/s-x-com_asgB'), { email: 's@x.com', asgId: 'asgB', kind: 'week', month: '2026-11', ts: NOW })));
+  // ---- (11/2026) monthly late-pass quota: pass + marker passq/<slug>_<VN month>_<kind> in ONE batch
+  const P2 = as('p2', { em: 'p2@x.com', role: 'student' }), P3 = as('p3', { em: 'p3@x.com', role: 'student' });
+  const redeem = (db, em, asg, kind, o) => { o = o || {}; const sl = em.replace(/[^a-z0-9]+/g, '-'), m = o.month || VM, b = writeBatch(db);
+    b.set(doc(db, 'passes/' + (o.pid || sl + '_' + asg)), Object.assign({ email: em, asgId: asg, kind, month: m, ts: NOW }, o.extra || {}));
+    if (!o.noMarker) b.set(doc(db, 'passq/' + (o.qid || sl + '_' + m + '_' + (o.qkind || kind))), { email: em, asgId: o.qasg || asg, kind: o.qkind || kind, month: m, ts: NOW });
+    return b.commit(); };
+  await t('quota: 1-day pass for B (pass + month marker together): accepted', assertSucceeds(redeem(S, 's@x.com', 'asgB', 'day')));
+  await t('quota: a second 1-day pass in the same month (for G): refused', assertFails(redeem(S, 's@x.com', 'asgG', 'day')));
+  await t('quota: the 1-week pass is separate: accepted once (for G)', assertSucceeds(redeem(S, 's@x.com', 'asgG', 'week')));
+  await t('quota: a second 1-week pass in the same month (for H): refused', assertFails(redeem(S, 's@x.com', 'asgH', 'week')));
+  await t('quota: a pass without the marker (old app / direct write): refused', assertFails(setDoc(doc(P3, 'passes/p3-x-com_asgH'), { email: 'p3@x.com', asgId: 'asgH', kind: 'day', month: VM, ts: NOW })));
+  await t('quota: a marker without a pass: refused', assertFails(setDoc(doc(P3, 'passq/p3-x-com_' + VM + '_day'), { email: 'p3@x.com', asgId: 'asgH', kind: 'day', month: VM })));
+  await t('quota: another month written by the device (2026-01): refused', assertFails(redeem(P3, 'p3@x.com', 'asgH', 'day', { month: '2001-01' })));
+  await t('quota: a 1-week pass with a 1-day marker (kind mismatch): refused', assertFails(redeem(P3, 'p3@x.com', 'asgH', 'week', { qkind: 'day' })));
+  await t('quota: a marker naming another homework: refused', assertFails(redeem(P3, 'p3@x.com', 'asgH', 'day', { qasg: 'asgI' })));
+  await t('quota: a pass that claims to be a Lucky Wheel item (no marker needed): refused', assertFails(redeem(P3, 'p3@x.com', 'asgH', 'day', { extra: { item: 'i123', month: 'item-i123' }, noMarker: true })));
+  await t('quota: a pass for another student (email / id): refused', assertFails(redeem(P3, 's@x.com', 'asgH', 'day')));
+  await t('quota: a marker id for another student: refused', assertFails(redeem(P3, 'p3@x.com', 'asgH', 'day', { qid: 's-x-com_' + VM + '_day' })));
+  // two tabs / devices at the same time: exactly one wins
+  const race = await Promise.allSettled([redeem(P2, 'p2@x.com', 'asgG', 'day'), redeem(P2, 'p2@x.com', 'asgH', 'day'), redeem(P2, 'p2@x.com', 'asgI', 'day')]);
+  await t('quota: 3 simultaneous 1-day requests for different homework: exactly one succeeds', Promise.resolve().then(() => { const n = race.filter((r) => r.status === 'fulfilled').length; if (n !== 1) throw new Error(n + ' succeeded'); }));
+  const won = ['asgG', 'asgH', 'asgI'][race.findIndex((r) => r.status === 'fulfilled')];
+  await t('quota: sending the same request again (retry) creates nothing new', assertFails(redeem(P2, 'p2@x.com', won, 'day')));
+  await t('quota: the student reads their own marker', assertSucceeds(getDoc(doc(P2, 'passq/p2-x-com_' + VM + '_day'))));
+  await t('quota: a student cannot read another student\'s marker', assertFails(getDoc(doc(P3, 'passq/p2-x-com_' + VM + '_day'))));
+  await t('quota: a student cannot delete or change a marker', assertFails(deleteDoc(doc(P2, 'passq/p2-x-com_' + VM + '_day'))));
+  await t('quota: teachers read markers; the assistant cannot', Promise.all([assertSucceeds(getDoc(doc(T, 'passq/p2-x-com_' + VM + '_day'))), assertFails(getDoc(doc(H, 'passq/p2-x-com_' + VM + '_day')))]));
+  await t('quota: extitems (Lucky Wheel ledger) is server only', assertFails(getDoc(doc(S, 'extitems/i1'))));
+  await t('late pass cannot be changed afterwards (day → week)', assertFails(setDoc(doc(S, 'passes/s-x-com_asgB'), { email: 's@x.com', asgId: 'asgB', kind: 'week', month: VM, ts: NOW })));
   await t('late pass that would end in the past (A, 100 days): refused', assertFails(setDoc(doc(S, 'passes/s-x-com_asgA'), { email: 's@x.com', asgId: 'asgA', kind: 'week', month: '2026-11', ts: NOW })));
   await t('late pass under another id: refused', assertFails(setDoc(doc(S, 'passes/zzz_asgF'), { email: 's@x.com', asgId: 'asgF', kind: 'day' })));
   await t('late pass of an unknown kind: refused', assertFails(setDoc(doc(S, 'passes/s-x-com_asgF'), { email: 's@x.com', asgId: 'asgF', kind: 'month' })));

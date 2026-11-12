@@ -1131,7 +1131,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-11-12a';
+const API_VERSION = '2026-11-12b';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -1174,7 +1174,7 @@ async function adminKick(env, body) {
    Every document of the student in the learning collections (found by the "email" field: one query each, so a kick stays
    far below the Workers sub-request limit), and profiles/{slug(email)} (XP, streak, prizes). Codes already handed out and the
    "wins" marquee are left alone. Cannot be undone. */
-const PURGE_COLS = ['attempts', 'errors', 'cards', 'hwdone', 'passes', 'redeems'];
+const PURGE_COLS = ['attempts', 'errors', 'cards', 'hwdone', 'passes', 'passq', 'extitems', 'redeems'];
 async function fsQueryEq(env, col, field, value) {
   const r = await fs(env, 'POST', ':runQuery', { structuredQuery: { from: [{ collectionId: col }], where: { fieldFilter: { field: { fieldPath: field }, op: 'EQUAL', value: { stringValue: value } } } } });
   if (!r.ok) throw new Error('firestore query ' + col + ' ' + r.status);
@@ -1487,6 +1487,9 @@ async function spinWheel(env, request, body) {
       code = await takeCodeFor(env, prize.kind, who.em);
       item.codeId = code ? code.id : ''; // (11/2026, D1) never the code text: profiles are readable by every signed-in user
     }
+    // (11/2026) a won 1-day Extension gets a server record (extitems/<item id>): only POST /api/pass can turn it into a late pass,
+    // because the inventory in profiles is written by the student's browser and cannot prove anything
+    if (item.kind === 'ext') await fsPut(env, 'extitems', item.id, { email: who.em, used: false, ts: now });
     const upd = { pity: nextPity(pity, tier), spinTs: now, spinUsed: useXP ? 'xp' : 'spin' };
     if (useXP) { upd.xp = xp - SPIN_XP; upd.xpAt = now; } else upd.spins = spins - 1;
     if (item.kind === 'freeze') upd.freezes = (Number(p.freezes) || 0) + 1;
@@ -1506,6 +1509,38 @@ async function spinWheel(env, request, body) {
     if (code) await fsUpdate(env, 'codes', code.id, { to: '' }); // the profile changed meanwhile: give the code back and try again
   }
   return fail('The wheel is busy. Try again.', 503);
+}
+// POST /api/pass {asgId, itemId} (Bearer ID token, student): use a 1-day Extension won on the Lucky Wheel for one assignment.
+// The monthly passes (one 1-day + one 1-week per month) are NOT made here: the app writes them with a quota marker that the
+// Firestore rules check (passes + passq). Here: the item must be in extitems for this student and unused; the assignment must
+// be of the student's class, sent, and the extended deadline (deadline + 1 day) still ahead; one pass per assignment.
+// Atomic: the item is marked used with a precondition (updateTime), then the pass is created only if none exists (else the
+// item is given back). Asking again for the same item + assignment returns the same pass (safe retry).
+async function passItem(env, request, body) {
+  const who = await idUser(env, request);
+  if (!who) return needSignIn();
+  if (who.role !== 'student') return fail('Only students use extensions.', 403);
+  const asgId = String(body.asgId || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 120), itemId = String(body.itemId || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 60);
+  if (!asgId || !itemId) return fail('Bad request.');
+  const pid = slug(who.em) + '_' + asgId;
+  const led = await fsGet(env, 'extitems', itemId), pas = await fsGet(env, 'passes', pid);
+  if (!led || normEmail(led.data.email) !== who.em) return json({ error: 'This extension cannot be checked (it may have been won before 12 Nov 2026). Ask your teacher.', code: 'noitem' }, 409);
+  if (led.data.used) {
+    if (pas && pas.data.item === itemId) return json({ ok: true, again: true, pass: pas.data });
+    return json({ error: 'This extension has already been used.', code: 'used' }, 409);
+  }
+  if (pas) return json({ error: 'This homework already has a late pass.', code: 'haspass' }, 409);
+  const a = await fsGet(env, 'assignments', asgId), r = await rosterRow(env, who.em), now = Date.now();
+  if (!a || !r || String(r.data.cls || '') !== String(a.data.cls || '')) return json({ error: 'This homework was not found for your class.', code: 'noasg' }, 404);
+  if (Number(a.data.start) > now) return json({ error: 'This homework has not been sent yet.', code: 'early' }, 409);
+  if (!(Number(a.data.due) > 0) || now > Number(a.data.due) + 864e5) return json({ error: 'Too late: one more day would still be in the past.', code: 'late' }, 409);
+  if (!(await fsUpdate(env, 'extitems', itemId, { used: true, asgId, usedTs: now }, led.updateTime))) return json({ error: 'Please try again.', code: 'busy' }, 409);
+  const rec = { email: who.em, asgId, kind: 'day', month: 'item-' + itemId, item: itemId, ts: now };
+  if (!(await fsCreate(env, 'passes', pid, rec))) {
+    await fsUpdate(env, 'extitems', itemId, { used: false, asgId: '', usedTs: 0 }).catch(() => {});
+    return json({ error: 'This homework already has a late pass.', code: 'haspass' }, 409);
+  }
+  return json({ ok: true, pass: rec });
 }
 async function adminClass(env, body) {
   const email = normEmail(body.email), cls = classLabel(String(body.cls || '').slice(0, 60)), course = String(body.course || '').trim().slice(0, 60);
@@ -2748,6 +2783,7 @@ export async function onRequest(ctx) {
     if (route === 'staff/unlock') return await staffUnlock(env, body);
     if (route === 'ai/correct') return await aiCorrect(env, request, body);
     if (route === 'spin') return await spinWheel(env, request, body);
+    if (route === 'pass') return await passItem(env, request, body);
     if (route === 'ai/practice') return await aiPractice(env, request, body);
     if (route === 'ai/lesson') return await aiLesson(env, request, body);
     if (route === 'ai/transcribe') return await aiTranscribe(env, request, body);

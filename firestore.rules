@@ -90,15 +90,44 @@ service cloud.firestore {
       allow update: if ownsOld() && ownsNew() && request.resource.data.asgId == resource.data.asgId && asgOpen(resource.data.asgId);
       allow delete: if admin();
     }
-    // late pass: một lần cho một bài giao (id = slug_asgId), loại day / week, khi hạn mới còn ở tương lai; không sửa được.
-    // Giới hạn mỗi tháng (một 1-day, một 1-week) vẫn chỉ do app kiểm (rules không đếm được).
+    // ---- Late pass (11/2026): mỗi học sinh mỗi tháng MỘT pass 1 ngày + MỘT pass 1 tuần ----
+    // Tháng = giờ Việt Nam (UTC+7) của server (request.time), không theo máy học sinh.
+    // Pass tháng = một lần ghi gộp (batch) 2 tài liệu: passes/<slug>_<asgId> + dấu passq/<slug>_<YYYY-MM>_<kind>.
+    // Dấu chỉ tạo được khi chưa có (có rồi = update = chỉ admin) ⇒ hai yêu cầu cùng lúc (2 tab, 2 máy) thì đúng một cái thành công.
+    // Pass do vật phẩm Lucky Wheel (1-day Extension) chỉ server tạo (/api/pass; extitems không có rule = app không đọc / ghi).
+    function vnMonth() {
+      let t = request.time + duration.value(7, 'h');
+      return string(t.year()) + '-' + (t.month() < 10 ? '0' : '') + string(t.month());
+    }
+    function quotaPath(kind) {
+      return /databases/$(database)/documents/passq/$(mySlug() + '_' + vnMonth() + '_' + kind);
+    }
+    function passPath(asg) {
+      return /databases/$(database)/documents/passes/$(mySlug() + '_' + asg);
+    }
+    // pass: một lần cho một bài giao, loại day / week, khi hạn mới còn ở tương lai, cùng dấu tháng; không sửa được.
     match /passes/{id} {
       allow read: if teacher() || ownsOld();
       allow create: if ownsNew() && request.resource.data.asgId is string
         && id == mySlug() + '_' + request.resource.data.asgId
         && request.resource.data.kind in ['day', 'week']
+        && request.resource.data.month == vnMonth()
+        && !('item' in request.resource.data)
         && request.time.toMillis() <= get(/databases/$(database)/documents/assignments/$(request.resource.data.asgId)).data.due
-             + (request.resource.data.kind == 'week' ? 7 : 1) * 86400000;
+             + (request.resource.data.kind == 'week' ? 7 : 1) * 86400000
+        && !exists(quotaPath(request.resource.data.kind))
+        && getAfter(quotaPath(request.resource.data.kind)).data.asgId == request.resource.data.asgId;
+      allow update: if admin();
+      allow delete: if admin();
+    }
+    match /passq/{id} {
+      allow read: if teacher() || ownsOld();
+      allow create: if ownsNew() && request.resource.data.kind in ['day', 'week']
+        && request.resource.data.asgId is string
+        && request.resource.data.month == vnMonth()
+        && id == mySlug() + '_' + vnMonth() + '_' + request.resource.data.kind
+        && !exists(passPath(request.resource.data.asgId))
+        && getAfter(passPath(request.resource.data.asgId)).data.kind == request.resource.data.kind;
       allow update: if admin();
       allow delete: if admin();
     }
