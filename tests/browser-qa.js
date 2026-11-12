@@ -121,7 +121,7 @@ async function openEx(page, exId) {
     rec('Admin', 'admin signs in on staging', 'role teacher + adm', JSON.stringify({ role: me.role, adm: me.adm }), me.role === 'teacher' && me.adm === true);
     await envGate(page, 'QA fixture');
     const pv = await api(page, 'admin/staging', { op: 'qa-preview' }, true);
-    rec('Admin', 'QA fixture dry run writes nothing and lists the plan', '200, dry, 11 records', pv.status + ' ' + JSON.stringify({ dry: pv.d.dry, n: (pv.d.plan || []).length, c: pv.d.created, u: pv.d.updated, s: pv.d.skipped }), pv.status === 200 && pv.d.dry === true && (pv.d.plan || []).length === 11);
+    rec('Admin', 'QA fixture dry run writes nothing and lists the plan', '200, dry, 15 records', pv.status + ' ' + JSON.stringify({ dry: pv.d.dry, n: (pv.d.plan || []).length, c: pv.d.created, u: pv.d.updated, s: pv.d.skipped }), pv.status === 200 && pv.d.dry === true && (pv.d.plan || []).length === 15);
     const qa = await api(page, 'admin/staging', { op: 'qa' }, true); FIX = qa.d;
     rec('Admin', 'QA fixture created / updated (idempotent)', '200, 0 skipped', qa.status + ' ' + JSON.stringify({ c: qa.d.created, u: qa.d.updated, s: qa.d.skipped }), qa.status === 200 && qa.d.skipped === 0);
     await envGate(page, 'password rotation');
@@ -238,7 +238,40 @@ async function openEx(page, exId) {
       await tr('screenshot record for closed A', () => db.doc('hwdone/' + sl + '_qa_sc_A').set({ email: me, asgId: 'qa_sc_A', done: true, ts: Date.now() }));
       return r; });
     rec('Tester', 'direct Firestore writes cannot unlock or credit A (rules refuse every one)', 'all permission-denied', rulesNew ? JSON.stringify(tamper) : 'not run: the staging project still has the old rules (would write junk and use up the tester late pass)', rulesNew ? Object.keys(tamper).length === 9 && Object.values(tamper).every((v) => v === 'permission-denied') : null);
+    // ---------- late-pass quota on the real staging rules (targets qa_q1..qa_q3 have no exercises: invisible on Home)
+    if (!rulesNew) rec('Tester', 'late-pass quota on staging', 'run', 'not run: old rules', null);
+    else {
+      const q = await page.evaluate(async () => { const db = firebase.firestore(), me = window.MD_USER.email.toLowerCase(), sl = me.replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        const VM = new Date(Date.now() + 7 * 36e5).toISOString().slice(0, 7), r = {};
+        const go = (asg, kind) => { const b = db.batch(); b.set(db.doc('passes/' + sl + '_' + asg), { email: me, asgId: asg, kind, month: VM, ts: Date.now() }); b.set(db.doc('passq/' + sl + '_' + VM + '_' + kind), { email: me, asgId: asg, kind, month: VM, ts: Date.now() }); return b.commit(); };
+        const res = (p) => p.then(() => 'ALLOWED', (e) => e.code || 'error');
+        const has = async (k) => (await db.doc('passq/' + sl + '_' + VM + '_' + k).get()).exists;
+        r.month = VM;
+        r.dayMarkerBefore = await has('day');
+        if (!r.dayMarkerBefore) r.day1 = await res(go('qa_q1', 'day'));
+        r.day2 = await res(go('qa_q2', 'day'));
+        r.weekMarkerBefore = await has('week');
+        if (!r.weekMarkerBefore) { const st = await Promise.allSettled([go('qa_q2', 'week'), go('qa_q3', 'week')]); r.weekRace = st.map((x) => x.status); const w = st.findIndex((x) => x.status === 'fulfilled'); r.weekRetry = w < 0 ? 'none won' : await res(go(['qa_q2', 'qa_q3'][w], 'week')); }
+        else r.week3 = await res(go('qa_q3', 'week'));
+        r.markers = { day: await has('day'), week: await has('week') };
+        try { await db.doc('passes/' + sl + '_qa_q3').set({ email: me, asgId: 'qa_q3', kind: 'day', month: 'item-x', item: 'x', ts: Date.now() }); r.itemByHand = 'ALLOWED'; } catch (e) { r.itemByHand = e.code; }
+        return r; });
+      const dayOk = (q.dayMarkerBefore || q.day1 === 'ALLOWED') && q.day2 === 'permission-denied';
+      rec('Tester', 'monthly quota: a second 1-day pass in the same month (another homework) is refused by the rules', 'first allowed (or already used), second permission-denied', JSON.stringify({ month: q.month, before: q.dayMarkerBefore, first: q.day1, second: q.day2 }), dayOk);
+      const weekOk = q.weekMarkerBefore ? q.week3 === 'permission-denied' : JSON.stringify(q.weekRace.slice().sort()) === '["fulfilled","rejected"]' && q.weekRetry === 'permission-denied';
+      rec('Tester', 'monthly quota: two 1-week requests at the same time → exactly one; sending it again → refused', 'one fulfilled, one rejected; retry denied', JSON.stringify({ before: q.weekMarkerBefore, race: q.weekRace, retry: q.weekRetry, after: q.week3 }), weekOk);
+      rec('Tester', 'a student cannot write a Lucky Wheel item pass directly', 'permission-denied', q.itemByHand, q.itemByHand === 'permission-denied');
+      // Lucky Wheel 1-day Extension: server ledger item qa_ext_1 (made by the QA fixture)
+      const i1 = await api(page, 'pass', { asgId: 'qa_hw_now', itemId: 'qa_ext_1' });
+      const i2 = await api(page, 'pass', { asgId: 'qa_hw_now', itemId: 'qa_ext_1' });
+      const i3 = await api(page, 'pass', { asgId: 'qa_hw_late', itemId: 'qa_ext_1' });
+      const i4 = await api(page, 'pass', { asgId: 'qa_q1', itemId: 'made_up_item_42' });
+      rec('Tester', 'Lucky Wheel extension: used once (or already used for this homework); retry returns the same pass', '200 then 200 again', JSON.stringify([i1.status, i1.d.code || (i1.d.again ? 'again' : 'new'), i2.status, i2.d.again]), i1.status === 200 && i2.status === 200 && i2.d.again === true);
+      rec('Tester', 'Lucky Wheel extension: a used item cannot be used again for another homework', '409 used', JSON.stringify([i3.status, i3.d.code]), i3.status === 409 && i3.d.code === 'used');
+      rec('Tester', 'Lucky Wheel extension: an item the server never gave is refused', '409 noitem', JSON.stringify([i4.status, i4.d.code]), i4.status === 409 && i4.d.code === 'noitem');
+    }
     page.errs = page.errs.filter((x) => !/PERMISSION_DENIED|Missing or insufficient permissions/i.test(x)); // the refusals above log on purpose
+    page.bad = page.bad.filter((x) => !/^409 \/api\/pass/.test(x)); // refused extensions above, on purpose
     // a late pass that has already ended: still locked
     await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(2500);
     await page.click('[data-act="nav"][data-asg="qa_sc_ended"][data-ex="c_qa_r10"]').catch(() => {}); await page.waitForTimeout(1200);

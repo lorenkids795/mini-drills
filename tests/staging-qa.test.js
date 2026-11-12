@@ -25,16 +25,16 @@ const run = async (S, op) => JSON.parse((await S.T.adminStaging(env(), { op })).
 (async () => {
   await t('dry run writes nothing and lists 3 exercises + 4 assignments to create', async () => {
     const S = server(SB), d = await run(S, 'qa-preview');
-    assert.strictEqual(d.dry, true); assert.strictEqual(S.W.length, 0); assert.strictEqual(d.created, 11); assert.strictEqual(d.plan.length, 11);
+    assert.strictEqual(d.dry, true); assert.strictEqual(S.W.length, 0); assert.strictEqual(d.created, 15); assert.strictEqual(d.plan.length, 15);
   });
   await t('create: every record qa + staging, titles "STAGING/QA", Cam 21 · Test 4; running again updates the same ids', async () => {
     const S = server(SB); await run(S, 'qa');
-    assert.deepStrictEqual(Object.keys(S.DB.exercises).sort(), ['qa_r10', 'qa_r5', 'qa_w1']); assert.deepStrictEqual(Object.keys(S.DB.assignments).sort(), ['qa_hw_late', 'qa_hw_mixed', 'qa_hw_now', 'qa_hw_stga', 'qa_sc_A', 'qa_sc_A_stga', 'qa_sc_ended']);
+    assert.deepStrictEqual(Object.keys(S.DB.exercises).sort(), ['qa_r10', 'qa_r5', 'qa_w1']); assert.deepStrictEqual(Object.keys(S.DB.assignments).sort(), ['qa_hw_late', 'qa_hw_mixed', 'qa_hw_now', 'qa_hw_stga', 'qa_q1', 'qa_q2', 'qa_q3', 'qa_sc_A', 'qa_sc_A_stga', 'qa_sc_ended']);
     Object.values(S.DB.exercises).forEach((e) => assert.ok(e.qa && e.staging && /^STAGING\/QA/.test(e.title) && e.bookId === 'cam21' && e.testId === 't4'));
     Object.values(S.DB.assignments).forEach((a) => assert.ok(a.qa && a.staging && /^STAGING\/QA/.test(a.name)));
     assert.strictEqual(S.DB.assignments.qa_hw_now.cls, 'Test', 'the tester\'s class'); assert.strictEqual(S.DB.assignments.qa_hw_stga.cls, 'STG-A');
     assert.ok(S.DB.assignments.qa_hw_late.due < Date.now() && S.DB.assignments.qa_hw_now.due > Date.now());
-    const d = await run(S, 'qa'); assert.strictEqual(d.created, 0); assert.strictEqual(d.updated, 11); assert.strictEqual(S.DB.passes['stg-tester-example-test_qa_sc_ended'].kind, 'day'); assert.strictEqual(Object.keys(S.DB.exercises).length, 3, 'no copies');
+    const d = await run(S, 'qa'); assert.strictEqual(d.created, 0); assert.strictEqual(d.updated, 14); assert.strictEqual(d.kept, 1, 'the ledger item is never reset'); S.DB.extitems.qa_ext_1.used = true; await run(S, 'qa'); assert.strictEqual(S.DB.extitems.qa_ext_1.used, true); assert.strictEqual(S.DB.passes['stg-tester-example-test_qa_sc_ended'].kind, 'day'); assert.strictEqual(Object.keys(S.DB.exercises).length, 3, 'no copies');
   });
   await t('a record with a fixture id that a person made (no qa flag) is skipped, never overwritten', async () => {
     const S = server(SB); S.DB.exercises = { qa_r5: { title: 'My own exercise' } };

@@ -2680,6 +2680,10 @@ function qaAssignments(now) {
     // a late pass that has already ended (written below for the tester)
     ['qa_sc_A', Object.assign({ cls: 'Test', name: 'STAGING/QA scenario A: closed 100 days ago', start: now - 120 * D, due: now - 100 * D, ex: ['c_qa_r5'], ext: [], type: 'mini' }, b)],
     ['qa_sc_A_stga', Object.assign({ cls: 'STG-A', name: 'STAGING/QA scenario A (STG-A): closed 100 days ago', start: now - 120 * D, due: now - 100 * D, ex: ['c_qa_r5'], ext: [], type: 'mini' }, b)],
+    // targets for late-pass quota tests (no exercises: they never show on Home)
+    ['qa_q1', Object.assign({ cls: 'Test', name: 'STAGING/QA quota target 1', start: now - D, due: now + 6 * D, ex: [], ext: [], type: 'mini' }, b)],
+    ['qa_q2', Object.assign({ cls: 'Test', name: 'STAGING/QA quota target 2', start: now - D, due: now + 6 * D, ex: [], ext: [], type: 'mini' }, b)],
+    ['qa_q3', Object.assign({ cls: 'Test', name: 'STAGING/QA quota target 3', start: now - D, due: now + 6 * D, ex: [], ext: [], type: 'mini' }, b)],
     ['qa_sc_ended', Object.assign({ cls: 'Test', name: 'STAGING/QA scenario: late pass already ended', start: now - 9 * D, due: now - 5 * D, ex: ['c_qa_r10'], ext: [], type: 'mini' }, b)],
   ];
 }
@@ -2689,15 +2693,17 @@ async function adminStagingQa(env, op) {
   // uses up the tester's passes of this month.
   const lm = new Date(now); lm.setUTCDate(1); lm.setUTCMonth(lm.getUTCMonth() - 1);
   const pass = ['passes', 'stg-tester-example-test_qa_sc_ended', { email: 'stg.tester@example.test', asgId: 'qa_sc_ended', kind: 'day', month: lm.toISOString().slice(0, 7), qa: true, staging: true }];
-  const all = [].concat(qaExercises().map((x) => ['exercises'].concat(x)), qaAssignments(now).map((x) => ['assignments'].concat(x)), [pass]);
-  for (const [col, id, data] of all) {
+  // a won 1-day Extension in the tester's server ledger (created once, never reset: once used it stays used)
+  const ext = ['extitems', 'qa_ext_1', { email: 'stg.tester@example.test', used: false, ts: now, qa: true, staging: true }, 'once'];
+  const all = [].concat(qaExercises().map((x) => ['exercises'].concat(x)), qaAssignments(now).map((x) => ['assignments'].concat(x)), [pass, ext]);
+  for (const [col, id, data, once] of all) {
     const cur = await fsGet(env, col, id);
-    const act = !cur ? 'create' : cur.data && cur.data.qa === true ? 'update' : 'skip (exists, not a QA fixture)';
+    const act = !cur ? 'create' : once ? 'keep (already there)' : cur.data && cur.data.qa === true ? 'update' : 'skip (exists, not a QA fixture)';
     plan.push({ col, id, title: data.title || data.name, act });
-    if (op === 'qa' && act !== 'skip (exists, not a QA fixture)') await fsPut(env, col, id, Object.assign({ ts: now }, data));
+    if (op === 'qa' && (act === 'create' || act === 'update')) await fsPut(env, col, id, Object.assign({ ts: now }, data));
   }
   const n = (a) => plan.filter((p) => p.act === a).length;
-  return json({ ok: true, dry: op !== 'qa', plan, created: n('create'), updated: n('update'), skipped: plan.length - n('create') - n('update') });
+  return json({ ok: true, dry: op !== 'qa', plan, created: n('create'), updated: n('update'), kept: n('keep (already there)'), skipped: plan.length - n('create') - n('update') - n('keep (already there)') });
 }
 async function adminStaging(env, body) {
   const st = await envState(env);
