@@ -690,8 +690,8 @@ const PASS_DAYS = { day: 1, week: 7 };
 // status of one student for one assignment: the SAME rules as the app (md-hw.js, imported at the top). Every part counts
 // from the send date; complete after the deadline = 'late' (shown apart, still in); blank answers = 'incomplete';
 // older attempts that cannot prove every answer = 'unverified'. done | late | unverified | incomplete | missing | pending | upcoming | none
-function hwaStatus(a, atts, hw, pass, now, exIds) {
-  const r = MDHW.asgEval({ start: a.start, due: a.due, ext: Array.isArray(a.ext) ? a.ext : hwaExt(a) }, { attempts: atts, hw, pass, now, ex: exIds || a.ex || [] });
+function hwaStatus(a, atts, hw, pass, now, exIds, sib) {
+  const r = MDHW.asgEval({ id: a.id, start: a.start, due: a.due, ext: Array.isArray(a.ext) ? a.ext : hwaExt(a) }, { attempts: atts, hw, pass, now, ex: exIds || a.ex || [], sib: sib || [] });
   const out = { st: r.st, due: r.due, ext: !!pass, done: r.done, n: r.n, parts: r.parts.map((p) => ({ k: p.kind, st: p.st })) };
   if (r.at) out.at = r.at;
   if (r.incomplete) out.inc = r.incomplete;
@@ -703,17 +703,20 @@ async function hwaData(env, request, body) {
   if (sc.res) return sc.res;
   const now = Date.now(), from = now - Math.min(180, Math.max(7, Number(body.days) || 60)) * 864e5;
   const stu = await hwaStudents(env, sc.classes);
-  const asg = (await fsList(env, 'assignments')).map(hwaNormAsg).filter((a) => sc.classes.indexOf(a.cls) >= 0 && (a.due >= from || a.start >= from));
+  const allAsg = (await fsList(env, 'assignments')).map(hwaNormAsg).filter((a) => sc.classes.indexOf(a.cls) >= 0 && !a.tOnly);
+  const asg = allAsg.filter((a) => a.due >= from || a.start >= from);
   const byEm = {};
   stu.forEach((s) => { byEm[s.em] = s; });
   // attempts by STUDENT (their email), not by the class written on the attempt: a student who changed class keeps the work
   // they did for this class. Only the fields the rules need.
-  const atts = {};
+  // late passes by student too (one query per student): the window of every assignment of the class needs them
+  const atts = {}, pss = {};
   await Promise.all(stu.map(async (s) => {
     const ems = [s.em].concat(s.raw && s.raw !== s.em ? [s.raw] : []);
+    for (const e of ems) (await fsQueryDocs(env, 'passes', 'email', e)).forEach((d) => { (pss[s.em] = pss[s.em] || {})[d.asgId] = d; });
     for (const e of ems) (await fsQueryDocs(env, 'attempts', 'email', e)).forEach((t) => {
       if (Number(t.ts) < from - 30 * 864e5) return;
-      (atts[s.em] = atts[s.em] || []).push({ ex: t.ex, ts: Number(t.ts), kind: t.kind || '', score: Number(t.score) || 0, total: Number(t.total) || 0,
+      (atts[s.em] = atts[s.em] || []).push({ ex: t.ex, ts: Number(t.ts), sts: t.sts || null, asg: t.asg == null ? '' : String(t.asg), kind: t.kind || '', score: Number(t.score) || 0, total: Number(t.total) || 0,
         answered: t.answered == null ? null : Number(t.answered), required: t.required == null ? null : Number(t.required), stages: Array.isArray(t.stages) && t.stages.length ? [1] : null });
     });
   }));
@@ -723,12 +726,12 @@ async function hwaData(env, request, body) {
   (await fsList(env, 'exercises')).forEach((e) => { exHave['c_' + e.id] = 1; });
   const status = {};
   await Promise.all(asg.map(async (a) => {
-    const hw = {}, ps = {};
+    const hw = {};
     (await fsQueryDocs(env, 'hwdone', 'asgId', a.id)).forEach((d) => { const em = normEmail(d.email); if (!hw[em] || (d.updatedAt || d.ts || 0) > (hw[em].updatedAt || hw[em].ts || 0)) hw[em] = d; });
-    (await fsQueryDocs(env, 'passes', 'asgId', a.id)).forEach((d) => { ps[normEmail(d.email)] = d; });
-    const m = {};
+    const sibs = allAsg.filter((x) => x.cls === a.cls && x.id !== a.id), m = {};
     stu.filter((s) => s.cls === a.cls).forEach((s) => {
-      const r = a.start > now ? { st: 'upcoming', due: a.due } : hwaStatus(a, atts[s.em] || [], hw[s.em], ps[s.em], now, MDHW.liveEx(a.ex, (id) => !!exHave[id]));
+      const ps = pss[s.em] || {}, sib = MDHW.sibOf(sibs, (id) => ps[id] || null);
+      const r = a.start > now ? { st: 'upcoming', due: a.due } : hwaStatus(a, atts[s.em] || [], hw[s.em], ps[a.id] || null, now, MDHW.liveEx(a.ex, (id) => !!exHave[id]), sib);
       const sh = hwaShots(hw[s.em]), us = a.ext.map((x) => sh[x.id] && String(sh[x.id].url || '')).filter((u) => /^\/api\/image\/[A-Za-z0-9_-]{22}$/.test(u || ''));
       if (us.length) { r.shots = us; r.shot = us[0]; }
       m[s.key] = r;
@@ -1128,7 +1131,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-11-11a';
+const API_VERSION = '2026-11-12a';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -2638,11 +2641,20 @@ function qaAssignments(now) {
     ['qa_hw_late', Object.assign({ cls: 'Test', name: 'STAGING/QA overdue (tester)', start: now - 9 * D, due: now - 2 * D, ex: ['c_qa_r5'], ext: [], type: 'mini' }, b)],
     ['qa_hw_mixed', Object.assign({ cls: 'Test', name: 'STAGING/QA mixed: Library + external (tester, overdue)', start: now - 9 * D, due: now - D, ex: ['c_qa_r10'], ext: [{ id: 'x1', link: 'https://example.com/staging-qa-form', src: 'STAGING/QA form', note: 'Made-up task: open the link, then upload any screenshot.' }], type: 'mixed' }, b)],
     ['qa_hw_stga', Object.assign({ cls: 'STG-A', name: 'STAGING/QA this week (STG-A)', start: now - D, due: now + 6 * D, ex: ['c_qa_r5', 'c_qa_r10'], ext: [{ id: 'x1', link: 'https://example.com/staging-qa-form', src: 'STAGING/QA form', note: 'Made-up task.' }], type: 'mixed' }, b)],
+    // (11/2026) assignment-scoped deadlines: A = closed 100 days ago with c_qa_r5, which is also in qa_hw_now (= B, open);
+    // a late pass that has already ended (written below for the tester)
+    ['qa_sc_A', Object.assign({ cls: 'Test', name: 'STAGING/QA scenario A: closed 100 days ago', start: now - 120 * D, due: now - 100 * D, ex: ['c_qa_r5'], ext: [], type: 'mini' }, b)],
+    ['qa_sc_A_stga', Object.assign({ cls: 'STG-A', name: 'STAGING/QA scenario A (STG-A): closed 100 days ago', start: now - 120 * D, due: now - 100 * D, ex: ['c_qa_r5'], ext: [], type: 'mini' }, b)],
+    ['qa_sc_ended', Object.assign({ cls: 'Test', name: 'STAGING/QA scenario: late pass already ended', start: now - 9 * D, due: now - 5 * D, ex: ['c_qa_r10'], ext: [], type: 'mini' }, b)],
   ];
 }
 async function adminStagingQa(env, op) {
   const now = Date.now(), plan = [];
-  const all = [].concat(qaExercises().map((x) => ['exercises'].concat(x)), qaAssignments(now).map((x) => ['assignments'].concat(x)));
+  // the tester's 1-day pass for qa_sc_ended (deadline 5 days ago: the pass ended 4 days ago). Month = last month, so it never
+  // uses up the tester's passes of this month.
+  const lm = new Date(now); lm.setUTCDate(1); lm.setUTCMonth(lm.getUTCMonth() - 1);
+  const pass = ['passes', 'stg-tester-example-test_qa_sc_ended', { email: 'stg.tester@example.test', asgId: 'qa_sc_ended', kind: 'day', month: lm.toISOString().slice(0, 7), qa: true, staging: true }];
+  const all = [].concat(qaExercises().map((x) => ['exercises'].concat(x)), qaAssignments(now).map((x) => ['assignments'].concat(x)), [pass]);
   for (const [col, id, data] of all) {
     const cur = await fsGet(env, col, id);
     const act = !cur ? 'create' : cur.data && cur.data.qa === true ? 'update' : 'skip (exists, not a QA fixture)';
@@ -2687,7 +2699,7 @@ async function adminStaging(env, body) {
   const at = [
     A('stg_a_legacy', { email: 'stg.student@example.test', student: 'STG Student An', cls: 'STG-A', ex: 'l1', score: 3, total: 5, ts: now - 97 * D }), // old, cannot prove answered → Legacy · Unverified
     A('stg_a_full', { email: 'stg.student@example.test', student: 'STG Student An', cls: 'STG-A', ex: 'r1', score: 5, total: 5, ts: now - 96 * D }), // old, full score → Completed
-    A('stg_a_late', { email: 'stg.late@example.test', student: 'STG Student Binh', cls: 'STG-A', ex: 'l1', score: 4, total: 5, answered: 5, required: 5, ts: now - 2 * D }), // after the deadline → late
+    A('stg_a_late', { email: 'stg.late@example.test', student: 'STG Student Binh', cls: 'STG-A', ex: 'l1', score: 4, total: 5, answered: 5, required: 5, ts: now - 2 * D }), // after the deadline, no late pass → not counted (an older unlinked attempt: flagged, Legacy · Unverified)
     A('stg_a_inc', { email: 'stg.student@example.test', student: 'STG Student An', cls: 'STG-A', ex: 'l1', score: 2, total: 5, answered: 3, required: 5, ts: now - D / 2 }), // blanks → Incomplete 3/5
     A('stg_a_move', { email: 'stg.mover@example.test', student: 'STG Student Chi', cls: 'STG-B', ex: 'l1', score: 5, total: 5, answered: 5, required: 5, ts: now - D / 2 }), // written in the old class
     A('stg_w_old', { email: 'stg.student@example.test', student: 'STG Student An', cls: 'STG-A', ex: 'w1', kind: 'submission', score: 0, total: 0, text: 'A made-up staging essay that nobody has marked yet. It is two hundred days old.', words: 16, ts: now - 200 * D }),

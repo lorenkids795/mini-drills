@@ -645,6 +645,7 @@ button.lsstep{background:none;font:inherit;font-size:var(--fs-sm);cursor:pointer
 .btn.done{background:var(--done);border-color:var(--done);color:var(--done-ink)}
 .btn.more{background:var(--more);border-color:var(--more);color:var(--more-ink)}
 .hwact{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.ctxbar{margin:0 0 12px;padding:10px 14px;border:1px solid var(--line-strong);border-left:4px solid var(--accent);border-radius:var(--r-sm);background:var(--surface);font-size:var(--fs-sm);line-height:1.5}.ctxseg{margin:0 0 12px;flex-wrap:wrap}.ctxseg button[aria-pressed="true"]{background:var(--nav);color:var(--nav-ink)}.ctxlock{line-height:1.6}
 .hwact .btn{flex:1 1 150px}
 .okline{margin:14px 0 0;color:var(--done);font-weight:600}
 .lock{font-size:2rem;font-weight:700;letter-spacing:-.01em;margin:6px 0 14px}
@@ -1841,7 +1842,7 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
 
 <script src="md-config.js?v=2026-11-04b"></script>
 <script src="md-backend.js?v=2026-11-09d"></script>
-<script src="md-chart.js?v=2026-11-04b"></script><script src="md-hw.js?v=2026-11-09b"></script>
+<script src="md-chart.js?v=2026-11-04b"></script><script src="md-hw.js?v=2026-11-12a"></script>
 <script src="lm-content.js?v=2026-11-04b"></script>
 <script src="lm-engine.js?v=2026-11-04b"></script>
 <script src="lm-unit2.js?v=2026-11-04b"></script>
@@ -2174,10 +2175,13 @@ function hwDone(email,id){return hwdoneDocs.concat(localHwdone).some(function(d)
 //  - submission = the student pressed "I'm done!" for the Library part (libSub, from hwdone; an old record without screenshots
 //    was written by I'm done too). It is shown on its own and NEVER makes the work complete.
 //  turned = complete and (no Library part, or turned in): "All done" on Home, the homework XP. A screenshot = submitted, never "correct".
+// the other assignments of the same class, with this student's late pass (md-hw.js: an attempt without an assignment link
+// that fits another open assignment's window is never guessed into this one)
+function asgSib(a,email){return MDHW.sibOf(allAsgs().filter(function(x){return x.cls===a.cls&&x.id!==a.id&&!x.tOnly}),function(id){return passFor(email,id)})}
 function asgState(a,email,now){a=normAsg(a);now=now||Date.now();var p=passFor(email,a.id),ids=a.ex.filter(exOf),sc=doneMap(email,a.start,0),sh=hwShots(hwRec(email,a.id));
   // the parts and their states come from the shared rules (md-hw.js), the same ones the Homework Assistant's server uses:
   // done (complete on time) · late (complete after the deadline, still counted) · incomplete (blank answers) · unverified (older attempt) · none
-  var E=MDHW.asgEval({start:a.start,due:a.due,ext:a.ext},{attempts:attemptsOf(email),hw:{shot:null,shots:sh},pass:p,now:now,ex:ids}),due=new Date(E.due),P={},dm={};
+  var E=MDHW.asgEval({id:a.id,start:a.start,due:a.due,ext:a.ext},{attempts:attemptsOf(email),hw:{shot:null,shots:sh},pass:p,now:now,ex:ids,sib:asgSib(a,email)}),due=new Date(E.due),P={},dm={};
   E.parts.forEach(function(q){if(q.kind==='ex'){P[q.id]=q;if(q.st==='done'||q.st==='late')dm[q.id]=sc[q.id]||{best:0,total:0,n:1,band:null}}});
   var X=a.ext.map(function(x){var q=E.parts.filter(function(o){return o.kind==='ext'&&o.id===x.id})[0]||{st:'none'};return {x:x,s:q.shot||null,late:q.st==='late',st:q.st}});
   var libSub=!!ids.length&&hwDone(email,a.id),extFin=X.every(function(t){return !!t.s}),libComp=ids.every(function(i){return !!dm[i]}),fin=E.fin;
@@ -2225,7 +2229,7 @@ function hwCardHTML(x){var a=x.a,p=passFor(U.email,a.id),miss=x.over&&!x.fin,sho
   var h='<div class="hw'+(x.X.length?' hwext':'')+(miss?' late':'')+'"><div class="sechead"><span class="chips2"><span class="chip">'+esc(asgName(a))+'</span>'+(miss?'<span class="chip" style="background:var(--bad-bg);color:var(--bad)">Missing</span>':'')+'</span><span class="meta hwdue">'+(x.over?'<span class="hwdate">Was due </span><b>'+fmtDue(x.due)+'</b>':'<span class="hwdate">Due '+fmtDue(x.due)+' · </span><b>'+leftOf(x.due)+'</b>')+'</span></div>';
   if(shown.length||xs.length)h+='<div class="lrows">'+shown.map(function(id){
       var e=exOf(id),l=locOf(id),d=x.dm[id],q=x.P&&x.P[id]||{},bad=!d&&x.over;
-      return '<button class="lrow" data-act="nav" data-book="'+l.book+'" data-test="'+l.test+'" data-skill="'+l.skill+'" data-ex="'+id+'"><span><b>'+esc(e.title)+'</b></span>'+pcHTML(e,d,bad,partLabel(q,bad))+'</button>';
+      return '<button class="lrow" data-act="nav" data-book="'+l.book+'" data-test="'+l.test+'" data-skill="'+l.skill+'" data-ex="'+id+'" data-asg="'+esc(a.id)+'"><span><b>'+esc(e.title)+'</b></span>'+pcHTML(e,d,bad,partLabel(q,bad))+'</button>';
     }).join('')+xs.map(function(o){return extHwHTML(x,o.t,o.i)}).join('')+'</div>';
   if(p)h+='<p class="due" style="margin:10px 0 0">Extended with your '+PASS[p.kind].label+'.</p>';
   h+=x.ids.length?actionsHTML(x):(x.turned?'<p class="okline">All done ✓ Nice work.</p>':'');
@@ -2235,13 +2239,14 @@ function hwCardHTML(x){var a=x.a,p=passFor(U.email,a.id),miss=x.over&&!x.fin,sho
 // Pressing the row opens its details: instructions, Open link, the screenshot and Upload / Replace (a screenshot = submitted, never "correct").
 var HWX={},HWUP={}; // HWX = open task rows, HWUP = upload state per 'assignment|task'
 function extHwHTML(x,t,i){var a=x.a,k=a.id+'|'+t.x.id,up=HWUP[k]||{},r=t.s,img=r?hwImg(r.url):'',open=!!(HWX[k]||up.busy||up.err),pid='hwxd_'+a.id+'_'+t.x.id,nm=t.x.src||'External task',bad=!r&&x.over;
-  var st=r?'<div class="pc"><div class="prog"><i style="width:100%;background:var(--good)"></i></div><span class="best">'+(t.late?'Submitted late':'Submitted')+'</span></div>':'<div class="pc'+(bad?' bad':'')+'"><div class="prog"><i style="width:0"></i></div><span>'+(bad?'Missed':'Waiting')+'</span></div>';
+  var st=r?'<div class="pc"><div class="prog"><i style="width:100%;background:var(--good)"></i></div><span class="best">'+(t.st==='unverified'?'After deadline · not counted':t.late?'Submitted late':'Submitted')+'</span></div>':'<div class="pc'+(bad?' bad':'')+'"><div class="prog"><i style="width:0"></i></div><span>'+(bad?'Missed':'Waiting')+'</span></div>';
   var h='<button type="button" class="lrow hwxr'+(open?' open':'')+'" data-act="hw-xopen" data-k="'+esc(k)+'" aria-expanded="'+open+'" aria-controls="'+esc(pid)+'"><span><b>'+esc(nm)+'</b>'+(t.x.src?'<small>External task</small>':'')+'</span>'+st+'</button>';
   if(!open)return h;
   h+='<div class="hwxd" id="'+esc(pid)+'">'+(t.x.note?'<p class="hwnote">'+esc(t.x.note)+'</p>':'')+
     '<div class="hwxrow">'+(t.x.link?'<a class="btn" href="'+esc(t.x.link)+'" target="_blank" rel="noopener noreferrer">Open link ↗</a>':'<span class="err">The link is missing. Ask your teacher.</span>')+
-    '<span class="pill'+(r?' ok':'')+'" role="status">'+(r?(t.late?'Submitted late':'Submitted')+' · '+esc(fmtDue(new Date(r.ts))):'Not submitted')+'</span></div>';
+    '<span class="pill'+(r?' ok':'')+'" role="status">'+(r?(t.st==='unverified'?'After deadline · not counted':t.late?'Submitted late':'Submitted')+' · '+esc(fmtDue(new Date(r.ts))):'Not submitted')+'</span></div>';
   if(r&&img)h+='<a class="hwthumb" href="'+esc(img)+'" target="_blank" rel="noopener"><img src="'+esc(img)+'" alt="Your screenshot for '+esc(nm)+'"></a>';
+  if(x.over){h+='<p class="muted hwhelp" role="status">'+(t.st==='unverified'?'This screenshot came after the deadline, so it does not count. ':'')+'The deadline has passed. '+(passFor(U.email,a.id)?'Your late pass has ended too.':'Only a late pass can reopen it.')+'</p>';return h+'</div>'}
   h+='<div class="hwact"><button class="btn'+(r?'':' pri')+'" type="button" data-act="hw-shot" data-asg="'+esc(a.id)+'" data-x="'+esc(t.x.id)+'"'+(up.busy?' disabled':'')+'>'+(up.busy?'Uploading… '+(up.pct||0)+'%':r?'Replace screenshot':'Upload screenshot')+'</button>'+
     '<input type="file" accept="image/*" hidden id="hwShot_'+esc(a.id)+'_'+esc(t.x.id)+'" data-hwshot="'+esc(a.id)+'" data-x="'+esc(t.x.id)+'" aria-label="Screenshot for '+esc(nm)+'"></div>'+
     (up.err?'<p class="err" role="alert">'+esc(up.err)+'</p>':'')+(r?'':'<p class="muted hwhelp">Do the task at the link, take a screenshot of your result, then upload it here.</p>');
@@ -2259,6 +2264,7 @@ function hwShotUpload(blob,prog){return new Promise(function(ok,no){
 document.addEventListener('change',function(e){var f=e.target,aid=f&&f.getAttribute&&f.getAttribute('data-hwshot');if(!aid||!f.files||!f.files[0]||!U)return;var file=f.files[0],xid=f.getAttribute('data-x')||'x1',key=aid+'|'+xid;
   if(!/^image\//.test(file.type)){HWUP[key]={err:'Choose a picture (PNG, JPG, WebP or GIF).'};return renderLib()}
   if(file.size>15*1024*1024){HWUP[key]={err:'This picture is too big. Take a smaller screenshot.'};return renderLib()}
+  var ha=allAsgs().filter(function(x){return x.id===aid})[0];if(ha&&Date.now()>effDue(ha,U.email).getTime()){HWUP[key]={err:'The deadline has passed. Only a late pass can reopen this homework.'};return renderLib()}
   HWUP[key]={busy:true,pct:0};renderLib();
   hwShrink(file).then(function(b){if(b.size>5*1024*1024)throw new Error('The picture is too big (5 MB at most).');return hwShotUpload(b,function(p){HWUP[key].pct=p;var bt=document.querySelector('[data-act="hw-shot"][data-asg="'+aid+'"][data-x="'+xid+'"]');if(bt)bt.textContent='Uploading… '+p+'%'})})
     .then(function(d){var now=Date.now(),old=hwRec(U.email,aid),did=slug(U.email)+'_'+aid,asg=allAsgs().filter(function(x){return x.id===aid})[0],was=asg?asgState(asg,U.email).turned:false;
@@ -3473,24 +3479,47 @@ function qHTML(ex){
     return '<fieldset class="mq"><legend>'+n+'<span>'+esc(q.q)+'</span></legend><div class="opts'+(q.type==='tfng'?' h':'')+'">'+q.opts.map(function(o,k){return '<label class="opt"><input type="radio" name="'+q.id+'" value="'+k+'"><span>'+esc(o)+'</span></label>'}).join('')+'</div></fieldset>';
   }).join('');
 }
-function lockInfo(id){
-  if(!U||U.role!=='student')return null;
+// (11/2026) Which assignment occurrence this exercise is being done for (md-hw.js counts an attempt for its asg only).
+//  want = the assignment the student came from (Home card row), or null (Library).
+//  ctx  = an assignment of the student's class, sent, that includes the exercise and is still open (deadline + late pass);
+//  lock = the assignment the student asked for when it is closed, or, with no open one, the latest closed one (unless the
+//         exercise was already done for one of them: then it stays open for review, credited nowhere new).
+//  Exercises in no assignment are free practice (ctx null, saved without asg). A closed assignment never reopens because
+//  another assignment with the same exercise is open: work there counts for that other assignment only.
+var PCTX='';
+function exCtx(id,want){
+  var R={open:[],ctx:null,lock:null};if(!U||U.role!=='student')return R;
   var now=Date.now(),as=allAsgs().filter(function(a){return a.cls===U.cls&&a.start<=now&&!a.tOnly&&a.ex.indexOf(id)>=0});
-  if(!as.length)return null;
-  var open=false,did=false;
-  as.forEach(function(a){var due=effDue(a,U.email);if(due.getTime()>=now)open=true;if(doneMap(U.email,a.start,due.getTime())[id])did=true});
-  if(open||did)return null;
-  return as.sort(function(x,y){return y.due-x.due})[0];
+  R.open=as.filter(function(a){return effDue(a,U.email).getTime()>=now}).sort(function(x,y){return effDue(x,U.email)-effDue(y,U.email)});
+  var w=want&&as.filter(function(a){return a.id===want})[0];
+  if(w){if(R.open.indexOf(w)>=0)R.ctx=w;else R.lock=w;return R}
+  if(R.open.length){R.ctx=R.open[0];return R}
+  if(!as.length)return R;
+  var did=as.some(function(a){var q=asgState(a,U.email).P[id];return q&&(q.st==='done'||q.st==='late')});
+  if(!did)R.lock=as.sort(function(x,y){return y.due-x.due})[0];
+  return R;
+}
+function lockInfo(id){return exCtx(id,NAV&&NAV.ex===id?NAV.asg:null).lock}
+function ctxBarHTML(C,id){
+  if(C.lock){var alt=C.open.filter(function(a){return a.id!==C.lock.id});
+    return '<div class="banner ctxlock" role="alert" style="background:var(--bad-bg);color:var(--bad)"><b>Locked.</b> This exercise belongs to <b>'+esc(asgName(C.lock))+'</b>, which was due '+fmtDue(effDue(C.lock,U.email))+'. After the deadline it can only be opened with a late pass.'+
+      (alt.length?' It is also in <b>'+esc(asgName(alt[0]))+'</b> (due '+fmtDue(effDue(alt[0],U.email))+'). Work there counts for that homework only.':'')+'</div>'+
+      (alt.length?'<div class="actions"><button class="btn pri" data-act="ctx-pick" data-asg="'+esc(alt[0].id)+'" type="button">Do it for '+esc(asgName(alt[0]))+'</button></div>':'');
+  }
+  if(!C.ctx)return '';
+  var a=C.ctx,late=Date.now()>a.due,h='<div class="ctxbar" role="status">Counts for <b>'+esc(asgName(a))+'</b> · due '+fmtDue(effDue(a,U.email))+(late?' · <b>late pass</b>: this work counts as late':'')+'</div>';
+  if(C.open.length>1)h+='<div class="seg ctxseg" role="group" aria-label="Which homework this work counts for">'+C.open.map(function(o){return '<button type="button" class="'+(o.id===a.id?'on':'')+'" aria-pressed="'+(o.id===a.id)+'" data-act="ctx-pick" data-asg="'+esc(o.id)+'">'+esc(asgName(o))+'</button>'}).join('')+'</div>';
+  return h;
 }
 function renderPlayer(){
   var ex=exOf(NAV.ex);done=false;
   if(REC_EX!==NAV.ex){recClearAll();REC_EX=NAV.ex} // recorders belong to one exercise
-  var lk=lockInfo(NAV.ex);if(WNEW!==NAV.ex)WNEW=null;if(WVER&&WVER.ex!==NAV.ex)WVER=null;
+  var C=exCtx(NAV.ex,NAV.asg),lk=C.lock;PCTX=C.ctx?C.ctx.id:'';if(WNEW!==NAV.ex)WNEW=null;if(WVER&&WVER.ex!==NAV.ex)WVER=null;
   if(lk&&!((ex.kind==='writing'||ex.kind==='speaking'||ex.kind==='readaloud')&&mySub(ex.id))){
-    $('#libBody').innerHTML='<div class="pane single"><div class="phead"><span class="chip">'+SNAME[ex.skill]+'</span><h2>'+esc(ex.title)+'</h2></div><div class="banner" style="background:var(--bad-bg);color:var(--bad)"><b>Locked.</b> This exercise belongs to <b>'+esc(asgName(lk))+'</b>, which was due '+fmtDue(effDue(lk,U.email))+'. After the deadline it can only be opened with a late pass.</div><div class="actions"><button class="btn" data-act="nav" data-book="'+NAV.book+'" data-test="'+NAV.test+'" data-skill="'+NAV.skill+'" type="button">Back to the list</button></div></div>';
+    $('#libBody').innerHTML='<div class="pane single"><div class="phead"><span class="chip">'+SNAME[ex.skill]+'</span><h2>'+esc(ex.title)+'</h2></div>'+ctxBarHTML(C,ex.id)+'<div class="actions"><button class="btn" data-act="nav" data-book="'+NAV.book+'" data-test="'+NAV.test+'" data-skill="'+NAV.skill+'" type="button">Back to the list</button></div></div>';
     return;
   }
-  var teacher=U.role==='teacher',ban=''; // teachers preview: nothing is saved (saveAttempt is skipped for teachers), no banner
+  var teacher=U.role==='teacher',ban=lk?'':ctxBarHTML(C,ex.id); // teachers preview: nothing is saved (saveAttempt is skipped for teachers), no banner
   var head='<div class="phead"><span class="chip">'+SNAME[ex.skill]+'</span><h2>'+esc(ex.title)+'</h2><p>'+esc(ex.hint)+'</p></div>';
   var tail='<div class="actions"><button class="btn pri" data-act="submit" id="submit" type="button">Submit answers</button><span class="saved" id="saveMsg"></span></div><div id="result"></div>';
   if(ex.kind==='writing')return renderWriting(ex,head,ban);
@@ -3549,10 +3578,15 @@ function nextBtns(noRetry){
   return '<div class="actions">'+(noRetry?'':'<button class="btn" data-act="retry" type="button">Try again</button>')+(nx?'<button class="btn pri" data-act="next" data-ex="'+nx+'" type="button">Next: '+esc(exOf(nx).title)+'</button>':'<button class="btn pri" data-act="nav" data-book="'+NAV.book+'" data-test="'+NAV.test+'" data-skill="'+NAV.skill+'" type="button">Back to list</button>')+'</div>';
 }
 var lastRef=null;
+// (11/2026) a student's attempt carries asg = the assignment it is done for ('' = free practice) and sts = the server's time
+// (rules: sts == request.time; a linked attempt is refused after that assignment's deadline + late pass)
 function saveAttempt(rec){
+  if(U&&U.role==='student'&&rec.email===U.email)rec.asg=PCTX||'';
+  var FV=dbh&&window.firebase&&firebase.firestore&&firebase.firestore.FieldValue,out=rec;
+  if(FV&&U&&U.role==='student')out=Object.assign({},rec,{sts:FV.serverTimestamp()});
   var local=function(){lastRef=null;localAttempts.unshift(Object.assign({id:'local-'+rec.ts},rec));setStatus('local');return 'local'};
   if(!dbh)return Promise.resolve(local());
-  return dbh.collection('attempts').add(rec).then(function(ref){lastRef=ref;setStatus('saved');return 'db'},function(){return local()});
+  return dbh.collection('attempts').add(out).then(function(ref){lastRef=ref;setStatus('saved');return 'db'},function(){return local()});
 }
 
 /* ---------- Demo helper (teachers and admins only, never students, also in demo mode) ----------
@@ -5781,7 +5815,8 @@ document.addEventListener('click',function(e){
   // an error inside a handler must never look like "the button does nothing": show it, keep it in the Console
   try{if(extAct(a,t))return}catch(err){actFail(a,err);return}
   if(a==='tab'){if(SB.open&&!sbWide())sbSet(false,!!t.closest('#sideNav'));NAV.daily=null;DY=null;if(CV&&CV.where==='daily')CV=null;return showTab(t.dataset.tab)}
-  if(a==='nav'){XED=null;var nb=t.dataset.book||null,nt=t.dataset.test||null,ns=t.dataset.skill||null,ne=t.dataset.ex||null;LIBX={book:nb,test:nt,skill:ns};NAV={book:ne?nb:null,test:ne?nt:null,skill:ne?ns:null,ex:ne};PANE='q';return showTab('library')}
+  if(a==='nav'){XED=null;var nb=t.dataset.book||null,nt=t.dataset.test||null,ns=t.dataset.skill||null,ne=t.dataset.ex||null;LIBX={book:nb,test:nt,skill:ns};NAV={book:ne?nb:null,test:ne?nt:null,skill:ne?ns:null,ex:ne,asg:ne&&t.dataset.asg||null};PANE='q';return showTab('library')}
+  if(a==='ctx-pick'){NAV.asg=t.dataset.asg||null;PANE='q';renderLib();window.scrollTo&&window.scrollTo(0,0);return}
   if(a==='next'){NAV.ex=t.dataset.ex;PANE='q';renderLib();window.scrollTo&&window.scrollTo(0,0);return}
   if(a==='pane'){PANE=t.dataset.pane;var p=$('#player');if(p)p.setAttribute('data-pane',PANE);$$('.ptabs button').forEach(function(b){b.setAttribute('aria-selected',b.dataset.pane===PANE)});return}
   if(a==='aplay'){if(au){if(au.paused)au.play().catch(function(){});else au.pause()}return}
@@ -7167,7 +7202,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-11-11a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-11-12a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(uiAct(a,t))return true;

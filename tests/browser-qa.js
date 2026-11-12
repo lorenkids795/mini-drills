@@ -12,7 +12,7 @@ const { chromium } = require('playwright-core');
 const BASE = process.env.QA_BASE || 'https://phase-b.myhomeworkmyfuture.pages.dev', PROJECT = 'mini-drills-staging';
 const OUT = process.argv[2] || path.join(__dirname, '..', 'qa-artifacts'); fs.mkdirSync(OUT, { recursive: true });
 const ENVF = path.join(__dirname, '..', '.qa.env');
-const R = []; // results: {id, role, test, expected, observed, result, evidence}
+const R = []; let TEACHER_A = {}; // results: {id, role, test, expected, observed, result, evidence}
 const rec = (role, test, expected, observed, ok, evidence) => { R.push({ role, test, expected, observed: String(observed).slice(0, 300), result: ok === null ? 'NOT TESTED' : ok ? 'PASS' : 'FAIL', evidence: evidence || '' }); console.log((ok === null ? 'SKIP' : ok ? 'PASS' : 'FAIL') + ' [' + role + '] ' + test + (ok ? '' : ' -> ' + String(observed).slice(0, 200))); };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const secretWords = [];
@@ -31,12 +31,26 @@ async function envGate(page, what) {
 }
 async function newCtx(b, opt) {
   const ctx = await b.newContext(Object.assign({ viewport: { width: 1280, height: 860 } }, opt || {}));
-  const page = await ctx.newPage(); page.errs = []; page.bad = [];
-  page.on('console', (m) => { if (m.type() === 'error' && !/Failed to load resource: the server responded with a status of 40[04]/.test(m.text())) page.errs.push(clean(m.text()).slice(0, 200)); });
+  const page = await ctx.newPage(); page.errs = []; page.bad = []; page.fs = []; page.nav = Date.now();
+  // Firestore listen-channel errors are recorded with evidence (status, body, time since the last navigation), never dropped:
+  // see fsCheck(). Other "Failed to load resource" lines stay errors.
+  const LISTEN = /firestore\.googleapis\.com\/google\.firestore\.v1\.Firestore\/(Listen|Write)\/channel/;
+  page.on('framenavigated', (f) => { if (f === page.mainFrame()) page.nav = Date.now(); });
+  page.on('console', (m) => { if (m.type() !== 'error') return; const u = (m.location() && m.location().url) || ''; if (LISTEN.test(u) && /Failed to load resource/.test(m.text())) return; page.errs.push(clean(m.text()).slice(0, 200)); });
+  page.on('response', async (r) => { if (r.status() < 400 || !LISTEN.test(r.url())) return; let body = ''; try { body = (await r.text()).slice(0, 200); } catch (e) { body = '(body unavailable)'; }
+    const q = new URL(r.url()).searchParams; page.fs.push({ status: r.status(), method: r.request().method(), type: q.get('TYPE') || '', rid: q.get('RID') || '', msAfterNav: Date.now() - page.nav, body: clean(body).replace(/\s+/g, ' ') }); });
   page.on('pageerror', (e) => page.errs.push('pageerror: ' + clean(String(e)).slice(0, 200)));
-  // a Firestore listen channel cut by a reload / navigation answers 400 / 404: normal for the SDK, not an app error
-  page.on('response', (r) => { if (r.status() >= 400 && !/\/api\/(status|names)/.test(r.url()) && !/Firestore\/Listen\/channel/.test(r.url())) page.bad.push(r.status() + ' ' + r.url().replace(BASE, '')); });
+  page.on('response', (r) => { if (r.status() >= 400 && !/\/api\/(status|names)/.test(r.url()) && !LISTEN.test(r.url())) page.bad.push(r.status() + ' ' + r.url().replace(BASE, '')); });
   return { ctx, page };
+}
+// Firestore channel errors of one session: listed with their evidence. PASS only when every one is a channel-session error
+// the SDK recovers from by itself (body names the session: "Unknown SID" / session not found) AND the app is still live
+// afterwards (status dot "saved" = a snapshot arrived after the error). Anything else = FAIL.
+async function fsCheck(page, role) {
+  const st = await page.evaluate(() => { const s = document.querySelector('#status'); return s ? s.getAttribute('data-s') : ''; }).catch(() => '');
+  const ok = page.fs.every((x) => /unknown sid|session/i.test(x.body)) && st === 'saved';
+  rec(role, 'Firestore channel errors: each explained, app still live', 'none, or only session-expired channel errors + status saved',
+    JSON.stringify({ n: page.fs.length, status: st, errors: page.fs.slice(0, 6) }), page.fs.length ? ok : st === 'saved' ? true : null);
 }
 async function login(page, email, pw) {
   await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'networkidle' });
@@ -123,6 +137,7 @@ async function openEx(page, exId) {
     const cam21 = await page.locator('button.bk[data-v="cam21"]').textContent().catch(() => '');
     rec('Admin', 'Cam 14 samples stay hidden (grey Empty), QA exercises in Cam 21', 'cam14 "bk e", cam21 3 exercises', cam14 + ' | ' + cam21, /\be\b/.test(cam14 || '') && /3 exercises/.test(cam21 || ''), await shot(page, 'admin-library'));
     rec('Admin', 'no console errors / failed requests (admin session)', '0', JSON.stringify({ errs: page.errs, http: page.bad }), !page.errs.length && !page.bad.length);
+    await fsCheck(page, 'Admin');
     await ctx.close();
   }
   // exercise definitions as the app sees them (for answering)
@@ -184,6 +199,69 @@ async function openEx(page, exId) {
     if (!(await inp.count()) && !(await page.locator('text=STAGING/QA mixed').count())) rec('Tester', 'external task screenshot after the deadline is accepted and counts', 'HTTP 200 + homework finished', 'already uploaded in an earlier QA run (homework finished, card gone): not testable on this account again', null, await shot(page, 'tester-external'));
     else rec('Tester', 'external task screenshot after the deadline is accepted and counts', 'HTTP 200 + row "Submitted late" or homework finished', upTxt, upOk, await shot(page, 'tester-external'));
     rec('Tester', 'no console errors / failed requests (tester session)', '0', JSON.stringify({ errs: page.errs, http: page.bad }), !page.errs.length && !page.bad.length);
+    await fsCheck(page, 'Tester');
+    // ---------- (11/2026) assignment-scoped deadlines: A closed 100 days ago and B open share c_qa_r5
+    await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(2500);
+    home = await page.locator('#libBody').textContent();
+    rec('Tester', 'Home lists A (closed 100 days) as missing', 'card "scenario A: closed 100 days ago"', /scenario A: closed 100 days ago/.test(home) ? 'shown' : 'not shown', /scenario A: closed 100 days ago/.test(home));
+    await page.click('[data-act="nav"][data-asg="qa_sc_A"][data-ex="c_qa_r5"]').catch(() => {}); await page.waitForTimeout(1200);
+    let body = await page.locator('#libBody').textContent();
+    rec('Tester', 'opening A after its deadline (no late pass) = Locked, even though B with the same exercise is open', 'Locked + offer to do it for B', clean(body).slice(0, 260),
+      /Locked\./.test(body) && /scenario A/.test(body) && /Do it for STAGING\/QA this week \(tester\)/.test(body) && !(await page.locator('#submit').count()), await shot(page, 'scope-A-locked'));
+    await page.click('[data-act="ctx-pick"][data-asg="qa_hw_now"]').catch(() => {}); await page.waitForTimeout(1200);
+    body = await page.locator('#libBody').textContent();
+    rec('Tester', 'switching to B: the bar says the work counts for B', '"Counts for STAGING/QA this week (tester)"', clean(body).slice(0, 160), /Counts for STAGING\/QA this week \(tester\)/.test(body) && (await page.locator('#submit').count()) > 0, await shot(page, 'scope-B-context'));
+    await answer(page, EX.qa_r5, 5, []); await page.click('#submit'); await page.waitForTimeout(3500);
+    const mine = await page.evaluate(async () => { const db = firebase.firestore(), me = window.MD_USER.email.toLowerCase();
+      const s = await db.collection('attempts').where('email', '==', me).get(); const L = s.docs.map((d) => d.data()).filter((a) => a.ex === 'c_qa_r5').sort((x, y) => y.ts - x.ts);
+      const a = L[0] || {}; return { asg: a.asg, sts: !!(a.sts && a.sts.toMillis), skew: a.sts && a.sts.toMillis ? Math.abs(a.sts.toMillis() - a.ts) : null }; });
+    rec('Tester', 'the attempt done through B is saved for B (asg = qa_hw_now) with server time', 'asg qa_hw_now, sts set', JSON.stringify(mine), mine.asg === 'qa_hw_now' && mine.sts);
+    // are the new rules published in the staging Firebase project? Harmless probe: an attempt with no server time for an
+    // exercise id that does not exist (new rules refuse it; old rules accept it, and it counts for nothing)
+    const rulesNew = await page.evaluate(async () => { try { await firebase.firestore().collection('attempts').add({ email: window.MD_USER.email.toLowerCase(), ex: 'qa_rules_probe', score: 0, total: 1, items: [], ts: Date.now() }); return false; } catch (e) { return e.code === 'permission-denied'; } });
+    rec('Tester', 'staging Firestore rules are the new ones (server time required)', 'probe refused', rulesNew ? 'refused (new rules)' : 'accepted (old rules still published)', rulesNew);
+    // direct Firestore writes (what a student could try from the console): all refused by the rules
+    const tamper = !rulesNew ? { skipped: 'old rules' } : await page.evaluate(async () => { const db = firebase.firestore(), FV = firebase.firestore.FieldValue, me = window.MD_USER.email.toLowerCase();
+      const sl = me.replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''), r = {};
+      const tr = async (k, f) => { try { await f(); r[k] = 'ALLOWED'; } catch (e) { r[k] = e.code || String(e).slice(0, 40); } };
+      const att = (o) => Object.assign({ email: me, student: 'QA', cls: 'Test', ex: 'c_qa_r5', score: 5, total: 5, answered: 5, required: 5, items: [], ts: Date.now(), sts: FV.serverTimestamp() }, o);
+      await tr('attempt for closed A', () => db.collection('attempts').add(att({ asg: 'qa_sc_A' })));
+      await tr('attempt with no server time', () => { const a = att({ asg: 'qa_hw_now' }); delete a.sts; return db.collection('attempts').add(a); });
+      await tr('attempt with a made-up old time', () => db.collection('attempts').add(att({ asg: 'qa_hw_now', sts: new Date(Date.now() - 200 * 864e5) })));
+      await tr('attempt for an assignment that does not exist', () => db.collection('attempts').add(att({ asg: 'qa_nope' })));
+      await tr('late pass for A (would end 93 days ago)', () => db.doc('passes/' + sl + '_qa_sc_A').set({ email: me, asgId: 'qa_sc_A', kind: 'week', month: '2026-11', ts: Date.now() }));
+      await tr('change the ended late pass to a week', () => db.doc('passes/' + sl + '_qa_sc_ended').set({ email: me, asgId: 'qa_sc_ended', kind: 'week', month: '2026-11', ts: Date.now() }));
+      await tr('screenshot record for closed A', () => db.doc('hwdone/' + sl + '_qa_sc_A').set({ email: me, asgId: 'qa_sc_A', done: true, ts: Date.now() }));
+      return r; });
+    rec('Tester', 'direct Firestore writes cannot unlock or credit A (rules refuse every one)', 'all permission-denied', rulesNew ? JSON.stringify(tamper) : 'not run: the staging project still has the old rules (would write junk and use up the tester late pass)', rulesNew ? Object.keys(tamper).length === 7 && Object.values(tamper).every((v) => v === 'permission-denied') : null);
+    page.errs = page.errs.filter((x) => !/PERMISSION_DENIED|Missing or insufficient permissions/i.test(x)); // the refusals above log on purpose
+    // a late pass that has already ended: still locked
+    await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(2500);
+    await page.click('[data-act="nav"][data-asg="qa_sc_ended"][data-ex="c_qa_r10"]').catch(() => {}); await page.waitForTimeout(1200);
+    body = await page.locator('#libBody').textContent();
+    rec('Tester', 'late pass already ended → locked again', 'Locked', clean(body).slice(0, 160), /Locked\./.test(body) && /late pass already ended/.test(body) && !(await page.locator('#submit').count()), await shot(page, 'scope-pass-ended'));
+    // a late pass in its valid window: use the real button on the overdue card (if this month's week pass is still free)
+    await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(2500);
+    const lateCard = page.locator('.hw').filter({ hasText: 'STAGING/QA overdue (tester)' });
+    let passNote = '';
+    if (await lateCard.locator('[data-act="needtime"]').count()) {
+      await lateCard.locator('[data-act="needtime"]').click(); await page.waitForTimeout(600);
+      const wk = lateCard.locator('[data-act="pass-ask"][data-kind="week"]:not([disabled])');
+      if (await wk.count()) { await wk.click(); await page.waitForTimeout(400); await page.click('[data-act="pass-use"]'); await page.waitForTimeout(2500); passNote = 'week pass used now'; }
+      else passNote = 'no week pass left this month';
+    } else passNote = 'pass already on this homework (earlier run)';
+    await page.click('[data-act="nav"][data-asg="qa_hw_late"][data-ex="c_qa_r5"]').catch(() => {}); await page.waitForTimeout(1200);
+    body = await page.locator('#libBody').textContent();
+    const lpOpen = /late pass<\/b>|late pass: this work counts as late/.test(await page.locator('#libBody').innerHTML()) && (await page.locator('#submit').count()) > 0;
+    if (passNote === 'no week pass left this month') rec('Tester', 'late pass in its window: A opens, the work counts as late', 'bar "late pass … counts as late"', passNote, null);
+    else {
+      rec('Tester', 'late pass in its window: the overdue homework opens, the bar says it counts as late', 'bar "late pass … counts as late" + Submit', passNote + ' · ' + clean(body).slice(0, 140), lpOpen, await shot(page, 'scope-latepass-open'));
+      if (lpOpen) { await answer(page, EX.qa_r5, 5, []); await page.click('#submit'); await page.waitForTimeout(3500);
+        await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(2500);
+        const lc = clean(await page.locator('.hw').filter({ hasText: 'STAGING/QA overdue (tester)' }).first().textContent().catch(() => '(card gone)'));
+        rec('Tester', 'work done inside the late pass is counted as late for that homework', 'late', lc.slice(0, 200), /late/i.test(lc) && !/Missed/.test(lc), await shot(page, 'scope-latepass-done'));
+      }
+    }
     // mobile dark, signed in
     await page.setViewportSize({ width: 390, height: 844 }); await page.emulateMedia({ colorScheme: 'dark' }); await page.reload({ waitUntil: 'load' }); await page.waitForTimeout(2500);
     const hs = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
@@ -216,8 +294,13 @@ async function openEx(page, exId) {
     rec('Teacher', 'STG-A QA homework table: STG Student An has 3/5 (incomplete) for the 5-question exercise', '! 3/5 · Submitted · Incomplete', clean(mtx).slice(0, 300), /3\/5/.test(mtx), await shot(page, 'teacher-stga-matrix'));
     const old = page.locator('[data-act="asg-open"]').filter({ hasText: 'STG old homework' }); await old.click().catch(() => {}); await page.waitForTimeout(4000);
     const om = await page.locator('#v-asg').textContent();
-    rec('Teacher', 'assignment older than 60 days loads its older work (✓ late, 3/5 incomplete, Completion column), no "Loading…" left', 'late + 3/5 + Completion', clean(om).match(/STG old homework[\s\S]{0,40}/) ? 'table shown' : 'not found', /late/.test(om) && /3\/5/.test(om) && /Completion|COMPLETION/i.test(om) && !/Loading the work/.test(om), await shot(page, 'teacher-old-asg'));
+    rec('Teacher', 'assignment older than 60 days loads its older work (Legacy · Unverified, Completion column); recent work is NOT counted as late', 'Unverified + Completion, no "late", no Loading', clean(om).match(/STG old homework[\s\S]{0,40}/) ? 'table shown' : 'not found', /Unverified/.test(om) && !/✓ late|Complete · late/.test(om) && /Completion|COMPLETION/i.test(om) && !/Loading the work/.test(om), await shot(page, 'teacher-old-asg'));
+    const opA = page.locator('[data-act="asg-open"]').filter({ hasText: 'STAGING/QA scenario A (STG-A)' }); await opA.click().catch(() => {}); await page.waitForTimeout(3000);
+    const am = clean(await page.locator('#v-asg').textContent()); const anRow = (am.match(/STG Student An[\s\S]{0,120}/) || [''])[0];
+    TEACHER_A.an = /Complete|✓/.test(anRow) ? 'complete' : anRow ? 'not done' : '(row not found)';
+    rec('Teacher', 'A (STG-A, closed 100 days): An is not credited with work done for the open homework', 'not done', TEACHER_A.an + ' · ' + anRow.slice(0, 100), TEACHER_A.an === 'not done', await shot(page, 'scope-teacher-A'));
     rec('Teacher', 'no console errors / failed requests (teacher session)', '0', JSON.stringify({ errs: page.errs, http: page.bad }), !page.errs.length && !page.bad.length);
+    await fsCheck(page, 'Teacher');
     await ctx.close();
   }
   // ---------- Homework Assistant
@@ -233,10 +316,15 @@ async function openEx(page, exId) {
     rec('Assistant', 'same student + homework as the teacher table: partial (not complete), parts listed', 'incomplete or pending, done < n, parts', JSON.stringify(st), !!st && st.st !== 'done' && st.done < st.n && Array.isArray(st.parts));
     const mv = (d.d.students || []).find((s) => /Chi/.test(s.name)), lt = (d.d.assignments || []).find((a) => a.id === 'stg_late');
     const cs = mv && lt ? d.d.status[lt.id][mv.key] : null, cp = cs && (cs.parts || []).find((p) => p.k === 'ex');
-    rec('Assistant', 'student who changed class: the Library exercise done in the old class counts (the external task is still missing)', 'Library part done/late, 1/2 parts', JSON.stringify(cs), !!cp && (cp.st === 'late' || cp.st === 'done') && cs.done === 1);
+    const nw = (d.d.assignments || []).find((a) => a.id === 'stg_now'), ns = mv && nw ? d.d.status[nw.id][mv.key] : null, np = ns && (ns.parts || [])[0];
+    rec('Assistant', 'student who changed class: work done (in the old class) during "this week" counts for this week, not for last week\'s closed homework', 'stg_now part done; stg_late Library part not credited', JSON.stringify({ now: ns, last: cs }), !!np && np.st === 'done' && !!cp && cp.st !== 'done' && cp.st !== 'late');
+    const sa = (d.d.assignments || []).find((a) => a.id === 'qa_sc_A_stga'), sas = an && sa ? d.d.status[sa.id][an.key] : null;
+    rec('Assistant', 'A (STG-A, closed 100 days) for An: missing, although An works on the same exercise in the open homework', 'missing', JSON.stringify(sas), !!sas && sas.st === 'missing');
+    TEACHER_A = TEACHER_A || {}; rec('Teacher + Assistant', 'same answer for An on A (STG-A)', 'teacher "not done" = assistant "missing"', JSON.stringify({ teacher: TEACHER_A.an, assistant: sas && sas.st }), !!sas && sas.st === 'missing' && TEACHER_A.an === 'not done');
     await page.click('#tabs [data-act="tab"][data-tab="hwa-miss"]').catch(() => {}); await page.waitForTimeout(1500);
     rec('Assistant', 'Missing homework page shows partial progress text', '"parts done · missing"', /parts done/.test(await page.locator('#v-hwa').textContent()) ? 'shown' : 'not shown', /parts done/.test(await page.locator('#v-hwa').textContent()), await shot(page, 'hwa-missing'));
     rec('Assistant', 'no console errors / failed requests (assistant session)', '0', JSON.stringify({ errs: page.errs, http: page.bad }), !page.errs.length && !page.bad.length);
+    await fsCheck(page, 'Assistant');
     await ctx.close();
   }
   fs.writeFileSync(path.join(OUT, 'report.json'), JSON.stringify(R, null, 2));

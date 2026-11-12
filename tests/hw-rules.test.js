@@ -35,8 +35,13 @@ const A = { id: 'a1', cls: '7h30', name: 'HW', start: now - 5 * DAY, due: now - 
 const OPEN = Object.assign({}, A, { id: 'a2', due: now + DAY });
 const CASES = [
   ['complete on time', [{ score: 3, total: 5, answered: 5, required: 5, ts: now - 2 * DAY }], A, null, 'done'],
-  ['complete after the deadline = late (still counted)', [{ score: 3, total: 5, answered: 5, required: 5, ts: now - 0.5 * DAY }], A, null, 'late'],
-  ['late, but a 1-day pass moves the deadline = on time', [{ score: 3, total: 5, answered: 5, required: 5, ts: now - 0.5 * DAY }], A, 'day', 'done'],
+  // (11/2026) each assignment occurrence has its own window: after it (no late pass) nothing is credited
+  ['after the deadline, no pass, older attempt (no server time) = flagged Legacy · Unverified, never counted', [{ score: 3, total: 5, answered: 5, required: 5, ts: now - 0.5 * DAY }], A, null, 'unverified'],
+  ['after the deadline, no pass, new free practice (server time) = not counted', [{ score: 3, total: 5, answered: 5, required: 5, ts: now - 0.5 * DAY, sts: now - 0.5 * DAY }], A, null, 'missing'],
+  ['inside a 1-day late pass = late (not on time)', [{ score: 3, total: 5, answered: 5, required: 5, ts: now - 0.5 * DAY }], A, 'day', 'late'],
+  ['linked to this assignment inside the late pass = late', [{ score: 3, total: 5, answered: 5, required: 5, ts: now - 0.5 * DAY, sts: now - 0.5 * DAY, asg: 'a1' }], A, 'day', 'late'],
+  ['linked to ANOTHER assignment (same exercise) = never counts here', [{ score: 5, total: 5, answered: 5, required: 5, ts: now - 2 * DAY, sts: now - 2 * DAY, asg: 'zz' }], A, null, 'missing'],
+  ['server time wins over a device clock set back (ts before the deadline, sts after)', [{ score: 5, total: 5, answered: 5, required: 5, ts: now - 2 * DAY, sts: now - 0.5 * DAY }], A, null, 'missing'],
   ['blank answers = incomplete', [{ score: 3, total: 5, answered: 3, required: 5, ts: now - 2 * DAY }], A, null, 'incomplete'],
   ['incomplete first, complete later = complete (the complete one counts)', [{ score: 1, total: 5, answered: 2, required: 5, ts: now - 3 * DAY }, { score: 4, total: 5, answered: 5, required: 5, ts: now - 2 * DAY }], A, null, 'done'],
   ['older attempt, not full score, no answered count = Legacy · Unverified', [{ score: 3, total: 5, ts: now - 2 * DAY }], A, null, 'unverified'],
@@ -81,7 +86,7 @@ const CASES = [
   }
   await t('teacher table: late ✓ with "late", incomplete ! with answered count, unverified ?, Completion words', () => {
     const B = boot({ hooks: HOOKS }); B.T.setRoster([{ email: 'lan@x.com', name: 'Lan', cls: '7h30', role: 'student' }, { email: 'ha@x.com', name: 'Ha', cls: '7h30', role: 'student' }, { email: 'vy@x.com', name: 'Vy', cls: '7h30', role: 'student' }]);
-    const a = Object.assign({}, A, { ex: ['l1', 'r1'] }); B.T.setAsg([a]);
+    const a = Object.assign({}, A, { ex: ['l1', 'r1'] }); B.T.setAsg([a]); B.T.setPass([{ email: 'lan@x.com', asgId: 'a1', kind: 'day' }]); // Lan: inside her late pass
     B.T.setAttempts([{ email: 'lan@x.com', ex: 'l1', score: 5, total: 5, answered: 5, required: 5, ts: now - 0.5 * DAY }, { email: 'lan@x.com', ex: 'r1', score: 5, total: 5, answered: 5, required: 5, ts: now - 2 * DAY },
       { email: 'ha@x.com', ex: 'l1', score: 2, total: 5, answered: 3, required: 5, ts: now - 2 * DAY }, { email: 'vy@x.com', ex: 'l1', score: 3, total: 5, ts: now - 2 * DAY }, { email: 'vy@x.com', ex: 'r1', score: 3, total: 5, ts: now - 2 * DAY }]);
     const h = B.T.hwMatrixHTML(a);
@@ -117,21 +122,26 @@ const CASES = [
     assert.deepStrictEqual(JSON.parse(m[1].replace(/'/g, '"')), H.BUILTIN, 'md-hw BUILTIN = the app\'s built-in exercises');
   });
   // the same student seen by the teacher (app) and the assistant (server), with screenshots (hwdone) and a roster
-  async function both(asg, atts, hw, roster) {
+  async function both(asg, atts, hw, roster, pass, more) {
     roster = roster || [{ email: 'lan@x.com', name: 'Lan', cls: '7h30', role: 'student' }];
-    const B = boot({ hooks: HOOKS }); B.T.setRoster(roster); B.T.setAsg([asg]); B.T.setAttempts(atts); if (hw) B.T.setHw([Object.assign({ id: 'h_' + asg.id, asgId: asg.id }, hw)]);
+    const L = [asg].concat(more || []);
+    const B = boot({ hooks: HOOKS }); B.T.setRoster(roster); B.T.setAsg(L); B.T.setAttempts(atts); if (hw) B.T.setHw([Object.assign({ id: 'h_' + asg.id, asgId: asg.id }, hw)]);
+    if (pass) B.T.setPass(pass);
     const S = server(); S.KV.assist = JSON.stringify({ 'as@x.com': { name: 'As', classes: ['7h30'] } });
-    roster.forEach((r) => { S.DB.roster[r.email] = r; }); S.DB.assignments[asg.id] = asg; atts.forEach((x, i) => { S.DB.attempts['q' + i] = x; }); if (hw) S.DB.hwdone.h1 = Object.assign({ asgId: asg.id }, hw);
+    roster.forEach((r) => { S.DB.roster[r.email] = r; }); L.forEach((x) => { S.DB.assignments[x.id] = x; }); atts.forEach((x, i) => { S.DB.attempts['q' + i] = x; }); if (hw) S.DB.hwdone.h1 = Object.assign({ asgId: asg.id }, hw);
+    (pass || []).forEach((p, i) => { S.DB.passes['p' + i] = p; });
     S.ctx.setWho({ em: 'as@x.com', role: 'assistant' }); const d = await S.data();
-    return { B, d, srv: (name) => { const s = d.students.filter((x) => x.name === name)[0]; return s ? d.status[asg.id][s.key] : null; } };
+    return { B, d, srv: (name, id) => { const s = d.students.filter((x) => x.name === name)[0]; return s ? d.status[id || asg.id][s.key] : null; } };
   }
-  await t('mixed Library + external task: both parts needed; a late screenshot = late on both sides', async () => {
+  await t('mixed Library + external task: both parts needed; a screenshot inside the late pass = late on both sides; after it = not counted', async () => {
     const M = Object.assign({}, A, { id: 'm1', ext: [{ id: 'x1', link: 'https://f.example.com/a', src: 'Google Form' }], type: 'mixed' });
     const ok = [{ email: 'lan@x.com', ex: 'l1', score: 5, total: 5, answered: 5, required: 5, ts: now - 2 * DAY }];
     let r = await both(M, ok, null); assert.strictEqual(r.B.T.asgState(M, 'lan@x.com', now).st, 'missing'); assert.strictEqual(r.srv('Lan').st, 'missing', 'Library alone is not enough');
     const shot = { email: 'lan@x.com', shots: { x1: { id: 'a'.repeat(22), url: '/api/image/' + 'a'.repeat(22), ts: now - 0.5 * DAY } } };
-    r = await both(M, ok, shot); assert.strictEqual(r.B.T.asgState(M, 'lan@x.com', now).st, 'late'); assert.strictEqual(r.srv('Lan').st, 'late');
-    r = await both(M, [], shot); assert.strictEqual(r.B.T.asgState(M, 'lan@x.com', now).st, 'missing'); assert.strictEqual(r.srv('Lan').st, 'missing', 'a screenshot never completes the Library work');
+    const lp = [{ email: 'lan@x.com', asgId: 'm1', kind: 'week' }];
+    r = await both(M, ok, shot, null, lp); assert.strictEqual(r.B.T.asgState(M, 'lan@x.com', now).st, 'late'); assert.strictEqual(r.srv('Lan').st, 'late');
+    r = await both(M, ok, shot); assert.strictEqual(r.B.T.asgState(M, 'lan@x.com', now).st, 'unverified', 'no pass: the late screenshot is flagged, never counted'); assert.strictEqual(r.srv('Lan').st, 'unverified');
+    r = await both(M, [], shot, null, lp); assert.strictEqual(r.B.T.asgState(M, 'lan@x.com', now).st, 'pending'); assert.strictEqual(r.srv('Lan').st, 'pending', 'a screenshot never completes the Library work (the pass is still running)');
   });
   await t('kicked account (no roster row) and testers: in neither list; their attempts never count for anyone', async () => {
     const roster = [{ email: 'lan@x.com', name: 'Lan', cls: '7h30', role: 'student' }, { email: 'tt@x.com', name: 'Tess', cls: '7h30', role: 'student', tester: true }];

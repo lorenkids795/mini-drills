@@ -28,7 +28,7 @@ Không dán mật khẩu, khóa hay file JSON vào chat. Nhập thẳng vào ô 
 ### A. Firebase (miễn phí, gói Spark)
 1. https://console.firebase.google.com → **Add project** → tên `mini-drills-staging` (ghi lại **Project ID**) → tắt Google Analytics → Create.
 2. **Build › Firestore Database › Create database** → *Start in production mode* → chọn vị trí → Enable.
-3. **Firestore › Rules**: dán nội dung `firestore.rules` của nhánh đang thử → **Publish** (chỉ ở dự án staging).
+3. **Firestore › Rules**: dán nội dung `firestore.rules` của nhánh đang thử → **Publish** (chỉ ở dự án staging). Mỗi lần `firestore.rules` trên nhánh đổi thì dán lại (kịch bản trình duyệt tự dò: rules cũ thì bỏ qua phần thử giả mạo).
 4. **Build › Authentication › Get started** (bật dịch vụ đăng nhập; không cần bật nhà cung cấp nào). **Settings › Authorized domains › Add domain**: `phase-b.myhomeworkmyfuture.pages.dev`.
 5. **Project settings (bánh răng) › General › Your apps › Web (`</>`)** → nickname `staging-web` → Register app (không chọn Hosting). Ghi lại 2 giá trị **công khai**: `apiKey` (bắt đầu `AIza…`) và `appId` (dạng `1:…:web:…`).
 6. **Project settings › Service accounts › Generate new private key** → tải file JSON về máy. Dùng 2 trường của file này ở bước B3 (`client_email`, `private_key`), rồi **xóa file**.

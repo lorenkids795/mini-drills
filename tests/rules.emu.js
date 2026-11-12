@@ -5,7 +5,8 @@
 'use strict';
 const fs = require('fs'), path = require('path');
 const { initializeTestEnvironment, assertSucceeds, assertFails } = require('@firebase/rules-unit-testing');
-const { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, query, where, addDoc } = require('firebase/firestore');
+const { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, query, where, addDoc, serverTimestamp } = require('firebase/firestore');
+const D = 864e5, NOW = Date.now(), ST = () => serverTimestamp();
 
 (async () => {
   const env = await initializeTestEnvironment({ projectId: 'demo-md', firestore: { rules: fs.readFileSync(path.join(__dirname, '..', 'firestore.rules'), 'utf8'), host: '127.0.0.1', port: +(process.env.EMU_PORT || 8080) } });
@@ -21,6 +22,14 @@ const { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, query, w
     await setDoc(doc(d, 'attempts/a1'), { email: 's@x.com', ex: 'l1', score: 3, total: 5 }); await setDoc(doc(d, 'profiles/s'), { email: 's@x.com', xp: 10 });
     await setDoc(doc(d, 'hwdone/h1'), { email: 's@x.com', asgId: 'x' }); await setDoc(doc(d, 'redeems/r1'), { email: 's@x.com', done: false });
     await setDoc(doc(d, 'names/n1'), { name: 'S', cls: '7h' }); await setDoc(doc(d, 'exercises/e1'), { title: 'E' });
+    // (11/2026) assignment windows: A closed 100 days ago, B open, L closed but a week pass is active, D closed 3 h ago + day pass,
+    // E closed 2 days ago + day pass (ended), old = legacy weekStart only
+    const as = { asgA: [-120, -100], asgB: [-1, 6], asgL: [-10, -2], asgD: [-5, -0.125], asgE: [-9, -2], asgF: [1, 8] };
+    for (const k of Object.keys(as)) await setDoc(doc(d, 'assignments/' + k), { cls: '7h', ex: ['x1'], start: NOW + as[k][0] * D, due: NOW + as[k][1] * D });
+    await setDoc(doc(d, 'assignments/old'), { cls: '7h', ex: ['x1'], weekStart: '2025-01-06' });
+    await setDoc(doc(d, 'passes/s-x-com_asgL'), { email: 's@x.com', asgId: 'asgL', kind: 'week' });
+    await setDoc(doc(d, 'passes/s-x-com_asgD'), { email: 's@x.com', asgId: 'asgD', kind: 'day' });
+    await setDoc(doc(d, 'passes/s-x-com_asgE'), { email: 's@x.com', asgId: 'asgE', kind: 'day' });
   });
   let pass = 0, fail = 0; const out = [];
   const t = async (name, p) => { try { await p; pass++; out.push('PASS ' + name); } catch (e) { fail++; out.push('FAIL ' + name + ' -> ' + (e && e.message || e)); } };
@@ -57,12 +66,34 @@ const { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, query, w
   await t('teacher cannot change a score', assertFails(updateDoc(doc(T, 'attempts/a1'), { score: 5 })));
   await t('teacher cannot delete an attempt', assertFails(deleteDoc(doc(T, 'attempts/a1'))));
   await t('admin can delete an attempt', assertSucceeds(deleteDoc(doc(A, 'attempts/a1'))));
-  await t('student creates own attempt', assertSucceeds(addDoc(collection(S, 'attempts'), { email: 's@x.com', ex: 'l1', score: 4, total: 5 })));
-  await t('student saves answered / required (Phase B)', assertSucceeds(addDoc(collection(S, 'attempts'), { email: 's@x.com', ex: 'l1', score: 3, total: 5, answered: 4, required: 5 })));
-  await t('answered can never be more than required', assertFails(addDoc(collection(S, 'attempts'), { email: 's@x.com', ex: 'l1', score: 3, total: 5, answered: 6, required: 5 })));
-  await t('student cannot give self a grade', assertFails(addDoc(collection(S, 'attempts'), { email: 's@x.com', ex: 'l1', score: 4, total: 5, grade: { overall: 9 } })));
-  await t('student cannot write for another student', assertFails(addDoc(collection(S, 'attempts'), { email: 'other@x.com', ex: 'l1', score: 1, total: 5 })));
+  await t('student creates own attempt', assertSucceeds(addDoc(collection(S, 'attempts'), { email: 's@x.com', ex: 'l1', sts: ST(), score: 4, total: 5 })));
+  await t('student saves answered / required (Phase B)', assertSucceeds(addDoc(collection(S, 'attempts'), { email: 's@x.com', ex: 'l1', sts: ST(), score: 3, total: 5, answered: 4, required: 5 })));
+  await t('answered can never be more than required', assertFails(addDoc(collection(S, 'attempts'), { email: 's@x.com', ex: 'l1', sts: ST(), score: 3, total: 5, answered: 6, required: 5 })));
+  await t('student cannot give self a grade', assertFails(addDoc(collection(S, 'attempts'), { email: 's@x.com', ex: 'l1', sts: ST(), score: 4, total: 5, grade: { overall: 9 } })));
+  await t('student cannot write for another student', assertFails(addDoc(collection(S, 'attempts'), { email: 'other@x.com', ex: 'l1', sts: ST(), score: 1, total: 5 })));
   await t('teacher cannot delete a profile', assertFails(deleteDoc(doc(T, 'profiles/s'))));
+  // ---- (11/2026) each assignment occurrence has its own window; server time
+  const att = (o) => addDoc(collection(S, 'attempts'), Object.assign({ email: 's@x.com', ex: 'x1', score: 5, total: 5, answered: 5, required: 5, sts: ST() }, o));
+  await t('attempt without server time is refused', assertFails(addDoc(collection(S, 'attempts'), { email: 's@x.com', ex: 'x1', score: 1, total: 5 })));
+  await t('attempt with a made-up time (not the server time) is refused', assertFails(att({ sts: NOW - 200 * D })));
+  await t('free practice (no assignment) is accepted', assertSucceeds(att({})));
+  await t('open assignment B is accepted', assertSucceeds(att({ asg: 'asgB' })));
+  await t('A closed 100 days ago is refused, even though B with the same exercise is open', assertFails(att({ asg: 'asgA' })));
+  await t('closed but the week late pass is still active: accepted', assertSucceeds(att({ asg: 'asgL' })));
+  await t('closed 3 h ago, day pass active: accepted', assertSucceeds(att({ asg: 'asgD' })));
+  await t('closed 2 days ago, day pass ended: refused', assertFails(att({ asg: 'asgE' })));
+  await t('assignment not sent yet: refused', assertFails(att({ asg: 'asgF' })));
+  await t('an assignment that does not exist: refused', assertFails(att({ asg: 'nope' })));
+  await t('legacy assignment without a deadline: not blocked', assertSucceeds(att({ asg: 'old' })));
+  await t('late pass for an open assignment: accepted', assertSucceeds(setDoc(doc(S, 'passes/s-x-com_asgB'), { email: 's@x.com', asgId: 'asgB', kind: 'day', month: '2026-11', ts: NOW })));
+  await t('late pass cannot be changed afterwards (day → week)', assertFails(setDoc(doc(S, 'passes/s-x-com_asgB'), { email: 's@x.com', asgId: 'asgB', kind: 'week', month: '2026-11', ts: NOW })));
+  await t('late pass that would end in the past (A, 100 days): refused', assertFails(setDoc(doc(S, 'passes/s-x-com_asgA'), { email: 's@x.com', asgId: 'asgA', kind: 'week', month: '2026-11', ts: NOW })));
+  await t('late pass under another id: refused', assertFails(setDoc(doc(S, 'passes/zzz_asgF'), { email: 's@x.com', asgId: 'asgF', kind: 'day' })));
+  await t('late pass of an unknown kind: refused', assertFails(setDoc(doc(S, 'passes/s-x-com_asgF'), { email: 's@x.com', asgId: 'asgF', kind: 'month' })));
+  await t('screenshot / I am done for open B: accepted', assertSucceeds(setDoc(doc(S, 'hwdone/s-x-com_asgB'), { email: 's@x.com', asgId: 'asgB', shots: { x1: { url: '/api/image/a', ts: NOW } } })));
+  await t('screenshot for closed A: refused', assertFails(setDoc(doc(S, 'hwdone/s-x-com_asgA'), { email: 's@x.com', asgId: 'asgA', shots: { x1: { url: '/api/image/a', ts: NOW } } })));
+  await t('screenshot inside the active week pass: accepted', assertSucceeds(setDoc(doc(S, 'hwdone/s-x-com_asgL'), { email: 's@x.com', asgId: 'asgL', done: true })));
+  await t('a homework record cannot be moved to another assignment', assertFails(updateDoc(doc(S, 'hwdone/s-x-com_asgB'), { asgId: 'asgL' })));
   await t('teacher cannot delete homework records', assertFails(deleteDoc(doc(T, 'hwdone/h1'))));
   await t('teacher cannot mark redeems done', assertFails(updateDoc(doc(T, 'redeems/r1'), { done: true })));
   await t('admin marks redeems done', assertSucceeds(updateDoc(doc(A, 'redeems/r1'), { done: true })));

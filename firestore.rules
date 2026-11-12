@@ -42,6 +42,25 @@ service cloud.firestore {
       return request.resource.data.get(k, 0) - resource.data.get(k, 0);
     }
 
+    // ---- (11/2026) Mỗi lần giao bài có hạn riêng: [ngày gửi, hạn + late pass] ----
+    // slug(email) giống app: chữ thường, ký tự khác a-z0-9 thành '-', bỏ '-' ở hai đầu (id của passes = slug_asgId)
+    function mySlug() {
+      return me().replace('[^a-z0-9]+', '-').replace('^-|-$', '');
+    }
+    function passDays(asg) {
+      let path = /databases/$(database)/documents/passes/$(mySlug() + '_' + asg);
+      let k = exists(path) ? get(path).data.get('kind', '') : '';
+      return k == 'week' ? 7 : (k == 'day' ? 1 : 0);
+    }
+    // bài giao còn mở lúc này (giờ của server): đã gửi (cho lệch 10 phút) và chưa quá hạn + late pass của chính học sinh.
+    // Bài giao kiểu cũ (chỉ có weekStart, không có due) không tính được hạn: không chặn.
+    function asgOpen(asg) {
+      let a = get(/databases/$(database)/documents/assignments/$(asg)).data;
+      return !('due' in a)
+        || (request.time.toMillis() >= a.get('start', 0) - 600000
+            && request.time.toMillis() <= a.due + passDays(asg) * 86400000);
+    }
+
     // ---- Bài làm: học sinh chỉ thấy bài của mình, giáo viên thấy tất cả ----
     match /attempts/{id} {
       allow read: if teacher() || ownsOld();
@@ -51,7 +70,11 @@ service cloud.firestore {
         && numIn('score', 0, 1000) && numIn('total', 0, 1000)
         && numIn('answered', 0, 1000) && numIn('required', 0, 1000)
         && request.resource.data.get('answered', 0) <= request.resource.data.get('required', 1000)
-        && request.resource.data.get('score', 0) <= request.resource.data.get('total', 0);
+        && request.resource.data.get('score', 0) <= request.resource.data.get('total', 0)
+        // giờ nộp do server ghi (không sửa lùi được); bài làm cho một bài giao (asg) chỉ nhận khi bài giao đó còn mở
+        && request.resource.data.sts == request.time
+        && (request.resource.data.get('asg', '') == ''
+            || (request.resource.data.asg is string && asgOpen(request.resource.data.asg)));
       // giáo viên chấm (grade, nhận xét Writing); học sinh chỉ thêm gợi ý sửa lỗi (fixes); admin mọi trường
       allow update: if admin()
         || (teacher() && changed().hasOnly(['grade', 'annotations', 'overallComment', 'fixes']))
@@ -60,16 +83,23 @@ service cloud.firestore {
     }
 
     // ---- Dữ liệu riêng của từng học sinh (có trường email) ----
+    // nộp / ảnh chụp bài ngoài: chỉ khi bài giao còn mở (hạn + late pass)
     match /hwdone/{id} {
       allow read: if teacher() || ownsOld();
-      allow create: if ownsNew();
-      allow update: if ownsOld() && ownsNew();
+      allow create: if ownsNew() && request.resource.data.asgId is string && asgOpen(request.resource.data.asgId);
+      allow update: if ownsOld() && ownsNew() && request.resource.data.asgId == resource.data.asgId && asgOpen(resource.data.asgId);
       allow delete: if admin();
     }
+    // late pass: một lần cho một bài giao (id = slug_asgId), loại day / week, khi hạn mới còn ở tương lai; không sửa được.
+    // Giới hạn mỗi tháng (một 1-day, một 1-week) vẫn chỉ do app kiểm (rules không đếm được).
     match /passes/{id} {
       allow read: if teacher() || ownsOld();
-      allow create: if ownsNew();
-      allow update: if ownsOld() && ownsNew();
+      allow create: if ownsNew() && request.resource.data.asgId is string
+        && id == mySlug() + '_' + request.resource.data.asgId
+        && request.resource.data.kind in ['day', 'week']
+        && request.time.toMillis() <= get(/databases/$(database)/documents/assignments/$(request.resource.data.asgId)).data.due
+             + (request.resource.data.kind == 'week' ? 7 : 1) * 86400000;
+      allow update: if admin();
       allow delete: if admin();
     }
     match /cards/{id} {

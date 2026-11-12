@@ -68,7 +68,10 @@ function seed(S) {
   await t('server: statuses = on time / late / missing / pending / extended by a late pass', () => {
     const S = server(), st = S.ctx.T.hwaStatus, a = { start: 0, due: 1000, ex: ['l1'] };
     assert.strictEqual(st(a, [{ ex: 'l1', ts: 900, answered: 1, required: 1 }], null, null, 2000).st, 'done');
-    assert.strictEqual(st(a, [{ ex: 'l1', ts: 1500, answered: 1, required: 1 }], null, null, 2000).st, 'late');
+    // (11/2026) after the deadline without a late pass: never counted (an older attempt is flagged, not credited)
+    assert.strictEqual(st(a, [{ ex: 'l1', ts: 1500, answered: 1, required: 1 }], null, null, 2000).st, 'unverified');
+    assert.strictEqual(st(a, [{ ex: 'l1', ts: 1500, sts: 1500, answered: 1, required: 1 }], null, null, 2000).st, 'missing');
+    assert.strictEqual(st(a, [{ ex: 'l1', ts: 1500, answered: 1, required: 1 }], null, { kind: 'day' }, 2000).st, 'late', 'inside the late pass = late');
     assert.strictEqual(st(a, [], null, null, 2000).st, 'missing');
     assert.strictEqual(st(a, [], null, null, 500).st, 'pending');
     const e = st(a, [], null, { kind: 'day' }, 2000); assert.ok(e.st === 'pending' && e.ext, 'extension moves the deadline');
