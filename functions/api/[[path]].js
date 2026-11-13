@@ -86,6 +86,9 @@ async function idUser(env, request) {
   } catch (e) { return null; }
   const em = normEmail(pay.em);
   if (!emailOk(em)) return null;
+  // (11/2026) a valid token of an account the admin kicked / paused / moved is refused (Firebase keeps old sessions alive):
+  // no uploads, Lucky Wheel, late-pass items, AI or assistant data from an old session. One KV read.
+  if (env.MD_KV && (await offState(env, em))) return null;
   return { em, role: String(pay.role || ''), uid: String(pay.sub) };
 }
 const needSignIn = () => json({ error: 'Your sign-in has expired. Reload the page and sign in again.', code: 'auth' }, 401);
@@ -1135,7 +1138,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-11-13c';
+const API_VERSION = '2026-11-13d';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);

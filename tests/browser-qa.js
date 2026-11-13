@@ -394,6 +394,63 @@ async function openEx(page, exId) {
     await fsCheck(page, 'Assistant');
     await ctx.close();
   }
+  // ---------- (11/2026) a FRESH made-up student every run (qa.legacy@example.test, class Test; made with an old-style roster id,
+  // fixed with admin/rosterids): Incomplete after reload, external screenshot closed → late pass → accepted, then Kick while the
+  // student's old session stays open: no homework attempt, late pass, screenshot record, upload or Lucky Wheel item afterwards
+  {
+    const A = await newCtx(b); await login(A.page, E.STG_ADMIN_EMAIL, E.STG_ADMIN_PASSWORD); await envGate(A.page, 'fresh student');
+    const fx = await api(A.page, 'admin/staging', { op: 'qa-legacy', newPassword: true }, true); if (fx.d.password) secretWords.push(fx.d.password);
+    const mv = await api(A.page, 'admin/rosterids', { op: 'apply', confirm: 'MOVE' }, true);
+    rec('Admin', 'fresh QA student (old-style roster id, fixed with admin/rosterids)', 'fixture 200, 1 row moved', JSON.stringify({ fixture: fx.status, moved: mv.d.moved, failed: mv.d.failed }), fx.status === 200 && mv.d.moved >= 1);
+    const em = fx.d.email, sl = em.replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const { ctx, page } = await newCtx(b); await login(page, em, fx.d.password); await envGate(page, 'fresh student work');
+    await openEx(page, 'c_qa_r5'); await answer(page, EX.qa_r5, 3, [3, 4]); await page.click('#submit'); await page.waitForTimeout(600);
+    await page.click('#uiDlg [data-act="ui-ok"]'); await page.waitForTimeout(2500);
+    await page.reload({ waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(3000); await tab(page, 'library');
+    const home = clean(await page.locator('#libBody').textContent());
+    rec('Fresh student', 'after reload: still Incomplete 3/5, not silently complete', 'Incomplete · 3/5 answered', (home.match(/Incomplete · \d\/\d answered/) || ['not found'])[0], /Incomplete · 3\/5 answered/.test(home), await shot(page, 'fresh-after-reload'));
+    // external task of the overdue mixed homework: closed (no pass) → no upload button, direct record refused
+    const k = 'qa_hw_mixed|x1', inpSel = 'input#hwShot_qa_hw_mixed_x1';
+    await page.click('[data-act="hw-xopen"][data-k="' + k + '"]').catch(() => {}); await page.waitForTimeout(600);
+    const closedInp = await page.locator(inpSel).count();
+    const dr = await page.evaluate(async ([sl]) => { const db = firebase.firestore(), me = window.MD_USER.email.toLowerCase();
+      try { await db.doc('hwdone/' + sl + '_qa_hw_mixed').set({ email: me, asgId: 'qa_hw_mixed', shots: { x1: { id: 'x', url: '/api/image/x', ts: Date.now() } }, ts: Date.now() }); return 'ALLOWED'; } catch (e) { return e.code || 'error'; } }, [sl]);
+    rec('Fresh student', 'external task after the deadline, no late pass: no upload button, a direct record is refused', '0 upload inputs + permission-denied', JSON.stringify({ uploadInputs: closedInp, direct: dr }), closedInp === 0 && dr === 'permission-denied', await shot(page, 'fresh-external-closed'));
+    // a 1-week late pass (the app's own write: pass + month marker in one batch) opens it again
+    const lp = await page.evaluate(async ([sl]) => { const db = firebase.firestore(), me = window.MD_USER.email.toLowerCase(), VM = new Date(Date.now() + 7 * 36e5).toISOString().slice(0, 7), bt = db.batch();
+      bt.set(db.doc('passes/' + sl + '_qa_hw_mixed'), { email: me, asgId: 'qa_hw_mixed', kind: 'week', month: VM, ts: Date.now() }); bt.set(db.doc('passq/' + sl + '_' + VM + '_week'), { email: me, asgId: 'qa_hw_mixed', kind: 'week', month: VM, ts: Date.now() });
+      try { await bt.commit(); return 'ALLOWED'; } catch (e) { return e.code || 'error'; } }, [sl]);
+    await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(2500);
+    await page.click('[data-act="hw-xopen"][data-k="' + k + '"]').catch(() => {}); await page.waitForTimeout(600);
+    let upTxt = 'upload input not found', upOk = false;
+    if (await page.locator(inpSel).count()) {
+      const png = await page.screenshot({ type: 'png', clip: { x: 0, y: 0, width: 240, height: 160 } });
+      const resp = page.waitForResponse((r) => /\/api\/image\?kind=hwshot/.test(r.url()), { timeout: 20000 }).catch(() => null);
+      await page.locator(inpSel).setInputFiles({ name: 'qa.png', mimeType: 'image/png', buffer: png }); const r = await resp; await page.waitForTimeout(3000);
+      const rec2 = await page.evaluate(async ([sl]) => { const q = await firebase.firestore().collection('hwdone').where('email', '==', window.MD_USER.email.toLowerCase()).get(); const d = q.docs.find((x) => x.id === sl + '_qa_hw_mixed'); return d ? !!(d.data().shots && d.data().shots.x1) : false; }, [sl]);
+      upOk = !!r && r.status() === 200 && rec2; upTxt = 'upload HTTP ' + (r ? r.status() : 'none') + ' · record with screenshot: ' + rec2;
+    }
+    rec('Fresh student', 'external task after the deadline WITH a 1-week late pass: upload accepted and recorded', 'pass ALLOWED, upload 200, record saved', JSON.stringify({ pass: lp, upload: upTxt }), lp === 'ALLOWED' && upOk, await shot(page, 'fresh-external-latepass'));
+    // Kick while this page keeps its old sign-in
+    const kk = await api(A.page, 'admin/kick', { email: em }, true);
+    const z = await page.evaluate(async ([sl]) => { const db = firebase.firestore(), FV = firebase.firestore.FieldValue, me = window.MD_USER.email.toLowerCase(), r = {}, VM = new Date(Date.now() + 7 * 36e5).toISOString().slice(0, 7);
+      const tok = await firebase.auth().currentUser.getIdToken(); r.sessionAlive = !!tok;
+      const att = (x) => Object.assign({ email: me, student: 'QA Legacy Student', cls: 'Test', score: 5, total: 5, answered: 5, required: 5, items: [], ts: Date.now(), sts: FV.serverTimestamp(), qaProbe: true }, x);
+      const tr = async (k, f) => { try { await f(); r[k] = 'ALLOWED'; } catch (e) { r[k] = e.code || 'error'; } };
+      await tr('homeworkAttempt', () => db.collection('attempts').add(att({ asg: 'qa_hw_now', ex: 'c_qa_r10' })));
+      await tr('latePassDay', () => { const bt = db.batch(); bt.set(db.doc('passes/' + sl + '_qa_q1'), { email: me, asgId: 'qa_q1', kind: 'day', month: VM, ts: Date.now() }); bt.set(db.doc('passq/' + sl + '_' + VM + '_day'), { email: me, asgId: 'qa_q1', kind: 'day', month: VM, ts: Date.now() }); return bt.commit(); });
+      await tr('screenshotRecord', () => db.doc('hwdone/' + sl + '_qa_hw_now').set({ email: me, asgId: 'qa_hw_now', done: true, ts: Date.now() }));
+      await tr('freePractice', () => db.collection('attempts').add(att({ ex: 'c_qa_r10' })));
+      const H = { Authorization: 'Bearer ' + tok };
+      r.imageUpload = (await fetch('/api/image?kind=hwshot', { method: 'POST', headers: Object.assign({ 'Content-Type': 'image/png' }, H), body: new Uint8Array(400) })).status;
+      r.luckyWheelPass = (await fetch('/api/pass', { method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, H), body: JSON.stringify({ asgId: 'qa_hw_now', itemId: 'qa_ext_1' }) })).status;
+      r.spin = (await fetch('/api/spin', { method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, H), body: JSON.stringify({ useXP: false, rid: 'qa' + Date.now() }) })).status;
+      return r; }, [sl]);
+    rec('Fresh student', 'kicked, old session still open: homework attempt, late pass and screenshot record refused by the rules', 'kick 200, session alive, all permission-denied', JSON.stringify({ kick: kk.status, z }), kk.status === 200 && z.sessionAlive && z.homeworkAttempt === 'permission-denied' && z.latePassDay === 'permission-denied' && z.screenshotRecord === 'permission-denied');
+    rec('Fresh student', 'kicked, old session: uploads, Lucky Wheel item and spin refused by the server', '401 / 401 / 401', JSON.stringify({ image: z.imageUpload, pass: z.luckyWheelPass, spin: z.spin }), z.imageUpload === 401 && z.luckyWheelPass === 401 && z.spin === 401);
+    rec('Fresh student', 'kicked, old session: free practice (no homework) is still saved but has no roster row, so it never counts for anyone', 'recorded as observed (low risk, see report)', z.freePractice, true);
+    await ctx.close(); await A.ctx.close();
+  }
   fs.writeFileSync(path.join(OUT, 'report.json'), JSON.stringify(R, null, 2));
   console.log('---- ' + R.filter((r) => r.result === 'PASS').length + ' pass · ' + R.filter((r) => r.result === 'FAIL').length + ' fail · ' + R.filter((r) => r.result === 'NOT TESTED').length + ' not tested');
   await b.close();
