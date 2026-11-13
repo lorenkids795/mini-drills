@@ -22,6 +22,8 @@ const VM = (() => { const d = new Date(Date.now() + 7 * 36e5); return d.getUTCFu
     await setDoc(doc(d, 'codes/c3'), { code: 'TEA-3', kind: 'tea', to: 'other@x.com' });
     await setDoc(doc(d, 'config/xp'), { vals: {} }); await setDoc(doc(d, 'roster/s@x.com'), { email: 's@x.com', cls: '7h', name: 'S' });
     await setDoc(doc(d, 'roster/tester@x.com'), { email: 'tester@x.com', cls: '7h', name: 'X', tester: true });
+    await setDoc(doc(d, 'roster/p2@x.com'), { email: 'p2@x.com', cls: '7h', name: 'P2' }); await setDoc(doc(d, 'roster/p3@x.com'), { email: 'p3@x.com', cls: '7h', name: 'P3' });
+    await setDoc(doc(d, 'roster/P4@X.com'), { email: 'p4@x.com', cls: '7h', name: 'P4 (old import id)' });
     await setDoc(doc(d, 'attempts/a1'), { email: 's@x.com', ex: 'l1', score: 3, total: 5 }); await setDoc(doc(d, 'profiles/s'), { email: 's@x.com', xp: 10 });
     await setDoc(doc(d, 'hwdone/h1'), { email: 's@x.com', asgId: 'x' }); await setDoc(doc(d, 'redeems/r1'), { email: 's@x.com', done: false });
     await setDoc(doc(d, 'names/n1'), { name: 'S', cls: '7h' }); await setDoc(doc(d, 'exercises/e1'), { title: 'E' });
@@ -101,7 +103,17 @@ const VM = (() => { const d = new Date(Date.now() + 7 * 36e5); return d.getUTCFu
   await t('exercise check: no exercise id at all: refused', assertFails(addDoc(collection(S, 'attempts'), { email: 's@x.com', score: 1, total: 5, sts: ST(), asg: 'asgB' })));
   await t('class proof: homework record (screenshot / I am done) for another class: refused', assertFails(setDoc(doc(S, 'hwdone/s-x-com_asgO'), { email: 's@x.com', asgId: 'asgO', done: true })));
   await t('class proof: a late pass for a homework of another class: refused', assertFails(redeemS('asgO', 'day')));
-  await t('class proof: a student whose roster row is stored under another id (old import) is only checked for the deadline', assertSucceeds(addDoc(collection(P3, 'attempts'), { email: 'p3@x.com', ex: 'x1', score: 1, total: 5, sts: ST(), asg: 'asgB' })));
+  // (11/2026) fail closed: no roster/<email> row = refused (old-id rows are fixed by the admin, admin/rosterids)
+  const P4 = as('p4', { em: 'p4@x.com', role: 'student' }), P5 = as('p5', { em: 'p5@x.com', role: 'student' });
+  const p4att = () => addDoc(collection(P4, 'attempts'), { email: 'p4@x.com', ex: 'x1', score: 1, total: 5, sts: ST(), asg: 'asgB' });
+  await t('class proof: roster row stored under an old id (P4@X.com): homework attempt refused (fail closed)', assertFails(p4att()));
+  await t('class proof: old-id student: homework record refused', assertFails(setDoc(doc(P4, 'hwdone/p4-x-com_asgB'), { email: 'p4@x.com', asgId: 'asgB', done: true })));
+  await t('class proof: old-id student: late pass refused', assertFails(redeem(P4, 'p4@x.com', 'asgB', 'day')));
+  await t('class proof: token with no roster row at all (removed account): homework attempt refused', assertFails(addDoc(collection(P5, 'attempts'), { email: 'p5@x.com', ex: 'x1', score: 1, total: 5, sts: ST(), asg: 'asgB' })));
+  await t('class proof: no roster row: free practice (no asg) still saved, it never counts as homework', assertSucceeds(addDoc(collection(P5, 'attempts'), { email: 'p5@x.com', ex: 'x1', score: 1, total: 5, sts: ST() })));
+  await env.withSecurityRulesDisabled(async (c) => { const d = c.firestore(); const o = (await getDoc(doc(d, 'roster/P4@X.com'))).data(); await setDoc(doc(d, 'roster/p4@x.com'), Object.assign({}, o, { legacyId: 'P4@X.com' })); await deleteDoc(doc(d, 'roster/P4@X.com')); });
+  await t('class proof: after the admin moves the row to roster/p4@x.com the same student hands in normally', assertSucceeds(p4att()));
+  await t('class proof: after the fix, another class is still refused', assertFails(addDoc(collection(P4, 'attempts'), { email: 'p4@x.com', ex: 'x1', score: 1, total: 5, sts: ST(), asg: 'asgO' })));
   // ---- (11/2026) monthly late-pass quota: pass + marker passq/<slug>_<VN month>_<kind> in ONE batch
   await t('quota: 1-day pass for B (pass + month marker together): accepted', assertSucceeds(redeem(S, 's@x.com', 'asgB', 'day')));
   await t('quota: a second 1-day pass in the same month (for G): refused', assertFails(redeem(S, 's@x.com', 'asgG', 'day')));

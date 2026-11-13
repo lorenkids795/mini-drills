@@ -845,7 +845,11 @@ async function login(env, body) {
   const off = await offState(env, email);
   if (off) return fail(OFF_MSG[off], 403);
   const who = await roleOf(env, email);
-  if (!who) return fail('This email is not on the class list. Ask your teacher.', 403);
+  if (!who) {
+    const old = await rosterRow(env, email);
+    if (old && old.id !== email && old.data.role !== 'teacher') return json({ error: 'Your class-list entry needs a quick fix by the admin before you can sign in. Ask the admin (Admin › My account › Diagnostics › Class-list IDs).', code: 'rosterid' }, 403);
+    return fail('This email is not on the class list. Ask your teacher.', 403);
+  }
   const res = { token: await customToken(env, email, who), user: { email, name: who.name, role: who.role, adm: !!who.adm } };
   if (who.adm) res.adminKey = await newAdminKey(env, email);
   if (who.role === 'teacher') res.staffKey = await newStaffKey(env, email); // teachers and admin
@@ -1131,7 +1135,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-11-13b';
+const API_VERSION = '2026-11-13c';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -2804,12 +2808,50 @@ async function adminExtLegacy(env, body) {
   }
   return json({ ok: true, dry: false, profilesChanged: changed, itemsRetired: items, failed });
 }
+// POST /api/admin/rosterids {op:'preview'} | {op:'apply', confirm:'MOVE'} (admin): class-list rows stored under an id that is
+// not the lower-case email (old CSV import, typed by hand, capitals). Such students cannot sign in (roleOf reads
+// roster/<email>) and the Firestore rules refuse their homework (class proof needs roster/<email>). Apply copies each row to
+// roster/<lower-case email> (create-if-absent, legacyId kept), saves audit/rosterids_<ts> first, then deletes the old row.
+// A row whose email is invalid, or whose target id already exists (two rows for one student), is reported and left alone.
+// Nothing else changes: attempts, profiles, passes and names are keyed by email, not by the roster id. Running it again = nothing.
+async function adminRosterIds(env, body) {
+  const op = String(body.op || 'preview');
+  if (op === 'apply' && body.confirm !== 'MOVE') return fail('Type MOVE to confirm.');
+  const all = await fsList(env, 'roster'), ids = {};
+  all.forEach((r) => { ids[r.id] = true; });
+  const rows = all.filter((r) => r.id !== normEmail(r.email || r.id)).map((r) => {
+    const to = normEmail(r.email || r.id);
+    return { id: r.id, to, name: String(r.name || ''), cls: String(r.cls || ''), state: !emailOk(to) ? 'invalid email (left alone)' : ids[to] ? 'a row with the right id already exists (left alone)' : 'to move' };
+  });
+  const todo = rows.filter((r) => r.state === 'to move');
+  if (op !== 'apply') return json({ ok: true, dry: true, roster: all.length, legacy: rows.length, toMove: todo.length, rows });
+  await fsPut(env, 'audit', 'rosterids_' + Date.now(), { rows: JSON.stringify(all.filter((r) => todo.some((x) => x.id === r.id))), by: 'admin/rosterids', ts: Date.now() });
+  let moved = 0; const failed = [];
+  for (const r of todo) {
+    const doc = await fsGet(env, 'roster', r.id);
+    if (!doc) continue;
+    if (!(await fsCreate(env, 'roster', r.to, Object.assign({}, doc.data, { email: r.to, legacyId: r.id, movedTs: Date.now() })))) { failed.push(r.id); continue; }
+    await fsDelete(env, 'roster', r.id);
+    moved++;
+  }
+  return json({ ok: true, dry: false, moved, failed, rows });
+}
 async function adminStaging(env, body) {
   const st = await envState(env);
   if (st.env !== 'staging' || !st.ok) return fail('Staging test data can only be made on a correctly set up staging deployment. Nothing was written.', 403);
   const now = Date.now(), D = 864e5, op = String(body.op || '');
   if (op === 'qa' || op === 'qa-preview') return await adminStagingQa(env, op);
   if (op === 'rules') return await stagingRules(env);
+  if (op === 'qa-legacy') { // roster/QA.Legacy@Example.test (old-style id) for qa.legacy@example.test, class Test; resets itself
+    const em = 'qa.legacy@example.test', oldId = 'QA.Legacy@Example.test', cur = await fsGet(env, 'roster', em);
+    if (cur && !cur.data.qa) return fail('roster/' + em + ' exists and was not made by the QA fixture. Nothing was written.', 409);
+    if (cur) await fsDelete(env, 'roster', em);
+    await fsPut(env, 'roster', oldId, { email: em, name: 'QA Legacy Student', cls: 'Test', course: '', role: 'student', ts: now - 30 * D, staging: true, qa: true });
+    let password = '(unchanged: it already has one)';
+    if (body.newPassword === true || !(await env.MD_KV.get('acct:' + em))) { password = stgPassword(); await savePassword(env, em, password); }
+    await env.MD_KV.delete('off:' + em); await env.MD_KV.delete('rl:' + em);
+    return json({ ok: true, email: em, oldId, password });
+  }
   if (op === 'bulk') { // 620 attempts for one made-up student: checks there is no 500 cap anywhere
     const rows = [];
     for (let i = 0; i < 620; i++) rows.push({ id: 'stg_bulk_' + i, data: { email: 'stg.student@example.test', student: 'STG Student An', cls: 'STG-A', ex: i % 2 ? 'l2' : 'r2', score: 3, total: 5, answered: 5, required: 5, items: [], ts: now - (i % 150) * D - i * 1000, staging: true } });
@@ -2904,6 +2946,7 @@ export async function onRequest(ctx) {
       if (route === 'admin/staging') return await adminStaging(env, body);
       if (route === 'admin/passmarkers') return await adminPassMarkers(env, body);
       if (route === 'admin/extlegacy') return await adminExtLegacy(env, body);
+      if (route === 'admin/rosterids') return await adminRosterIds(env, body);
       if (route === 'admin/users') return await adminUsers(env);
       if (route === 'admin/password') return await adminPassword(env, body);
       if (route === 'admin/active') return await adminActive(env, body);

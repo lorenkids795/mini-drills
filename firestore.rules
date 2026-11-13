@@ -55,13 +55,14 @@ service cloud.firestore {
     // bài giao còn mở lúc này (giờ của server): đã gửi (cho lệch 10 phút) và chưa quá hạn + late pass của chính học sinh.
     // Bài giao kiểu cũ (chỉ có weekStart, không có due) không tính được hạn: không chặn.
     // (11/2026) lớp của học sinh = dòng roster/<email> (chỉ server / admin ghi, học sinh không sửa được), KHÔNG phải lớp
-    // học sinh tự ghi trên bài làm. Bài giao phải thuộc đúng lớp đó. Dòng roster cũ lưu dưới id khác (nhập tay, chữ hoa)
-    // không tìm thấy ở đây: khi đó chỉ kiểm hạn, để không chặn nhầm việc nộp bài của các em.
+    // học sinh tự ghi trên bài làm. Bài giao phải thuộc đúng lớp đó. Không có dòng roster/<email> = TỪ CHỐI (fail closed).
+    // Không chặn nhầm ai: server chỉ cho đăng nhập học sinh khi có đúng roster/<email> (roleOf). Dòng cũ lưu dưới id khác
+    // (nhập tay, chữ hoa) -> đăng nhập báo "needs a quick fix", admin sửa ở Diagnostics › Class-list IDs (admin/rosterids).
     function rosterPath() {
       return /databases/$(database)/documents/roster/$(me());
     }
     function inAsgClass(a) {
-      return !exists(rosterPath()) || get(rosterPath()).data.get('cls', '') == a.get('cls', '');
+      return exists(rosterPath()) && get(rosterPath()).data.get('cls', '') == a.get('cls', '');
     }
     function asgOpen(asg) {
       let a = get(/databases/$(database)/documents/assignments/$(asg)).data;

@@ -769,6 +769,8 @@ Các thay đổi đã có trong code. **Không đảo ngược** nếu không đ
    - `admin/staging {op:'rules'}` (chỉ staging, chỉ đọc): bản rules Firestore **đang chạy** trên dự án staging (Firebase Rules API: thời điểm, sha, có `vnMonth`/`classProof`/`exInAsg`…).
    - `APP_VERSION` = `API_VERSION` = `2026-11-13b`. Test: `rules.emu.js` 97, `late-pass` 18, `asg-scope` 18, `staging-qa` 8.
 
+99. **Kiểm lớp fail closed + sửa roster ID cũ (11/2026)** (nhánh `phase-b`; rules phải dán lại vào **staging**): `inAsgClass` = `exists(roster/<email>) && cls khớp` (trước: không có dòng roster thì bỏ qua kiểm lớp). Không chặn nhầm ai: server chỉ cho học sinh đăng nhập khi có đúng `roster/<email>` (`roleOf`), nên chỗ bỏ qua cũ chỉ có lợi cho token của tài khoản đã mất dòng roster. Dòng roster lưu dưới id cũ (chữ hoa, nhập tay): đăng nhập báo `code:'rosterid'` "Your class-list entry needs a quick fix by the admin…"; **`POST /api/admin/rosterids`** `{op:'preview'}` (chỉ đọc) / `{op:'apply', confirm:'MOVE'}` (sao lưu `audit/rosterids_<ts>` trước, chép sang `roster/<email chữ thường>` + `legacyId`, xóa dòng cũ; trùng / email sai thì để nguyên; chạy lại = không đổi). Admin › My account › Diagnostics › **Class-list IDs**. Staging: `admin/staging {op:'qa-legacy'}` tạo học sinh mẫu id cũ. `APP_VERSION` = `API_VERSION` = `2026-11-13c`. Test `rules.emu.js` 103, `tests/roster-ids.test.js` 7.
+
 ## 8. Giới hạn đã biết / chưa làm
 
 - AI chữa lỗi Writing chạy qua `/api/ai/correct` (cần `GEMINI_KEY`). `aiLookup` (tra từ bằng AI) vẫn gọi `window.claude` nên chưa chạy trên site thật.
