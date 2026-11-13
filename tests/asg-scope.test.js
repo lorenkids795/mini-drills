@@ -138,5 +138,12 @@ async function both(asgs, atts, passes, hw) {
     assert.strictEqual(H.ms({ toMillis: () => 1234 }), 1234); assert.strictEqual(H.ms('2026-01-01T00:00:00Z'), Date.parse('2026-01-01T00:00:00Z'));
     assert.strictEqual(H.ms({ seconds: 2, nanoseconds: 5e6 }), 2005); assert.strictEqual(H.tOf({ ts: 9, sts: null }), 9);
   });
+  await t('forged links never count: another class\'s homework id, or an exercise that is not in the homework', async () => {
+    const OC = Object.assign({}, B, { id: 'OC', cls: '9h' });
+    let r = await both([B, OC], [full({ ts: now - 1000, sts: now - 1000, asg: 'OC' })]);
+    assert.deepStrictEqual(r.B, ['pending', 'pending'], 'Lan (7h) linked work to a 9h homework: not counted for her own homework');
+    r = await both([B], [full({ ex: 'c_other', ts: now - 1000, sts: now - 1000, asg: 'B' })]);
+    assert.deepStrictEqual(r.B, ['pending', 'pending'], 'an exercise outside the homework is not a part of it');
+  });
   out.forEach((l) => console.log(l)); console.log('---- ' + pass + '/' + (pass + fail) + ' passed'); if (fail) process.exitCode = 1;
 })();

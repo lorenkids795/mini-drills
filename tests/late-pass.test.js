@@ -83,19 +83,55 @@ function server() {
   });
   await t('app: refused because this month\'s pass is used → clear message, no local pass', async () => {
     const B = boot({ hooks: HOOKS, user: { name: 'Lan', email: 'lan@x.com', role: 'student', cls: '7h' } });
-    const db = { batch: () => ({ set() {}, commit: () => Promise.reject(new Error('permission-denied')) }), doc: (p) => ({ get: () => Promise.resolve({ exists: /^passq\//.test(p) }) }) };
+    B.T.setPass([{ email: 'lan@x.com', asgId: 'H', kind: 'day', month: B.T.vnMonth(Date.now()) }]);
+    const db = { batch: () => ({ set() {}, commit: () => Promise.reject({ code: 'permission-denied' }) }), doc: () => ({ get: () => Promise.reject({ code: 'permission-denied' }) }) };
     B.T.setDb(db); B.T.setConf({ asg: 'G', kind: 'day' }); B.T.usePass(); await new Promise((r) => setTimeout(r, 10));
     assert.ok(/already used your 1-day pass this month/.test(B.T.doneMsg().G)); assert.ok(!B.T.passDocsGet().some((p) => p.asgId === 'G'));
   });
-  await t('app: an answer lost on the way (the pass was written) → reading it back counts as done', async () => {
+  await t('app: an answer lost on the way (the pass arrived in the live list) → counts as done', async () => {
     const B = boot({ hooks: HOOKS, user: { name: 'Lan', email: 'lan@x.com', role: 'student', cls: '7h' } });
-    const db = { batch: () => ({ set() {}, commit: () => Promise.reject(new Error('unavailable')) }), doc: (p) => ({ get: () => Promise.resolve({ exists: /^passes\//.test(p), data: () => ({ email: 'lan@x.com', asgId: 'G', kind: 'day', month: 'x' }) }) }) };
+    const db = { batch: () => ({ set() {}, commit: () => { B.T.setPass([{ email: 'lan@x.com', asgId: 'G', kind: 'day', month: 'x' }]); return Promise.reject({ code: 'unavailable' }); } }), doc: () => ({ get: () => Promise.reject({ code: 'unavailable' }) }) };
     B.T.setDb(db); B.T.setConf({ asg: 'G', kind: 'day' }); B.T.usePass(); await new Promise((r) => setTimeout(r, 10));
     assert.ok(B.T.passDocsGet().some((p) => p.asgId === 'G')); assert.ok(!B.T.doneMsg().G);
   });
   await t('app: the Lucky Wheel extension no longer writes /passes itself (it calls /api/pass)', () => {
     const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'), f = html.slice(html.indexOf('function giveExtPass('), html.indexOf('function imgFrom('));
     assert.ok(/adPost\('pass',\{asgId:asgId,itemId:it\.id\}/.test(f) && !/dbh\.doc\('passes/.test(f));
+  });
+  // ---- old passes of this month (made before the quota markers): they must count toward this month
+  function pmServer() {
+    const SRC = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest')
+      .replace(/^import BUILD from .*$/m, 'const BUILD = {};').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(ROOT, 'md-hw.js'), 'utf8'));
+    const DB = { passes: {}, passq: {}, audit: {} };
+    const ctx = vm.createContext({ console: { log() {} }, Response: class { constructor(b, o) { this.body = b; this.status = (o && o.status) || 200; } }, URL, TextEncoder, TextDecoder, crypto: globalThis.crypto, atob, btoa, fetch: async () => ({ ok: false, status: 500 }) });
+    vm.runInContext(SRC + `;this.T={adminPassMarkers,vnMonthOf};var DB=null;this.set=function(d){DB=d};
+      fsList=async function(env,col){var c=DB[col]||{};return Object.keys(c).map(function(k){return Object.assign({id:k},c[k])})};
+      fsGet=async function(env,col,id){var c=DB[col]||{};return c[id]?{data:c[id],updateTime:'t'}:null};
+      fsPut=async function(env,col,id,o){(DB[col]=DB[col]||{})[id]=o};
+      fsCreate=async function(env,col,id,o){var c=DB[col]=DB[col]||{};if(c[id])return false;c[id]=o;return true};`, ctx);
+    ctx.set(DB); return { DB, T: ctx.T };
+  }
+  await t('old passes: preview lists this month\'s day/week passes without a marker (not items, not other months); writes nothing', async () => {
+    const S = pmServer(), M = S.T.vnMonthOf(Date.now());
+    S.DB.passes = { a: { email: 'Lan@x.com', asgId: 'A', kind: 'week', month: M }, b: { email: 'lan@x.com', asgId: 'B', kind: 'day', month: M }, c: { email: 'lan@x.com', asgId: 'C', kind: 'day', month: '2001-01' }, d: { email: 'lan@x.com', asgId: 'D', kind: 'day', month: 'item-i1', item: 'i1' } };
+    S.DB.passq['lan-x-com_' + M + '_day'] = { asgId: 'B' };
+    const d = JSON.parse((await S.T.adminPassMarkers({}, { op: 'preview' })).body);
+    assert.strictEqual(d.passes, 2); assert.strictEqual(d.missing, 1); assert.strictEqual(Object.keys(S.DB.passq).length, 1); assert.strictEqual(Object.keys(S.DB.audit).length, 0);
+  });
+  await t('old passes: apply creates only the missing marker (audit first); running it again creates nothing', async () => {
+    const S = pmServer(), M = S.T.vnMonthOf(Date.now());
+    S.DB.passes = { a: { email: 'lan@x.com', asgId: 'A', kind: 'week', month: M }, a2: { email: 'lan@x.com', asgId: 'A2', kind: 'week', month: M } };
+    let d = JSON.parse((await S.T.adminPassMarkers({}, { op: 'apply' })).body);
+    assert.strictEqual(d.created, 1); assert.strictEqual(S.DB.passq['lan-x-com_' + M + '_week'].asgId, 'A'); assert.ok(d.rows.some((r) => /second pass/.test(r.state)), 'a second old pass of the same kind is reported');
+    assert.strictEqual(Object.keys(S.DB.audit).length, 1);
+    d = JSON.parse((await S.T.adminPassMarkers({}, { op: 'apply' })).body); assert.strictEqual(d.created, 0);
+  });
+  await t('app: a refused pass when this month\'s pass of that kind is already in the list → "already used", without reading missing documents', async () => {
+    const B = boot({ hooks: HOOKS, user: { name: 'Lan', email: 'lan@x.com', role: 'student', cls: '7h' } }), m = B.T.vnMonth(Date.now());
+    B.T.setPass([{ email: 'lan@x.com', asgId: 'OTHER', kind: 'day', month: m }]); let reads = 0;
+    const db = { batch: () => ({ set() {}, commit: () => Promise.reject({ code: 'permission-denied' }) }), doc: () => ({ get: () => { reads++; return Promise.reject({ code: 'permission-denied' }); } }) };
+    B.T.setDb(db); B.T.setConf({ asg: 'G', kind: 'day' }); B.T.usePass(); await new Promise((r) => setTimeout(r, 10));
+    assert.ok(/already used your 1-day pass this month/.test(B.T.doneMsg().G)); assert.strictEqual(reads, 0);
   });
   out.forEach((l) => console.log(l)); console.log('---- ' + pass + '/' + (pass + fail) + ' passed'); if (fail) process.exitCode = 1;
 })();

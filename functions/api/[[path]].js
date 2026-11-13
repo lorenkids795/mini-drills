@@ -1131,7 +1131,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-11-12b';
+const API_VERSION = '2026-11-13a';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -2731,6 +2731,28 @@ async function stagingRules(env) {
   }
   return json(out);
 }
+// POST /api/admin/passmarkers {op:'preview'|'apply'} (admin): monthly late passes made BEFORE the quota markers existed
+// (passes of this Vietnam month, kind day/week, not a Lucky Wheel item) get their marker passq/<slug>_<month>_<kind>, so an
+// old pass blocks a second one of the same kind this month, like a new one. Preview writes nothing. Apply creates only
+// missing markers (create-if-absent: running it again changes nothing) and saves an audit list first. Passes are not changed.
+function vnMonthOf(ms) { const d = new Date(ms + 7 * 3600e3); return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0'); }
+async function adminPassMarkers(env, body) {
+  const op = String(body.op || 'preview'), month = vnMonthOf(Date.now());
+  const all = (await fsList(env, 'passes')).filter((p) => p && p.month === month && (p.kind === 'day' || p.kind === 'week') && !p.item);
+  const rows = [], seen = {};
+  for (const p of all) {
+    const em = normEmail(p.email), qid = slug(em) + '_' + month + '_' + p.kind, dup = !!seen[qid];
+    seen[qid] = true;
+    const has = dup ? null : await fsGet(env, 'passq', qid);
+    rows.push({ email: em, kind: p.kind, asgId: String(p.asgId || ''), marker: qid, state: dup ? 'second pass of this kind (kept, reported)' : has ? 'has marker' : 'missing marker' });
+  }
+  const todo = rows.filter((r) => r.state === 'missing marker');
+  if (op !== 'apply') return json({ ok: true, dry: true, month, passes: rows.length, missing: todo.length, rows });
+  await fsPut(env, 'audit', 'passq_' + month + '_' + Date.now(), { month, rows: JSON.stringify(rows), by: 'admin/passmarkers', ts: Date.now() });
+  let created = 0;
+  for (const r of todo) if (await fsCreate(env, 'passq', r.marker, { email: r.email, asgId: r.asgId, kind: r.kind, month, ts: Date.now(), backfill: true })) created++;
+  return json({ ok: true, dry: false, month, passes: rows.length, created, rows });
+}
 async function adminStaging(env, body) {
   const st = await envState(env);
   if (st.env !== 'staging' || !st.ok) return fail('Staging test data can only be made on a correctly set up staging deployment. Nothing was written.', 403);
@@ -2829,6 +2851,7 @@ export async function onRequest(ctx) {
         return json({ error: 'Your admin session ended. Enter your admin password to continue.', needUnlock: true }, 401);
       }
       if (route === 'admin/staging') return await adminStaging(env, body);
+      if (route === 'admin/passmarkers') return await adminPassMarkers(env, body);
       if (route === 'admin/users') return await adminUsers(env);
       if (route === 'admin/password') return await adminPassword(env, body);
       if (route === 'admin/active') return await adminActive(env, body);

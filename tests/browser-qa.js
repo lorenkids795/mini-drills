@@ -12,7 +12,7 @@ const { chromium } = require('playwright-core');
 const BASE = process.env.QA_BASE || 'https://phase-b.myhomeworkmyfuture.pages.dev', PROJECT = 'mini-drills-staging';
 const OUT = process.argv[2] || path.join(__dirname, '..', 'qa-artifacts'); fs.mkdirSync(OUT, { recursive: true });
 const ENVF = path.join(__dirname, '..', '.qa.env');
-const R = []; let TEACHER_A = {};
+const R = []; let TEACHER_A = {}, FORGE = null;
 const VER = (fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8').match(/var APP_VERSION='([^']+)'/) || [])[1], SVER = (fs.readFileSync(path.join(__dirname, '..', 'functions', 'api', '[[path]].js'), 'utf8').match(/const API_VERSION = '([^']+)'/) || [])[1]; // results: {id, role, test, expected, observed, result, evidence}
 const rec = (role, test, expected, observed, ok, evidence) => { R.push({ role, test, expected, observed: String(observed).slice(0, 300), result: ok === null ? 'NOT TESTED' : ok ? 'PASS' : 'FAIL', evidence: evidence || '' }); console.log((ok === null ? 'SKIP' : ok ? 'PASS' : 'FAIL') + ' [' + role + '] ' + test + (ok ? '' : ' -> ' + String(observed).slice(0, 200))); };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -124,6 +124,10 @@ async function openEx(page, exId) {
     rec('Admin', 'QA fixture dry run writes nothing and lists the plan', '200, dry, 15 records', pv.status + ' ' + JSON.stringify({ dry: pv.d.dry, n: (pv.d.plan || []).length, c: pv.d.created, u: pv.d.updated, s: pv.d.skipped }), pv.status === 200 && pv.d.dry === true && (pv.d.plan || []).length === 15);
     const qa = await api(page, 'admin/staging', { op: 'qa' }, true); FIX = qa.d;
     rec('Admin', 'QA fixture created / updated (idempotent)', '200, 0 skipped', qa.status + ' ' + JSON.stringify({ c: qa.d.created, u: qa.d.updated, s: qa.d.skipped }), qa.status === 200 && qa.d.skipped === 0);
+    // late passes made before the quota markers existed: preview → create missing markers → preview again (0 missing)
+    const pm1 = await api(page, 'admin/passmarkers', { op: 'preview' }, true), pm2 = await api(page, 'admin/passmarkers', { op: 'apply' }, true), pm3 = await api(page, 'admin/passmarkers', { op: 'preview' }, true);
+    const pmT = (pm1.d.rows || []).filter((r) => /stg\.tester/.test(r.email)).map((r) => r.kind + ':' + r.asgId + ':' + r.state);
+    rec('Admin', 'old late passes of this month get their quota marker (preview, apply, preview again = 0 missing)', 'apply 200, then 0 missing', JSON.stringify({ month: pm1.d.month, before: pm1.d.missing, tester: pmT, created: pm2.d.created, after: pm3.d.missing }), pm1.status === 200 && pm2.status === 200 && pm3.d.missing === 0);
     await envGate(page, 'password rotation');
     let rot = 0; for (const a of ACC) { const r = await api(page, 'admin/password', { email: a, newPassword: PW[a] }, true); if (r.status === 200) rot++; else rec('Admin', 'rotate password ' + a, '200', r.status + ' ' + clean(JSON.stringify(r.d)), false); }
     rec('Admin', 'made-up accounts get new random passwords (old ones seen in screenshots stop working)', '7 of 7', rot + ' of 7', rot === 7);
@@ -245,7 +249,8 @@ async function openEx(page, exId) {
         const VM = new Date(Date.now() + 7 * 36e5).toISOString().slice(0, 7), r = {};
         const go = (asg, kind) => { const b = db.batch(); b.set(db.doc('passes/' + sl + '_' + asg), { email: me, asgId: asg, kind, month: VM, ts: Date.now() }); b.set(db.doc('passq/' + sl + '_' + VM + '_' + kind), { email: me, asgId: asg, kind, month: VM, ts: Date.now() }); return b.commit(); };
         const res = (p) => p.then(() => 'ALLOWED', (e) => e.code || 'error');
-        const has = async (k) => (await db.doc('passq/' + sl + '_' + VM + '_' + k).get()).exists;
+        const mk = (await db.collection('passq').where('email', '==', me).get()).docs.map((d) => d.id); // a student cannot read a marker that does not exist
+        const has = async (k) => { const q = await db.collection('passq').where('email', '==', me).get(); return q.docs.some((d) => d.id === sl + '_' + VM + '_' + k); };
         r.month = VM;
         r.dayMarkerBefore = await has('day');
         if (!r.dayMarkerBefore) r.day1 = await res(go('qa_q1', 'day'));
@@ -260,6 +265,16 @@ async function openEx(page, exId) {
       rec('Tester', 'monthly quota: a second 1-day pass in the same month (another homework) is refused by the rules', 'first allowed (or already used), second permission-denied', JSON.stringify({ month: q.month, before: q.dayMarkerBefore, first: q.day1, second: q.day2 }), dayOk);
       const weekOk = q.weekMarkerBefore ? q.week3 === 'permission-denied' : JSON.stringify(q.weekRace.slice().sort()) === '["fulfilled","rejected"]' && q.weekRetry === 'permission-denied';
       rec('Tester', 'monthly quota: two 1-week requests at the same time → exactly one; sending it again → refused', 'one fulfilled, one rejected; retry denied', JSON.stringify({ before: q.weekMarkerBefore, race: q.weekRace, retry: q.weekRetry, after: q.week3 }), weekOk);
+      // assignment of ANOTHER class, and an exercise that is NOT in the assignment: the write itself, then whether it counts anywhere
+      const fk = await page.evaluate(async () => { const db = firebase.firestore(), FV = firebase.firestore.FieldValue, me = window.MD_USER.email.toLowerCase(), r = {};
+        const att = (o) => Object.assign({ email: me, student: 'QA', cls: 'Test', score: 5, total: 5, answered: 5, required: 5, items: [], ts: Date.now(), sts: FV.serverTimestamp(), qaProbe: true }, o);
+        const tr = async (k, f) => { try { await f(); r[k] = 'ALLOWED'; } catch (e) { r[k] = e.code || 'error'; } };
+        await tr('otherClassAsg', () => db.collection('attempts').add(att({ asg: 'qa_hw_stga', ex: 'c_qa_r5', cls: 'STG-A' })));
+        await tr('exerciseNotInAsg', () => db.collection('attempts').add(att({ asg: 'qa_hw_now', ex: 'c_qa_not_in_it' })));
+        await tr('closedAsgViaOtherEx', () => db.collection('attempts').add(att({ asg: 'qa_sc_A', ex: 'c_qa_r10' })));
+        return r; });
+      FORGE = fk;
+      rec('Tester', 'forged links: another class\'s open homework / an exercise not in the homework / a closed homework', 'closed homework refused; the others may be written but must never count (checked by teacher + assistant below)', JSON.stringify(fk), fk.closedAsgViaOtherEx === 'permission-denied');
       rec('Tester', 'a student cannot write a Lucky Wheel item pass directly', 'permission-denied', q.itemByHand, q.itemByHand === 'permission-denied');
       // Lucky Wheel 1-day Extension: server ledger item qa_ext_1 (made by the QA fixture)
       const i1 = await api(page, 'pass', { asgId: 'qa_hw_now', itemId: 'qa_ext_1' });
@@ -360,6 +375,8 @@ async function openEx(page, exId) {
     rec('Teacher + Assistant', 'same answer for An on A (STG-A)', 'teacher = assistant', JSON.stringify({ teacher: TEACHER_A.an, assistant: sas && sas.st }), !!sas && sas.st === TEACHER_A.an);
     await page.click('#tabs [data-act="tab"][data-tab="hwa-miss"]').catch(() => {}); await page.waitForTimeout(1500);
     rec('Assistant', 'Missing homework page shows partial progress text', '"parts done · missing"', /parts done/.test(await page.locator('#v-hwa').textContent()) ? 'shown' : 'not shown', /parts done/.test(await page.locator('#v-hwa').textContent()), await shot(page, 'hwa-missing'));
+    const stgaKeys = (d.d.students || []).map((x) => x.name), qs = qa ? d.d.status[qa.id] : {};
+    rec('Assistant', 'forged STG-A homework attempt of the tester (class Test) counts for nobody in STG-A', 'no tester in STG-A list; STG-A statuses unchanged by it', JSON.stringify({ forge: FORGE && FORGE.otherClassAsg, students: stgaKeys }), !stgaKeys.some((n) => /Tester/i.test(n)));
     rec('Assistant', 'no console errors / failed requests (assistant session)', '0', JSON.stringify({ errs: page.errs, http: page.bad }), !page.errs.length && !page.bad.length);
     await fsCheck(page, 'Assistant');
     await ctx.close();
