@@ -1131,7 +1131,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-11-13a';
+const API_VERSION = '2026-11-13b';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -2702,6 +2702,12 @@ async function adminStagingQa(env, op) {
     plan.push({ col, id, title: data.title || data.name, act });
     if (op === 'qa' && (act === 'create' || act === 'update')) await fsPut(env, col, id, Object.assign({ ts: now }, data));
   }
+  // an OLD-style 1-day Extension in the tester's inventory (no server record): used to check that it cannot be redeemed and
+  // that admin/extlegacy retires it. Added once; once retired it stays retired.
+  const tp = await fsGet(env, 'profiles', 'stg-tester-example-test');
+  const hasOld = tp && (Array.isArray(tp.data.inv) ? tp.data.inv : []).some((x) => x && x.id === 'qa_legacy_ext');
+  plan.push({ col: 'profiles', id: 'stg-tester-example-test:qa_legacy_ext', title: 'old-style 1-day Extension (no server record)', act: !tp ? 'skip (no tester profile yet)' : hasOld ? 'keep (already there)' : 'create' });
+  if (op === 'qa' && tp && !hasOld) await fsUpdate(env, 'profiles', 'stg-tester-example-test', { inv: (Array.isArray(tp.data.inv) ? tp.data.inv : []).concat([{ id: 'qa_legacy_ext', kind: 'ext', tier: 1, used: false, ts: now, qa: true }]) }, tp.updateTime);
   const n = (a) => plan.filter((p) => p.act === a).length;
   return json({ ok: true, dry: op !== 'qa', plan, created: n('create'), updated: n('update'), kept: n('keep (already there)'), skipped: plan.length - n('create') - n('update') - n('keep (already there)') });
 }
@@ -2726,7 +2732,7 @@ async function stagingRules(env) {
     if (rr.ok) {
       const d = await rr.json(), src = ((d.source && d.source.files) || []).map((f) => f.content || '').join(String.fromCharCode(10));
       out.firestore = { release: fsr.updateTime, rulesetCreated: d.createTime, chars: src.length, sha256: (await sha256Hex(src)).slice(0, 16),
-        has: { vnMonth: /vnMonth/.test(src), passq: /match \/passq\//.test(src), sts: /sts == request\.time/.test(src), asgOpen: /function asgOpen/.test(src) } };
+        has: { vnMonth: /vnMonth/.test(src), passq: /match \/passq\//.test(src), sts: /sts == request\.time/.test(src), asgOpen: /function asgOpen/.test(src), classProof: /function inAsgClass/.test(src), exInAsg: /function asgHasEx/.test(src) } };
     } else out.firestore = { release: fsr.updateTime, error: rr.status };
   }
   return json(out);
@@ -2752,6 +2758,51 @@ async function adminPassMarkers(env, body) {
   let created = 0;
   for (const r of todo) if (await fsCreate(env, 'passq', r.marker, { email: r.email, asgId: r.asgId, kind: r.kind, month, ts: Date.now(), backfill: true })) created++;
   return json({ ok: true, dry: false, month, passes: rows.length, created, rows });
+}
+// POST /api/admin/extlegacy {op:'preview'} | {op:'apply', confirm:'RETIRE'} (admin): old Lucky Wheel "1-day Extension" items.
+// Old = an unused item of kind 'ext' in profiles.inv with NO server record in extitems (won before 12 Nov 2026, or written by a
+// browser): it can no longer be used (POST /api/pass answers 'noitem'). Apply marks those items used + retired:'legacy-ext'
+// (nothing deleted), one profile at a time with a precondition, after saving the old inventory in audit/extlegacy_<id>_<ts>
+// (rollback = copy it back). Server-issued items (extitems), used items, other prizes, passes, passq and the wins marquee are
+// never changed. Running it again changes nothing. Preview writes nothing and shows hashed profile ids, not names or emails.
+async function adminExtLegacy(env, body) {
+  const op = String(body.op || 'preview');
+  if (op === 'apply' && body.confirm !== 'RETIRE') return fail('Type RETIRE to confirm.');
+  const profs = await fsList(env, 'profiles'), led = await fsList(env, 'extitems'), passes = await fsList(env, 'passes');
+  const ledger = {}; led.forEach((x) => { ledger[x.id] = x; });
+  const rows = [], counts = { profiles: profs.length, extItems: 0, used: 0, server: 0, legacy: 0, retiredBefore: 0,
+    extitems: led.length, extitemsUsed: led.filter((x) => x.used).length, itemPassesLegacy: 0, itemPassesServer: 0 };
+  passes.forEach((p) => { if (p.item === true) counts.itemPassesLegacy++; else if (typeof p.item === 'string' && p.item) counts.itemPassesServer++; });
+  for (const p of profs) {
+    const em = normEmail(p.email), inv = Array.isArray(p.inv) ? p.inv : [], old = [];
+    inv.forEach((it) => {
+      if (!it || it.kind !== 'ext') return;
+      counts.extItems++;
+      if (it.retired) { counts.retiredBefore++; return; }
+      if (it.used) { counts.used++; return; }
+      const l = ledger[it.id];
+      if (l && normEmail(l.email) === em) { counts.server++; return; }
+      counts.legacy++; old.push(String(it.id || ''));
+    });
+    if (old.length) rows.push({ id: p.id, ref: 'p' + (await sha256Hex('extlegacy|' + p.id)).slice(0, 8), items: old });
+  }
+  const sample = rows.slice(0, 10).map((r) => ({ profile: r.ref, items: r.items.slice(0, 3) }));
+  if (op !== 'apply') return json({ ok: true, dry: true, counts, profilesToChange: rows.length, sample });
+  let changed = 0, items = 0; const failed = [];
+  for (const r of rows) {
+    const doc = await fsGet(env, 'profiles', r.id);
+    if (!doc) continue;
+    const inv = Array.isArray(doc.data.inv) ? doc.data.inv : [], ts = Date.now();
+    await fsPut(env, 'audit', 'extlegacy_' + r.id + '_' + ts, { profile: r.id, inv: JSON.stringify(inv), by: 'admin/extlegacy', ts });
+    let n = 0;
+    const next = inv.map((it) => {
+      if (it && it.kind === 'ext' && !it.used && !it.retired && r.items.indexOf(String(it.id || '')) >= 0) { n++; return Object.assign({}, it, { used: true, retired: 'legacy-ext', retiredTs: ts }); }
+      return it;
+    });
+    if (!n) continue;
+    if (await fsUpdate(env, 'profiles', r.id, { inv: next }, doc.updateTime)) { changed++; items += n; } else failed.push(r.ref);
+  }
+  return json({ ok: true, dry: false, profilesChanged: changed, itemsRetired: items, failed });
 }
 async function adminStaging(env, body) {
   const st = await envState(env);
@@ -2852,6 +2903,7 @@ export async function onRequest(ctx) {
       }
       if (route === 'admin/staging') return await adminStaging(env, body);
       if (route === 'admin/passmarkers') return await adminPassMarkers(env, body);
+      if (route === 'admin/extlegacy') return await adminExtLegacy(env, body);
       if (route === 'admin/users') return await adminUsers(env);
       if (route === 'admin/password') return await adminPassword(env, body);
       if (route === 'admin/active') return await adminActive(env, body);

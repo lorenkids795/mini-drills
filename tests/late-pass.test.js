@@ -104,10 +104,11 @@ function server() {
       .replace(/^import BUILD from .*$/m, 'const BUILD = {};').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(ROOT, 'md-hw.js'), 'utf8'));
     const DB = { passes: {}, passq: {}, audit: {} };
     const ctx = vm.createContext({ console: { log() {} }, Response: class { constructor(b, o) { this.body = b; this.status = (o && o.status) || 200; } }, URL, TextEncoder, TextDecoder, crypto: globalThis.crypto, atob, btoa, fetch: async () => ({ ok: false, status: 500 }) });
-    vm.runInContext(SRC + `;this.T={adminPassMarkers,vnMonthOf};var DB=null;this.set=function(d){DB=d};
+    vm.runInContext(SRC + `;this.T={adminPassMarkers,vnMonthOf,adminExtLegacy};var DB=null;this.set=function(d){DB=d};
       fsList=async function(env,col){var c=DB[col]||{};return Object.keys(c).map(function(k){return Object.assign({id:k},c[k])})};
       fsGet=async function(env,col,id){var c=DB[col]||{};return c[id]?{data:c[id],updateTime:'t'}:null};
       fsPut=async function(env,col,id,o){(DB[col]=DB[col]||{})[id]=o};
+      fsUpdate=async function(env,col,id,o){var c=DB[col]||{};if(!c[id])return false;Object.assign(c[id],o);return true};
       fsCreate=async function(env,col,id,o){var c=DB[col]=DB[col]||{};if(c[id])return false;c[id]=o;return true};`, ctx);
     ctx.set(DB); return { DB, T: ctx.T };
   }
@@ -132,6 +133,31 @@ function server() {
     const db = { batch: () => ({ set() {}, commit: () => Promise.reject({ code: 'permission-denied' }) }), doc: () => ({ get: () => { reads++; return Promise.reject({ code: 'permission-denied' }); } }) };
     B.T.setDb(db); B.T.setConf({ asg: 'G', kind: 'day' }); B.T.usePass(); await new Promise((r) => setTimeout(r, 10));
     assert.ok(/already used your 1-day pass this month/.test(B.T.doneMsg().G)); assert.strictEqual(reads, 0);
+  });
+  // ---- old Lucky Wheel extensions (no server record): preview counts, apply retires them only, backup first, idempotent
+  function exServer() {
+    const S = pmServer(); S.DB.profiles = {}; S.DB.extitems = {};
+    return S;
+  }
+  await t('old extensions: preview counts old vs server-issued items and writes nothing; no emails / names in the reply', async () => {
+    const S = pmServer();
+    S.DB.profiles = { 'an-x-com': { email: 'an@x.com', inv: [{ id: 'old1', kind: 'ext', used: false }, { id: 'new1', kind: 'ext', used: false }, { id: 'u1', kind: 'ext', used: true }, { id: 'f1', kind: 'freeze', used: false }] }, 'bo-x-com': { email: 'bo@x.com', inv: [] } };
+    S.DB.extitems = { new1: { email: 'an@x.com', used: false } }; S.DB.passes = { p: { email: 'an@x.com', item: true }, q: { email: 'an@x.com', item: 'new0' } };
+    const SRC = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8');
+    const r = JSON.parse((await S.T.adminExtLegacy({}, { op: 'preview' })).body);
+    assert.deepStrictEqual([r.counts.legacy, r.counts.server, r.counts.used, r.counts.itemPassesLegacy, r.counts.itemPassesServer, r.profilesToChange], [1, 1, 1, 1, 1, 1]);
+    assert.ok(!/an@x\.com|an-x-com/.test(JSON.stringify(r)), 'hashed profile refs only'); assert.ok(!S.DB.audit || !Object.keys(S.DB.audit).length);
+  });
+  await t('old extensions: apply needs RETIRE, retires only the old item (backup first), keeps the server item and other prizes; again = nothing', async () => {
+    const S = pmServer();
+    S.DB.profiles = { 'an-x-com': { email: 'an@x.com', inv: [{ id: 'old1', kind: 'ext', used: false }, { id: 'new1', kind: 'ext', used: false }, { id: 'f1', kind: 'freeze', used: false }] } };
+    S.DB.extitems = { new1: { email: 'an@x.com', used: false } };
+    assert.strictEqual((await S.T.adminExtLegacy({}, { op: 'apply' })).status, 400);
+    let r = JSON.parse((await S.T.adminExtLegacy({}, { op: 'apply', confirm: 'RETIRE' })).body);
+    assert.strictEqual(r.itemsRetired, 1); const inv = S.DB.profiles['an-x-com'].inv;
+    assert.ok(inv[0].used && inv[0].retired === 'legacy-ext'); assert.ok(!inv[1].used && !inv[1].retired && !inv[2].used);
+    assert.strictEqual(Object.keys(S.DB.audit).length, 1); assert.ok(/old1/.test(Object.values(S.DB.audit)[0].inv));
+    r = JSON.parse((await S.T.adminExtLegacy({}, { op: 'apply', confirm: 'RETIRE' })).body); assert.strictEqual(r.itemsRetired, 0);
   });
   out.forEach((l) => console.log(l)); console.log('---- ' + pass + '/' + (pass + fail) + ' passed'); if (fail) process.exitCode = 1;
 })();

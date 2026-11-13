@@ -30,6 +30,7 @@ const VM = (() => { const d = new Date(Date.now() + 7 * 36e5); return d.getUTCFu
     const as = { asgG: [-1, 6], asgH: [-1, 6], asgI: [-1, 6], asgA: [-120, -100], asgB: [-1, 6], asgL: [-10, -2], asgD: [-5, -0.125], asgE: [-9, -2], asgF: [1, 8] };
     for (const k of Object.keys(as)) await setDoc(doc(d, 'assignments/' + k), { cls: '7h', ex: ['x1'], start: NOW + as[k][0] * D, due: NOW + as[k][1] * D });
     await setDoc(doc(d, 'assignments/old'), { cls: '7h', ex: ['x1'], weekStart: '2025-01-06' });
+    await setDoc(doc(d, 'assignments/asgO'), { cls: '9h', ex: ['x1'], start: NOW - D, due: NOW + 6 * D }); // another class, open
     await setDoc(doc(d, 'passes/s-x-com_asgL'), { email: 's@x.com', asgId: 'asgL', kind: 'week' });
     await setDoc(doc(d, 'passes/s-x-com_asgD'), { email: 's@x.com', asgId: 'asgD', kind: 'day' });
     await setDoc(doc(d, 'passes/s-x-com_asgE'), { email: 's@x.com', asgId: 'asgE', kind: 'day' });
@@ -76,6 +77,12 @@ const VM = (() => { const d = new Date(Date.now() + 7 * 36e5); return d.getUTCFu
   await t('student cannot write for another student', assertFails(addDoc(collection(S, 'attempts'), { email: 'other@x.com', ex: 'l1', sts: ST(), score: 1, total: 5 })));
   await t('teacher cannot delete a profile', assertFails(deleteDoc(doc(T, 'profiles/s'))));
   // ---- (11/2026) each assignment occurrence has its own window; server time
+  const P2 = as('p2', { em: 'p2@x.com', role: 'student' }), P3 = as('p3', { em: 'p3@x.com', role: 'student' });
+  const redeem = (db, em, asg, kind, o) => { o = o || {}; const sl = em.replace(/[^a-z0-9]+/g, '-'), m = o.month || VM, b = writeBatch(db);
+    b.set(doc(db, 'passes/' + (o.pid || sl + '_' + asg)), Object.assign({ email: em, asgId: asg, kind, month: m, ts: NOW }, o.extra || {}));
+    if (!o.noMarker) b.set(doc(db, 'passq/' + (o.qid || sl + '_' + m + '_' + (o.qkind || kind))), { email: em, asgId: o.qasg || asg, kind: o.qkind || kind, month: m, ts: NOW });
+    return b.commit(); };
+  const redeemS = (asg, kind) => redeem(S, 's@x.com', asg, kind);
   const att = (o) => addDoc(collection(S, 'attempts'), Object.assign({ email: 's@x.com', ex: 'x1', score: 5, total: 5, answered: 5, required: 5, sts: ST() }, o));
   await t('attempt without server time is refused', assertFails(addDoc(collection(S, 'attempts'), { email: 's@x.com', ex: 'x1', score: 1, total: 5 })));
   await t('attempt with a made-up time (not the server time) is refused', assertFails(att({ sts: NOW - 200 * D })));
@@ -88,12 +95,14 @@ const VM = (() => { const d = new Date(Date.now() + 7 * 36e5); return d.getUTCFu
   await t('assignment not sent yet: refused', assertFails(att({ asg: 'asgF' })));
   await t('an assignment that does not exist: refused', assertFails(att({ asg: 'nope' })));
   await t('legacy assignment without a deadline: not blocked', assertSucceeds(att({ asg: 'old' })));
+  await t('class proof: an open homework of ANOTHER class (roster says 7h, homework is 9h): refused', assertFails(att({ asg: 'asgO', cls: '9h' })));
+  await t('class proof: writing cls 9h on the attempt does not help (the class comes from roster, not from the attempt)', assertFails(att({ asg: 'asgO', cls: '9h', email: 's@x.com' })));
+  await t('exercise check: an exercise that is not in the homework: refused', assertFails(att({ asg: 'asgB', ex: 'not_in_it' })));
+  await t('exercise check: no exercise id at all: refused', assertFails(addDoc(collection(S, 'attempts'), { email: 's@x.com', score: 1, total: 5, sts: ST(), asg: 'asgB' })));
+  await t('class proof: homework record (screenshot / I am done) for another class: refused', assertFails(setDoc(doc(S, 'hwdone/s-x-com_asgO'), { email: 's@x.com', asgId: 'asgO', done: true })));
+  await t('class proof: a late pass for a homework of another class: refused', assertFails(redeemS('asgO', 'day')));
+  await t('class proof: a student whose roster row is stored under another id (old import) is only checked for the deadline', assertSucceeds(addDoc(collection(P3, 'attempts'), { email: 'p3@x.com', ex: 'x1', score: 1, total: 5, sts: ST(), asg: 'asgB' })));
   // ---- (11/2026) monthly late-pass quota: pass + marker passq/<slug>_<VN month>_<kind> in ONE batch
-  const P2 = as('p2', { em: 'p2@x.com', role: 'student' }), P3 = as('p3', { em: 'p3@x.com', role: 'student' });
-  const redeem = (db, em, asg, kind, o) => { o = o || {}; const sl = em.replace(/[^a-z0-9]+/g, '-'), m = o.month || VM, b = writeBatch(db);
-    b.set(doc(db, 'passes/' + (o.pid || sl + '_' + asg)), Object.assign({ email: em, asgId: asg, kind, month: m, ts: NOW }, o.extra || {}));
-    if (!o.noMarker) b.set(doc(db, 'passq/' + (o.qid || sl + '_' + m + '_' + (o.qkind || kind))), { email: em, asgId: o.qasg || asg, kind: o.qkind || kind, month: m, ts: NOW });
-    return b.commit(); };
   await t('quota: 1-day pass for B (pass + month marker together): accepted', assertSucceeds(redeem(S, 's@x.com', 'asgB', 'day')));
   await t('quota: a second 1-day pass in the same month (for G): refused', assertFails(redeem(S, 's@x.com', 'asgG', 'day')));
   await t('quota: the 1-week pass is separate: accepted once (for G)', assertSucceeds(redeem(S, 's@x.com', 'asgG', 'week')));

@@ -761,6 +761,14 @@ Các thay đổi đã có trong code. **Không đảo ngược** nếu không đ
    - **Tương thích khi lên production**: pass tháng đã dùng **trong tháng triển khai** chưa có dấu ⇒ app vẫn chặn (đọc `passes`), nhưng gọi Firestore trực tiếp còn tạo thêm được 1 pass mỗi loại trong tháng đó (hết khi sang tháng). Muốn kín ngay: tạo dấu `passq` cho các pass tháng hiện tại lúc triển khai (chưa làm, cần duyệt).
    - `APP_VERSION` = `API_VERSION` = `2026-11-12b`. Test: `rules.emu.js` 90 (chạy lại sạch nhờ `clearFirestore`; 3 yêu cầu đồng thời → đúng 1), `tests/late-pass.test.js` 13, `server-purge` cập nhật; `browser-qa.js` thêm 2 phép thử pass giả (chỉ khi rules mới).
 
+98. **Rules chứng minh lớp + bài tập trong bài giao; gỡ vật phẩm 1-day Extension cũ (11/2026)** (nhánh `phase-b`; rules phải dán lại vào **staging**):
+   - **Rules**: lớp của học sinh lấy từ `roster/<email>` (`rosterPath`, `inAsgClass`: chỉ server / admin ghi, không tin lớp học sinh tự ghi trên bài làm); `asgOpen` = đúng lớp + còn hạn; `attempts` có `asg` thì `ex` phải nằm trong `assignments/<asg>.ex` (`asgHasEx`); `passes` cũng kiểm lớp. Dòng roster cũ lưu dưới id khác (chữ hoa, nhập tay) không tìm thấy ⇒ chỉ kiểm hạn (không chặn nhầm). Trước đây hai kiểu ghi này được nhận nhưng không được tính.
+   - **Late pass app**: dùng thất bại thì quyết định bằng danh sách pass đang có (`passFor`, `passesOf`), không đọc tài liệu có thể chưa tồn tại (rules từ chối học sinh đọc tài liệu không có).
+   - **`POST /api/admin/passmarkers`** `{op:'preview'|'apply'}`: pass tháng tạo trước dấu `passq` (tháng VN hiện tại, day/week, không phải vật phẩm) được tạo dấu (create-if-absent, `audit/passq_<tháng>_<ts>` trước); Diagnostics › Late-pass markers.
+   - **`POST /api/admin/extlegacy`** `{op:'preview'}` / `{op:'apply', confirm:'RETIRE'}`: vật phẩm `ext` chưa dùng trong `profiles.inv` mà **không có** `extitems/<id>` (vật phẩm cũ, không chứng minh được) → `used:true, retired:'legacy-ext'` (không xóa), từng hồ sơ có precondition, sao lưu `audit/extlegacy_<id>_<ts>` trước; vật phẩm server cấp, quà khác, passes, passq, wins không đổi; chạy lại = không đổi gì; preview chỉ trả id hồ sơ đã băm. App: kho đồ hiện "No longer valid", `/api/pass` trả `noitem` thì tự đánh dấu như vậy. Diagnostics › Old 1-day Extensions. `/api/pass` vẫn là lớp chặn thật (vật phẩm cũ luôn `noitem`).
+   - `admin/staging {op:'rules'}` (chỉ staging, chỉ đọc): bản rules Firestore **đang chạy** trên dự án staging (Firebase Rules API: thời điểm, sha, có `vnMonth`/`classProof`/`exInAsg`…).
+   - `APP_VERSION` = `API_VERSION` = `2026-11-13b`. Test: `rules.emu.js` 97, `late-pass` 18, `asg-scope` 18, `staging-qa` 8.
+
 ## 8. Giới hạn đã biết / chưa làm
 
 - AI chữa lỗi Writing chạy qua `/api/ai/correct` (cần `GEMINI_KEY`). `aiLookup` (tra từ bằng AI) vẫn gọi `window.claude` nên chưa chạy trên site thật.

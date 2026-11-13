@@ -7012,7 +7012,7 @@ function renderBag(){
     else if(it.kind==='ctitle')act=BAG.ct===it.id?'<input class="linkin" id="ctIn" aria-label="Your title" maxlength="20" placeholder="Your title (max 20)" style="flex:1;min-width:140px"><button class="btn pri sm" data-act="bag-ctsave" data-id="'+it.id+'" type="button">Save</button>':'<button class="btn pri sm" data-act="bag-ct" data-id="'+it.id+'" type="button">Write title</button>';
     else if(it.kind==='mat'||(it.kind==='custom'&&it.url))act='';
     else if(it.kind==='hint')act='<span class="saved">Applies by itself when you open a Writing hint.</span>';
-    else if(it.kind==='ext'){act=it.used?'<span class="saved">Used</span>':(BAG.ext===it.id?extPick():'<button class="btn pri sm" data-act="bag-ext" data-id="'+it.id+'" type="button">Use extension</button>')}
+    else if(it.kind==='ext'){act=it.retired?'<span class="saved" title="Won before the November 2026 update. It can no longer be used.">No longer valid</span>':it.used?'<span class="saved">Used</span>':(BAG.ext===it.id?extPick():'<button class="btn pri sm" data-act="bag-ext" data-id="'+it.id+'" type="button">Use extension</button>')}
     else if(it.kind==='vip'){act=it.used?'<span class="saved">Sent to your teacher</span>':(BAG.vip===it.id?vipPick(it):'<button class="btn pri sm" data-act="bag-vip" data-id="'+it.id+'" type="button">Use VIP correction</button>')}
     else act=it.used?'<span class="saved">'+(it.kind==='peek'?'Used':'Claimed')+'</span>':'<button class="btn pri sm" data-act="bag-use" data-id="'+it.id+'" type="button">'+(it.kind==='peek'?'Use':'Claim')+'</button>';
     return '<div class="item'+(it.used?' used':'')+'"><span class="ii">'+iconOf(it.kind)+'</span><span><b><span class="tb t'+it.tier+'">'+TIERNAME[it.tier]+'</span>'+esc(prizeName(it))+'</b><small>'+esc(it.kind==='mat'?d.d:(d?d.d:''))+'</small>'+(invCode(it)?'<small class="mono">Code: <b>'+esc(invCode(it))+'</b></small>':((it.tier===4)?'<small>Your teacher will send the code.</small>':''))+'</span><div class="ia">'+act+'</div></div>';
@@ -7045,7 +7045,9 @@ function giveExtPass(asgId){
   if(DEMO||!dbh){var rl={email:U.email,asgId:asgId,kind:'day',month:'item-'+it.id,item:it.id,ts:Date.now()};localPass.push(Object.assign({id:id},rl));return done(rl)}
   BAG.busy=true;renderBag();
   authHdr().then(function(ah){return adPost('pass',{asgId:asgId,itemId:it.id},'',ah)}).then(function(d){
-    if(d._ok&&d.pass)return done(d.pass);BAG.busy=false;toast(d._status===401?'Your sign-in has expired. Reload the page and sign in again.':(d.error||'The extension could not be used.'));renderBag()},
+    if(d._ok&&d.pass)return done(d.pass);BAG.busy=false;
+    if(d.code==='noitem'){var pr=myProf();it.used=true;it.retired='legacy-ext';it.retiredTs=Date.now();putProf(pr);BAG.ext=null;toast('This extension was won before the November 2026 update and can no longer be used.');return renderBag()}
+    toast(d._status===401?'Your sign-in has expired. Reload the page and sign in again.':(d.error||'The extension could not be used.'));renderBag()},
     function(){BAG.busy=false;toast('No connection. Check your internet and try again.');renderBag()});
   return;
 }
@@ -7219,7 +7221,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-11-13a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-11-13b'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(uiAct(a,t))return true;
@@ -9076,12 +9078,19 @@ function envDiagHTML(){var e=window.MD_ENV;if(DEMO)return '';if(!e)return '<p cl
   var stg=e.env==='staging',h='<p class="sub mono">environment '+esc(e.env||'?')+(e.branch?' · branch '+esc(e.branch):'')+(e.sha?' · '+esc(e.sha):'')+' · Firebase '+esc(e.serverProject||'?')+(stg?' · KV '+esc(e.kv||'?')+' · AI '+esc(e.ai||'off')+' · uploads '+esc(e.uploads||'kv'):'')+'</p>';
   if(e.problems&&e.problems.length)h+='<p class="banner" role="alert">'+esc(e.problems.join('; '))+'</p>';
   h+='<h4>Late-pass markers (this month)</h4><p class="sub">Monthly late passes used before the quota check get their marker, so they count for this month too. Preview first.</p><div class="actions"><button type="button" class="btn" data-act="ad-pqm" data-dry="1"'+(PQM.busy?' disabled':'')+'>Preview</button> <button type="button" class="btn" data-act="ad-pqm"'+(PQM.busy||!PQM.miss?' disabled':'')+'>Create missing markers</button></div>'+(PQM.msg?'<p class="sub" role="status">'+esc(PQM.msg)+'</p>':'');
+  h+='<h4>Old 1-day Extensions (Lucky Wheel)</h4><p class="sub">Unused extensions with no server record can no longer be used. Preview shows counts; Retire marks them “No longer valid” (a backup is saved first, nothing is deleted).</p><div class="actions"><button type="button" class="btn" data-act="ad-extl" data-dry="1"'+(EXL.busy?' disabled':'')+'>Preview</button> <button type="button" class="btn" data-act="ad-extl"'+(EXL.busy||!EXL.n?' disabled':'')+'>Retire old extensions</button></div>'+(EXL.msg?'<p class="sub" role="status">'+esc(EXL.msg)+'</p>':'');
   if(!stg)return h;
   h+='<h4>Staging test data</h4><p class="sub">Made-up accounts and records for testing on this staging site only.</p><div class="actions"><button type="button" class="btn pri" data-act="ad-stg-seed"'+(STGS.busy||!e.ok?' disabled':'')+'>Create staging test data</button> <button type="button" class="btn" data-act="ad-stg-bulk"'+(STGS.busy||!e.ok?' disabled':'')+'>Add 620 attempts (large data)</button></div><h4>QA exercises</h4><p class="sub">Real STAGING/QA exercises (Cam 21 · Test 4) and assignments for the tester (class Test) and STG-A.</p><div class="actions"><button type="button" class="btn" data-act="ad-stg-qa" data-dry="1"'+(STGS.busy||!e.ok?' disabled':'')+'>Preview QA fixture</button> <button type="button" class="btn pri" data-act="ad-stg-qa"'+(STGS.busy||!e.ok?' disabled':'')+'>Create / update QA fixture</button></div>'+(STGS.plan?'<div class="tscr"><table class="dtbl"><thead><tr><th>Record</th><th>Title</th><th>Action</th></tr></thead><tbody>'+STGS.plan.map(function(x){return '<tr><td class="mono">'+esc(x.col+'/'+x.id)+'</td><td>'+esc(x.title||'')+'</td><td>'+esc(x.act)+'</td></tr>'}).join('')+'</tbody></table></div>':'')+'<p class="saved" aria-live="polite">'+esc(STGS.msg)+'</p>';
   if(STGS.acc)h+='<p class="sub">New passwords are shown only now. Copy them to a safe place; they are not stored anywhere you can read again.</p><div class="tscr"><table class="dtbl"><thead><tr><th>Account</th><th>Role</th><th>Class</th><th>Password</th></tr></thead><tbody>'+STGS.acc.map(function(x){return '<tr><td>'+esc(x.email)+'</td><td>'+esc(x.role)+'</td><td>'+esc(x.cls||'—')+'</td><td class="mono">'+esc(x.password)+'</td></tr>'}).join('')+'</tbody></table></div>';
   return h}
-var PQM={};
+var PQM={},EXL={};
 function adAct(a,t){
+  if(a==='ad-extl'){var xd=t.dataset.dry==='1',xgo=function(){EXL.busy=true;EXL.msg='Working…';renderAdmin();adminApi('admin/extlegacy',xd?{op:'preview'}:{op:'apply',confirm:'RETIRE'}).then(function(d){EXL.busy=false;
+      if(d.dry){var c=d.counts||{};EXL.n=c.legacy||0;EXL.msg=c.legacy+' old extension'+(c.legacy===1?'':'s')+' in '+d.profilesToChange+' profile'+(d.profilesToChange===1?'':'s')+' · '+c.server+' from the server (kept) · '+c.used+' used · '+c.retiredBefore+' already retired · ledger '+c.extitems+' ('+c.extitemsUsed+' used).'}
+      else{EXL.n=0;EXL.msg='Retired '+d.itemsRetired+' old extension'+(d.itemsRetired===1?'':'s')+' in '+d.profilesChanged+' profile'+(d.profilesChanged===1?'':'s')+(d.failed&&d.failed.length?' · '+d.failed.length+' changed meanwhile, run it again':'')+'. Backups saved.'}
+      renderAdmin()},function(e){EXL.busy=false;EXL.msg=(e&&e.message)||'Could not check the extensions.';renderAdmin()})};
+    if(xd)xgo();else uiAsk({title:'Retire '+EXL.n+' old extension'+(EXL.n===1?'':'s')+'?',text:'They will show as “No longer valid”. A backup of each inventory is saved first. Other prizes, late passes, homework and results are not touched. Type RETIRE to continue.',ok:'Retire',must:'RETIRE',onOk:xgo});
+    return true}
   if(a==='ad-pqm'){var pd=t.dataset.dry==='1';if(!pd&&uiGate(t,{title:'Create the missing late-pass markers?',text:PQM.miss+' monthly late pass'+(PQM.miss===1?'':'es')+' of this month will count toward this month\'s limit. Passes are not changed; a list is saved first (audit).',ok:'Create markers',cancel:'Cancel'}))return true;
     PQM.busy=true;PQM.msg='Working…';renderAdmin();adminApi('admin/passmarkers',{op:pd?'preview':'apply'}).then(function(d){PQM.busy=false;PQM.miss=d.dry?d.missing:0;PQM.msg=d.dry?d.month+': '+d.passes+' monthly pass'+(d.passes===1?'':'es')+', '+d.missing+' without a marker.':d.month+': created '+d.created+' marker'+(d.created===1?'':'s')+'.';renderAdmin()},function(e){PQM.busy=false;PQM.msg=(e&&e.message)||'Could not check the markers.';renderAdmin()});return true}
   if(a==='ad-stg-qa'){var dry=t.dataset.dry==='1';if(!dry&&uiGate(t,{title:'Create the STAGING/QA exercises?',text:'Only on this STAGING site: 3 exercises in Cam 21 · Test 4 and 4 assignments (class Test and STG-A). Records made by people are never overwritten; attempts are not touched.',ok:'Create / update',cancel:'Cancel'}))return true;

@@ -12,7 +12,7 @@ const { chromium } = require('playwright-core');
 const BASE = process.env.QA_BASE || 'https://phase-b.myhomeworkmyfuture.pages.dev', PROJECT = 'mini-drills-staging';
 const OUT = process.argv[2] || path.join(__dirname, '..', 'qa-artifacts'); fs.mkdirSync(OUT, { recursive: true });
 const ENVF = path.join(__dirname, '..', '.qa.env');
-const R = []; let TEACHER_A = {}, FORGE = null;
+const R = []; let TEACHER_A = {}, FORGE = null, LIVE = {};
 const VER = (fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8').match(/var APP_VERSION='([^']+)'/) || [])[1], SVER = (fs.readFileSync(path.join(__dirname, '..', 'functions', 'api', '[[path]].js'), 'utf8').match(/const API_VERSION = '([^']+)'/) || [])[1]; // results: {id, role, test, expected, observed, result, evidence}
 const rec = (role, test, expected, observed, ok, evidence) => { R.push({ role, test, expected, observed: String(observed).slice(0, 800), result: ok === null ? 'NOT TESTED' : ok ? 'PASS' : 'FAIL', evidence: evidence || '' }); console.log((ok === null ? 'SKIP' : ok ? 'PASS' : 'FAIL') + ' [' + role + '] ' + test + (ok ? '' : ' -> ' + String(observed).slice(0, 200))); };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -124,6 +124,12 @@ async function openEx(page, exId) {
     rec('Admin', 'QA fixture dry run writes nothing and lists the plan', '200, dry, 15 records', pv.status + ' ' + JSON.stringify({ dry: pv.d.dry, n: (pv.d.plan || []).length, c: pv.d.created, u: pv.d.updated, s: pv.d.skipped }), pv.status === 200 && pv.d.dry === true && (pv.d.plan || []).length === 15);
     const qa = await api(page, 'admin/staging', { op: 'qa' }, true); FIX = qa.d;
     rec('Admin', 'QA fixture created / updated (idempotent)', '200, 0 skipped', qa.status + ' ' + JSON.stringify({ c: qa.d.created, u: qa.d.updated, s: qa.d.skipped }), qa.status === 200 && qa.d.skipped === 0);
+    // which rules are LIVE in the staging project (read from Firebase, not from GitHub)
+    const lr = await api(page, 'admin/staging', { op: 'rules' }, true); LIVE = (lr.d.firestore && lr.d.firestore.has) || {};
+    rec('Admin', 'live staging Firestore rules (read from Firebase)', 'newest rules: class proof + exercise check', JSON.stringify({ release: lr.d.firestore && lr.d.firestore.release, has: LIVE }), !!(LIVE.vnMonth && LIVE.classProof && LIVE.exInAsg));
+    // old Lucky Wheel 1-day Extensions (no server record): preview → retire → preview again (0 old)
+    const ex1 = await api(page, 'admin/extlegacy', { op: 'preview' }, true), ex2 = await api(page, 'admin/extlegacy', { op: 'apply', confirm: 'RETIRE' }, true), ex3 = await api(page, 'admin/extlegacy', { op: 'preview' }, true);
+    rec('Admin', 'old 1-day Extensions: preview counts, retire (backup first), preview again = 0 old; server-issued items kept', 'apply 200, then 0 old', JSON.stringify({ before: ex1.d.counts, sample: ex1.d.sample, retired: ex2.d.itemsRetired, failed: ex2.d.failed, after: ex3.d.counts && ex3.d.counts.legacy }), ex2.status === 200 && ex3.d.counts && ex3.d.counts.legacy === 0);
     // late passes made before the quota markers existed: preview → create missing markers → preview again (0 missing)
     const pm1 = await api(page, 'admin/passmarkers', { op: 'preview' }, true), pm2 = await api(page, 'admin/passmarkers', { op: 'apply' }, true), pm3 = await api(page, 'admin/passmarkers', { op: 'preview' }, true);
     const pmT = (pm1.d.rows || []).filter((r) => /stg\.tester/.test(r.email)).map((r) => r.kind + ':' + r.asgId + ':' + r.state);
@@ -274,7 +280,11 @@ async function openEx(page, exId) {
         await tr('closedAsgViaOtherEx', () => db.collection('attempts').add(att({ asg: 'qa_sc_A', ex: 'c_qa_r10' })));
         return r; });
       FORGE = fk;
-      rec('Tester', 'forged links: another class\'s open homework / an exercise not in the homework / a closed homework', 'closed homework refused; the others may be written but must never count (checked by teacher + assistant below)', JSON.stringify(fk), fk.closedAsgViaOtherEx === 'permission-denied');
+      const allNo = fk.otherClassAsg === 'permission-denied' && fk.exerciseNotInAsg === 'permission-denied' && fk.closedAsgViaOtherEx === 'permission-denied';
+      rec('Tester', 'forged links refused by the rules: another class\'s open homework / an exercise not in the homework / a closed homework', 'all permission-denied', JSON.stringify(fk) + (LIVE.classProof ? '' : ' (staging still has rules without the class check: republish)'), LIVE.classProof ? allNo : null);
+      // an old-style 1-day Extension (no server record, retired by the admin above) can never be redeemed
+      const lx = await api(page, 'pass', { asgId: 'qa_q2', itemId: 'qa_legacy_ext' });
+      rec('Tester', 'an old 1-day Extension (no server record) cannot be redeemed', '409 noitem', JSON.stringify([lx.status, lx.d.code]), lx.status === 409 && lx.d.code === 'noitem');
       rec('Tester', 'a student cannot write a Lucky Wheel item pass directly', 'permission-denied', q.itemByHand, q.itemByHand === 'permission-denied');
       // Lucky Wheel 1-day Extension: server ledger item qa_ext_1 (made by the QA fixture)
       const i1 = await api(page, 'pass', { asgId: 'qa_hw_now', itemId: 'qa_ext_1' });
@@ -314,6 +324,9 @@ async function openEx(page, exId) {
         rec('Tester', 'work done inside the late pass is counted as late for that homework', '"Done late (late pass)"', lc.slice(0, 200), /Done late \(late pass\)/.test(lc) && !/Missed/.test(lc), await shot(page, 'scope-latepass-done'));
       }
     }
+    await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(2500);
+    await tab(page, 'bag'); const bag = clean(await page.locator('#v-bag').textContent().catch(() => ''));
+    rec('Tester', 'Inventory: the retired old extension shows "No longer valid", no Use button for it', '"No longer valid"', (bag.match(/1-day Extension[\s\S]{0,60}/) || [''])[0], /No longer valid/.test(bag), await shot(page, 'tester-inventory'));
     // mobile dark, signed in
     await page.setViewportSize({ width: 390, height: 844 }); await page.emulateMedia({ colorScheme: 'dark' }); await page.reload({ waitUntil: 'load' }); await page.waitForTimeout(2500);
     const hs = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);

@@ -25,7 +25,7 @@ const run = async (S, op) => JSON.parse((await S.T.adminStaging(env(), { op })).
 (async () => {
   await t('dry run writes nothing and lists 3 exercises + 4 assignments to create', async () => {
     const S = server(SB), d = await run(S, 'qa-preview');
-    assert.strictEqual(d.dry, true); assert.strictEqual(S.W.length, 0); assert.strictEqual(d.created, 15); assert.strictEqual(d.plan.length, 15);
+    assert.strictEqual(d.dry, true); assert.strictEqual(S.W.length, 0); assert.strictEqual(d.created, 15); assert.strictEqual(d.plan.length, 16, '+ the old-style extension (no tester profile in this fake = skipped)');
   });
   await t('create: every record qa + staging, titles "STAGING/QA", Cam 21 · Test 4; running again updates the same ids', async () => {
     const S = server(SB); await run(S, 'qa');
@@ -38,7 +38,7 @@ const run = async (S, op) => JSON.parse((await S.T.adminStaging(env(), { op })).
   });
   await t('a record with a fixture id that a person made (no qa flag) is skipped, never overwritten', async () => {
     const S = server(SB); S.DB.exercises = { qa_r5: { title: 'My own exercise' } };
-    const d = await run(S, 'qa'); assert.strictEqual(S.DB.exercises.qa_r5.title, 'My own exercise'); assert.strictEqual(d.skipped, 1);
+    const d = await run(S, 'qa'); assert.strictEqual(S.DB.exercises.qa_r5.title, 'My own exercise'); assert.strictEqual(d.skipped, 2);
   });
   await t('refused on production, on a non-Cloudflare build and on an unsafe staging (nothing written)', async () => {
     for (const b of [{ env: 'production' }, {}]) { const S = server(b), r = await S.T.adminStaging(env(), { op: 'qa' }); assert.strictEqual(r.status, 403); assert.strictEqual(S.W.length, 0); }
