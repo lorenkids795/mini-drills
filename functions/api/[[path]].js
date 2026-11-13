@@ -2705,11 +2705,38 @@ async function adminStagingQa(env, op) {
   const n = (a) => plan.filter((p) => p.act === a).length;
   return json({ ok: true, dry: op !== 'qa', plan, created: n('create'), updated: n('update'), kept: n('keep (already there)'), skipped: plan.length - n('create') - n('update') - n('keep (already there)') });
 }
+// Staging only, admin only, read-only: which Firestore rules are LIVE in the staging project (Firebase Rules API), so a
+// "rules published?" question is answered from Google, not guessed. Returns every release (database / storage) with its
+// time, and for Firestore: the ruleset time, size, sha-256 and whether it contains the newest markers. Nothing is written.
+async function stagingRules(env) {
+  const now = Math.floor(Date.now() / 1000);
+  const jwt = await signJwt(env, { iss: env.FIREBASE_CLIENT_EMAIL, scope: 'https://www.googleapis.com/auth/firebase.readonly', aud: 'https://oauth2.googleapis.com/token', iat: now, exp: now + 600 });
+  const tr = await fetch('https://oauth2.googleapis.com/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'grant_type=' + encodeURIComponent('urn:ietf:params:oauth:grant-type:jwt-bearer') + '&assertion=' + jwt });
+  if (!tr.ok) return json({ ok: false, step: 'token', status: tr.status }, 502);
+  const tok = (await tr.json()).access_token, H = { Authorization: 'Bearer ' + tok };
+  const base = 'https://firebaserules.googleapis.com/v1/projects/' + encodeURIComponent(env.FIREBASE_PROJECT_ID);
+  const lr = await fetch(base + '/releases', { headers: H });
+  if (!lr.ok) return json({ ok: false, step: 'releases', status: lr.status, error: (await lr.text()).slice(0, 300) }, 502);
+  const rel = ((await lr.json()).releases || []).map((r) => ({ name: String(r.name || '').split('/releases/')[1] || r.name, ruleset: String(r.rulesetName || '').split('/').pop(), updateTime: r.updateTime }));
+  const out = { ok: true, project: env.FIREBASE_PROJECT_ID, releases: rel, firestore: null };
+  const fsr = rel.filter((r) => r.name === 'cloud.firestore')[0];
+  if (fsr) {
+    const rr = await fetch(base + '/rulesets/' + encodeURIComponent(fsr.ruleset), { headers: H });
+    if (rr.ok) {
+      const d = await rr.json(), src = ((d.source && d.source.files) || []).map((f) => f.content || '').join(String.fromCharCode(10));
+      out.firestore = { release: fsr.updateTime, rulesetCreated: d.createTime, chars: src.length, sha256: (await sha256Hex(src)).slice(0, 16),
+        has: { vnMonth: /vnMonth/.test(src), passq: /match \/passq\//.test(src), sts: /sts == request\.time/.test(src), asgOpen: /function asgOpen/.test(src) } };
+    } else out.firestore = { release: fsr.updateTime, error: rr.status };
+  }
+  return json(out);
+}
 async function adminStaging(env, body) {
   const st = await envState(env);
   if (st.env !== 'staging' || !st.ok) return fail('Staging test data can only be made on a correctly set up staging deployment. Nothing was written.', 403);
   const now = Date.now(), D = 864e5, op = String(body.op || '');
   if (op === 'qa' || op === 'qa-preview') return await adminStagingQa(env, op);
+  if (op === 'rules') return await stagingRules(env);
   if (op === 'bulk') { // 620 attempts for one made-up student: checks there is no 500 cap anywhere
     const rows = [];
     for (let i = 0; i < 620; i++) rows.push({ id: 'stg_bulk_' + i, data: { email: 'stg.student@example.test', student: 'STG Student An', cls: 'STG-A', ex: i % 2 ? 'l2' : 'r2', score: 3, total: 5, answered: 5, required: 5, items: [], ts: now - (i % 150) * D - i * 1000, staging: true } });
