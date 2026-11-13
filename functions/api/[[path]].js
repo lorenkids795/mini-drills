@@ -258,7 +258,7 @@ async function fsList(env, col) {
   let tok = '';
   for (let i = 0; i < 10; i++) {
     const r = await fs(env, 'GET', '/' + col + '?pageSize=300' + (tok ? '&pageToken=' + encodeURIComponent(tok) : ''));
-    if (!r.ok) throw new Error('firestore list ' + r.status + ' ' + (await r.text().catch(() => '')).replace(/s+/g, ' ').slice(0, 120));
+    if (!r.ok) throw new Error('firestore list ' + r.status + ' ' + (await r.text().catch(() => '')).replace(/\s+/g, ' ').slice(0, 120));
     const d = await r.json();
     (d.documents || []).forEach((doc) => {
       out.push(Object.assign({ id: decodeURIComponent(doc.name.split('/').pop()) }, fromFields(doc.fields)));
@@ -1348,7 +1348,7 @@ async function fsListTimed(env, col) {
   let tok = '';
   for (let i = 0; i < 20; i++) {
     const r = await fs(env, 'GET', '/' + col + '?pageSize=300' + (tok ? '&pageToken=' + encodeURIComponent(tok) : ''));
-    if (!r.ok) throw new Error('firestore list ' + r.status + ' ' + (await r.text().catch(() => '')).replace(/s+/g, ' ').slice(0, 120));
+    if (!r.ok) throw new Error('firestore list ' + r.status + ' ' + (await r.text().catch(() => '')).replace(/\s+/g, ' ').slice(0, 120));
     const d = await r.json();
     (d.documents || []).forEach((doc) => out.push({ name: doc.name, updateTime: doc.updateTime, data: fromFields(doc.fields) }));
     tok = d.nextPageToken || '';
