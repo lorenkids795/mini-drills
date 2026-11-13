@@ -439,7 +439,7 @@ async function openEx(page, exId) {
       try { await bt.commit(); return 'ALLOWED'; } catch (e) { return e.code || 'error'; } }, [sl]);
     await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(2500);
     await page.click('[data-act="nav"][data-asg="qa_hw_late"][data-ex="c_qa_r5"]').catch(() => {}); await page.waitForTimeout(1500);
-    const barLate = /late pass: this work counts as late/.test(await page.locator('#libBody').innerHTML());
+    const barLate = /late pass<\/b>|late pass: this work counts as late/.test(await page.locator('#libBody').innerHTML());
     if (await page.locator('#submit').count()) { await answer(page, EX.qa_r5, 5, []); await page.click('#submit'); await page.waitForTimeout(3500); }
     await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(2500);
     const lcard = clean(await page.locator('.hw').filter({ hasText: 'STAGING/QA overdue (tester)' }).first().textContent().catch(() => '(card gone)'));
