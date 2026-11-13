@@ -2968,6 +2968,7 @@ export async function onRequest(ctx) {
     return fail('Not found.', 404);
   } catch (e) {
     console.log('[api] server error', route, String((e && e.stack) || e).slice(0, 500));
-    return json({ error: 'Server error. Try again.', code: 'server' }, 500);
+    // staging only: the short reason (e.g. "firestore list 429", "google token 400"; never a secret) to find infrastructure errors
+    return json(Object.assign({ error: 'Server error. Try again.', code: 'server' }, BUILD && BUILD.env === 'staging' ? { detail: String((e && e.message) || e).slice(0, 160) } : {}), 500);
   }
 }
