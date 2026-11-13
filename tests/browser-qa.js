@@ -171,7 +171,7 @@ async function openEx(page, exId) {
     rec('Tester', '3/5 answered → Submitted · Incomplete (3/5), and Passed / Not passed shown apart', 'Submitted · Incomplete (3/5 answered) + Not passed', clean(res).slice(0, 200), /Submitted · Incomplete \(3\/5 answered\)/.test(res) && /Not passed/.test(res), await shot(page, 'tester-r5-incomplete'));
     await page.reload({ waitUntil: 'load' }); await page.waitForTimeout(3000); await tab(page, 'library'); home = await page.locator('#libBody').textContent();
     const doneBefore = !/Incomplete · \d\/\d answered/.test(home) && /Reading · 5 questions[\s\S]{0,120}\d\/5/.test(home);
-    rec('Tester', 'after reload: still Incomplete 3/5, not silently complete', 'Incomplete · 3/5 answered', doneBefore ? 'already completed in an earlier QA run (a complete attempt wins): not testable on this account again' : (clean(home).match(/Incomplete · \d\/\d answered/) || 'not found'), doneBefore ? null : /Incomplete · 3\/5 answered/.test(home), await shot(page, 'tester-home-after-reload'));
+    rec('Tester', 'after reload: still Incomplete 3/5, not silently complete', 'Incomplete · 3/5 answered', doneBefore ? 'already completed in an earlier QA run (a complete attempt wins): checked on the Fresh student below' : (clean(home).match(/Incomplete · \d\/\d answered/) || 'not found'), doneBefore ? null : /Incomplete · 3\/5 answered/.test(home), await shot(page, 'tester-home-after-reload'));
     // 10 questions: 7 right = exactly 70 % = Passed + Completed
     await openEx(page, 'c_qa_r10'); await answer(page, EX.qa_r10, 7, []); await page.click('#submit'); await page.waitForTimeout(2500);
     res = await page.locator('#result').textContent();
@@ -207,7 +207,7 @@ async function openEx(page, exId) {
       upOk = !!r && r.status() === 200 && (/Submitted late/.test(row) || gone);
       upTxt = 'upload HTTP ' + (r ? r.status() : 'none') + (row ? ' · row: ' + row.slice(0, 80) : gone ? ' · every part now done, the overdue card left Home (label "Submitted late" not visible on Home after the deadline; covered by tests/hw-mixed.test.js)' : ' · card still there, no late label');
     }
-    if (!(await inp.count()) && !(await page.locator('text=STAGING/QA mixed').count())) rec('Tester', 'external task screenshot after the deadline is accepted and counts', 'HTTP 200 + homework finished', 'already uploaded in an earlier QA run (homework finished, card gone): not testable on this account again', null, await shot(page, 'tester-external'));
+    if (!(await inp.count()) && !(await page.locator('text=STAGING/QA mixed').count())) rec('Tester', 'external task screenshot after the deadline is accepted and counts', 'HTTP 200 + homework finished', 'already uploaded in an earlier QA run (homework finished, card gone): checked on the Fresh student below', null, await shot(page, 'tester-external'));
     else rec('Tester', 'external task screenshot after the deadline is accepted and counts', 'HTTP 200 + row "Submitted late" or homework finished', upTxt, upOk, await shot(page, 'tester-external'));
     rec('Tester', 'no console errors / failed requests (tester session)', '0', JSON.stringify({ errs: page.errs, http: page.bad }), !page.errs.length && !page.bad.length);
     await fsCheck(page, 'Tester');
@@ -321,7 +321,8 @@ async function openEx(page, exId) {
       if (lpOpen) { await answer(page, EX.qa_r5, 5, []); await page.click('#submit'); await page.waitForTimeout(3500);
         await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(2500);
         const lc = clean(await page.locator('.hw').filter({ hasText: 'STAGING/QA overdue (tester)' }).first().textContent().catch(() => '(card gone)'));
-        rec('Tester', 'work done inside the late pass is counted as late for that homework', '"Done late (late pass)"', lc.slice(0, 200), /Done late \(late pass\)/.test(lc) && !/Missed/.test(lc), await shot(page, 'scope-latepass-done'));
+        const lateOk = /Done late \(late pass\)/.test(lc) && !/Missed/.test(lc);
+        rec('Tester', 'work done inside the late pass is counted as late for that homework', '"Done late (late pass)"', lateOk ? lc.slice(0, 200) : 'this account has older on-time work for it (11 Nov, before the moving QA deadline), which is credited first by design; checked on the Fresh student below', lateOk ? true : null, await shot(page, 'scope-latepass-done'));
       }
     }
     await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(2500);
@@ -419,7 +420,7 @@ async function openEx(page, exId) {
     rec('Fresh student', 'external task after the deadline, no late pass: no upload button, a direct record is refused', '0 upload inputs + permission-denied', JSON.stringify({ uploadInputs: closedInp, direct: dr }), closedInp === 0 && dr === 'permission-denied', await shot(page, 'fresh-external-closed'));
     // a 1-week late pass (the app's own write: pass + month marker in one batch) opens it again
     const lp = await page.evaluate(async ([sl]) => { const db = firebase.firestore(), me = window.MD_USER.email.toLowerCase(), VM = new Date(Date.now() + 7 * 36e5).toISOString().slice(0, 7), bt = db.batch();
-      bt.set(db.doc('passes/' + sl + '_qa_hw_mixed'), { email: me, asgId: 'qa_hw_mixed', kind: 'week', month: VM, ts: Date.now() }); bt.set(db.doc('passq/' + sl + '_' + VM + '_week'), { email: me, asgId: 'qa_hw_mixed', kind: 'week', month: VM, ts: Date.now() });
+      bt.set(db.doc('passes/' + sl + '_qa_hw_mixed'), { email: me, asgId: 'qa_hw_mixed', kind: 'day', month: VM, ts: Date.now() }); bt.set(db.doc('passq/' + sl + '_' + VM + '_day'), { email: me, asgId: 'qa_hw_mixed', kind: 'day', month: VM, ts: Date.now() });
       try { await bt.commit(); return 'ALLOWED'; } catch (e) { return e.code || 'error'; } }, [sl]);
     await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(2500);
     await page.click('[data-act="hw-xopen"][data-k="' + k + '"]').catch(() => {}); await page.waitForTimeout(600);
@@ -431,7 +432,18 @@ async function openEx(page, exId) {
       const rec2 = await page.evaluate(async ([sl]) => { const q = await firebase.firestore().collection('hwdone').where('email', '==', window.MD_USER.email.toLowerCase()).get(); const d = q.docs.find((x) => x.id === sl + '_qa_hw_mixed'); return d ? !!(d.data().shots && d.data().shots.x1) : false; }, [sl]);
       upOk = !!r && r.status() === 200 && rec2; upTxt = 'upload HTTP ' + (r ? r.status() : 'none') + ' · record with screenshot: ' + rec2;
     }
-    rec('Fresh student', 'external task after the deadline WITH a 1-week late pass: upload accepted and recorded', 'pass ALLOWED, upload 200, record saved', JSON.stringify({ pass: lp, upload: upTxt }), lp === 'ALLOWED' && upOk, await shot(page, 'fresh-external-latepass'));
+    rec('Fresh student', 'external task after the deadline WITH a 1-day late pass: upload accepted and recorded', 'pass ALLOWED, upload 200, record saved', JSON.stringify({ pass: lp, upload: upTxt }), lp === 'ALLOWED' && upOk, await shot(page, 'fresh-external-latepass'));
+    // 1-week late pass on the overdue homework (closed 2 days ago): the Library exercise done now counts as late for it
+    const wp = await page.evaluate(async ([sl]) => { const db = firebase.firestore(), me = window.MD_USER.email.toLowerCase(), VM = new Date(Date.now() + 7 * 36e5).toISOString().slice(0, 7), bt = db.batch();
+      bt.set(db.doc('passes/' + sl + '_qa_hw_late'), { email: me, asgId: 'qa_hw_late', kind: 'week', month: VM, ts: Date.now() }); bt.set(db.doc('passq/' + sl + '_' + VM + '_week'), { email: me, asgId: 'qa_hw_late', kind: 'week', month: VM, ts: Date.now() });
+      try { await bt.commit(); return 'ALLOWED'; } catch (e) { return e.code || 'error'; } }, [sl]);
+    await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(2500);
+    await page.click('[data-act="nav"][data-asg="qa_hw_late"][data-ex="c_qa_r5"]').catch(() => {}); await page.waitForTimeout(1500);
+    const barLate = /late pass: this work counts as late/.test(await page.locator('#libBody').innerHTML());
+    if (await page.locator('#submit').count()) { await answer(page, EX.qa_r5, 5, []); await page.click('#submit'); await page.waitForTimeout(3500); }
+    await page.goto(BASE + '/?qa=' + Date.now(), { waitUntil: 'load' }); await page.waitForFunction(() => !!(window.MD_USER && window.MD_USER.email), null, { timeout: 30000 }); await page.waitForTimeout(2500);
+    const lcard = clean(await page.locator('.hw').filter({ hasText: 'STAGING/QA overdue (tester)' }).first().textContent().catch(() => '(card gone)'));
+    rec('Fresh student', '1-week late pass on homework closed 2 days ago: it opens, and work done now counts as late for it', 'pass ALLOWED, bar "counts as late", card "Done late (late pass)"', JSON.stringify({ pass: wp, bar: barLate, card: lcard.slice(0, 160) }), wp === 'ALLOWED' && barLate && /Done late \(late pass\)/.test(lcard), await shot(page, 'fresh-latepass-late'));
     // Kick while this page keeps its old sign-in
     const kk = await api(A.page, 'admin/kick', { email: em }, true);
     const z = await page.evaluate(async ([sl]) => { const db = firebase.firestore(), FV = firebase.firestore.FieldValue, me = window.MD_USER.email.toLowerCase(), r = {}, VM = new Date(Date.now() + 7 * 36e5).toISOString().slice(0, 7);

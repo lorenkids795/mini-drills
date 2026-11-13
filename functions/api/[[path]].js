@@ -2681,7 +2681,7 @@ function qaAssignments(now) {
   return [
     ['qa_hw_now', Object.assign({ cls: 'Test', name: 'STAGING/QA this week (tester)', start: now - D, due: now + 6 * D, ex: ['c_qa_r5', 'c_qa_r10', 'c_qa_w1'], ext: [], type: 'mini' }, b)],
     ['qa_hw_late', Object.assign({ cls: 'Test', name: 'STAGING/QA overdue (tester)', start: now - 9 * D, due: now - 2 * D, ex: ['c_qa_r5'], ext: [], type: 'mini' }, b)],
-    ['qa_hw_mixed', Object.assign({ cls: 'Test', name: 'STAGING/QA mixed: Library + external (tester, overdue)', start: now - 9 * D, due: now - D, ex: ['c_qa_r10'], ext: [{ id: 'x1', link: 'https://example.com/staging-qa-form', src: 'STAGING/QA form', note: 'Made-up task: open the link, then upload any screenshot.' }], type: 'mixed' }, b)],
+    ['qa_hw_mixed', Object.assign({ cls: 'Test', name: 'STAGING/QA mixed: Library + external (tester, overdue)', start: now - 9 * D, due: now - D / 2, ex: ['c_qa_r10'], ext: [{ id: 'x1', link: 'https://example.com/staging-qa-form', src: 'STAGING/QA form', note: 'Made-up task: open the link, then upload any screenshot.' }], type: 'mixed' }, b)],
     ['qa_hw_stga', Object.assign({ cls: 'STG-A', name: 'STAGING/QA this week (STG-A)', start: now - D, due: now + 6 * D, ex: ['c_qa_r5', 'c_qa_r10'], ext: [{ id: 'x1', link: 'https://example.com/staging-qa-form', src: 'STAGING/QA form', note: 'Made-up task.' }], type: 'mixed' }, b)],
     // (11/2026) assignment-scoped deadlines: A = closed 100 days ago with c_qa_r5, which is also in qa_hw_now (= B, open);
     // a late pass that has already ended (written below for the tester)
@@ -2849,11 +2849,12 @@ async function adminStaging(env, body) {
     const em = 'qa.legacy@example.test', oldId = 'QA.Legacy@Example.test', cur = await fsGet(env, 'roster', em);
     if (cur && !cur.data.qa) return fail('roster/' + em + ' exists and was not made by the QA fixture. Nothing was written.', 409);
     if (cur) await fsDelete(env, 'roster', em);
+    const purged = await purgeStudent(env, em); // made-up QA account on staging only: every run starts with no history
     await fsPut(env, 'roster', oldId, { email: em, name: 'QA Legacy Student', cls: 'Test', course: '', role: 'student', ts: now - 30 * D, staging: true, qa: true });
     let password = '(unchanged: it already has one)';
     if (body.newPassword === true || !(await env.MD_KV.get('acct:' + em))) { password = stgPassword(); await savePassword(env, em, password); }
     await env.MD_KV.delete('off:' + em); await env.MD_KV.delete('rl:' + em);
-    return json({ ok: true, email: em, oldId, password });
+    return json({ ok: true, email: em, oldId, password, purged });
   }
   if (op === 'bulk') { // 620 attempts for one made-up student: checks there is no 500 cap anywhere
     const rows = [];
