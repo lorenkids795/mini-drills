@@ -14,7 +14,7 @@ const OUT = process.argv[2] || path.join(__dirname, '..', 'qa-artifacts'); fs.mk
 const ENVF = path.join(__dirname, '..', '.qa.env');
 const R = []; let TEACHER_A = {}, FORGE = null;
 const VER = (fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8').match(/var APP_VERSION='([^']+)'/) || [])[1], SVER = (fs.readFileSync(path.join(__dirname, '..', 'functions', 'api', '[[path]].js'), 'utf8').match(/const API_VERSION = '([^']+)'/) || [])[1]; // results: {id, role, test, expected, observed, result, evidence}
-const rec = (role, test, expected, observed, ok, evidence) => { R.push({ role, test, expected, observed: String(observed).slice(0, 300), result: ok === null ? 'NOT TESTED' : ok ? 'PASS' : 'FAIL', evidence: evidence || '' }); console.log((ok === null ? 'SKIP' : ok ? 'PASS' : 'FAIL') + ' [' + role + '] ' + test + (ok ? '' : ' -> ' + String(observed).slice(0, 200))); };
+const rec = (role, test, expected, observed, ok, evidence) => { R.push({ role, test, expected, observed: String(observed).slice(0, 800), result: ok === null ? 'NOT TESTED' : ok ? 'PASS' : 'FAIL', evidence: evidence || '' }); console.log((ok === null ? 'SKIP' : ok ? 'PASS' : 'FAIL') + ' [' + role + '] ' + test + (ok ? '' : ' -> ' + String(observed).slice(0, 200))); };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const secretWords = [];
 const clean = (s) => { let t = String(s); secretWords.forEach((w) => { if (w) t = t.split(w).join('***'); }); return t; };
