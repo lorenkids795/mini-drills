@@ -2736,7 +2736,7 @@ async function stagingRules(env) {
     if (rr.ok) {
       const d = await rr.json(), src = ((d.source && d.source.files) || []).map((f) => f.content || '').join(String.fromCharCode(10));
       out.firestore = { release: fsr.updateTime, rulesetCreated: d.createTime, chars: src.length, sha256: (await sha256Hex(src)).slice(0, 16),
-        has: { vnMonth: /vnMonth/.test(src), passq: /match \/passq\//.test(src), sts: /sts == request\.time/.test(src), asgOpen: /function asgOpen/.test(src), classProof: /function inAsgClass/.test(src), exInAsg: /function asgHasEx/.test(src) } };
+        has: { vnMonth: /vnMonth/.test(src), passq: /match \/passq\//.test(src), sts: /sts == request\.time/.test(src), asgOpen: /function asgOpen/.test(src), classProof: /function inAsgClass/.test(src), classFailClosed: /return exists\(rosterPath\(\)\) &&/.test(src), exInAsg: /function asgHasEx/.test(src) } };
     } else out.firestore = { release: fsr.updateTime, error: rr.status };
   }
   return json(out);

@@ -126,7 +126,7 @@ async function openEx(page, exId) {
     rec('Admin', 'QA fixture created / updated (idempotent)', '200, 0 skipped', qa.status + ' ' + JSON.stringify({ c: qa.d.created, u: qa.d.updated, s: qa.d.skipped }), qa.status === 200 && qa.d.skipped === 0);
     // which rules are LIVE in the staging project (read from Firebase, not from GitHub)
     const lr = await api(page, 'admin/staging', { op: 'rules' }, true); LIVE = (lr.d.firestore && lr.d.firestore.has) || {};
-    rec('Admin', 'live staging Firestore rules (read from Firebase)', 'newest rules: class proof + exercise check', JSON.stringify({ release: lr.d.firestore && lr.d.firestore.release, has: LIVE }), !!(LIVE.vnMonth && LIVE.classProof && LIVE.exInAsg));
+    rec('Admin', 'live staging Firestore rules (read from Firebase)', 'newest rules: class proof + exercise check', JSON.stringify({ release: lr.d.firestore && lr.d.firestore.release, has: LIVE }), !!(LIVE.vnMonth && LIVE.classProof && LIVE.classFailClosed && LIVE.exInAsg));
     // old Lucky Wheel 1-day Extensions (no server record): preview → retire → preview again (0 old)
     const ex1 = await api(page, 'admin/extlegacy', { op: 'preview' }, true), ex2 = await api(page, 'admin/extlegacy', { op: 'apply', confirm: 'RETIRE' }, true), ex3 = await api(page, 'admin/extlegacy', { op: 'preview' }, true);
     rec('Admin', 'old 1-day Extensions: preview counts, retire (backup first), preview again = 0 old; server-issued items kept', 'apply 200, then 0 old', JSON.stringify({ before: ex1.d.counts, sample: ex1.d.sample, retired: ex2.d.itemsRetired, failed: ex2.d.failed, after: ex3.d.counts && ex3.d.counts.legacy }), ex2.status === 200 && ex3.d.counts && ex3.d.counts.legacy === 0);
