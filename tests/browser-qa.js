@@ -121,7 +121,7 @@ async function openEx(page, exId) {
     rec('Admin', 'admin signs in on staging', 'role teacher + adm', JSON.stringify({ role: me.role, adm: me.adm }), me.role === 'teacher' && me.adm === true);
     await envGate(page, 'QA fixture');
     const pv = await api(page, 'admin/staging', { op: 'qa-preview' }, true);
-    rec('Admin', 'QA fixture dry run writes nothing and lists the plan', '200, dry, 15 records', pv.status + ' ' + JSON.stringify({ dry: pv.d.dry, n: (pv.d.plan || []).length, c: pv.d.created, u: pv.d.updated, s: pv.d.skipped }), pv.status === 200 && pv.d.dry === true && (pv.d.plan || []).length === 15);
+    rec('Admin', 'QA fixture dry run writes nothing and lists the plan', '200, dry, 16 records', pv.status + ' ' + JSON.stringify({ dry: pv.d.dry, n: (pv.d.plan || []).length, c: pv.d.created, u: pv.d.updated, s: pv.d.skipped }), pv.status === 200 && pv.d.dry === true && (pv.d.plan || []).length === 16);
     const qa = await api(page, 'admin/staging', { op: 'qa' }, true); FIX = qa.d;
     rec('Admin', 'QA fixture created / updated (idempotent)', '200, 0 skipped', qa.status + ' ' + JSON.stringify({ c: qa.d.created, u: qa.d.updated, s: qa.d.skipped }), qa.status === 200 && qa.d.skipped === 0);
     // which rules are LIVE in the staging project (read from Firebase, not from GitHub)
