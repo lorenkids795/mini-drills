@@ -137,6 +137,13 @@ service cloud.firestore {
       allow update: if admin();
       allow delete: if admin();
     }
+    // (11/2026, Phase C) Personal Goal: ONLY the server writes it (POST /api/goal, service account). The student reads their own,
+    // teachers read all (display only). No create / update / delete for anyone here: activation time, review results and the
+    // one manual change cannot be edited from a browser.
+    match /goals/{id} {
+      allow read: if teacher() || ownsOld();
+      allow write: if false;
+    }
     match /passq/{id} {
       allow read: if teacher() || ownsOld();
       allow create: if ownsNew() && request.resource.data.kind in ['day', 'week']

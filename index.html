@@ -1391,6 +1391,24 @@ mark.wch.act,mark.wch:focus-visible{outline:2px solid var(--accent);outline-offs
 .hwst{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;font-size:var(--fs-sm);color:var(--muted)}.hwst.ok{color:var(--good)}.hwst.no{color:var(--bad)}.hwst.warn{color:var(--warn);font-weight:700}
 .mk.wn{display:inline-flex;align-items:center;justify-content:center;width:1.2em;height:1.2em;border:1.5px solid currentColor;border-radius:50%;font-size:.8em;font-weight:800}
 .hwinc{margin:10px 0 0;padding:10px 12px;border:1px solid var(--warn);border-radius:var(--r-sm);font-size:var(--fs-body);line-height:1.6}
+/* Personal goal (Phase C): one quiet card on Home; PASS 70 % shown apart from the goal */
+.pg{margin:0 0 18px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}
+.pg h3{margin:0;font-size:var(--fs-md)}
+.pgrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pgv{color:var(--accent)}
+.pgpass{background:var(--surface-2,var(--bg));border:1px solid var(--line-2);color:var(--ink);font-size:var(--fs-xs)}
+.pgs,.pgl{margin:8px 0 0;font-size:var(--fs-sm);line-height:1.6;color:var(--muted)}
+.pgl{color:var(--ink)}
+.pg .seg.pgch{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));margin-top:10px;border:1px solid var(--line-2);border-radius:var(--r-sm);overflow:hidden}
+.pg .pgch button{border:0;background:none;color:var(--ink);font-weight:700;font-size:var(--fs-body);min-height:44px;cursor:pointer;font-family:var(--mono)}
+.pg .pgch button+button{border-left:1px solid var(--line-2)}
+.pg .pgch button[aria-checked="true"]{background:var(--accent);color:var(--accent-ink)}
+.pg .pgch button:focus-visible,.pgc:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pgc{display:flex;align-items:center;gap:10px;margin-top:12px;padding:0;min-height:44px;border:0;background:none;color:var(--ink);font:inherit;font-size:var(--fs-body);cursor:pointer;text-align:left}
+.pgbx{display:inline-grid;place-items:center;width:22px;height:22px;border:2px solid var(--line-2);border-radius:var(--r-xs);font-weight:800;color:var(--accent-ink)}
+.pgc[aria-checked="true"] .pgbx{background:var(--accent);border-color:var(--accent)}
+.pg .actions{margin-top:12px}
+@media (max-width:640px){.pg .seg.pgch{grid-template-columns:repeat(3,minmax(0,1fr))}.pg .pgch button:nth-child(4){border-left:0}.pg .pgch button:nth-child(n+4){border-top:1px solid var(--line-2)}}
 /* Reading settings (11/2026): one calm panel; phones = sheet at the bottom with its own scroll */
 .rmsetp{width:300px;max-width:calc(100vw - 24px);max-height:min(70vh,560px);overflow-y:auto;padding:4px 16px 10px;z-index:60}
 .rmseth{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0 4px}
@@ -1842,7 +1860,7 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
 
 <script src="md-config.js?v=2026-11-04b"></script>
 <script src="md-backend.js?v=2026-11-09d"></script>
-<script src="md-chart.js?v=2026-11-04b"></script><script src="md-hw.js?v=2026-11-12a"></script>
+<script src="md-chart.js?v=2026-11-04b"></script><script src="md-hw.js?v=2026-11-14a"></script>
 <script src="lm-content.js?v=2026-11-04b"></script>
 <script src="lm-engine.js?v=2026-11-04b"></script>
 <script src="lm-unit2.js?v=2026-11-04b"></script>
@@ -2212,6 +2230,84 @@ function hwStatus(a){
   return {ids:a.ex.filter(exOf),ext:a.ext,rows:rows,pct:tot?Math.round(pairs/tot*100):0};
 }
 var HWTODO=0; // assignments on Home that are not complete yet (set by homeworkHTML)
+/* ---------- Personal goal (Phase C, 11/2026) ----------
+   The student's own target for Reading / Listening homework. It is NOT a pass mark: PASS stays 70 % (PASS_PCT) everywhere,
+   and the goal never changes marks, Passed / Not passed, homework status or what can be opened.
+   Authority = server POST /api/goal (goals/<slug(email)>, written only by the server); rules of the goal = MDHW (md-hw.js).
+   Home card #pgBox: choose 70–95 % + commit (once) → status line (next review, the one change after 30 days, last review).
+   A failed load never blocks homework: the card says so and offers Try again. Demo: same rules on this device. */
+var PG={st:'idle',g:null,pick:0,commit:false,msg:'',err:'',busy:false,open:false,adj:0,at:0,em:''};
+function pgReset(){PG={st:'idle',g:null,pick:0,commit:false,msg:'',err:'',busy:false,open:false,adj:0,at:0,em:U?U.email:''}}
+function pgDate(ts){var d=new Date(ts);return d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear()}
+// demo only: the same rules, kept on this device
+function pgDemo(b){var k='md-pgdemo:'+(U?U.email:''),g=null,now=Date.now(),H=window.MDHW;try{g=JSON.parse(lsGet(k)||'null')}catch(e){}
+  var out=function(x){return x?{goal:x.goal,first:x.first,at:x.at,days:H.goalDays(x,now),manualUsed:!!x.manualUsed,lockUntil:x.at+H.GOAL.LOCK_DAYS*864e5,options:H.goalOptions(x,now),nextReview:H.goalNextReview(x),reviews:(x.rv||[]).slice(-3),hist:(x.hist||[]).slice(-10),minSamples:H.GOAL.MIN_SAMPLES,minAsgs:H.GOAL.MIN_ASGS,now:now}:null};
+  if(b.op==='set'){if(!H.goalValid(b.goal))return {error:'Choose 70, 75, 80, 85, 90 or 95 %.',code:'invalid'};if(g)return {ok:true,again:true,goal:out(g)};
+    g={goal:b.goal,first:b.goal,at:now,manualUsed:false,rk:0,bs:0,rv:[],hist:[{t:now,from:0,to:b.goal,by:'student',type:'initial'}]};lsSet(k,JSON.stringify(g));return {ok:true,goal:out(g)}}
+  if(!g)return {ok:true,goal:null};
+  g=H.goalReview(g,[],null,now).g;
+  if(b.op==='adjust'){var c=H.goalManual(g,b.goal,now);if(!c.ok)return {error:'This change is not allowed.',code:c.code,goal:out(g)};g.hist.push({t:now,from:g.goal,to:b.goal,by:'student',type:'manual'});g.goal=b.goal;g.manualUsed=true;g.mt=now;g.bs=0}
+  lsSet(k,JSON.stringify(g));return {ok:true,goal:out(g)}}
+function pgApi(body){if(DEMO)return new Promise(function(ok){setTimeout(function(){ok(pgDemo(body))},150)});return authHdr().then(function(h){return adPost('goal',body,'',h)})}
+function pgOn(){return !!(U&&U.role==='student'&&window.MDHW&&MDHW.GOAL)}
+function pgLoad(force){if(!pgOn())return;if(PG.em!==U.email)pgReset();if(PG.st==='load')return;if(PG.st==='ok'&&!force&&Date.now()-PG.at<300000)return;
+  PG.st='load';pgDraw();pgApi({op:'get'}).then(function(d){if(d.error&&d.goal===undefined){PG.st='err';PG.err=d.error}else{PG.st='ok';PG.g=d.goal||null;PG.at=Date.now();PG.err=''}pgDraw()},function(e){PG.st='err';PG.err=(e&&e.message)||'No connection.';pgDraw()})}
+function pgDraw(){var el=$('#pgBox');if(el)el.outerHTML=pgHTML()}
+var PG_VERD={above:'Your checked homework was above your goal.',within:'Your checked homework was close to your goal.',below:'Your checked homework was below your goal.',insufficient:'Not enough checked homework in that month to review it.'};
+function pgLastHTML(g){var r=(g.reviews||[]).slice(-1)[0];if(!r)return '';
+  var what=r.act==='raise'?'Goal raised to '+r.next+'%.':r.act==='lower'?'Goal moved to '+r.next+'% after two months below it in a row.':'Goal kept at '+r.next+'%.';
+  var ev=r.verdict==='insufficient'?' ('+r.n+' checked homework '+(r.n===1?'exercise':'exercises')+'; at least '+g.minSamples+' from '+g.minAsgs+' assignments are needed.)':(typeof r.pooled==='number'?' Average '+r.pooled+'% over '+r.n+' exercises.':'');
+  return '<p class="pgl">Last review ('+pgDate(r.ts)+'): '+esc(PG_VERD[r.verdict]||'')+' '+esc(what)+esc(ev)+'</p>'}
+function pgHTML(){
+  if(!pgOn())return '';
+  if(PG.st==='idle'||PG.em!==U.email)setTimeout(function(){pgLoad()},0); /* first draw: load once (5-minute cache) */
+  var h='<section id="pgBox" class="pg" aria-labelledby="pgH" aria-live="polite" aria-busy="'+(PG.st==='load'||PG.busy?'true':'false')+'">';
+  if(PG.st==='idle'||(PG.st==='load'&&!PG.g&&PG.at===0))return h+'<p class="pgs">Loading your personal goal…</p></section>';
+  if(PG.st==='err')return h+'<p class="pgs" role="alert">Your personal goal could not be loaded. Homework still works as usual.</p><div class="actions"><button type="button" class="btn sm" data-act="pg-retry">Try again</button></div></section>';
+  var g=PG.g;
+  if(!g){
+    var cs=MDHW.GOAL.CHOICES;
+    h+='<h3 id="pgH">Set your personal goal</h3><p class="pgs">PASS is always <b>70%</b>. Your goal is your own aim for Reading and Listening homework. It does not change your marks or what you can open.</p>'+
+      '<div class="seg pgch" role="radiogroup" aria-label="Personal goal">'+cs.map(function(v){var on=PG.pick===v;return '<button type="button" role="radio" aria-checked="'+on+'" class="'+(on?'on':'')+'" data-act="pg-pick" data-v="'+v+'">'+v+'%</button>'}).join('')+'</div>'+
+      '<button type="button" class="pgc" role="checkbox" aria-checked="'+PG.commit+'" data-act="pg-commit"><span class="pgbx" aria-hidden="true">'+(PG.commit?'✓':'')+'</span>I commit to aiming for this goal.</button>'+
+      '<p class="pgs">You can change it once, 30 days after you set it. From day 60 it is reviewed every 30 days.</p>'+
+      '<div class="actions"><button type="button" class="btn" data-act="pg-set"'+(PG.pick&&PG.commit&&!PG.busy?'':' disabled')+'>'+(PG.busy?'Saving…':PG.pick?'Set my goal: '+PG.pick+'%':'Set my goal')+'</button></div>'+
+      (PG.msg?'<p class="pgs" role="alert">'+esc(PG.msg)+'</p>':'');
+    return h+'</section>'}
+  var now=Date.now(),nr=g.nextReview,canAdj=!g.manualUsed&&now>=g.lockUntil&&(g.options||[]).length;
+  h+='<div class="pgrow"><h3 id="pgH">My goal <b class="pgv">'+g.goal+'%</b></h3><span class="pill pgpass">PASS 70%</span></div>'+
+    '<p class="pgs">'+(g.manualUsed?'You have used your one goal change.':now<g.lockUntil?'You can change your goal once from '+pgDate(g.lockUntil)+'.':'You can change your goal once now.')+
+    ' '+(nr.k===1?'Automatic reviews start '+pgDate(nr.at)+'.':'Next automatic review: '+pgDate(nr.at)+'.')+'</p>'+pgLastHTML(g);
+  if(canAdj&&!PG.open)h+='<div class="actions"><button type="button" class="btn sm sec" data-act="pg-open">Change my goal</button></div>';
+  if(canAdj&&PG.open){
+    h+='<div class="seg pgch" role="radiogroup" aria-label="New goal">'+g.options.map(function(v){var on=PG.adj===v;return '<button type="button" role="radio" aria-checked="'+on+'" class="'+(on?'on':'')+'" data-act="pg-adjv" data-v="'+v+'">'+v+'%</button>'}).join('')+'</div>'+
+      '<p class="pgs">At most 10 points up or down. This is your only change.</p><div class="actions"><button type="button" class="btn sm" data-act="pg-adj"'+(PG.adj&&!PG.busy?'':' disabled')+'>'+(PG.busy?'Saving…':PG.adj?'Change to '+PG.adj+'%':'Change')+'</button> <button type="button" class="btn sm sec" data-act="pg-close">Cancel</button></div>'}
+  if(PG.msg)h+='<p class="pgs" role="alert">'+esc(PG.msg)+'</p>';
+  return h+'</section>'}
+function pgSend(body,okMsg){PG.busy=true;PG.msg='';pgDraw();
+  pgApi(body).then(function(d){PG.busy=false;if(d.goal!==undefined&&d.goal!==null){PG.g=d.goal;PG.st='ok';PG.at=Date.now()}
+    if(d.error){PG.msg=d.error}else{PG.open=false;PG.adj=0;PG.msg='';toast(okMsg)}pgDraw()},
+    function(e){PG.busy=false;PG.msg=((e&&e.message)||'No connection.')+' Nothing was changed. Try again.';pgDraw()})}
+function pgAct(a,t){
+  if(a.indexOf('pg-')!==0)return false;
+  if(a==='pg-retry'){PG.st='idle';pgLoad(true);return true}
+  if(a==='pg-pick'){PG.pick=+t.dataset.v;PG.msg='';pgDraw();return true}
+  if(a==='pg-commit'){PG.commit=!PG.commit;pgDraw();var c=$('#pgBox .pgc');if(c)c.focus();return true}
+  if(a==='pg-set'){if(!PG.pick||!PG.commit||PG.busy)return true;pgSend({op:'set',goal:PG.pick,commit:true},'Your personal goal is '+PG.pick+'%.');return true}
+  if(a==='pg-open'){PG.open=true;PG.adj=0;pgDraw();return true}
+  if(a==='pg-close'){PG.open=false;PG.adj=0;PG.msg='';pgDraw();return true}
+  if(a==='pg-adjv'){PG.adj=+t.dataset.v;pgDraw();return true}
+  if(a==='pg-adj'){if(!PG.adj||PG.busy)return true;
+    if(uiGate(t,{title:'Change your goal to '+PG.adj+'%?',text:'You can change your goal only once. After that, only the automatic review moves it (5 points at a time).',ok:'Change goal'}))return true;
+    pgSend({op:'adjust',goal:PG.adj},'Your personal goal is now '+PG.adj+'%.');return true}
+  return true}
+// teachers / admin: goals of their students (display only; read once per session, rules: teachers read goals)
+var PGT={st:'idle',m:{}};
+function pgTeachLoad(){if(PGT.st!=='idle'||!U||U.role!=='teacher')return;PGT.st='load';
+  if(DEMO){PGT.st='ok';return}
+  if(!dbh){PGT.st='idle';return}
+  dbh.collection('goals').get().then(function(s){s.forEach(function(d){var x=d.data();if(x&&x.email)PGT.m[nEm(x.email)]=x});PGT.st='ok';if(TAB==='asg')refreshLive()},function(){PGT.st='err'})}
+function pgTeach(em){pgTeachLoad();var x=PGT.m[nEm(em)];return x&&x.goal?' · Personal goal '+Number(x.goal)+'%':''}
 function homeworkHTML(){
   var now=Date.now();HWTODO=0;
   var items=allAsgs().filter(function(a){return a.cls===U.cls&&a.start<=now&&!a.tOnly}).map(function(a){return asgState(a,U.email,now)})
@@ -3183,7 +3279,7 @@ function renderLib(){
   if(XED)return renderEditor();
   if(LIBT==='lm'&&LMV){var lcur=lmLesson(LMV);if(lcur&&lmVisible(lcur)){$('#libBody').innerHTML='<div class="lmfocus">'+lmLessonHTML(lcur)+'</div>';return}LMV=null}
   var dm=doneMap(U.email),h='',stu=U.role==='student';
-  if(stu){var hwh=homeworkHTML();h+=HWTODO?hwh+dailyHTML():dailyHTML()+hwh} // homework first while something is still to do
+  if(stu){var hwh=homeworkHTML();h+=pgHTML()+(HWTODO?hwh+dailyHTML():dailyHTML()+hwh)} // homework first while something is still to do
   if(stu)h+='<div class="sechead" style="margin-top:26px"><h2>Library</h2></div>'+libTabsHTML();
   else h+='<div class="sechead"><h2>Library</h2></div>'+libTabsHTML(); // the tabs below already say Cambridge / Learning Materials
   if(LIBT==='lm'){h+=lmHTML();if(stu)h+=recentHTML();$('#libBody').innerHTML=h;return}
@@ -4396,7 +4492,7 @@ function settingsHTML(c){
     '<button class="btn sm" data-act="cs-status" type="button">Save status</button><span class="pill cst '+clsStatus(c)+'">Now: '+({active:'Active',pending:'Pending',archived:'Archived'})[clsStatus(c)]+'</span></div>'+
     '<p class="saved" style="margin:0">Pending = in the Google Sheet, nobody signed up yet (turns Active with the first student). Archived classes are folded at the bottom of the list.</p></div>':'')+
   '<div class="sec" id="csS_stu"><h3>Students ('+live.length+')</h3><p class="saved" style="margin:4px 0 8px">New students are added automatically when your Google Sheet syncs. Removing a student here hides them from this class.</p>'+
-  (live.length?'<p class="saved" style="margin:0 0 6px">Reading level: the version of AI reading lessons each student gets (Beginner = Easy, Intermediate = Medium, Advanced = Hard).</p>'+live.map(function(r){var lv=SLV[r.level]?r.level:'';return '<div class="srow"><span>'+esc(r.name)+'<small>'+esc(r.email)+'</small></span>'+
+  (live.length?'<p class="saved" style="margin:0 0 6px">Reading level: the version of AI reading lessons each student gets (Beginner = Easy, Intermediate = Medium, Advanced = Hard).</p>'+live.map(function(r){var lv=SLV[r.level]?r.level:'';return '<div class="srow"><span>'+esc(r.name)+'<small>'+esc(r.email)+esc(pgTeach(r.email))+'</small></span>'+
     '<select class="cslv" data-email="'+esc(r.email)+'" aria-label="Reading level of '+esc(r.name)+'"><option value=""'+(lv?'':' selected')+'>Level: not set (Medium)</option>'+['beginner','intermediate','advanced'].map(function(k){return '<option value="'+k+'"'+(lv===k?' selected':'')+'>'+SLV_NAME[k]+'</option>'}).join('')+'</select>'+
     '<button class="btn sm" data-act="cs-rm" data-email="'+esc(r.email)+'" type="button">Remove</button></div>'}).join(''):'<p class="saved">No students in this class.</p>')+
   (gone.length?'<h4 style="margin:18px 0 4px;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Removed</h4>'+gone.map(function(r){return '<div class="srow"><span>'+esc(r.name)+'<small>'+esc(r.email)+'</small></span><button class="btn sm" data-act="cs-restore" data-email="'+esc(r.email)+'" type="button">Restore</button></div>'}).join(''):'')+'</div>'+
@@ -7221,10 +7317,11 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-11-13c'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-11-14a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(uiAct(a,t))return true;
+  if(pgAct(a,t))return true;
   if(a==='att-older'){attNeed(ATT.lo-1);refreshLive();return true} // teachers: one more page of older attempts
   if(audAct(a,t))return true;
   if(hwaAct(a,t))return true;

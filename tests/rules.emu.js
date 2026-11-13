@@ -21,6 +21,7 @@ const VM = (() => { const d = new Date(Date.now() + 7 * 36e5); return d.getUTCFu
     await setDoc(doc(d, 'codes/c1'), { code: 'TEA-1', kind: 'tea', to: '' }); await setDoc(doc(d, 'codes/c2'), { code: 'TEA-2', kind: 'tea', to: 's@x.com' });
     await setDoc(doc(d, 'codes/c3'), { code: 'TEA-3', kind: 'tea', to: 'other@x.com' });
     await setDoc(doc(d, 'config/xp'), { vals: {} }); await setDoc(doc(d, 'roster/s@x.com'), { email: 's@x.com', cls: '7h', name: 'S' });
+    await setDoc(doc(d, 'goals/s-x-com'), { email: 's@x.com', goal: 80, at: NOW - 40 * D, manualUsed: false }); await setDoc(doc(d, 'goals/p2-x-com'), { email: 'p2@x.com', goal: 75, at: NOW });
     await setDoc(doc(d, 'roster/tester@x.com'), { email: 'tester@x.com', cls: '7h', name: 'X', tester: true });
     await setDoc(doc(d, 'roster/p2@x.com'), { email: 'p2@x.com', cls: '7h', name: 'P2' }); await setDoc(doc(d, 'roster/p3@x.com'), { email: 'p3@x.com', cls: '7h', name: 'P3' });
     await setDoc(doc(d, 'roster/P4@X.com'), { email: 'p4@x.com', cls: '7h', name: 'P4 (old import id)' });
@@ -51,6 +52,21 @@ const VM = (() => { const d = new Date(Date.now() + 7 * 36e5); return d.getUTCFu
   await t('admin reads all vouchers', assertSucceeds(getDocs(collection(A, 'codes'))));
   await t('admin adds a voucher', assertSucceeds(setDoc(doc(A, 'codes/c9'), { code: 'NEW', kind: 'tea', to: '' })));
   await t('assistant cannot read vouchers', assertFails(getDoc(doc(H, 'codes/c2'))));
+  // ---- (11/2026, Phase C) Personal Goal: server-only writes
+  await t('goal: student reads own goal', assertSucceeds(getDoc(doc(S, 'goals/s-x-com'))));
+  await t('goal: student cannot read another student goal', assertFails(getDoc(doc(S, 'goals/p2-x-com'))));
+  await t('goal: student cannot change own goal value', assertFails(updateDoc(doc(S, 'goals/s-x-com'), { goal: 95 })));
+  await t('goal: student cannot move the activation time', assertFails(updateDoc(doc(S, 'goals/s-x-com'), { at: NOW - 400 * D })));
+  await t('goal: student cannot reset the one manual change', assertFails(updateDoc(doc(S, 'goals/s-x-com'), { manualUsed: false })));
+  await t('goal: student cannot write review results', assertFails(updateDoc(doc(S, 'goals/s-x-com'), { rv: [], rk: 9 })));
+  await t('goal: student cannot create a goal doc directly', assertFails(setDoc(doc(X, 'goals/tester-x-com'), { email: 'tester@x.com', goal: 90, at: NOW })));
+  await t('goal: student cannot delete own goal', assertFails(deleteDoc(doc(S, 'goals/s-x-com'))));
+  await t('goal: student cannot write another student goal', assertFails(setDoc(doc(S, 'goals/p2-x-com'), { email: 's@x.com', goal: 70 })));
+  await t('goal: teacher reads a goal', assertSucceeds(getDoc(doc(T, 'goals/s-x-com'))));
+  await t('goal: teacher cannot change a goal', assertFails(updateDoc(doc(T, 'goals/s-x-com'), { goal: 70 })));
+  await t('goal: admin cannot change a goal from the browser either', assertFails(updateDoc(doc(A, 'goals/s-x-com'), { goal: 70 })));
+  await t('goal: assistant cannot read goals', assertFails(getDoc(doc(H, 'goals/s-x-com'))));
+  await t('goal: signed-out cannot read goals', assertFails(getDoc(doc(N, 'goals/s-x-com'))));
   // ---- D2 config / roster / names
   await t('teacher cannot change XP settings', assertFails(setDoc(doc(T, 'config/xp'), { vals: { hack: 1 } })));
   await t('teacher cannot change prizes', assertFails(setDoc(doc(T, 'config/prizes'), { list: [] })));

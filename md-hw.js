@@ -120,7 +120,106 @@
 
   // the window of each assignment for one student, to pass as o.sib: list = assignments of the student's class, passOf(id) = pass
   function sibOf(list, passOf) { return (list || []).map(function (a) { return { id: a.id, start: num(a.start), due: dueOf(a, passOf ? passOf(a.id) : null), ex: a.ex || [] }; }); }
-  var H = { BUILTIN: BUILTIN, liveEx: liveEx, PASS_DAYS: PASS_DAYS, attState: attState, exPart: exPart, extPart: extPart, shots: shots, asgEval: asgEval, dueOf: dueOf, nEm: nEm, ms: ms, tOf: tOf, linkOf: linkOf, sibOf: sibOf };
+  /* ---------- (11/2026, Phase C) Personal Goal: ONE set of rules for the server (authority) and the app (display, demo) ----------
+     The goal is the student's own target. It is NEVER a pass mark: PASS stays 70 % everywhere (PASS_PCT in the app).
+     Approved by the owner:
+       - first choice 70 / 75 / 80 / 85 / 90 / 95 %, the student confirms a self-commitment;
+       - no change during the first 30 days after activation (server time, never reset by login / class / device);
+       - after day 30: ONE student change in the account's lifetime, at most ±10 points, 5-point steps, 70–95 %;
+       - from day 60: automatic review every 30 days, ±5 per review, never outside 70–95 %;
+       - raise only on sufficient, reliable evidence above the goal; lower only after TWO consecutive sufficiently sampled
+         reviews below the goal; too little evidence = hold, and it never counts as a cycle below the goal.
+     PROPOSED (not owner-approved, change here only): MIN_SAMPLES, MIN_ASGS, RAISE_MARGIN, RAISE_SHARE, LOWER_MARGIN.
+     Review k (k = 1, 2, …) happens on day 60 + 30·(k−1) and looks only at the 30 days before it (day D−30 … D).
+     Trusted evidence (goalSample): Reading / Listening homework attempts (linked to an assignment, server time `sts`,
+     every question answered), score consistent with its items; one attempt per assignment + exercise (the FIRST complete
+     one, so retries after seeing answers do not count). Writing / Speaking, free practice, legacy, incomplete, seeded /
+     QA probes and attempts whose numbers do not add up are left out, with the reason counted. */
+  var DAY = 86400000;
+  var GOAL = { CHOICES: [70, 75, 80, 85, 90, 95], MIN: 70, MAX: 95, STEP: 5, LOCK_DAYS: 30, MANUAL_MAX: 10,
+    FIRST_REVIEW: 60, CYCLE: 30, AUTO_STEP: 5, MAX_CATCHUP: 24,
+    MIN_SAMPLES: 4, MIN_ASGS: 2, RAISE_MARGIN: 5, RAISE_SHARE: 0.75, LOWER_MARGIN: 5, LOWER_CYCLES: 2 };
+  function goalValid(v) { return typeof v === 'number' && GOAL.CHOICES.indexOf(v) >= 0; }
+  function clampGoal(v) { return Math.max(GOAL.MIN, Math.min(GOAL.MAX, v)); }
+  // whole days since activation (server clock)
+  function goalDays(g, now) { return g && g.at ? Math.floor((now - num(g.at)) / DAY) : 0; }
+  // the day of review k (1-based) and the time it becomes due
+  function goalReviewDay(k) { return GOAL.FIRST_REVIEW + GOAL.CYCLE * (k - 1); }
+  function goalNextReview(g) { var k = (num(g && g.rk) || 0) + 1; return { k: k, day: goalReviewDay(k), at: num(g.at) + goalReviewDay(k) * DAY }; }
+  // can the student make the one manual change now to value v? -> {ok, code}
+  function goalManual(g, v, now) {
+    if (!g || !goalValid(num(g.goal))) return { ok: false, code: 'nogoal' };
+    if (g.manualUsed) return { ok: false, code: 'used' };
+    if (now < num(g.at) + GOAL.LOCK_DAYS * DAY) return { ok: false, code: 'early', from: num(g.at) + GOAL.LOCK_DAYS * DAY };
+    if (!goalValid(v)) return { ok: false, code: 'invalid' };
+    if (v === num(g.goal)) return { ok: false, code: 'same' };
+    if (Math.abs(v - num(g.goal)) > GOAL.MANUAL_MAX) return { ok: false, code: 'range' };
+    return { ok: true };
+  }
+  // the goals the student may switch to now (empty when not allowed)
+  function goalOptions(g, now) { return GOAL.CHOICES.filter(function (v) { return goalManual(g, v, now).ok; }); }
+  /* trusted samples in [from, to). exInfo(exId) -> {skill, n?} or null (unknown / not checkable exercise). */
+  function goalSample(atts, from, to, exInfo) {
+    var ex = {}, first = {}, out = [];
+    function no(r) { ex[r] = (ex[r] || 0) + 1; }
+    (atts || []).slice().sort(function (a, b) { return ms(a.sts) - ms(b.sts); }).forEach(function (a) {
+      if (!a) return;
+      if (a.kind === 'submission') return no('writing / speaking');
+      if (a.seeded || a.qaProbe) return no('test data');
+      if (!a.asg || typeof a.asg !== 'string') return no('not homework');
+      var t = ms(a.sts);
+      if (!t) return no('no server time');
+      if (t < from || t >= to) return;
+      var info = exInfo ? exInfo(a.ex) : null;
+      if (!info || (info.skill !== 'reading' && info.skill !== 'listening')) return no('not a checked Reading / Listening exercise');
+      var total = num(a.total), score = num(a.score), items = Array.isArray(a.items) ? a.items : null;
+      if (!(total > 0) || !(num(a.required) > 0) || num(a.answered) < num(a.required)) return no('incomplete');
+      if (!items || items.length !== total) return no('numbers do not add up');
+      var ids = {}, ok = 0, dup = false;
+      items.forEach(function (it) { var k = String(it && it.i); if (ids[k]) dup = true; ids[k] = 1; if (it && it.ok) ok++; });
+      if (dup || ok !== score || score > total || (info.n && info.n !== total)) return no('numbers do not add up');
+      var key = a.asg + '|' + a.ex;
+      if (first[key]) return no('retry of the same homework');
+      first[key] = 1;
+      out.push({ asg: a.asg, ex: a.ex, score: score, total: total, pct: Math.round(score / total * 1000) / 10, t: t });
+    });
+    var sc = 0, tt = 0, asgs = {};
+    out.forEach(function (s) { sc += s.score; tt += s.total; asgs[s.asg] = 1; });
+    return { samples: out, n: out.length, asgs: Object.keys(asgs).length, pooled: tt ? Math.round(sc / tt * 1000) / 10 : null, excluded: ex };
+  }
+  // 'insufficient' | 'above' | 'below' | 'within'
+  function goalJudge(s, goal) {
+    if (s.n < GOAL.MIN_SAMPLES || s.asgs < GOAL.MIN_ASGS) return 'insufficient';
+    var hi = s.samples.filter(function (x) { return x.pct >= goal; }).length;
+    if (s.pooled >= goal + GOAL.RAISE_MARGIN && hi / s.n >= GOAL.RAISE_SHARE) return 'above';
+    if (s.pooled < goal - GOAL.LOWER_MARGIN) return 'below';
+    return 'within';
+  }
+  /* run every review that is due by `now` and not run yet (catch-up, in order, idempotent: the review number k is stored).
+     Returns {g (new copy), done: [reviews]}. Never touches anything when nothing is due. */
+  function goalReview(g0, atts, exInfo, now) {
+    var g = JSON.parse(JSON.stringify(g0 || {})), done = [];
+    if (!goalValid(num(g.goal)) || !num(g.at)) return { g: g, done: done };
+    g.rv = Array.isArray(g.rv) ? g.rv : []; g.hist = Array.isArray(g.hist) ? g.hist : [];
+    for (var i = 0; i < GOAL.MAX_CATCHUP; i++) {
+      var nx = goalNextReview(g);
+      if (nx.at > now) break;
+      var from = num(g.at) + (nx.day - GOAL.CYCLE) * DAY, to = nx.at, prev = num(g.goal);
+      var s = goalSample(atts, from, to, exInfo), v = goalJudge(s, prev), act = 'hold', next = prev, bs = num(g.bs) || 0;
+      if (v === 'above') { next = clampGoal(prev + GOAL.AUTO_STEP); act = next > prev ? 'raise' : 'hold'; bs = 0; }
+      else if (v === 'below') { bs++; if (bs >= GOAL.LOWER_CYCLES) { next = clampGoal(prev - GOAL.AUTO_STEP); act = next < prev ? 'lower' : 'hold'; bs = 0; } }
+      else bs = 0; // 'within' and 'insufficient' break a run of cycles below the goal
+      var r = { k: nx.k, day: nx.day, from: from, to: to, n: s.n, asgs: s.asgs, pooled: s.pooled, verdict: v, act: act, prev: prev, next: next, bs: bs, excl: s.excluded, ts: to };
+      g.goal = next; g.bs = bs; g.rk = nx.k;
+      g.rv.push(r); if (g.rv.length > 24) g.rv = g.rv.slice(-24);
+      if (act !== 'hold') { g.hist.push({ t: to, from: prev, to: next, by: 'review', type: act, k: nx.k }); if (g.hist.length > 50) g.hist = g.hist.slice(-50); }
+      done.push(r);
+    }
+    return { g: g, done: done };
+  }
+
+  var H = { BUILTIN: BUILTIN, liveEx: liveEx, PASS_DAYS: PASS_DAYS, attState: attState, exPart: exPart, extPart: extPart, shots: shots, asgEval: asgEval, dueOf: dueOf, nEm: nEm, ms: ms, tOf: tOf, linkOf: linkOf, sibOf: sibOf,
+    GOAL: GOAL, goalValid: goalValid, goalDays: goalDays, goalNextReview: goalNextReview, goalManual: goalManual, goalOptions: goalOptions, goalSample: goalSample, goalJudge: goalJudge, goalReview: goalReview };
   if (typeof module !== 'undefined' && module.exports) module.exports = H;
   else root.MDHW = H;
 })(typeof self !== 'undefined' ? self : this);

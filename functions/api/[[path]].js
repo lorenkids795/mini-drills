@@ -1138,7 +1138,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-11-13d';
+const API_VERSION = '2026-11-14a';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -1181,7 +1181,7 @@ async function adminKick(env, body) {
    Every document of the student in the learning collections (found by the "email" field: one query each, so a kick stays
    far below the Workers sub-request limit), and profiles/{slug(email)} (XP, streak, prizes). Codes already handed out and the
    "wins" marquee are left alone. Cannot be undone. */
-const PURGE_COLS = ['attempts', 'errors', 'cards', 'hwdone', 'passes', 'passq', 'extitems', 'redeems'];
+const PURGE_COLS = ['attempts', 'errors', 'cards', 'hwdone', 'passes', 'passq', 'extitems', 'redeems', 'goals'];
 async function fsQueryEq(env, col, field, value) {
   const r = await fs(env, 'POST', ':runQuery', { structuredQuery: { from: [{ collectionId: col }], where: { fieldFilter: { field: { fieldPath: field }, op: 'EQUAL', value: { stringValue: value } } } } });
   if (!r.ok) throw new Error('firestore query ' + col + ' ' + r.status);
@@ -1523,6 +1523,83 @@ async function spinWheel(env, request, body) {
 // be of the student's class, sent, and the extended deadline (deadline + 1 day) still ahead; one pass per assignment.
 // Atomic: the item is marked used with a precondition (updateTime), then the pass is created only if none exists (else the
 // item is given back). Asking again for the same item + assignment returns the same pass (safe retry).
+/* ---------- (11/2026, Phase C) Personal Goal: POST /api/goal ----------
+   {op:'get'} | {op:'set', goal, commit:true} | {op:'adjust', goal, reason?} + Authorization: Bearer <ID token> (students only).
+   Authority = goals/<slug(email)> written ONLY here (no Firestore write rule). Times are this server's clock.
+   Rules of the goal: MDHW (md-hw.js) goalValid / goalManual / goalReview. Reviews run lazily on any call once due (catch-up,
+   idempotent by review number); every write has an updateTime precondition, retried on a concurrent write.
+   Reads: 1 (goal) + 1 (roster) per call; when a review is due (once per 30 days): the student's attempts + their custom
+   exercises (only exercises of linked homework attempts). */
+const GOAL_MSG = { nogoal: 'Choose your goal first.', used: 'You have already used your one goal change.', early: 'You can change your goal 30 days after you set it.',
+  invalid: 'Choose 70, 75, 80, 85, 90 or 95 %.', same: 'That is already your goal.', range: 'You can move your goal by 10 points at most.' };
+function goalOut(g, now) {
+  if (!g || !MDHW.goalValid(Number(g.goal))) return null;
+  const H = MDHW, G = H.GOAL, nx = H.goalNextReview(g), lock = Number(g.at) + G.LOCK_DAYS * 864e5;
+  const rv = (Array.isArray(g.rv) ? g.rv : []).slice(-3).map((r) => ({ k: r.k, day: r.day, n: r.n, asgs: r.asgs, pooled: typeof r.pooled === 'number' ? r.pooled : null, verdict: r.verdict, act: r.act, prev: r.prev, next: r.next, ts: r.ts }));
+  const hist = (Array.isArray(g.hist) ? g.hist : []).slice(-10).map((h) => ({ t: h.t, from: h.from, to: h.to, by: h.by, type: h.type }));
+  return { goal: Number(g.goal), first: Number(g.first), at: Number(g.at), days: H.goalDays(g, now), manualUsed: !!g.manualUsed, lockUntil: lock,
+    options: H.goalOptions(g, now), nextReview: { k: nx.k, day: nx.day, at: nx.at }, reviews: rv, hist, minSamples: G.MIN_SAMPLES, minAsgs: G.MIN_ASGS, now };
+}
+// what the review may look at for an exercise id: custom Reading / Listening exercises only (built-ins cannot be checked here)
+async function goalExInfo(env, atts) {
+  const ids = [...new Set(atts.filter((a) => a && a.asg && a.kind !== 'submission').map((a) => String(a.ex || '')).filter((x) => /^c_[A-Za-z0-9_-]{1,120}$/.test(x)))].slice(0, 60);
+  const m = {};
+  for (const id of ids) {
+    const d = await fsGet(env, 'exercises', id.slice(2));
+    if (!d) continue;
+    const x = d.data;
+    if (x.kind === 'writing' || x.kind === 'speaking' || x.skill === 'writing' || x.skill === 'speaking') continue;
+    const plain = !x.kind && !x.rlesson && !x.lesson && Array.isArray(x.qs);
+    m[id] = { skill: x.skill === 'listening' ? 'listening' : 'reading', n: plain ? x.qs.length : 0 };
+  }
+  return (id) => m[id] || null;
+}
+async function goalApi(env, request, body) {
+  const who = await idUser(env, request);
+  if (!who) return needSignIn();
+  if (who.role !== 'student') return fail('Personal goals are for students.', 403);
+  const row = await fsGet(env, 'roster', who.em);
+  if (!row || row.data.role === 'teacher') return json({ error: 'This account is not on the class list. Ask the admin.', code: 'noroster' }, 403);
+  const op = String(body.op || 'get'), id = slug(who.em), H = MDHW;
+  if (['get', 'set', 'adjust'].indexOf(op) < 0) return fail('Unknown action.');
+  const v = Number(body.goal);
+  if ((op === 'set' || op === 'adjust') && !H.goalValid(v)) return json({ error: GOAL_MSG.invalid, code: 'invalid' }, 400);
+  if (op === 'set' && body.commit !== true) return json({ error: 'Confirm your goal first.', code: 'commit' }, 400);
+  for (let tries = 0; tries < 4; tries++) {
+    const now = Date.now(), cur = await fsGet(env, 'goals', id);
+    if (op === 'set') {
+      if (cur) return json({ ok: true, again: true, same: Number(cur.data.goal) === v, goal: goalOut(cur.data, now) }); // the first choice is final
+      const doc = { email: who.em, cls: String(row.data.cls || ''), goal: v, first: v, at: now, committed: true, manualUsed: false, rk: 0, bs: 0, rv: [],
+        hist: [{ t: now, from: 0, to: v, by: 'student', type: 'initial' }], ver: 1, upd: now };
+      if (await fsCreate(env, 'goals', id, doc)) return json({ ok: true, goal: goalOut(doc, now) });
+      continue; // created meanwhile (another tab): read it again
+    }
+    if (!cur) return json({ ok: true, goal: null });
+    let g = cur.data, changed = false, done = [];
+    if (H.goalNextReview(g).at <= now) {
+      const atts = (await fsQueryDocs(env, 'attempts', 'email', who.em)).filter((a) => a.asg);
+      const r = H.goalReview(g, atts, await goalExInfo(env, atts), now);
+      g = r.g; done = r.done; changed = done.length > 0;
+    }
+    let refuse = null;
+    if (op === 'adjust') {
+      const c = H.goalManual(g, v, now);
+      if (!c.ok) refuse = c.code;
+      else {
+        g.hist = (Array.isArray(g.hist) ? g.hist : []).concat([{ t: now, from: Number(g.goal), to: v, by: 'student', type: 'manual', reason: String(body.reason || '').slice(0, 200) }]).slice(-50);
+        g.goal = v; g.manualUsed = true; g.mt = now; g.bs = 0; changed = true;
+      }
+    }
+    if (changed) {
+      const f = { goal: Number(g.goal), manualUsed: !!g.manualUsed, rk: Number(g.rk) || 0, bs: Number(g.bs) || 0, rv: g.rv || [], hist: g.hist || [], cls: String(row.data.cls || g.cls || ''), upd: now };
+      if (g.mt) f.mt = g.mt;
+      if (!(await fsUpdate(env, 'goals', id, f, cur.updateTime))) continue; // another tab / device wrote first: start again from its state
+    }
+    if (refuse) return json({ error: GOAL_MSG[refuse] || 'This change is not allowed.', code: refuse, goal: goalOut(g, now) }, 409);
+    return json({ ok: true, goal: goalOut(g, now), reviewed: done.length });
+  }
+  return json({ error: 'Busy, try again.', code: 'busy' }, 409);
+}
 async function passItem(env, request, body) {
   const who = await idUser(env, request);
   if (!who) return needSignIn();
@@ -2936,6 +3013,7 @@ export async function onRequest(ctx) {
     if (route === 'ai/correct') return await aiCorrect(env, request, body);
     if (route === 'spin') return await spinWheel(env, request, body);
     if (route === 'pass') return await passItem(env, request, body);
+    if (route === 'goal') return await goalApi(env, request, body);
     if (route === 'ai/practice') return await aiPractice(env, request, body);
     if (route === 'ai/lesson') return await aiLesson(env, request, body);
     if (route === 'ai/transcribe') return await aiTranscribe(env, request, body);
