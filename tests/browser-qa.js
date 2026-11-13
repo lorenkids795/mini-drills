@@ -402,6 +402,7 @@ async function openEx(page, exId) {
     const fx = await api(A.page, 'admin/staging', { op: 'qa-legacy', newPassword: true }, true); if (fx.d.password) secretWords.push(fx.d.password);
     const mv = await api(A.page, 'admin/rosterids', { op: 'apply', confirm: 'MOVE' }, true);
     rec('Admin', 'fresh QA student (old-style roster id, fixed with admin/rosterids)', 'fixture 200, 1 row moved', JSON.stringify({ fixture: fx.status, moved: mv.d.moved, failed: mv.d.failed }), fx.status === 200 && mv.d.moved >= 1);
+    if (fx.status !== 200 || !fx.d.email) { await A.ctx.close(); throw new Error('fresh-student fixture failed (HTTP ' + fx.status + '): infrastructure, rerun'); }
     const em = fx.d.email, sl = em.replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     const { ctx, page } = await newCtx(b); await login(page, em, fx.d.password); await envGate(page, 'fresh student work');
     await openEx(page, 'c_qa_r5'); await answer(page, EX.qa_r5, 3, [3, 4]); await page.click('#submit'); await page.waitForTimeout(600);
