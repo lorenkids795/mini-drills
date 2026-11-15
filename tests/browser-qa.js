@@ -208,6 +208,7 @@ async function openEx(page, exId) {
       upTxt = 'upload HTTP ' + (r ? r.status() : 'none') + (row ? ' · row: ' + row.slice(0, 80) : gone ? ' · every part now done, the overdue card left Home (label "Submitted late" not visible on Home after the deadline; covered by tests/hw-mixed.test.js)' : ' · card still there, no late label');
     }
     if (!(await inp.count()) && !(await page.locator('text=STAGING/QA mixed').count())) rec('Tester', 'external task screenshot after the deadline is accepted and counts', 'HTTP 200 + homework finished', 'already uploaded in an earlier QA run (homework finished, card gone): checked on the Fresh student below', null, await shot(page, 'tester-external'));
+    else if (!(await inp.count())) rec('Tester', 'external task after the deadline without a late pass: no upload button (closed window, item 96)', 'no upload input while the card is shown', 'card shown, no upload input', true, await shot(page, 'tester-external'));
     else rec('Tester', 'external task screenshot after the deadline is accepted and counts', 'HTTP 200 + row "Submitted late" or homework finished', upTxt, upOk, await shot(page, 'tester-external'));
     rec('Tester', 'no console errors / failed requests (tester session)', '0', JSON.stringify({ errs: page.errs, http: page.bad }), !page.errs.length && !page.bad.length);
     await fsCheck(page, 'Tester');
