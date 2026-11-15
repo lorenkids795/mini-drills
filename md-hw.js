@@ -125,11 +125,22 @@
      Approved by the owner:
        - first choice 70 / 75 / 80 / 85 / 90 / 95 %, the student confirms a self-commitment;
        - no change during the first 30 days after activation (server time, never reset by login / class / device);
-       - after day 30: ONE student change in the account's lifetime, at most ±10 points, 5-point steps, 70–95 %;
+       - after day 30: the student may change it once per rolling 30 days (Decision 1, Option B): at most ±10 points,
+         5-point steps, 70–95 %. Every manual change starts a new 30-day cooldown (from its server time `mt`); logins,
+         class / device changes and automatic reviews never shorten or reset it, and reviews never use or refill it;
        - from day 60: automatic review every 30 days, ±5 per review, never outside 70–95 %;
        - raise only on sufficient, reliable evidence above the goal; lower only after TWO consecutive sufficiently sampled
          reviews below the goal; too little evidence = hold, and it never counts as a cycle below the goal.
-     PROPOSED (not owner-approved, change here only): MIN_SAMPLES, MIN_ASGS, RAISE_MARGIN, RAISE_SHARE, LOWER_MARGIN.
+     Thresholds APPROVED by the owner (Decision 2): a review needs >= 4 eligible attempts from >= 2 assignments; raise +5 when
+     the MEAN of the attempt percentages >= goal + 5 AND >= 75 % of attempts >= goal; lower −5 only after two consecutive
+     sufficient reviews with mean STRICTLY below goal − 5; an insufficient review keeps the goal and breaks the run.
+     Comparisons use the exact mean (the stored `mean` is rounded to 0.1 for display only).
+     Boundary math: review k is due at activation + (60 + 30·(k−1)) days; its window is [due − 30 days, due) (half-open), so
+     an attempt belongs to exactly one window. A manual change does not move the schedule; the next review compares with the
+     goal in force at that review (the manually chosen one) and the manual change resets the run of low reviews.
+     Precedence (no surprise double change): /api/goal always runs every due review FIRST (with the old goal), then applies the
+     student's change; when the app sends `base` (the goal the student was looking at) and a review has just moved it, the
+     manual change is refused with code 'changed' so the student chooses again from the new goal.
      Review k (k = 1, 2, …) happens on day 60 + 30·(k−1) and looks only at the 30 days before it (day D−30 … D).
      Trusted evidence (goalSample): Reading / Listening homework attempts (linked to an assignment, server time `sts`,
      every question answered), score consistent with its items; one attempt per assignment + exercise (the FIRST complete
@@ -137,7 +148,7 @@
      QA probes and attempts whose numbers do not add up are left out, with the reason counted. */
   var DAY = 86400000;
   var GOAL = { CHOICES: [70, 75, 80, 85, 90, 95], MIN: 70, MAX: 95, STEP: 5, LOCK_DAYS: 30, MANUAL_MAX: 10,
-    FIRST_REVIEW: 60, CYCLE: 30, AUTO_STEP: 5, MAX_CATCHUP: 24,
+    FIRST_REVIEW: 60, CYCLE: 30, COOLDOWN: 30, AUTO_STEP: 5, MAX_CATCHUP: 24,
     MIN_SAMPLES: 4, MIN_ASGS: 2, RAISE_MARGIN: 5, RAISE_SHARE: 0.75, LOWER_MARGIN: 5, LOWER_CYCLES: 2 };
   function goalValid(v) { return typeof v === 'number' && GOAL.CHOICES.indexOf(v) >= 0; }
   function clampGoal(v) { return Math.max(GOAL.MIN, Math.min(GOAL.MAX, v)); }
@@ -149,8 +160,8 @@
   // can the student make the one manual change now to value v? -> {ok, code}
   function goalManual(g, v, now) {
     if (!g || !goalValid(num(g.goal))) return { ok: false, code: 'nogoal' };
-    if (g.manualUsed) return { ok: false, code: 'used' };
     if (now < num(g.at) + GOAL.LOCK_DAYS * DAY) return { ok: false, code: 'early', from: num(g.at) + GOAL.LOCK_DAYS * DAY };
+    if (num(g.mt) && now < num(g.mt) + GOAL.COOLDOWN * DAY) return { ok: false, code: 'cooldown', from: num(g.mt) + GOAL.COOLDOWN * DAY };
     if (!goalValid(v)) return { ok: false, code: 'invalid' };
     if (v === num(g.goal)) return { ok: false, code: 'same' };
     if (Math.abs(v - num(g.goal)) > GOAL.MANUAL_MAX) return { ok: false, code: 'range' };
@@ -185,14 +196,16 @@
     });
     var sc = 0, tt = 0, asgs = {};
     out.forEach(function (s) { sc += s.score; tt += s.total; asgs[s.asg] = 1; });
-    return { samples: out, n: out.length, asgs: Object.keys(asgs).length, pooled: tt ? Math.round(sc / tt * 1000) / 10 : null, excluded: ex };
+    var sum = 0; out.forEach(function (s) { sum += s.score * 100 / s.total; });
+    var meanX = out.length ? sum / out.length : null;
+    return { samples: out, n: out.length, asgs: Object.keys(asgs).length, meanX: meanX, mean: meanX === null ? null : Math.round(meanX * 10) / 10, pooled: tt ? Math.round(sc / tt * 1000) / 10 : null, excluded: ex };
   }
   // 'insufficient' | 'above' | 'below' | 'within'
   function goalJudge(s, goal) {
     if (s.n < GOAL.MIN_SAMPLES || s.asgs < GOAL.MIN_ASGS) return 'insufficient';
-    var hi = s.samples.filter(function (x) { return x.pct >= goal; }).length;
-    if (s.pooled >= goal + GOAL.RAISE_MARGIN && hi / s.n >= GOAL.RAISE_SHARE) return 'above';
-    if (s.pooled < goal - GOAL.LOWER_MARGIN) return 'below';
+    var hi = s.samples.filter(function (x) { return x.score * 100 >= goal * x.total; }).length;
+    if (s.meanX >= goal + GOAL.RAISE_MARGIN && hi >= GOAL.RAISE_SHARE * s.n) return 'above';
+    if (s.meanX < goal - GOAL.LOWER_MARGIN) return 'below';
     return 'within';
   }
   /* run every review that is due by `now` and not run yet (catch-up, in order, idempotent: the review number k is stored).
@@ -209,7 +222,7 @@
       if (v === 'above') { next = clampGoal(prev + GOAL.AUTO_STEP); act = next > prev ? 'raise' : 'hold'; bs = 0; }
       else if (v === 'below') { bs++; if (bs >= GOAL.LOWER_CYCLES) { next = clampGoal(prev - GOAL.AUTO_STEP); act = next < prev ? 'lower' : 'hold'; bs = 0; } }
       else bs = 0; // 'within' and 'insufficient' break a run of cycles below the goal
-      var r = { k: nx.k, day: nx.day, from: from, to: to, n: s.n, asgs: s.asgs, pooled: s.pooled, verdict: v, act: act, prev: prev, next: next, bs: bs, excl: s.excluded, ts: to };
+      var r = { k: nx.k, day: nx.day, from: from, to: to, n: s.n, asgs: s.asgs, mean: s.mean, pooled: s.pooled, verdict: v, act: act, prev: prev, next: next, bs: bs, excl: s.excluded, ts: to };
       g.goal = next; g.bs = bs; g.rk = nx.k;
       g.rv.push(r); if (g.rv.length > 24) g.rv = g.rv.slice(-24);
       if (act !== 'hold') { g.hist.push({ t: to, from: prev, to: next, by: 'review', type: act, k: nx.k }); if (g.hist.length > 50) g.hist = g.hist.slice(-50); }

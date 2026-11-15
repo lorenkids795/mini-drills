@@ -36,9 +36,22 @@ const month = (day, pct, n) => { const r = []; for (let i = 0; i < (n || 4); i++
     assert.strictEqual(H.goalManual(goal({ goal: 95 }), 100, n).code, 'invalid'); assert.strictEqual(H.goalManual(goal({ goal: 70 }), 65, n).code, 'invalid');
     assert.deepStrictEqual(H.goalOptions(g, n), [70, 75, 85, 90]); assert.deepStrictEqual(H.goalOptions(g, T0 + D), []);
   });
-  await t('manual change: only once in the account lifetime', () => {
-    assert.strictEqual(H.goalManual(goal({ manualUsed: true }), 85, T0 + 400 * D).code, 'used');
-    assert.deepStrictEqual(H.goalOptions(goal({ manualUsed: true }), T0 + 400 * D), []);
+  await t('manual change: once per rolling 30 days from the last manual change (cooldown, exact boundary)', () => {
+    const g = goal({ goal: 85, mt: T0 + 31 * D, manualUsed: true });
+    assert.strictEqual(H.goalManual(g, 90, T0 + 61 * D - 1).code, 'cooldown');
+    assert.strictEqual(H.goalManual(g, 90, T0 + 61 * D - 1).from, T0 + 61 * D);
+    assert.ok(H.goalManual(g, 90, T0 + 61 * D).ok, 'exactly 30 days later = allowed');
+    assert.deepStrictEqual(H.goalOptions(g, T0 + 40 * D), []);
+  });
+  await t('day 31 (first change allowed), day 29 (early), records from the old one-time rule (manualUsed + mt) follow the cooldown', () => {
+    assert.ok(H.goalManual(goal(), 75, T0 + 31 * D).ok);
+    assert.strictEqual(H.goalManual(goal(), 75, T0 + 29 * D).code, 'early');
+    const old = goal({ manualUsed: true, mt: T0 + 35 * D });
+    assert.strictEqual(H.goalManual(old, 85, T0 + 50 * D).code, 'cooldown'); assert.ok(H.goalManual(old, 85, T0 + 65 * D).ok);
+  });
+  await t('automatic reviews never use or refill the manual allowance (cooldown unchanged by a review)', () => {
+    const g = goal({ mt: T0 + 50 * D }), r = H.goalReview(g, month(60, 95), EXI, T0 + 61 * D);
+    assert.strictEqual(r.g.mt, T0 + 50 * D); assert.strictEqual(H.goalManual(r.g, 80, T0 + 61 * D).code, 'cooldown');
   });
   await t('no automatic review before day 60; review 1 at day 60, review 2 at day 90 (30-day steps)', () => {
     assert.strictEqual(H.goalReview(goal(), [], EXI, T0 + 60 * D - 1).done.length, 0);
@@ -89,6 +102,36 @@ const month = (day, pct, n) => { const r = []; for (let i = 0; i < (n || 4); i++
   await t('below, then a month with too little evidence, then below: no decrease (the run is broken)', () => {
     const r = H.goalReview(goal(), month(60, 50).concat(month(120, 50)), EXI, T0 + 120 * D);
     assert.deepStrictEqual(r.done.map((x) => x.verdict), ['below', 'insufficient', 'below']); assert.strictEqual(r.g.goal, 80);
+  });
+  await t('raise boundary: mean exactly goal + 5 with exactly 75 % at or above goal → raise; 74.9 → no; 3/4 vs 2/4 at goal', () => {
+    const mk = (pcts) => pcts.map((p, i) => att(36 + i, p, 100, 'b' + (i % 2)));
+    assert.strictEqual(H.goalJudge(H.goalSample(mk([90, 90, 90, 70]), T0 + 30 * D, T0 + 60 * D, EXI), 80), 'above', 'mean 85, 3 of 4 >= 80');
+    assert.strictEqual(H.goalJudge(H.goalSample(mk([100, 100, 70, 70]), T0 + 30 * D, T0 + 60 * D, EXI), 80), 'within', 'mean 85 but only 2 of 4 >= 80');
+    assert.strictEqual(H.goalJudge(H.goalSample(mk([90, 90, 90, 69]), T0 + 30 * D, T0 + 60 * D, EXI), 80), 'within', 'mean 84.75');
+    assert.strictEqual(H.goalJudge(H.goalSample(mk([80, 80, 80, 80]), T0 + 30 * D, T0 + 60 * D, EXI), 80), 'within', 'at goal exactly = kept');
+  });
+  await t('lower boundary: mean exactly goal − 5 is NOT below; strictly below is', () => {
+    const mk = (pcts) => pcts.map((p, i) => att(36 + i, p, 100, 'c' + (i % 2)));
+    assert.strictEqual(H.goalJudge(H.goalSample(mk([75, 75, 75, 75]), T0 + 30 * D, T0 + 60 * D, EXI), 80), 'within');
+    assert.strictEqual(H.goalJudge(H.goalSample(mk([75, 75, 75, 74]), T0 + 30 * D, T0 + 60 * D, EXI), 80), 'below');
+  });
+  await t('mean = average of the attempt percentages (not pooled questions): 10/10 and 1/2 → 75 %', () => {
+    const s = H.goalSample([att(36, 10, 10, 'x'), att(37, 1, 2, 'y')], T0 + 30 * D, T0 + 60 * D, EXI);
+    assert.strictEqual(s.mean, 75); assert.notStrictEqual(s.pooled, 75);
+  });
+  await t('window boundaries: an attempt exactly at day 60 belongs to the NEXT review, day 60 − 1 ms to this one (counted once)', () => {
+    const a = att(0, 9, 10, 'w'); a.sts = T0 + 60 * D; const b = att(0, 9, 10, 'w2'); b.sts = T0 + 60 * D - 1;
+    assert.strictEqual(H.goalSample([a, b], T0 + 30 * D, T0 + 60 * D, EXI).n, 1);
+    assert.strictEqual(H.goalSample([a, b], T0 + 60 * D, T0 + 90 * D, EXI).n, 1);
+  });
+  await t('a manual change resets a run of low reviews; the next review compares with the new goal', () => {
+    const r1 = H.goalReview(goal(), month(60, 50), EXI, T0 + 61 * D); assert.strictEqual(r1.g.bs, 1);
+    const g2 = Object.assign({}, r1.g, { goal: 70, mt: T0 + 62 * D, bs: 0 });
+    const r2 = H.goalReview(g2, month(90, 50), EXI, T0 + 91 * D); assert.strictEqual(r2.done[0].prev, 70); assert.strictEqual(r2.g.goal, 70, 'floor');
+  });
+  await t('stale timestamps: attempts with no server time or with times outside the window never count', () => {
+    const s = H.goalSample([att(40, 9, 10, 'a', { sts: 'garbage' }), att(40, 9, 10, 'b', { sts: T0 - 400 * D })], T0 + 30 * D, T0 + 60 * D, EXI);
+    assert.strictEqual(s.n, 0);
   });
   await t('one bad homework does not lower the goal (a month close to the goal is "within")', () => {
     const rows = month(60, 80); rows[0] = att(36, 2, 10, 'm60_0');
@@ -164,18 +207,37 @@ const month = (day, pct, n) => { const r = []; for (let i = 0; i < (n || 4); i++
     await S.call({ op: 'set', goal: 85, commit: true });
     assert.strictEqual((await S.call({ op: 'get' })).d.goal.goal, 85);
   });
-  await t('server: manual change day 29 refused, day 30 allowed once, a replay refused', async () => {
+  await t('server: manual change day 29 refused, day 30 allowed, a second one inside 30 days refused, allowed again after 30 days', async () => {
     const clock = { now: T0 }, S = server(DB0(), clock, STU); await S.call({ op: 'set', goal: 80, commit: true });
     clock.now = T0 + 29 * D; assert.strictEqual((await S.call({ op: 'adjust', goal: 85 })).d.code, 'early');
     clock.now = T0 + 30 * D; const ok = await S.call({ op: 'adjust', goal: 90, reason: 'feeling confident' }); assert.strictEqual(ok.status, 200); assert.strictEqual(ok.d.goal.goal, 90);
     const h = S.DB.goals['s-x-com'].hist.slice(-1)[0]; assert.deepStrictEqual([h.from, h.to, h.by, h.type], [80, 90, 'student', 'manual']);
-    assert.strictEqual((await S.call({ op: 'adjust', goal: 85 })).d.code, 'used'); assert.strictEqual((await S.call({ op: 'adjust', goal: 90 })).d.code, 'used');
-    assert.strictEqual(S.DB.goals['s-x-com'].goal, 90);
+    assert.strictEqual(ok.d.goal.nextManual, T0 + 60 * D);
+    clock.now = T0 + 59 * D; assert.strictEqual((await S.call({ op: 'adjust', goal: 85 })).d.code, 'cooldown'); assert.strictEqual(S.DB.goals['s-x-com'].goal, 90);
+    clock.now = T0 + 60 * D + 1; const again = await S.call({ op: 'adjust', goal: 95 }); assert.strictEqual(again.status, 200); assert.strictEqual(S.DB.goals['s-x-com'].mc, 2);
+    assert.strictEqual(again.d.goal.nextManual, T0 + 90 * D + 1);
+  });
+  await t('server: a login / get / class change never moves the cooldown', async () => {
+    const clock = { now: T0 }, DB = DB0(), S = server(DB, clock, STU); await S.call({ op: 'set', goal: 80, commit: true });
+    clock.now = T0 + 31 * D; await S.call({ op: 'adjust', goal: 85 }); const mt = DB.goals['s-x-com'].mt;
+    DB.roster['s@x.com'].cls = '9h'; clock.now = T0 + 40 * D; await S.call({ op: 'get' }); await S.call({ op: 'get' });
+    assert.strictEqual(DB.goals['s-x-com'].mt, mt); assert.strictEqual((await S.call({ op: 'adjust', goal: 90 })).d.code, 'cooldown');
+  });
+  await t('server: review due and manual change in the same request → review first with the old goal; the student view (base) mismatch is refused, nothing compounds', async () => {
+    const clock = { now: T0 }, DB = DB0(), S = server(DB, clock, STU); await S.call({ op: 'set', goal: 80, commit: true });
+    month(60, 95).forEach((a, i) => { DB.attempts['m' + i] = a; });
+    clock.now = T0 + 61 * D;
+    const r = await S.call({ op: 'adjust', goal: 90, base: 80 }); // the student was still looking at 80
+    assert.strictEqual(r.d.code, 'changed'); assert.strictEqual(DB.goals['s-x-com'].goal, 85, 'only the review happened'); assert.strictEqual(DB.goals['s-x-com'].rk, 1);
+    assert.ok(!DB.goals['s-x-com'].mt, 'manual allowance not used');
+    const r2 = await S.call({ op: 'adjust', goal: 90, base: 85 }); assert.strictEqual(r2.status, 200); assert.strictEqual(DB.goals['s-x-com'].goal, 90);
+    assert.strictEqual(DB.goals['s-x-com'].rk, 1, 'the review is not run twice');
   });
   await t('server: two tabs change the goal at the same time → only one change', async () => {
     const clock = { now: T0 }, S = server(DB0(), clock, STU); await S.call({ op: 'set', goal: 80, commit: true }); clock.now = T0 + 31 * D;
     const r = await Promise.all([S.call({ op: 'adjust', goal: 90 }), S.call({ op: 'adjust', goal: 70 })]);
     assert.deepStrictEqual(r.map((x) => x.status).sort(), [200, 409]); assert.strictEqual(S.DB.goals['s-x-com'].hist.filter((h) => h.type === 'manual').length, 1);
+    assert.ok(r.some((x) => x.d.code === 'cooldown'));
   });
   await t('server: review is lazy, catches up, and runs once even with two tabs (no double shift)', async () => {
     const clock = { now: T0 }, DB = DB0(), S = server(DB, clock, STU); await S.call({ op: 'set', goal: 80, commit: true });
@@ -226,10 +288,18 @@ const month = (day, pct, n) => { const r = []; for (let i = 0; i < (n || 4); i++
   });
   await t('app: after day 30 the one change offers only allowed values (server list) and asks to confirm', async () => {
     const B = boot({ hooks: HK, user: stu }), now = Date.now();
-    B.W.reply = () => ({ status: 200, body: { ok: true, goal: { goal: 80, first: 80, at: now - 40 * D, days: 40, manualUsed: false, lockUntil: now - 10 * D, options: [70, 75, 85, 90], nextReview: { k: 1, day: 60, at: now + 20 * D }, reviews: [], hist: [], minSamples: 4, minAsgs: 2 } } });
+    B.W.reply = () => ({ status: 200, body: { ok: true, goal: { goal: 80, first: 80, at: now - 40 * D, days: 40, lockUntil: now - 10 * D, nextManual: now - 10 * D, options: [70, 75, 85, 90], nextReview: { k: 1, day: 60, at: now + 20 * D }, reviews: [], hist: [], minSamples: 4, minAsgs: 2 } } });
     B.T.pgLoad(true); await B.flush(); B.press({ act: 'pg-open' }); const h = B.T.pgHTML();
     assert.deepStrictEqual((h.match(/data-act="pg-adjv" data-v="(\d+)"/g) || []).map((x) => +x.match(/\d+/)[0]), [70, 75, 85, 90]);
     B.press({ act: 'pg-adjv', v: '90' }); B.press({ act: 'pg-adj' }); assert.ok(/Change your goal to 90%\?/.test(B.asking()));
+    let sent = null; B.W.reply = (u, o) => { sent = JSON.parse(o.body); return { status: 200, body: { ok: true, goal: null } }; };
+    B.ok(); await B.flush(); assert.deepStrictEqual(sent, { op: 'adjust', goal: 90, base: 80 }, 'sends the goal the student was looking at');
+  });
+  await t('app: inside the cooldown the card shows the next date and no Change button', async () => {
+    const B = boot({ hooks: HK, user: stu }), now = Date.now();
+    B.W.reply = () => ({ status: 200, body: { ok: true, goal: { goal: 85, first: 80, at: now - 45 * D, days: 45, lockUntil: now - 15 * D, lastManual: now - 5 * D, nextManual: now + 25 * D, options: [], nextReview: { k: 1, day: 60, at: now + 15 * D }, reviews: [], hist: [], minSamples: 4, minAsgs: 2 } } });
+    B.T.pgLoad(true); await B.flush(); const h = B.T.pgHTML();
+    assert.ok(/You can change your goal from /.test(h) && !/data-act="pg-open"/.test(h));
   });
   await t('PASS stays 70 % whatever the goal (goal 95: 72 % passes; goal 70: 68 % does not)', async () => {
     const B = boot({ hooks: HK, user: stu }); B.W.reply = () => ({ status: 200, body: { ok: true, goal: { goal: 95, first: 95, at: T0, days: 1, manualUsed: false, lockUntil: T0 + 30 * D, options: [], nextReview: { k: 1, day: 60, at: T0 + 60 * D }, reviews: [], hist: [] } } });

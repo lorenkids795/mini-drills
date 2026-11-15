@@ -1138,7 +1138,7 @@ async function rosterRow(env, email) {
 }
 
 // Shown in Admin → Users, so the admin can see that the latest functions/ folder is deployed. Change it with each server update.
-const API_VERSION = '2026-11-14a';
+const API_VERSION = '2026-11-15a';
 
 async function adminKick(env, body) {
   const email = normEmail(body.email);
@@ -1530,14 +1530,16 @@ async function spinWheel(env, request, body) {
    idempotent by review number); every write has an updateTime precondition, retried on a concurrent write.
    Reads: 1 (goal) + 1 (roster) per call; when a review is due (once per 30 days): the student's attempts + their custom
    exercises (only exercises of linked homework attempts). */
-const GOAL_MSG = { nogoal: 'Choose your goal first.', used: 'You have already used your one goal change.', early: 'You can change your goal 30 days after you set it.',
+const GOAL_MSG = { nogoal: 'Choose your goal first.', cooldown: 'You can change your goal once every 30 days.', early: 'You can change your goal 30 days after you set it.',
+  changed: 'Your goal was just reviewed and is now different. Look at it again before you change it.',
   invalid: 'Choose 70, 75, 80, 85, 90 or 95 %.', same: 'That is already your goal.', range: 'You can move your goal by 10 points at most.' };
 function goalOut(g, now) {
   if (!g || !MDHW.goalValid(Number(g.goal))) return null;
-  const H = MDHW, G = H.GOAL, nx = H.goalNextReview(g), lock = Number(g.at) + G.LOCK_DAYS * 864e5;
-  const rv = (Array.isArray(g.rv) ? g.rv : []).slice(-3).map((r) => ({ k: r.k, day: r.day, n: r.n, asgs: r.asgs, pooled: typeof r.pooled === 'number' ? r.pooled : null, verdict: r.verdict, act: r.act, prev: r.prev, next: r.next, ts: r.ts }));
+  const H = MDHW, G = H.GOAL, nx = H.goalNextReview(g), lock = Number(g.at) + G.LOCK_DAYS * 864e5, mt = Number(g.mt) || 0;
+  const rv = (Array.isArray(g.rv) ? g.rv : []).slice(-3).map((r) => ({ k: r.k, day: r.day, n: r.n, asgs: r.asgs, mean: typeof r.mean === 'number' ? r.mean : (typeof r.pooled === 'number' ? r.pooled : null), verdict: r.verdict, act: r.act, prev: r.prev, next: r.next, ts: r.ts }));
   const hist = (Array.isArray(g.hist) ? g.hist : []).slice(-10).map((h) => ({ t: h.t, from: h.from, to: h.to, by: h.by, type: h.type }));
-  return { goal: Number(g.goal), first: Number(g.first), at: Number(g.at), days: H.goalDays(g, now), manualUsed: !!g.manualUsed, lockUntil: lock,
+  return { goal: Number(g.goal), first: Number(g.first), at: Number(g.at), days: H.goalDays(g, now), lockUntil: lock, lastManual: mt, changes: Number(g.mc) || (g.manualUsed ? 1 : 0),
+    nextManual: Math.max(lock, mt ? mt + G.COOLDOWN * 864e5 : 0),
     options: H.goalOptions(g, now), nextReview: { k: nx.k, day: nx.day, at: nx.at }, reviews: rv, hist, minSamples: G.MIN_SAMPLES, minAsgs: G.MIN_ASGS, now };
 }
 // what the review may look at for an exercise id: custom Reading / Listening exercises only (built-ins cannot be checked here)
@@ -1583,16 +1585,17 @@ async function goalApi(env, request, body) {
     }
     let refuse = null;
     if (op === 'adjust') {
-      const c = H.goalManual(g, v, now);
-      if (!c.ok) refuse = c.code;
+      const c = H.goalManual(g, v, now), base = Number(body.base);
+      if (body.base !== undefined && base !== Number(g.goal)) refuse = 'changed'; // a review moved the goal the student was looking at
+      else if (!c.ok) refuse = c.code;
       else {
         g.hist = (Array.isArray(g.hist) ? g.hist : []).concat([{ t: now, from: Number(g.goal), to: v, by: 'student', type: 'manual', reason: String(body.reason || '').slice(0, 200) }]).slice(-50);
-        g.goal = v; g.manualUsed = true; g.mt = now; g.bs = 0; changed = true;
+        g.goal = v; g.mc = (Number(g.mc) || (g.manualUsed ? 1 : 0)) + 1; g.manualUsed = true; g.mt = now; g.bs = 0; changed = true;
       }
     }
     if (changed) {
       const f = { goal: Number(g.goal), manualUsed: !!g.manualUsed, rk: Number(g.rk) || 0, bs: Number(g.bs) || 0, rv: g.rv || [], hist: g.hist || [], cls: String(row.data.cls || g.cls || ''), upd: now };
-      if (g.mt) f.mt = g.mt;
+      if (g.mt) { f.mt = g.mt; f.mc = Number(g.mc) || 1; }
       if (!(await fsUpdate(env, 'goals', id, f, cur.updateTime))) continue; // another tab / device wrote first: start again from its state
     }
     if (refuse) return json({ error: GOAL_MSG[refuse] || 'This change is not allowed.', code: refuse, goal: goalOut(g, now) }, 409);

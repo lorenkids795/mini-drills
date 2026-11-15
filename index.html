@@ -1860,7 +1860,7 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
 
 <script src="md-config.js?v=2026-11-04b"></script>
 <script src="md-backend.js?v=2026-11-09d"></script>
-<script src="md-chart.js?v=2026-11-04b"></script><script src="md-hw.js?v=2026-11-14a"></script>
+<script src="md-chart.js?v=2026-11-04b"></script><script src="md-hw.js?v=2026-11-15a"></script>
 <script src="lm-content.js?v=2026-11-04b"></script>
 <script src="lm-engine.js?v=2026-11-04b"></script>
 <script src="lm-unit2.js?v=2026-11-04b"></script>
@@ -2241,12 +2241,13 @@ function pgReset(){PG={st:'idle',g:null,pick:0,commit:false,msg:'',err:'',busy:f
 function pgDate(ts){var d=new Date(ts);return d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear()}
 // demo only: the same rules, kept on this device
 function pgDemo(b){var k='md-pgdemo:'+(U?U.email:''),g=null,now=Date.now(),H=window.MDHW;try{g=JSON.parse(lsGet(k)||'null')}catch(e){}
-  var out=function(x){return x?{goal:x.goal,first:x.first,at:x.at,days:H.goalDays(x,now),manualUsed:!!x.manualUsed,lockUntil:x.at+H.GOAL.LOCK_DAYS*864e5,options:H.goalOptions(x,now),nextReview:H.goalNextReview(x),reviews:(x.rv||[]).slice(-3),hist:(x.hist||[]).slice(-10),minSamples:H.GOAL.MIN_SAMPLES,minAsgs:H.GOAL.MIN_ASGS,now:now}:null};
+  var out=function(x){return x?{goal:x.goal,first:x.first,at:x.at,days:H.goalDays(x,now),lockUntil:x.at+H.GOAL.LOCK_DAYS*864e5,lastManual:x.mt||0,nextManual:Math.max(x.at+H.GOAL.LOCK_DAYS*864e5,x.mt?x.mt+H.GOAL.COOLDOWN*864e5:0),options:H.goalOptions(x,now),nextReview:H.goalNextReview(x),reviews:(x.rv||[]).slice(-3),hist:(x.hist||[]).slice(-10),minSamples:H.GOAL.MIN_SAMPLES,minAsgs:H.GOAL.MIN_ASGS,now:now}:null};
   if(b.op==='set'){if(!H.goalValid(b.goal))return {error:'Choose 70, 75, 80, 85, 90 or 95 %.',code:'invalid'};if(g)return {ok:true,again:true,goal:out(g)};
     g={goal:b.goal,first:b.goal,at:now,manualUsed:false,rk:0,bs:0,rv:[],hist:[{t:now,from:0,to:b.goal,by:'student',type:'initial'}]};lsSet(k,JSON.stringify(g));return {ok:true,goal:out(g)}}
   if(!g)return {ok:true,goal:null};
   g=H.goalReview(g,[],null,now).g;
-  if(b.op==='adjust'){var c=H.goalManual(g,b.goal,now);if(!c.ok)return {error:'This change is not allowed.',code:c.code,goal:out(g)};g.hist.push({t:now,from:g.goal,to:b.goal,by:'student',type:'manual'});g.goal=b.goal;g.manualUsed=true;g.mt=now;g.bs=0}
+  if(b.op==='adjust'){if(b.base!==undefined&&b.base!==g.goal)return {error:'Your goal was just reviewed and is now different. Look at it again before you change it.',code:'changed',goal:out(g)};
+    var c=H.goalManual(g,b.goal,now);if(!c.ok)return {error:'This change is not allowed.',code:c.code,goal:out(g)};g.hist.push({t:now,from:g.goal,to:b.goal,by:'student',type:'manual'});g.goal=b.goal;g.mt=now;g.bs=0}
   lsSet(k,JSON.stringify(g));return {ok:true,goal:out(g)}}
 function pgApi(body){if(DEMO)return new Promise(function(ok){setTimeout(function(){ok(pgDemo(body))},150)});return authHdr().then(function(h){return adPost('goal',body,'',h)})}
 function pgOn(){return !!(U&&U.role==='student'&&window.MDHW&&MDHW.GOAL)}
@@ -2256,7 +2257,7 @@ function pgDraw(){var el=$('#pgBox');if(el)el.outerHTML=pgHTML()}
 var PG_VERD={above:'Your checked homework was above your goal.',within:'Your checked homework was close to your goal.',below:'Your checked homework was below your goal.',insufficient:'Not enough checked homework in that month to review it.'};
 function pgLastHTML(g){var r=(g.reviews||[]).slice(-1)[0];if(!r)return '';
   var what=r.act==='raise'?'Goal raised to '+r.next+'%.':r.act==='lower'?'Goal moved to '+r.next+'% after two months below it in a row.':'Goal kept at '+r.next+'%.';
-  var ev=r.verdict==='insufficient'?' ('+r.n+' checked homework '+(r.n===1?'exercise':'exercises')+'; at least '+g.minSamples+' from '+g.minAsgs+' assignments are needed.)':(typeof r.pooled==='number'?' Average '+r.pooled+'% over '+r.n+' exercises.':'');
+  var ev=r.verdict==='insufficient'?' ('+r.n+' checked homework '+(r.n===1?'exercise':'exercises')+'; at least '+g.minSamples+' from '+g.minAsgs+' assignments are needed.)':(typeof r.mean==='number'?' Average '+r.mean+'% over '+r.n+' exercises.':'');
   return '<p class="pgl">Last review ('+pgDate(r.ts)+'): '+esc(PG_VERD[r.verdict]||'')+' '+esc(what)+esc(ev)+'</p>'}
 function pgHTML(){
   if(!pgOn())return '';
@@ -2270,18 +2271,18 @@ function pgHTML(){
     h+='<h3 id="pgH">Set your personal goal</h3><p class="pgs">PASS is always <b>70%</b>. Your goal is your own aim for Reading and Listening homework. It does not change your marks or what you can open.</p>'+
       '<div class="seg pgch" role="radiogroup" aria-label="Personal goal">'+cs.map(function(v){var on=PG.pick===v;return '<button type="button" role="radio" aria-checked="'+on+'" class="'+(on?'on':'')+'" data-act="pg-pick" data-v="'+v+'">'+v+'%</button>'}).join('')+'</div>'+
       '<button type="button" class="pgc" role="checkbox" aria-checked="'+PG.commit+'" data-act="pg-commit"><span class="pgbx" aria-hidden="true">'+(PG.commit?'✓':'')+'</span>I commit to aiming for this goal.</button>'+
-      '<p class="pgs">You can change it once, 30 days after you set it. From day 60 it is reviewed every 30 days.</p>'+
+      '<p class="pgs">You can change it 30 days after you set it, then once every 30 days. From day 60 it is reviewed every 30 days.</p>'+
       '<div class="actions"><button type="button" class="btn" data-act="pg-set"'+(PG.pick&&PG.commit&&!PG.busy?'':' disabled')+'>'+(PG.busy?'Saving…':PG.pick?'Set my goal: '+PG.pick+'%':'Set my goal')+'</button></div>'+
       (PG.msg?'<p class="pgs" role="alert">'+esc(PG.msg)+'</p>':'');
     return h+'</section>'}
-  var now=Date.now(),nr=g.nextReview,canAdj=!g.manualUsed&&now>=g.lockUntil&&(g.options||[]).length;
+  var now=Date.now(),nr=g.nextReview,nm=g.nextManual||g.lockUntil,canAdj=now>=nm&&(g.options||[]).length;
   h+='<div class="pgrow"><h3 id="pgH">My goal <b class="pgv">'+g.goal+'%</b></h3><span class="pill pgpass">PASS 70%</span></div>'+
-    '<p class="pgs">'+(g.manualUsed?'You have used your one goal change.':now<g.lockUntil?'You can change your goal once from '+pgDate(g.lockUntil)+'.':'You can change your goal once now.')+
+    '<p class="pgs">'+(now<nm?'You can change your goal from '+pgDate(nm)+'.':'You can change your goal now.')+
     ' '+(nr.k===1?'Automatic reviews start '+pgDate(nr.at)+'.':'Next automatic review: '+pgDate(nr.at)+'.')+'</p>'+pgLastHTML(g);
   if(canAdj&&!PG.open)h+='<div class="actions"><button type="button" class="btn sm sec" data-act="pg-open">Change my goal</button></div>';
   if(canAdj&&PG.open){
     h+='<div class="seg pgch" role="radiogroup" aria-label="New goal">'+g.options.map(function(v){var on=PG.adj===v;return '<button type="button" role="radio" aria-checked="'+on+'" class="'+(on?'on':'')+'" data-act="pg-adjv" data-v="'+v+'">'+v+'%</button>'}).join('')+'</div>'+
-      '<p class="pgs">At most 10 points up or down. This is your only change.</p><div class="actions"><button type="button" class="btn sm" data-act="pg-adj"'+(PG.adj&&!PG.busy?'':' disabled')+'>'+(PG.busy?'Saving…':PG.adj?'Change to '+PG.adj+'%':'Change')+'</button> <button type="button" class="btn sm sec" data-act="pg-close">Cancel</button></div>'}
+      '<p class="pgs">At most 10 points up or down. After this, the next change is possible in 30 days.</p><div class="actions"><button type="button" class="btn sm" data-act="pg-adj"'+(PG.adj&&!PG.busy?'':' disabled')+'>'+(PG.busy?'Saving…':PG.adj?'Change to '+PG.adj+'%':'Change')+'</button> <button type="button" class="btn sm sec" data-act="pg-close">Cancel</button></div>'}
   if(PG.msg)h+='<p class="pgs" role="alert">'+esc(PG.msg)+'</p>';
   return h+'</section>'}
 function pgSend(body,okMsg){PG.busy=true;PG.msg='';pgDraw();
@@ -2298,8 +2299,8 @@ function pgAct(a,t){
   if(a==='pg-close'){PG.open=false;PG.adj=0;PG.msg='';pgDraw();return true}
   if(a==='pg-adjv'){PG.adj=+t.dataset.v;pgDraw();return true}
   if(a==='pg-adj'){if(!PG.adj||PG.busy)return true;
-    if(uiGate(t,{title:'Change your goal to '+PG.adj+'%?',text:'You can change your goal only once. After that, only the automatic review moves it (5 points at a time).',ok:'Change goal'}))return true;
-    pgSend({op:'adjust',goal:PG.adj},'Your personal goal is now '+PG.adj+'%.');return true}
+    if(uiGate(t,{title:'Change your goal to '+PG.adj+'%?',text:'Your next change will be possible in 30 days. PASS stays 70%.',ok:'Change goal'}))return true;
+    pgSend({op:'adjust',goal:PG.adj,base:PG.g?PG.g.goal:undefined},'Your personal goal is now '+PG.adj+'%.');return true}
   return true}
 // teachers / admin: goals of their students (display only; read once per session, rules: teachers read goals)
 var PGT={st:'idle',m:{}};
@@ -7317,7 +7318,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-11-14a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-11-15a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(uiAct(a,t))return true;
