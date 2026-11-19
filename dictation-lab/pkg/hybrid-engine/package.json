@@ -1,0 +1,19 @@
+{
+  "name": "dictation-lab-hybrid-engine",
+  "version": "0.3.0-draft",
+  "description": "Deterministic, dependency-free scoring, review-gate, session and homework engine for the Mini Drills Dictation Lab (contract v1.1: no hint, no reveal; homework scored on the server). Browser and Node 18+. No AI, no network, no DOM. Draft, not integrated.",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "mutation": "node tools/mutation-check.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "private": true,
+  "license": "UNLICENSED",
+  "exports": {
+    ".": "./src/index.js"
+  }
+}

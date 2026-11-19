@@ -1,0 +1,775 @@
+{
+ "$schema": "urn:minidrills:dictation-lab:schema:1.1",
+ "schemaVersion": "1.1",
+ "importMode": "ai_json",
+ "metadata": {
+  "title": "Riverside Cycling Club enquiry (synthetic, unresolved suspect lines)",
+  "language": "en-GB",
+  "topic": "Cycling club",
+  "source": {
+   "type": "teacher_upload",
+   "label": "synthetic demonstration transcript"
+  },
+  "audio": {
+   "availability": "none_attached",
+   "timestampsAvailable": false
+  },
+  "generatedBy": {
+   "kind": "external_ai",
+   "toolName": "Claude (Anthropic), demonstration output",
+   "generatedAt": "2026-11-09T00:00:00Z"
+  }
+ },
+ "rights": {
+  "usage": "public_domain",
+  "rightsHolder": "Synthetic demonstration (CC0)",
+  "teacherAttestsAuthorizedUse": false,
+  "publicRedistributionAllowed": true,
+  "notes": "Synthetic public-safe transcript. teacherAttestsAuthorizedUse reflects a human decision the generator cannot make."
+ },
+ "rawTranscript": {
+  "immutable": true,
+  "encoding": "utf-8",
+  "newline": "LF",
+  "capturedFrom": "external_ai_echo",
+  "sha256": "4197eb04e415dc2a5a4b0faa77786d0a4aa9716659557fc3487dea82b729f2b6",
+  "text": "SAM: Good morning, is this the Riverside Cycling Club?\n\nKATE: It is. I’m Kate, the ride leader.\n\nSAM: I’d like to join the Sunday ride. Where do we start (Q1)?\n\nKATE: We meet at the old bridge at nine o’clock. The route is twelve miles to the lake, then we ride another ten miles round the hills, so twenty miles in total.\n\nSAM: Should I bring anything special?\n\nKATE: Please bring a helmet, a spare tube and plenty of whether (Q2). There is a cafe at the lake, but it only takes cash.\n\nSAM: How much is the membership?\n\nKATE: It costs £30 a year, or £5 for a single ride."
+ },
+ "audit": {
+  "auditState": "audited_open_issues",
+  "auditedBy": {
+   "kind": "external_ai",
+   "name": "Claude (Anthropic); text only, no audio"
+  },
+  "auditedAt": "2026-11-09T00:00:00Z",
+  "audioAvailableToAuditor": false,
+  "audioVerificationPerformed": false,
+  "issues": [
+   {
+    "id": "iss-001",
+    "issueClass": "lexical_suspect",
+    "status": "proposed_correction",
+    "severity": "major",
+    "confidence": "medium",
+    "sourceQuote": "plenty of whether",
+    "rawSpan": {
+     "start": 409,
+     "end": 426
+    },
+    "cleanSpan": {
+     "sentenceId": "s009",
+     "start": 40,
+     "end": 57
+    },
+    "proposedReplacement": "plenty of water",
+    "reason": "Danh sách đồ cần mang (helmet, spare tube): whether không hợp nghĩa; water là khả năng cao nhưng chưa có audio để xác nhận.",
+    "evidenceStatus": "context_inference_only",
+    "affectedSentenceIds": [
+     "s009"
+    ],
+    "blocksScoredUse": true,
+    "proposedBy": {
+     "kind": "external_ai",
+     "name": "Claude (Anthropic); no audio available"
+    },
+    "alternatives": [
+     "plenty of weather"
+    ]
+   },
+   {
+    "id": "iss-002",
+    "issueClass": "consistency",
+    "status": "needs_audio_verification",
+    "severity": "major",
+    "confidence": "medium",
+    "sourceQuote": "twelve miles to the lake, then we ride another ten miles round the hills, so twenty miles in total",
+    "rawSpan": {
+     "start": 223,
+     "end": 321
+    },
+    "cleanSpan": {
+     "sentenceId": "s007",
+     "start": 13,
+     "end": 111
+    },
+    "proposedReplacement": null,
+    "reason": "Tổng 12 + 10 = 22 dặm nhưng câu nói 20 dặm. Có thể người nói nói sai thật hoặc transcript chép sai; chưa đề xuất sửa vì không đủ cơ sở.",
+    "evidenceStatus": "context_inference_only",
+    "affectedSentenceIds": [
+     "s007"
+    ],
+    "blocksScoredUse": true,
+    "proposedBy": {
+     "kind": "external_ai",
+     "name": "Claude (Anthropic); no audio available"
+    }
+   },
+   {
+    "id": "iss-003",
+    "issueClass": "proper_noun",
+    "status": "info_note",
+    "severity": "info",
+    "confidence": "low",
+    "sourceQuote": "Riverside Cycling Club",
+    "rawSpan": {
+     "start": 31,
+     "end": 53
+    },
+    "cleanSpan": {
+     "sentenceId": "s001",
+     "start": 26,
+     "end": 48
+    },
+    "proposedReplacement": null,
+    "reason": "Tên riêng: không kiểm tra được chính tả với audio.",
+    "evidenceStatus": "context_inference_only",
+    "affectedSentenceIds": [
+     "s001"
+    ],
+    "blocksScoredUse": false,
+    "proposedBy": {
+     "kind": "external_ai",
+     "name": "Claude (Anthropic)"
+    }
+   },
+   {
+    "id": "iss-004",
+    "issueClass": "number_format",
+    "status": "info_note",
+    "severity": "minor",
+    "confidence": "low",
+    "sourceQuote": "£30",
+    "rawSpan": {
+     "start": 536,
+     "end": 539
+    },
+    "cleanSpan": {
+     "sentenceId": "s012",
+     "start": 9,
+     "end": 12
+    },
+    "proposedReplacement": null,
+    "reason": "Dạng viết số tiền có thể khác dạng nói.",
+    "evidenceStatus": "context_inference_only",
+    "affectedSentenceIds": [
+     "s012"
+    ],
+    "blocksScoredUse": false,
+    "proposedBy": {
+     "kind": "external_ai",
+     "name": "Claude (Anthropic)"
+    }
+   }
+  ],
+  "decisions": [],
+  "auditNote": "Hai câu bị chặn (s007, s009) chờ giáo viên xác minh bằng audio hoặc nguồn chính thức. Chưa có quyết định nào. Không có đoạn Level 4 nào hợp lệ vì mọi chuỗi liền kề của cùng một người nói đều chứa câu bị chặn."
+ },
+ "transcript": {
+  "speakers": [
+   {
+    "id": "sp-sam",
+    "rawLabel": "SAM",
+    "displayName": "Sam"
+   },
+   {
+    "id": "sp-kate",
+    "rawLabel": "KATE",
+    "displayName": "Kate"
+   }
+  ],
+  "turns": [
+   {
+    "id": "t001",
+    "order": 1,
+    "speakerId": "sp-sam",
+    "rawSpan": {
+     "start": 0,
+     "end": 54
+    }
+   },
+   {
+    "id": "t002",
+    "order": 2,
+    "speakerId": "sp-kate",
+    "rawSpan": {
+     "start": 56,
+     "end": 95
+    }
+   },
+   {
+    "id": "t003",
+    "order": 3,
+    "speakerId": "sp-sam",
+    "rawSpan": {
+     "start": 97,
+     "end": 159
+    }
+   },
+   {
+    "id": "t004",
+    "order": 4,
+    "speakerId": "sp-kate",
+    "rawSpan": {
+     "start": 161,
+     "end": 322
+    }
+   },
+   {
+    "id": "t005",
+    "order": 5,
+    "speakerId": "sp-sam",
+    "rawSpan": {
+     "start": 324,
+     "end": 361
+    }
+   },
+   {
+    "id": "t006",
+    "order": 6,
+    "speakerId": "sp-kate",
+    "rawSpan": {
+     "start": 363,
+     "end": 485
+    }
+   },
+   {
+    "id": "t007",
+    "order": 7,
+    "speakerId": "sp-sam",
+    "rawSpan": {
+     "start": 487,
+     "end": 519
+    }
+   },
+   {
+    "id": "t008",
+    "order": 8,
+    "speakerId": "sp-kate",
+    "rawSpan": {
+     "start": 521,
+     "end": 572
+    }
+   }
+  ],
+  "sentences": [
+   {
+    "id": "s001",
+    "turnId": "t001",
+    "order": 1,
+    "rawText": "Good morning, is this the Riverside Cycling Club?",
+    "rawSpan": {
+     "start": 5,
+     "end": 54
+    },
+    "cleanText": "Good morning, is this the Riverside Cycling Club?",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "ai_proposed",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s002",
+    "turnId": "t002",
+    "order": 2,
+    "rawText": "It is.",
+    "rawSpan": {
+     "start": 62,
+     "end": 68
+    },
+    "cleanText": "It is.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "ai_proposed",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s003",
+    "turnId": "t002",
+    "order": 3,
+    "rawText": "I’m Kate, the ride leader.",
+    "rawSpan": {
+     "start": 69,
+     "end": 95
+    },
+    "cleanText": "I’m Kate, the ride leader.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "ai_proposed",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s004",
+    "turnId": "t003",
+    "order": 4,
+    "rawText": "I’d like to join the Sunday ride.",
+    "rawSpan": {
+     "start": 102,
+     "end": 135
+    },
+    "cleanText": "I’d like to join the Sunday ride.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "ai_proposed",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s005",
+    "turnId": "t003",
+    "order": 5,
+    "rawText": "Where do we start (Q1)?",
+    "rawSpan": {
+     "start": 136,
+     "end": 159
+    },
+    "cleanText": "Where do we start?",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [
+     "qm-01"
+    ],
+    "provenance": {
+     "segmentation": "ai_proposed",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s006",
+    "turnId": "t004",
+    "order": 6,
+    "rawText": "We meet at the old bridge at nine o’clock.",
+    "rawSpan": {
+     "start": 167,
+     "end": 209
+    },
+    "cleanText": "We meet at the old bridge at nine o’clock.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "ai_proposed",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s007",
+    "turnId": "t004",
+    "order": 7,
+    "rawText": "The route is twelve miles to the lake, then we ride another ten miles round the hills, so twenty miles in total.",
+    "rawSpan": {
+     "start": 210,
+     "end": 322
+    },
+    "cleanText": "The route is twelve miles to the lake, then we ride another ten miles round the hills, so twenty miles in total.",
+    "enabled": true,
+    "textStatus": "pending_verification",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "ai_proposed",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s008",
+    "turnId": "t005",
+    "order": 8,
+    "rawText": "Should I bring anything special?",
+    "rawSpan": {
+     "start": 329,
+     "end": 361
+    },
+    "cleanText": "Should I bring anything special?",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "ai_proposed",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s009",
+    "turnId": "t006",
+    "order": 9,
+    "rawText": "Please bring a helmet, a spare tube and plenty of whether (Q2).",
+    "rawSpan": {
+     "start": 369,
+     "end": 432
+    },
+    "cleanText": "Please bring a helmet, a spare tube and plenty of whether.",
+    "enabled": true,
+    "textStatus": "pending_verification",
+    "qMarkerIds": [
+     "qm-02"
+    ],
+    "provenance": {
+     "segmentation": "ai_proposed",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s010",
+    "turnId": "t006",
+    "order": 10,
+    "rawText": "There is a cafe at the lake, but it only takes cash.",
+    "rawSpan": {
+     "start": 433,
+     "end": 485
+    },
+    "cleanText": "There is a cafe at the lake, but it only takes cash.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "ai_proposed",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s011",
+    "turnId": "t007",
+    "order": 11,
+    "rawText": "How much is the membership?",
+    "rawSpan": {
+     "start": 492,
+     "end": 519
+    },
+    "cleanText": "How much is the membership?",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "ai_proposed",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s012",
+    "turnId": "t008",
+    "order": 12,
+    "rawText": "It costs £30 a year, or £5 for a single ride.",
+    "rawSpan": {
+     "start": 527,
+     "end": 572
+    },
+    "cleanText": "It costs £30 a year, or £5 for a single ride.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "ai_proposed",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   }
+  ],
+  "qMarkers": [
+   {
+    "id": "qm-01",
+    "number": 1,
+    "sentenceId": "s005",
+    "rawSpan": {
+     "start": 154,
+     "end": 158
+    },
+    "cleanTextOffset": 17,
+    "role": "location_cue"
+   },
+   {
+    "id": "qm-02",
+    "number": 2,
+    "sentenceId": "s009",
+    "rawSpan": {
+     "start": 427,
+     "end": 431
+    },
+    "cleanTextOffset": 57,
+    "role": "location_cue"
+   }
+  ]
+ },
+ "settings": {
+  "sessionGuidelines": {
+   "level1": {
+    "min": 3,
+    "max": 8
+   },
+   "level2": {
+    "min": 2,
+    "max": 8
+   },
+   "level3": {
+    "min": 3,
+    "max": 8
+   },
+   "answerSpotter": {
+    "min": 2,
+    "max": 8
+   }
+  },
+  "level2": {
+   "maxHiddenWords": 2
+  },
+  "answerSpotter": {
+   "showTranscriptDuringTask": false,
+   "postCheckReviewUnlock": "after_first_attempt_checked"
+  }
+ },
+ "learningTargets": [
+  {
+   "id": "tg-001",
+   "sentenceId": "s006",
+   "charStart": 19,
+   "charEnd": 25,
+   "surface": "bridge",
+   "occurrence": 1,
+   "focusTypes": [
+    "content_word",
+    "ielts_answer_candidate"
+   ],
+   "confidence": "medium",
+   "rationale": "Danh từ địa điểm gặp mặt.",
+   "source": "external_ai",
+   "warnings": [
+    "answer_context_dependent"
+   ]
+  },
+  {
+   "id": "tg-002",
+   "sentenceId": "s012",
+   "charStart": 9,
+   "charEnd": 12,
+   "surface": "£30",
+   "occurrence": 1,
+   "focusTypes": [
+    "price",
+    "number",
+    "ielts_answer_candidate"
+   ],
+   "confidence": "medium",
+   "rationale": "Phí thành viên một năm.",
+   "source": "external_ai",
+   "allowedForms": [
+    {
+     "text": "30",
+     "kind": "symbol_optional",
+     "approvalState": "proposed"
+    }
+   ],
+   "warnings": [
+    "number_format_unverified",
+    "answer_context_dependent"
+   ]
+  },
+  {
+   "id": "tg-003",
+   "sentenceId": "s012",
+   "charStart": 24,
+   "charEnd": 26,
+   "surface": "£5",
+   "occurrence": 1,
+   "focusTypes": [
+    "price",
+    "number"
+   ],
+   "confidence": "medium",
+   "rationale": "Giá một chuyến.",
+   "source": "external_ai",
+   "allowedForms": [
+    {
+     "text": "5",
+     "kind": "symbol_optional",
+     "approvalState": "proposed"
+    }
+   ],
+   "warnings": [
+    "number_format_unverified"
+   ]
+  }
+ ],
+ "exercises": {
+  "level1": {
+   "itemsMode": "explicit_items_only",
+   "items": [
+    {
+     "id": "l1-001",
+     "sentenceId": "s003",
+     "grammarOnlyRisk": "medium"
+    },
+    {
+     "id": "l1-002",
+     "sentenceId": "s004",
+     "grammarOnlyRisk": "medium"
+    },
+    {
+     "id": "l1-003",
+     "sentenceId": "s010",
+     "grammarOnlyRisk": "medium"
+    }
+   ]
+  },
+  "level2": {
+   "itemsMode": "explicit_items_only",
+   "items": [
+    {
+     "id": "l2-001",
+     "sentenceId": "s006",
+     "blanks": [
+      {
+       "targetId": "tg-001"
+      }
+     ]
+    },
+    {
+     "id": "l2-002",
+     "sentenceId": "s012",
+     "blanks": [
+      {
+       "targetId": "tg-002"
+      },
+      {
+       "targetId": "tg-003"
+      }
+     ]
+    }
+   ]
+  },
+  "level3": {
+   "itemsMode": "explicit_items_only",
+   "items": [
+    {
+     "id": "l3-001",
+     "sentenceId": "s004"
+    },
+    {
+     "id": "l3-002",
+     "sentenceId": "s006"
+    },
+    {
+     "id": "l3-003",
+     "sentenceId": "s010"
+    }
+   ]
+  },
+  "answerSpotter": {
+   "items": [
+    {
+     "id": "as-001",
+     "type": "independent_answer_hunt",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "relatedQMarkerIds": [
+      "qm-01"
+     ],
+     "markerRelationNote": "Marker Q1 nằm ở câu hỏi của Sam; đáp án luyện tập ở câu kế tiếp. Marker chỉ là gợi ý vị trí, không phải câu hỏi hay đáp án chính thức.",
+     "prompt": "Câu luyện tự soạn (gõ đáp án): The ride starts at the old ___ .",
+     "expectedAnswerType": "common_noun",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": false,
+      "label": "ONE WORD ONLY (practice rule)"
+     },
+     "evidenceSentenceIds": [
+      "s005",
+      "s006"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s006",
+        "charStart": 19,
+        "charEnd": 25,
+        "surface": "bridge",
+        "occurrence": 1
+       },
+       "reason": "Điểm xuất phát."
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s006",
+        "charStart": 29,
+        "charEnd": 33,
+        "surface": "nine",
+        "occurrence": 1
+       },
+       "reason": "Giờ xuất phát, không phải địa điểm."
+      }
+     ],
+     "explanation": "bridge là nơi gặp; nine là giờ."
+    },
+    {
+     "id": "as-002",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "choose_option",
+     "prompt": "Câu luyện tự soạn: The annual membership costs ___ .",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true,
+      "label": "ONE WORD AND/OR A NUMBER (practice rule)"
+     },
+     "evidenceSentenceIds": [
+      "s012"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s012",
+        "charStart": 9,
+        "charEnd": 12,
+        "surface": "£30",
+        "occurrence": 1
+       },
+       "reason": "Phí hằng năm.",
+       "acceptedForms": [
+        {
+         "text": "30",
+         "kind": "symbol_optional",
+         "approvalState": "proposed"
+        }
+       ]
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s012",
+        "charStart": 24,
+        "charEnd": 26,
+        "surface": "£5",
+        "occurrence": 1
+       },
+       "reason": "Giá một chuyến, không phải phí hằng năm.",
+       "acceptedForms": [
+        {
+         "text": "5",
+         "kind": "symbol_optional",
+         "approvalState": "proposed"
+        }
+       ]
+      }
+     ],
+     "explanation": "£30 là phí hằng năm; £5 là giá một chuyến."
+    }
+   ]
+  }
+ },
+ "selection": {
+  "disabledReasons": []
+ }
+}

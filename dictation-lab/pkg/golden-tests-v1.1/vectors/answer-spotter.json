@@ -1,0 +1,2138 @@
+{
+ "suite": "answer-spotter",
+ "vectorsVersion": "3",
+ "baseline": "baseline-harbour-museum.rev1.json",
+ "vectors": [
+  {
+   "id": "AS-001",
+   "title": "typed answer exact",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "as-001",
+    "response": {
+     "text": "groups"
+    }
+   },
+   "expected": {
+    "correct": true,
+    "num": 1,
+    "den": 1
+   }
+  },
+  {
+   "id": "AS-002",
+   "title": "typed answer with capital and full stop",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "as-001",
+    "response": {
+     "text": "Groups."
+    }
+   },
+   "expected": {
+    "correct": true,
+    "num": 1,
+    "den": 1
+   }
+  },
+  {
+   "id": "AS-003",
+   "title": "two words exceed the one-word limit: rejected even though it contains the answer",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "as-001",
+    "response": {
+     "text": "school groups"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "rejected": "exceeds_word_limit",
+    "num": 0,
+    "den": 1
+   }
+  },
+  {
+   "id": "AS-004",
+   "title": "distractor typed",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "as-001",
+    "response": {
+     "text": "galleries"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "distractorChosen": true,
+    "num": 0,
+    "den": 1
+   }
+  },
+  {
+   "id": "AS-005",
+   "title": "no stemming: singular is wrong",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "as-001",
+    "response": {
+     "text": "group"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "num": 0,
+    "den": 1
+   }
+  },
+  {
+   "id": "AS-006",
+   "title": "empty typed answer is not an attempt",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "as-001",
+    "response": {
+     "text": ""
+    }
+   },
+   "expected": {
+    "rejected": "empty_answer"
+   },
+   "decisionRefs": [
+    "D-12"
+   ]
+  },
+  {
+   "id": "AS-007",
+   "title": "digits rejected when numberAllowed is false",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "as-001",
+    "response": {
+     "text": "5"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "rejected": "number_not_allowed",
+    "num": 0,
+    "den": 1
+   }
+  },
+  {
+   "id": "AS-008",
+   "title": "multiple choice: correct option",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "as-002",
+    "response": {
+     "chosen": "shoes"
+    }
+   },
+   "expected": {
+    "correct": true,
+    "num": 1,
+    "den": 1
+   }
+  },
+  {
+   "id": "AS-009",
+   "title": "multiple choice: distractor",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "as-002",
+    "response": {
+     "chosen": "stairs"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "distractorChosen": true,
+    "num": 0,
+    "den": 1
+   }
+  },
+  {
+   "id": "AS-010",
+   "title": "multiple choice: price distractor",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "as-004",
+    "response": {
+     "chosen": "£8.50"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "distractorChosen": true,
+    "num": 0,
+    "den": 1
+   }
+  },
+  {
+   "id": "AS-011",
+   "title": "typed list: both prices",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "as-005",
+    "response": {
+     "text": "£8.50, £12"
+    }
+   },
+   "expected": {
+    "correct": true,
+    "num": 2,
+    "den": 2
+   }
+  },
+  {
+   "id": "AS-012",
+   "title": "typed list with approved symbol-less forms",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "as-005",
+    "response": {
+     "text": "8.50; 12"
+    }
+   },
+   "expected": {
+    "correct": true,
+    "num": 2,
+    "den": 2
+   }
+  },
+  {
+   "id": "AS-013",
+   "title": "typed list: one price missing",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "as-005",
+    "response": {
+     "text": "£12"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "num": 1,
+    "den": 2
+   }
+  },
+  {
+   "id": "AS-014",
+   "title": "typed list: duplicate answer counts as extra",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "as-005",
+    "response": {
+     "text": "£12, £12"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "num": 1,
+    "den": 2
+   }
+  },
+  {
+   "id": "AS-015",
+   "title": "typed list: extra invented price",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "as-005",
+    "response": {
+     "text": "£8.50, £12, £20"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "num": 2,
+    "den": 3
+   }
+  },
+  {
+   "id": "AS-016",
+   "title": "typed list: forms not accepted when only proposed",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "as-005",
+    "response": {
+     "text": "8.50, 12"
+    },
+    "mutations": [
+     {
+      "op": "forms_state",
+      "value": "proposed"
+     }
+    ]
+   },
+   "expected": {
+    "correct": false,
+    "num": 0,
+    "den": 2
+   }
+  },
+  {
+   "id": "AS-017",
+   "title": "typed date: approved numeral form 24",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "as-007",
+    "response": {
+     "text": "24"
+    }
+   },
+   "expected": {
+    "correct": true,
+    "num": 1,
+    "den": 1
+   }
+  },
+  {
+   "id": "AS-018",
+   "title": "typed date: approved word form twenty-fourth",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "as-007",
+    "response": {
+     "text": "twenty-fourth"
+    }
+   },
+   "expected": {
+    "correct": true,
+    "num": 1,
+    "den": 1
+   }
+  },
+  {
+   "id": "AS-019",
+   "title": "typed date: two-token word form breaks the one-word limit",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "as-007",
+    "response": {
+     "text": "twenty fourth"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "rejected": "exceeds_word_limit",
+    "num": 0,
+    "den": 1
+   }
+  },
+  {
+   "id": "AS-020",
+   "title": "typed compound: approved variant half day (two words allowed)",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "as-008",
+    "response": {
+     "text": "half day"
+    }
+   },
+   "expected": {
+    "correct": true,
+    "num": 1,
+    "den": 1
+   }
+  },
+  {
+   "id": "AS-021",
+   "title": "typed compound: joined spelling wrong",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "as-008",
+    "response": {
+     "text": "halfday"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "num": 0,
+    "den": 1
+   }
+  },
+  {
+   "id": "AS-022",
+   "title": "post-check review never gives independent credit",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "as-006",
+    "response": {
+     "selected": [
+      "£8.50",
+      "£12"
+     ]
+    }
+   },
+   "expected": {
+    "reviewed": true,
+    "reviewMatches": 2,
+    "reviewDen": 2,
+    "independentCredit": false,
+    "masteryEvidence": "none"
+   }
+  },
+  {
+   "id": "AS-027",
+   "title": "student payload of an independent item must not contain answer-bearing data",
+   "kind": "studentPayload",
+   "requires": "engine_ui",
+   "tags": [
+    "adversarial",
+    "safety"
+   ],
+   "input": {
+    "itemId": "as-004",
+    "activity": "independent_listening",
+    "phase": "before_first_check"
+   },
+   "expected": {
+    "mustNotContain": [
+     "span roles",
+     "correct_answer markers",
+     "explanation",
+     "evidence sentence cleanText",
+     "accepted answer sets",
+     "markerRelationNote"
+    ],
+    "mayContain": [
+     "prompt",
+     "option strings for choose_option",
+     "answerFormat label"
+    ]
+   }
+  },
+  {
+   "id": "AS-028",
+   "title": "approved symbol-free value is accepted",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "answer_value"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£35",
+        "occurrence": 1
+       },
+       "reason": "x",
+       "acceptedForms": [
+        {
+         "text": "35",
+         "kind": "symbol_optional",
+         "approvalState": "teacher_approved",
+         "approvedAt": "2026-11-09T00:00:00Z"
+        }
+       ]
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£40",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    },
+    "response": {
+     "text": "35"
+    }
+   },
+   "expected": {
+    "correct": true,
+    "num": 1,
+    "den": 1
+   },
+   "decisionRefs": [
+    "D-27",
+    "D-30"
+   ]
+  },
+  {
+   "id": "AS-029",
+   "title": "the printed value is accepted",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "answer_value"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£35",
+        "occurrence": 1
+       },
+       "reason": "x",
+       "acceptedForms": [
+        {
+         "text": "35",
+         "kind": "symbol_optional",
+         "approvalState": "teacher_approved",
+         "approvedAt": "2026-11-09T00:00:00Z"
+        }
+       ]
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£40",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    },
+    "response": {
+     "text": "£35"
+    }
+   },
+   "expected": {
+    "correct": true,
+    "num": 1,
+    "den": 1
+   },
+   "decisionRefs": [
+    "D-27",
+    "D-30"
+   ]
+  },
+  {
+   "id": "AS-030",
+   "title": "extra decimals are a different value",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "answer_value"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£35",
+        "occurrence": 1
+       },
+       "reason": "x",
+       "acceptedForms": [
+        {
+         "text": "35",
+         "kind": "symbol_optional",
+         "approvalState": "teacher_approved",
+         "approvedAt": "2026-11-09T00:00:00Z"
+        }
+       ]
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£40",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    },
+    "response": {
+     "text": "£35.00"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "num": 0,
+    "den": 1
+   },
+   "decisionRefs": [
+    "D-27",
+    "D-30"
+   ]
+  },
+  {
+   "id": "AS-031",
+   "title": "35.0 is not 35",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "answer_value"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£35",
+        "occurrence": 1
+       },
+       "reason": "x",
+       "acceptedForms": [
+        {
+         "text": "35",
+         "kind": "symbol_optional",
+         "approvalState": "teacher_approved",
+         "approvedAt": "2026-11-09T00:00:00Z"
+        }
+       ]
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£40",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    },
+    "response": {
+     "text": "35.0"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "num": 0,
+    "den": 1
+   },
+   "decisionRefs": [
+    "D-27",
+    "D-30"
+   ]
+  },
+  {
+   "id": "AS-032",
+   "title": "3.5 is not 35",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "answer_value"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£35",
+        "occurrence": 1
+       },
+       "reason": "x",
+       "acceptedForms": [
+        {
+         "text": "35",
+         "kind": "symbol_optional",
+         "approvalState": "teacher_approved",
+         "approvedAt": "2026-11-09T00:00:00Z"
+        }
+       ]
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£40",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    },
+    "response": {
+     "text": "3.5"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "num": 0,
+    "den": 1
+   },
+   "decisionRefs": [
+    "D-27",
+    "D-30"
+   ]
+  },
+  {
+   "id": "AS-033",
+   "title": "£350 is not £35",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "answer_value"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£35",
+        "occurrence": 1
+       },
+       "reason": "x",
+       "acceptedForms": [
+        {
+         "text": "35",
+         "kind": "symbol_optional",
+         "approvalState": "teacher_approved",
+         "approvedAt": "2026-11-09T00:00:00Z"
+        }
+       ]
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£40",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    },
+    "response": {
+     "text": "£350"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "num": 0,
+    "den": 1
+   },
+   "decisionRefs": [
+    "D-27",
+    "D-30"
+   ]
+  },
+  {
+   "id": "AS-034",
+   "title": "distractor value typed",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "answer_value"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£35",
+        "occurrence": 1
+       },
+       "reason": "x",
+       "acceptedForms": [
+        {
+         "text": "35",
+         "kind": "symbol_optional",
+         "approvalState": "teacher_approved",
+         "approvedAt": "2026-11-09T00:00:00Z"
+        }
+       ]
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£40",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    },
+    "response": {
+     "text": "£40"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "distractorChosen": true,
+    "num": 0,
+    "den": 1
+   },
+   "decisionRefs": [
+    "D-27",
+    "D-30"
+   ]
+  },
+  {
+   "id": "AS-035",
+   "title": "spelled-out number is not approved",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "answer_value"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£35",
+        "occurrence": 1
+       },
+       "reason": "x",
+       "acceptedForms": [
+        {
+         "text": "35",
+         "kind": "symbol_optional",
+         "approvalState": "teacher_approved",
+         "approvedAt": "2026-11-09T00:00:00Z"
+        }
+       ]
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£40",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    },
+    "response": {
+     "text": "thirty-five"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "num": 0,
+    "den": 1
+   },
+   "decisionRefs": [
+    "D-27",
+    "D-30"
+   ]
+  },
+  {
+   "id": "AS-036",
+   "title": "percent answer needs the percent sign",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "answer_value"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "number",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "20%",
+        "occurrence": 1
+       },
+       "reason": "x"
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "30%",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    },
+    "response": {
+     "text": "20"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "num": 0,
+    "den": 1
+   },
+   "decisionRefs": [
+    "D-27",
+    "D-30"
+   ]
+  },
+  {
+   "id": "AS-037",
+   "title": "percent answer matches exactly",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "answer_value"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "number",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "20%",
+        "occurrence": 1
+       },
+       "reason": "x"
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "30%",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    },
+    "response": {
+     "text": "20%"
+    }
+   },
+   "expected": {
+    "correct": true,
+    "num": 1,
+    "den": 1
+   },
+   "decisionRefs": [
+    "D-27",
+    "D-30"
+   ]
+  },
+  {
+   "id": "AS-038",
+   "title": "spelling variant is not accepted unless approved",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "answer_value"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "common_noun",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 6,
+        "surface": "colour",
+        "occurrence": 1
+       },
+       "reason": "x"
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 5,
+        "surface": "shape",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    },
+    "response": {
+     "text": "color"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "num": 0,
+    "den": 1
+   },
+   "decisionRefs": [
+    "D-27",
+    "D-30"
+   ]
+  },
+  {
+   "id": "AS-039",
+   "title": "approved spelling variant is accepted",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "answer_value"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "common_noun",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 6,
+        "surface": "colour",
+        "occurrence": 1
+       },
+       "reason": "x",
+       "acceptedForms": [
+        {
+         "text": "color",
+         "kind": "spelling_variant",
+         "approvalState": "teacher_approved",
+         "approvedAt": "2026-11-09T00:00:00Z"
+        }
+       ]
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 5,
+        "surface": "shape",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    },
+    "response": {
+     "text": "color"
+    }
+   },
+   "expected": {
+    "correct": true,
+    "num": 1,
+    "den": 1
+   },
+   "decisionRefs": [
+    "D-27",
+    "D-30"
+   ]
+  },
+  {
+   "id": "AS-040",
+   "title": "an unapproved (proposed) form is never used for grading",
+   "kind": "scoreAnswerSpotter",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "answer_value"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£35",
+        "occurrence": 1
+       },
+       "reason": "x",
+       "acceptedForms": [
+        {
+         "text": "35",
+         "kind": "symbol_optional",
+         "approvalState": "proposed"
+        }
+       ]
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£40",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    },
+    "response": {
+     "text": "35"
+    }
+   },
+   "expected": {
+    "correct": false,
+    "num": 0,
+    "den": 1
+   },
+   "decisionRefs": [
+    "D-27",
+    "D-30"
+   ]
+  },
+  {
+   "id": "AS-041",
+   "title": "independent item that selects transcript text is invalid",
+   "kind": "itemValidity",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "provenance"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "select_span_in_text",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£35",
+        "occurrence": 1
+       },
+       "reason": "x"
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£40",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    },
+    "lesson": {}
+   },
+   "expected": {
+    "valid": false,
+    "code": "E-AS-MODE-VISIBILITY"
+   },
+   "decisionRefs": [
+    "D-27"
+   ]
+  },
+  {
+   "id": "AS-042",
+   "title": "post-check review without a paired independent item is invalid",
+   "kind": "itemValidity",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "provenance"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "post_check_transcript_review",
+     "responseMode": "select_span_in_text",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£35",
+        "occurrence": 1
+       },
+       "reason": "x"
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£40",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x",
+     "pairedIndependentItemId": "as-nope"
+    },
+    "lesson": {
+     "itemIds": [
+      "as-x01"
+     ]
+    }
+   },
+   "expected": {
+    "valid": false,
+    "code": "E-AS-REVIEW-PAIR"
+   },
+   "decisionRefs": [
+    "D-27"
+   ]
+  },
+  {
+   "id": "AS-043",
+   "title": "choose_option with a single option is invalid",
+   "kind": "itemValidity",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "provenance"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "choose_option",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£35",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    },
+    "lesson": {}
+   },
+   "expected": {
+    "valid": false,
+    "code": "E-AS-OPTIONS"
+   },
+   "decisionRefs": [
+    "D-27"
+   ]
+  },
+  {
+   "id": "AS-044",
+   "title": "official origin without an official claim is invalid",
+   "kind": "itemValidity",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "provenance"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "official_paper_transcribed",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£35",
+        "occurrence": 1
+       },
+       "reason": "x"
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£40",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    },
+    "lesson": {}
+   },
+   "expected": {
+    "valid": false,
+    "code": "E-AS-ORIGIN-CLAIM"
+   },
+   "decisionRefs": [
+    "D-27"
+   ]
+  },
+  {
+   "id": "AS-045",
+   "title": "a valid independent multiple choice item",
+   "kind": "itemValidity",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "provenance"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "choose_option",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£35",
+        "occurrence": 1
+       },
+       "reason": "x"
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£40",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    },
+    "lesson": {}
+   },
+   "expected": {
+    "valid": true
+   },
+   "decisionRefs": [
+    "D-27"
+   ]
+  },
+  {
+   "id": "AS-046",
+   "title": "AI-authored practice is never labelled official",
+   "kind": "provenance",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "provenance"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£35",
+        "occurrence": 1
+       },
+       "reason": "x"
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£40",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    }
+   },
+   "expected": {
+    "isOfficial": false,
+    "label": "AI-authored practice (not an official Cambridge question)"
+   },
+   "decisionRefs": [
+    "D-27"
+   ]
+  },
+  {
+   "id": "AS-047",
+   "title": "teacher-authored practice label",
+   "kind": "provenance",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "provenance"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "teacher_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£35",
+        "occurrence": 1
+       },
+       "reason": "x"
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£40",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x"
+    }
+   },
+   "expected": {
+    "isOfficial": false,
+    "label": "Teacher-authored practice"
+   },
+   "decisionRefs": [
+    "D-27"
+   ]
+  },
+  {
+   "id": "AS-048",
+   "title": "official label only with a complete official claim",
+   "kind": "provenance",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "provenance"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "official_paper_transcribed",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£35",
+        "occurrence": 1
+       },
+       "reason": "x"
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£40",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x",
+     "officialClaim": {
+      "claims": [
+       "answer_key"
+      ],
+      "questionNumber": 2,
+      "sourceNote": "SYNTHETIC",
+      "evidenceStatus": "official_source_confirmed",
+      "rightsAttested": true,
+      "attestedByRole": "teacher",
+      "attestedAt": "2026-11-09T00:00:00Z"
+     }
+    }
+   },
+   "expected": {
+    "isOfficial": true,
+    "label": "Official (verified source, rights attested)"
+   },
+   "decisionRefs": [
+    "D-27"
+   ]
+  },
+  {
+   "id": "AS-049",
+   "title": "official origin with a broken claim is not labelled official",
+   "kind": "provenance",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "provenance"
+   ],
+   "input": {
+    "item": {
+     "id": "as-x01",
+     "type": "answer_vs_distractor",
+     "origin": "official_paper_transcribed",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "prompt": "Practice question (authored).",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£35",
+        "occurrence": 1
+       },
+       "reason": "x"
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 0,
+        "charEnd": 3,
+        "surface": "£40",
+        "occurrence": 1
+       },
+       "reason": "x"
+      }
+     ],
+     "explanation": "x",
+     "officialClaim": {
+      "claims": [
+       "answer_key"
+      ],
+      "questionNumber": 2,
+      "sourceNote": "SYNTHETIC",
+      "evidenceStatus": "official_source_confirmed",
+      "rightsAttested": false,
+      "attestedByRole": "teacher",
+      "attestedAt": "2026-11-09T00:00:00Z"
+     }
+    }
+   },
+   "expected": {
+    "isOfficial": false,
+    "label": "Invalid provenance"
+   },
+   "decisionRefs": [
+    "D-27"
+   ]
+  },
+  {
+   "id": "RVU-001",
+   "title": "free practice: no review before a valid Check",
+   "kind": "reviewUnlock",
+   "requires": "oracle",
+   "tags": [
+    "v1.1",
+    "adversarial"
+   ],
+   "input": {
+    "mode": "free",
+    "validChecks": 0,
+    "submission": "draft",
+    "blockedBy": []
+   },
+   "expected": {
+    "unlocked": false
+   },
+   "decisionRefs": [
+    "D-28",
+    "D-12"
+   ]
+  },
+  {
+   "id": "RVU-002",
+   "title": "free practice: review opens after one valid Check",
+   "kind": "reviewUnlock",
+   "requires": "oracle",
+   "tags": [
+    "v1.1"
+   ],
+   "input": {
+    "mode": "free",
+    "validChecks": 1,
+    "submission": "draft",
+    "blockedBy": []
+   },
+   "expected": {
+    "unlocked": true
+   },
+   "decisionRefs": [
+    "D-28"
+   ]
+  },
+  {
+   "id": "RVU-003",
+   "title": "free practice: review waits while an independent Answer Spotter item on the same sentence is unchecked",
+   "kind": "reviewUnlock",
+   "requires": "oracle",
+   "tags": [
+    "v1.1",
+    "adversarial"
+   ],
+   "input": {
+    "mode": "free",
+    "validChecks": 2,
+    "submission": "draft",
+    "blockedBy": [
+     "as-003"
+    ]
+   },
+   "expected": {
+    "unlocked": false
+   },
+   "decisionRefs": [
+    "D-27",
+    "D-28"
+   ]
+  },
+  {
+   "id": "RVU-004",
+   "title": "homework: no review while still a draft, whatever the device claims",
+   "kind": "reviewUnlock",
+   "requires": "oracle",
+   "tags": [
+    "v1.1",
+    "adversarial"
+   ],
+   "input": {
+    "mode": "homework",
+    "validChecks": 3,
+    "submission": "draft",
+    "blockedBy": []
+   },
+   "expected": {
+    "unlocked": false
+   },
+   "decisionRefs": [
+    "D-20",
+    "D-28"
+   ]
+  },
+  {
+   "id": "RVU-005",
+   "title": "homework: no review while the submission is pending",
+   "kind": "reviewUnlock",
+   "requires": "oracle",
+   "tags": [
+    "v1.1",
+    "adversarial"
+   ],
+   "input": {
+    "mode": "homework",
+    "validChecks": 0,
+    "submission": "submit_pending",
+    "blockedBy": []
+   },
+   "expected": {
+    "unlocked": false
+   },
+   "decisionRefs": [
+    "D-20",
+    "D-28"
+   ]
+  },
+  {
+   "id": "RVU-006",
+   "title": "homework: review opens after the server acknowledged the submission",
+   "kind": "reviewUnlock",
+   "requires": "oracle",
+   "tags": [
+    "v1.1"
+   ],
+   "input": {
+    "mode": "homework",
+    "validChecks": 0,
+    "submission": "submitted",
+    "blockedBy": []
+   },
+   "expected": {
+    "unlocked": true
+   },
+   "decisionRefs": [
+    "D-20",
+    "D-28"
+   ]
+  },
+  {
+   "id": "RVU-007",
+   "title": "homework: after submission blank items are reviewable too (the work is locked)",
+   "kind": "reviewUnlock",
+   "requires": "oracle",
+   "tags": [
+    "v1.1"
+   ],
+   "input": {
+    "mode": "homework",
+    "validChecks": 0,
+    "submission": "submitted",
+    "blockedBy": [
+     "as-001"
+    ]
+   },
+   "expected": {
+    "unlocked": true
+   },
+   "decisionRefs": [
+    "D-22",
+    "D-28"
+   ]
+  },
+  {
+   "id": "RVU-008",
+   "title": "the legacy document setting after_reveal is ignored: the v1.1 gate applies",
+   "kind": "reviewUnlock",
+   "requires": "oracle",
+   "tags": [
+    "v1.1",
+    "adversarial"
+   ],
+   "input": {
+    "mode": "free",
+    "validChecks": 1,
+    "submission": "draft",
+    "blockedBy": [],
+    "setting": "after_reveal"
+   },
+   "expected": {
+    "unlocked": true
+   },
+   "decisionRefs": [
+    "D-28"
+   ]
+  }
+ ]
+}

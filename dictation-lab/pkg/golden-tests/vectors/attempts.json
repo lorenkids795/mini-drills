@@ -1,0 +1,2418 @@
+{
+ "suite": "attempts-and-mastery",
+ "vectorsVersion": "2",
+ "baseline": "baseline-harbour-museum.rev1.json",
+ "vectors": [
+  {
+   "id": "AGG-001",
+   "title": "token weighted attempted accuracy, not a mean of percentages (free practice: no assignment score)",
+   "kind": "aggregateScores",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "aggregation"
+   ],
+   "input": {
+    "mode": "free_practice",
+    "submitted": false,
+    "items": [
+     {
+      "id": "a",
+      "level": "level3",
+      "state": "attempted",
+      "first": {
+       "num": 1,
+       "den": 1
+      },
+      "expectedDen": 1
+     },
+     {
+      "id": "b",
+      "level": "level3",
+      "state": "attempted",
+      "first": {
+       "num": 1,
+       "den": 10
+      },
+      "expectedDen": 10
+     }
+    ]
+   },
+   "expected": {
+    "attemptedAccuracy": {
+     "num": 2,
+     "den": 11
+    },
+    "completionRate": {
+     "num": 1,
+     "den": 1
+    },
+    "assignmentScore": null
+   },
+   "decisionRefs": [
+    "D-19",
+    "D-29"
+   ]
+  },
+  {
+   "id": "AGG-002",
+   "title": "reviewed-only and unattempted items are not attempted: attempted accuracy 18/22, completion 3 of 5",
+   "kind": "aggregateScores",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "aggregation"
+   ],
+   "input": {
+    "mode": "free_practice",
+    "submitted": false,
+    "items": [
+     {
+      "id": "a",
+      "level": "level3",
+      "state": "attempted",
+      "first": {
+       "num": 6,
+       "den": 6
+      },
+      "expectedDen": 6
+     },
+     {
+      "id": "b",
+      "level": "level3",
+      "state": "attempted",
+      "first": {
+       "num": 4,
+       "den": 6
+      },
+      "expectedDen": 6
+     },
+     {
+      "id": "c",
+      "level": "level3",
+      "state": "reviewed_only",
+      "expectedDen": 6
+     },
+     {
+      "id": "d",
+      "level": "level3",
+      "state": "attempted",
+      "first": {
+       "num": 8,
+       "den": 10
+      },
+      "expectedDen": 10
+     },
+     {
+      "id": "e",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     }
+    ]
+   },
+   "expected": {
+    "attemptedAccuracy": {
+     "num": 9,
+     "den": 11
+    },
+    "completionRate": {
+     "num": 3,
+     "den": 5
+    },
+    "reviewedOnly": 1,
+    "assignmentScore": null
+   },
+   "decisionRefs": [
+    "D-19",
+    "D-29"
+   ]
+  },
+  {
+   "id": "AGS-001",
+   "title": "2 of 10 attempted correctly, 8 skipped, submitted homework: 100% attempted accuracy but only 20% assignment score",
+   "kind": "aggregateScores",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "aggregation"
+   ],
+   "input": {
+    "mode": "homework",
+    "submitted": true,
+    "items": [
+     {
+      "id": "q0",
+      "level": "level3",
+      "state": "attempted",
+      "expectedDen": 6,
+      "first": {
+       "num": 6,
+       "den": 6
+      }
+     },
+     {
+      "id": "q1",
+      "level": "level3",
+      "state": "attempted",
+      "expectedDen": 6,
+      "first": {
+       "num": 6,
+       "den": 6
+      }
+     },
+     {
+      "id": "q2",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q3",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q4",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q5",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q6",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q7",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q8",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q9",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     }
+    ]
+   },
+   "expected": {
+    "attemptedAccuracy": {
+     "num": 1,
+     "den": 1
+    },
+    "assignmentScore": {
+     "num": 1,
+     "den": 5
+    },
+    "completionRate": {
+     "num": 1,
+     "den": 5
+    },
+    "attemptedItems": 2,
+    "totalItems": 10
+   },
+   "decisionRefs": [
+    "D-29"
+   ]
+  },
+  {
+   "id": "AGS-002",
+   "title": "nothing attempted on submitted homework",
+   "kind": "aggregateScores",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "aggregation"
+   ],
+   "input": {
+    "mode": "homework",
+    "submitted": true,
+    "items": [
+     {
+      "id": "q0",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q1",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q2",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q3",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q4",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q5",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q6",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q7",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q8",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q9",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     }
+    ]
+   },
+   "expected": {
+    "attemptedAccuracy": null,
+    "assignmentScore": {
+     "num": 0,
+     "den": 1
+    },
+    "completionRate": {
+     "num": 0,
+     "den": 1
+    }
+   },
+   "decisionRefs": [
+    "D-29"
+   ]
+  },
+  {
+   "id": "AGS-003",
+   "title": "everything attempted: attempted accuracy equals assignment score",
+   "kind": "aggregateScores",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "aggregation"
+   ],
+   "input": {
+    "mode": "homework",
+    "submitted": true,
+    "items": [
+     {
+      "id": "a",
+      "level": "level3",
+      "state": "attempted",
+      "expectedDen": 6,
+      "first": {
+       "num": 6,
+       "den": 6
+      }
+     },
+     {
+      "id": "b",
+      "level": "level3",
+      "state": "attempted",
+      "expectedDen": 6,
+      "first": {
+       "num": 4,
+       "den": 6
+      }
+     },
+     {
+      "id": "c",
+      "level": "level3",
+      "state": "attempted",
+      "expectedDen": 10,
+      "first": {
+       "num": 8,
+       "den": 10
+      }
+     }
+    ]
+   },
+   "expected": {
+    "attemptedAccuracy": {
+     "num": 9,
+     "den": 11
+    },
+    "assignmentScore": {
+     "num": 9,
+     "den": 11
+    },
+    "completionRate": {
+     "num": 1,
+     "den": 1
+    }
+   },
+   "decisionRefs": [
+    "D-29"
+   ]
+  },
+  {
+   "id": "AGS-004",
+   "title": "an item with zero expected tokens is invalid content and excluded from every denominator",
+   "kind": "aggregateScores",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "aggregation"
+   ],
+   "input": {
+    "mode": "homework",
+    "submitted": true,
+    "items": [
+     {
+      "id": "a",
+      "level": "level3",
+      "state": "attempted",
+      "expectedDen": 6,
+      "first": {
+       "num": 6,
+       "den": 6
+      }
+     },
+     {
+      "id": "z",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 0
+     }
+    ]
+   },
+   "expected": {
+    "attemptedAccuracy": {
+     "num": 1,
+     "den": 1
+    },
+    "assignmentScore": {
+     "num": 1,
+     "den": 1
+    },
+    "completionRate": {
+     "num": 1,
+     "den": 1
+    },
+    "invalidItems": 1,
+    "totalItems": 1
+   },
+   "decisionRefs": [
+    "D-29"
+   ]
+  },
+  {
+   "id": "AGS-005",
+   "title": "only zero-token items: every metric is null, never 0 and never 100 percent",
+   "kind": "aggregateScores",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "aggregation"
+   ],
+   "input": {
+    "mode": "homework",
+    "submitted": true,
+    "items": [
+     {
+      "id": "z",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 0
+     }
+    ]
+   },
+   "expected": {
+    "attemptedAccuracy": null,
+    "assignmentScore": null,
+    "completionRate": null,
+    "invalidItems": 1,
+    "totalItems": 0
+   },
+   "decisionRefs": [
+    "D-29"
+   ]
+  },
+  {
+   "id": "AGS-006",
+   "title": "mixed levels: per-level token weighted, overall item weighted",
+   "kind": "aggregateScores",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "aggregation"
+   ],
+   "input": {
+    "mode": "homework",
+    "submitted": true,
+    "items": [
+     {
+      "id": "a",
+      "level": "level1",
+      "state": "attempted",
+      "expectedDen": 6,
+      "first": {
+       "num": 6,
+       "den": 6
+      }
+     },
+     {
+      "id": "b",
+      "level": "level3",
+      "state": "attempted",
+      "expectedDen": 15,
+      "first": {
+       "num": 10,
+       "den": 15
+      }
+     },
+     {
+      "id": "c",
+      "level": "level4",
+      "state": "unattempted",
+      "expectedDen": 25
+     }
+    ]
+   },
+   "expected": {
+    "levels": {
+     "level1": {
+      "attemptedAccuracy": {
+       "num": 1,
+       "den": 1
+      },
+      "assignmentScore": {
+       "num": 1,
+       "den": 1
+      }
+     },
+     "level3": {
+      "attemptedAccuracy": {
+       "num": 2,
+       "den": 3
+      },
+      "assignmentScore": {
+       "num": 2,
+       "den": 3
+      }
+     },
+     "level4": {
+      "attemptedAccuracy": null,
+      "assignmentScore": {
+       "num": 0,
+       "den": 1
+      }
+     }
+    },
+    "overall": {
+     "itemWeightedAssignmentScore": {
+      "num": 5,
+      "den": 9
+     },
+     "unitWeightedAssignmentScore": {
+      "num": 8,
+      "den": 23
+     },
+     "completionRate": {
+      "num": 2,
+      "den": 3
+     }
+    }
+   },
+   "decisionRefs": [
+    "D-29"
+   ]
+  },
+  {
+   "id": "AGS-007",
+   "title": "unsubmitted homework: assignment score is only a labelled projection",
+   "kind": "aggregateScores",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "aggregation"
+   ],
+   "input": {
+    "mode": "homework",
+    "submitted": false,
+    "items": [
+     {
+      "id": "q0",
+      "level": "level3",
+      "state": "attempted",
+      "expectedDen": 6,
+      "first": {
+       "num": 6,
+       "den": 6
+      }
+     },
+     {
+      "id": "q1",
+      "level": "level3",
+      "state": "attempted",
+      "expectedDen": 6,
+      "first": {
+       "num": 6,
+       "den": 6
+      }
+     },
+     {
+      "id": "q2",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q3",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q4",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q5",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q6",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q7",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q8",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q9",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     }
+    ]
+   },
+   "expected": {
+    "assignmentScore": null,
+    "projectedAssignmentScore": {
+     "num": 1,
+     "den": 5
+    },
+    "attemptedAccuracy": {
+     "num": 1,
+     "den": 1
+    },
+    "completionRate": {
+     "num": 1,
+     "den": 5
+    }
+   },
+   "decisionRefs": [
+    "D-29"
+   ]
+  },
+  {
+   "id": "AGS-008",
+   "title": "free practice never has an assignment score",
+   "kind": "aggregateScores",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "aggregation"
+   ],
+   "input": {
+    "mode": "free_practice",
+    "submitted": false,
+    "items": [
+     {
+      "id": "q0",
+      "level": "level3",
+      "state": "attempted",
+      "expectedDen": 6,
+      "first": {
+       "num": 6,
+       "den": 6
+      }
+     },
+     {
+      "id": "q1",
+      "level": "level3",
+      "state": "attempted",
+      "expectedDen": 6,
+      "first": {
+       "num": 6,
+       "den": 6
+      }
+     },
+     {
+      "id": "q2",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q3",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q4",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q5",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q6",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q7",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q8",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     },
+     {
+      "id": "q9",
+      "level": "level3",
+      "state": "unattempted",
+      "expectedDen": 6
+     }
+    ]
+   },
+   "expected": {
+    "assignmentScore": null,
+    "projectedAssignmentScore": null,
+    "attemptedAccuracy": {
+     "num": 1,
+     "den": 1
+    },
+    "completionRate": {
+     "num": 1,
+     "den": 5
+    }
+   },
+   "decisionRefs": [
+    "D-29"
+   ]
+  },
+  {
+   "id": "AGS-009",
+   "title": "reveal-only items count as not attempted and are reported as reviewed only",
+   "kind": "aggregateScores",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "aggregation"
+   ],
+   "input": {
+    "mode": "homework",
+    "submitted": true,
+    "items": [
+     {
+      "id": "a",
+      "level": "level3",
+      "state": "attempted",
+      "expectedDen": 6,
+      "first": {
+       "num": 6,
+       "den": 6
+      }
+     },
+     {
+      "id": "r",
+      "level": "level3",
+      "state": "reviewed_only",
+      "expectedDen": 6
+     }
+    ]
+   },
+   "expected": {
+    "attemptedAccuracy": {
+     "num": 1,
+     "den": 1
+    },
+    "assignmentScore": {
+     "num": 1,
+     "den": 2
+    },
+    "completionRate": {
+     "num": 1,
+     "den": 2
+    },
+    "reviewedOnly": 1
+   },
+   "decisionRefs": [
+    "D-29"
+   ]
+  },
+  {
+   "id": "AGS-010",
+   "title": "first attempt is immutable: the score uses the first attempt, practice accuracy reports the later one",
+   "kind": "aggregateScores",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "aggregation"
+   ],
+   "input": {
+    "mode": "homework",
+    "submitted": true,
+    "items": [
+     {
+      "id": "a",
+      "level": "level3",
+      "state": "attempted",
+      "expectedDen": 6,
+      "first": {
+       "num": 4,
+       "den": 6
+      },
+      "current": {
+       "num": 6,
+       "den": 6
+      }
+     }
+    ]
+   },
+   "expected": {
+    "attemptedAccuracy": {
+     "num": 2,
+     "den": 3
+    },
+    "assignmentScore": {
+     "num": 2,
+     "den": 3
+    },
+    "practiceAccuracy": {
+     "num": 1,
+     "den": 1
+    }
+   },
+   "decisionRefs": [
+    "D-29"
+   ]
+  },
+  {
+   "id": "AGS-011",
+   "title": "Answer Spotter list item: unattempted weight is the number of expected candidates",
+   "kind": "aggregateScores",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "aggregation"
+   ],
+   "input": {
+    "mode": "homework",
+    "submitted": true,
+    "items": [
+     {
+      "id": "s1",
+      "level": "answerSpotter",
+      "state": "attempted",
+      "expectedDen": 1,
+      "first": {
+       "num": 1,
+       "den": 1
+      }
+     },
+     {
+      "id": "s2",
+      "level": "answerSpotter",
+      "state": "attempted",
+      "expectedDen": 2,
+      "first": {
+       "num": 1,
+       "den": 3
+      }
+     },
+     {
+      "id": "s3",
+      "level": "answerSpotter",
+      "state": "unattempted",
+      "expectedDen": 2
+     }
+    ]
+   },
+   "expected": {
+    "attemptedAccuracy": {
+     "num": 1,
+     "den": 2
+    },
+    "assignmentScore": {
+     "num": 1,
+     "den": 3
+    },
+    "completionRate": {
+     "num": 2,
+     "den": 3
+    }
+   },
+   "decisionRefs": [
+    "D-29"
+   ]
+  },
+  {
+   "id": "ATT-001",
+   "title": "first check exact with no help",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "exposure": "none",
+    "events": [
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ],
+    "exposureHistoryComplete": true
+   },
+   "expected": {
+    "attempts": [
+     {
+      "index": 0,
+      "num": 6,
+      "den": 6,
+      "exact": true,
+      "hintsBefore": 0,
+      "revealedBefore": false,
+      "kind": "scored"
+     }
+    ],
+    "firstAttempt": {
+     "num": 6,
+     "den": 6,
+     "exact": true,
+     "independent": true
+    },
+    "status": "independent_success",
+    "independence": "independent",
+    "outcome": "succeeded",
+    "evidence": "novel_independent",
+    "attempted": true,
+    "currentPractice": {
+     "num": 6,
+     "den": 6
+    }
+   },
+   "decisionRefs": [
+    "D-14",
+    "D-16"
+   ]
+  },
+  {
+   "id": "ATT-002",
+   "title": "wrong then exact",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "exposure": "none",
+    "events": [
+     {
+      "op": "check",
+      "num": 4,
+      "den": 6
+     },
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ],
+    "exposureHistoryComplete": false
+   },
+   "expected": {
+    "attempts": [
+     {
+      "index": 0,
+      "num": 4,
+      "den": 6,
+      "exact": false,
+      "hintsBefore": 0,
+      "revealedBefore": false,
+      "kind": "scored"
+     },
+     {
+      "index": 1,
+      "num": 6,
+      "den": 6,
+      "exact": true,
+      "hintsBefore": 0,
+      "revealedBefore": false,
+      "kind": "scored"
+     }
+    ],
+    "firstAttempt": {
+     "num": 4,
+     "den": 6,
+     "exact": false,
+     "independent": true
+    },
+    "status": "improved_after_practice",
+    "independence": "independent",
+    "outcome": "succeeded",
+    "evidence": "practice_success",
+    "attempted": true,
+    "currentPractice": {
+     "num": 6,
+     "den": 6
+    }
+   },
+   "decisionRefs": [
+    "D-14",
+    "D-16"
+   ]
+  },
+  {
+   "id": "ATT-003",
+   "title": "hint before the first check: exact but not independent",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "exposure": "none",
+    "events": [
+     {
+      "op": "hint"
+     },
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ],
+    "exposureHistoryComplete": true
+   },
+   "expected": {
+    "attempts": [
+     {
+      "index": 0,
+      "num": 6,
+      "den": 6,
+      "exact": true,
+      "hintsBefore": 1,
+      "revealedBefore": false,
+      "kind": "scored"
+     }
+    ],
+    "firstAttempt": {
+     "num": 6,
+     "den": 6,
+     "exact": true,
+     "independent": false
+    },
+    "status": "improved_after_practice",
+    "independence": "assisted",
+    "outcome": "succeeded",
+    "evidence": "assisted_success",
+    "attempted": true,
+    "currentPractice": {
+     "num": 6,
+     "den": 6
+    }
+   },
+   "decisionRefs": [
+    "D-14",
+    "D-16"
+   ]
+  },
+  {
+   "id": "ATT-004",
+   "title": "wrong, hint, wrong, hint, exact",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "exposure": "none",
+    "events": [
+     {
+      "op": "check",
+      "num": 4,
+      "den": 6
+     },
+     {
+      "op": "hint"
+     },
+     {
+      "op": "check",
+      "num": 5,
+      "den": 6
+     },
+     {
+      "op": "hint"
+     },
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ],
+    "exposureHistoryComplete": false
+   },
+   "expected": {
+    "attempts": [
+     {
+      "index": 0,
+      "num": 4,
+      "den": 6,
+      "exact": false,
+      "hintsBefore": 0,
+      "revealedBefore": false,
+      "kind": "scored"
+     },
+     {
+      "index": 1,
+      "num": 5,
+      "den": 6,
+      "exact": false,
+      "hintsBefore": 1,
+      "revealedBefore": false,
+      "kind": "scored"
+     },
+     {
+      "index": 2,
+      "num": 6,
+      "den": 6,
+      "exact": true,
+      "hintsBefore": 2,
+      "revealedBefore": false,
+      "kind": "scored"
+     }
+    ],
+    "firstAttempt": {
+     "num": 4,
+     "den": 6,
+     "exact": false,
+     "independent": true
+    },
+    "status": "improved_after_practice",
+    "independence": "independent",
+    "outcome": "succeeded",
+    "evidence": "practice_success",
+    "attempted": true,
+    "currentPractice": {
+     "num": 6,
+     "den": 6
+    }
+   },
+   "decisionRefs": [
+    "D-14",
+    "D-16"
+   ]
+  },
+  {
+   "id": "ATT-005",
+   "title": "reveal before any check",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "exposure": "none",
+    "events": [
+     {
+      "op": "reveal"
+     }
+    ],
+    "exposureHistoryComplete": false
+   },
+   "expected": {
+    "attempts": [],
+    "firstAttempt": null,
+    "status": "reviewed",
+    "independence": null,
+    "outcome": "reviewed",
+    "evidence": "none",
+    "attempted": false,
+    "currentPractice": null
+   },
+   "decisionRefs": [
+    "D-14",
+    "D-16"
+   ]
+  },
+  {
+   "id": "ATT-006",
+   "title": "wrong, reveal, then copy the answer: copying earns no mastery",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "exposure": "none",
+    "events": [
+     {
+      "op": "check",
+      "num": 4,
+      "den": 6
+     },
+     {
+      "op": "reveal"
+     },
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ],
+    "exposureHistoryComplete": false
+   },
+   "expected": {
+    "attempts": [
+     {
+      "index": 0,
+      "num": 4,
+      "den": 6,
+      "exact": false,
+      "hintsBefore": 0,
+      "revealedBefore": false,
+      "kind": "scored"
+     },
+     {
+      "index": 1,
+      "num": 6,
+      "den": 6,
+      "exact": true,
+      "hintsBefore": 0,
+      "revealedBefore": true,
+      "kind": "post_reveal"
+     }
+    ],
+    "firstAttempt": {
+     "num": 4,
+     "den": 6,
+     "exact": false,
+     "independent": true
+    },
+    "status": "reviewed",
+    "independence": "independent",
+    "outcome": "reviewed",
+    "evidence": "none",
+    "attempted": true,
+    "currentPractice": {
+     "num": 4,
+     "den": 6
+    }
+   },
+   "decisionRefs": [
+    "D-14",
+    "D-16"
+   ]
+  },
+  {
+   "id": "ATT-007",
+   "title": "never exact, no reveal",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "exposure": "none",
+    "events": [
+     {
+      "op": "check",
+      "num": 3,
+      "den": 6
+     },
+     {
+      "op": "check",
+      "num": 4,
+      "den": 6
+     }
+    ],
+    "exposureHistoryComplete": false
+   },
+   "expected": {
+    "attempts": [
+     {
+      "index": 0,
+      "num": 3,
+      "den": 6,
+      "exact": false,
+      "hintsBefore": 0,
+      "revealedBefore": false,
+      "kind": "scored"
+     },
+     {
+      "index": 1,
+      "num": 4,
+      "den": 6,
+      "exact": false,
+      "hintsBefore": 0,
+      "revealedBefore": false,
+      "kind": "scored"
+     }
+    ],
+    "firstAttempt": {
+     "num": 3,
+     "den": 6,
+     "exact": false,
+     "independent": true
+    },
+    "status": "in_progress",
+    "independence": "independent",
+    "outcome": "in_progress",
+    "evidence": "none",
+    "attempted": true,
+    "currentPractice": {
+     "num": 4,
+     "den": 6
+    }
+   },
+   "decisionRefs": [
+    "D-14",
+    "D-16"
+   ]
+  },
+  {
+   "id": "ATT-008",
+   "title": "exact first, later revisit with a worse answer: first attempt and status are unchanged",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "exposure": "none",
+    "events": [
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     },
+     {
+      "op": "check",
+      "num": 5,
+      "den": 6
+     }
+    ],
+    "exposureHistoryComplete": true
+   },
+   "expected": {
+    "attempts": [
+     {
+      "index": 0,
+      "num": 6,
+      "den": 6,
+      "exact": true,
+      "hintsBefore": 0,
+      "revealedBefore": false,
+      "kind": "scored"
+     },
+     {
+      "index": 1,
+      "num": 5,
+      "den": 6,
+      "exact": false,
+      "hintsBefore": 0,
+      "revealedBefore": false,
+      "kind": "scored"
+     }
+    ],
+    "firstAttempt": {
+     "num": 6,
+     "den": 6,
+     "exact": true,
+     "independent": true
+    },
+    "status": "independent_success",
+    "independence": "independent",
+    "outcome": "succeeded",
+    "evidence": "novel_independent",
+    "attempted": true,
+    "currentPractice": {
+     "num": 5,
+     "den": 6
+    }
+   },
+   "decisionRefs": [
+    "D-14",
+    "D-16"
+   ]
+  },
+  {
+   "id": "ATT-009",
+   "title": "independent success after the sentence was shown as Level 1 tiles",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "exposure": "tokens_shown",
+    "events": [
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ],
+    "exposureHistoryComplete": true
+   },
+   "expected": {
+    "attempts": [
+     {
+      "index": 0,
+      "num": 6,
+      "den": 6,
+      "exact": true,
+      "hintsBefore": 0,
+      "revealedBefore": false,
+      "kind": "scored"
+     }
+    ],
+    "firstAttempt": {
+     "num": 6,
+     "den": 6,
+     "exact": true,
+     "independent": true
+    },
+    "status": "independent_success",
+    "independence": "independent",
+    "outcome": "succeeded",
+    "evidence": "practice_success",
+    "attempted": true,
+    "currentPractice": {
+     "num": 6,
+     "den": 6
+    }
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "ATT-010",
+   "title": "independent success after the answer was shown earlier",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "exposure": "answer_shown",
+    "events": [
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ],
+    "exposureHistoryComplete": true
+   },
+   "expected": {
+    "attempts": [
+     {
+      "index": 0,
+      "num": 6,
+      "den": 6,
+      "exact": true,
+      "hintsBefore": 0,
+      "revealedBefore": false,
+      "kind": "scored"
+     }
+    ],
+    "firstAttempt": {
+     "num": 6,
+     "den": 6,
+     "exact": true,
+     "independent": true
+    },
+    "status": "independent_success",
+    "independence": "independent",
+    "outcome": "succeeded",
+    "evidence": "practice_success",
+    "attempted": true,
+    "currentPractice": {
+     "num": 6,
+     "den": 6
+    }
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "ATT-011",
+   "title": "empty check is not an attempt and does not consume the first attempt",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "exposure": "none",
+    "events": [
+     {
+      "op": "check_empty"
+     },
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ],
+    "exposureHistoryComplete": true
+   },
+   "expected": {
+    "attempts": [
+     {
+      "index": 0,
+      "num": 6,
+      "den": 6,
+      "exact": true,
+      "hintsBefore": 0,
+      "revealedBefore": false,
+      "kind": "scored"
+     }
+    ],
+    "firstAttempt": {
+     "num": 6,
+     "den": 6,
+     "exact": true,
+     "independent": true
+    },
+    "status": "independent_success",
+    "independence": "independent",
+    "outcome": "succeeded",
+    "evidence": "novel_independent",
+    "attempted": true,
+    "currentPractice": {
+     "num": 6,
+     "den": 6
+    }
+   },
+   "decisionRefs": [
+    "D-12"
+   ]
+  },
+  {
+   "id": "ATT-012",
+   "title": "rapid double click on Check with an unchanged answer records one attempt",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "multi_click"
+   ],
+   "input": {
+    "exposure": "none",
+    "events": [
+     {
+      "op": "check",
+      "num": 4,
+      "den": 6,
+      "answer": "we are always"
+     },
+     {
+      "op": "check",
+      "num": 4,
+      "den": 6,
+      "answer": "we are always"
+     }
+    ],
+    "exposureHistoryComplete": false
+   },
+   "expected": {
+    "attempts": [
+     {
+      "index": 0,
+      "num": 4,
+      "den": 6,
+      "exact": false,
+      "hintsBefore": 0,
+      "revealedBefore": false,
+      "kind": "scored"
+     }
+    ],
+    "firstAttempt": {
+     "num": 4,
+     "den": 6,
+     "exact": false,
+     "independent": true
+    },
+    "status": "in_progress",
+    "independence": "independent",
+    "outcome": "in_progress",
+    "evidence": "none",
+    "attempted": true,
+    "currentPractice": {
+     "num": 4,
+     "den": 6
+    }
+   },
+   "decisionRefs": [
+    "D-18"
+   ]
+  },
+  {
+   "id": "ATT-013",
+   "title": "same answer re-checked after a hint is a new attempt",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "exposure": "none",
+    "events": [
+     {
+      "op": "check",
+      "num": 4,
+      "den": 6,
+      "answer": "we are always"
+     },
+     {
+      "op": "hint"
+     },
+     {
+      "op": "check",
+      "num": 4,
+      "den": 6,
+      "answer": "we are always"
+     }
+    ],
+    "exposureHistoryComplete": false
+   },
+   "expected": {
+    "attempts": [
+     {
+      "index": 0,
+      "num": 4,
+      "den": 6,
+      "exact": false,
+      "hintsBefore": 0,
+      "revealedBefore": false,
+      "kind": "scored"
+     },
+     {
+      "index": 1,
+      "num": 4,
+      "den": 6,
+      "exact": false,
+      "hintsBefore": 1,
+      "revealedBefore": false,
+      "kind": "scored"
+     }
+    ],
+    "firstAttempt": {
+     "num": 4,
+     "den": 6,
+     "exact": false,
+     "independent": true
+    },
+    "status": "in_progress",
+    "independence": "independent",
+    "outcome": "in_progress",
+    "evidence": "none",
+    "attempted": true,
+    "currentPractice": {
+     "num": 4,
+     "den": 6
+    }
+   },
+   "decisionRefs": [
+    "D-18"
+   ]
+  },
+  {
+   "id": "EXD-001",
+   "title": "Level 1 presentation exposes the tokens",
+   "kind": "exposureDerivation",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "events": [
+     {
+      "op": "present",
+      "level": "level1",
+      "sentenceId": "s004"
+     }
+    ],
+    "query": "s004",
+    "host": {}
+   },
+   "expected": {
+    "exposure": "tokens_shown"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXD-002",
+   "title": "Level 2 presentation exposes the context and outranks tiles",
+   "kind": "exposureDerivation",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "events": [
+     {
+      "op": "present",
+      "level": "level1",
+      "sentenceId": "s004"
+     },
+     {
+      "op": "present",
+      "level": "level2",
+      "sentenceId": "s004"
+     }
+    ],
+    "query": "s004",
+    "host": {}
+   },
+   "expected": {
+    "exposure": "context_shown"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXD-003",
+   "title": "Level 3 and Level 4 dictation do not expose the text",
+   "kind": "exposureDerivation",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "events": [
+     {
+      "op": "present",
+      "level": "level3",
+      "sentenceId": "s004"
+     },
+     {
+      "op": "present",
+      "level": "level4",
+      "sentenceId": "s004"
+     }
+    ],
+    "query": "s004",
+    "host": {}
+   },
+   "expected": {
+    "exposure": "none"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXD-004",
+   "title": "reveal exposes the full answer",
+   "kind": "exposureDerivation",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "events": [
+     {
+      "op": "reveal",
+      "sentenceId": "s004"
+     }
+    ],
+    "query": "s004",
+    "host": {}
+   },
+   "expected": {
+    "exposure": "answer_shown"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXD-005",
+   "title": "host-supplied earlier exposure is merged by maximum",
+   "kind": "exposureDerivation",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "events": [],
+    "query": "s004",
+    "host": {
+     "priorExposure": {
+      "s004": "answer_shown"
+     }
+    }
+   },
+   "expected": {
+    "exposure": "answer_shown"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXD-006",
+   "title": "history unknown and nothing seen in session: unknown",
+   "kind": "exposureDerivation",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "events": [],
+    "query": "s004",
+    "host": {
+     "history": "unknown"
+    }
+   },
+   "expected": {
+    "exposure": "unknown"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXD-007",
+   "title": "history unknown but tiles were shown in session: the known exposure wins",
+   "kind": "exposureDerivation",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "events": [
+     {
+      "op": "present",
+      "level": "level1",
+      "sentenceId": "s004"
+     }
+    ],
+    "query": "s004",
+    "host": {
+     "history": "unknown"
+    }
+   },
+   "expected": {
+    "exposure": "tokens_shown"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXD-008",
+   "title": "post-check transcript review exposes the answer",
+   "kind": "exposureDerivation",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "events": [
+     {
+      "op": "present",
+      "level": "answerSpotterReview",
+      "sentenceId": "s004"
+     }
+    ],
+    "query": "s004",
+    "host": {}
+   },
+   "expected": {
+    "exposure": "answer_shown"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXD-009",
+   "title": "other sentences are unaffected",
+   "kind": "exposureDerivation",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "events": [
+     {
+      "op": "present",
+      "level": "level1",
+      "sentenceId": "s005"
+     }
+    ],
+    "query": "s004",
+    "host": {}
+   },
+   "expected": {
+    "exposure": "none"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXP-001",
+   "title": "no exposure and complete history: novel independent success",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "exposure": "none",
+    "exposureHistoryComplete": true,
+    "events": [
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "evidence": "novel_independent",
+    "independence": "independent",
+    "outcome": "succeeded"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXP-002",
+   "title": "no in-session exposure but history not asserted complete: independence without a novelty claim",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "exposure": "none",
+    "exposureHistoryComplete": false,
+    "events": [
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "evidence": "independent_unverified_novelty"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXP-003",
+   "title": "unknown exposure never claims novelty",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "exposure": "unknown",
+    "exposureHistoryComplete": true,
+    "events": [
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "evidence": "independent_unverified_novelty"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXP-004",
+   "title": "sentence met as Level 1 tiles then answered correctly in Level 3: valid practice success, not novel",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "exposure": "tokens_shown",
+    "exposureHistoryComplete": true,
+    "events": [
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "evidence": "practice_success",
+    "independence": "independent",
+    "outcome": "succeeded"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXP-005",
+   "title": "sentence met as Level 2 context then answered correctly: practice success",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "exposure": "context_shown",
+    "exposureHistoryComplete": true,
+    "events": [
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "evidence": "practice_success"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXP-006",
+   "title": "answer was shown earlier: practice success",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "exposure": "answer_shown",
+    "exposureHistoryComplete": true,
+    "events": [
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "evidence": "practice_success"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXP-007",
+   "title": "hint before the first Check: assisted success, never novel",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "exposure": "none",
+    "exposureHistoryComplete": true,
+    "events": [
+     {
+      "op": "hint"
+     },
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "evidence": "assisted_success",
+    "independence": "assisted"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXP-008",
+   "title": "wrong first attempt then exact: practice success even with no exposure",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "exposure": "none",
+    "exposureHistoryComplete": true,
+    "events": [
+     {
+      "op": "check",
+      "num": 4,
+      "den": 6
+     },
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "evidence": "practice_success",
+    "independence": "independent"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXP-009",
+   "title": "reveal then copy: no evidence, not attempted",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "exposure": "none",
+    "exposureHistoryComplete": true,
+    "events": [
+     {
+      "op": "reveal"
+     },
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "evidence": "none",
+    "outcome": "reviewed",
+    "attempted": false,
+    "firstAttempt": null
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXP-010",
+   "title": "hint after the first Check does not make the first attempt assisted",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "exposure": "none",
+    "exposureHistoryComplete": true,
+    "events": [
+     {
+      "op": "check",
+      "num": 4,
+      "den": 6
+     },
+     {
+      "op": "hint"
+     },
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "independence": "independent",
+    "firstAttempt": {
+     "independent": true
+    },
+    "evidence": "practice_success"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXP-011",
+   "title": "five identical Checks create one attempt",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "exposure": "none",
+    "exposureHistoryComplete": false,
+    "events": [
+     {
+      "op": "check",
+      "num": 4,
+      "den": 6,
+      "answer": "a b"
+     },
+     {
+      "op": "check",
+      "num": 4,
+      "den": 6,
+      "answer": "a b"
+     },
+     {
+      "op": "check",
+      "num": 4,
+      "den": 6,
+      "answer": "a b"
+     },
+     {
+      "op": "check",
+      "num": 4,
+      "den": 6,
+      "answer": "a b"
+     },
+     {
+      "op": "check",
+      "num": 4,
+      "den": 6,
+      "answer": "a b"
+     }
+    ]
+   },
+   "expected": {
+    "attempts": [
+     {
+      "index": 0,
+      "num": 4,
+      "den": 6,
+      "exact": false,
+      "hintsBefore": 0,
+      "revealedBefore": false,
+      "kind": "scored"
+     }
+    ],
+    "outcome": "in_progress"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXP-012",
+   "title": "first attempt is immutable after many later attempts",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "exposure": "none",
+    "exposureHistoryComplete": true,
+    "events": [
+     {
+      "op": "check",
+      "num": 2,
+      "den": 6
+     },
+     {
+      "op": "check",
+      "num": 3,
+      "den": 6
+     },
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "firstAttempt": {
+     "num": 2,
+     "den": 6,
+     "exact": false,
+     "independent": true
+    },
+    "outcome": "succeeded",
+    "currentPractice": {
+     "num": 6,
+     "den": 6
+    }
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  },
+  {
+   "id": "EXP-013",
+   "title": "checks after reveal are post_reveal and never counted as attempts for completion",
+   "kind": "attemptSequence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "exposure"
+   ],
+   "input": {
+    "exposure": "none",
+    "exposureHistoryComplete": true,
+    "events": [
+     {
+      "op": "check",
+      "num": 3,
+      "den": 6
+     },
+     {
+      "op": "reveal"
+     },
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6
+     },
+     {
+      "op": "check",
+      "num": 6,
+      "den": 6,
+      "answer": "x"
+     }
+    ]
+   },
+   "expected": {
+    "attempts": [
+     {
+      "index": 0,
+      "num": 3,
+      "den": 6,
+      "exact": false,
+      "hintsBefore": 0,
+      "revealedBefore": false,
+      "kind": "scored"
+     },
+     {
+      "index": 1,
+      "num": 6,
+      "den": 6,
+      "exact": true,
+      "hintsBefore": 0,
+      "revealedBefore": true,
+      "kind": "post_reveal"
+     },
+     {
+      "index": 2,
+      "num": 6,
+      "den": 6,
+      "exact": true,
+      "hintsBefore": 0,
+      "revealedBefore": true,
+      "kind": "post_reveal"
+     }
+    ],
+    "outcome": "reviewed",
+    "evidence": "none"
+   },
+   "decisionRefs": [
+    "D-16"
+   ]
+  }
+ ]
+}

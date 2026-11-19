@@ -1823,6 +1823,7 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
       <div id="cpEditor">
         <div class="step alstep" id="audBox" hidden></div>
         <div class="step alstep" id="alBox" hidden></div>
+        <div class="step alstep" id="dlBox" hidden></div>
         <div class="step alstep" id="rdBox" hidden></div>
         <div class="step alstep" id="wsBox" hidden></div>
       </div>
@@ -1958,7 +1959,7 @@ var exOf=function(id){return EXS[id]||customMap[id]||null};
 var qOf=function(exId,qid){var e=exOf(exId);if(!e)return null;for(var i=0;i<e.qs.length;i++)if(e.qs[i].id===qid)return e.qs[i];return null};
 var tagOf=function(exId,qid){var q=qOf(exId,qid);return q?q.tag:null};
 var graded=function(e){return e&&(e.kind==='list'||e.kind==='cloze'||e.kind==='lesson'||e.kind==='reading-ms')};
-var exSub=function(e){return e.kind==='lesson'?'5-stage lesson · '+e.qs.length+' items':e.kind==='reading-ms'?'Reading lesson · 4 stages · '+e.qs.length+' items':e.kind==='writing'?'Writing task · min '+e.minWords+' words':(e.kind==='speaking'?'Parts 1 and 2':e.qs.length+' questions')};
+var exSub=function(e){return e.kind==='dictation'?'Dictation · '+(e.dl.homework?'homework':'practice')+(e.dl.label==='unverified_transcript'?' · unverified transcript':''):e.kind==='lesson'?'5-stage lesson · '+e.qs.length+' items':e.kind==='reading-ms'?'Reading lesson · 4 stages · '+e.qs.length+' items':e.kind==='writing'?'Writing task · min '+e.minWords+' words':(e.kind==='speaking'?'Parts 1 and 2':e.qs.length+' questions')};
 /* The first sample exercises written with the app (in this file, not in Firestore): Cam 14 · Test 1. SAMPLE_IDS = the list for
    Admin › Library samples (inventory). LIB_HIDE = the ones hidden from the Library on the real site; EMPTY until the owner approves
    the list (then put the approved ids here). Hiding never deletes: EXS keeps them for old attempts / grades / assignments. */
@@ -1990,6 +1991,10 @@ function exJSON(d){
 function rebuildCustom(){
   customEx=[];customMap={};
   customDocs.concat(localCustom).forEach(function(d){
+    if(d.kind==='dictation'){ // Dictation Lab: the lesson and its answers stay on the server; this is only the Library entry
+      var dw={id:'c_'+d.id,bookId:d.bookId,testId:d.testId,skill:'listening',title:d.title,kind:'dictation',hint:'',qs:[],dl:{lid:String(d.dlId||''),ver:+d.dlVer||0,homework:d.dlMode==='homework',label:String(d.dlLabel||''),audio:String(d.audio||'')},part:+d.part||0,docId:d.docId||null};
+      customEx.push(dw);customMap[dw.id]=dw;return;
+    }
     var skill=d.skill==='listening'?'listening':(d.skill==='writing'||d.skill==='speaking'?d.skill:'reading');
     if(d.kind==='writing'||d.kind==='speaking'){
       var w={id:'c_'+d.id,bookId:d.bookId,testId:d.testId,skill:skill,title:d.title,kind:d.kind,hint:d.hint||'',qs:[]};
@@ -3522,6 +3527,47 @@ function ctxBarHTML(C,id){
   if(C.open.length>1)h+='<div class="seg ctxseg" role="group" aria-label="Which homework this work counts for">'+C.open.map(function(o){return '<button type="button" class="'+(o.id===a.id?'on':'')+'" aria-pressed="'+(o.id===a.id)+'" data-act="ctx-pick" data-asg="'+esc(o.id)+'">'+esc(asgName(o))+'</button>'}).join('')+'</div>';
   return h;
 }
+/* ---------- Dictation Lab (contract v1.1, 11/2026) ----------
+   The engine and the UI are ES modules in dictation/ (O-1), loaded only here through dictation/bridge.js (window.MD_DL).
+   No hint, no reveal. Practice: /api/dictation/practice gives the practice lesson (answers on the device: practice has no grade).
+   Homework: the device gets only the student payload; /api/dictation/submit scores on the server and writes the attempt. */
+var DLQ=null;
+function dlLoad(cb){
+  if(window.MD_DL){cb();return}
+  if(!DLQ){DLQ=[];window.addEventListener('md-dl-ready',function(){var q=DLQ;DLQ=[];q.forEach(function(f){try{f()}catch(e){actFail('dictation',e)}})});
+    var sc=document.createElement('script');sc.type='module';sc.src='dictation/bridge.js?v='+APP_VERSION;sc.onerror=function(){toast('Could not load Dictation Lab. Reload the page.')};document.head.appendChild(sc)}
+  DLQ.push(cb);
+}
+function dlUserApi(path,body){return authHdr().then(function(hd){return adPost(path,body,'',hd)}).then(function(d){if(d._status===401)throw new Error(d.error||'Your sign-in has expired. Sign in again.');if(d._nojson)throw new Error('The server does not know Dictation Lab yet.');return d})}
+function dlAsk(o){uiAsk({title:o.title,text:o.text||'',ok:o.ok||'OK',cancel:o.cancel||'Cancel',danger:!!o.danger,onOk:o.onOk})}
+function dlSubOf(ex){if(!U)return null;var L=attemptsOf(U.email).filter(function(a){return a.ex===ex.id&&a.kind==='dictation'});return L.length?L[L.length-1]:null}
+function renderDictation(ex,head,ban,C){
+  $('#libBody').innerHTML='<div class="pane single">'+head+ban+'<div id="dlRoot"><p class="muted">Loading…</p></div><div class="actions" id="dlMore"></div></div>';
+  if(DEMO){$('#dlRoot').innerHTML='<p class="muted">Dictation Lab needs the live site (it is scored on the server).</p>';return}
+  var exId=ex.id.slice(2),stu=U.role==='student',sub=stu?dlSubOf(ex):null;
+  var practice=function(){var el=$('#dlRoot');if(!el)return;el.innerHTML='<p class="muted">Loading…</p>';var mo=$('#dlMore');if(mo)mo.innerHTML='';
+    dlUserApi('dictation/practice',{exId:exId}).then(function(d){var el2=$('#dlRoot');if(!el2)return;if(!d._ok){el2.textContent=d.error||'This dictation is not available.';return}
+      var M=window.MD_DL,doc=JSON.parse(d.json);M.mountPractice(el2,{doc:doc,validation:M.validateDoc(doc),version:d.version,seed:d.seed,deselected:d.deselected||[],audio:d.audio||ex.dl.audio,storeKey:stu?'md-dl:'+U.email+':'+ex.id+':'+d.version:null,preview:!stu})},
+    function(e){var el2=$('#dlRoot');if(el2)el2.textContent=e.message})};
+  dlLoad(function(){
+    var el=$('#dlRoot');if(!el)return;
+    if(stu&&ex.dl.homework&&(C.ctx||sub)){
+      window.MD_DL.mountHomework(el,{api:dlUserApi,exId:exId,asgId:C.ctx?C.ctx.id:sub.asg,audio:ex.dl.audio,email:U.email,ask:dlAsk});
+      if(sub){var mo=$('#dlMore');if(mo){mo.innerHTML='<button class="btn" type="button" id="dlPractise">Practise this dictation (not graded)</button>';$('#dlPractise').onclick=practice}}
+      return;
+    }
+    if(stu&&ex.dl.homework){el.innerHTML='<p class="muted">This dictation is homework. Open it from your homework list; practice opens after you submit it.</p>';return}
+    practice();
+  });
+}
+var DLB=false;
+function dlSlot(){if(!CP.slot)return null;var b=BOOKS.filter(function(x){return x.id===CP.book})[0];return {book:CP.book,test:CP.test,part:CP.slot,label:(b?b.short:CP.book)+' · '+TNAME[CP.test]+' · Listening · Part '+CP.slot}}
+function renderDlBox(){
+  var b=$('#dlBox');if(!b)return;b.hidden=!(CP.skill==='listening'&&U&&U.adm);if(b.hidden||DLB)return;DLB=true;
+  if(DEMO){b.innerHTML='<h3>Dictation lesson</h3><p class="muted">Dictation Lab needs the live site.</p>';return}
+  b.innerHTML='<h3>Dictation lesson</h3><p class="muted">Loading…</p>';
+  dlLoad(function(){var el=$('#dlBox');if(el)window.MD_DL.mountAuthor(el,{staffApi:staffApi,adminApi:adminApi,uploadAudio:function(f){return audioUpload(f,'lesson')},getSlot:dlSlot,ask:dlAsk,toast:toast})});
+}
 function renderPlayer(){
   var ex=exOf(NAV.ex);done=false;
   if(REC_EX!==NAV.ex){recClearAll();REC_EX=NAV.ex} // recorders belong to one exercise
@@ -3537,6 +3583,7 @@ function renderPlayer(){
   if(ex.kind==='speaking'||ex.kind==='readaloud')return renderSpeaking(ex,head,ban);
   if(ex.kind==='lesson')return renderLesson(ex,head,ban);
   if(ex.kind==='reading-ms')return renderRLesson(ex,head,ban);
+  if(ex.kind==='dictation')return renderDictation(ex,head,ban,C);
   if(ex.skill==='listening'){
     var tr=(ex.material.lines||[]).map(function(l){return '<div>'+(l[0]?'<b>'+esc(l[0])+'</b>':'')+esc(l[1])+'</div>'}).join('');
     $('#libBody').innerHTML='<div class="pane single">'+head+ban+audioBar()+'<details class="tdet"><summary>Show transcript to try the demo</summary><div class="tr">'+tr+'</div></details>'+demoBarHTML('qs')+qHTML(ex)+tail+'</div>';
@@ -4198,9 +4245,10 @@ function asgName(a){if(a.name)return a.name;var d=new Date(a.due);return 'HW '+D
 function pickBooks(){return BOOKS.filter(function(b){return allIdsBook(b.id).length})}
 function pickIds(){
   var pk=AS.pk,out=[];
-  TESTS.forEach(function(t){if(pk.test!=='all'&&pk.test!==t)return;SKILLS.forEach(function(sk){if(pk.skill!=='all'&&pk.skill!==sk)return;var ids=exIds(pk.book,t,sk);if(ids.length)out.push({t:t,s:sk,ids:ids})})});
+  TESTS.forEach(function(t){if(pk.test!=='all'&&pk.test!==t)return;SKILLS.forEach(function(sk){if(pk.skill!=='all'&&pk.skill!==sk)return;var ids=exIds(pk.book,t,sk).filter(dlAssignable);if(ids.length)out.push({t:t,s:sk,ids:ids})})});
   return out;
 }
+function dlAssignable(id){var e=exOf(id);return !(e&&e.kind==='dictation'&&!e.dl.homework)}
 function pickedHTML(){
   var ids=Object.keys(AS.sel).filter(function(k){return AS.sel[k]});
   return ids.map(function(id){var e=exOf(id);return e?'<span class="xchip">'+esc(locLabel(locOf(id)))+' · '+esc(e.title)+'<button data-act="pk-rm" data-id="'+esc(id)+'" type="button" aria-label="Remove '+esc(e.title)+'">×</button></span>':''}).join('');
@@ -5080,7 +5128,7 @@ CP.skill=(function(){var v=lsGet('md-cpskill');return /^(listening|reading|writi
 function renderCpPrompt(){
   CP.preset=CP.skill==='listening'?'l5':(cpPresets()[CP.skill]||[{id:''}])[0].id;
   var sk=$('#cpSkills');if(sk)sk.innerHTML=CP_SK.map(function(x){return '<button type="button" role="tab" data-act="cp-skill" data-v="'+x[0]+'" aria-selected="'+(CP.skill===x[0])+'">'+x[1]+'</button>'}).join('');
-  renderSlotMap();renderAudBox();renderAutoL();renderRdBox();
+  renderSlotMap();renderAudBox();renderAutoL();renderRdBox();renderDlBox();
   var ws=$('#wsBox');if(ws){ws.hidden=CP.skill!=='writing'&&CP.skill!=='speaking';if(!ws.hidden)ws.innerHTML=CP.skill==='writing'?wsWriteHTML():'<h3>'+esc(SNAME[CP.skill])+'</h3><p>Creating '+esc(SNAME[CP.skill])+' exercises here is coming soon.</p>'}
 }
 // Create › Writing: a Writing task as JSON (title, prompt, minWords, optional table, optional line chart + writingModule "t1-overview")
@@ -7221,7 +7269,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-11-13c'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-11-20a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(uiAct(a,t))return true;

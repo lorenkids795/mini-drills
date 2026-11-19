@@ -1,0 +1,467 @@
+{
+ "suite": "level4-extended-dictation",
+ "vectorsVersion": "3",
+ "baseline": "baseline-harbour-museum.rev1.json",
+ "vectors": [
+  {
+   "id": "L4-001",
+   "title": "exact with different line breaks and punctuation",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l4-003",
+    "answer": "Not really\nYou listen you smile and you answer questions\nLast year we guided over 200 school groups and most of them came back again"
+   },
+   "expected": {
+    "lcs": 25,
+    "den": 25,
+    "exact": true,
+    "variant": "original",
+    "sentenceMatchedAll": [
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "L4-002",
+   "title": "whole middle sentence omitted: alignment re-syncs after the gap",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l4-003",
+    "answer": "Not really. Last year we guided over 200 school groups, and most of them came back again."
+   },
+   "expected": {
+    "lcs": 17,
+    "den": 25,
+    "exact": false,
+    "variant": "original",
+    "sentenceMatchedAll": [
+     true,
+     false,
+     true
+    ]
+   }
+  },
+  {
+   "id": "L4-003",
+   "title": "approved numeral word form inside a long passage",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l4-003",
+    "answer": "Not really. You listen, you smile, and you answer questions. Last year we guided over two hundred school groups, and most of them came back again."
+   },
+   "expected": {
+    "lcs": 26,
+    "den": 26,
+    "exact": true,
+    "variant": "alt:two hundred"
+   }
+  },
+  {
+   "id": "L4-004",
+   "title": "sentences typed in the wrong order",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l4-003",
+    "answer": "Last year we guided over 200 school groups, and most of them came back again. Not really. You listen, you smile, and you answer questions."
+   },
+   "expected": {
+    "lcs": 15,
+    "den": 25,
+    "exact": false,
+    "variant": "original"
+   }
+  },
+  {
+   "id": "L4-005",
+   "title": "extra trailing sentence",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l4-003",
+    "answer": "Not really. You listen, you smile, and you answer questions. Last year we guided over 200 school groups, and most of them came back again. Perfect."
+   },
+   "expected": {
+    "lcs": 25,
+    "den": 26,
+    "exact": false,
+    "variant": "original",
+    "missing": 0,
+    "extra": 1
+   }
+  },
+  {
+   "id": "L4-006",
+   "title": "known speaker label at line start is ignored (Level 4, contract rule C8)",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "speaker_labels"
+   ],
+   "input": {
+    "itemId": "l4-003",
+    "answer": "TOM: Not really. You listen, you smile, and you answer questions. Last year we guided over 200 school groups, and most of them came back again."
+   },
+   "expected": {
+    "lcs": 25,
+    "den": 25,
+    "exact": true
+   },
+   "decisionRefs": [
+    "D-13"
+   ]
+  },
+  {
+   "id": "L4-007",
+   "title": "approved it has accepted inside a two-sentence passage",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l4-001",
+    "answer": "Mostly guiding school groups around the galleries on weekday mornings. It has got a lot of stairs, so please wear comfortable shoes and bring a bottle of water."
+   },
+   "expected": {
+    "lcs": 28,
+    "den": 28,
+    "exact": true,
+    "variant": "alt:It has"
+   }
+  },
+  {
+   "id": "SPK-001",
+   "title": "TOM: at line start is ignored",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "speaker_labels"
+   ],
+   "input": {
+    "answer": "TOM: Not really. You listen, you smile, and you answer questions. Last year we guided over 200 school groups, and most of them came back again.",
+    "itemId": "l4-003"
+   },
+   "expected": {
+    "lcs": 25,
+    "den": 25,
+    "exact": true
+   },
+   "decisionRefs": [
+    "D-13"
+   ]
+  },
+  {
+   "id": "SPK-002",
+   "title": "label with different case and a space before the colon",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "speaker_labels"
+   ],
+   "input": {
+    "answer": "tom : Not really. You listen, you smile, and you answer questions. Last year we guided over 200 school groups, and most of them came back again.",
+    "itemId": "l4-003"
+   },
+   "expected": {
+    "lcs": 25,
+    "den": 25,
+    "exact": true
+   },
+   "decisionRefs": [
+    "D-13"
+   ]
+  },
+  {
+   "id": "SPK-003",
+   "title": "known label before every line",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "speaker_labels"
+   ],
+   "input": {
+    "answer": "TOM: Not really.\nTOM: You listen, you smile, and you answer questions.\nTOM: Last year we guided over 200 school groups, and most of them came back again.",
+    "itemId": "l4-003"
+   },
+   "expected": {
+    "lcs": 25,
+    "den": 25,
+    "exact": true
+   },
+   "decisionRefs": [
+    "D-13"
+   ]
+  },
+  {
+   "id": "SPK-004",
+   "title": "arbitrary colon text is spoken-looking content and is NOT dropped",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "speaker_labels"
+   ],
+   "input": {
+    "answer": "Note: Not really. You listen, you smile, and you answer questions. Last year we guided over 200 school groups, and most of them came back again.",
+    "itemId": "l4-003"
+   },
+   "expected": {
+    "lcs": 25,
+    "den": 26,
+    "exact": false,
+    "extra": 1
+   },
+   "decisionRefs": [
+    "D-13"
+   ]
+  },
+  {
+   "id": "SPK-005",
+   "title": "label in the middle of a line is not at line start: kept",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "speaker_labels"
+   ],
+   "input": {
+    "answer": "Not really. TOM: You listen, you smile, and you answer questions. Last year we guided over 200 school groups, and most of them came back again.",
+    "itemId": "l4-003"
+   },
+   "expected": {
+    "lcs": 25,
+    "den": 26,
+    "exact": false,
+    "extra": 1
+   },
+   "decisionRefs": [
+    "D-13"
+   ]
+  },
+  {
+   "id": "SPK-006",
+   "title": "label without a colon is not a label",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "speaker_labels"
+   ],
+   "input": {
+    "answer": "TOM Not really. You listen, you smile, and you answer questions. Last year we guided over 200 school groups, and most of them came back again.",
+    "itemId": "l4-003"
+   },
+   "expected": {
+    "lcs": 25,
+    "den": 26,
+    "exact": false,
+    "extra": 1
+   },
+   "decisionRefs": [
+    "D-13"
+   ]
+  },
+  {
+   "id": "SPK-007",
+   "title": "label ignoring switched off by the setting",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "speaker_labels"
+   ],
+   "input": {
+    "answer": "TOM: Not really. You listen, you smile, and you answer questions. Last year we guided over 200 school groups, and most of them came back again.",
+    "itemId": "l4-003",
+    "ignoreSpeakerLabels": false
+   },
+   "expected": {
+    "lcs": 25,
+    "den": 26,
+    "exact": false,
+    "extra": 1
+   },
+   "decisionRefs": [
+    "D-13"
+   ]
+  },
+  {
+   "id": "SPK-008",
+   "title": "guard: a label that is part of the expected text is kept and expected",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "speaker_labels"
+   ],
+   "input": {
+    "answer": "Note: bring a map",
+    "expectedText": "Note: bring a map.",
+    "level": "level4",
+    "speakers": [
+     {
+      "rawLabel": "NOTE",
+      "displayName": "Note"
+     }
+    ]
+   },
+   "expected": {
+    "lcs": 4,
+    "den": 4,
+    "exact": true
+   },
+   "decisionRefs": [
+    "D-13"
+   ]
+  },
+  {
+   "id": "SPK-009",
+   "title": "display name is also a known label",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "speaker_labels"
+   ],
+   "input": {
+    "answer": "Tom: Not really. You listen, you smile, and you answer questions. Last year we guided over 200 school groups, and most of them came back again.",
+    "itemId": "l4-003"
+   },
+   "expected": {
+    "lcs": 25,
+    "den": 25,
+    "exact": true
+   },
+   "decisionRefs": [
+    "D-13"
+   ]
+  },
+  {
+   "id": "SPK-010",
+   "title": "label of a speaker that is not in the lesson metadata is not ignored",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "speaker_labels"
+   ],
+   "input": {
+    "answer": "ANNA: Not really. You listen, you smile, and you answer questions. Last year we guided over 200 school groups, and most of them came back again.",
+    "itemId": "l4-003"
+   },
+   "expected": {
+    "lcs": 25,
+    "den": 26,
+    "exact": false,
+    "extra": 1
+   },
+   "decisionRefs": [
+    "D-13"
+   ]
+  },
+  {
+   "id": "SPK-011",
+   "title": "label alone on its own first line",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "speaker_labels"
+   ],
+   "input": {
+    "answer": "TOM:\nNot really. You listen, you smile, and you answer questions. Last year we guided over 200 school groups, and most of them came back again.",
+    "itemId": "l4-003"
+   },
+   "expected": {
+    "lcs": 25,
+    "den": 25,
+    "exact": true
+   },
+   "decisionRefs": [
+    "D-13"
+   ]
+  },
+  {
+   "id": "SPK-012",
+   "title": "label stripping is a Level 4 rule: Level 3 keeps the label as an extra word",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "speaker_labels"
+   ],
+   "input": {
+    "answer": "TOM: I’ll send my details today.",
+    "itemId": "l3-008"
+   },
+   "expected": {
+    "lcs": 5,
+    "den": 6,
+    "exact": false,
+    "extra": 1
+   },
+   "decisionRefs": [
+    "D-13"
+   ]
+  },
+  {
+   "id": "SPK-013",
+   "title": "leading tab and spaces before the label, CRLF line breaks",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "speaker_labels"
+   ],
+   "input": {
+    "answer": "  \tTOM:\tNot really.\r\nTOM: You listen, you smile, and you answer questions.\r\nLast year we guided over 200 school groups, and most of them came back again.",
+    "itemId": "l4-003"
+   },
+   "expected": {
+    "lcs": 25,
+    "den": 25,
+    "exact": true
+   },
+   "decisionRefs": [
+    "D-13"
+   ]
+  },
+  {
+   "id": "SPK-014",
+   "title": "label text only, no spoken content, is not a free pass",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "speaker_labels"
+   ],
+   "input": {
+    "answer": "TOM:",
+    "itemId": "l4-003"
+   },
+   "expected": {
+    "rejected": "empty_answer"
+   },
+   "decisionRefs": [
+    "D-13"
+   ]
+  }
+ ]
+}

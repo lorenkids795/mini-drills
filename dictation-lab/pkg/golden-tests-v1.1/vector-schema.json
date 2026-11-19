@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:minidrills:dictation-lab:golden-vectors:3",
+  "title": "Golden test vector file envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "suite",
+    "vectorsVersion",
+    "baseline",
+    "vectors"
+  ],
+  "properties": {
+    "suite": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]{3,60}$"
+    },
+    "vectorsVersion": {
+      "const": "3"
+    },
+    "baseline": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{3,100}$"
+    },
+    "vectors": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 200,
+      "items": {
+        "$ref": "#/$defs/vector"
+      }
+    }
+  },
+  "$defs": {
+    "vector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "kind",
+        "requires",
+        "tags",
+        "input",
+        "expected"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9]{1,3}-[0-9]{3}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 200
+        },
+        "kind": {
+          "enum": [
+            "tokenize",
+            "l1Arrangement",
+            "l1Events",
+            "l2Blanks",
+            "scoreSentence",
+            "scoreAnswerSpotter",
+            "reviewUnlock",
+            "studentPayload",
+            "attemptSequence",
+            "aggregate",
+            "session",
+            "render",
+            "aggregateScores",
+            "exposureDerivation",
+            "itemValidity",
+            "provenance"
+          ]
+        },
+        "requires": {
+          "enum": [
+            "oracle",
+            "engine_ui"
+          ],
+          "description": "oracle: the spec oracle can recompute it. engine_ui: needs the production engine or UI; reported NOT RUN unless an adapter supplies results."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "adversarial",
+              "known_limitation",
+              "multi_click",
+              "repeated_words",
+              "safety",
+              "numerals",
+              "speaker_labels",
+              "lcs_safeguard",
+              "aggregation",
+              "exposure",
+              "submission",
+              "answer_value",
+              "provenance",
+              "v1.1"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "decisionRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^D-[0-9]{2}$"
+          },
+          "uniqueItems": true
+        },
+        "input": {
+          "type": "object"
+        },
+        "expected": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

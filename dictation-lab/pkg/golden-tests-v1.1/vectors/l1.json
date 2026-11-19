@@ -1,0 +1,462 @@
+{
+ "suite": "level1-word-builder",
+ "vectorsVersion": "3",
+ "baseline": "baseline-harbour-museum.rev1.json",
+ "vectors": [
+  {
+   "id": "L1-001",
+   "title": "perfect order",
+   "kind": "l1Arrangement",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l1-002",
+    "placed": [
+     "We’re",
+     "always",
+     "looking",
+     "for",
+     "new",
+     "helpers"
+    ]
+   },
+   "expected": {
+    "lcs": 6,
+    "den": 6,
+    "exact": true
+   }
+  },
+  {
+   "id": "L1-002",
+   "title": "two adjacent tiles swapped",
+   "kind": "l1Arrangement",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l1-002",
+    "placed": [
+     "always",
+     "We’re",
+     "looking",
+     "for",
+     "new",
+     "helpers"
+    ]
+   },
+   "expected": {
+    "lcs": 5,
+    "den": 6,
+    "exact": false
+   }
+  },
+  {
+   "id": "L1-003",
+   "title": "distractor used instead of helpers",
+   "kind": "l1Arrangement",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l1-002",
+    "placed": [
+     "We’re",
+     "always",
+     "looking",
+     "for",
+     "new",
+     "helper"
+    ]
+   },
+   "expected": {
+    "lcs": 5,
+    "den": 6,
+    "exact": false,
+    "usedDistractor": true
+   }
+  },
+  {
+   "id": "L1-004",
+   "title": "one tile omitted",
+   "kind": "l1Arrangement",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l1-002",
+    "placed": [
+     "We’re",
+     "always",
+     "looking",
+     "new",
+     "helpers"
+    ]
+   },
+   "expected": {
+    "lcs": 5,
+    "den": 6,
+    "exact": false
+   }
+  },
+  {
+   "id": "L1-005",
+   "title": "all tiles placed including the distractor",
+   "kind": "l1Arrangement",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l1-002",
+    "placed": [
+     "We’re",
+     "always",
+     "looking",
+     "for",
+     "new",
+     "helpers",
+     "helper"
+    ]
+   },
+   "expected": {
+    "lcs": 6,
+    "den": 7,
+    "exact": false,
+    "usedDistractor": true
+   }
+  },
+  {
+   "id": "L1-006",
+   "title": "repeated identical words: tiles are matched by text, not identity",
+   "kind": "l1Arrangement",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l1-005",
+    "placed": [
+     "you",
+     "you",
+     "listen",
+     "smile",
+     "and",
+     "you",
+     "answer",
+     "questions"
+    ]
+   },
+   "expected": {
+    "lcs": 7,
+    "den": 8,
+    "exact": false
+   }
+  },
+  {
+   "id": "L1-007",
+   "title": "empty arrangement is not an attempt",
+   "kind": "l1Arrangement",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l1-002",
+    "placed": []
+   },
+   "expected": {
+    "rejected": "empty_answer"
+   },
+   "decisionRefs": [
+    "D-12"
+   ]
+  },
+  {
+   "id": "L1-008",
+   "title": "double click on a pool tile places it once",
+   "kind": "l1Events",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "multi_click"
+   ],
+   "input": {
+    "tiles": [
+     {
+      "id": "t1",
+      "text": "We’re"
+     },
+     {
+      "id": "t2",
+      "text": "always"
+     },
+     {
+      "id": "t3",
+      "text": "looking"
+     }
+    ],
+    "expectedText": "We’re always looking",
+    "events": [
+     {
+      "op": "place",
+      "tile": "t2"
+     },
+     {
+      "op": "place",
+      "tile": "t2"
+     }
+    ]
+   },
+   "expected": {
+    "pool": [
+     "t1",
+     "t3"
+    ],
+    "placed": [
+     "t2"
+    ]
+   }
+  },
+  {
+   "id": "L1-009",
+   "title": "removing a tile returns it to its original pool position",
+   "kind": "l1Events",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "tiles": [
+     {
+      "id": "t1",
+      "text": "We’re"
+     },
+     {
+      "id": "t2",
+      "text": "always"
+     },
+     {
+      "id": "t3",
+      "text": "looking"
+     }
+    ],
+    "expectedText": "We’re always looking",
+    "events": [
+     {
+      "op": "place",
+      "tile": "t1"
+     },
+     {
+      "op": "place",
+      "tile": "t3"
+     },
+     {
+      "op": "remove",
+      "tile": "t1"
+     }
+    ]
+   },
+   "expected": {
+    "pool": [
+     "t1",
+     "t2"
+    ],
+    "placed": [
+     "t3"
+    ]
+   }
+  },
+  {
+   "id": "L1-010",
+   "title": "reorder by move then check",
+   "kind": "l1Events",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "tiles": [
+     {
+      "id": "t1",
+      "text": "We’re"
+     },
+     {
+      "id": "t2",
+      "text": "always"
+     },
+     {
+      "id": "t3",
+      "text": "looking"
+     }
+    ],
+    "expectedText": "We’re always looking",
+    "events": [
+     {
+      "op": "place",
+      "tile": "t1"
+     },
+     {
+      "op": "place",
+      "tile": "t2"
+     },
+     {
+      "op": "place",
+      "tile": "t3"
+     },
+     {
+      "op": "move",
+      "tile": "t3",
+      "to": 0
+     },
+     {
+      "op": "check"
+     }
+    ]
+   },
+   "expected": {
+    "pool": [],
+    "placed": [
+     "t3",
+     "t1",
+     "t2"
+    ],
+    "check": {
+     "lcs": 2,
+     "den": 3,
+     "exact": false
+    }
+   }
+  },
+  {
+   "id": "L1-011",
+   "title": "identical-text tiles are interchangeable",
+   "kind": "l1Events",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "tiles": [
+     {
+      "id": "t1",
+      "text": "you"
+     },
+     {
+      "id": "t2",
+      "text": "listen"
+     },
+     {
+      "id": "t3",
+      "text": "you"
+     }
+    ],
+    "expectedText": "you listen you",
+    "events": [
+     {
+      "op": "place",
+      "tile": "t3"
+     },
+     {
+      "op": "place",
+      "tile": "t2"
+     },
+     {
+      "op": "place",
+      "tile": "t1"
+     },
+     {
+      "op": "check"
+     }
+    ]
+   },
+   "expected": {
+    "pool": [],
+    "placed": [
+     "t3",
+     "t2",
+     "t1"
+    ],
+    "check": {
+     "lcs": 3,
+     "den": 3,
+     "exact": true
+    }
+   }
+  },
+  {
+   "id": "L1-012",
+   "title": "check with nothing placed is rejected",
+   "kind": "l1Events",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "tiles": [
+     {
+      "id": "t1",
+      "text": "We’re"
+     },
+     {
+      "id": "t2",
+      "text": "always"
+     },
+     {
+      "id": "t3",
+      "text": "looking"
+     }
+    ],
+    "expectedText": "We’re always looking",
+    "events": [
+     {
+      "op": "check"
+     }
+    ]
+   },
+   "expected": {
+    "pool": [
+     "t1",
+     "t2",
+     "t3"
+    ],
+    "placed": [],
+    "check": {
+     "rejected": "empty_answer"
+    }
+   }
+  },
+  {
+   "id": "L1-013",
+   "title": "removing a tile that is not placed is ignored",
+   "kind": "l1Events",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "tiles": [
+     {
+      "id": "t1",
+      "text": "We’re"
+     },
+     {
+      "id": "t2",
+      "text": "always"
+     },
+     {
+      "id": "t3",
+      "text": "looking"
+     }
+    ],
+    "expectedText": "We’re always looking",
+    "events": [
+     {
+      "op": "remove",
+      "tile": "t2"
+     }
+    ]
+   },
+   "expected": {
+    "pool": [
+     "t1",
+     "t2",
+     "t3"
+    ],
+    "placed": []
+   }
+  }
+ ]
+}

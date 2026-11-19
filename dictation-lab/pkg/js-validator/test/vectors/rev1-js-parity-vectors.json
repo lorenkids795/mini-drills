@@ -1,0 +1,282 @@
+{
+  "vectorsVersion": "rev1",
+  "note": "Hand-written expected values. Python (dictation-semantic-validator.py) and the production JavaScript validator must both reproduce them. Offsets are UTF-16 code units.",
+  "wordCount": [
+    {
+      "text": "I’ve just moved to this area, and I’m interested.",
+      "words": 9
+    },
+    {
+      "text": "pair – there’s a hole",
+      "words": 4
+    },
+    {
+      "text": "It’s on the 17th, from 10 a.m. until 3.",
+      "words": 9
+    },
+    {
+      "text": "There’s a charge of £35, including lunch, or £40 if you want to camp.",
+      "words": 14
+    },
+    {
+      "text": "   ",
+      "words": 0
+    },
+    {
+      "text": "... ?!",
+      "words": 0
+    },
+    {
+      "text": "full-day walk",
+      "words": 2
+    },
+    {
+      "text": "A < B",
+      "words": 2
+    },
+    {
+      "text": "I saw 😀 a kite",
+      "words": 4
+    }
+  ],
+  "normalizeToken": [
+    {
+      "token": "Island,",
+      "norm": "island"
+    },
+    {
+      "token": "I’m",
+      "norm": "i'm"
+    },
+    {
+      "token": "£35,",
+      "norm": "35"
+    },
+    {
+      "token": "“Hello”",
+      "norm": "hello"
+    },
+    {
+      "token": "o’clock.",
+      "norm": "o'clock"
+    }
+  ],
+  "wholeTokenMatches": [
+    {
+      "text": "It’s quite small, and it’s got a range.",
+      "surface": "it’s",
+      "utf16Starts": [
+        0,
+        22
+      ],
+      "note": "case-insensitive, occurrence 1 and 2"
+    },
+    {
+      "text": "the bus has to reach the trailhead before the morning",
+      "surface": "the",
+      "utf16Starts": [
+        0,
+        21,
+        42
+      ]
+    },
+    {
+      "text": "another other",
+      "surface": "other",
+      "utf16Starts": [
+        8
+      ],
+      "note": "no match inside another"
+    },
+    {
+      "text": "full-day",
+      "surface": "day",
+      "utf16Starts": [],
+      "note": "hyphen is a word character boundary: not a whole token"
+    },
+    {
+      "text": "I saw 😀 a red kite",
+      "surface": "red",
+      "utf16Starts": [
+        11
+      ],
+      "note": "emoji counts as 2 UTF-16 units; the code point index would be 10"
+    },
+    {
+      "text": "It’s on the 17th, from 10 a.m. until 3.",
+      "surface": "3",
+      "utf16Starts": [
+        37
+      ]
+    }
+  ],
+  "utf16": [
+    {
+      "text": "a😀b",
+      "utf16Length": 4,
+      "codePointLength": 3,
+      "utf8Bytes": 6
+    },
+    {
+      "text": "£35",
+      "utf16Length": 3,
+      "codePointLength": 3,
+      "utf8Bytes": 4
+    }
+  ],
+  "sha256Utf8": [
+    {
+      "text": "abc",
+      "sha256": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+    },
+    {
+      "text": "£",
+      "sha256": "b4fe151e413445357b1c0935e7cf04a429492ebd23dc62bfadb2f898c431c1fd",
+      "note": "UTF-8 bytes C2 A3"
+    }
+  ],
+  "qMarkerCleanup": [
+    {
+      "raw": "litter (Q1).",
+      "clean": "litter.",
+      "markerCleanTextOffset": 6
+    },
+    {
+      "raw": "insects (Q3) – they’re important",
+      "clean": "insects – they’re important",
+      "markerCleanTextOffset": 7
+    },
+    {
+      "raw": "£35 (Q10), including lunch",
+      "clean": "£35, including lunch",
+      "markerCleanTextOffset": 3
+    }
+  ],
+  "lengthClassification": {
+    "level1AdvisoryTiles": [
+      4,
+      18
+    ],
+    "level1HardTiles": [
+      2,
+      40
+    ],
+    "level3AdvisoryWords": [
+      4,
+      22
+    ],
+    "level3HardWords": [
+      2,
+      60
+    ],
+    "level4AdvisoryWords": [
+      25,
+      80
+    ],
+    "level4AdvisorySentences": [
+      2,
+      5
+    ],
+    "level4HardSentences": [
+      2,
+      8
+    ],
+    "level4HardWordsMax": 300,
+    "cases": [
+      {
+        "level": "level3",
+        "words": 22,
+        "result": "ok"
+      },
+      {
+        "level": "level3",
+        "words": 23,
+        "result": "advisory_warning"
+      },
+      {
+        "level": "level3",
+        "words": 61,
+        "result": "hard_error"
+      },
+      {
+        "level": "level4",
+        "words": 22,
+        "sentences": 3,
+        "result": "advisory_warning"
+      },
+      {
+        "level": "level4",
+        "words": 25,
+        "sentences": 2,
+        "result": "ok"
+      },
+      {
+        "level": "level4",
+        "words": 301,
+        "sentences": 3,
+        "result": "hard_error"
+      },
+      {
+        "level": "level4",
+        "words": 40,
+        "sentences": 9,
+        "result": "hard_error"
+      }
+    ]
+  },
+  "answerSpotterModeRules": [
+    {
+      "activity": "independent_listening",
+      "type": "answer_vs_distractor",
+      "responseMode": "choose_option",
+      "showTranscriptDuringTask": false,
+      "valid": true
+    },
+    {
+      "activity": "independent_listening",
+      "type": "answer_vs_distractor",
+      "responseMode": "type_answer",
+      "showTranscriptDuringTask": false,
+      "valid": true
+    },
+    {
+      "activity": "independent_listening",
+      "type": "target_detection",
+      "responseMode": "type_answer",
+      "showTranscriptDuringTask": false,
+      "valid": true
+    },
+    {
+      "activity": "independent_listening",
+      "type": "answer_vs_distractor",
+      "responseMode": "select_span_in_text",
+      "showTranscriptDuringTask": false,
+      "valid": false,
+      "code": "E-AS-MODE-VISIBILITY"
+    },
+    {
+      "activity": "independent_listening",
+      "type": "answer_vs_distractor",
+      "responseMode": "choose_option",
+      "showTranscriptDuringTask": true,
+      "valid": false,
+      "code": "E-AS-MODE-VISIBILITY"
+    },
+    {
+      "activity": "post_check_transcript_review",
+      "type": "target_detection",
+      "responseMode": "select_span_in_text",
+      "showTranscriptDuringTask": false,
+      "valid": true,
+      "needsPairedIndependentItem": true
+    },
+    {
+      "activity": "post_check_transcript_review",
+      "type": "target_detection",
+      "responseMode": "choose_option",
+      "showTranscriptDuringTask": false,
+      "valid": false,
+      "code": "E-AS-MODE-VISIBILITY"
+    }
+  ]
+}

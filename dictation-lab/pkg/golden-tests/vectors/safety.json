@@ -1,0 +1,74 @@
+{
+ "suite": "safety-rendering",
+ "vectorsVersion": "2",
+ "baseline": "baseline-harbour-museum.rev1.json",
+ "vectors": [
+  {
+   "id": "SAF-001",
+   "title": "malicious-looking text from transcript, answers or feedback is rendered as text everywhere",
+   "kind": "render",
+   "requires": "engine_ui",
+   "tags": [
+    "adversarial",
+    "safety"
+   ],
+   "input": {
+    "text": "<img src=x onerror=alert(1)>",
+    "surfaces": [
+     "transcript view",
+     "typed answer echo",
+     "feedback diff",
+     "results table",
+     "teacher preview",
+     "audit report"
+    ]
+   },
+   "expected": {
+    "renderMode": "text_node",
+    "executesMarkup": false,
+    "createsElementsFromText": false
+   }
+  },
+  {
+   "id": "SAF-002",
+   "title": "text containing angle brackets keeps its characters visible",
+   "kind": "render",
+   "requires": "engine_ui",
+   "tags": [
+    "safety"
+   ],
+   "input": {
+    "text": "A < B and <noise>",
+    "surfaces": [
+     "transcript view",
+     "feedback diff"
+    ]
+   },
+   "expected": {
+    "renderMode": "text_node",
+    "visibleText": "A < B and <noise>",
+    "executesMarkup": false
+   }
+  },
+  {
+   "id": "SAF-003",
+   "title": "imported JSON never supplies URLs, CSS or event handlers",
+   "kind": "render",
+   "requires": "engine_ui",
+   "tags": [
+    "safety"
+   ],
+   "input": {
+    "fields": [
+     "assetId",
+     "any string field"
+    ]
+   },
+   "expected": {
+    "urlsFromJsonFollowed": false,
+    "cssFromJsonApplied": false,
+    "eventHandlersFromJsonBound": false
+   }
+  }
+ ]
+}

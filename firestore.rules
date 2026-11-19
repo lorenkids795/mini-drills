@@ -82,6 +82,9 @@ service cloud.firestore {
       // học sinh không được tự gắn điểm chấm (grade) hay kết quả AI (ai: chỉ server ghi); điểm tự chấm phải hợp lý
       allow create: if ownsNew()
         && !('grade' in request.resource.data) && !('ai' in request.resource.data)
+        // Dictation Lab (11/2026): bài dictation chỉ máy chủ chấm và ghi (học sinh không tự tạo được bài làm cho bài dictation)
+        && request.resource.data.get('kind', '') != 'dictation'
+        && !(request.resource.data.get('ex', '') is string && request.resource.data.get('ex', '').matches('^c_dl-.*'))
         && numIn('score', 0, 1000) && numIn('total', 0, 1000)
         && numIn('answered', 0, 1000) && numIn('required', 0, 1000)
         && request.resource.data.get('answered', 0) <= request.resource.data.get('required', 1000)

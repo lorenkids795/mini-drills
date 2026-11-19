@@ -1,0 +1,745 @@
+{
+ "suite": "level2-missing-words",
+ "vectorsVersion": "3",
+ "baseline": "baseline-harbour-museum.rev1.json",
+ "vectors": [
+  {
+   "id": "L2-001",
+   "title": "exact surface with curly apostrophe",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l2-001",
+    "answers": [
+     "We’re"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 1,
+      "den": 1,
+      "exact": true,
+      "variant": "original"
+     }
+    ],
+    "num": 1,
+    "den": 1,
+    "exact": true
+   }
+  },
+  {
+   "id": "L2-002",
+   "title": "ASCII apostrophe and lowercase are equal",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l2-001",
+    "answers": [
+     "we're"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 1,
+      "den": 1,
+      "exact": true,
+      "variant": "original"
+     }
+    ],
+    "num": 1,
+    "den": 1,
+    "exact": true
+   }
+  },
+  {
+   "id": "L2-003",
+   "title": "approved contraction expansion We are",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l2-001",
+    "answers": [
+     "We are"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 2,
+      "den": 2,
+      "exact": true,
+      "variant": "alt:We are"
+     }
+    ],
+    "num": 2,
+    "den": 2,
+    "exact": true
+   }
+  },
+  {
+   "id": "L2-004",
+   "title": "same expansion is NOT accepted when the form is only proposed",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l2-001",
+    "answers": [
+     "We are"
+    ],
+    "mutations": [
+     {
+      "op": "forms_state",
+      "value": "proposed"
+     }
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 0,
+      "den": 2,
+      "exact": false,
+      "variant": "original"
+     }
+    ],
+    "num": 0,
+    "den": 2,
+    "exact": false
+   }
+  },
+  {
+   "id": "L2-005",
+   "title": "it has accepted for it’s got; mixed with correct second blank",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l2-003",
+    "answers": [
+     "it has",
+     "stairs"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 2,
+      "den": 2,
+      "exact": true,
+      "variant": "alt:It has"
+     },
+     {
+      "lcs": 1,
+      "den": 1,
+      "exact": true,
+      "variant": "original"
+     }
+    ],
+    "num": 3,
+    "den": 3,
+    "exact": true
+   }
+  },
+  {
+   "id": "L2-006",
+   "title": "it is is NOT equivalent to it’s got: earns only the shared token",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l2-003",
+    "answers": [
+     "it is",
+     "stairs"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 1,
+      "den": 2,
+      "exact": false,
+      "variant": "alt:It has"
+     },
+     {
+      "lcs": 1,
+      "den": 1,
+      "exact": true,
+      "variant": "original"
+     }
+    ],
+    "num": 2,
+    "den": 3,
+    "exact": false
+   }
+  },
+  {
+   "id": "L2-007",
+   "title": "answers typed in swapped blanks earn nothing (positional)",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l2-003",
+    "answers": [
+     "stairs",
+     "it’s"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 0,
+      "den": 1,
+      "exact": false,
+      "variant": "original"
+     },
+     {
+      "lcs": 0,
+      "den": 1,
+      "exact": false,
+      "variant": "original"
+     }
+    ],
+    "num": 0,
+    "den": 2,
+    "exact": false
+   }
+  },
+  {
+   "id": "L2-008",
+   "title": "empty second blank is unanswered, first blank still scored",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l2-003",
+    "answers": [
+     "It’s",
+     ""
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 1,
+      "den": 1,
+      "exact": true,
+      "variant": "original"
+     },
+     {
+      "lcs": 0,
+      "den": 1,
+      "exact": false,
+      "variant": "original"
+     }
+    ],
+    "num": 1,
+    "den": 2,
+    "exact": false
+   }
+  },
+  {
+   "id": "L2-009",
+   "title": "currency symbol optional only via approved form",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l2-004",
+    "answers": [
+     "8.50",
+     "12"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 1,
+      "den": 1,
+      "exact": true,
+      "variant": "alt:8.50"
+     },
+     {
+      "lcs": 1,
+      "den": 1,
+      "exact": true,
+      "variant": "alt:12"
+     }
+    ],
+    "num": 2,
+    "den": 2,
+    "exact": true
+   }
+  },
+  {
+   "id": "L2-010",
+   "title": "no numeric equivalence: 8.5 is not 8.50",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l2-004",
+    "answers": [
+     "£8.5",
+     "£12"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 0,
+      "den": 1,
+      "exact": false,
+      "variant": "original"
+     },
+     {
+      "lcs": 1,
+      "den": 1,
+      "exact": true,
+      "variant": "original"
+     }
+    ],
+    "num": 1,
+    "den": 2,
+    "exact": false
+   }
+  },
+  {
+   "id": "L2-011",
+   "title": "comma decimal is a different token",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l2-004",
+    "answers": [
+     "8,50",
+     "12"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 0,
+      "den": 1,
+      "exact": false,
+      "variant": "original"
+     },
+     {
+      "lcs": 1,
+      "den": 1,
+      "exact": true,
+      "variant": "alt:12"
+     }
+    ],
+    "num": 1,
+    "den": 2,
+    "exact": false
+   }
+  },
+  {
+   "id": "L2-012",
+   "title": "lone currency symbol is dropped, number then matches the approved form",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l2-004",
+    "answers": [
+     "£ 8.50",
+     "£12"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 1,
+      "den": 1,
+      "exact": true,
+      "variant": "alt:8.50"
+     },
+     {
+      "lcs": 1,
+      "den": 1,
+      "exact": true,
+      "variant": "original"
+     }
+    ],
+    "num": 2,
+    "den": 2,
+    "exact": true
+   }
+  },
+  {
+   "id": "L2-013",
+   "title": "spoken forms are not accepted unless declared",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l2-004",
+    "answers": [
+     "eight fifty",
+     "twelve pounds"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 0,
+      "den": 2,
+      "exact": false,
+      "variant": "original"
+     },
+     {
+      "lcs": 0,
+      "den": 2,
+      "exact": false,
+      "variant": "original"
+     }
+    ],
+    "num": 0,
+    "den": 4,
+    "exact": false
+   }
+  },
+  {
+   "id": "L2-014",
+   "title": "numeral word form twenty-fourth approved; split form is not",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l2-005",
+    "answers": [
+     "twenty fourth"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 0,
+      "den": 2,
+      "exact": false,
+      "variant": "original"
+     }
+    ],
+    "num": 0,
+    "den": 2,
+    "exact": false
+   }
+  },
+  {
+   "id": "L2-015",
+   "title": "approved numeral word form",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l2-005",
+    "answers": [
+     "twenty-fourth"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 1,
+      "den": 1,
+      "exact": true,
+      "variant": "alt:twenty-fourth"
+     }
+    ],
+    "num": 1,
+    "den": 1,
+    "exact": true
+   }
+  },
+  {
+   "id": "L2-016",
+   "title": "trailing full stop is ignored",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l2-005",
+    "answers": [
+     "24th."
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 1,
+      "den": 1,
+      "exact": true,
+      "variant": "original"
+     }
+    ],
+    "num": 1,
+    "den": 1,
+    "exact": true
+   }
+  },
+  {
+   "id": "L2-017",
+   "title": "hyphen spelling variant approved",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l2-006",
+    "answers": [
+     "half day"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 2,
+      "den": 2,
+      "exact": true,
+      "variant": "alt:half day"
+     }
+    ],
+    "num": 2,
+    "den": 2,
+    "exact": true
+   }
+  },
+  {
+   "id": "L2-018",
+   "title": "joined spelling is not a variant",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l2-006",
+    "answers": [
+     "halfday"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 0,
+      "den": 1,
+      "exact": false,
+      "variant": "original"
+     }
+    ],
+    "num": 0,
+    "den": 1,
+    "exact": false
+   }
+  },
+  {
+   "id": "L2-019",
+   "title": "plural ending missing earns nothing (no stemming, no fuzzy credit)",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l2-002",
+    "answers": [
+     "group"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 0,
+      "den": 1,
+      "exact": false,
+      "variant": "original"
+     }
+    ],
+    "num": 0,
+    "den": 1,
+    "exact": false
+   }
+  },
+  {
+   "id": "L2-020",
+   "title": "capitalisation ignored",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l2-002",
+    "answers": [
+     "Groups"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 1,
+      "den": 1,
+      "exact": true,
+      "variant": "original"
+     }
+    ],
+    "num": 1,
+    "den": 1,
+    "exact": true
+   }
+  },
+  {
+   "id": "L2-021",
+   "title": "repeated word target (occurrence 2 of you)",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l2-007",
+    "answers": [
+     "you"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 1,
+      "den": 1,
+      "exact": true,
+      "variant": "original"
+     }
+    ],
+    "num": 1,
+    "den": 1,
+    "exact": true
+   }
+  },
+  {
+   "id": "L2-022",
+   "title": "-ed ending near miss earns nothing; number exact",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l2-008",
+    "answers": [
+     "guide",
+     "200"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 0,
+      "den": 1,
+      "exact": false,
+      "variant": "original"
+     },
+     {
+      "lcs": 1,
+      "den": 1,
+      "exact": true,
+      "variant": "original"
+     }
+    ],
+    "num": 1,
+    "den": 2,
+    "exact": false
+   }
+  },
+  {
+   "id": "L2-023",
+   "title": "numeral word form two hundred is multi-token",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l2-008",
+    "answers": [
+     "guided",
+     "two hundred"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 1,
+      "den": 1,
+      "exact": true,
+      "variant": "original"
+     },
+     {
+      "lcs": 2,
+      "den": 2,
+      "exact": true,
+      "variant": "alt:two hundred"
+     }
+    ],
+    "num": 3,
+    "den": 3,
+    "exact": true
+   }
+  },
+  {
+   "id": "L2-024",
+   "title": "Cyrillic a inside stairs is a different token",
+   "kind": "l2Blanks",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l2-003",
+    "answers": [
+     "It’s",
+     "stаirs"
+    ]
+   },
+   "expected": {
+    "perBlank": [
+     {
+      "lcs": 1,
+      "den": 1,
+      "exact": true,
+      "variant": "original"
+     },
+     {
+      "lcs": 0,
+      "den": 1,
+      "exact": false,
+      "variant": "original"
+     }
+    ],
+    "num": 1,
+    "den": 2,
+    "exact": false
+   }
+  }
+ ]
+}

@@ -1,0 +1,923 @@
+{
+ "manifestVersion": "3",
+ "contract": "dictation-scoring-contract-v1.1.md",
+ "derivedFrom": "../golden-tests (v2, 242 vectors, unchanged)",
+ "vectors": {
+  "AS-001": {
+   "status": "unchanged"
+  },
+  "AS-002": {
+   "status": "unchanged"
+  },
+  "AS-003": {
+   "status": "unchanged"
+  },
+  "AS-004": {
+   "status": "unchanged"
+  },
+  "AS-005": {
+   "status": "unchanged"
+  },
+  "AS-006": {
+   "status": "unchanged"
+  },
+  "AS-007": {
+   "status": "unchanged"
+  },
+  "AS-008": {
+   "status": "unchanged"
+  },
+  "AS-009": {
+   "status": "unchanged"
+  },
+  "AS-010": {
+   "status": "unchanged"
+  },
+  "AS-011": {
+   "status": "unchanged"
+  },
+  "AS-012": {
+   "status": "unchanged"
+  },
+  "AS-013": {
+   "status": "unchanged"
+  },
+  "AS-014": {
+   "status": "unchanged"
+  },
+  "AS-015": {
+   "status": "unchanged"
+  },
+  "AS-016": {
+   "status": "unchanged"
+  },
+  "AS-017": {
+   "status": "unchanged"
+  },
+  "AS-018": {
+   "status": "unchanged"
+  },
+  "AS-019": {
+   "status": "unchanged"
+  },
+  "AS-020": {
+   "status": "unchanged"
+  },
+  "AS-021": {
+   "status": "unchanged"
+  },
+  "AS-022": {
+   "status": "unchanged"
+  },
+  "AS-027": {
+   "status": "unchanged"
+  },
+  "AS-028": {
+   "status": "unchanged"
+  },
+  "AS-029": {
+   "status": "unchanged"
+  },
+  "AS-030": {
+   "status": "unchanged"
+  },
+  "AS-031": {
+   "status": "unchanged"
+  },
+  "AS-032": {
+   "status": "unchanged"
+  },
+  "AS-033": {
+   "status": "unchanged"
+  },
+  "AS-034": {
+   "status": "unchanged"
+  },
+  "AS-035": {
+   "status": "unchanged"
+  },
+  "AS-036": {
+   "status": "unchanged"
+  },
+  "AS-037": {
+   "status": "unchanged"
+  },
+  "AS-038": {
+   "status": "unchanged"
+  },
+  "AS-039": {
+   "status": "unchanged"
+  },
+  "AS-040": {
+   "status": "unchanged"
+  },
+  "AS-041": {
+   "status": "unchanged"
+  },
+  "AS-042": {
+   "status": "unchanged"
+  },
+  "AS-043": {
+   "status": "unchanged"
+  },
+  "AS-044": {
+   "status": "unchanged"
+  },
+  "AS-045": {
+   "status": "unchanged"
+  },
+  "AS-046": {
+   "status": "unchanged"
+  },
+  "AS-047": {
+   "status": "unchanged"
+  },
+  "AS-048": {
+   "status": "unchanged"
+  },
+  "AS-049": {
+   "status": "unchanged"
+  },
+  "RVU-001": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "RVU-002": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "RVU-003": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "RVU-004": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "RVU-005": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "RVU-006": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "RVU-007": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "RVU-008": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "AGG-001": {
+   "status": "unchanged"
+  },
+  "AGG-002": {
+   "status": "changed",
+   "reason": "input state reviewed_only -> unattempted (no reveal in v1.1); reviewedOnly removed"
+  },
+  "AGS-001": {
+   "status": "unchanged"
+  },
+  "AGS-002": {
+   "status": "unchanged"
+  },
+  "AGS-003": {
+   "status": "unchanged"
+  },
+  "AGS-004": {
+   "status": "unchanged"
+  },
+  "AGS-005": {
+   "status": "unchanged"
+  },
+  "AGS-006": {
+   "status": "unchanged"
+  },
+  "AGS-007": {
+   "status": "unchanged"
+  },
+  "AGS-008": {
+   "status": "unchanged"
+  },
+  "AGS-010": {
+   "status": "unchanged"
+  },
+  "AGS-011": {
+   "status": "unchanged"
+  },
+  "ATT-001": {
+   "status": "changed",
+   "reason": "hint/reveal/independence fields removed from the expected value; status independent_success renamed first_attempt_exact"
+  },
+  "ATT-002": {
+   "status": "changed",
+   "reason": "hint/reveal/independence fields removed from the expected value; status independent_success renamed first_attempt_exact"
+  },
+  "ATT-007": {
+   "status": "changed",
+   "reason": "hint/reveal/independence fields removed from the expected value; status independent_success renamed first_attempt_exact"
+  },
+  "ATT-008": {
+   "status": "changed",
+   "reason": "hint/reveal/independence fields removed from the expected value; status independent_success renamed first_attempt_exact"
+  },
+  "ATT-009": {
+   "status": "changed",
+   "reason": "hint/reveal/independence fields removed from the expected value; status independent_success renamed first_attempt_exact"
+  },
+  "ATT-010": {
+   "status": "changed",
+   "reason": "hint/reveal/independence fields removed from the expected value; status independent_success renamed first_attempt_exact"
+  },
+  "ATT-011": {
+   "status": "changed",
+   "reason": "hint/reveal/independence fields removed from the expected value; status independent_success renamed first_attempt_exact"
+  },
+  "ATT-012": {
+   "status": "changed",
+   "reason": "hint/reveal/independence fields removed from the expected value; status independent_success renamed first_attempt_exact"
+  },
+  "EXD-001": {
+   "status": "unchanged"
+  },
+  "EXD-002": {
+   "status": "unchanged"
+  },
+  "EXD-003": {
+   "status": "unchanged"
+  },
+  "EXD-005": {
+   "status": "unchanged"
+  },
+  "EXD-006": {
+   "status": "unchanged"
+  },
+  "EXD-007": {
+   "status": "unchanged"
+  },
+  "EXD-008": {
+   "status": "unchanged"
+  },
+  "EXD-009": {
+   "status": "unchanged"
+  },
+  "EXP-001": {
+   "status": "changed",
+   "reason": "expected rewritten: 'evidence'/'independence' removed (D-14, D-16 replaced; P-01/P-06 informational exposure)"
+  },
+  "EXP-002": {
+   "status": "changed",
+   "reason": "expected rewritten: 'evidence'/'independence' removed (D-14, D-16 replaced; P-01/P-06 informational exposure)"
+  },
+  "EXP-003": {
+   "status": "changed",
+   "reason": "expected rewritten: 'evidence'/'independence' removed (D-14, D-16 replaced; P-01/P-06 informational exposure)"
+  },
+  "EXP-004": {
+   "status": "changed",
+   "reason": "expected rewritten: 'evidence'/'independence' removed (D-14, D-16 replaced; P-01/P-06 informational exposure)"
+  },
+  "EXP-005": {
+   "status": "changed",
+   "reason": "expected rewritten: 'evidence'/'independence' removed (D-14, D-16 replaced; P-01/P-06 informational exposure)"
+  },
+  "EXP-006": {
+   "status": "changed",
+   "reason": "expected rewritten: 'evidence'/'independence' removed (D-14, D-16 replaced; P-01/P-06 informational exposure)"
+  },
+  "EXP-008": {
+   "status": "changed",
+   "reason": "expected rewritten: 'evidence'/'independence' removed (D-14, D-16 replaced; P-01/P-06 informational exposure)"
+  },
+  "EXP-011": {
+   "status": "changed",
+   "reason": "expected rewritten: 'evidence'/'independence' removed (D-14, D-16 replaced; P-01/P-06 informational exposure)"
+  },
+  "EXP-012": {
+   "status": "changed",
+   "reason": "expected rewritten: 'evidence'/'independence' removed (D-14, D-16 replaced; P-01/P-06 informational exposure)"
+  },
+  "ATS-001": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "ATS-002": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "ATS-003": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "ATS-004": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "ATS-005": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "EXD-010": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "EXD-011": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "AGS-012": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "AGS-013": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "AGS-014": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "AGS-015": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "AGS-016": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "AGS-017": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "AGS-018": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "L1-001": {
+   "status": "unchanged"
+  },
+  "L1-002": {
+   "status": "unchanged"
+  },
+  "L1-003": {
+   "status": "unchanged"
+  },
+  "L1-004": {
+   "status": "unchanged"
+  },
+  "L1-005": {
+   "status": "unchanged"
+  },
+  "L1-006": {
+   "status": "unchanged"
+  },
+  "L1-007": {
+   "status": "unchanged"
+  },
+  "L1-008": {
+   "status": "unchanged"
+  },
+  "L1-009": {
+   "status": "unchanged"
+  },
+  "L1-010": {
+   "status": "unchanged"
+  },
+  "L1-011": {
+   "status": "unchanged"
+  },
+  "L1-012": {
+   "status": "unchanged"
+  },
+  "L1-013": {
+   "status": "unchanged"
+  },
+  "L2-001": {
+   "status": "unchanged"
+  },
+  "L2-002": {
+   "status": "unchanged"
+  },
+  "L2-003": {
+   "status": "unchanged"
+  },
+  "L2-004": {
+   "status": "unchanged"
+  },
+  "L2-005": {
+   "status": "unchanged"
+  },
+  "L2-006": {
+   "status": "unchanged"
+  },
+  "L2-007": {
+   "status": "unchanged"
+  },
+  "L2-008": {
+   "status": "unchanged"
+  },
+  "L2-009": {
+   "status": "unchanged"
+  },
+  "L2-010": {
+   "status": "unchanged"
+  },
+  "L2-011": {
+   "status": "unchanged"
+  },
+  "L2-012": {
+   "status": "unchanged"
+  },
+  "L2-013": {
+   "status": "unchanged"
+  },
+  "L2-014": {
+   "status": "unchanged"
+  },
+  "L2-015": {
+   "status": "unchanged"
+  },
+  "L2-016": {
+   "status": "unchanged"
+  },
+  "L2-017": {
+   "status": "unchanged"
+  },
+  "L2-018": {
+   "status": "unchanged"
+  },
+  "L2-019": {
+   "status": "unchanged"
+  },
+  "L2-020": {
+   "status": "unchanged"
+  },
+  "L2-021": {
+   "status": "unchanged"
+  },
+  "L2-022": {
+   "status": "unchanged"
+  },
+  "L2-023": {
+   "status": "unchanged"
+  },
+  "L2-024": {
+   "status": "unchanged"
+  },
+  "L3-001": {
+   "status": "unchanged"
+  },
+  "L3-002": {
+   "status": "unchanged"
+  },
+  "L3-003": {
+   "status": "unchanged"
+  },
+  "L3-004": {
+   "status": "unchanged"
+  },
+  "L3-005": {
+   "status": "unchanged"
+  },
+  "L3-006": {
+   "status": "unchanged"
+  },
+  "L3-007": {
+   "status": "unchanged"
+  },
+  "L3-008": {
+   "status": "unchanged"
+  },
+  "L3-009": {
+   "status": "unchanged"
+  },
+  "L3-010": {
+   "status": "unchanged"
+  },
+  "L3-011": {
+   "status": "unchanged"
+  },
+  "L3-012": {
+   "status": "unchanged"
+  },
+  "L3-013": {
+   "status": "unchanged"
+  },
+  "L3-014": {
+   "status": "unchanged"
+  },
+  "L3-015": {
+   "status": "unchanged"
+  },
+  "L3-016": {
+   "status": "unchanged"
+  },
+  "L3-017": {
+   "status": "unchanged"
+  },
+  "L3-018": {
+   "status": "unchanged"
+  },
+  "L3-019": {
+   "status": "unchanged"
+  },
+  "L3-020": {
+   "status": "unchanged"
+  },
+  "L3-021": {
+   "status": "unchanged"
+  },
+  "LCS-001": {
+   "status": "unchanged"
+  },
+  "LCS-002": {
+   "status": "unchanged"
+  },
+  "LCS-003": {
+   "status": "unchanged"
+  },
+  "LCS-004": {
+   "status": "unchanged"
+  },
+  "LCS-005": {
+   "status": "unchanged"
+  },
+  "LCS-006": {
+   "status": "unchanged"
+  },
+  "NUM-009": {
+   "status": "unchanged"
+  },
+  "NUM-010": {
+   "status": "unchanged"
+  },
+  "NUM-011": {
+   "status": "unchanged"
+  },
+  "NUM-012": {
+   "status": "unchanged"
+  },
+  "NUM-013": {
+   "status": "unchanged"
+  },
+  "NUM-014": {
+   "status": "unchanged"
+  },
+  "NUM-015": {
+   "status": "unchanged"
+  },
+  "NUM-016": {
+   "status": "unchanged"
+  },
+  "NUM-017": {
+   "status": "unchanged"
+  },
+  "NUM-018": {
+   "status": "unchanged"
+  },
+  "NUM-019": {
+   "status": "unchanged"
+  },
+  "NUM-020": {
+   "status": "unchanged"
+  },
+  "L4-001": {
+   "status": "unchanged"
+  },
+  "L4-002": {
+   "status": "unchanged"
+  },
+  "L4-003": {
+   "status": "unchanged"
+  },
+  "L4-004": {
+   "status": "unchanged"
+  },
+  "L4-005": {
+   "status": "unchanged"
+  },
+  "L4-006": {
+   "status": "unchanged"
+  },
+  "L4-007": {
+   "status": "unchanged"
+  },
+  "SPK-001": {
+   "status": "unchanged"
+  },
+  "SPK-002": {
+   "status": "unchanged"
+  },
+  "SPK-003": {
+   "status": "unchanged"
+  },
+  "SPK-004": {
+   "status": "unchanged"
+  },
+  "SPK-005": {
+   "status": "unchanged"
+  },
+  "SPK-006": {
+   "status": "unchanged"
+  },
+  "SPK-007": {
+   "status": "unchanged"
+  },
+  "SPK-008": {
+   "status": "unchanged"
+  },
+  "SPK-009": {
+   "status": "unchanged"
+  },
+  "SPK-010": {
+   "status": "unchanged"
+  },
+  "SPK-011": {
+   "status": "unchanged"
+  },
+  "SPK-012": {
+   "status": "unchanged"
+  },
+  "SPK-013": {
+   "status": "unchanged"
+  },
+  "SPK-014": {
+   "status": "unchanged"
+  },
+  "SAF-001": {
+   "status": "unchanged"
+  },
+  "SAF-002": {
+   "status": "unchanged"
+  },
+  "SAF-003": {
+   "status": "unchanged"
+  },
+  "NAV-001": {
+   "status": "unchanged"
+  },
+  "NAV-002": {
+   "status": "unchanged"
+  },
+  "NAV-003": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "NAV-004": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "NAV-005": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "NAV-006": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "NAV-007": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "NAV-008": {
+   "status": "unchanged"
+  },
+  "NAV-009": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "NAV-010": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "SUB-001": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "SUB-002": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "SUB-003": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "SUB-004": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "SUB-005": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "SUB-006": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "SUB-007": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "SUB-008": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "SUB-009": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "SUB-010": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "SUB-011": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "SUB-012": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed"
+  },
+  "SUB-013": {
+   "status": "changed",
+   "reason": "homework: draft 'check' -> 'answer' (no scored Check before submission, O-2); hint events removed; resume while pending is now locked_pending_submit (it was 'resumed')"
+  },
+  "HWS-001": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "HWS-002": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "HWS-003": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "HWS-004": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "HWS-005": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "HWS-006": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "HWS-007": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "HWS-008": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "HWS-009": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "HWS-010": {
+   "status": "new",
+   "reason": "hand-written for contract v1.1"
+  },
+  "NUM-001": {
+   "status": "unchanged"
+  },
+  "NUM-002": {
+   "status": "unchanged"
+  },
+  "NUM-003": {
+   "status": "unchanged"
+  },
+  "NUM-004": {
+   "status": "unchanged"
+  },
+  "NUM-005": {
+   "status": "unchanged"
+  },
+  "NUM-006": {
+   "status": "unchanged"
+  },
+  "NUM-007": {
+   "status": "unchanged"
+  },
+  "NUM-008": {
+   "status": "unchanged"
+  },
+  "TOK-001": {
+   "status": "unchanged"
+  },
+  "TOK-002": {
+   "status": "unchanged"
+  },
+  "TOK-003": {
+   "status": "unchanged"
+  },
+  "TOK-004": {
+   "status": "unchanged"
+  },
+  "TOK-005": {
+   "status": "unchanged"
+  },
+  "TOK-006": {
+   "status": "unchanged"
+  },
+  "TOK-007": {
+   "status": "unchanged"
+  },
+  "TOK-008": {
+   "status": "unchanged"
+  },
+  "TOK-009": {
+   "status": "unchanged"
+  },
+  "TOK-010": {
+   "status": "unchanged"
+  },
+  "TOK-011": {
+   "status": "unchanged"
+  },
+  "TOK-012": {
+   "status": "unchanged"
+  },
+  "TOK-013": {
+   "status": "unchanged"
+  },
+  "TOK-014": {
+   "status": "unchanged"
+  }
+ },
+ "removed": {
+  "AS-023": {
+   "reason": "D-28 replaced: postCheckReviewUnlock setting ignored; v1.1 gate covered by RVU-001..008",
+   "v2file": "answer-spotter.json"
+  },
+  "AS-024": {
+   "reason": "D-28 replaced: postCheckReviewUnlock setting ignored; v1.1 gate covered by RVU-001..008",
+   "v2file": "answer-spotter.json"
+  },
+  "AS-025": {
+   "reason": "D-28 replaced: 'after_reveal' cannot exist without Reveal",
+   "v2file": "answer-spotter.json"
+  },
+  "AS-026": {
+   "reason": "D-28 replaced: 'after_reveal' cannot exist without Reveal",
+   "v2file": "answer-spotter.json"
+  },
+  "AGS-009": {
+   "reason": "owner policy 2026-11 (v1.1): Hint and Reveal removed for students; reveal-only (reviewed_only) items no longer exist",
+   "v2file": "attempts.json"
+  },
+  "ATT-003": {
+   "reason": "owner policy 2026-11 (v1.1): Hint and Reveal removed for students; hint before the first Check no longer exists",
+   "v2file": "attempts.json"
+  },
+  "ATT-004": {
+   "reason": "owner policy 2026-11 (v1.1): Hint and Reveal removed for students; hint ladder no longer exists",
+   "v2file": "attempts.json"
+  },
+  "ATT-005": {
+   "reason": "owner policy 2026-11 (v1.1): Hint and Reveal removed for students; reveal before any Check no longer exists",
+   "v2file": "attempts.json"
+  },
+  "ATT-006": {
+   "reason": "owner policy 2026-11 (v1.1): Hint and Reveal removed for students; reveal then copy no longer exists",
+   "v2file": "attempts.json"
+  },
+  "ATT-013": {
+   "reason": "owner policy 2026-11 (v1.1): Hint and Reveal removed for students; 'same answer after a hint' no longer exists (D-18 is still covered by ATT-012, EXP-011)",
+   "v2file": "attempts.json"
+  },
+  "EXD-004": {
+   "reason": "owner policy 2026-11 (v1.1): Hint and Reveal removed for students; exposure by Reveal replaced by exposure by review after a Check (EXD-010)",
+   "v2file": "attempts.json"
+  },
+  "EXP-007": {
+   "reason": "owner policy 2026-11 (v1.1): Hint and Reveal removed for students; 'assisted' evidence no longer exists",
+   "v2file": "attempts.json"
+  },
+  "EXP-009": {
+   "reason": "owner policy 2026-11 (v1.1): Hint and Reveal removed for students; reveal-only evidence no longer exists",
+   "v2file": "attempts.json"
+  },
+  "EXP-010": {
+   "reason": "owner policy 2026-11 (v1.1): Hint and Reveal removed for students; hint after the first Check no longer exists",
+   "v2file": "attempts.json"
+  },
+  "EXP-013": {
+   "reason": "owner policy 2026-11 (v1.1): Hint and Reveal removed for students; post_reveal attempts no longer exist",
+   "v2file": "attempts.json"
+  }
+ },
+ "totals": {
+  "unchanged": 189,
+  "new": 32,
+  "changed": 38,
+  "removed": 15,
+  "total": 259
+ }
+}

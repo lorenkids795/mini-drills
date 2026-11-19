@@ -1,0 +1,93 @@
+{
+ "$schema": "urn:minidrills:dictation-lab:schema:1.1",
+ "schemaVersion": "1.1",
+ "importMode": "ai_json",
+ "metadata": {
+  "title": "Synthetic club walk (public-safe test fixture)",
+  "language": "en-GB",
+  "source": {
+   "type": "teacher_upload",
+   "label": "synthetic"
+  },
+  "audio": {
+   "availability": "none_attached",
+   "timestampsAvailable": false
+  },
+  "generatedBy": {
+   "kind": "external_ai",
+   "toolName": "make_fixtures.py (synthetic)",
+   "generatedAt": "2026-01-01T00:00:00Z"
+  },
+  "fixture": {
+   "isPartial": false,
+   "note": "Synthetic public-safe fixture. All approvals and identities are synthetic test data."
+  }
+ },
+ "rights": {
+  "usage": "public_domain",
+  "rightsHolder": "Synthetic fixture (CC0)",
+  "teacherAttestsAuthorizedUse": true,
+  "publicRedistributionAllowed": true
+ },
+ "rawTranscript": {
+  "immutable": true,
+  "encoding": "utf-8",
+  "newline": "LF",
+  "capturedFrom": "teacher_paste",
+  "sha256": "fc730508beed80e0eba36ba5911a505c96cb9817328c501df240614ce40b6fb7",
+  "text": "AMY: Type <img src=x onerror=alert(1)> as plain text."
+ },
+ "audit": {
+  "auditState": "audited_no_open_issues",
+  "auditedBy": {
+   "kind": "rule_engine",
+   "name": "synthetic fixture generator"
+  },
+  "auditedAt": "2026-01-01T00:00:00Z",
+  "audioAvailableToAuditor": false,
+  "audioVerificationPerformed": false,
+  "issues": [],
+  "decisions": []
+ },
+ "transcript": {
+  "speakers": [
+   {
+    "id": "sp-amy",
+    "rawLabel": "AMY",
+    "displayName": "Amy"
+   }
+  ],
+  "turns": [
+   {
+    "id": "t001",
+    "order": 1,
+    "speakerId": "sp-amy",
+    "rawSpan": {
+     "start": 0,
+     "end": 53
+    }
+   }
+  ],
+  "sentences": [
+   {
+    "id": "s001",
+    "turnId": "t001",
+    "order": 1,
+    "rawText": "Type <img src=x onerror=alert(1)> as plain text. é́",
+    "rawSpan": {
+     "start": 5,
+     "end": 60
+    },
+    "cleanText": "Type <img src=x onerror=alert(1)> as plain text. é́",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   }
+  ],
+  "fullCleanText": "Type <img src=x onerror=alert(1)> as plain text."
+ }
+}

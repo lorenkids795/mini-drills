@@ -1,0 +1,276 @@
+{
+ "mutants": 45,
+ "detected": 45,
+ "rows": [
+  {
+   "file": "normalize.js",
+   "what": "trailing % stripped (D-17)",
+   "status": "DETECTED",
+   "failingTests": 2
+  },
+  {
+   "file": "normalize.js",
+   "what": "leading minus / decimal point stripped",
+   "status": "DETECTED",
+   "failingTests": 2
+  },
+  {
+   "file": "normalize.js",
+   "what": "case-sensitive scoring (D-23)",
+   "status": "DETECTED",
+   "failingTests": null
+  },
+  {
+   "file": "normalize.js",
+   "what": "curly apostrophe not mapped",
+   "status": "DETECTED",
+   "failingTests": 2
+  },
+  {
+   "file": "normalize.js",
+   "what": "speaker-label guard removed (SPK-008)",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "normalize.js",
+   "what": "length limit raised (D-15)",
+   "status": "DETECTED",
+   "failingTests": 3
+  },
+  {
+   "file": "normalize.js",
+   "what": "bidi controls kept",
+   "status": "DETECTED",
+   "failingTests": 2
+  },
+  {
+   "file": "align.js",
+   "what": "denominator min(n,m): extra words not penalised",
+   "status": "DETECTED",
+   "failingTests": 3
+  },
+  {
+   "file": "align.js",
+   "what": "exact ignores extra tokens",
+   "status": "DETECTED",
+   "failingTests": 2
+  },
+  {
+   "file": "align.js",
+   "what": "price errors not critical",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "scoring.js",
+   "what": "unapproved forms accepted (C3)",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "scoring.js",
+   "what": "official label without rights attestation",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "scoring.js",
+   "what": "list answers: extra guesses not penalised",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "scoring.js",
+   "what": "word limit ignored",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "session.js",
+   "what": "identical re-check counted (D-18)",
+   "status": "DETECTED",
+   "failingTests": 3
+  },
+  {
+   "file": "session.js",
+   "what": "assignment score over attempted items only (D-19)",
+   "status": "DETECTED",
+   "failingTests": 2
+  },
+  {
+   "file": "session.js",
+   "what": "assignment score before server ack / in free practice",
+   "status": "DETECTED",
+   "failingTests": 2
+  },
+  {
+   "file": "session.js",
+   "what": "zero-token items counted (D-29)",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "session.js",
+   "what": "ack without submissionId accepted (D-20)",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "session.js",
+   "what": "ack for another key accepted",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "session.js",
+   "what": "submitted without the server",
+   "status": "DETECTED",
+   "failingTests": 7
+  },
+  {
+   "file": "content.js",
+   "what": "blocked sentences used (C14)",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "content.js",
+   "what": "Answer Spotter auto-generated",
+   "status": "DETECTED",
+   "failingTests": 4
+  },
+  {
+   "file": "wordbuilder.js",
+   "what": "R1 regression: tiles lose £ and %",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "payload.js",
+   "what": "answer data leaks into the student payload (AS-027)",
+   "status": "DETECTED",
+   "failingTests": 2
+  },
+  {
+   "file": "prng.js",
+   "what": "shuffle may return the correct order (both guards off)",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "scoring.js",
+   "what": "review discloses an unchecked independent Answer Spotter answer (v1.1)",
+   "status": "DETECTED",
+   "failingTests": 3
+  },
+  {
+   "file": "scoring.js",
+   "what": "homework review while the submission is only pending (v1.1)",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "session.js",
+   "what": "hint/reveal events accepted (v1.1)",
+   "status": "DETECTED",
+   "failingTests": 5
+  },
+  {
+   "file": "session.js",
+   "what": "homework accepts a scored Check before submission (v1.1)",
+   "status": "DETECTED",
+   "failingTests": 2
+  },
+  {
+   "file": "session.js",
+   "what": "homework answers editable after submission (D-22)",
+   "status": "DETECTED",
+   "failingTests": 3
+  },
+  {
+   "file": "session.js",
+   "what": "latest attempt used instead of the first (frozen first attempt)",
+   "status": "DETECTED",
+   "failingTests": 3
+  },
+  {
+   "file": "session.js",
+   "what": "PASS on attempted-only accuracy (O-3)",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "session.js",
+   "what": "resume overwrites a pending or submitted homework",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "run.js",
+   "what": "answer-bearing feedback detail before the review gate opens",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "run.js",
+   "what": "free-practice review before any valid Check",
+   "status": "DETECTED",
+   "failingTests": 2
+  },
+  {
+   "file": "run.js",
+   "what": "Level 1/2 or options shown before the independent item is answered",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "run.js",
+   "what": "cross-item disclosure detection off",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "run.js",
+   "what": "homework without a teacher approval of the version",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "run.js",
+   "what": "unaudited transcript allowed as homework (P-04)",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "homework.js",
+   "what": "phase-2 items sent before phase 1 is locked",
+   "status": "DETECTED",
+   "failingTests": 2
+  },
+  {
+   "file": "homework.js",
+   "what": "locked phase-1 answers overwritten at submission",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "homework.js",
+   "what": "raw answers stored without an approved retention period (P-05)",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "homework.js",
+   "what": "a lost acknowledgement creates a second submission",
+   "status": "DETECTED",
+   "failingTests": 1
+  },
+  {
+   "file": "homework.js",
+   "what": "submission for another content version accepted (D-21)",
+   "status": "DETECTED",
+   "failingTests": 1
+  }
+ ]
+}

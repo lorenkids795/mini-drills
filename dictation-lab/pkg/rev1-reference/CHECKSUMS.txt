@@ -1,0 +1,2 @@
+b050943244548a287bcca586361b83fd2dac6466c960636787b3291e5f4b8deb  dictation-schema-v1.json
+38133a04c94fcb61096a8f07adf94e003644a503c2b87305ceab93e98d3a6092  dictation-semantic-validator.py

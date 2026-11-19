@@ -1,0 +1,1648 @@
+{
+  "$schema": "urn:minidrills:dictation-lab:schema:1.1",
+  "schemaVersion": "1.1",
+  "importMode": "ai_json",
+  "metadata": {
+    "title": "Harbour Museum volunteer enquiry (synthetic demonstration)",
+    "language": "en-GB",
+    "topic": "Museum volunteering",
+    "source": {
+      "type": "teacher_upload",
+      "label": "synthetic demonstration transcript"
+    },
+    "audio": {
+      "availability": "none_attached",
+      "timestampsAvailable": false
+    },
+    "generatedBy": {
+      "kind": "external_ai",
+      "toolName": "Claude (Anthropic), demonstration output",
+      "generatedAt": "2026-11-09T00:00:00Z"
+    }
+  },
+  "rights": {
+    "usage": "public_domain",
+    "rightsHolder": "Synthetic demonstration (CC0)",
+    "teacherAttestsAuthorizedUse": false,
+    "publicRedistributionAllowed": true,
+    "notes": "Synthetic public-safe transcript. teacherAttestsAuthorizedUse reflects a human decision the generator cannot make."
+  },
+  "rawTranscript": {
+    "immutable": true,
+    "encoding": "utf-8",
+    "newline": "LF",
+    "capturedFrom": "external_ai_echo",
+    "sha256": "11fe42530466ac82989b965161a930f5ccc3829514be58561d7735e2652f7818",
+    "text": "NINA: Hello, I’m calling about volunteering at the Harbour Museum.\n\nTOM: Welcome. I’m Tom, the volunteer coordinator. We’re always looking for new helpers.\n\nNINA: Great. What does the work involve (Q1)?\n\nTOM: Mostly guiding school groups around the galleries on weekday mornings. It’s got a lot of stairs, so please wear comfortable shoes and bring a bottle of water.\n\nNINA: Is there a charge for the training day?\n\nTOM: The training is free (Q2), but the guidebook costs £8.50, or £12 with the audio guide.\n\nNINA: And when does the next training day start (Q3)?\n\nTOM: It starts on the 24th at half past nine, and everyone meets at the main entrance. The training is only a half-day session, so you can still work the same afternoon.\n\n----------------------------\n\nNINA: Do I need any special skills?\n\nTOM: Not really. You listen, you smile, and you answer questions. Last year we guided over 200 school groups, and most of them came back again.\n\nNINA: That sounds good. I’ll send my details today.\n\nTOM: Perfect. I’ll email the form this afternoon."
+  },
+  "audit": {
+    "auditState": "audited_no_open_issues",
+    "auditedBy": {
+      "kind": "external_ai",
+      "name": "Claude (Anthropic); text only, no audio"
+    },
+    "auditedAt": "2026-11-09T00:00:00Z",
+    "audioAvailableToAuditor": false,
+    "audioVerificationPerformed": false,
+    "issues": [
+      {
+        "id": "iss-001",
+        "issueClass": "proper_noun",
+        "status": "info_note",
+        "severity": "info",
+        "confidence": "low",
+        "sourceQuote": "Harbour Museum",
+        "rawSpan": {
+          "start": 51,
+          "end": 65
+        },
+        "cleanSpan": {
+          "sentenceId": "s001",
+          "start": 45,
+          "end": 59
+        },
+        "proposedReplacement": null,
+        "reason": "Tên riêng: không kiểm tra được chính tả với audio.",
+        "evidenceStatus": "context_inference_only",
+        "affectedSentenceIds": [
+          "s001"
+        ],
+        "blocksScoredUse": false,
+        "proposedBy": {
+          "kind": "external_ai",
+          "name": "Claude (Anthropic)"
+        }
+      },
+      {
+        "id": "iss-002",
+        "issueClass": "number_format",
+        "status": "info_note",
+        "severity": "minor",
+        "confidence": "low",
+        "sourceQuote": "£8.50",
+        "rawSpan": {
+          "start": 472,
+          "end": 477
+        },
+        "cleanSpan": {
+          "sentenceId": "s010",
+          "start": 46,
+          "end": 51
+        },
+        "proposedReplacement": null,
+        "reason": "Dạng viết số tiền có thể khác dạng nói; khai bộ đáp án nếu dùng làm target.",
+        "evidenceStatus": "context_inference_only",
+        "affectedSentenceIds": [
+          "s010"
+        ],
+        "blocksScoredUse": false,
+        "proposedBy": {
+          "kind": "external_ai",
+          "name": "Claude (Anthropic)"
+        }
+      },
+      {
+        "id": "iss-003",
+        "issueClass": "number_format",
+        "status": "info_note",
+        "severity": "minor",
+        "confidence": "low",
+        "sourceQuote": "24th",
+        "rawSpan": {
+          "start": 586,
+          "end": 590
+        },
+        "cleanSpan": {
+          "sentenceId": "s012",
+          "start": 17,
+          "end": 21
+        },
+        "proposedReplacement": null,
+        "reason": "Dạng viết ngày có thể khác dạng nói.",
+        "evidenceStatus": "context_inference_only",
+        "affectedSentenceIds": [
+          "s012"
+        ],
+        "blocksScoredUse": false,
+        "proposedBy": {
+          "kind": "external_ai",
+          "name": "Claude (Anthropic)"
+        }
+      },
+      {
+        "id": "iss-004",
+        "issueClass": "section_separator",
+        "status": "info_note",
+        "severity": "minor",
+        "confidence": "high",
+        "sourceQuote": "----------------------------",
+        "rawSpan": {
+          "start": 735,
+          "end": 763
+        },
+        "proposedReplacement": null,
+        "reason": "Dòng phân cách không phải lời nói; audio quanh điểm ngắt chưa biết nên không có đoạn L4 nào vượt qua.",
+        "evidenceStatus": "context_inference_only",
+        "affectedSentenceIds": [
+          "s013",
+          "s014"
+        ],
+        "blocksScoredUse": false,
+        "proposedBy": {
+          "kind": "external_ai",
+          "name": "Claude (Anthropic)"
+        }
+      }
+    ],
+    "decisions": [],
+    "auditNote": "Chỉ audit văn bản, không có audio. Không phát hiện nghi vấn từ ngữ rõ ràng, nhưng điều đó không chứng minh transcript khớp audio. sha256 và offset do công cụ tính."
+  },
+  "transcript": {
+    "speakers": [
+      {
+        "id": "sp-nina",
+        "rawLabel": "NINA",
+        "displayName": "Nina"
+      },
+      {
+        "id": "sp-tom",
+        "rawLabel": "TOM",
+        "displayName": "Tom"
+      }
+    ],
+    "turns": [
+      {
+        "id": "t001",
+        "order": 1,
+        "speakerId": "sp-nina",
+        "rawSpan": {
+          "start": 0,
+          "end": 66
+        }
+      },
+      {
+        "id": "t002",
+        "order": 2,
+        "speakerId": "sp-tom",
+        "rawSpan": {
+          "start": 68,
+          "end": 155
+        }
+      },
+      {
+        "id": "t003",
+        "order": 3,
+        "speakerId": "sp-nina",
+        "rawSpan": {
+          "start": 157,
+          "end": 202
+        }
+      },
+      {
+        "id": "t004",
+        "order": 4,
+        "speakerId": "sp-tom",
+        "rawSpan": {
+          "start": 204,
+          "end": 367
+        }
+      },
+      {
+        "id": "t005",
+        "order": 5,
+        "speakerId": "sp-nina",
+        "rawSpan": {
+          "start": 369,
+          "end": 414
+        }
+      },
+      {
+        "id": "t006",
+        "order": 6,
+        "speakerId": "sp-tom",
+        "rawSpan": {
+          "start": 416,
+          "end": 507
+        }
+      },
+      {
+        "id": "t007",
+        "order": 7,
+        "speakerId": "sp-nina",
+        "rawSpan": {
+          "start": 509,
+          "end": 562
+        }
+      },
+      {
+        "id": "t008",
+        "order": 8,
+        "speakerId": "sp-tom",
+        "rawSpan": {
+          "start": 564,
+          "end": 733
+        }
+      },
+      {
+        "id": "t009",
+        "order": 9,
+        "speakerId": "sp-nina",
+        "rawSpan": {
+          "start": 765,
+          "end": 800
+        }
+      },
+      {
+        "id": "t010",
+        "order": 10,
+        "speakerId": "sp-tom",
+        "rawSpan": {
+          "start": 802,
+          "end": 945
+        }
+      },
+      {
+        "id": "t011",
+        "order": 11,
+        "speakerId": "sp-nina",
+        "rawSpan": {
+          "start": 947,
+          "end": 998
+        }
+      },
+      {
+        "id": "t012",
+        "order": 12,
+        "speakerId": "sp-tom",
+        "rawSpan": {
+          "start": 1000,
+          "end": 1049
+        }
+      }
+    ],
+    "sentences": [
+      {
+        "id": "s001",
+        "turnId": "t001",
+        "order": 1,
+        "rawText": "Hello, I’m calling about volunteering at the Harbour Museum.",
+        "rawSpan": {
+          "start": 6,
+          "end": 66
+        },
+        "cleanText": "Hello, I’m calling about volunteering at the Harbour Museum.",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s002",
+        "turnId": "t002",
+        "order": 2,
+        "rawText": "Welcome.",
+        "rawSpan": {
+          "start": 73,
+          "end": 81
+        },
+        "cleanText": "Welcome.",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s003",
+        "turnId": "t002",
+        "order": 3,
+        "rawText": "I’m Tom, the volunteer coordinator.",
+        "rawSpan": {
+          "start": 82,
+          "end": 117
+        },
+        "cleanText": "I’m Tom, the volunteer coordinator.",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s004",
+        "turnId": "t002",
+        "order": 4,
+        "rawText": "We’re always looking for new helpers.",
+        "rawSpan": {
+          "start": 118,
+          "end": 155
+        },
+        "cleanText": "We’re always looking for new helpers.",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s005",
+        "turnId": "t003",
+        "order": 5,
+        "rawText": "Great.",
+        "rawSpan": {
+          "start": 163,
+          "end": 169
+        },
+        "cleanText": "Great.",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s006",
+        "turnId": "t003",
+        "order": 6,
+        "rawText": "What does the work involve (Q1)?",
+        "rawSpan": {
+          "start": 170,
+          "end": 202
+        },
+        "cleanText": "What does the work involve?",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [
+          "qm-01"
+        ],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s007",
+        "turnId": "t004",
+        "order": 7,
+        "rawText": "Mostly guiding school groups around the galleries on weekday mornings.",
+        "rawSpan": {
+          "start": 209,
+          "end": 279
+        },
+        "cleanText": "Mostly guiding school groups around the galleries on weekday mornings.",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s008",
+        "turnId": "t004",
+        "order": 8,
+        "rawText": "It’s got a lot of stairs, so please wear comfortable shoes and bring a bottle of water.",
+        "rawSpan": {
+          "start": 280,
+          "end": 367
+        },
+        "cleanText": "It’s got a lot of stairs, so please wear comfortable shoes and bring a bottle of water.",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s009",
+        "turnId": "t005",
+        "order": 9,
+        "rawText": "Is there a charge for the training day?",
+        "rawSpan": {
+          "start": 375,
+          "end": 414
+        },
+        "cleanText": "Is there a charge for the training day?",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s010",
+        "turnId": "t006",
+        "order": 10,
+        "rawText": "The training is free (Q2), but the guidebook costs £8.50, or £12 with the audio guide.",
+        "rawSpan": {
+          "start": 421,
+          "end": 507
+        },
+        "cleanText": "The training is free, but the guidebook costs £8.50, or £12 with the audio guide.",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [
+          "qm-02"
+        ],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s011",
+        "turnId": "t007",
+        "order": 11,
+        "rawText": "And when does the next training day start (Q3)?",
+        "rawSpan": {
+          "start": 515,
+          "end": 562
+        },
+        "cleanText": "And when does the next training day start?",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [
+          "qm-03"
+        ],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s012",
+        "turnId": "t008",
+        "order": 12,
+        "rawText": "It starts on the 24th at half past nine, and everyone meets at the main entrance.",
+        "rawSpan": {
+          "start": 569,
+          "end": 650
+        },
+        "cleanText": "It starts on the 24th at half past nine, and everyone meets at the main entrance.",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s013",
+        "turnId": "t008",
+        "order": 13,
+        "rawText": "The training is only a half-day session, so you can still work the same afternoon.",
+        "rawSpan": {
+          "start": 651,
+          "end": 733
+        },
+        "cleanText": "The training is only a half-day session, so you can still work the same afternoon.",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s014",
+        "turnId": "t009",
+        "order": 14,
+        "rawText": "Do I need any special skills?",
+        "rawSpan": {
+          "start": 771,
+          "end": 800
+        },
+        "cleanText": "Do I need any special skills?",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s015",
+        "turnId": "t010",
+        "order": 15,
+        "rawText": "Not really.",
+        "rawSpan": {
+          "start": 807,
+          "end": 818
+        },
+        "cleanText": "Not really.",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s016",
+        "turnId": "t010",
+        "order": 16,
+        "rawText": "You listen, you smile, and you answer questions.",
+        "rawSpan": {
+          "start": 819,
+          "end": 867
+        },
+        "cleanText": "You listen, you smile, and you answer questions.",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s017",
+        "turnId": "t010",
+        "order": 17,
+        "rawText": "Last year we guided over 200 school groups, and most of them came back again.",
+        "rawSpan": {
+          "start": 868,
+          "end": 945
+        },
+        "cleanText": "Last year we guided over 200 school groups, and most of them came back again.",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s018",
+        "turnId": "t011",
+        "order": 18,
+        "rawText": "That sounds good.",
+        "rawSpan": {
+          "start": 953,
+          "end": 970
+        },
+        "cleanText": "That sounds good.",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s019",
+        "turnId": "t011",
+        "order": 19,
+        "rawText": "I’ll send my details today.",
+        "rawSpan": {
+          "start": 971,
+          "end": 998
+        },
+        "cleanText": "I’ll send my details today.",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s020",
+        "turnId": "t012",
+        "order": 20,
+        "rawText": "Perfect.",
+        "rawSpan": {
+          "start": 1005,
+          "end": 1013
+        },
+        "cleanText": "Perfect.",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      },
+      {
+        "id": "s021",
+        "turnId": "t012",
+        "order": 21,
+        "rawText": "I’ll email the form this afternoon.",
+        "rawSpan": {
+          "start": 1014,
+          "end": 1049
+        },
+        "cleanText": "I’ll email the form this afternoon.",
+        "enabled": true,
+        "textStatus": "verbatim_cleaned",
+        "qMarkerIds": [],
+        "provenance": {
+          "segmentation": "ai_proposed",
+          "cleanTextBasis": "raw_plus_safe_cleanup"
+        }
+      }
+    ],
+    "sectionBreaks": [
+      {
+        "id": "sb-01",
+        "afterSentenceId": "s013",
+        "rawSpan": {
+          "start": 735,
+          "end": 763
+        },
+        "continuityAcrossBreak": "unknown"
+      }
+    ],
+    "qMarkers": [
+      {
+        "id": "qm-01",
+        "number": 1,
+        "sentenceId": "s006",
+        "rawSpan": {
+          "start": 197,
+          "end": 201
+        },
+        "cleanTextOffset": 26,
+        "role": "location_cue"
+      },
+      {
+        "id": "qm-02",
+        "number": 2,
+        "sentenceId": "s010",
+        "rawSpan": {
+          "start": 442,
+          "end": 446
+        },
+        "cleanTextOffset": 20,
+        "role": "location_cue"
+      },
+      {
+        "id": "qm-03",
+        "number": 3,
+        "sentenceId": "s011",
+        "rawSpan": {
+          "start": 557,
+          "end": 561
+        },
+        "cleanTextOffset": 41,
+        "role": "location_cue"
+      }
+    ]
+  },
+  "settings": {
+    "sessionGuidelines": {
+      "level1": {
+        "min": 6,
+        "max": 10
+      },
+      "level2": {
+        "min": 6,
+        "max": 10
+      },
+      "level3": {
+        "min": 6,
+        "max": 10
+      },
+      "level4": {
+        "min": 3,
+        "max": 5
+      },
+      "answerSpotter": {
+        "min": 6,
+        "max": 10
+      }
+    },
+    "level1": {
+      "minTiles": 4,
+      "maxTiles": 18,
+      "maxDistractorsPerItem": 2
+    },
+    "level2": {
+      "maxHiddenWords": 2
+    },
+    "level3": {
+      "minWords": 4,
+      "maxWords": 22
+    },
+    "level4": {
+      "minSentences": 2,
+      "maxSentences": 5,
+      "minWords": 25,
+      "maxWords": 80,
+      "allowMultiSpeaker": true
+    },
+    "answerSpotter": {
+      "showTranscriptDuringTask": false,
+      "postCheckReviewUnlock": "after_first_attempt_checked"
+    }
+  },
+  "learningTargets": [
+    {
+      "id": "tg-001",
+      "sentenceId": "s004",
+      "charStart": 0,
+      "charEnd": 5,
+      "surface": "We’re",
+      "occurrence": 1,
+      "focusTypes": [
+        "weak_form",
+        "contraction"
+      ],
+      "confidence": "medium",
+      "rationale": "Dạng rút gọn We’re; chỉ chấp nhận We are vì đây đúng là we are trong ngữ cảnh.",
+      "source": "external_ai",
+      "allowedForms": [
+        {
+          "text": "We are",
+          "kind": "contraction_equivalent",
+          "approvalState": "proposed"
+        }
+      ]
+    },
+    {
+      "id": "tg-002",
+      "sentenceId": "s007",
+      "charStart": 22,
+      "charEnd": 28,
+      "surface": "groups",
+      "occurrence": 1,
+      "focusTypes": [
+        "word_ending",
+        "morphology"
+      ],
+      "confidence": "medium",
+      "rationale": "Danh từ số nhiều; đuôi -s dễ bị bỏ sót.",
+      "source": "external_ai"
+    },
+    {
+      "id": "tg-003",
+      "sentenceId": "s008",
+      "charStart": 0,
+      "charEnd": 4,
+      "surface": "It’s",
+      "occurrence": 1,
+      "focusTypes": [
+        "weak_form",
+        "contraction"
+      ],
+      "confidence": "medium",
+      "rationale": "It’s got nghĩa là it has, không phải it is.",
+      "source": "external_ai",
+      "allowedForms": [
+        {
+          "text": "It has",
+          "kind": "contraction_equivalent",
+          "approvalState": "proposed"
+        }
+      ],
+      "warnings": [
+        "contraction_ambiguity"
+      ]
+    },
+    {
+      "id": "tg-004",
+      "sentenceId": "s008",
+      "charStart": 18,
+      "charEnd": 24,
+      "surface": "stairs",
+      "occurrence": 1,
+      "focusTypes": [
+        "word_ending",
+        "morphology"
+      ],
+      "confidence": "medium",
+      "rationale": "Danh từ số nhiều.",
+      "source": "external_ai"
+    },
+    {
+      "id": "tg-005",
+      "sentenceId": "s010",
+      "charStart": 40,
+      "charEnd": 45,
+      "surface": "costs",
+      "occurrence": 1,
+      "focusTypes": [
+        "word_ending",
+        "morphology"
+      ],
+      "confidence": "medium",
+      "rationale": "Động từ ngôi thứ ba số ít -s.",
+      "source": "external_ai"
+    },
+    {
+      "id": "tg-006",
+      "sentenceId": "s010",
+      "charStart": 46,
+      "charEnd": 51,
+      "surface": "£8.50",
+      "occurrence": 1,
+      "focusTypes": [
+        "price",
+        "number"
+      ],
+      "confidence": "medium",
+      "rationale": "Giá sách hướng dẫn, có phần thập phân.",
+      "source": "external_ai",
+      "allowedForms": [
+        {
+          "text": "8.50",
+          "kind": "symbol_optional",
+          "approvalState": "proposed"
+        }
+      ],
+      "warnings": [
+        "number_format_unverified"
+      ]
+    },
+    {
+      "id": "tg-007",
+      "sentenceId": "s010",
+      "charStart": 56,
+      "charEnd": 59,
+      "surface": "£12",
+      "occurrence": 1,
+      "focusTypes": [
+        "price",
+        "number",
+        "ielts_answer_candidate"
+      ],
+      "confidence": "medium",
+      "rationale": "Giá kèm audio guide.",
+      "source": "external_ai",
+      "allowedForms": [
+        {
+          "text": "12",
+          "kind": "symbol_optional",
+          "approvalState": "proposed"
+        }
+      ],
+      "warnings": [
+        "number_format_unverified",
+        "answer_context_dependent"
+      ]
+    },
+    {
+      "id": "tg-008",
+      "sentenceId": "s012",
+      "charStart": 17,
+      "charEnd": 21,
+      "surface": "24th",
+      "occurrence": 1,
+      "focusTypes": [
+        "date_time",
+        "number"
+      ],
+      "confidence": "medium",
+      "rationale": "Ngày dạng thứ tự.",
+      "source": "external_ai",
+      "allowedForms": [
+        {
+          "text": "24",
+          "kind": "numeral_word_equivalent",
+          "approvalState": "proposed"
+        },
+        {
+          "text": "twenty-fourth",
+          "kind": "numeral_word_equivalent",
+          "approvalState": "proposed"
+        }
+      ],
+      "warnings": [
+        "number_format_unverified"
+      ]
+    },
+    {
+      "id": "tg-009",
+      "sentenceId": "s013",
+      "charStart": 23,
+      "charEnd": 31,
+      "surface": "half-day",
+      "occurrence": 1,
+      "focusTypes": [
+        "compound_word",
+        "spelling"
+      ],
+      "confidence": "medium",
+      "rationale": "Từ ghép có gạch nối.",
+      "source": "external_ai",
+      "allowedForms": [
+        {
+          "text": "half day",
+          "kind": "spelling_variant",
+          "approvalState": "proposed"
+        }
+      ],
+      "warnings": [
+        "hyphenation_variant"
+      ]
+    },
+    {
+      "id": "tg-010",
+      "sentenceId": "s016",
+      "charStart": 12,
+      "charEnd": 15,
+      "surface": "you",
+      "occurrence": 2,
+      "focusTypes": [
+        "connected_speech"
+      ],
+      "confidence": "low",
+      "rationale": "Ví dụ từ lặp: you xuất hiện ba lần, chỉ lần thứ hai bị ẩn.",
+      "source": "external_ai",
+      "warnings": [
+        "syntax_determinable"
+      ]
+    },
+    {
+      "id": "tg-011",
+      "sentenceId": "s017",
+      "charStart": 13,
+      "charEnd": 19,
+      "surface": "guided",
+      "occurrence": 1,
+      "focusTypes": [
+        "word_ending",
+        "morphology"
+      ],
+      "confidence": "medium",
+      "rationale": "Đuôi -ed.",
+      "source": "external_ai"
+    },
+    {
+      "id": "tg-012",
+      "sentenceId": "s017",
+      "charStart": 25,
+      "charEnd": 28,
+      "surface": "200",
+      "occurrence": 1,
+      "focusTypes": [
+        "number"
+      ],
+      "confidence": "medium",
+      "rationale": "Số lượng nhóm học sinh.",
+      "source": "external_ai",
+      "allowedForms": [
+        {
+          "text": "two hundred",
+          "kind": "numeral_word_equivalent",
+          "approvalState": "proposed"
+        }
+      ],
+      "warnings": [
+        "number_format_unverified"
+      ]
+    }
+  ],
+  "exercises": {
+    "level1": {
+      "itemsMode": "explicit_items_only",
+      "items": [
+        {
+          "id": "l1-001",
+          "sentenceId": "s003",
+          "grammarOnlyRisk": "medium"
+        },
+        {
+          "id": "l1-002",
+          "sentenceId": "s004",
+          "grammarOnlyRisk": "low",
+          "distractors": [
+            {
+              "text": "helper",
+              "rationale": "Thiếu đuôi -s, nghe phân biệt được với helpers.",
+              "discrimination": "audibly_distinct"
+            }
+          ]
+        },
+        {
+          "id": "l1-003",
+          "sentenceId": "s007",
+          "grammarOnlyRisk": "low"
+        },
+        {
+          "id": "l1-004",
+          "sentenceId": "s014",
+          "grammarOnlyRisk": "medium"
+        },
+        {
+          "id": "l1-005",
+          "sentenceId": "s016",
+          "grammarOnlyRisk": "medium"
+        },
+        {
+          "id": "l1-006",
+          "sentenceId": "s019",
+          "grammarOnlyRisk": "medium"
+        },
+        {
+          "id": "l1-007",
+          "sentenceId": "s021",
+          "grammarOnlyRisk": "low"
+        }
+      ]
+    },
+    "level2": {
+      "itemsMode": "explicit_items_only",
+      "items": [
+        {
+          "id": "l2-001",
+          "sentenceId": "s004",
+          "blanks": [
+            {
+              "targetId": "tg-001"
+            }
+          ]
+        },
+        {
+          "id": "l2-002",
+          "sentenceId": "s007",
+          "blanks": [
+            {
+              "targetId": "tg-002"
+            }
+          ]
+        },
+        {
+          "id": "l2-003",
+          "sentenceId": "s008",
+          "blanks": [
+            {
+              "targetId": "tg-003"
+            },
+            {
+              "targetId": "tg-004"
+            }
+          ]
+        },
+        {
+          "id": "l2-004",
+          "sentenceId": "s010",
+          "blanks": [
+            {
+              "targetId": "tg-006"
+            },
+            {
+              "targetId": "tg-007"
+            }
+          ]
+        },
+        {
+          "id": "l2-005",
+          "sentenceId": "s012",
+          "blanks": [
+            {
+              "targetId": "tg-008"
+            }
+          ]
+        },
+        {
+          "id": "l2-006",
+          "sentenceId": "s013",
+          "blanks": [
+            {
+              "targetId": "tg-009"
+            }
+          ]
+        },
+        {
+          "id": "l2-007",
+          "sentenceId": "s016",
+          "blanks": [
+            {
+              "targetId": "tg-010"
+            }
+          ]
+        },
+        {
+          "id": "l2-008",
+          "sentenceId": "s017",
+          "blanks": [
+            {
+              "targetId": "tg-011"
+            },
+            {
+              "targetId": "tg-012"
+            }
+          ]
+        }
+      ]
+    },
+    "level3": {
+      "itemsMode": "explicit_items_only",
+      "items": [
+        {
+          "id": "l3-001",
+          "sentenceId": "s001"
+        },
+        {
+          "id": "l3-002",
+          "sentenceId": "s004"
+        },
+        {
+          "id": "l3-003",
+          "sentenceId": "s008"
+        },
+        {
+          "id": "l3-004",
+          "sentenceId": "s010"
+        },
+        {
+          "id": "l3-005",
+          "sentenceId": "s012"
+        },
+        {
+          "id": "l3-006",
+          "sentenceId": "s016"
+        },
+        {
+          "id": "l3-007",
+          "sentenceId": "s017"
+        },
+        {
+          "id": "l3-008",
+          "sentenceId": "s019"
+        },
+        {
+          "id": "l3-009",
+          "sentenceId": "s021"
+        }
+      ]
+    },
+    "level4": {
+      "itemsMode": "explicit_items_only",
+      "items": [
+        {
+          "id": "l4-001",
+          "sentenceIds": [
+            "s007",
+            "s008"
+          ]
+        },
+        {
+          "id": "l4-002",
+          "sentenceIds": [
+            "s012",
+            "s013"
+          ]
+        },
+        {
+          "id": "l4-003",
+          "sentenceIds": [
+            "s015",
+            "s016",
+            "s017"
+          ]
+        }
+      ]
+    },
+    "answerSpotter": {
+      "items": [
+        {
+          "id": "as-001",
+          "type": "answer_vs_distractor",
+          "origin": "ai_authored_practice",
+          "activity": "independent_listening",
+          "prompt": "Câu luyện tự soạn (gõ đáp án): Volunteers mostly guide school ___ .",
+          "expectedAnswerType": "common_noun",
+          "responseMode": "type_answer",
+          "evidenceSentenceIds": [
+            "s006",
+            "s007"
+          ],
+          "spans": [
+            {
+              "role": "correct_answer",
+              "span": {
+                "sentenceId": "s007",
+                "charStart": 22,
+                "charEnd": 28,
+                "surface": "groups",
+                "occurrence": 1
+              },
+              "reason": "Đối tượng được hướng dẫn."
+            },
+            {
+              "role": "distractor",
+              "span": {
+                "sentenceId": "s007",
+                "charStart": 40,
+                "charEnd": 49,
+                "surface": "galleries",
+                "occurrence": 1
+              },
+              "reason": "Nơi diễn ra hoạt động, không phải đối tượng được hướng dẫn."
+            }
+          ],
+          "explanation": "Chỉ groups là thứ được hướng dẫn; galleries là địa điểm.",
+          "answerFormat": {
+            "maxWords": 1,
+            "numberAllowed": false,
+            "label": "ONE WORD ONLY (practice rule)"
+          },
+          "relatedQMarkerIds": [
+            "qm-01"
+          ],
+          "markerRelationNote": "Marker Q1 nằm ở câu hỏi của Nina; đáp án luyện tập ở câu kế tiếp. Marker chỉ là gợi ý vị trí, không phải câu hỏi hay đáp án chính thức."
+        },
+        {
+          "id": "as-002",
+          "type": "answer_vs_distractor",
+          "origin": "ai_authored_practice",
+          "activity": "independent_listening",
+          "prompt": "Câu luyện tự soạn: Volunteers should wear comfortable ___ .",
+          "expectedAnswerType": "common_noun",
+          "responseMode": "choose_option",
+          "evidenceSentenceIds": [
+            "s008"
+          ],
+          "spans": [
+            {
+              "role": "correct_answer",
+              "span": {
+                "sentenceId": "s008",
+                "charStart": 53,
+                "charEnd": 58,
+                "surface": "shoes",
+                "occurrence": 1
+              },
+              "reason": "Vật cần mang."
+            },
+            {
+              "role": "distractor",
+              "span": {
+                "sentenceId": "s008",
+                "charStart": 18,
+                "charEnd": 24,
+                "surface": "stairs",
+                "occurrence": 1
+              },
+              "reason": "Đặc điểm của công việc, không phải vật cần mang."
+            }
+          ],
+          "explanation": "shoes là vật cần mang; stairs mô tả công việc.",
+          "answerFormat": {
+            "maxWords": 1,
+            "numberAllowed": false,
+            "label": "ONE WORD ONLY (practice rule)"
+          }
+        },
+        {
+          "id": "as-003",
+          "type": "answer_vs_distractor",
+          "origin": "ai_authored_practice",
+          "activity": "independent_listening",
+          "prompt": "Câu luyện tự soạn: The training day itself is ___ .",
+          "expectedAnswerType": "price",
+          "responseMode": "choose_option",
+          "evidenceSentenceIds": [
+            "s010"
+          ],
+          "spans": [
+            {
+              "role": "correct_answer",
+              "span": {
+                "sentenceId": "s010",
+                "charStart": 16,
+                "charEnd": 20,
+                "surface": "free",
+                "occurrence": 1
+              },
+              "reason": "Buổi đào tạo miễn phí."
+            },
+            {
+              "role": "distractor",
+              "span": {
+                "sentenceId": "s010",
+                "charStart": 46,
+                "charEnd": 51,
+                "surface": "£8.50",
+                "occurrence": 1
+              },
+              "reason": "Giá sách hướng dẫn, không phải giá buổi đào tạo.",
+              "acceptedForms": [
+                {
+                  "text": "8.50",
+                  "kind": "symbol_optional",
+                  "approvalState": "proposed"
+                }
+              ]
+            }
+          ],
+          "explanation": "free là về buổi đào tạo; £8.50 là giá sách.",
+          "answerFormat": {
+            "maxWords": 1,
+            "numberAllowed": true,
+            "label": "ONE WORD AND/OR A NUMBER (practice rule)"
+          },
+          "relatedQMarkerIds": [
+            "qm-02"
+          ],
+          "markerRelationNote": "Marker Q2 nằm ngay sau free trong cùng câu. Chỉ là gợi ý vị trí, không phải câu hỏi hay đáp án chính thức."
+        },
+        {
+          "id": "as-004",
+          "type": "answer_vs_distractor",
+          "origin": "ai_authored_practice",
+          "activity": "independent_listening",
+          "prompt": "Câu luyện tự soạn: The guidebook with the audio guide costs ___ .",
+          "expectedAnswerType": "price",
+          "responseMode": "choose_option",
+          "evidenceSentenceIds": [
+            "s010"
+          ],
+          "spans": [
+            {
+              "role": "correct_answer",
+              "span": {
+                "sentenceId": "s010",
+                "charStart": 56,
+                "charEnd": 59,
+                "surface": "£12",
+                "occurrence": 1
+              },
+              "reason": "Giá kèm audio guide.",
+              "acceptedForms": [
+                {
+                  "text": "12",
+                  "kind": "symbol_optional",
+                  "approvalState": "proposed"
+                }
+              ]
+            },
+            {
+              "role": "distractor",
+              "span": {
+                "sentenceId": "s010",
+                "charStart": 46,
+                "charEnd": 51,
+                "surface": "£8.50",
+                "occurrence": 1
+              },
+              "reason": "Giá sách không kèm audio guide.",
+              "acceptedForms": [
+                {
+                  "text": "8.50",
+                  "kind": "symbol_optional",
+                  "approvalState": "proposed"
+                }
+              ]
+            }
+          ],
+          "explanation": "Cả hai đều là giá sách; chỉ £12 đi kèm audio guide.",
+          "answerFormat": {
+            "maxWords": 1,
+            "numberAllowed": true,
+            "label": "ONE WORD AND/OR A NUMBER (practice rule)"
+          },
+          "relatedQMarkerIds": [
+            "qm-02"
+          ],
+          "markerRelationNote": "Marker Q2 cùng câu. Chỉ là gợi ý vị trí."
+        },
+        {
+          "id": "as-005",
+          "type": "target_detection",
+          "origin": "ai_authored_practice",
+          "activity": "independent_listening",
+          "prompt": "Mẫu ghi chú: Guidebook. Gõ mọi mức giá bạn nghe được.",
+          "expectedAnswerType": "price",
+          "responseMode": "type_answer",
+          "evidenceSentenceIds": [
+            "s010"
+          ],
+          "spans": [
+            {
+              "role": "candidate",
+              "span": {
+                "sentenceId": "s010",
+                "charStart": 46,
+                "charEnd": 51,
+                "surface": "£8.50",
+                "occurrence": 1
+              },
+              "reason": "Mức giá thứ nhất.",
+              "acceptedForms": [
+                {
+                  "text": "8.50",
+                  "kind": "symbol_optional",
+                  "approvalState": "proposed"
+                }
+              ]
+            },
+            {
+              "role": "candidate",
+              "span": {
+                "sentenceId": "s010",
+                "charStart": 56,
+                "charEnd": 59,
+                "surface": "£12",
+                "occurrence": 1
+              },
+              "reason": "Mức giá thứ hai.",
+              "acceptedForms": [
+                {
+                  "text": "12",
+                  "kind": "symbol_optional",
+                  "approvalState": "proposed"
+                }
+              ]
+            }
+          ],
+          "explanation": "Cả hai là giá; cần câu hỏi để biết giá nào áp dụng.",
+          "answerFormat": {
+            "maxWords": 1,
+            "numberAllowed": true,
+            "label": "ONE WORD AND/OR A NUMBER (practice rule)"
+          }
+        },
+        {
+          "id": "as-006",
+          "type": "target_detection",
+          "origin": "ai_authored_practice",
+          "activity": "post_check_transcript_review",
+          "prompt": "Xem lại transcript sau khi đã làm bài trước: chọn mọi mức giá.",
+          "expectedAnswerType": "price",
+          "responseMode": "select_span_in_text",
+          "evidenceSentenceIds": [
+            "s010"
+          ],
+          "spans": [
+            {
+              "role": "candidate",
+              "span": {
+                "sentenceId": "s010",
+                "charStart": 46,
+                "charEnd": 51,
+                "surface": "£8.50",
+                "occurrence": 1
+              },
+              "reason": "Mức giá.",
+              "acceptedForms": [
+                {
+                  "text": "8.50",
+                  "kind": "symbol_optional",
+                  "approvalState": "proposed"
+                }
+              ]
+            },
+            {
+              "role": "candidate",
+              "span": {
+                "sentenceId": "s010",
+                "charStart": 56,
+                "charEnd": 59,
+                "surface": "£12",
+                "occurrence": 1
+              },
+              "reason": "Mức giá.",
+              "acceptedForms": [
+                {
+                  "text": "12",
+                  "kind": "symbol_optional",
+                  "approvalState": "proposed"
+                }
+              ]
+            }
+          ],
+          "explanation": "Hoạt động xem lại sau kiểm tra, không độc lập.",
+          "pairedIndependentItemId": "as-004"
+        },
+        {
+          "id": "as-007",
+          "type": "answer_vs_distractor",
+          "origin": "ai_authored_practice",
+          "activity": "independent_listening",
+          "prompt": "Câu luyện tự soạn (gõ đáp án): The training starts on the ___ of the month.",
+          "expectedAnswerType": "date",
+          "responseMode": "type_answer",
+          "evidenceSentenceIds": [
+            "s011",
+            "s012"
+          ],
+          "spans": [
+            {
+              "role": "correct_answer",
+              "span": {
+                "sentenceId": "s012",
+                "charStart": 17,
+                "charEnd": 21,
+                "surface": "24th",
+                "occurrence": 1
+              },
+              "reason": "Ngày bắt đầu.",
+              "acceptedForms": [
+                {
+                  "text": "24",
+                  "kind": "numeral_word_equivalent",
+                  "approvalState": "proposed"
+                },
+                {
+                  "text": "twenty-fourth",
+                  "kind": "numeral_word_equivalent",
+                  "approvalState": "proposed"
+                }
+              ]
+            },
+            {
+              "role": "distractor",
+              "span": {
+                "sentenceId": "s012",
+                "charStart": 25,
+                "charEnd": 39,
+                "surface": "half past nine",
+                "occurrence": 1
+              },
+              "reason": "Giờ bắt đầu, không phải ngày."
+            }
+          ],
+          "explanation": "24th là ngày; half past nine là giờ.",
+          "answerFormat": {
+            "maxWords": 1,
+            "numberAllowed": true,
+            "label": "ONE WORD AND/OR A NUMBER (practice rule)"
+          },
+          "relatedQMarkerIds": [
+            "qm-03"
+          ],
+          "markerRelationNote": "Marker Q3 nằm ở câu hỏi của Nina; đáp án luyện tập ở câu kế tiếp. Marker chỉ là gợi ý vị trí, không phải câu hỏi hay đáp án chính thức."
+        },
+        {
+          "id": "as-008",
+          "type": "answer_vs_distractor",
+          "origin": "ai_authored_practice",
+          "activity": "independent_listening",
+          "prompt": "Câu luyện tự soạn (gõ đáp án): The training is only a ___ session.",
+          "expectedAnswerType": "common_noun",
+          "responseMode": "type_answer",
+          "evidenceSentenceIds": [
+            "s013"
+          ],
+          "spans": [
+            {
+              "role": "correct_answer",
+              "span": {
+                "sentenceId": "s013",
+                "charStart": 23,
+                "charEnd": 31,
+                "surface": "half-day",
+                "occurrence": 1
+              },
+              "reason": "Loại buổi đào tạo.",
+              "acceptedForms": [
+                {
+                  "text": "half day",
+                  "kind": "spelling_variant",
+                  "approvalState": "proposed"
+                }
+              ]
+            },
+            {
+              "role": "distractor",
+              "span": {
+                "sentenceId": "s013",
+                "charStart": 72,
+                "charEnd": 81,
+                "surface": "afternoon",
+                "occurrence": 1
+              },
+              "reason": "Thời điểm có thể đi làm sau buổi học, không phải loại buổi học."
+            }
+          ],
+          "explanation": "half-day mô tả buổi học; afternoon là thời điểm làm việc sau đó.",
+          "answerFormat": {
+            "maxWords": 2,
+            "numberAllowed": false,
+            "label": "NO MORE THAN TWO WORDS (practice rule)"
+          }
+        }
+      ]
+    }
+  },
+  "selection": {
+    "disabledReasons": []
+  }
+}

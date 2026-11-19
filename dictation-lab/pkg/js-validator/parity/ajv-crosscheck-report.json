@@ -1,0 +1,66 @@
+{
+ "ajv": "8.17.1",
+ "ajvFormats": "3.0.1",
+ "files": 533,
+ "jsEqAjv": 533,
+ "jsNeAjv": [],
+ "pyEqAjv": 526,
+ "pyNeAjv": [
+  {
+   "file": "generated/g0053.json",
+   "python": true,
+   "ajv": false,
+   "ajvErrors": [
+    "/exercises/level3/items/0/lengthException/approvedAt format"
+   ]
+  },
+  {
+   "file": "generated/g0082.json",
+   "python": true,
+   "ajv": false,
+   "ajvErrors": [
+    "/exercises/level3/items/2/lengthException/approvedAt format"
+   ]
+  },
+  {
+   "file": "generated/g0186.json",
+   "python": true,
+   "ajv": false,
+   "ajvErrors": [
+    "/exercises/level3/items/2/lengthException/approvedAt format"
+   ]
+  },
+  {
+   "file": "generated/g0198.json",
+   "python": true,
+   "ajv": false,
+   "ajvErrors": [
+    "/exercises/level3/items/1/lengthException/approvedAt format"
+   ]
+  },
+  {
+   "file": "generated/g0288.json",
+   "python": true,
+   "ajv": false,
+   "ajvErrors": [
+    "/exercises/level3/items/0/lengthException/approvedAt format"
+   ]
+  },
+  {
+   "file": "generated/g0321.json",
+   "python": true,
+   "ajv": false,
+   "ajvErrors": [
+    "/exercises/level3/items/0/lengthException/approvedAt format"
+   ]
+  },
+  {
+   "file": "generated/g0411.json",
+   "python": true,
+   "ajv": false,
+   "ajvErrors": [
+    "/exercises/level3/items/2/lengthException/approvedAt format"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,159 @@
+{
+ "$schema": "urn:minidrills:dictation-lab:schema:1.1",
+ "schemaVersion": "1.1",
+ "importMode": "ai_json",
+ "metadata": {
+  "title": "Synthetic club walk (public-safe test fixture)",
+  "language": "en-GB",
+  "source": {
+   "type": "teacher_upload",
+   "label": "synthetic"
+  },
+  "audio": {
+   "availability": "none_attached",
+   "timestampsAvailable": false
+  },
+  "generatedBy": {
+   "kind": "external_ai",
+   "toolName": "make_fixtures.py (synthetic)",
+   "generatedAt": "2026-01-01T00:00:00Z"
+  },
+  "fixture": {
+   "isPartial": false,
+   "note": "Synthetic public-safe fixture. All approvals and identities are synthetic test data."
+  }
+ },
+ "rights": {
+  "usage": "public_domain",
+  "rightsHolder": "Synthetic fixture (CC0)",
+  "teacherAttestsAuthorizedUse": true,
+  "publicRedistributionAllowed": true
+ },
+ "rawTranscript": {
+  "immutable": true,
+  "encoding": "utf-8",
+  "newline": "LF",
+  "capturedFrom": "teacher_paste",
+  "sha256": "e3912651dc959f87e72a5ca4fab3b73d2a9d9e3cfc4159c17784accda351bfa6",
+  "text": "AMY: I saw 😀 a kite (Q1). Then home."
+ },
+ "audit": {
+  "auditState": "audited_no_open_issues",
+  "auditedBy": {
+   "kind": "rule_engine",
+   "name": "synthetic fixture generator"
+  },
+  "auditedAt": "2026-01-01T00:00:00Z",
+  "audioAvailableToAuditor": false,
+  "audioVerificationPerformed": false,
+  "issues": [
+   {
+    "id": "iss-001",
+    "issueClass": "q_marker",
+    "status": "safe_cleanup",
+    "severity": "info",
+    "confidence": "high",
+    "sourceQuote": "(Q1)",
+    "rawSpan": {
+     "start": 21,
+     "end": 25
+    },
+    "proposedReplacement": "",
+    "cleanupOperation": "remove_q_marker",
+    "reason": "Location cue extracted from spoken text.",
+    "evidenceStatus": "not_required",
+    "affectedSentenceIds": [
+     "s001"
+    ],
+    "affectedQMarkerIds": [
+     "qm-01"
+    ],
+    "blocksScoredUse": false,
+    "proposedBy": {
+     "kind": "rule_engine",
+     "name": "synthetic"
+    }
+   }
+  ],
+  "decisions": []
+ },
+ "transcript": {
+  "speakers": [
+   {
+    "id": "sp-amy",
+    "rawLabel": "AMY",
+    "displayName": "Amy"
+   }
+  ],
+  "turns": [
+   {
+    "id": "t001",
+    "order": 1,
+    "speakerId": "sp-amy",
+    "rawSpan": {
+     "start": 0,
+     "end": 37
+    }
+   }
+  ],
+  "sentences": [
+   {
+    "id": "s001",
+    "turnId": "t001",
+    "order": 1,
+    "rawText": "I saw 😀 a kite (Q1).",
+    "rawSpan": {
+     "start": 5,
+     "end": 26
+    },
+    "cleanText": "I saw < a kite.",
+    "enabled": false,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [
+     "qm-01"
+    ],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s002",
+    "turnId": "t001",
+    "order": 2,
+    "rawText": "Then home.",
+    "rawSpan": {
+     "start": 27,
+     "end": 37
+    },
+    "cleanText": "Then home.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   }
+  ],
+  "qMarkers": [
+   {
+    "id": "qm-01",
+    "number": 1,
+    "sentenceId": "s001",
+    "rawSpan": {
+     "start": 21,
+     "end": 25
+    },
+    "cleanTextOffset": 15,
+    "role": "location_cue"
+   }
+  ],
+  "fullCleanText": "I saw 😀 a kite. Then home."
+ },
+ "settings": {
+  "level2": {
+   "maxHiddenWords": 2
+  }
+ }
+}

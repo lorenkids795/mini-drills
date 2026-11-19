@@ -16,6 +16,11 @@ const FILES = /^(index\.html|md-[a-z0-9-]+\.js|lm-[a-z0-9-]+\.js|site\.webmanife
 // folders that are published whole (icons; pictures and sound files an exercise may point to)
 const DIRS = ['assets', 'audio', 'img', 'images', 'media'];
 const MEDIA = /\.(png|jpe?g|gif|webp|svg|ico|mp3|m4a|aac|wav|ogg|oga|webm|mp4|woff2?|ttf|otf)$/i;
+// Dictation Lab (11/2026, O-1): the ES-module engine, validator and UI, loaded only on the Dictation screen. Only .js files.
+// They contain NO lesson and NO answer key (lessons live in Firestore, server-only). dictation-lab/ (the source package) and
+// dictation-server.js (the server part, bundled into functions/) are never published.
+const CODE_DIRS = ['dictation'];
+const CODE = /\.js$/;
 // never published, even if a rule above would match
 const NEVER = /(^|\/)(\.|node_modules\/|tests?\/|functions\/)|\.(md|map|rules|gs|py|log|env|pem|key)$/i;
 const SECRET = [/-----BEGIN [A-Z ]*PRIVATE KEY-----/, /"private_key"\s*:/, /"client_email"\s*:\s*"[^"]+gserviceaccount\.com"/, /\bsk-[A-Za-z0-9]{20,}/, /\bghp_[A-Za-z0-9]{30,}/, /GEMINI_KEY\s*[:=]\s*['"][A-Za-z0-9_-]{20,}/];
@@ -25,6 +30,10 @@ function list() {
   fs.readdirSync(ROOT).forEach((f) => { const p = path.join(ROOT, f); if (fs.statSync(p).isFile() && FILES.test(f)) out.push(f); });
   DIRS.forEach((d) => {
     const walk = (rel) => { const p = path.join(ROOT, rel); if (!fs.existsSync(p)) return; fs.readdirSync(p).forEach((f) => { const r = rel + '/' + f, q = path.join(ROOT, r); if (fs.statSync(q).isDirectory()) walk(r); else if (MEDIA.test(f)) out.push(r); }); };
+    walk(d);
+  });
+  CODE_DIRS.forEach((d) => {
+    const walk = (rel) => { const p = path.join(ROOT, rel); if (!fs.existsSync(p)) return; fs.readdirSync(p).forEach((f) => { const r = rel + '/' + f, q = path.join(ROOT, r); if (fs.statSync(q).isDirectory()) walk(r); else if (CODE.test(f)) out.push(r); }); };
     walk(d);
   });
   return out.filter((f) => !NEVER.test(f)).sort();

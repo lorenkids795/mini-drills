@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dictation validator example</title>
+<style>
+  :root { --bg:#f6f7fb; --surface:#fff; --ink:#1b2333; --muted:#535e74; --line:#c5ccd9; --good:#17663f; --bad:#a3262e; --warn:#8f5b06; --accent:#2f4fd8; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0f1420; --surface:#171e2e; --ink:#e7ecf5; --muted:#a6b0c5; --line:#2b3550; --good:#62d6a0; --bad:#ff8a8a; --warn:#f2b84f; --accent:#8fa8ff; } }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.6 system-ui, sans-serif; }
+  main { max-width:900px; margin:0 auto; padding:24px 16px; }
+  textarea { width:100%; min-height:180px; box-sizing:border-box; font:13px/1.5 ui-monospace, monospace; background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:10px; }
+  button, label.file { min-height:44px; padding:0 16px; border-radius:8px; border:1px solid var(--line); background:var(--surface); color:var(--ink); font:inherit; cursor:pointer; display:inline-flex; align-items:center; }
+  button.primary { background:var(--accent); color:var(--bg); border-color:var(--accent); font-weight:700; }
+  button:focus-visible, label.file:focus-within { outline:3px solid var(--accent); outline-offset:2px; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; }
+  .card { background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin-top:14px; }
+  .ok { color:var(--good); font-weight:700; } .err { color:var(--bad); font-weight:700; } .muted { color:var(--muted); }
+  ul { padding-left:20px; margin:6px 0; } li { word-break:break-word; } pre { white-space:pre-wrap; word-break:break-word; font-size:12px; }
+  input[type=file] { position:absolute; opacity:0; width:1px; height:1px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Dictation import validator</h1>
+  <p class="muted">Runs entirely in this browser: nothing is uploaded. Serve the <code>js-validator</code> folder over HTTP (for example <code>python -m http.server</code>) because ES modules do not load from <code>file://</code>.</p>
+  <label for="doc">Import JSON</label>
+  <textarea id="doc" spellcheck="false" placeholder="Paste a schemaVersion 1.1 dictation document"></textarea>
+  <div class="row">
+    <button type="button" class="primary" id="run">Validate</button>
+    <label class="file">Open a JSON file<input type="file" id="file" accept="application/json,.json"></label>
+    <button type="button" id="demo">Load the synthetic demo</button>
+  </div>
+  <div id="out" class="card" aria-live="polite"><span class="muted">No result yet.</span></div>
+  <p class="muted">A clean result is not audio verification and not publication approval.</p>
+</main>
+<script type="module">
+// Every value from the document or the report is inserted with textContent (never innerHTML): imported text is data, not markup.
+import { validateDictationJson, VERSION } from "./src/index.js";
+const $ = (id) => document.getElementById(id);
+const el = (tag, text, cls) => { const e = document.createElement(tag); if (text !== undefined) e.textContent = String(text); if (cls) e.className = cls; return e; };
+let schema = null;
+async function loadSchema() { if (!schema) schema = await (await fetch("./schema/dictation-schema-v1.json")).json(); return schema; }
+function list(title, rows) {
+  const box = document.createElement("div"); box.append(el("strong", `${title} (${rows.length})`)); if (!rows.length) return box;
+  const ul = document.createElement("ul"); for (const r of rows.slice(0, 200)) ul.append(el("li", `${r.code}  ${r.path ?? ""}  ${r.message ?? ""}`)); box.append(ul); return box;
+}
+function render(res) {
+  const out = $("out"); out.replaceChildren();
+  out.append(el("p", res.valid ? "Valid: no schema or semantic errors." : "Not valid.", res.valid ? "ok" : "err"));
+  const s = res.semantic ?? {};
+  out.append(el("p", `Gate: ${s.gate ?? "-"} · eligibility: ${s.publicationEligibility ?? "-"} · validator ${VERSION}`));
+  if (res.parse?.length) out.append(list("Parse problems", res.parse));
+  out.append(list("Schema errors", (res.schemaErrors ?? []).map((e) => ({ code: e.keyword, path: e.path ?? e.instancePath, message: e.message }))));
+  out.append(list("Errors", s.errors ?? []), list("Warnings", s.warnings ?? []), list("Info", s.info ?? []));
+  return { valid: res.valid, gate: s.gate, errors: (s.errorCodes ?? []).length, warnings: (s.warningCodes ?? []).length };
+}
+async function run() { return render(validateDictationJson($("doc").value, { schema: await loadSchema() })); }
+$("run").addEventListener("click", run);
+$("file").addEventListener("change", async (e) => { const f = e.target.files[0]; if (f) { $("doc").value = await f.text(); run(); } });
+$("demo").addEventListener("click", async () => { $("doc").value = await (await fetch("./test/corpus/demos/baseline-harbour-museum.rev1.json")).text(); run(); });
+// Self-test for headless browsers: ?selftest=1 validates the demo, one broken file and one hostile string, then writes JSON into #selftest.
+if (new URLSearchParams(location.search).has("selftest")) {
+  (async () => {
+    const r = {}; try {
+      $("doc").value = await (await fetch("./test/corpus/demos/baseline-harbour-museum.rev1.json")).text(); r.demo = await run();
+      $("doc").value = await (await fetch("./test/corpus/rev1-fixtures/n01_blocked_sentence_referenced.json")).text(); r.blocked = await run();
+      $("doc").value = '{"x":"<img src=x onerror=window.__pwned=1>"'; r.hostile = await run(); r.noMarkupCreated = document.querySelectorAll("#out img").length === 0 && !window.__pwned;
+      r.nodeGlobals = typeof process === "undefined" && typeof Buffer === "undefined" && typeof require === "undefined";
+    } catch (e) { r.error = String(e); }
+    const p = el("pre", JSON.stringify(r)); p.id = "selftest"; document.body.append(p);
+  })();
+}
+</script>
+</body>
+</html>

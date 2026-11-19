@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Dictation engine example</title>
+<style>
+  :root { --bg:#f6f7fb; --surface:#fff; --ink:#1b2333; --muted:#535e74; --line:#c5ccd9; --good:#17663f; --bad:#a3262e; --accent:#2f4fd8; --accent-ink:#fff; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0f1420; --surface:#171e2e; --ink:#e7ecf5; --muted:#a6b0c5; --line:#5d6c95; --good:#62d6a0; --bad:#ff8a8a; --accent:#8fa8ff; --accent-ink:#0f1420; } }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.6 "IBM Plex Sans", system-ui, sans-serif; }
+  main { max-width:760px; margin:0 auto; padding:20px 16px 40px; }
+  h1 { font-size:1.3rem; margin:0 0 4px; } h2 { font-size:1rem; margin:0 0 6px; }
+  .item { border-top:1px solid var(--line); padding:14px 0; } .muted { color:var(--muted); font-size:.9rem; }
+  .ok { color:var(--good); font-weight:700; } .bad { color:var(--bad); font-weight:700; } .tag { font-size:.8rem; color:var(--muted); }
+  textarea, input[type=text] { width:100%; box-sizing:border-box; min-height:44px; font:inherit; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink); }
+  textarea { min-height:72px; resize:vertical; }
+  button { min-height:44px; padding:0 16px; border-radius:8px; border:1px solid var(--accent); background:var(--surface); color:var(--accent); font:inherit; font-weight:700; cursor:pointer; margin:8px 8px 0 0; }
+  button.primary { background:var(--accent); color:var(--accent-ink); } button:disabled { opacity:.55; cursor:not-allowed; }
+  button:focus-visible, input:focus-visible, textarea:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+  label.opt { display:flex; align-items:center; gap:8px; min-height:44px; } .review { border-left:3px solid var(--accent); padding-left:10px; margin-top:8px; }
+  pre { white-space:pre-wrap; word-break:break-word; font-size:12px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Dictation engine (contract v1.1): reference page</h1>
+  <p class="muted" id="intro">Reference page only, not the Mini Drills UI. No hints, no reveal. Serve <code>pkg/</code> over HTTP. <code>?mode=homework</code> needs the reference server of <code>tools/browser-selftest.mjs</code>.</p>
+  <p class="muted" id="note"></p>
+  <section id="items" aria-live="polite"></section>
+  <div id="actions"></div>
+  <section id="result" aria-live="polite"></section>
+</main>
+<script type="module">
+// Every string from content, the engine or the server is written with textContent (SAF-001..003 on this page). The engine never touches the DOM.
+import { createRun, HomeworkClient } from "./src/index.js";
+const Q = new URLSearchParams(location.search); const MODE = Q.get("mode") === "homework" ? "homework" : "free";
+const $ = (id) => document.getElementById(id);
+const el = (tag, text, cls) => { const e = document.createElement(tag); if (text !== undefined) e.textContent = text; if (cls) e.className = cls; return e; };
+const label = { level1: "Level 1", level2: "Level 2", level3: "Level 3", level4: "Level 4", answerSpotter: "Answer Spotter" };
+const fbText = (s) => s.correct !== undefined ? (s.correct ? "Correct." : "Not correct.") : `${s.exact ? "Exact." : "Not exact."} ${s.num}/${s.den} words in order` + (s.missing !== undefined ? `, ${s.missing} missing, ${s.extra} extra` : "") + (s.criticalTargetErrors ? `, ${s.criticalTargetErrors} critical error(s)` : "");
+const reviewText = (r) => r.text ?? (r.answers ? "Accepted: " + r.answers.join(" / ") : (r.transcript ?? []).map((t) => t.text).join(" "));
+async function api(path, body) { const r = await fetch("/api/dictation/" + path, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body ?? {}) }); return r.json(); }
+
+if (MODE === "free") {
+  // FREE PRACTICE: the practice lesson (with its answer key) is on the device. This is the disclosed trade-off of O-2 for practice.
+  const { validateDictationDocument } = await import("../js-validator/src/index.js");
+  const [doc, schema] = await Promise.all([fetch("../golden-tests-v1.1/baseline-harbour-museum.rev1.json").then((r) => r.json()), fetch("../js-validator/schema/dictation-schema-v1.json").then((r) => r.json())]);
+  const run = createRun({ doc, validation: validateDictationDocument(doc, { schema }), version: "demo-v1", seed: 42 }); window.__run = run;
+  $("note").textContent = "Free practice: Check an item to see its answer. " + (run.content.label === "unverified_transcript" ? "Transcript quality is not verified." : "");
+  for (const id of ["as-001", "l3-002"]) {
+    const P = run.present(id).payload; const box = el("div", undefined, "item"); box.append(el("h2", label[P.level] + " · " + id));
+    if (P.prompt) box.append(el("p", P.prompt));
+    if (P.level === "level3") box.append(el("p", "Listen to the sentence (no text is shown at Level 3).", "muted"));
+    const inp = el(P.level === "level3" ? "textarea" : "input"); if (inp.tagName === "INPUT") inp.type = "text"; inp.id = "in-" + id; inp.setAttribute("aria-label", "Your answer for " + id); box.append(inp);
+    const fb = el("p", "", "fb"); fb.id = "fb-" + id; const rvBtn = el("button", "Review answer"); rvBtn.type = "button"; rvBtn.hidden = true; const rv = el("div", "", "review"); rv.hidden = true;
+    const ck = el("button", "Check", "primary"); ck.type = "button";
+    ck.addEventListener("click", () => { const r = run.check(id, P.level === "answerSpotter" ? { text: inp.value } : { answer: inp.value });
+      if (!r.score) { fb.textContent = r.status === "empty_answer" ? "Type something first. An empty Check is not an attempt and opens nothing." : r.status; fb.className = "muted"; return; }
+      fb.textContent = fbText(r.score) + (r.status === "duplicate_ignored" ? " (same answer as last time: not a new attempt)" : ""); fb.className = (r.score.exact || r.score.correct) ? "ok" : "bad";
+      rvBtn.hidden = !r.reviewAvailable; });
+    rvBtn.addEventListener("click", () => { const r = run.review(id); if (r.status === "ok") { rv.hidden = false; rv.textContent = reviewText(r.review); } });
+    box.append(ck, rvBtn, fb, rv); $("items").append(box);
+  }
+} else {
+  // HOMEWORK: the page receives ONLY the student payload from the server. No lesson file, no answer key, no transcript before submission.
+  const res = await api("payload"); if (res.status !== "ok") { $("note").textContent = "Could not load the homework: " + (res.reason ?? "error"); }
+  else {
+    let k = 0; const c = new HomeworkClient(res.payload, { makeKey: () => "key-" + Date.now() + "-" + ++k, transport: { lockPhase: (req) => api("lock", req), submit: (req) => api("submit", req) } }); window.__client = c;
+    const draw = () => {
+      $("items").replaceChildren(); $("actions").replaceChildren();
+      $("note").textContent = `Homework · part ${c.phase} of ${c.p.phases}. Answers are checked only after you submit.`;
+      for (const it of c.view()) {
+        const box = el("div", undefined, "item"); box.append(el("h2", label[it.level] + " · " + it.id)); if (it.prompt) box.append(el("p", it.prompt));
+        if (it.level === "level3" || it.level === "level4" || (it.level === "answerSpotter" && it.responseMode !== "choose_option")) {
+          const inp = el(it.level === "answerSpotter" ? "input" : "textarea"); if (inp.tagName === "INPUT") inp.type = "text"; inp.setAttribute("aria-label", "Your answer for " + it.id); inp.disabled = it.readOnly;
+          inp.value = it.response?.answer ?? it.response?.text ?? ""; inp.addEventListener("input", () => c.answer(it.id, it.level === "answerSpotter" ? { text: inp.value } : { answer: inp.value })); box.append(inp);
+        } else if (it.level === "answerSpotter") {
+          for (const o of it.options) { const l = el("label", undefined, "opt"); const r = el("input"); r.type = "radio"; r.name = "o-" + it.id; r.value = o; r.disabled = it.readOnly; r.checked = it.response?.chosen === o; r.addEventListener("change", () => c.answer(it.id, { chosen: o })); l.append(r, el("span", o)); box.append(l); }
+        } else box.append(el("p", "(Level 1 tiles and Level 2 blanks are not drawn on this reference page.)", "muted"));
+        if (it.readOnly) box.append(el("p", "Saved and locked.", "tag")); $("items").append(box);
+      }
+      const go = el("button", c.morePhases ? "Save these answers and continue" : `Submit homework · ${c.view().length} items`, "primary"); go.type = "button"; go.id = "go";
+      go.addEventListener("click", async () => { go.disabled = true; if (c.morePhases) { const r = await c.continueToNextPhase(); if (r.status !== "ok") $("result").textContent = "Could not save: " + (r.error ?? r.status); draw(); return; } await submit(false); });
+      $("actions").append(go);
+    };
+    const submit = async (confirm) => {
+      const r = await c.submit({ confirmIncomplete: confirm });
+      if (r.status.startsWith("needs_confirmation:")) { const n = r.status.split(":")[1]; $("result").replaceChildren(el("p", `${n} item(s) are blank. Blank answers score 0 and the homework will be incomplete.`), (() => { const b = el("button", "Submit anyway", "primary"); b.type = "button"; b.id = "confirm"; b.addEventListener("click", () => submit(true)); return b; })(), (() => { const b = el("button", "Keep working"); b.type = "button"; b.addEventListener("click", () => { $("result").replaceChildren(); draw(); }); return b; })()); return; }
+      if (r.status !== "submitted" && r.status !== "already_submitted") { $("result").textContent = "Not submitted (" + r.status + "). Your answers are kept; try again."; draw(); return; }
+      const v = c.review(); const a = v.aggregate; const pct = (f) => (f ? Math.round((100 * f.num) / f.den) + "%" : "–");
+      $("items").replaceChildren(); $("actions").replaceChildren();
+      $("result").replaceChildren(el("h2", "Submitted"), el("p", `Score (whole assignment): ${pct(a.overall.itemWeightedAssignmentScore)} · ${a.result.passed ? "Passed" : "Not passed"} (70% needed) · ${a.result.completed ? "Completed" : "Incomplete"}`),
+        el("p", `Accuracy on answered items: ${pct(a.attemptedAccuracy)} · Answered: ${pct(a.completionRate)}`, "muted"));
+      for (const [id, rv] of Object.entries(v.review)) { const box = el("div", undefined, "item"); box.append(el("h2", id), el("p", reviewText(rv), "review")); $("result").append(box); }
+    };
+    draw();
+  }
+}
+
+// ?selftest=1 (free): every level and Answer Spotter scores exact through one run; review gate; no hint/reveal. (homework): full flow against the reference server.
+if (Q.has("selftest")) {
+  const out = { mode: MODE, nodeGlobals: typeof process === "undefined" && typeof Buffer === "undefined" };
+  try {
+    if (MODE === "free") {
+      const t = window.__run; out.hintReveal = ["hint", "reveal"].every((op) => t.apply({ op, item: "l3-002" }).status === "unsupported_event");
+      out.reviewBeforeCheck = t.review("l3-002").status; t.check("l3-002", { answer: " ,, " }); out.reviewAfterEmpty = t.review("l3-002").status;
+      for (const a of t.items().filter((i) => i.level === "answerSpotter" && i.kind === "scored")) { const I = t.lesson.items.get(a.id); const ans = I.spans.find((s) => s.role === "correct_answer" || s.role === "candidate").span.surface; const r = t.check(a.id, I.responseMode === "choose_option" ? { chosen: ans } : { text: I.type === "target_detection" ? I.spans.filter((s) => s.role === "candidate").map((s) => s.span.surface).join(", ") : ans }); out.answerSpotter = (out.answerSpotter ?? true) && !!r.score?.correct; }
+      for (const lv of ["level1", "level2", "level3", "level4"]) {
+        const it = t.items().find((i) => i.level === lv && i.kind === "scored"); const P = t.present(it.id).payload; const I = t.lesson.items.get(it.id); const txt = t.sentencesOf(it.id).map((s) => t.lesson.S.get(s).cleanText).join("\n");
+        const resp = lv === "level1" ? { placedIds: P.tiles.filter((x) => x.id.startsWith("w")).sort((a, b) => a.id.slice(1) - b.id.slice(1)).map((x) => x.id) } : lv === "level2" ? { answers: I.blanks.map((b) => t.lesson.T.get(b.targetId).surface) } : { answer: txt };
+        const r = t.check(it.id, resp); out[lv] = !!r.score?.exact;
+      }
+      t.check("l3-002", { answer: "we are always looking" }); out.reviewAfterCheck = t.review("l3-002").status; out.official = t.summary().official;
+    } else {
+      const c = window.__client; await new Promise((r) => setTimeout(r, 300)); // the QA server puts a hostile prompt in the payload: it must render as text only
+      out.hostileShownAsText = document.querySelector("#items").textContent.includes("<img") && !document.querySelector("#items img, #items script") && !window.__pwned;
+      out.reviewBeforeSubmit = c.review().status; out.checkInHomework = c.session.dispatch({ op: "check", item: "l3-001", num: 1, den: 1 });
+      c.answer("l3-001", { answer: "zz yy xx" }); for (const a of c.p.lockOnContinue) c.answer(a, { text: "x", chosen: "x" });
+      if (c.morePhases) out.phase = (await c.continueToNextPhase()).status;
+      const first = await c.submit(); out.needsConfirmation = first.status.startsWith("needs_confirmation"); const sub = await c.submit({ confirmIncomplete: true }); out.submission = sub.status;
+      const v = c.review(); out.review = v.status; out.passed = v.aggregate?.result?.passed; out.completed = v.aggregate?.result?.completed;
+    }
+  } catch (e) { out.error = String(e && e.stack || e); }
+  const pre = document.createElement("pre"); pre.id = "selftest"; pre.textContent = JSON.stringify(out); document.body.append(pre);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+{
+ "$schema": "urn:minidrills:dictation-lab:schema:1.1",
+ "schemaVersion": "1.1",
+ "importMode": "ai_json",
+ "metadata": {
+  "title": "Synthetic club walk (public-safe test fixture)",
+  "language": "en-GB",
+  "source": {
+   "type": "teacher_upload",
+   "label": "synthetic"
+  },
+  "audio": {
+   "availability": "none_attached",
+   "timestampsAvailable": false
+  },
+  "generatedBy": {
+   "kind": "external_ai",
+   "toolName": "make_fixtures.py (synthetic)",
+   "generatedAt": "2026-01-01T00:00:00Z"
+  },
+  "fixture": {
+   "isPartial": false,
+   "note": "Synthetic public-safe fixture. All approvals and identities are synthetic test data."
+  }
+ },
+ "rights": {
+  "usage": "public_domain",
+  "rightsHolder": "Synthetic fixture (CC0)",
+  "teacherAttestsAuthorizedUse": true,
+  "publicRedistributionAllowed": true
+ },
+ "rawTranscript": {
+  "immutable": true,
+  "encoding": "utf-8",
+  "newline": "LF",
+  "capturedFrom": "teacher_paste",
+  "sha256": "b9e4f23af8e7c44bf5548fb48b4c0ad90da8ca823edde17064eebb19b16c6959",
+  "text": "AMY: It costs １２ today."
+ },
+ "audit": {
+  "auditState": "audited_no_open_issues",
+  "auditedBy": {
+   "kind": "rule_engine",
+   "name": "synthetic fixture generator"
+  },
+  "auditedAt": "2026-01-01T00:00:00Z",
+  "audioAvailableToAuditor": false,
+  "audioVerificationPerformed": false,
+  "issues": [],
+  "decisions": []
+ },
+ "transcript": {
+  "speakers": [
+   {
+    "id": "sp-amy",
+    "rawLabel": "AMY",
+    "displayName": "Amy"
+   }
+  ],
+  "turns": [
+   {
+    "id": "t001",
+    "order": 1,
+    "speakerId": "sp-amy",
+    "rawSpan": {
+     "start": 0,
+     "end": 23
+    }
+   }
+  ],
+  "sentences": [
+   {
+    "id": "s001",
+    "turnId": "t001",
+    "order": 1,
+    "rawText": "It costs １２ today.",
+    "rawSpan": {
+     "start": 5,
+     "end": 23
+    },
+    "cleanText": "It costs １２ today.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   }
+  ],
+  "fullCleanText": "It costs １２ today."
+ },
+ "settings": {
+  "level2": {
+   "maxHiddenWords": 2
+  }
+ },
+ "learningTargets": [
+  {
+   "id": "tg-001",
+   "sentenceId": "s001",
+   "charStart": 9,
+   "charEnd": 11,
+   "surface": "１２",
+   "occurrence": 1,
+   "focusTypes": [
+    "number"
+   ],
+   "confidence": "low",
+   "rationale": "unicode probe",
+   "source": "external_ai",
+   "allowedForms": [
+    {
+     "text": "12",
+     "kind": "numeral_word_equivalent",
+     "approvalState": "proposed"
+    }
+   ]
+  }
+ ],
+ "exercises": {
+  "level2": {
+   "items": [
+    {
+     "id": "l2-001",
+     "sentenceId": "s001",
+     "blanks": [
+      {
+       "targetId": "tg-001"
+      }
+     ]
+    }
+   ]
+  }
+ }
+}

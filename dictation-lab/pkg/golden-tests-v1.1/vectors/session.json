@@ -1,0 +1,1745 @@
+{
+ "suite": "session-navigation-homework",
+ "vectorsVersion": "3",
+ "baseline": "baseline-harbour-museum.rev1.json",
+ "vectors": [
+  {
+   "id": "NAV-001",
+   "title": "skip an item and return: its first attempt is still the first",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "mode": "free_practice",
+    "version": "v1",
+    "items": [
+     "A",
+     "B",
+     "C"
+    ],
+    "events": [
+     {
+      "op": "goto",
+      "item": "A"
+     },
+     {
+      "op": "goto",
+      "item": "C"
+     },
+     {
+      "op": "check",
+      "item": "C",
+      "num": 6,
+      "den": 6
+     },
+     {
+      "op": "goto",
+      "item": "B"
+     },
+     {
+      "op": "check",
+      "item": "B",
+      "num": 3,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "ok",
+     "ok",
+     "recorded",
+     "ok",
+     "recorded"
+    ],
+    "final": {
+     "attemptCounts": {
+      "A": 0,
+      "B": 1,
+      "C": 1
+     },
+     "firstAttempt": {
+      "B": {
+       "num": 3,
+       "den": 6
+      },
+      "C": {
+       "num": 6,
+       "den": 6
+      }
+     }
+    }
+   }
+  },
+  {
+   "id": "NAV-002",
+   "title": "revisiting a completed item adds an attempt, first attempt unchanged",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "mode": "free_practice",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "check",
+      "item": "A",
+      "num": 4,
+      "den": 6
+     },
+     {
+      "op": "check",
+      "item": "A",
+      "num": 6,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "recorded",
+     "recorded"
+    ],
+    "final": {
+     "attemptCounts": {
+      "A": 2
+     },
+     "firstAttempt": {
+      "A": {
+       "num": 4,
+       "den": 6
+      }
+     }
+    }
+   }
+  },
+  {
+   "id": "NAV-003",
+   "title": "autosaved draft restores the draft answers; a draft is not a submission",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A",
+     "B"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "saveDraft"
+     },
+     {
+      "op": "resume"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "draft_saved",
+     "resumed"
+    ],
+    "final": {
+     "submitted": false,
+     "answered": {
+      "A": true,
+      "B": false
+     }
+    }
+   }
+  },
+  {
+   "id": "NAV-004",
+   "title": "incomplete submit needs confirmation; confirmed request is only pending until the server acknowledges",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "submission"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A",
+     "B",
+     "C"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": false
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     },
+     {
+      "op": "server_ack",
+      "key": "k1",
+      "status": "accepted",
+      "submissionId": "sub-1"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "needs_confirmation:2",
+     "submit_pending",
+     "submitted"
+    ],
+    "final": {
+     "submitted": true,
+     "submissionState": "submitted",
+     "unanswered": [
+      "B",
+      "C"
+     ],
+     "answered": {
+      "A": true,
+      "B": false,
+      "C": false
+     }
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "NAV-005",
+   "title": "failed submit restores draft; retry with a new key; late repeat after success is idempotent",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "submission"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     },
+     {
+      "op": "submit_failed",
+      "key": "k1"
+     },
+     {
+      "op": "submit_requested",
+      "key": "k2",
+      "confirmIncomplete": true
+     },
+     {
+      "op": "server_ack",
+      "key": "k2",
+      "status": "accepted",
+      "submissionId": "sub-2"
+     },
+     {
+      "op": "submit_requested",
+      "key": "k3",
+      "confirmIncomplete": true
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "submit_pending",
+     "draft_restored",
+     "submit_pending",
+     "submitted",
+     "already_submitted"
+    ],
+    "final": {
+     "submitted": true,
+     "submissionId": "sub-2",
+     "answered": {
+      "A": true
+     }
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "NAV-006",
+   "title": "version pinning: draft and submission stay on the version in progress",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "submission"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "publishNewVersion",
+      "version": "v2"
+     },
+     {
+      "op": "saveDraft"
+     },
+     {
+      "op": "resume"
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     },
+     {
+      "op": "server_ack",
+      "key": "k1",
+      "status": "accepted",
+      "submissionId": "sub-1"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "ok",
+     "draft_saved",
+     "resumed",
+     "submit_pending",
+     "submitted"
+    ],
+    "final": {
+     "version": "v1",
+     "latestPublished": "v2",
+     "submittedVersion": "v1",
+     "submitted": true
+    }
+   },
+   "decisionRefs": [
+    "D-20",
+    "D-21"
+   ]
+  },
+  {
+   "id": "NAV-007",
+   "title": "after server-confirmed submission homework is locked",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "submission"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     },
+     {
+      "op": "server_ack",
+      "key": "k1",
+      "status": "accepted",
+      "submissionId": "sub-1"
+     },
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "submit_pending",
+     "submitted",
+     "locked_after_submit"
+    ],
+    "final": {
+     "submitted": true,
+     "answered": {
+      "A": true
+     }
+    }
+   },
+   "decisionRefs": [
+    "D-22"
+   ]
+  },
+  {
+   "id": "NAV-008",
+   "title": "free practice never submits and is never locked",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "submission"
+   ],
+   "input": {
+    "mode": "free_practice",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "check",
+      "item": "A",
+      "num": 4,
+      "den": 6
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     },
+     {
+      "op": "check",
+      "item": "A",
+      "num": 6,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "recorded",
+     "not_applicable_free_practice",
+     "recorded"
+    ],
+    "final": {
+     "attemptCounts": {
+      "A": 2
+     },
+     "submitted": false
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "NAV-009",
+   "title": "an empty draft answer is recorded as not answered; a later answer replaces it",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": true
+     },
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "draft_updated"
+    ],
+    "final": {
+     "answered": {
+      "A": true
+     }
+    }
+   },
+   "decisionRefs": [
+    "D-12"
+   ]
+  },
+  {
+   "id": "NAV-010",
+   "title": "leaving the page without submitting never submits",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "saveDraft"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "draft_saved"
+    ],
+    "final": {
+     "submitted": false,
+     "answered": {
+      "A": true
+     }
+    }
+   }
+  },
+  {
+   "id": "SUB-001",
+   "title": "a confirmed submit request is pending, never submitted, until the server acknowledges",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "submission"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A",
+     "B"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "answer",
+      "item": "B",
+      "empty": false
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "draft_updated",
+     "submit_pending"
+    ],
+    "final": {
+     "submitted": false,
+     "submissionState": "submit_pending"
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "SUB-002",
+   "title": "failure notice restores the draft with all data intact",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "submission"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A",
+     "B"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "answer",
+      "item": "B",
+      "empty": false
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     },
+     {
+      "op": "submit_failed",
+      "key": "k1"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "draft_updated",
+     "submit_pending",
+     "draft_restored"
+    ],
+    "final": {
+     "submitted": false,
+     "submissionState": "draft",
+     "answered": {
+      "A": true,
+      "B": true
+     }
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "SUB-003",
+   "title": "acknowledgement for another key is ignored",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "submission"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A",
+     "B"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "answer",
+      "item": "B",
+      "empty": false
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     },
+     {
+      "op": "server_ack",
+      "key": "zzz",
+      "status": "accepted",
+      "submissionId": "sub-1"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "draft_updated",
+     "submit_pending",
+     "mismatched_ack_ignored"
+    ],
+    "final": {
+     "submitted": false,
+     "submissionState": "submit_pending"
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "SUB-004",
+   "title": "acknowledgement without a pending request is ignored",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "submission"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A",
+     "B"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "server_ack",
+      "key": "k1",
+      "status": "accepted",
+      "submissionId": "sub-1"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "unexpected_ack_ignored"
+    ],
+    "final": {
+     "submitted": false,
+     "submissionState": "draft"
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "SUB-005",
+   "title": "duplicate acknowledgement after success is idempotent",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "submission"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A",
+     "B"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "answer",
+      "item": "B",
+      "empty": false
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     },
+     {
+      "op": "server_ack",
+      "key": "k1",
+      "status": "accepted",
+      "submissionId": "sub-1"
+     },
+     {
+      "op": "server_ack",
+      "key": "k1",
+      "status": "accepted",
+      "submissionId": "sub-1"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "draft_updated",
+     "submit_pending",
+     "submitted",
+     "already_submitted"
+    ],
+    "final": {
+     "submitted": true,
+     "submissionId": "sub-1"
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "SUB-006",
+   "title": "server rejection returns to draft",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "submission"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A",
+     "B"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "answer",
+      "item": "B",
+      "empty": false
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     },
+     {
+      "op": "server_ack",
+      "key": "k1",
+      "status": "rejected",
+      "submissionId": "x"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "draft_updated",
+     "submit_pending",
+     "submit_rejected"
+    ],
+    "final": {
+     "submitted": false,
+     "submissionState": "draft"
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "SUB-007",
+   "title": "an accepted acknowledgement without a submission id is invalid and ignored",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "submission"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A",
+     "B"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "answer",
+      "item": "B",
+      "empty": false
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     },
+     {
+      "op": "server_ack",
+      "key": "k1",
+      "status": "accepted"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "draft_updated",
+     "submit_pending",
+     "invalid_ack_ignored"
+    ],
+    "final": {
+     "submitted": false,
+     "submissionState": "submit_pending"
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "SUB-008",
+   "title": "edits are locked while a submission is pending",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "submission"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A",
+     "B"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "answer",
+      "item": "B",
+      "empty": false
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     },
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "draft_updated",
+     "submit_pending",
+     "locked_pending_submit"
+    ],
+    "final": {
+     "submissionState": "submit_pending",
+     "answered": {
+      "A": true,
+      "B": true
+     }
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "SUB-009",
+   "title": "a second request while pending does not create a second submission",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "submission"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A",
+     "B"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "answer",
+      "item": "B",
+      "empty": false
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     },
+     {
+      "op": "submit_requested",
+      "key": "k2",
+      "confirmIncomplete": true
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "draft_updated",
+     "submit_pending",
+     "already_pending"
+    ],
+    "final": {
+     "submissionState": "submit_pending"
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "SUB-010",
+   "title": "optional Free Practice after submission is separate and leaves the submission unchanged",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "submission"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A",
+     "B"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "answer",
+      "item": "B",
+      "empty": false
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     },
+     {
+      "op": "server_ack",
+      "key": "k1",
+      "status": "accepted",
+      "submissionId": "sub-1"
+     },
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "startFreePractice"
+     },
+     {
+      "op": "check",
+      "item": "A",
+      "num": 3,
+      "den": 6,
+      "practice": true
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "draft_updated",
+     "submit_pending",
+     "submitted",
+     "locked_after_submit",
+     "free_practice_started",
+     "recorded_practice"
+    ],
+    "final": {
+     "submitted": true,
+     "practiceAttemptCounts": {
+      "A": 1
+     },
+     "answered": {
+      "A": true,
+      "B": true
+     }
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "SUB-011",
+   "title": "free practice cannot start before a confirmed submission",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "submission"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A",
+     "B"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "startFreePractice"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "free_practice_not_available"
+    ],
+    "final": {
+     "submitted": false
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "SUB-012",
+   "title": "empty answers do not count as answered when counting incomplete items",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "submission"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A",
+     "B"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": true
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": false
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "needs_confirmation:2"
+    ],
+    "final": {
+     "submitted": false,
+     "submissionState": "draft"
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "SUB-013",
+   "title": "a client can never become submitted without an acknowledgement; resuming a draft while pending is locked",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "submission"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A",
+     "B"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "answer",
+      "item": "B",
+      "empty": false
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     },
+     {
+      "op": "saveDraft"
+     },
+     {
+      "op": "resume"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "draft_updated",
+     "submit_pending",
+     "draft_saved",
+     "locked_pending_submit"
+    ],
+    "final": {
+     "submitted": false
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "HWS-001",
+   "title": "homework: a scored Check before submission is not available (no answer key on the device)",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "v1.1",
+    "adversarial"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "check",
+      "item": "A",
+      "num": 6,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "not_available_homework"
+    ],
+    "final": {
+     "answered": {
+      "A": false
+     },
+     "submitted": false
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "HWS-002",
+   "title": "free practice: injected hint and reveal events are unsupported and change nothing",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "v1.1",
+    "adversarial"
+   ],
+   "input": {
+    "mode": "free_practice",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "hint",
+      "item": "A"
+     },
+     {
+      "op": "reveal",
+      "item": "A"
+     },
+     {
+      "op": "check",
+      "item": "A",
+      "num": 3,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "unsupported_event",
+     "unsupported_event",
+     "recorded"
+    ],
+    "final": {
+     "attemptCounts": {
+      "A": 1
+     },
+     "firstAttempt": {
+      "A": {
+       "num": 3,
+       "den": 6
+      }
+     }
+    }
+   },
+   "decisionRefs": [
+    "D-14"
+   ]
+  },
+  {
+   "id": "HWS-003",
+   "title": "homework: hint and reveal are unsupported before and after submission",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "v1.1",
+    "adversarial"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "hint",
+      "item": "A"
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     },
+     {
+      "op": "server_ack",
+      "key": "k1",
+      "status": "accepted",
+      "submissionId": "sub-1"
+     },
+     {
+      "op": "reveal",
+      "item": "A"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "unsupported_event",
+     "submit_pending",
+     "submitted",
+     "unsupported_event"
+    ],
+    "final": {
+     "submitted": true
+    }
+   },
+   "decisionRefs": [
+    "D-14",
+    "D-22"
+   ]
+  },
+  {
+   "id": "HWS-004",
+   "title": "homework: one blank of two needs confirmation before submitting",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "v1.1"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A",
+     "B"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "answer",
+      "item": "B",
+      "empty": true
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": false
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "draft_updated",
+     "needs_confirmation:1"
+    ],
+    "final": {
+     "submissionState": "draft",
+     "answered": {
+      "A": true,
+      "B": false
+     }
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "HWS-005",
+   "title": "homework: after acknowledgement, answers and resuming an old draft are locked",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "v1.1",
+    "adversarial"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "saveDraft"
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     },
+     {
+      "op": "server_ack",
+      "key": "k1",
+      "status": "accepted",
+      "submissionId": "sub-1"
+     },
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": true
+     },
+     {
+      "op": "resume"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "draft_saved",
+     "submit_pending",
+     "submitted",
+     "locked_after_submit",
+     "locked_after_submit"
+    ],
+    "final": {
+     "answered": {
+      "A": true
+     },
+     "submitted": true
+    }
+   },
+   "decisionRefs": [
+    "D-22"
+   ]
+  },
+  {
+   "id": "HWS-006",
+   "title": "homework: clearing an answer makes the item unanswered again",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "v1.1"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": true
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": false
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "draft_updated",
+     "needs_confirmation:1"
+    ],
+    "final": {
+     "answered": {
+      "A": false
+     }
+    }
+   },
+   "decisionRefs": [
+    "D-12"
+   ]
+  },
+  {
+   "id": "HWS-007",
+   "title": "free practice has no draft-answer event (Check is the action)",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "v1.1"
+   ],
+   "input": {
+    "mode": "free_practice",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "not_applicable_free_practice"
+    ],
+    "final": {
+     "attemptCounts": {
+      "A": 0
+     }
+    }
+   },
+   "decisionRefs": [
+    "D-22"
+   ]
+  },
+  {
+   "id": "HWS-008",
+   "title": "homework: review is not available while the submission is pending",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "v1.1",
+    "adversarial"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "submit_pending"
+    ],
+    "final": {
+     "reviewAvailable": false,
+     "submissionState": "submit_pending"
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "HWS-009",
+   "title": "homework: review becomes available only with the server acknowledgement",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "v1.1"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "answer",
+      "item": "A",
+      "empty": false
+     },
+     {
+      "op": "submit_requested",
+      "key": "k1",
+      "confirmIncomplete": true
+     },
+     {
+      "op": "server_ack",
+      "key": "k1",
+      "status": "accepted",
+      "submissionId": "sub-1"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "draft_updated",
+     "submit_pending",
+     "submitted"
+    ],
+    "final": {
+     "reviewAvailable": true,
+     "submissionId": "sub-1"
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "HWS-010",
+   "title": "homework: a practice Check before submission is still not available",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "v1.1",
+    "adversarial"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "startFreePractice"
+     },
+     {
+      "op": "check",
+      "item": "A",
+      "num": 6,
+      "den": 6,
+      "practice": true
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "free_practice_not_available",
+     "not_available_homework"
+    ],
+    "final": {
+     "submitted": false
+    }
+   },
+   "decisionRefs": [
+    "D-22"
+   ]
+  }
+ ]
+}

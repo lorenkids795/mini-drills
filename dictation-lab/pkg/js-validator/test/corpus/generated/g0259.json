@@ -1,0 +1,152 @@
+{
+ "$schema": "urn:minidrills:dictation-lab:schema:1.1",
+ "schemaVersion": "1.1",
+ "importMode": "ai_json",
+ "metadata": {
+  "title": "Synthetic club walk (public-safe test fixture)",
+  "language": "en-GB",
+  "source": {
+   "type": "teacher_upload",
+   "label": "synthetic"
+  },
+  "audio": {
+   "availability": "none_attached",
+   "timestampsAvailable": false
+  },
+  "generatedBy": {
+   "kind": "external_ai",
+   "toolName": "make_fixtures.py (synthetic)",
+   "generatedAt": "2026-01-01T00:00:00Z"
+  },
+  "fixture": {
+   "isPartial": false,
+   "note": "Synthetic public-safe fixture. All approvals and identities are synthetic test data."
+  }
+ },
+ "rights": {
+  "usage": "public_domain",
+  "rightsHolder": "Synthetic fixture (CC0)",
+  "teacherAttestsAuthorizedUse": true,
+  "publicRedistributionAllowed": true
+ },
+ "rawTranscript": {
+  "immutable": true,
+  "encoding": "utf-8",
+  "newline": "LF",
+  "capturedFrom": "teacher_paste",
+  "sha256": "bcfb65cafeeb3f987ba9b87115c0b4df4a1ddfb73974b106d05ff69bd9882a93",
+  "text": "AMY: I SAW 😀 A RED KITE TODAY. THEN I SAW A BLUE KITE."
+ },
+ "audit": {
+  "auditState": "audited_no_open_issues",
+  "auditedBy": {
+   "kind": "rule_engine",
+   "name": "synthetic fixture generator"
+  },
+  "auditedAt": "2026-01-01T00:00:00Z",
+  "audioAvailableToAuditor": false,
+  "audioVerificationPerformed": false,
+  "issues": [],
+  "decisions": []
+ },
+ "transcript": {
+  "speakers": [
+   {
+    "id": "sp-amy",
+    "rawLabel": "AMY",
+    "displayName": "Amy"
+   }
+  ],
+  "turns": [
+   {
+    "id": "t001",
+    "order": 1,
+    "speakerId": "sp-amy",
+    "rawSpan": {
+     "start": 0,
+     "end": 55
+    }
+   }
+  ],
+  "sentences": [
+   {
+    "id": "s001",
+    "turnId": "t001",
+    "order": 1,
+    "rawText": "I saw 😀 a red kite today.",
+    "rawSpan": {
+     "start": 5,
+     "end": 31
+    },
+    "cleanText": "I saw 😀 a red kite today.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s002",
+    "turnId": "t001",
+    "order": 2,
+    "rawText": "Then I saw a blue kite.",
+    "rawSpan": {
+     "start": 32,
+     "end": 55
+    },
+    "cleanText": "Then I saw a blue kite.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    },
+    "timestamp": {
+     "startSec": 5.0,
+     "endSec": 3.0,
+     "source": "teacher_entered"
+    }
+   }
+  ],
+  "fullCleanText": "I saw 😀 a red kite today. Then I saw a blue kite."
+ },
+ "settings": {
+  "level2": {
+   "maxHiddenWords": 2
+  }
+ },
+ "learningTargets": [
+  {
+   "id": "tg-001",
+   "sentenceId": "s001",
+   "charStart": 11,
+   "charEnd": 14,
+   "surface": "red",
+   "occurrence": 1,
+   "focusTypes": [
+    "content_word"
+   ],
+   "confidence": "medium",
+   "rationale": "Synthetic target for QA.",
+   "source": "external_ai"
+  }
+ ],
+ "exercises": {
+  "level2": {
+   "items": [
+    {
+     "id": "l2-001",
+     "sentenceId": "s001",
+     "blanks": [
+      {
+       "targetId": "tg-001"
+      }
+     ]
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,149 @@
+{
+ "suite": "level4-extended-dictation",
+ "vectorsVersion": "1",
+ "baseline": "baseline-harbour-museum.rev1.json",
+ "vectors": [
+  {
+   "id": "L4-001",
+   "title": "exact with different line breaks and punctuation",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l4-003",
+    "answer": "Not really\nYou listen you smile and you answer questions\nLast year we guided over 200 school groups and most of them came back again"
+   },
+   "expected": {
+    "lcs": 25,
+    "den": 25,
+    "exact": true,
+    "variant": "original",
+    "sentenceMatchedAll": [
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "L4-002",
+   "title": "whole middle sentence omitted: alignment re-syncs after the gap",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l4-003",
+    "answer": "Not really. Last year we guided over 200 school groups, and most of them came back again."
+   },
+   "expected": {
+    "lcs": 17,
+    "den": 25,
+    "exact": false,
+    "variant": "original",
+    "sentenceMatchedAll": [
+     true,
+     false,
+     true
+    ]
+   }
+  },
+  {
+   "id": "L4-003",
+   "title": "approved numeral word form inside a long passage",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l4-003",
+    "answer": "Not really. You listen, you smile, and you answer questions. Last year we guided over two hundred school groups, and most of them came back again."
+   },
+   "expected": {
+    "lcs": 26,
+    "den": 26,
+    "exact": true,
+    "variant": "alt:two hundred"
+   }
+  },
+  {
+   "id": "L4-004",
+   "title": "sentences typed in the wrong order",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l4-003",
+    "answer": "Last year we guided over 200 school groups, and most of them came back again. Not really. You listen, you smile, and you answer questions."
+   },
+   "expected": {
+    "lcs": 15,
+    "den": 25,
+    "exact": false,
+    "variant": "original"
+   }
+  },
+  {
+   "id": "L4-005",
+   "title": "extra trailing sentence",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l4-003",
+    "answer": "Not really. You listen, you smile, and you answer questions. Last year we guided over 200 school groups, and most of them came back again. Perfect."
+   },
+   "expected": {
+    "lcs": 25,
+    "den": 26,
+    "exact": false,
+    "variant": "original",
+    "missing": 0,
+    "extra": 1
+   }
+  },
+  {
+   "id": "L4-006",
+   "title": "speaker label typed by the student counts as an extra word (strict default)",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "itemId": "l4-003",
+    "answer": "TOM: Not really. You listen, you smile, and you answer questions. Last year we guided over 200 school groups, and most of them came back again."
+   },
+   "expected": {
+    "lcs": 25,
+    "den": 26,
+    "exact": false,
+    "variant": "original",
+    "missing": 0,
+    "extra": 1
+   },
+   "decisionRefs": [
+    "D-13"
+   ]
+  },
+  {
+   "id": "L4-007",
+   "title": "approved it has accepted inside a two-sentence passage",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "itemId": "l4-001",
+    "answer": "Mostly guiding school groups around the galleries on weekday mornings. It has got a lot of stairs, so please wear comfortable shoes and bring a bottle of water."
+   },
+   "expected": {
+    "lcs": 28,
+    "den": 28,
+    "exact": true,
+    "variant": "alt:It has"
+   }
+  }
+ ]
+}

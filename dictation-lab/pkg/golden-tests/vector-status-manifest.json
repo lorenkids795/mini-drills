@@ -1,0 +1,980 @@
+{
+ "manifestVersion": "2",
+ "originalVectors": 134,
+ "totals": {
+  "unchanged": 112,
+  "changed": 22,
+  "new": 108,
+  "total": 242
+ },
+ "vectors": {
+  "AGG-001": {
+   "status": "changed",
+   "reason": "D-19 revised: separate attemptedAccuracy, assignmentScore, completionRate (design review 1)"
+  },
+  "AGG-002": {
+   "status": "changed",
+   "reason": "D-19 revised: separate attemptedAccuracy, assignmentScore, completionRate (design review 1)"
+  },
+  "AGS-001": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AGS-002": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AGS-003": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AGS-004": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AGS-005": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AGS-006": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AGS-007": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AGS-008": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AGS-009": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AGS-010": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AGS-011": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-001": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-002": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-003": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-004": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-005": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-006": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-007": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-008": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-009": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-010": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-011": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-012": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-013": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-014": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-015": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-016": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-017": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-018": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-019": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-020": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-021": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-022": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-023": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-024": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-025": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-026": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-027": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "AS-028": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-029": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-030": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-031": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-032": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-033": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-034": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-035": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-036": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-037": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-038": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-039": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-040": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-041": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-042": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-043": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-044": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-045": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-046": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-047": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-048": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "AS-049": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "ATT-001": {
+   "status": "changed",
+   "reason": "attempt result fields split into independence, outcome, evidence, attempted (contract C10, C11); legacy status kept"
+  },
+  "ATT-002": {
+   "status": "changed",
+   "reason": "attempt result fields split into independence, outcome, evidence, attempted (contract C10, C11); legacy status kept"
+  },
+  "ATT-003": {
+   "status": "changed",
+   "reason": "attempt result fields split into independence, outcome, evidence, attempted (contract C10, C11); legacy status kept"
+  },
+  "ATT-004": {
+   "status": "changed",
+   "reason": "attempt result fields split into independence, outcome, evidence, attempted (contract C10, C11); legacy status kept"
+  },
+  "ATT-005": {
+   "status": "changed",
+   "reason": "attempt result fields split into independence, outcome, evidence, attempted (contract C10, C11); legacy status kept"
+  },
+  "ATT-006": {
+   "status": "changed",
+   "reason": "attempt result fields split into independence, outcome, evidence, attempted (contract C10, C11); legacy status kept"
+  },
+  "ATT-007": {
+   "status": "changed",
+   "reason": "attempt result fields split into independence, outcome, evidence, attempted (contract C10, C11); legacy status kept"
+  },
+  "ATT-008": {
+   "status": "changed",
+   "reason": "attempt result fields split into independence, outcome, evidence, attempted (contract C10, C11); legacy status kept"
+  },
+  "ATT-009": {
+   "status": "changed",
+   "reason": "attempt result fields split into independence, outcome, evidence, attempted (contract C10, C11); legacy status kept"
+  },
+  "ATT-010": {
+   "status": "changed",
+   "reason": "attempt result fields split into independence, outcome, evidence, attempted (contract C10, C11); legacy status kept"
+  },
+  "ATT-011": {
+   "status": "changed",
+   "reason": "attempt result fields split into independence, outcome, evidence, attempted (contract C10, C11); legacy status kept"
+  },
+  "ATT-012": {
+   "status": "changed",
+   "reason": "attempt result fields split into independence, outcome, evidence, attempted (contract C10, C11); legacy status kept"
+  },
+  "ATT-013": {
+   "status": "changed",
+   "reason": "attempt result fields split into independence, outcome, evidence, attempted (contract C10, C11); legacy status kept"
+  },
+  "EXD-001": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXD-002": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXD-003": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXD-004": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXD-005": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXD-006": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXD-007": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXD-008": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXD-009": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXP-001": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXP-002": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXP-003": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXP-004": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXP-005": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXP-006": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXP-007": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXP-008": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXP-009": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXP-010": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXP-011": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXP-012": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "EXP-013": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "L1-001": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L1-002": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L1-003": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L1-004": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L1-005": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L1-006": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L1-007": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L1-008": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L1-009": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L1-010": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L1-011": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L1-012": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L1-013": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-001": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-002": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-003": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-004": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-005": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-006": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-007": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-008": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-009": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-010": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-011": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-012": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-013": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-014": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-015": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-016": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-017": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-018": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-019": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-020": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-021": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-022": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-023": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L2-024": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-001": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-002": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-003": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-004": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-005": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-006": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-007": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-008": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-009": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-010": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-011": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-012": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-013": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-014": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-015": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-016": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-017": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-018": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-019": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-020": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L3-021": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L4-001": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L4-002": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L4-003": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L4-004": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L4-005": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "L4-006": {
+   "status": "changed",
+   "reason": "D-13 revised: known leading speaker label at line start is ignored in Level 4"
+  },
+  "L4-007": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "LCS-001": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "LCS-002": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "LCS-003": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "LCS-004": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "LCS-005": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "LCS-006": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NAV-001": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "NAV-002": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "NAV-003": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "NAV-004": {
+   "status": "changed",
+   "reason": "Homework becomes submitted only after a server acknowledgement (design review 5); event names changed from submit to submit_requested, server_ack, submit_failed"
+  },
+  "NAV-005": {
+   "status": "changed",
+   "reason": "Homework becomes submitted only after a server acknowledgement (design review 5); event names changed from submit to submit_requested, server_ack, submit_failed"
+  },
+  "NAV-006": {
+   "status": "changed",
+   "reason": "Homework becomes submitted only after a server acknowledgement (design review 5); event names changed from submit to submit_requested, server_ack, submit_failed"
+  },
+  "NAV-007": {
+   "status": "changed",
+   "reason": "Homework becomes submitted only after a server acknowledgement (design review 5); event names changed from submit to submit_requested, server_ack, submit_failed"
+  },
+  "NAV-008": {
+   "status": "changed",
+   "reason": "Homework becomes submitted only after a server acknowledgement (design review 5); event names changed from submit to submit_requested, server_ack, submit_failed"
+  },
+  "NAV-009": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "NAV-010": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "NUM-001": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-002": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-003": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-004": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-005": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-006": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-007": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-008": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-009": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-010": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-011": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-012": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-013": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-014": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-015": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-016": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-017": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-018": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-019": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "NUM-020": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SAF-001": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "SAF-002": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "SAF-003": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "SPK-001": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SPK-002": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SPK-003": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SPK-004": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SPK-005": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SPK-006": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SPK-007": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SPK-008": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SPK-009": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SPK-010": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SPK-011": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SPK-012": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SPK-013": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SPK-014": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SUB-001": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SUB-002": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SUB-003": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SUB-004": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SUB-005": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SUB-006": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SUB-007": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SUB-008": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SUB-009": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SUB-010": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SUB-011": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SUB-012": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "SUB-013": {
+   "status": "new",
+   "reason": "new vector for contract v1"
+  },
+  "TOK-001": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "TOK-002": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "TOK-003": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "TOK-004": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "TOK-005": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "TOK-006": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "TOK-007": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "TOK-008": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "TOK-009": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "TOK-010": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "TOK-011": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "TOK-012": {
+   "status": "unchanged",
+   "reason": ""
+  },
+  "TOK-013": {
+   "status": "changed",
+   "reason": "D-17 revised: % carries answer meaning and is no longer stripped"
+  },
+  "TOK-014": {
+   "status": "unchanged",
+   "reason": ""
+  }
+ }
+}

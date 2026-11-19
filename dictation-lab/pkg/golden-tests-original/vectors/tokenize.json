@@ -1,0 +1,252 @@
+{
+ "suite": "tokenize-and-normalise",
+ "vectorsVersion": "1",
+ "baseline": "baseline-harbour-museum.rev1.json",
+ "vectors": [
+  {
+   "id": "TOK-001",
+   "title": "curly apostrophe lowercased",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "text": "We’re always looking"
+   },
+   "expected": {
+    "tokens": [
+     "we're",
+     "always",
+     "looking"
+    ]
+   }
+  },
+  {
+   "id": "TOK-002",
+   "title": "quotes and trailing punctuation stripped",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "text": "“Hello,” she said."
+   },
+   "expected": {
+    "tokens": [
+     "hello",
+     "she",
+     "said"
+    ]
+   }
+  },
+  {
+   "id": "TOK-003",
+   "title": "times and dates; trailing dot of a.m. is stripped",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "text": "It’s on the 17th, from 10 a.m. until 3."
+   },
+   "expected": {
+    "tokens": [
+     "it's",
+     "on",
+     "the",
+     "17th",
+     "from",
+     "10",
+     "a.m",
+     "until",
+     "3"
+    ]
+   }
+  },
+  {
+   "id": "TOK-004",
+   "title": "standalone dash dropped",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "text": "pair – there’s a hole"
+   },
+   "expected": {
+    "tokens": [
+     "pair",
+     "there's",
+     "a",
+     "hole"
+    ]
+   }
+  },
+  {
+   "id": "TOK-005",
+   "title": "currency symbol kept, decimal point kept, trailing comma and bang stripped",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "text": "£8.50, or £12!"
+   },
+   "expected": {
+    "tokens": [
+     "£8.50",
+     "or",
+     "£12"
+    ]
+   }
+  },
+  {
+   "id": "TOK-006",
+   "title": "hyphenated compound is one token; extra spaces ignored",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "text": "  half-day   session "
+   },
+   "expected": {
+    "tokens": [
+     "half-day",
+     "session"
+    ]
+   }
+  },
+  {
+   "id": "TOK-007",
+   "title": "lone symbol is not a token",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "text": "A < B"
+   },
+   "expected": {
+    "tokens": [
+     "a",
+     "b"
+    ]
+   }
+  },
+  {
+   "id": "TOK-008",
+   "title": "angle brackets inside a token are kept",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "text": "<noise> here"
+   },
+   "expected": {
+    "tokens": [
+     "<noise>",
+     "here"
+    ]
+   }
+  },
+  {
+   "id": "TOK-009",
+   "title": "NFC: decomposed and composed e acute are equal",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "text": "café café"
+   },
+   "expected": {
+    "tokens": [
+     "café",
+     "café"
+    ]
+   }
+  },
+  {
+   "id": "TOK-010",
+   "title": "single quotes and ellipsis stripped, inner apostrophe kept",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "text": "o’clock; ‘quoted’ words…"
+   },
+   "expected": {
+    "tokens": [
+     "o'clock",
+     "quoted",
+     "words"
+    ]
+   }
+  },
+  {
+   "id": "TOK-011",
+   "title": "whitespace only",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "text": "   "
+   },
+   "expected": {
+    "tokens": []
+   }
+  },
+  {
+   "id": "TOK-012",
+   "title": "punctuation only",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "text": "?! ... –"
+   },
+   "expected": {
+    "tokens": []
+   }
+  },
+  {
+   "id": "TOK-013",
+   "title": "percent sign is punctuation and is stripped (known limitation)",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [
+    "known_limitation"
+   ],
+   "input": {
+    "text": "20% off"
+   },
+   "expected": {
+    "tokens": [
+     "20",
+     "off"
+    ]
+   },
+   "decisionRefs": [
+    "D-17"
+   ]
+  },
+  {
+   "id": "TOK-014",
+   "title": "tab and newline separate tokens",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "text": "one\ttwo\nthree"
+   },
+   "expected": {
+    "tokens": [
+     "one",
+     "two",
+     "three"
+    ]
+   }
+  }
+ ]
+}

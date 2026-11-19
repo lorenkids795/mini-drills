@@ -1,0 +1,129 @@
+{
+ "$schema": "urn:minidrills:dictation-lab:schema:1.1",
+ "schemaVersion": "1.1",
+ "importMode": "ai_json",
+ "metadata": {
+  "title": "Synthetic club walk (public-safe test fixture)",
+  "language": "en-GB",
+  "source": {
+   "type": "teacher_upload",
+   "label": "synthetic"
+  },
+  "audio": {
+   "availability": "none_attached",
+   "timestampsAvailable": false
+  },
+  "generatedBy": {
+   "kind": "external_ai",
+   "toolName": "make_fixtures.py (synthetic)",
+   "generatedAt": "2026-01-01T00:00:00Z"
+  },
+  "fixture": {
+   "isPartial": false,
+   "note": "Synthetic public-safe fixture. All approvals and identities are synthetic test data."
+  }
+ },
+ "rights": {
+  "usage": "public_domain",
+  "rightsHolder": "Synthetic fixture (CC0)",
+  "teacherAttestsAuthorizedUse": true,
+  "publicRedistributionAllowed": true
+ },
+ "rawTranscript": {
+  "immutable": true,
+  "encoding": "utf-8",
+  "newline": "LF",
+  "capturedFrom": "teacher_paste",
+  "sha256": "2c57933c6b7b32a062de22a473af462d8fce3da450e17eb581ba1d7aa0e6fd87",
+  "text": "AMY: We met 👨‍👩‍👧 at noon and left."
+ },
+ "audit": {
+  "auditState": "audited_no_open_issues",
+  "auditedBy": {
+   "kind": "rule_engine",
+   "name": "synthetic fixture generator"
+  },
+  "auditedAt": "2026-01-01T00:00:00Z",
+  "audioAvailableToAuditor": false,
+  "audioVerificationPerformed": false,
+  "issues": [],
+  "decisions": []
+ },
+ "transcript": {
+  "speakers": [
+   {
+    "id": "sp-amy",
+    "rawLabel": "AMY",
+    "displayName": "Amy"
+   }
+  ],
+  "turns": [
+   {
+    "id": "t001",
+    "order": 1,
+    "speakerId": "sp-amy",
+    "rawSpan": {
+     "start": 0,
+     "end": 38
+    }
+   }
+  ],
+  "sentences": [
+   {
+    "id": "s001",
+    "turnId": "t001",
+    "order": 1,
+    "rawText": "We met 👨‍👩‍👧 at noon and left.",
+    "rawSpan": {
+     "start": 5,
+     "end": 38
+    },
+    "cleanText": "We met 👨‍👩‍👧 at noon and left.",
+    "enabled": true,
+    "textStatus": "verbatim_cleane",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   }
+  ],
+  "fullCleanText": "We met 👨‍👩‍👧 at noon and left."
+ },
+ "settings": {
+  "level2": {
+   "maxHiddenWords": 2
+  }
+ },
+ "learningTargets": [
+  {
+   "id": "tg-001",
+   "sentenceId": "s001",
+   "charStart": 19,
+   "charEnd": 23,
+   "surface": "noon",
+   "occurrence": 1,
+   "focusTypes": [
+    "spelling"
+   ],
+   "confidence": "low",
+   "rationale": "unicode probe",
+   "source": "external_ai"
+  }
+ ],
+ "exercises": {
+  "level2": {
+   "items": [
+    {
+     "id": "l2-001",
+     "sentenceId": "s001",
+     "blanks": [
+      {
+       "targetId": "tg-001"
+      }
+     ]
+    }
+   ]
+  }
+ }
+}

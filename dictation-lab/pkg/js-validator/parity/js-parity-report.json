@@ -1,0 +1,60 @@
+{
+ "divergencesDocumented": {
+  "date-time": "Python jsonschema ignores format date-time (no RFC 3339 package installed); the JS evaluator enforces RFC 3339."
+ },
+ "files": 533,
+ "schemaAgree": 526,
+ "schemaDivergent": [
+  {
+   "file": "generated/g0053.json",
+   "js": false,
+   "python": true,
+   "explained": "date-time"
+  },
+  {
+   "file": "generated/g0082.json",
+   "js": false,
+   "python": true,
+   "explained": "date-time"
+  },
+  {
+   "file": "generated/g0186.json",
+   "js": false,
+   "python": true,
+   "explained": "date-time"
+  },
+  {
+   "file": "generated/g0198.json",
+   "js": false,
+   "python": true,
+   "explained": "date-time"
+  },
+  {
+   "file": "generated/g0288.json",
+   "js": false,
+   "python": true,
+   "explained": "date-time"
+  },
+  {
+   "file": "generated/g0321.json",
+   "js": false,
+   "python": true,
+   "explained": "date-time"
+  },
+  {
+   "file": "generated/g0411.json",
+   "js": false,
+   "python": true,
+   "explained": "date-time"
+  }
+ ],
+ "semanticAgree": 533,
+ "semanticMismatch": [],
+ "fatalBothAgree": 0,
+ "byFolder": {
+  "rev1-fixtures": 92,
+  "demos": 3,
+  "unicode": 18,
+  "generated": 420
+ }
+}

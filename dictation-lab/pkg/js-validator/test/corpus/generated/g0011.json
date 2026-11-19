@@ -1,0 +1,943 @@
+{
+ "$schema": "urn:minidrills:dictation-lab:schema:1.1",
+ "schemaVersion": "1.1",
+ "importMode": "ai_json",
+ "metadata": {
+  "title": "Synthetic club walk (public-safe test fixture)",
+  "language": "en-GB",
+  "source": {
+   "type": "teacher_upload",
+   "label": "synthetic"
+  },
+  "audio": {
+   "availability": "none_attached",
+   "timestampsAvailable": false
+  },
+  "generatedBy": {
+   "kind": "external_ai",
+   "toolName": "make_fixtures.py (synthetic)",
+   "generatedAt": "2026-01-01T00:00:00Z"
+  },
+  "fixture": {
+   "isPartial": false,
+   "note": "Synthetic public-safe fixture. All approvals and identities are synthetic test data."
+  }
+ },
+ "rights": {
+  "usage": "public_domain",
+  "rightsHolder": "Synthetic fixture (CC0)",
+  "teacherAttestsAuthorizedUse": true,
+  "publicRedistributionAllowed": true
+ },
+ "rawTranscript": {
+  "immutable": true,
+  "encoding": "utf-8",
+  "newline": "LF",
+  "capturedFrom": "teacher_paste",
+  "sha256": "45bda2f298eaa32e8a973bdf288038bd1eb490a30a06290e95b985b47ecb3786",
+  "text": "MAYA: Hello, is this the Greenfield Walking Club?\n\nLEO: Yes, it is. I’m Leo, the treasurer.\n\nMAYA: Great. I’d like to join the Saturday walk. What is the cost (Q1)?\n\nLEO: The fee is £12 (Q2), including tea, or £15 if you want the bus ticket.\n\nMAYA: Should I bring a map?\n\nLEO: No, we lend maps. But do wear strong shoes (Q3) because the path is muddy after rain.\n\n----------------------------\n\nMAYA: Where do we meet?\n\nLEO: We meet outside the old library gate at nine o’clock sharp. Please arrive ten minutes early so everyone can sign in quickly. The group leaves promptly at nine, and nobody waits for latecomers, because the bus has to reach the trailhead before the morning traffic builds up.\n\nMAYA: Understood. Thank you."
+ },
+ "audit": {
+  "auditState": "audited_no_open_issues",
+  "auditedBy": {
+   "kind": "rule_engine",
+   "name": "synthetic fixture generator"
+  },
+  "auditedAt": "2026-01-01T00:00:00Z",
+  "audioAvailableToAuditor": false,
+  "audioVerificationPerformed": false,
+  "issues": [
+   {
+    "id": "iss-001",
+    "issueClass": "q_marker",
+    "status": "safe_cleanup",
+    "severity": "info",
+    "confidence": "high",
+    "sourceQuote": "(Q1)",
+    "rawSpan": {
+     "start": 159,
+     "end": 163
+    },
+    "proposedReplacement": "",
+    "cleanupOperation": "remove_q_marker",
+    "reason": "Location cue extracted from spoken text.",
+    "evidenceStatus": "not_required",
+    "affectedSentenceIds": [
+     "s006"
+    ],
+    "affectedQMarkerIds": [
+     "qm-01"
+    ],
+    "blocksScoredUse": false,
+    "proposedBy": {
+     "kind": "rule_engine",
+     "name": "synthetic"
+    }
+   },
+   {
+    "id": "iss-002",
+    "issueClass": "q_marker",
+    "status": "safe_cleanup",
+    "severity": "info",
+    "confidence": "high",
+    "sourceQuote": "(Q2)",
+    "rawSpan": {
+     "start": 186,
+     "end": 190
+    },
+    "proposedReplacement": "",
+    "cleanupOperation": "remove_q_marker",
+    "reason": "Location cue extracted from spoken text.",
+    "evidenceStatus": "not_required",
+    "affectedSentenceIds": [
+     "s007"
+    ],
+    "affectedQMarkerIds": [
+     "qm-02"
+    ],
+    "blocksScoredUse": false,
+    "proposedBy": {
+     "kind": "rule_engine",
+     "name": "synthetic"
+    }
+   },
+   {
+    "id": "iss-003",
+    "issueClass": "q_marker",
+    "status": "safe_cleanup",
+    "severity": "info",
+    "confidence": "high",
+    "sourceQuote": "(Q3)",
+    "rawSpan": {
+     "start": 320,
+     "end": 324
+    },
+    "proposedReplacement": "",
+    "cleanupOperation": "remove_q_marker",
+    "reason": "Location cue extracted from spoken text.",
+    "evidenceStatus": "not_required",
+    "affectedSentenceIds": [
+     "s010"
+    ],
+    "affectedQMarkerIds": [
+     "qm-03"
+    ],
+    "blocksScoredUse": false,
+    "proposedBy": {
+     "kind": "rule_engine",
+     "name": "synthetic"
+    }
+   }
+  ],
+  "decisions": []
+ },
+ "transcript": {
+  "speakers": [
+   {
+    "id": "sp-maya",
+    "rawLabel": "MAYA",
+    "displayName": "Maya"
+   },
+   {
+    "id": "sp-leo",
+    "rawLabel": "LEO",
+    "displayName": "Leo"
+   }
+  ],
+  "turns": [
+   {
+    "id": "t001",
+    "order": 1,
+    "speakerId": "sp-maya",
+    "rawSpan": {
+     "start": 0,
+     "end": 49
+    }
+   },
+   {
+    "id": "t002",
+    "order": 2,
+    "speakerId": "sp-leo",
+    "rawSpan": {
+     "start": 51,
+     "end": 91
+    }
+   },
+   {
+    "id": "t003",
+    "order": 3,
+    "speakerId": "sp-maya",
+    "rawSpan": {
+     "start": 93,
+     "end": 164
+    }
+   },
+   {
+    "id": "t004",
+    "order": 4,
+    "speakerId": "sp-leo",
+    "rawSpan": {
+     "start": 166,
+     "end": 241
+    }
+   },
+   {
+    "id": "t005",
+    "order": 5,
+    "speakerId": "sp-maya",
+    "rawSpan": {
+     "start": 243,
+     "end": 270
+    }
+   },
+   {
+    "id": "t006",
+    "order": 6,
+    "speakerId": "sp-leo",
+    "rawSpan": {
+     "start": 272,
+     "end": 362
+    }
+   },
+   {
+    "id": "t007",
+    "order": 7,
+    "speakerId": "sp-maya",
+    "rawSpan": {
+     "start": 394,
+     "end": 417
+    }
+   },
+   {
+    "id": "t008",
+    "order": 8,
+    "speakerId": "sp-leo",
+    "rawSpan": {
+     "start": 419,
+     "end": 697
+    }
+   },
+   {
+    "id": "t009",
+    "order": 9,
+    "speakerId": "sp-maya",
+    "rawSpan": {
+     "start": 699,
+     "end": 727
+    }
+   }
+  ],
+  "sentences": [
+   {
+    "id": "s001",
+    "turnId": "t001",
+    "order": 1,
+    "rawText": "Hello, is this the Greenfield Walking Club?",
+    "rawSpan": {
+     "start": 6,
+     "end": 49
+    },
+    "cleanText": "Hello, is this the Greenfield Walking Club?",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s002",
+    "turnId": "t002",
+    "order": 2,
+    "rawText": "Yes, it is.",
+    "rawSpan": {
+     "start": 56,
+     "end": 67
+    },
+    "cleanText": "Yes, it is.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s003",
+    "turnId": "t002",
+    "order": 3,
+    "rawText": "I’m Leo, the treasurer.",
+    "rawSpan": {
+     "start": 68,
+     "end": 91
+    },
+    "cleanText": "I’m Leo, the xreasurer.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s004",
+    "turnId": "t003",
+    "order": 4,
+    "rawText": "Great.",
+    "rawSpan": {
+     "start": 99,
+     "end": 105
+    },
+    "cleanText": "Great.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s005",
+    "turnId": "t003",
+    "order": 5,
+    "rawText": "I’d like to join the Saturday walk.",
+    "rawSpan": {
+     "start": 106,
+     "end": 141
+    },
+    "cleanText": "I’d like to join the Saturday walk.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s006",
+    "turnId": "t003",
+    "order": 6,
+    "rawText": "What is the cost (Q1)?",
+    "rawSpan": {
+     "start": 142,
+     "end": 164
+    },
+    "cleanText": "What is the cost?",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [
+     "qm-01"
+    ],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s007",
+    "turnId": "t004",
+    "order": 7,
+    "rawText": "The fee is £12 (Q2), including tea, or £15 if you want the bus ticket.",
+    "rawSpan": {
+     "start": 171,
+     "end": 241
+    },
+    "cleanText": "The fee is £12, including tea, or £15 if you want the bus ticket.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [
+     "qm-02"
+    ],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s008",
+    "turnId": "t005",
+    "order": 8,
+    "rawText": "Should I bring a map?",
+    "rawSpan": {
+     "start": 249,
+     "end": 270
+    },
+    "cleanText": "Should I bring a map?",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s009",
+    "turnId": "t006",
+    "order": 9,
+    "rawText": "No, we lend maps.",
+    "rawSpan": {
+     "start": 277,
+     "end": 294
+    },
+    "cleanText": "No, we lend maps.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s010",
+    "turnId": "t006",
+    "order": 10,
+    "rawText": "But do wear strong shoes (Q3) because the path is muddy after rain.",
+    "rawSpan": {
+     "start": 295,
+     "end": 362
+    },
+    "cleanText": "But do wear strong shoes because the path is muddy after rain.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [
+     "qm-03"
+    ],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s011",
+    "turnId": "t007",
+    "order": 11,
+    "rawText": "Where do we meet?",
+    "rawSpan": {
+     "start": 400,
+     "end": 417
+    },
+    "cleanText": "Where do we meet?",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s012",
+    "turnId": "t008",
+    "order": 12,
+    "rawText": "We meet outside the old library gate at nine o’clock sharp.",
+    "rawSpan": {
+     "start": 424,
+     "end": 483
+    },
+    "cleanText": "We meet outside the old library gate at nine o’clock sharp.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s013",
+    "turnId": "t008",
+    "order": 13,
+    "rawText": "Please arrive ten minutes early so everyone can sign in quickly.",
+    "rawSpan": {
+     "start": 484,
+     "end": 548
+    },
+    "cleanText": "Please arrive ten minutes early so everyone can sign in quickly.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s014",
+    "turnId": "t008",
+    "order": 14,
+    "rawText": "The group leaves promptly at nine, and nobody waits for latecomers, because the bus has to reach the trailhead before the morning traffic builds up.",
+    "rawSpan": {
+     "start": 549,
+     "end": 697
+    },
+    "cleanText": "The group leaves promptly at nine, and nobody waits for latecomers, because the bus has to reach the trailhead before the morning traffic builds up.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s015",
+    "turnId": "t009",
+    "order": 15,
+    "rawText": "Understood.",
+    "rawSpan": {
+     "start": 705,
+     "end": 716
+    },
+    "cleanText": "Understood.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   },
+   {
+    "id": "s016",
+    "turnId": "t009",
+    "order": 16,
+    "rawText": "Thank you.",
+    "rawSpan": {
+     "start": 717,
+     "end": 727
+    },
+    "cleanText": "Thank you.",
+    "enabled": true,
+    "textStatus": "verbatim_cleaned",
+    "qMarkerIds": [],
+    "provenance": {
+     "segmentation": "rule_based",
+     "cleanTextBasis": "raw_plus_safe_cleanup"
+    }
+   }
+  ],
+  "sectionBreaks": [
+   {
+    "id": "sb-01",
+    "afterSentenceId": "s010",
+    "rawSpan": {
+     "start": 364,
+     "end": 392
+    },
+    "continuityAcrossBreak": "unknown"
+   }
+  ],
+  "qMarkers": [
+   {
+    "id": "qm-01",
+    "number": 1,
+    "sentenceId": "s006",
+    "rawSpan": {
+     "start": 159,
+     "end": 163
+    },
+    "cleanTextOffset": 16,
+    "role": "location_cue"
+   },
+   {
+    "id": "qm-02",
+    "number": 2,
+    "sentenceId": "s007",
+    "rawSpan": {
+     "start": 186,
+     "end": 190
+    },
+    "cleanTextOffset": 14,
+    "role": "location_cue"
+   },
+   {
+    "id": "qm-03",
+    "number": 3,
+    "sentenceId": "s010",
+    "rawSpan": {
+     "start": 320,
+     "end": 324
+    },
+    "cleanTextOffset": 24,
+    "role": "location_cue"
+   }
+  ],
+  "fullCleanText": "Hello, is this the Greenfield Walking Club?\nYes, it is. I’m Leo, the treasurer.\nGreat. I’d like to join the Saturday walk. What is the cost?\nThe fee is £12, including tea, or £15 if you want the bus ticket.\nShould I bring a map?\nNo, we lend maps. But do wear strong shoes because the path is muddy after rain.\nWhere do we meet?\nWe meet outside the old library gate at nine o’clock sharp. Please arrive ten minutes early so everyone can sign in quickly. The group leaves promptly at nine, and nobody waits for latecomers, because the bus has to reach the trailhead before the morning traffic builds up.\nUnderstood. Thank you."
+ },
+ "settings": {
+  "sessionGuidelines": {
+   "level1": {
+    "min": 1,
+    "max": 12
+   },
+   "level2": {
+    "min": 1,
+    "max": 12
+   },
+   "level3": {
+    "min": 1,
+    "max": 12
+   },
+   "level4": {
+    "min": 1,
+    "max": 12
+   },
+   "answerSpotter": {
+    "min": 1,
+    "max": 12
+   }
+  },
+  "answerSpotter": {
+   "showTranscriptDuringTask": false,
+   "postCheckReviewUnlock": "after_first_attempt_checked"
+  }
+ },
+ "learningTargets": [
+  {
+   "id": "tg-001",
+   "sentenceId": "s003",
+   "charStart": 13,
+   "charEnd": 22,
+   "surface": "treasurer",
+   "occurrence": 1,
+   "focusTypes": [
+    "spelling"
+   ],
+   "confidence": "medium",
+   "rationale": "Synthetic target for QA.",
+   "source": "external_ai"
+  },
+  {
+   "id": "tg-002",
+   "sentenceId": "s007",
+   "charStart": 11,
+   "charEnd": 14,
+   "surface": "£12",
+   "occurrence": 1,
+   "focusTypes": [
+    "price",
+    "ielts_answer_candidate"
+   ],
+   "confidence": "medium",
+   "rationale": "Synthetic target for QA.",
+   "source": "external_ai",
+   "allowedForms": [
+    {
+     "text": "12",
+     "kind": "symbol_optional",
+     "approvalState": "teacher_approved",
+     "approvedAt": "2026-01-01T00:00:00Z"
+    }
+   ],
+   "warnings": [
+    "answer_context_dependent"
+   ]
+  },
+  {
+   "id": "tg-003",
+   "sentenceId": "s007",
+   "charStart": 34,
+   "charEnd": 37,
+   "surface": "£15",
+   "occurrence": 1,
+   "focusTypes": [
+    "price"
+   ],
+   "confidence": "medium",
+   "rationale": "Synthetic target for QA.",
+   "source": "external_ai",
+   "allowedForms": [
+    {
+     "text": "15",
+     "kind": "symbol_optional",
+     "approvalState": "teacher_approved",
+     "approvedAt": "2026-01-01T00:00:00Z"
+    }
+   ]
+  },
+  {
+   "id": "tg-004",
+   "sentenceId": "s010",
+   "charStart": 45,
+   "charEnd": 50,
+   "surface": "muddy",
+   "occurrence": 1,
+   "focusTypes": [
+    "spelling",
+    "word_ending"
+   ],
+   "confidence": "medium",
+   "rationale": "Synthetic target for QA.",
+   "source": "external_ai"
+  }
+ ],
+ "exercises": {
+  "level1": {
+   "itemsMode": "explicit_items_only",
+   "items": [
+    {
+     "id": "l1-001",
+     "sentenceId": "s005",
+     "grammarOnlyRisk": "medium",
+     "distractors": [
+      {
+       "text": "gates",
+       "rationale": "r",
+       "discrimination": "audibly_distinct"
+      },
+      {
+       "text": "gates",
+       "rationale": "r",
+       "discrimination": "audibly_distinct"
+      }
+     ]
+    },
+    {
+     "id": "l1-002",
+     "sentenceId": "s010",
+     "grammarOnlyRisk": "low"
+    },
+    {
+     "id": "l1-003",
+     "sentenceId": "s012",
+     "grammarOnlyRisk": "low",
+     "distractors": [
+      {
+       "text": "gates",
+       "rationale": "Plural ending is audible; gates does not fit the sentence.",
+       "discrimination": "audibly_distinct"
+      }
+     ]
+    }
+   ]
+  },
+  "level2": {
+   "itemsMode": "explicit_items_only",
+   "items": [
+    {
+     "id": "l2-001",
+     "sentenceId": "s003",
+     "blanks": [
+      {
+       "targetId": "tg-001"
+      }
+     ]
+    },
+    {
+     "id": "l2-002",
+     "sentenceId": "s007",
+     "blanks": [
+      {
+       "targetId": "tg-002"
+      },
+      {
+       "targetId": "tg-003"
+      }
+     ]
+    },
+    {
+     "id": "l2-003",
+     "sentenceId": "s010",
+     "blanks": [
+      {
+       "targetId": "tg-004"
+      }
+     ]
+    }
+   ]
+  },
+  "level3": {
+   "itemsMode": "explicit_items_only",
+   "items": [
+    {
+     "id": "l3-001",
+     "sentenceId": "s005"
+    },
+    {
+     "id": "l3-002",
+     "sentenceId": "s010"
+    },
+    {
+     "id": "l3-003",
+     "sentenceId": "s013"
+    }
+   ]
+  },
+  "level4": {
+   "itemsMode": "explicit_items_only",
+   "items": [
+    {
+     "id": "l4-001",
+     "sentenceIds": [
+      "s012",
+      "s013"
+     ]
+    }
+   ]
+  },
+  "answerSpotter": {
+   "items": [
+    {
+     "id": "as-001",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "choose_option",
+     "relatedQMarkerIds": [
+      "qm-01"
+     ],
+     "markerRelationNote": "Q1 cue is on the question sentence; the practice answer is in the next sentence. Location cue only, not an official question or answer.",
+     "prompt": "Practice question (authored): The fee including tea is ___ .",
+     "expectedAnswerType": "price",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": true
+     },
+     "evidenceSentenceIds": [
+      "s006",
+      "s007"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s007",
+        "charStart": 11,
+        "charEnd": 14,
+        "surface": "£12",
+        "occurrence": 1
+       },
+       "reason": "Fee that includes tea.",
+       "acceptedForms": [
+        {
+         "text": "12",
+         "kind": "symbol_optional",
+         "approvalState": "teacher_approved",
+         "approvedAt": "2026-01-01T00:00:00Z"
+        }
+       ]
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s007",
+        "charStart": 34,
+        "charEnd": 37,
+        "surface": "£15",
+        "occurrence": 1
+       },
+       "reason": "Price that includes the bus ticket."
+      }
+     ],
+     "explanation": "Both are prices; only £12 is linked to including tea."
+    },
+    {
+     "id": "as-002",
+     "type": "target_detection",
+     "origin": "ai_authored_practice",
+     "activity": "post_check_transcript_review",
+     "responseMode": "select_span_in_text",
+     "pairedIndependentItemId": "as-001",
+     "prompt": "Transcript review after checking: select every price.",
+     "expectedAnswerType": "price",
+     "evidenceSentenceIds": [
+      "s007"
+     ],
+     "spans": [
+      {
+       "role": "candidate",
+       "span": {
+        "sentenceId": "s007",
+        "charStart": 11,
+        "charEnd": 14,
+        "surface": "£12",
+        "occurrence": 1
+       },
+       "reason": "A price.",
+       "acceptedForms": [
+        {
+         "text": "12",
+         "kind": "symbol_optional",
+         "approvalState": "teacher_approved",
+         "approvedAt": "2026-01-01T00:00:00Z"
+        }
+       ]
+      },
+      {
+       "role": "candidate",
+       "span": {
+        "sentenceId": "s007",
+        "charStart": 34,
+        "charEnd": 37,
+        "surface": "£15",
+        "occurrence": 1
+       },
+       "reason": "A price.",
+       "acceptedForms": [
+        {
+         "text": "15",
+         "kind": "symbol_optional",
+         "approvalState": "teacher_approved",
+         "approvedAt": "2026-01-01T00:00:00Z"
+        }
+       ]
+      }
+     ],
+     "explanation": "Non-independent review activity; never counts as independent success."
+    },
+    {
+     "id": "as-003",
+     "type": "answer_vs_distractor",
+     "origin": "ai_authored_practice",
+     "activity": "independent_listening",
+     "responseMode": "type_answer",
+     "relatedQMarkerIds": [
+      "qm-03"
+     ],
+     "prompt": "Practice question (authored, typed): Walkers should wear strong ___ .",
+     "expectedAnswerType": "common_noun",
+     "answerFormat": {
+      "maxWords": 1,
+      "numberAllowed": false
+     },
+     "evidenceSentenceIds": [
+      "s009",
+      "s010"
+     ],
+     "spans": [
+      {
+       "role": "correct_answer",
+       "span": {
+        "sentenceId": "s010",
+        "charStart": 19,
+        "charEnd": 24,
+        "surface": "shoes",
+        "occurrence": 1
+       },
+       "reason": "Item to wear."
+      },
+      {
+       "role": "distractor",
+       "span": {
+        "sentenceId": "s009",
+        "charStart": 12,
+        "charEnd": 16,
+        "surface": "maps",
+        "occurrence": 1
+       },
+       "reason": "Item the club lends, not an item to wear."
+      }
+     ],
+     "explanation": "Maps are lent; shoes must be worn."
+    }
+   ]
+  }
+ }
+}

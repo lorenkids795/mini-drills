@@ -1,0 +1,523 @@
+{
+ "suite": "session-navigation-homework",
+ "vectorsVersion": "1",
+ "baseline": "baseline-harbour-museum.rev1.json",
+ "vectors": [
+  {
+   "id": "NAV-001",
+   "title": "skip an item and return: its first attempt is still the first",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "mode": "free_practice",
+    "version": "v1",
+    "items": [
+     "A",
+     "B",
+     "C"
+    ],
+    "events": [
+     {
+      "op": "goto",
+      "item": "A"
+     },
+     {
+      "op": "goto",
+      "item": "C"
+     },
+     {
+      "op": "check",
+      "item": "C",
+      "num": 6,
+      "den": 6
+     },
+     {
+      "op": "goto",
+      "item": "B"
+     },
+     {
+      "op": "check",
+      "item": "B",
+      "num": 3,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "ok",
+     "ok",
+     "recorded",
+     "ok",
+     "recorded"
+    ],
+    "final": {
+     "attemptCounts": {
+      "A": 0,
+      "B": 1,
+      "C": 1
+     },
+     "firstAttempt": {
+      "B": {
+       "num": 3,
+       "den": 6
+      },
+      "C": {
+       "num": 6,
+       "den": 6
+      }
+     }
+    }
+   }
+  },
+  {
+   "id": "NAV-002",
+   "title": "revisiting a completed item adds an attempt, first attempt unchanged",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "mode": "free_practice",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "check",
+      "item": "A",
+      "num": 4,
+      "den": 6
+     },
+     {
+      "op": "check",
+      "item": "A",
+      "num": 6,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "recorded",
+     "recorded"
+    ],
+    "final": {
+     "attemptCounts": {
+      "A": 2
+     },
+     "firstAttempt": {
+      "A": {
+       "num": 4,
+       "den": 6
+      }
+     }
+    }
+   }
+  },
+  {
+   "id": "NAV-003",
+   "title": "autosaved draft restores attempts and hints; a draft is not a submission",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A",
+     "B"
+    ],
+    "events": [
+     {
+      "op": "check",
+      "item": "A",
+      "num": 4,
+      "den": 6
+     },
+     {
+      "op": "hint",
+      "item": "A"
+     },
+     {
+      "op": "saveDraft"
+     },
+     {
+      "op": "resume"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "recorded",
+     "ok",
+     "draft_saved",
+     "resumed"
+    ],
+    "final": {
+     "attemptCounts": {
+      "A": 1,
+      "B": 0
+     },
+     "hints": {
+      "A": 1
+     },
+     "submitted": false
+    }
+   }
+  },
+  {
+   "id": "NAV-004",
+   "title": "submitting with incomplete items needs confirmation and changes nothing until confirmed",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A",
+     "B",
+     "C"
+    ],
+    "events": [
+     {
+      "op": "check",
+      "item": "A",
+      "num": 6,
+      "den": 6
+     },
+     {
+      "op": "submit",
+      "confirm": false,
+      "network": "ok"
+     },
+     {
+      "op": "submit",
+      "confirm": true,
+      "network": "ok"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "recorded",
+     "needs_confirmation:2",
+     "submitted"
+    ],
+    "final": {
+     "submitted": true,
+     "unanswered": [
+      "B",
+      "C"
+     ],
+     "attemptCounts": {
+      "A": 1,
+      "B": 0,
+      "C": 0
+     }
+    }
+   }
+  },
+  {
+   "id": "NAV-005",
+   "title": "failed submit does not mark submitted; retry succeeds; repeat is idempotent",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "check",
+      "item": "A",
+      "num": 6,
+      "den": 6
+     },
+     {
+      "op": "submit",
+      "confirm": true,
+      "network": "fail"
+     },
+     {
+      "op": "submit",
+      "confirm": true,
+      "network": "ok"
+     },
+     {
+      "op": "submit",
+      "confirm": true,
+      "network": "ok"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "recorded",
+     "submit_failed",
+     "submitted",
+     "already_submitted"
+    ],
+    "final": {
+     "submitted": true,
+     "attemptCounts": {
+      "A": 1
+     }
+    }
+   },
+   "decisionRefs": [
+    "D-20"
+   ]
+  },
+  {
+   "id": "NAV-006",
+   "title": "published new version: draft and submission stay pinned to the version in progress",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "check",
+      "item": "A",
+      "num": 6,
+      "den": 6
+     },
+     {
+      "op": "publishNewVersion",
+      "version": "v2"
+     },
+     {
+      "op": "saveDraft"
+     },
+     {
+      "op": "resume"
+     },
+     {
+      "op": "submit",
+      "confirm": true,
+      "network": "ok"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "recorded",
+     "ok",
+     "draft_saved",
+     "resumed",
+     "submitted"
+    ],
+    "final": {
+     "version": "v1",
+     "latestPublished": "v2",
+     "submittedVersion": "v1",
+     "submitted": true
+    }
+   },
+   "decisionRefs": [
+    "D-21"
+   ]
+  },
+  {
+   "id": "NAV-007",
+   "title": "after submission homework is locked",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "check",
+      "item": "A",
+      "num": 6,
+      "den": 6
+     },
+     {
+      "op": "submit",
+      "confirm": true,
+      "network": "ok"
+     },
+     {
+      "op": "check",
+      "item": "A",
+      "num": 6,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "recorded",
+     "submitted",
+     "locked_after_submit"
+    ],
+    "final": {
+     "attemptCounts": {
+      "A": 1
+     },
+     "submitted": true
+    }
+   },
+   "decisionRefs": [
+    "D-22"
+   ]
+  },
+  {
+   "id": "NAV-008",
+   "title": "free practice never submits and is never locked",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "mode": "free_practice",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "check",
+      "item": "A",
+      "num": 4,
+      "den": 6
+     },
+     {
+      "op": "submit",
+      "confirm": true,
+      "network": "ok"
+     },
+     {
+      "op": "check",
+      "item": "A",
+      "num": 6,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "recorded",
+     "not_applicable_free_practice",
+     "recorded"
+    ],
+    "final": {
+     "attemptCounts": {
+      "A": 2
+     },
+     "submitted": false
+    }
+   }
+  },
+  {
+   "id": "NAV-009",
+   "title": "empty check records nothing",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "check_empty",
+      "item": "A"
+     },
+     {
+      "op": "check",
+      "item": "A",
+      "num": 6,
+      "den": 6
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "empty_answer",
+     "recorded"
+    ],
+    "final": {
+     "attemptCounts": {
+      "A": 1
+     },
+     "firstAttempt": {
+      "A": {
+       "num": 6,
+       "den": 6
+      }
+     }
+    }
+   },
+   "decisionRefs": [
+    "D-12"
+   ]
+  },
+  {
+   "id": "NAV-010",
+   "title": "leaving the page without submitting never submits",
+   "kind": "session",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "mode": "homework",
+    "version": "v1",
+    "items": [
+     "A"
+    ],
+    "events": [
+     {
+      "op": "check",
+      "item": "A",
+      "num": 6,
+      "den": 6
+     },
+     {
+      "op": "saveDraft"
+     }
+    ]
+   },
+   "expected": {
+    "results": [
+     "recorded",
+     "draft_saved"
+    ],
+    "final": {
+     "submitted": false,
+     "attemptCounts": {
+      "A": 1
+     }
+    }
+   }
+  }
+ ]
+}

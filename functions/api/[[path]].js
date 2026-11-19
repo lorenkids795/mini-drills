@@ -1,5 +1,6 @@
 import BUILD from '../../build-info.js'; // what this deployment is (production / staging), written by build.js
 import MDHW from '../../md-hw.js'; // the homework rules shared with the app (one source, 11/2026)
+import { dlStaff, dlAdmin, dlPractice, dlHomework } from '../../dictation-server.js'; // Dictation Lab (contract v1.1): homework scored here, never on the device
 // Mini Drills auth API (Cloudflare Pages Function, served at /api/*).
 // Everyone signs in with email + password. Students pick class + name the first time;
 // teacher passwords are set by the admin (Admin › Teachers / Users). Teachers reset forgotten student passwords.
@@ -2896,6 +2897,8 @@ async function adminStaging(env, body) {
   return json({ ok: true, accounts: out, classes: ['STG-A', 'STG-B'], assignments: asg.map((x) => x[0]), attempts: at.map((x) => x.id) });
 }
 
+// helpers handed to dictation-server.js (one place, so its tests can pass fakes)
+const dlDeps = () => ({ fsGet, fsPut, fsCreate, fsUpdate, fsDelete, fsList, fsQueryDocs, idUser, staffEmail, rosterRow, normEmail, slug, json, fail, adminEmail });
 export async function onRequest(ctx) {
   const { request } = ctx;
   let env = ctx.env;
@@ -2940,6 +2943,12 @@ export async function onRequest(ctx) {
     if (route === 'ai/lesson') return await aiLesson(env, request, body);
     if (route === 'ai/transcribe') return await aiTranscribe(env, request, body);
     if (route === 'ai/reading') return await aiReading(env, request, body);
+    if (route.indexOf('dictation/') === 0) {
+      const D = dlDeps();
+      if (route === 'dictation/staff') return await dlStaff(D, env, request, body);
+      if (route === 'dictation/practice') return await dlPractice(D, env, request, body);
+      const hm = /^dictation\/(payload|lock|submit)$/.exec(route); if (hm) return await dlHomework(D, env, request, body, hm[1]);
+    }
     if (route === 'hwa/data') return await hwaData(env, request, body);
     if (route === 'hwa/asg') return await hwaAsg(env, request, body);
     if (route === 'hwa/note') return await hwaNote(env, request, body);
@@ -2965,6 +2974,7 @@ export async function onRequest(ctx) {
       if (route === 'admin/aitest') return await adminAiTest(env, body);
       if (route === 'admin/season') return await adminSeason(env, body);
       if (route === 'admin/tester') return await adminTester(env, body);
+      if (route === 'admin/dictation') return await dlAdmin(dlDeps(), env, body);
     }
     return fail('Not found.', 404);
   } catch (e) {

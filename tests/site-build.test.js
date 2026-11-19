@@ -10,12 +10,16 @@ const tracked = cp.execSync('git ls-files', { cwd: ROOT, encoding: 'utf8' }).spl
 const files = B.list();
 
 t('published = exactly the app page, its scripts, the manifest, the headers file and the icons', () => {
-  const want = tracked.filter((f) => /^(index\.html|md-[a-z0-9-]+\.js|lm-[a-z0-9-]+\.js|site\.webmanifest|_headers)$/.test(f) || /^assets\//.test(f)).sort();
+  const want = tracked.filter((f) => /^(index\.html|md-[a-z0-9-]+\.js|lm-[a-z0-9-]+\.js|site\.webmanifest|_headers)$/.test(f) || /^assets\//.test(f) || /^dictation\/.*\.js$/.test(f)).sort();
   assert.strictEqual(JSON.stringify(files), JSON.stringify(want));
+});
+t('Dictation Lab: only the engine/validator/UI modules are published, never the source package, the server part or a lesson', () => {
+  assert.ok(files.every((f) => !/^dictation-lab\//.test(f) && f !== 'dictation-server.js'), 'source package or server part published');
+  assert.ok(files.filter((f) => /^dictation\//.test(f)).every((f) => /\.js$/.test(f)), 'only .js under dictation/');
 });
 t('no internal file is published (notes, prompts, tests, rules, relay, old worker, server source, build script)', () => {
   const internal = tracked.filter((f) => files.indexOf(f) < 0);
-  ['CLAUDE.md', 'README.md', 'TESTING.md', 'firestore.rules', 'gemini-relay.gs', 'ai-worker.js', 'build.js', 'functions/api/[[path]].js'].forEach((f) => assert.ok(internal.indexOf(f) >= 0 || !tracked.includes(f), f));
+  ['CLAUDE.md', 'README.md', 'TESTING.md', 'firestore.rules', 'gemini-relay.gs', 'ai-worker.js', 'build.js', 'functions/api/[[path]].js', 'dictation-server.js'].forEach((f) => assert.ok(internal.indexOf(f) >= 0 || !tracked.includes(f), f));
   files.forEach((f) => assert.ok(!/\.(md|rules|gs|map)$|^tests\/|^functions\/|^build\.js$|^\./.test(f), f));
   assert.ok(internal.some((f) => /^PROMPT-.*\.md$/.test(f)) && internal.some((f) => /^tests\//.test(f)));
 });

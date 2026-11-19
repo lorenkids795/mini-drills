@@ -1,0 +1,3 @@
+R3 was built from this R2 archive (verified: every file matched its SHA256SUMS.txt before any change):
+2657066f998788a18c5d40ebe3182fa5cd297c82ef816a73f99f3fdee8ba8d48  dictation-lab-scoring-engine-final-r2.zip
+R3 changes files of R2; SHA256SUMS.txt in this package describes R3, not R2.

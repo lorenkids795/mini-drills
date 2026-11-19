@@ -1,0 +1,449 @@
+{
+ "suite": "tokenize-and-normalise",
+ "vectorsVersion": "2",
+ "baseline": "baseline-harbour-museum.rev1.json",
+ "vectors": [
+  {
+   "id": "NUM-001",
+   "title": "percent kept at the end of a number, sentence full stop stripped",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "text": "The tax is 20%."
+   },
+   "expected": {
+    "tokens": [
+     "the",
+     "tax",
+     "is",
+     "20%"
+    ]
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "NUM-002",
+   "title": "currency symbols attached to numbers are kept",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "text": "costs £35, not €40."
+   },
+   "expected": {
+    "tokens": [
+     "costs",
+     "£35",
+     "not",
+     "€40"
+    ]
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "NUM-003",
+   "title": "leading minus and plus signs before digits are kept",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "text": "temperature -5 or +3 degrees"
+   },
+   "expected": {
+    "tokens": [
+     "temperature",
+     "-5",
+     "or",
+     "+3",
+     "degrees"
+    ]
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "NUM-004",
+   "title": "leading decimal point before a digit is kept; interior decimal point kept",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "text": "it is .5 of 3.5"
+   },
+   "expected": {
+    "tokens": [
+     "it",
+     "is",
+     ".5",
+     "of",
+     "3.5"
+    ]
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "NUM-005",
+   "title": "degree sign and attached units are kept inside the token",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "text": "25°C and 5km"
+   },
+   "expected": {
+    "tokens": [
+     "25°c",
+     "and",
+     "5km"
+    ]
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "NUM-006",
+   "title": "unicode minus sign is mapped to hyphen-minus",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "text": "it was −5 today"
+   },
+   "expected": {
+    "tokens": [
+     "it",
+     "was",
+     "-5",
+     "today"
+    ]
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "NUM-007",
+   "title": "comma inside a number is kept; trailing comma is not",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "text": "€5,50, please"
+   },
+   "expected": {
+    "tokens": [
+     "€5,50",
+     "please"
+    ]
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "NUM-008",
+   "title": "percent inside brackets and quotes",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "text": "(“20%”)"
+   },
+   "expected": {
+    "tokens": [
+     "20%"
+    ]
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "TOK-001",
+   "title": "curly apostrophe lowercased",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "text": "We’re always looking"
+   },
+   "expected": {
+    "tokens": [
+     "we're",
+     "always",
+     "looking"
+    ]
+   }
+  },
+  {
+   "id": "TOK-002",
+   "title": "quotes and trailing punctuation stripped",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "text": "“Hello,” she said."
+   },
+   "expected": {
+    "tokens": [
+     "hello",
+     "she",
+     "said"
+    ]
+   }
+  },
+  {
+   "id": "TOK-003",
+   "title": "times and dates; trailing dot of a.m. is stripped",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "text": "It’s on the 17th, from 10 a.m. until 3."
+   },
+   "expected": {
+    "tokens": [
+     "it's",
+     "on",
+     "the",
+     "17th",
+     "from",
+     "10",
+     "a.m",
+     "until",
+     "3"
+    ]
+   }
+  },
+  {
+   "id": "TOK-004",
+   "title": "standalone dash dropped",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "text": "pair – there’s a hole"
+   },
+   "expected": {
+    "tokens": [
+     "pair",
+     "there's",
+     "a",
+     "hole"
+    ]
+   }
+  },
+  {
+   "id": "TOK-005",
+   "title": "currency symbol kept, decimal point kept, trailing comma and bang stripped",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "text": "£8.50, or £12!"
+   },
+   "expected": {
+    "tokens": [
+     "£8.50",
+     "or",
+     "£12"
+    ]
+   }
+  },
+  {
+   "id": "TOK-006",
+   "title": "hyphenated compound is one token; extra spaces ignored",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "text": "  half-day   session "
+   },
+   "expected": {
+    "tokens": [
+     "half-day",
+     "session"
+    ]
+   }
+  },
+  {
+   "id": "TOK-007",
+   "title": "lone symbol is not a token",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "text": "A < B"
+   },
+   "expected": {
+    "tokens": [
+     "a",
+     "b"
+    ]
+   }
+  },
+  {
+   "id": "TOK-008",
+   "title": "angle brackets inside a token are kept",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "text": "<noise> here"
+   },
+   "expected": {
+    "tokens": [
+     "<noise>",
+     "here"
+    ]
+   }
+  },
+  {
+   "id": "TOK-009",
+   "title": "NFC: decomposed and composed e acute are equal",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "text": "café café"
+   },
+   "expected": {
+    "tokens": [
+     "café",
+     "café"
+    ]
+   }
+  },
+  {
+   "id": "TOK-010",
+   "title": "single quotes and ellipsis stripped, inner apostrophe kept",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "text": "o’clock; ‘quoted’ words…"
+   },
+   "expected": {
+    "tokens": [
+     "o'clock",
+     "quoted",
+     "words"
+    ]
+   }
+  },
+  {
+   "id": "TOK-011",
+   "title": "whitespace only",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "text": "   "
+   },
+   "expected": {
+    "tokens": []
+   }
+  },
+  {
+   "id": "TOK-012",
+   "title": "punctuation only",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "text": "?! ... –"
+   },
+   "expected": {
+    "tokens": []
+   }
+  },
+  {
+   "id": "TOK-013",
+   "title": "percent sign is meaningful and kept: 20% stays 20%",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "text": "20% off"
+   },
+   "expected": {
+    "tokens": [
+     "20%",
+     "off"
+    ]
+   },
+   "decisionRefs": [
+    "D-17"
+   ]
+  },
+  {
+   "id": "TOK-014",
+   "title": "tab and newline separate tokens",
+   "kind": "tokenize",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "text": "one\ttwo\nthree"
+   },
+   "expected": {
+    "tokens": [
+     "one",
+     "two",
+     "three"
+    ]
+   }
+  }
+ ]
+}

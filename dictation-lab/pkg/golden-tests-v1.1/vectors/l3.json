@@ -1,0 +1,857 @@
+{
+ "suite": "level3-sentence-dictation",
+ "vectorsVersion": "3",
+ "baseline": "baseline-harbour-museum.rev1.json",
+ "vectors": [
+  {
+   "id": "L3-001",
+   "title": "exact with curly apostrophe and final full stop",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "sentenceId": "s004",
+    "answer": "We’re always looking for new helpers."
+   },
+   "expected": {
+    "lcs": 6,
+    "den": 6,
+    "exact": true,
+    "variant": "original"
+   }
+  },
+  {
+   "id": "L3-002",
+   "title": "ASCII apostrophe, lowercase, no final stop",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "sentenceId": "s004",
+    "answer": "we're always looking for new helpers"
+   },
+   "expected": {
+    "lcs": 6,
+    "den": 6,
+    "exact": true,
+    "variant": "original"
+   }
+  },
+  {
+   "id": "L3-003",
+   "title": "approved expansion We are",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "sentenceId": "s004",
+    "answer": "We are always looking for new helpers"
+   },
+   "expected": {
+    "lcs": 7,
+    "den": 7,
+    "exact": true,
+    "variant": "alt:We are"
+   }
+  },
+  {
+   "id": "L3-004",
+   "title": "expansion not accepted when form is only proposed",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "sentenceId": "s004",
+    "answer": "We are always looking for new helpers",
+    "mutations": [
+     {
+      "op": "forms_state",
+      "value": "proposed"
+     }
+    ]
+   },
+   "expected": {
+    "lcs": 5,
+    "den": 7,
+    "exact": false,
+    "variant": "original"
+   }
+  },
+  {
+   "id": "L3-005",
+   "title": "one word omitted",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "sentenceId": "s004",
+    "answer": "We’re always looking new helpers."
+   },
+   "expected": {
+    "lcs": 5,
+    "den": 6,
+    "exact": false,
+    "variant": "original",
+    "missing": 1,
+    "extra": 0
+   }
+  },
+  {
+   "id": "L3-006",
+   "title": "one word added",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "sentenceId": "s004",
+    "answer": "We’re always looking for the new helpers."
+   },
+   "expected": {
+    "lcs": 6,
+    "den": 7,
+    "exact": false,
+    "variant": "original",
+    "missing": 0,
+    "extra": 1
+   }
+  },
+  {
+   "id": "L3-007",
+   "title": "plural s missing",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "sentenceId": "s004",
+    "answer": "We’re always looking for new helper."
+   },
+   "expected": {
+    "lcs": 5,
+    "den": 6,
+    "exact": false,
+    "variant": "original",
+    "missing": 1,
+    "extra": 1
+   }
+  },
+  {
+   "id": "L3-008",
+   "title": "Were is not We’re",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "sentenceId": "s004",
+    "answer": "Were always looking for new helpers."
+   },
+   "expected": {
+    "lcs": 5,
+    "den": 6,
+    "exact": false,
+    "variant": "original"
+   }
+  },
+  {
+   "id": "L3-009",
+   "title": "punctuation inside the sentence is ignored",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "sentenceId": "s010",
+    "answer": "The training is free but the guidebook costs £8.50 or £12 with the audio guide"
+   },
+   "expected": {
+    "lcs": 15,
+    "den": 15,
+    "exact": true,
+    "variant": "original"
+   }
+  },
+  {
+   "id": "L3-010",
+   "title": "currency symbols dropped through approved symbol_optional forms",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "sentenceId": "s010",
+    "answer": "The training is free, but the guidebook costs 8.50, or 12 with the audio guide."
+   },
+   "expected": {
+    "lcs": 15,
+    "den": 15,
+    "exact": true,
+    "variant": "alt:8.50+alt:12"
+   }
+  },
+  {
+   "id": "L3-011",
+   "title": "third person -s missing",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "sentenceId": "s010",
+    "answer": "The training is free, but the guidebook cost £8.50, or £12 with the audio guide."
+   },
+   "expected": {
+    "lcs": 14,
+    "den": 15,
+    "exact": false,
+    "variant": "original"
+   }
+  },
+  {
+   "id": "L3-012",
+   "title": "repeated word: one phrase omitted, alignment re-syncs",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "repeated_words"
+   ],
+   "input": {
+    "sentenceId": "s016",
+    "answer": "You listen and you answer questions"
+   },
+   "expected": {
+    "lcs": 6,
+    "den": 8,
+    "exact": false,
+    "variant": "original",
+    "missing": 2,
+    "extra": 0
+   }
+  },
+  {
+   "id": "L3-013",
+   "title": "repeated word: phrase duplicated",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "repeated_words"
+   ],
+   "input": {
+    "sentenceId": "s016",
+    "answer": "You listen you listen you smile and you answer questions"
+   },
+   "expected": {
+    "lcs": 8,
+    "den": 10,
+    "exact": false,
+    "variant": "original",
+    "missing": 0,
+    "extra": 2
+   }
+  },
+  {
+   "id": "L3-014",
+   "title": "I will is NOT accepted for I’ll when no form is declared",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "sentenceId": "s019",
+    "answer": "I will send my details today"
+   },
+   "expected": {
+    "lcs": 4,
+    "den": 6,
+    "exact": false,
+    "variant": "original"
+   }
+  },
+  {
+   "id": "L3-015",
+   "title": "approved numeral word form for 200",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [],
+   "input": {
+    "sentenceId": "s017",
+    "answer": "Last year we guided over two hundred school groups, and most of them came back again."
+   },
+   "expected": {
+    "lcs": 16,
+    "den": 16,
+    "exact": true,
+    "variant": "alt:two hundred"
+   }
+  },
+  {
+   "id": "L3-016",
+   "title": "HTML-looking answer is plain text and scores zero",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "safety"
+   ],
+   "input": {
+    "sentenceId": "s019",
+    "answer": "<img src=x onerror=alert(1)>"
+   },
+   "expected": {
+    "lcs": 0,
+    "den": 5,
+    "exact": false,
+    "variant": "original",
+    "tokens": [
+     "<img",
+     "src=x",
+     "onerror=alert(1)>"
+    ]
+   }
+  },
+  {
+   "id": "L3-017",
+   "title": "blank answer is rejected and is not an attempt",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "sentenceId": "s019",
+    "answer": "   "
+   },
+   "expected": {
+    "rejected": "empty_answer"
+   },
+   "decisionRefs": [
+    "D-12"
+   ]
+  },
+  {
+   "id": "L3-018",
+   "title": "answer longer than 4000 characters is rejected",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial"
+   ],
+   "input": {
+    "sentenceId": "s019",
+    "answerRepeat": {
+     "unit": "word ",
+     "times": 1000
+    }
+   },
+   "expected": {
+    "rejected": "answer_too_long"
+   },
+   "decisionRefs": [
+    "D-15"
+   ]
+  },
+  {
+   "id": "L3-019",
+   "title": "control characters are removed before scoring and flagged",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "safety"
+   ],
+   "input": {
+    "sentenceId": "s019",
+    "answer": "I’ll\u0000 send my details today"
+   },
+   "expected": {
+    "lcs": 5,
+    "den": 5,
+    "exact": true,
+    "variant": "original",
+    "sanitized": true
+   },
+   "decisionRefs": [
+    "D-15"
+   ]
+  },
+  {
+   "id": "L3-020",
+   "title": "inline expected text with literal angle-bracket token",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "safety"
+   ],
+   "input": {
+    "expectedText": "I heard a <noise> just then.",
+    "answer": "I heard a noise just then"
+   },
+   "expected": {
+    "lcs": 5,
+    "den": 6,
+    "exact": false,
+    "variant": "original"
+   }
+  },
+  {
+   "id": "L3-021",
+   "title": "lone less-than symbol is not scored",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "known_limitation"
+   ],
+   "input": {
+    "expectedText": "The rule is A < B in this test.",
+    "answer": "The rule is A B in this test"
+   },
+   "expected": {
+    "lcs": 8,
+    "den": 8,
+    "exact": true,
+    "variant": "original"
+   },
+   "decisionRefs": [
+    "D-17"
+   ]
+  },
+  {
+   "id": "LCS-001",
+   "title": "one wrong number in a 25-token passage: 24/25 but not exact and flagged as a critical target error",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "lcs_safeguard"
+   ],
+   "input": {
+    "itemId": "l4-003",
+    "answer": "Not really. You listen, you smile, and you answer questions. Last year we guided over 300 school groups, and most of them came back again."
+   },
+   "expected": {
+    "lcs": 24,
+    "den": 25,
+    "exact": false,
+    "targetErrors": 1,
+    "criticalTargetErrors": 1
+   },
+   "decisionRefs": [
+    "D-25"
+   ]
+  },
+  {
+   "id": "LCS-002",
+   "title": "both prices wrong in a 15-token sentence: 13/15 with two critical target errors",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "lcs_safeguard"
+   ],
+   "input": {
+    "sentenceId": "s010",
+    "answer": "The training is free, but the guidebook costs £9.50, or £14 with the audio guide."
+   },
+   "expected": {
+    "lcs": 13,
+    "den": 15,
+    "exact": false,
+    "targetErrors": 2,
+    "criticalTargetErrors": 2
+   },
+   "decisionRefs": [
+    "D-25"
+   ]
+  },
+  {
+   "id": "LCS-003",
+   "title": "all words present but reversed: almost no credit",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "lcs_safeguard"
+   ],
+   "input": {
+    "sentenceId": "s004",
+    "answer": "helpers new for looking always We’re"
+   },
+   "expected": {
+    "lcs": 1,
+    "den": 6,
+    "exact": false
+   },
+   "decisionRefs": [
+    "D-25"
+   ]
+  },
+  {
+   "id": "LCS-004",
+   "title": "correct sentence padded with six extra words",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "lcs_safeguard"
+   ],
+   "input": {
+    "sentenceId": "s004",
+    "answer": "We’re always looking for new helpers and then some more words here"
+   },
+   "expected": {
+    "lcs": 6,
+    "den": 12,
+    "exact": false,
+    "extra": 6
+   },
+   "decisionRefs": [
+    "D-25"
+   ]
+  },
+  {
+   "id": "LCS-005",
+   "title": "last content word missing from a 5-token sentence",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "lcs_safeguard"
+   ],
+   "input": {
+    "sentenceId": "s019",
+    "answer": "I’ll send my details"
+   },
+   "expected": {
+    "lcs": 4,
+    "den": 5,
+    "exact": false,
+    "missing": 1,
+    "targetErrors": 0
+   },
+   "decisionRefs": [
+    "D-25"
+   ]
+  },
+  {
+   "id": "LCS-006",
+   "title": "plural ending target wrong is reported but not critical",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "lcs_safeguard"
+   ],
+   "input": {
+    "sentenceId": "s007",
+    "answer": "Mostly guiding school group around the galleries on weekday mornings."
+   },
+   "expected": {
+    "lcs": 9,
+    "den": 10,
+    "exact": false,
+    "targetErrors": 1,
+    "criticalTargetErrors": 0
+   },
+   "decisionRefs": [
+    "D-25"
+   ]
+  },
+  {
+   "id": "NUM-009",
+   "title": "20 is not 20%",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "expectedText": "The tax is 20%.",
+    "answer": "The tax is 20"
+   },
+   "expected": {
+    "lcs": 3,
+    "den": 4,
+    "exact": false
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "NUM-010",
+   "title": "20 percent is not accepted without an approved form",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "expectedText": "The tax is 20%.",
+    "answer": "The tax is 20 percent"
+   },
+   "expected": {
+    "lcs": 3,
+    "den": 5,
+    "exact": false
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "NUM-011",
+   "title": "20 percent accepted when the form is approved",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "expectedText": "The tax is 20%.",
+    "answer": "The tax is 20 percent",
+    "inlineForms": [
+     {
+      "surface": "20%",
+      "forms": [
+       "20 percent"
+      ]
+     }
+    ]
+   },
+   "expected": {
+    "lcs": 5,
+    "den": 5,
+    "exact": true,
+    "variant": "alt:20 percent"
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "NUM-012",
+   "title": "35 is not £35",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "expectedText": "The fee is £35 today.",
+    "answer": "The fee is 35 today"
+   },
+   "expected": {
+    "lcs": 4,
+    "den": 5,
+    "exact": false
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "NUM-013",
+   "title": "35 accepted for £35 only through an approved form",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "expectedText": "The fee is £35 today.",
+    "answer": "The fee is 35 today",
+    "inlineForms": [
+     {
+      "surface": "£35",
+      "forms": [
+       "35"
+      ]
+     }
+    ]
+   },
+   "expected": {
+    "lcs": 5,
+    "den": 5,
+    "exact": true,
+    "variant": "alt:35"
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "NUM-014",
+   "title": "3.5 is not 35",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "expectedText": "It weighs 3.5 kg.",
+    "answer": "It weighs 35 kg"
+   },
+   "expected": {
+    "lcs": 3,
+    "den": 4,
+    "exact": false
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "NUM-015",
+   "title": "unit glued to the number is a different token",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "expectedText": "It weighs 3.5 kg.",
+    "answer": "It weighs 3.5kg"
+   },
+   "expected": {
+    "lcs": 2,
+    "den": 4,
+    "exact": false
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "NUM-016",
+   "title": "negative sign matters",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "expectedText": "It was -5 today.",
+    "answer": "It was 5 today"
+   },
+   "expected": {
+    "lcs": 3,
+    "den": 4,
+    "exact": false
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "NUM-017",
+   "title": "leading decimal point matters: .5 is not 0.5",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "expectedText": "Add .5 litre.",
+    "answer": "Add 0.5 litre"
+   },
+   "expected": {
+    "lcs": 2,
+    "den": 3,
+    "exact": false
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "NUM-018",
+   "title": "percent with sentence full stop typed without the full stop is exact",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "expectedText": "The tax is 20%.",
+    "answer": "The tax is 20%"
+   },
+   "expected": {
+    "lcs": 4,
+    "den": 4,
+    "exact": true
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "NUM-019",
+   "title": "a lone percent sign is dropped, so 20 % is 20",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "expectedText": "The tax is 20%.",
+    "answer": "The tax is 20 %"
+   },
+   "expected": {
+    "lcs": 3,
+    "den": 4,
+    "exact": false
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  },
+  {
+   "id": "NUM-020",
+   "title": "numeral to word form is not accepted: thirty-five pounds",
+   "kind": "scoreSentence",
+   "requires": "oracle",
+   "tags": [
+    "adversarial",
+    "numerals"
+   ],
+   "input": {
+    "expectedText": "The fee is £35 today.",
+    "answer": "The fee is thirty-five pounds today"
+   },
+   "expected": {
+    "lcs": 4,
+    "den": 6,
+    "exact": false
+   },
+   "decisionRefs": [
+    "D-17",
+    "D-30"
+   ]
+  }
+ ]
+}
