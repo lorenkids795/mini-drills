@@ -128,29 +128,34 @@ export async function mountHomework(el, o) {
   const dkey = "md-dlhw:" + (o.email || "") + ":" + o.asgId + ":" + o.exId; const call = (path, extra) => o.api("dictation/" + path, Object.assign({ exId: o.exId, asgId: o.asgId }, extra || {}));
   let res; try { res = await call("payload"); } catch (e) { el.replaceChildren(h("p", { class: "dl-err", text: "Could not load this homework: " + (e.message || e) })); return; }
   el.replaceChildren(root); const player = audioPlayer(o.audio); root.addEventListener("keydown", (e) => player.keys && player.keys(e));
-  if (res.submitted) return result(res.result, store.get(dkey + ":done"));
+  // the student's own copy of their final answers on THIS device follows the same 90-day limit as the server (P-05); older copies are dropped
+  const mineOf = () => { const d = store.get(dkey + ":done"); if (d && d.t && Date.now() - d.t < 90 * 864e5) return d.r; if (d) store.del(dkey + ":done"); return null; };
+  if (res.submitted) return result(res.result, mineOf());
   if (res.status !== "ok" || !res.payload) { root.replaceChildren(h("p", { class: "dl-err", text: res.error || "This homework is not available." })); return; }
   let k = 0; const c = new HomeworkClient(res.payload, { makeKey: () => "k" + Date.now().toString(36) + (++k), transport: { lockPhase: (req) => call("lock", { req }), submit: (req) => call("submit", { req }) } });
   for (const [id, v] of Object.entries(res.locked || {})) { c.responses[id] = v; if (c.session.S.items[id]) c.session.S.items[id].answered = true; } // saved on the server, read-only
   for (const [id, v] of Object.entries(store.get(dkey) || {})) c.answer(id, v);
   const saveDraft = () => store.set(dkey, c.responses);
   function draw(msg) {
-    const v = c.view(); const blanks = v.filter((i) => !c.session.S.items[i.id]?.answered && !c.locked.has(i.id)).length;
+    const v = c.view(); const pending = c.session.S.sub === "submit_pending"; const blanks = v.filter((i) => !c.session.S.items[i.id]?.answered && !c.locked.has(i.id)).length;
     const head = [h("div", { class: "dl-row" }, h("span", { class: "pill" }, "Homework"), c.p.phases > 1 ? h("span", { class: "pill" }, "Part " + c.phase + " of " + c.p.phases) : null, h("span", { class: "dl-muted" }, v.length - blanks + " of " + v.length + " answered"))];
     head.push(h("p", { class: "dl-muted" }, "Answers are checked only after you submit. You can change them until then." + (c.p.phases > 1 && c.morePhases ? " Part 1 answers are saved and locked when you continue to part 2." : "")));
     if (!res.open) head.push(h("p", { class: "dl-err" }, "The deadline has passed. This homework can no longer be submitted."));
     if (msg) head.push(h("p", { class: msg.cls || "dl-muted", role: "status" }, msg.text));
     const byLevel = groups(v.map((i) => ({ ...i, kind: "scored" })));
     const go = c.morePhases ? btn("Save part 1 and continue", () => o.ask({ title: "Continue to part 2?", text: "Your part 1 answers will be saved and cannot be changed afterwards.", ok: "Continue", onOk: async () => { const r = await c.continueToNextPhase(); saveDraft(); draw(r.status === "ok" ? null : { text: "Could not save: " + (r.error || r.status) + ". Try again.", cls: "dl-err" }); } }), "btn pri", { disabled: !res.open })
-      : btn("Submit homework · " + v.length + " items", () => submit(false), "btn pri", { disabled: !res.open });
+      : btn(pending ? "Submitting…" : "Submit homework · " + v.length + " items", () => submit(false), "btn pri", { disabled: !res.open || pending, "aria-busy": pending ? "true" : "false" });
     root.replaceChildren(...head, player, ...byLevel.map(([lv, list]) => h("section", { class: "dl-sec" }, h("h3", {}, LV[lv]), ...list.map((it) => h("div", { class: "dl-item" }, h("h4", {}, it.id), it.prompt ? h("p", { class: "dl-prompt" }, it.prompt) : null,
       control(it, it.response, (val) => { const r = c.answer(it.id, val); if (r.status === "draft_updated") saveDraft(); else if (r.status === "rejected") draw({ text: it.id + ": " + (r.rejected === "answer_too_long" ? "too long (4000 characters at most)." : "this answer cannot be used."), cls: "dl-err" }); }, it.readOnly), it.readOnly ? h("p", { class: "dl-muted" }, "Saved and locked.") : null)))), h("div", { class: "dl-row" }, go));
   }
   async function submit(confirmed) {
-    const r = await c.submit({ confirmIncomplete: confirmed });
+    // E-5: the session is 'submit_pending' as soon as submit() starts: every answer is read-only and Submit is off until the server answers
+    const p = c.submit({ confirmIncomplete: confirmed });
+    if (c.session.S.sub === "submit_pending") draw({ text: "Submitting… your answers are frozen until the server confirms. Keep this page open.", cls: "dl-muted" });
+    const r = await p;
     if (r.status.startsWith("needs_confirmation:")) { const n = r.status.split(":")[1]; return o.ask({ title: "Submit with " + n + " blank answer(s)?", text: "Blank answers score 0 and the homework will be marked Incomplete. You cannot change your answers after submitting.", ok: "Submit anyway", cancel: "Keep working", danger: true, onOk: () => submit(true) }); }
     if (r.status === "submit_pending" || r.status === "already_pending") return;
-    if (r.status === "submitted" || r.status === "already_submitted") { store.set(dkey + ":done", c.responses); store.del(dkey); return result(c.review(), c.responses); }
+    if (r.status === "submitted" || r.status === "already_submitted") { store.set(dkey + ":done", { t: Date.now(), r: c.responses }); store.del(dkey); return result(c.review(), c.responses); }
     draw({ text: "Not submitted yet (" + (r.reason || r.error || r.status) + "). Your answers are kept: try again.", cls: "dl-err" });
   }
   function result(R, mine) {

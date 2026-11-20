@@ -3,7 +3,7 @@
 // Run: node tests/server-purge.test.js
 'use strict';
 const assert = require('assert'), fs = require('fs'), path = require('path'), vm = require('vm');
-const SRC = fs.readFileSync(path.join(__dirname, '..', 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest').replace(/^import BUILD from .*$/m, 'const BUILD = {};').replace(/^import \{ dlStaff[^\n]*$/m, 'const dlStaff = null, dlAdmin = null, dlPractice = null, dlHomework = null;').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(__dirname, '..', 'md-hw.js'), 'utf8'));
+const SRC = fs.readFileSync(path.join(__dirname, '..', 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest').replace(/^import BUILD from .*$/m, 'const BUILD = {};').replace(/^import \{ dlStaff[^\n]*$/m, 'const dlStaff = null, dlAdmin = null, dlPractice = null, dlHomework = null, dlRaw = null, dlReapMaybe = null;').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(__dirname, '..', 'md-hw.js'), 'utf8'));
 let pass = 0, fail = 0; const out = [];
 async function t(name, fn) { try { await fn(); pass++; out.push('PASS ' + name); } catch (e) { fail++; out.push('FAIL ' + name + ' -> ' + e.message); } }
 const BASE = 'projects/p1/databases/(default)/documents/';
@@ -49,9 +49,9 @@ const student = (em) => ({
 });
 
 (async () => {
-  await t('purgeStudent deletes every learning doc of that email (8 collections + profile)', async () => {
+  await t('purgeStudent deletes every learning doc of that email (11 collections incl. Dictation + profile)', async () => {
     const DB = student('3667@gmail.com'), B = boot(DB), r = await B.T.purgeStudent(B.env, '3667@gmail.com');
-    assert.strictEqual(JSON.stringify(r), JSON.stringify({ attempts: 2, errors: 1, cards: 1, hwdone: 1, passes: 1, passq: 0, extitems: 0, redeems: 1, profiles: 1 }));
+    assert.strictEqual(JSON.stringify(r), JSON.stringify({ attempts: 2, errors: 1, cards: 1, hwdone: 1, passes: 1, passq: 0, extitems: 0, redeems: 1, dlSits: 0, dlSubs: 0, dlRaw: 0, profiles: 1 }));
     ['attempts', 'errors', 'cards', 'hwdone', 'passes', 'redeems'].forEach((c) => assert.ok(!Object.values(DB[c]).some((d) => d.email === '3667@gmail.com'), c));
     assert.ok(!DB.profiles['3667-gmail-com']);
   });
@@ -61,7 +61,7 @@ const student = (em) => ({
   });
   await t('purge = one query per collection (stays far below the Workers sub-request limit)', async () => {
     const DB = student('a@b.c'), B = boot(DB); await B.T.purgeStudent(B.env, 'a@b.c');
-    assert.ok(B.calls.length <= 16, 'calls: ' + B.calls.length); assert.ok(!B.calls.some((c) => /\/documents\/(attempts|errors|cards)(\?|$)/.test(c.url)), 'no full collection scan');
+    assert.ok(B.calls.length <= 19, 'calls: ' + B.calls.length); assert.ok(!B.calls.some((c) => /\/documents\/(attempts|errors|cards)(\?|$)/.test(c.url)), 'no full collection scan');
   });
   await t('adminKick of a student: account gone, off:=kicked, and all learning data deleted', async () => {
     const DB = Object.assign(student('k@x.com'), { roster: { 'k@x.com': { email: 'k@x.com', name: 'K', cls: '17h', role: 'student' } }, names: {} });

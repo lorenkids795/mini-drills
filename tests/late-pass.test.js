@@ -13,7 +13,7 @@ const DAY = 864e5, now = Date.now();
 
 function server() {
   const SRC = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest')
-    .replace(/^import BUILD from .*$/m, 'const BUILD = {};').replace(/^import \{ dlStaff[^\n]*$/m, 'const dlStaff = null, dlAdmin = null, dlPractice = null, dlHomework = null;').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(ROOT, 'md-hw.js'), 'utf8'));
+    .replace(/^import BUILD from .*$/m, 'const BUILD = {};').replace(/^import \{ dlStaff[^\n]*$/m, 'const dlStaff = null, dlAdmin = null, dlPractice = null, dlHomework = null, dlRaw = null, dlReapMaybe = null;').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(ROOT, 'md-hw.js'), 'utf8'));
   const DB = { extitems: {}, passes: {}, assignments: {}, roster: {} }, VER = {};
   const ctx = vm.createContext({ console: { log() {} }, Response: class { constructor(b, o) { this.body = b; this.status = (o && o.status) || 200; } }, URL, TextEncoder, TextDecoder, crypto: globalThis.crypto, atob, btoa, fetch: async () => ({ ok: false, status: 500 }) });
   vm.runInContext(SRC + `;this.T={passItem};var WHO=null,DB=null,VER=null;this.setWho=function(w){WHO=w};this.set=function(d,v){DB=d;VER=v};idUser=async function(){return WHO};
@@ -101,7 +101,7 @@ function server() {
   // ---- old passes of this month (made before the quota markers): they must count toward this month
   function pmServer() {
     const SRC = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest')
-      .replace(/^import BUILD from .*$/m, 'const BUILD = {};').replace(/^import \{ dlStaff[^\n]*$/m, 'const dlStaff = null, dlAdmin = null, dlPractice = null, dlHomework = null;').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(ROOT, 'md-hw.js'), 'utf8'));
+      .replace(/^import BUILD from .*$/m, 'const BUILD = {};').replace(/^import \{ dlStaff[^\n]*$/m, 'const dlStaff = null, dlAdmin = null, dlPractice = null, dlHomework = null, dlRaw = null, dlReapMaybe = null;').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(ROOT, 'md-hw.js'), 'utf8'));
     const DB = { passes: {}, passq: {}, audit: {} };
     const ctx = vm.createContext({ console: { log() {} }, Response: class { constructor(b, o) { this.body = b; this.status = (o && o.status) || 200; } }, URL, TextEncoder, TextDecoder, crypto: globalThis.crypto, atob, btoa, fetch: async () => ({ ok: false, status: 500 }) });
     vm.runInContext(SRC + `;this.T={adminPassMarkers,vnMonthOf,adminExtLegacy};var DB=null;this.set=function(d){DB=d};

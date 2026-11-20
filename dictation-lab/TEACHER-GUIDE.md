@@ -1,7 +1,6 @@
 # Hướng dẫn cho giáo viên: Dictation Lab (bản R3)
 
-Tài liệu ngắn về cách học sinh làm bài và cách đọc điểm. Dictation Lab **chưa có trên web Mini Drills**; đây là hành vi đã được
-lập trình và kiểm thử trong gói này, sẽ giữ nguyên khi tích hợp.
+Tài liệu ngắn về cách học sinh làm bài và cách đọc điểm (đã tích hợp vào Mini Drills, Library › Listening).
 
 ## 1. Bốn Level và Answer Spotter
 
@@ -48,6 +47,15 @@ Với một câu: điểm từng phần là số từ đúng thứ tự trên s�
 Đảo thứ tự từ, thêm hoặc bớt từ đều bị trừ. Không phân biệt hoa thường và dấu câu. Sai chính tả, thiếu hay thừa `s`/`ed`, sai dạng từ là **sai**.
 Giữ đúng ký hiệu số: `20` khác `20%`, `35` khác `£35`, `5 km` khác `5km`. Dạng thay thế (ví dụ `£35` chấp nhận `35`) chỉ được dùng khi giáo viên duyệt.
 
-## 5. Việc của giáo viên
+## 5. Xem câu trả lời của học sinh (giữ 90 ngày)
+
+* Mở bài dictation (bài về nhà) trong Library: dưới bài có **Submitted answers**. Bấm tên một học sinh để xem từng câu: câu học sinh
+  đã nộp, đúng/sai, số từ đúng thứ tự, đáp án.
+* Chỉ thấy học sinh **của lớp mình** (cột "Giáo viên" trong Google Sheet phải trùng tên tài khoản giáo viên). Học sinh bị Kick, chuyển lớp,
+  bị gỡ khỏi lớp, hoặc bài giao bị đổi lớp thì không còn thấy nữa.
+* Câu trả lời chỉ được giữ **90 ngày** kể từ lúc nộp, sau đó hiện "answer details expired" và tự xóa; **điểm vẫn giữ**.
+* Chỉ hoạt động khi chủ dự án đã bật `DL_RAW_RETENTION = on`; chưa bật thì chỉ thấy điểm.
+
+## 6. Việc của giáo viên
 
 Xem `TEACHER-DECISIONS.md` mục B (việc chỉ con người làm được) và mục C (các mặc định cần xác nhận).

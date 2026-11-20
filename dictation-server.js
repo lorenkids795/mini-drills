@@ -9,6 +9,9 @@
 //   exercises/dl-{lid}         public, answer-free entry for the Library and assignments {kind:'dictation', dlId, dlVer, dlMode, ...}
 //   attempts/{slug}_{asg}_{ex} the official homework attempt (server-written; md-hw.js counts it like any attempt)
 //   audit/dl_{lid}_{ts}        save / approve / publish / unpublish trail
+//   dlRaw/{slug}_{asg}_{ex}    P-05 (owner: 90 days): the FINAL submitted answers as text {email, cls, asg, ex, ver, answers, submittedAt, expMs,
+//                              expiresAt}. Written only when env DL_RAW_RETENTION = 'on'; read only by dlRaw() for an authorized teacher;
+//                              expired rows are never returned and are deleted by dlReap() (fail closed: off = nothing raw is kept).
 // D = helpers from [[path]].js: {fsGet, fsPut, fsCreate, fsUpdate, fsDelete, fsList, fsQueryDocs, idUser, staffEmail, rosterRow, normEmail, slug, json, fail, adminEmail}
 import * as DL from './dictation/engine/index.js';
 import { validateDictationJson, validateDictationDocument, sha256Utf8 } from './dictation/validator/index.js';
@@ -20,6 +23,24 @@ const ID = /^[A-Za-z0-9_-]{1,80}$/;
 const BOOK = /^cam\d{1,2}$/, TEST = /^t[1-4]$/;
 const clean = (s, n) => String(s ?? '').replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, n);
 const vid = (lid, n) => lid + '_' + n;
+export const DL_RAW_DAYS = 90; const DAY = 864e5; const RAW_MS = DL_RAW_DAYS * DAY;
+export const rawOn = (env) => String((env && env.DL_RAW_RETENTION) || '').toLowerCase() === 'on';
+// same as tNorm in index.html: the roster "Giáo viên" column vs the teacher's account name
+export const tNorm = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 'd').toLowerCase().replace(/^\s*(co|thay|ms|mrs|mr|miss|teacher)\.?\s+/, '').replace(/\s+/g, ' ').trim();
+// display text of one submitted response (Level 1 tiles -> their words); it = the server's student payload item
+function answerText(it, r) {
+  if (!r || typeof r !== 'object') return '';
+  if (Array.isArray(r.placedIds)) { const m = new Map(((it && it.tiles) || []).map((t) => [t.id, t.text])); return r.placedIds.map((x) => m.get(x) ?? '?').join(' '); }
+  if (Array.isArray(r.answers)) return r.answers.map((x) => String(x)).join(' · ');
+  return String(r.answer ?? r.text ?? r.chosen ?? '');
+}
+function keyText(rv) {
+  if (!rv || typeof rv !== 'object') return '';
+  if (Array.isArray(rv.blanks)) return rv.blanks.join(' · ') + (rv.text ? '  (' + rv.text + ')' : '');
+  if (Array.isArray(rv.answers)) return rv.answers.join(' / ');
+  if (Array.isArray(rv.transcript)) return rv.transcript.map((x) => x.text).join(' ');
+  return String(rv.text || '');
+}
 
 async function loadVersion(D, env, lid, n) { const v = await D.fsGet(env, 'dlVersions', vid(lid, n)); return v ? v.data : null; }
 function docOf(ver) { const doc = JSON.parse(ver.json); return { doc, validation: validateDictationDocument(doc, { schema: SCHEMA }) }; }
@@ -52,6 +73,13 @@ export async function dlStaff(D, env, request, body) {
 
 /* ---------- admin: approve / publish / unpublish (POST /api/admin/dictation {op}) — called after adminKeyOk ---------- */
 export async function dlAdmin(D, env, body) {
+  if (body.op === 'retention') return D.json({ ok: true, on: rawOn(env), days: DL_RAW_DAYS, last: env && env.MD_KV ? await env.MD_KV.get('dlreap:last', 'json').catch(() => null) : null });
+  if (body.op === 'reap') { // manual cleanup for missed runs: bounded, idempotent (deleting an expired row twice is a no-op)
+    const tot = { ts: Date.now(), raw: 0, sits: 0, more: false };
+    try { for (let i = 0; i < 5; i++) { const o = await dlReap(D, env, 300); tot.raw += o.raw; tot.sits += o.sits; tot.more = o.more; if (!o.more) break; } } catch (e) { tot.err = String((e && e.message) || e).slice(0, 120); }
+    if (env && env.MD_KV) await env.MD_KV.put('dlreap:last', JSON.stringify(tot)).catch(() => {});
+    return D.json(Object.assign({ ok: !tot.err }, tot), tot.err ? 500 : 200);
+  }
   const by = D.adminEmail(env); const lid = String(body.lid || ''); if (!ID.test(lid)) return D.fail('Bad lesson id.');
   const L = await D.fsGet(env, 'dlLessons', lid); if (!L) return D.fail('Not found.', 404); const now = Date.now();
   if (body.op === 'approve') {
@@ -139,7 +167,7 @@ export async function dlHomework(D, env, request, body, route) {
     const req = body.req || {}; if (req.contentVersion !== S.cv) return D.json({ status: 'rejected', reason: 'version_mismatch' }, 409);
     const v = DL.validateSubmission({ schema: DL.SUBMISSION_SCHEMA, idempotencyKey: 'phase', assignmentId: S.asgId, contentVersion: S.cv, responses: req.responses }, { assignmentId: S.asgId, contentVersion: S.cv, items: all.filter((i) => lockIds.includes(i.id)) });
     if (!v.ok) return D.json({ status: 'rejected', reason: v.reason }, 400);
-    if (!(await D.fsUpdate(env, 'dlSits', S.key, { lock: JSON.stringify(req.responses || {}), lockTs: S.now }, S.sit.updateTime))) return D.json({ status: 'rejected', reason: 'busy' }, 409);
+    if (!(await D.fsUpdate(env, 'dlSits', S.key, { lock: JSON.stringify(req.responses || {}), lockTs: S.now, rawExp: S.now + RAW_MS }, S.sit.updateTime))) return D.json({ status: 'rejected', reason: 'busy' }, 409);
     return D.json({ status: 'ok', payload: DL.releasePhase(S.SO, { assignmentId: S.asgId }) });
   }
   if (route !== 'submit') return D.fail('Not found.', 404);
@@ -147,10 +175,17 @@ export async function dlHomework(D, env, request, body, route) {
   if (!v.ok) return D.json({ status: 'rejected', reason: v.reason }, 400);
   if (DL.phaseItemIds(S.SO).length > 1 && !lock) return D.json({ status: 'rejected', reason: 'phase_not_locked' }, 409);
   const sc = DL.scoreHomework(req, S.SO, { locked: lock || {} }); const result = { items: sc.items, aggregate: sc.aggregate, unanswered: sc.unanswered, review: sc.review };
-  const rec = DL.storageRecord(sc, {}).record; // scores only: raw answers are not stored (retention period not approved, P-05)
+  const rec = DL.storageRecord(sc, {}).record; // scores only (kept like any attempt); the raw text goes to dlRaw below and expires
   if (!(await D.fsCreate(env, 'dlSubs', S.key, { email: S.who.em, asg: S.asgId, ex: S.exId, ver: S.n, record: JSON.stringify(rec), result: JSON.stringify(result), ts: S.now }))) {
     const again = await D.fsGet(env, 'dlSubs', S.key); return D.json({ status: 'duplicate', submissionId: S.key, result: again ? JSON.parse(again.data.result) : result });
   }
+  // P-05: final answers only (no drafts, no keystrokes); clock = this server-accepted submission; fsCreate = a retry never resets it
+  if (rawOn(env)) {
+    const R = Object.assign({}, req.responses || {}, lock || {}); const byId = new Map(all.map((i) => [i.id, i])); const answers = {};
+    for (const id of Object.keys(sc.items)) if (R[id] !== undefined) answers[id] = answerText(byId.get(id), R[id]).slice(0, 4000);
+    await D.fsCreate(env, 'dlRaw', S.key, { email: S.who.em, cls: String(S.r.data.cls || ''), asg: S.asgId, ex: S.exId, ver: S.cv, answers, submittedAt: S.now, expMs: S.now + RAW_MS, expiresAt: new Date(S.now + RAW_MS) }).catch(() => {});
+  }
+  if (S.sit.data.lock) await D.fsUpdate(env, 'dlSits', S.key, { lock: '', rawExp: 0 }).catch(() => {}); // phase-1 text is no longer needed
   const f = sc.aggregate.overall.itemWeightedAssignmentScore || { num: 0, den: 1 }; const big = f.den > 1000;
   const score = big ? Math.floor((f.num * 1000) / f.den) : f.num, total = big ? 1000 : f.den;
   const ids = Object.keys(sc.items); const answered = ids.filter((id) => sc.items[id].state === 'attempted').length;
@@ -159,3 +194,53 @@ export async function dlHomework(D, env, request, body, route) {
     dl: { ver: S.cv, passed: !!sc.aggregate.result?.passed, completed: !!sc.aggregate.result?.completed, official: sc.official } });
   return D.json({ status: 'accepted', submissionId: S.key, result });
 }
+
+/* ---------- P-05: teacher-only raw answers (POST /api/dictation/raw {op:'list', exId}) ----------
+   Checked on EVERY request, from server records only (never from ids the client sends): a teacher / admin staff key, the student's
+   CURRENT roster row (kicked = gone), still in the class the submission was for and not removed from it, the assignment still for that
+   class and still containing this exercise, and the roster "Giáo viên" of that student = this teacher's name. Admin (the owner's
+   diagnostic role) sees every class: the one documented exception. Homework Assistants and students never get here (staff key). */
+export async function dlRaw(D, env, request, body) {
+  const by = await D.staffEmail(env, request); if (!by) return D.json({ error: 'Your session ended. Enter your password to continue.', needUnlock: true }, 401);
+  if (body.op !== 'list') return D.fail('Unknown action.');
+  const exId = String(body.exId || ''); if (!/^dl-[A-Za-z0-9_-]{1,80}$/.test(exId)) return D.fail('Bad request.');
+  const adm = by === D.adminEmail(env); const me = adm ? '' : tNorm(await D.teacherName(env, by)); const now = Date.now();
+  const subs = (await D.fsQueryDocs(env, 'dlSubs', 'ex', exId)).slice(0, 300); const C = {}; const memo = (k, f) => (k in C ? C[k] : (C[k] = f()));
+  const rows = []; let hidden = 0;
+  for (const s of subs) {
+    const r = await memo('r:' + s.email, () => D.rosterRow(env, s.email)); const a = await memo('a:' + s.asg, () => D.fsGet(env, 'assignments', s.asg));
+    const cls = r ? String(r.data.cls || '') : ''; const cd = cls ? await memo('c:' + cls, () => D.fsGet(env, 'classes', D.slug(cls))) : null;
+    const removed = ((cd && cd.data && cd.data.removed) || []).some((e) => D.normEmail(e) === D.normEmail(s.email));
+    const ok = !!r && r.data.role !== 'teacher' && !!a && String(a.data.cls || '') === cls && Array.isArray(a.data.ex) && a.data.ex.indexOf('c_' + exId) >= 0 && !removed && (adm || (!!me && tNorm(r.data.teacher) === me));
+    if (!ok) { hidden++; continue; }
+    const raw = await D.fsGet(env, 'dlRaw', s.id); const rec = JSON.parse(s.record || '{}'); const res = JSON.parse(s.result || '{}');
+    const live = !!(raw && Number(raw.data.expMs) > now && String(raw.data.email) === String(s.email));
+    if (raw && !live) await D.fsDelete(env, 'dlRaw', s.id).catch(() => {}); // expired: never shown, deleted now
+    const items = Object.keys(rec.items || {}).map((id) => { const x = rec.items[id]; const o = { id, level: x.level, state: x.state, first: x.first || null, key: keyText(res.review && res.review[id]) }; if (live) o.answer = String((raw.data.answers || {})[id] ?? ''); return o; });
+    rows.push({ name: String(r.data.name || ''), cls, asg: s.asg, submittedAt: Number(s.ts) || 0, raw: live ? 'kept' : (Number(s.ts) + RAW_MS <= now ? 'expired' : 'not_kept'), expiresAt: live ? Number(raw.data.expMs) : 0,
+      score: (rec.aggregate && rec.aggregate.overall && rec.aggregate.overall.itemWeightedAssignmentScore) || null, passed: !!(rec.aggregate && rec.aggregate.result && rec.aggregate.result.passed), items });
+  }
+  return D.json({ ok: true, days: DL_RAW_DAYS, on: rawOn(env), rows, hidden });
+}
+
+/* ---------- P-05 automatic deletion ----------
+   Pages Functions have no cron, so the cleanup runs (1) from GET /api/status, which every signed-in app calls every 10 minutes, at
+   most once an hour (KV dlreap:last), in bounded batches; (2) on demand: POST /api/admin/dictation {op:'reap'}. Reads never return an
+   expired row even when deletion is late. If Firestore TTL is switched on for dlRaw.expiresAt it is a second, independent layer. */
+export async function dlReap(D, env, max = 200) {
+  const now = Date.now(); const out = { ts: now, raw: 0, sits: 0, more: false };
+  const raw = await D.fsQueryRange(env, 'dlRaw', 'expMs', 0, now, max);
+  for (const d of raw) { await D.fsDelete(env, 'dlRaw', d.id); out.raw++; }
+  const sits = await D.fsQueryRange(env, 'dlSits', 'rawExp', 0, now, max);
+  for (const d of sits) { await D.fsUpdate(env, 'dlSits', d.id, { lock: '', rawExp: 0 }); out.sits++; }
+  out.more = raw.length >= max || sits.length >= max; return out;
+}
+let REAP_AT = 0;
+export async function dlReapMaybe(D, env) {
+  const now = Date.now(); if (now - REAP_AT < 6e5 || !env || !env.MD_KV) return null; REAP_AT = now;
+  const last = await env.MD_KV.get('dlreap:last', 'json').catch(() => null);
+  if (last && now - Number(last.ts) < 36e5 && !last.more && !last.err) return null;
+  let out; try { out = await dlReap(D, env, 200); } catch (e) { out = { ts: now, err: String((e && e.message) || e).slice(0, 120) }; } // message only, never data
+  await env.MD_KV.put('dlreap:last', JSON.stringify(out)).catch(() => {}); return out;
+}
+export const _resetReapClock = () => { REAP_AT = 0; };

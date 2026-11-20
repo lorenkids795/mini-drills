@@ -1,6 +1,6 @@
 import BUILD from '../../build-info.js'; // what this deployment is (production / staging), written by build.js
 import MDHW from '../../md-hw.js'; // the homework rules shared with the app (one source, 11/2026)
-import { dlStaff, dlAdmin, dlPractice, dlHomework } from '../../dictation-server.js'; // Dictation Lab (contract v1.1): homework scored here, never on the device
+import { dlStaff, dlAdmin, dlPractice, dlHomework, dlRaw, dlReapMaybe } from '../../dictation-server.js'; // Dictation Lab (contract v1.1): homework scored here, never on the device
 // Mini Drills auth API (Cloudflare Pages Function, served at /api/*).
 // Everyone signs in with email + password. Students pick class + name the first time;
 // teacher passwords are set by the admin (Admin › Teachers / Users). Teachers reset forgotten student passwords.
@@ -206,6 +206,7 @@ const fsBase = (env) =>
 // objects become mapValue and arrays arrayValue, so attempts.ai can be stored as real data.
 function toValue(v) {
   if (typeof v === 'boolean') return { booleanValue: v };
+  if (v instanceof Date) return { timestampValue: v.toISOString() }; // e.g. dlRaw.expiresAt (usable by a Firestore TTL policy)
   if (typeof v === 'number') {
     if (!isFinite(v)) return { integerValue: '0' };
     return Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v };
@@ -1182,7 +1183,7 @@ async function adminKick(env, body) {
    Every document of the student in the learning collections (found by the "email" field: one query each, so a kick stays
    far below the Workers sub-request limit), and profiles/{slug(email)} (XP, streak, prizes). Codes already handed out and the
    "wins" marquee are left alone. Cannot be undone. */
-const PURGE_COLS = ['attempts', 'errors', 'cards', 'hwdone', 'passes', 'passq', 'extitems', 'redeems'];
+const PURGE_COLS = ['attempts', 'errors', 'cards', 'hwdone', 'passes', 'passq', 'extitems', 'redeems', 'dlSits', 'dlSubs', 'dlRaw'];
 async function fsQueryEq(env, col, field, value) {
   const r = await fs(env, 'POST', ':runQuery', { structuredQuery: { from: [{ collectionId: col }], where: { fieldFilter: { field: { fieldPath: field }, op: 'EQUAL', value: { stringValue: value } } } } });
   if (!r.ok) throw new Error('firestore query ' + col + ' ' + r.status);
@@ -1191,6 +1192,14 @@ async function fsQueryEq(env, col, field, value) {
 }
 async function fsQueryDocs(env, col, field, value) {
   const r = await fs(env, 'POST', ':runQuery', { structuredQuery: { from: [{ collectionId: col }], where: { fieldFilter: { field: { fieldPath: field }, op: 'EQUAL', value: { stringValue: String(value) } } }, limit: 3000 } });
+  if (!r.ok) throw new Error('firestore query ' + col + ' ' + r.status);
+  const rows = await r.json();
+  return (Array.isArray(rows) ? rows : []).filter((x) => x && x.document).map((x) => Object.assign({ id: decodeURIComponent(x.document.name.split('/').pop()) }, fromFields(x.document.fields)));
+}
+// lo < field <= hi (one field, so no composite index); used by the Dictation raw-answer cleanup
+async function fsQueryRange(env, col, field, lo, hi, limit) {
+  const f = (op, v) => ({ fieldFilter: { field: { fieldPath: field }, op, value: { integerValue: String(Math.floor(v)) } } });
+  const r = await fs(env, 'POST', ':runQuery', { structuredQuery: { from: [{ collectionId: col }], where: { compositeFilter: { op: 'AND', filters: [f('GREATER_THAN', lo), f('LESS_THAN_OR_EQUAL', hi)] } }, limit: Math.max(1, Math.min(500, limit || 200)) } });
   if (!r.ok) throw new Error('firestore query ' + col + ' ' + r.status);
   const rows = await r.json();
   return (Array.isArray(rows) ? rows : []).filter((x) => x && x.document).map((x) => Object.assign({ id: decodeURIComponent(x.document.name.split('/').pop()) }, fromFields(x.document.fields)));
@@ -2898,7 +2907,8 @@ async function adminStaging(env, body) {
 }
 
 // helpers handed to dictation-server.js (one place, so its tests can pass fakes)
-const dlDeps = () => ({ fsGet, fsPut, fsCreate, fsUpdate, fsDelete, fsList, fsQueryDocs, idUser, staffEmail, rosterRow, normEmail, slug, json, fail, adminEmail });
+const teacherName = async (env, email) => { const st = await staffMap(env); return (st[email] && st[email].name) || ''; };
+const dlDeps = () => ({ fsGet, fsPut, fsCreate, fsUpdate, fsDelete, fsList, fsQueryDocs, fsQueryRange, idUser, staffEmail, rosterRow, normEmail, slug, json, fail, adminEmail, teacherName });
 export async function onRequest(ctx) {
   const { request } = ctx;
   let env = ctx.env;
@@ -2917,6 +2927,8 @@ export async function onRequest(ctx) {
       const em = normEmail(url.searchParams.get('em'));
       const s = emailOk(em) ? await offState(env, em) : '';
       const st = {}; st[s || 'ok'] = true; // { ok } | { off } | { moved } | { kicked }
+      // P-05: every signed-in app calls this every 10 minutes, so the hourly Dictation raw-answer cleanup rides on it (after the reply)
+      if (dlReapMaybe) { const job = dlReapMaybe(dlDeps(), env).catch(() => null); if (ctx.waitUntil) ctx.waitUntil(job); }
       return json(st);
     }
     const am = /^audio\/([A-Za-z0-9_-]{22})$/.exec(route);
@@ -2947,6 +2959,7 @@ export async function onRequest(ctx) {
       const D = dlDeps();
       if (route === 'dictation/staff') return await dlStaff(D, env, request, body);
       if (route === 'dictation/practice') return await dlPractice(D, env, request, body);
+      if (route === 'dictation/raw') return await dlRaw(D, env, request, body);
       const hm = /^dictation\/(payload|lock|submit)$/.exec(route); if (hm) return await dlHomework(D, env, request, body, hm[1]);
     }
     if (route === 'hwa/data') return await hwaData(env, request, body);

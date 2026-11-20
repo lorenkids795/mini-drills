@@ -1108,6 +1108,7 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .lsflash{margin-top:10px;font-size:var(--fs-body);color:var(--accent)}.lsflash .lsfh{font-size:1.5rem;font-weight:800;line-height:1.25;margin:0 0 2px}.lsflash .lsfd{margin:0 0 8px}.lsflash .lsfl{font-size:var(--fs-sm);font-weight:700;margin:6px 0 2px}.lsflash .lsfu{list-style:none;margin:0;padding:0 0 0 22px}.lsflash .lsfu li{margin:2px 0}.lsflash .lsfe{margin-top:10px;font-style:italic}.lsflash b,.lsflash small,.lsflash i{color:var(--accent)}.lsexp{font-style:italic;color:var(--accent);margin:6px 0 0}
 .lsc .opt.good,.lsc .opt.good:has(input:checked){background:var(--good-bg);border-color:var(--good);color:var(--good);font-weight:600}.lsc .opt.bad,.lsc .opt.bad:has(input:checked){background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
 .lsw b{font-size:1.2rem}.lsscore{cursor:default;display:inline-block}.lshw.tg.on{background:var(--good);color:var(--bg)}
+.dlraw{border:1px solid var(--line);border-radius:var(--r-md);padding:10px 12px;margin:0 0 8px}.dlraw summary{cursor:pointer;min-height:32px}.dlri{padding:6px 0;border-top:1px solid var(--line);line-height:1.6}.dlans{white-space:pre-wrap;word-break:break-word}
 .lsdemo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;font-size:var(--fs-sm);color:var(--muted)}
 /* ---- Lesson layout shared by Listening (.ls) and Reading (.rm): one type scale (passage 1.06rem / 1.8–1.9, questions 1rem,
    small text >= .82rem), touch targets >= 44px with 8px gaps, sticky stage bar, full-width sticky actions on phones ---- */
@@ -3542,7 +3543,7 @@ function dlUserApi(path,body){return authHdr().then(function(hd){return adPost(p
 function dlAsk(o){uiAsk({title:o.title,text:o.text||'',ok:o.ok||'OK',cancel:o.cancel||'Cancel',danger:!!o.danger,onOk:o.onOk})}
 function dlSubOf(ex){if(!U)return null;var L=attemptsOf(U.email).filter(function(a){return a.ex===ex.id&&a.kind==='dictation'});return L.length?L[L.length-1]:null}
 function renderDictation(ex,head,ban,C){
-  $('#libBody').innerHTML='<div class="pane single">'+head+ban+'<div id="dlRoot"><p class="muted">Loading…</p></div><div class="actions" id="dlMore"></div></div>';
+  $('#libBody').innerHTML='<div class="pane single">'+head+ban+'<div id="dlRoot"><p class="muted">Loading…</p></div><div class="actions" id="dlMore"></div><div id="dlRaw"></div></div>';
   if(DEMO){$('#dlRoot').innerHTML='<p class="muted">Dictation Lab needs the live site (it is scored on the server).</p>';return}
   var exId=ex.id.slice(2),stu=U.role==='student',sub=stu?dlSubOf(ex):null;
   var practice=function(){var el=$('#dlRoot');if(!el)return;el.innerHTML='<p class="muted">Loading…</p>';var mo=$('#dlMore');if(mo)mo.innerHTML='';
@@ -3557,8 +3558,24 @@ function renderDictation(ex,head,ban,C){
       return;
     }
     if(stu&&ex.dl.homework){el.innerHTML='<p class="muted">This dictation is homework. Open it from your homework list; practice opens after you submit it.</p>';return}
-    practice();
+    practice();if(!stu&&ex.dl.homework)dlRawLoad(exId);
   });
+}
+/* P-05 (owner: 90 days): the class teacher sees each student's final submitted answers; the server checks the class on every request,
+   hides expired details (score kept) and deletes them. Everything from the server goes through esc(). */
+function dlRawLoad(exId){
+  var b=$('#dlRaw');if(!b)return;b.innerHTML='<h3>Submitted answers</h3><p class="muted">Loading…</p>';
+  staffApi('dictation/raw',{op:'list',exId:exId}).then(function(d){var el=$('#dlRaw');if(!el)return;el.innerHTML='<h3>Submitted answers</h3>'+(d&&d.ok?dlRawHTML(d):'<p class="err">'+esc((d&&d.error)||'Could not load the answers.')+'</p>')},function(e){var el=$('#dlRaw');if(el)el.innerHTML='<h3>Submitted answers</h3><p class="err">'+esc(e.message||e)+'</p>'});
+}
+function dlRawHTML(d){
+  var note='<p class="muted">'+(d.on?'Final answers are kept for '+(+d.days||90)+' days after a student submits, then deleted automatically. Only the class teacher can see them. Scores stay.':'Answer details are not being kept on this site. Scores are shown.')+(d.hidden?' '+(+d.hidden)+' submission(s) from classes that are not yours are not shown.':'')+'</p>';
+  if(!d.rows.length)return note+'<p class="muted">No submissions yet.</p>';
+  return note+d.rows.map(function(r){
+    var sc=r.score&&r.score.den?Math.floor(100*r.score.num/r.score.den)+'%':'–';
+    var st=r.raw==='kept'?'answer details until '+fmtD(+r.expiresAt):r.raw==='expired'?'answer details expired':'answer details not kept';
+    return '<details class="dlraw"><summary><b>'+esc(r.name)+'</b> · '+esc(classTitle(r.cls))+' · '+sc+' · '+(r.passed?'Passed':'Not passed')+' <span class="muted">· '+esc(st)+'</span></summary>'+
+      (r.items||[]).map(function(i){var f=i.first;return '<div class="dlri"><div class="muted">'+esc(i.id)+' · '+(i.state!=='attempted'?'Blank (0)':f&&f.exact?'✓ Fully correct':'✗ '+(f?(+f.num)+' / '+(+f.den):'Not correct'))+'</div>'+
+        (typeof i.answer==='string'?'<div>Student: <span class="dlans">'+esc(i.answer)+'</span></div>':'')+'<div class="muted">Correct: '+esc(i.key)+'</div></div>'}).join('')+'</details>'}).join('');
 }
 var DLB=false;
 function dlSlot(){if(!CP.slot)return null;var b=BOOKS.filter(function(x){return x.id===CP.book})[0];return {book:CP.book,test:CP.test,part:CP.slot,label:(b?b.short:CP.book)+' · '+TNAME[CP.test]+' · Listening · Part '+CP.slot}}
@@ -7269,7 +7286,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-11-20a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-11-21a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(uiAct(a,t))return true;
