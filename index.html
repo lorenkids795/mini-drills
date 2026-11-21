@@ -1108,6 +1108,7 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .lsflash{margin-top:10px;font-size:var(--fs-body);color:var(--accent)}.lsflash .lsfh{font-size:1.5rem;font-weight:800;line-height:1.25;margin:0 0 2px}.lsflash .lsfd{margin:0 0 8px}.lsflash .lsfl{font-size:var(--fs-sm);font-weight:700;margin:6px 0 2px}.lsflash .lsfu{list-style:none;margin:0;padding:0 0 0 22px}.lsflash .lsfu li{margin:2px 0}.lsflash .lsfe{margin-top:10px;font-style:italic}.lsflash b,.lsflash small,.lsflash i{color:var(--accent)}.lsexp{font-style:italic;color:var(--accent);margin:6px 0 0}
 .lsc .opt.good,.lsc .opt.good:has(input:checked){background:var(--good-bg);border-color:var(--good);color:var(--good);font-weight:600}.lsc .opt.bad,.lsc .opt.bad:has(input:checked){background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
 .lsw b{font-size:1.2rem}.lsscore{cursor:default;display:inline-block}.lshw.tg.on{background:var(--good);color:var(--bg)}
+.attcap{margin:18px 0 8px;font-size:var(--fs-sm);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .dlraw{border:1px solid var(--line);border-radius:var(--r-md);padding:10px 12px;margin:0 0 8px}.dlraw summary{cursor:pointer;min-height:32px}.dlri{padding:6px 0;border-top:1px solid var(--line);line-height:1.6}.dlans{white-space:pre-wrap;word-break:break-word}
 .lsdemo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;font-size:var(--fs-sm);color:var(--muted)}
 /* ---- Lesson layout shared by Listening (.ls) and Reading (.rm): one type scale (passage 1.06rem / 1.8–1.9, questions 1rem,
@@ -4252,7 +4253,7 @@ function renderDash(){
     h+=dCard('By question type','Share of wrong answers. Darker means more mistakes.',tagList.length?'<div class="dg4">'+tagList.slice(0,12).map(function(x){var r=Math.round(x.r*100);return '<div class="dht" style="--x:'+Math.min(60,r*2)+'%"><b>'+r+'%</b><span>'+esc(x.t)+'</span></div>'}).join('')+'</div>':'<p class="saved">Not enough data yet (each type needs at least 4 answers).</p>');
     h+=dCard('Hardest exercises','Share of answers that were wrong.',hardEx.length?hardEx.slice(0,6).map(function(x){return dBar(x.label,x.wrong,'var(--bad)')}).join(''):'<p class="saved">Not enough data yet.</p>');
   }
-  $('#v-dash').innerHTML=attCapHTML()+h;
+  $('#v-dash').innerHTML=h+attCapHTML();
 }
 
 /* ---------- Assignments (teacher) ---------- */
@@ -4377,7 +4378,7 @@ function attNeed(ts,cb){if(attHas(ts)||ATT.busy){if(cb&&attHas(ts))cb();return}A
     function(){ATT.busy=false;ATT.err='Older work could not be loaded. Check the connection and try again.';refreshLive()})}
 // teacher note: what is loaded, and a way to load older work (nothing is lost, it is only not read yet)
 function attCapHTML(){if(DEMO||!U||U.role!=='teacher'||!ATT.db||!ATT.more)return '';
-  return '<p class="banner" role="note">'+(ATT.busy?'Loading older work…':'Showing work since '+esc(fmtShort(ATT.lo))+'. Older work is not lost.')+(ATT.err?' '+esc(ATT.err):'')+
+  return '<p class="muted attcap" role="note">'+(ATT.busy?'Loading older work…':'Work before '+esc(fmtShort(ATT.lo))+' is not loaded yet (it is not lost).')+(ATT.err?' '+esc(ATT.err):'')+
     (ATT.busy?'':' <button type="button" class="btn sm" data-act="att-older">Load older work</button>')+'</p>'}
 function hwMatrixHTML(a,only){
   a=normAsg(a);if(!attHas(a.start)){attNeed(a.start);return '<p class="banner" role="status">Loading the work for this assignment…</p>'}return hwMatrixBody(a,only)}
@@ -4869,7 +4870,7 @@ function renderMark(){
   var a=MK.open?L.filter(function(x){return x.id===MK.sel})[0]:null;
   if(MK.open&&!a&&!subsAll().some(function(x){return x.id===MK.sel})){MK.open=false;MK.sel=null;toast('That submission is no longer available: the student was removed.')}
   if(a)h+=modalHTML(a);
-  $('#v-mark').innerHTML=attCapHTML()+h;
+  $('#v-mark').innerHTML=h+attCapHTML();
   if(a)setStk();
 }
 function setStk(){var b=$('#stkBox');if(b)b.innerHTML=safeImg(MK.sticker)?'<img src="'+esc(safeImg(MK.sticker))+'" alt="Sticker">':'<span>Click, then paste an image (Ctrl+V)</span>'}
@@ -5826,7 +5827,10 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&SB.open&&!s
 function curDark(){var t=document.documentElement.getAttribute('data-theme');if(t)return t==='dark';return !!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)}
 // Admin: everything (Students and XP live inside Admin). Teacher: only their classes (see myCls). Student: unchanged.
 var HWA_TABS={hwa:'overview','hwa-asg':'assign','hwa-miss':'missing','hwa-watch':'watch'};
-function tabsFor(){return U.role==='assistant'?[['hwa','Dashboard'],['hwa-asg','Assignments'],['hwa-miss','Missing homework'],['hwa-watch','Students to watch']]:U.adm?[['dash','Dashboard'],['asg','Classes'],['mark','Marking'],['library','Library'],['create','Create'],['prize','Prizes'],['admin','Admin']]:U.role==='teacher'?[['asg','Classes'],['mark','Marking'],['dash','Dashboard'],['library','Library']]:[['library','Home'],['cards','Flashcards'],['errors','Error Notebook'],['ranks','Leaderboard'],['wheel','Lucky Wheel'],['bag','Inventory'],['set','Settings']]}
+function tabsFor(){return U.role==='assistant'?[['hwa','Dashboard'],['hwa-asg','Assignments'],['hwa-miss','Missing homework'],['hwa-watch','Students to watch']]:U.adm?[['dash','Dashboard'],['asg','Classes'],['mark','Marking'],['library','Library'],['create','Create'],['prize','Prizes'],['wheel','Lucky Wheel'],['admin','Admin']]:U.role==='teacher'?[['asg','Classes'],['mark','Marking'],['dash','Dashboard'],['library','Library'],['wheel','Lucky Wheel']]:[['library','Home'],['cards','Flashcards'],['errors','Error Notebook'],['ranks','Leaderboard']].concat(wheelOn()?[['wheel','Lucky Wheel']]:[]).concat([['bag','Inventory'],['set','Settings']])}
+/* Lucky Wheel is hidden from regular students for now (owner, 11/2026): WHEEL_STUDENTS=true shows it again. Testers keep it; staff get a preview. */
+var WHEEL_STUDENTS=false;function wheelOn(){return WHEEL_STUDENTS||lmTester()}
+var TABK='';function tabsDraw(t){var L=tabsFor();TABK=L.map(function(x){return x[0]}).join();$('#tabs').innerHTML=L.map(function(x){return '<button role="tab" data-act="tab" data-tab="'+x[0]+'" aria-selected="'+(x[0]===t)+'">'+x[1]+'</button>'}).join('')}
 function showTab(t){
   TAB=t;stopAudio();clearTimer();MK.open=false;recClearAll();
   if(t!=='admin'){AD.modal=null;var amr=document.getElementById('adModalRoot');if(amr)amr.innerHTML=''} // leaving Admin closes its confirm box
@@ -5835,7 +5839,7 @@ function showTab(t){
   $('#v-login').removeAttribute('data-wait');document.body.classList.remove('lg');
   if(t!=='library'&&!tabsFor().some(function(x){return x[0]===t})){t=tabsFor()[0][0];TAB=t} // a tab this role does not have
   $('#tabs').hidden=tabsFor().length<2;document.body.classList.toggle('nav-on',!$('#tabs').hidden);$('#sbBtn').hidden=$('#tabs').hidden;sbSet(SB.open);/* keeps the open / closed state */$('#who').hidden=false;$('#whoName').innerHTML=(U.role==='student'?avatarHTML(U.email,28,true)+' ':'')+'<b>'+esc(U.role==='student'?nameOf(U.email):U.name)+'</b>'+(lmTester()?' <span class="pill tst" title="Tester account: hidden from class lists, Dashboard and Leaderboard. Work is still saved.">Tester mode</span>':'')+(U.adm||U.role==='student'?'':'<span class="rl"> · '+(U.role==='assistant'?'Homework Assistant':U.role)+'</span>');
-  $('#tabs').innerHTML=tabsFor().map(function(x){return '<button role="tab" data-act="tab" data-tab="'+x[0]+'" aria-selected="'+(x[0]===t)+'">'+x[1]+'</button>'}).join('');
+  tabsDraw(t);
   var id={library:'lib',cards:'cards',errors:'errors',ranks:'ranks',wheel:'wheel',bag:'bag',set:'set',prize:'prize',xps:'xps',dash:'dash',asg:'asg',mark:'mark',roster:'roster',create:'create',admin:'admin',hwa:'hwa','hwa-asg':'hwa','hwa-miss':'hwa','hwa-watch':'hwa'}[t];$('#v-'+id).hidden=false;updMarq();
   if(HWA_TABS[t]){HWA.view=HWA_TABS[t];HWA.msg='';AG.form=null;renderHwa()}
   if(t==='admin')renderAdmin();
@@ -5860,6 +5864,7 @@ function signIn(email){
 }
 function refreshLive(){
   if(!U)return;updMarq();
+  if(TABK&&tabsFor().map(function(x){return x[0]}).join()!==TABK)tabsDraw(TAB); /* e.g. the tester flag arrived with the roster */
   if(TAB==='dash')renderDash();
   else if(TAB==='admin'&&AD.sub==='students')renderRoster();
   else if(TAB==='library'&&!NAV.ex&&!NAV.daily)renderLib();
@@ -7006,7 +7011,9 @@ function wheelSVG(){
   return s+'</g><g data-act="wh-center" style="cursor:pointer"><path d="M0,-31 C-3,-25 -12,-21 -10,-14 L10,-14 C12,-21 3,-25 0,-31 Z" fill="#111" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/><circle r="17" fill="#111" stroke="#fff" stroke-width="3"/><text y="3.4" text-anchor="middle" font-size="9.5" font-weight="700" style="fill:#fff">Spin</text></g></svg>';
 }
 function renderWheel(){
-  var el=$('#v-wheel');if(!U||U.role!=='student'){el.innerHTML='<p class="saved pad">The lucky wheel is for students.</p>';return}
+  var el=$('#v-wheel');if(!U)return;
+  if(U.role!=='student'){el.innerHTML='<div class="pad"><div class="sechead"><h2>Lucky Wheel</h2><span class="meta">Preview</span></div><div class="wheelbox"><div class="wwrap">'+wheelSVG()+'</div><p class="muted">'+(WHEEL_STUDENTS?'Students can spin from their own account.':'Hidden from students for now. Only tester accounts can spin.')+'</p></div></div>';return}
+  if(!wheelOn()){el.innerHTML='<p class="saved pad">The Lucky Wheel is not available right now.</p>';return}
   var p=myProf(),mk=monthKey(Date.now()),e=p.earn[mk]||{s:0,h:0,p:0};
   var h='<div class="pad"><div class="sechead"><h2>Lucky Wheel</h2><span class="meta">'+p.spins+' spin'+(p.spins===1?'':'s')+' · '+p.xp+' XP</span></div><div class="wheelbox"><div class="wwrap">'+wheelSVG()+'</div>'+
   '<div class="actions" style="margin:0;justify-content:center"><button class="btn pri" data-act="wh-spin" type="button"'+((p.spins<1||WH.busy)?' disabled':'')+'>Spin (uses 1)</button><button class="btn" data-act="wh-spinxp" type="button"'+((p.xp<SPIN_XP||WH.busy)?' disabled':'')+'>Spin for '+SPIN_XP+' XP</button></div><div id="wRes" aria-live="polite">'+(WH.res?resHTML(WH.res):'')+'</div></div>'+
@@ -7286,7 +7293,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-11-21a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-11-21c'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(uiAct(a,t))return true;
@@ -7356,7 +7363,7 @@ function extAct(a,t){
   if(a==='st-avfile'){var af=$('#avFile');if(af)af.click();return true}
   if(a==='st-avclr'){var pq=myProf();pq.avatar='';putProf(pq);showTab('set');return true}
   if(a==='st-save'){saveSettings();return true}
-  if(a==='wh-center'){var pc=myProf();doSpin(pc.spins<1);return true}
+  if(a==='wh-center'){if(!U||U.role!=='student'||!wheelOn())return true;/* staff preview / hidden wheel: no spin */var pc=myProf();doSpin(pc.spins<1);return true}
   if(a==='pr-mat'){
     var add=($('#prMat').value||'').split(/\n/).map(function(l){var i=l.lastIndexOf(',');return i>0?{id:'p'+Date.now()+Math.floor(Math.random()*999),kind:'mat',tier:2,label:l.slice(0,i).trim(),url:l.slice(i+1).trim()}:null}).filter(function(x){return x&&x.label&&/^https?:\/\//.test(x.url)});
     if(add.length)savePrizes(prizeList().concat(add));return true;

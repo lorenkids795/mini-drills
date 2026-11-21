@@ -784,6 +784,8 @@ Các thay đổi đã có trong code. **Không đảo ngược** nếu không đ
    - **Rules**: `attempts` create từ chối `kind:'dictation'` và `ex` dạng `c_dl-*` (**phải dán lại vào staging**).
    - Test: `tests/dictation-server.test.js` (12), `dictation-decisions` (6), `dictation-retention` (11), `dictation-app` (5) + bộ của gói (`cd dictation-lab/pkg && node tools/run-all.mjs`).
 
+103. **Ẩn Lucky Wheel với học sinh + dòng "older work" gọn (11/2026)**: `WHEEL_STUDENTS=false` + `wheelOn()` (= `WHEEL_STUDENTS || lmTester()`): học sinh thường không có tab Lucky Wheel (mở thẳng `renderWheel` → "not available"), tester vẫn quay; giáo viên + admin có tab **Lucky Wheel** = bản xem trước chỉ đọc (`wh-center` không quay khi không phải học sinh / `!wheelOn()`). Bật lại cho học sinh: `WHEEL_STUDENTS=true`. Server `/api/spin` không đổi (chỉ ẩn ở app). `tabsDraw(t)` + `TABK`: `refreshLive` vẽ lại thanh tab khi danh sách đổi (cờ tester tới sau roster). `attCapHTML` không còn là băng vàng: dòng chữ nhỏ `.attcap` "Work before … is not loaded yet" + Load older work, đặt **cuối** Dashboard / Marking. `APP_VERSION` = `2026-11-21b`. Test `tests/wheel-hidden.test.js` (4).
+
 ## 8. Giới hạn đã biết / chưa làm
 
 - AI chữa lỗi Writing chạy qua `/api/ai/correct` (cần `GEMINI_KEY`). `aiLookup` (tra từ bằng AI) vẫn gọi `window.claude` nên chưa chạy trên site thật.
