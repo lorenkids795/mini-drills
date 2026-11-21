@@ -4360,7 +4360,10 @@ function attNeed(ts,cb){if(attHas(ts)||ATT.busy){if(cb&&attHas(ts))cb();return}A
     attMerge();refreshLive();if(ts!=null&&!attHas(ts))attNeed(ts,cb);else if(cb)cb()},
     function(){ATT.busy=false;ATT.err='Older work could not be loaded. Check the connection and try again.';refreshLive()})}
 // teacher note: what is loaded, and a way to load older work (nothing is lost, it is only not read yet)
-function attCapHTML(){if(DEMO||!U||U.role!=='teacher'||!ATT.db||!ATT.more)return '';
+/* the note shows only when the Dashboard filter asks for a month / year that starts before the loaded work (Marking already loads every
+   Writing/Speaking submission, so it never needs it) */
+function attOldPick(){if(TAB!=='dash')return false;var st=F.month!=='all'?new Date(+F.month.slice(0,4),+F.month.slice(5,7)-1,1).getTime():F.year!=='all'?new Date(+F.year,0,1).getTime():NaN;return st<ATT.lo}
+function attCapHTML(){if(DEMO||!U||U.role!=='teacher'||!ATT.db||!ATT.more||!attOldPick())return '';
   return '<p class="muted attcap" role="note">'+(ATT.busy?'Loading older work…':'Work before '+esc(fmtShort(ATT.lo))+' is not loaded yet (it is not lost).')+(ATT.err?' '+esc(ATT.err):'')+
     (ATT.busy?'':' <button type="button" class="btn sm" data-act="att-older">Load older work</button>')+'</p>'}
 function hwMatrixHTML(a,only){
@@ -7276,7 +7279,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-11-21b'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-11-21d'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(uiAct(a,t))return true;

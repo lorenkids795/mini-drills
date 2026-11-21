@@ -24,4 +24,14 @@ t('older-work note: quiet line after the page content, no yellow banner', () => 
   assert.ok(s.includes("$('#v-dash').innerHTML=h+attCapHTML();") && s.includes("$('#v-mark').innerHTML=h+attCapHTML();"));
   assert.ok(s.includes('<p class="muted attcap" role="note">') && !s.includes('Showing work since'));
 });
+t('older-work note only when the Dashboard filter picks a month / year older than the loaded work; never on Marking', () => {
+  const B = boot({ hooks: 'attCapHTML:attCapHTML,setF:function(m,y){F.month=m;F.year=y},setATT:function(o){Object.assign(ATT,o)},setTab:function(t){TAB=t}', user: { name: 'T', email: 't@x.com', role: 'teacher' } });
+  const lo = new Date(2026, 8, 22).getTime(); B.T.setATT({ db: {}, more: true, lo }); B.T.setTab('dash');
+  B.T.setF('all', 'all'); assert.strictEqual(B.T.attCapHTML(), '', 'All / All');
+  B.T.setF('2026-10', 'all'); assert.strictEqual(B.T.attCapHTML(), '', 'a loaded month');
+  B.T.setF('2026-09', 'all'); assert.ok(B.T.attCapHTML().includes('Load older work'), 'September starts before 22 Sep');
+  B.T.setF('all', '2026'); assert.ok(B.T.attCapHTML().includes('Load older work'), 'the whole year');
+  B.T.setF('all', '2027'); assert.strictEqual(B.T.attCapHTML(), '');
+  B.T.setTab('mark'); B.T.setF('2026-09', 'all'); assert.strictEqual(B.T.attCapHTML(), '', 'Marking: never');
+});
 console.log('---- ' + pass + '/' + (pass + fail) + ' passed'); process.exit(fail ? 1 : 0);
