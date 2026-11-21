@@ -35,7 +35,7 @@ function fakeDb(DB) {
   }
   return { log, collection: (c) => query(c), runTransaction: () => Promise.reject(new Error('no')), batch: () => ({ set() {}, update() {}, delete() {}, commit: () => Promise.resolve() }) };
 }
-const HOOKS = 'get attemptDocs(){return attemptDocs},get ATT(){return ATT},attNeed:attNeed,attCapHTML:attCapHTML,hwMatrixHTML:hwMatrixHTML,asgState:asgState,allAsgs:allAsgs';
+const HOOKS = 'get attemptDocs(){return attemptDocs},get ATT(){return ATT},attNeed:attNeed,attCapHTML:attCapHTML,oldPick:function(){TAB="dash";F.year=String(new Date(ATT.lo).getFullYear()-1)},hwMatrixHTML:hwMatrixHTML,asgState:asgState,allAsgs:allAsgs';
 // 30 students, 650 attempts in the last 60 days, an assignment 100 days ago with its 30 attempts, 1200 very old attempts,
 // and one Writing submission 200 days ago that nobody has marked yet
 function centre() {
@@ -74,7 +74,8 @@ function centre() {
   });
   await t('"Load older work" pages through 1200 more attempts with a cursor, no duplicates, then stops', async () => {
     const { DB } = centre(), db = fakeDb(DB), B = boot({ hooks: HOOKS, db }); await B.flush();
-    assert.ok(/Load older work/.test(B.T.attCapHTML()));
+    assert.strictEqual(B.T.attCapHTML(), '', 'no note while the Dashboard filter shows only loaded work');
+    B.T.oldPick(); assert.ok(/Load older work/.test(B.T.attCapHTML()), 'the note appears for an older year');
     for (let k = 0; k < 6 && B.T.ATT.more; k++) { B.T.attNeed(0); await B.flush(); await B.flush(); }
     const ids = B.T.attemptDocs.map((a) => a.id);
     assert.strictEqual(ids.length, 650 + 30 + 1200 + 1, 'everything, once'); assert.strictEqual(new Set(ids).size, ids.length, 'no duplicates');
