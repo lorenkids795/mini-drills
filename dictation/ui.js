@@ -30,7 +30,7 @@ function css() {
 .dl-tiles{display:flex;flex-wrap:wrap;gap:6px;min-height:44px;padding:6px;border:1px dashed var(--line-2,var(--line));border-radius:var(--r-sm,8px)}.dl-tile{min-height:40px;padding:0 12px;border:1px solid var(--line-2,var(--line));border-radius:var(--r-sm,8px);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}
 .dl-tile:focus-visible,.dl button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}.dl .dl-gap{display:inline-block;width:9em;max-width:calc(100% - 8px);min-height:36px!important;margin:2px 4px;vertical-align:middle}.dl-sent{line-height:2.2}
 .dl-warn{padding:10px 12px;border-radius:var(--r-sm,8px);background:var(--hl-soft,#fff7d6);color:var(--ink)}.dl-err{color:var(--bad)}.dl-opt{display:flex;gap:8px;align-items:center;min-height:44px}
-.dl-player{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:var(--r-md,12px);background:var(--surface)}.dl-player input[type=range]{flex:1 1 160px}.dl-player .dl-time{font-family:var(--mono,monospace);font-size:var(--fs-sm,.84rem)}
+.dl-player{display:grid;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r-lg,16px);background:var(--surface)}.dl-prow{display:flex;flex-wrap:wrap;align-items:center;gap:8px}.dl-pp{width:52px;height:52px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink,#fff);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.dl-ib{position:relative;width:44px;height:44px;border-radius:50%;border:1px solid var(--line-2,var(--line));background:var(--surface);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.dl-ibt{position:absolute;font-size:9px;font-weight:800;line-height:1;top:50%;left:50%;transform:translate(-50%,-38%)}.dl-time{font-family:var(--mono,monospace);font-size:var(--fs-sm,.84rem);color:var(--muted);margin-left:4px}.dl-seg{display:inline-flex;margin-left:auto;border:1px solid var(--line-2,var(--line));border-radius:999px;overflow:hidden}.dl-sp{min-height:36px;min-width:52px;padding:0 10px;border:0;background:transparent;color:var(--ink);font:inherit;font-size:var(--fs-sm,.84rem);cursor:pointer}.dl-sp+.dl-sp{border-left:1px solid var(--line-2,var(--line))}.dl-sp[aria-pressed=true]{background:var(--accent);color:var(--accent-ink,#fff);font-weight:700}.dl-track{position:relative;display:flex;align-items:center;height:28px}.dl-track input[type=range]{position:relative;width:100%;margin:0;accent-color:var(--accent);background:transparent;z-index:1}.dl-band{position:absolute;top:50%;height:12px;transform:translateY(-50%);border-radius:6px;background:color-mix(in srgb,var(--accent) 28%,transparent);border:1px solid var(--accent)}.dl-loop{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-height:44px}.dl-lb{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line-2,var(--line));background:var(--surface);color:var(--ink);font:inherit;font-weight:600;cursor:pointer}.dl-lb.on{border-color:var(--accent);background:var(--accent);color:var(--accent-ink,#fff)}.dl-lb svg{flex:none}.dl-lk{min-height:40px;padding:0 6px;border:0;background:transparent;color:var(--accent);font:inherit;font-weight:600;text-decoration:underline;cursor:pointer}.dl-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:var(--surface-2,var(--bg));border:1px solid var(--line);font-family:var(--mono,monospace);font-size:var(--fs-sm,.84rem)}.dl-chip.on{border-color:var(--accent);color:var(--accent)}.dl-keys{margin:0;color:var(--muted);font-size:var(--fs-xs,.78rem)}.dl-pp:focus-visible,.dl-ib:focus-visible,.dl-sp:focus-visible,.dl-lb:focus-visible,.dl-lk:focus-visible{outline:3px solid var(--accent);outline-offset:2px}.dl-ib:hover,.dl-lb:hover{border-color:var(--accent)}@media (max-width:640px){.dl-seg{margin-left:0}.dl-keys{display:none}}
 .dl-sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.dl-sum div{border:1px solid var(--line);border-radius:var(--r-sm,8px);padding:8px 10px}.dl-sum b{display:block;font-size:var(--fs-lg,1.15rem)}
 .dl *{min-width:0}.dl select{min-height:44px;max-width:100%;font:inherit;padding:8px 10px;border:1px solid var(--line-2,var(--line));border-radius:var(--r-sm,8px);background:var(--surface);color:var(--ink)}.dl input[type=file]{max-width:100%;font:inherit}
 .dl-guide{border:1px solid var(--line);border-radius:var(--r-md,12px);padding:10px 14px;background:var(--surface-2,var(--surface))}.dl-guide summary{cursor:pointer;font-weight:700;min-height:32px;display:flex;align-items:center}.dl-guide ol{margin:8px 0 4px;padding-left:1.3em;display:grid;gap:6px;line-height:1.6}.dl-guide p{margin:6px 0}
@@ -40,20 +40,56 @@ function css() {
 }
 
 /* ---------- audio player: full uncut source, ±3 s, speed, A-B loop, keyboard (not answer hints) ---------- */
+const ICO = {
+  play: '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>',
+  pause: '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1"/><rect x="13.5" y="5" width="4" height="14" rx="1"/></svg>',
+  back: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 3 3 9 9 9"/></svg>',
+  fwd: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>',
+  loop: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>',
+};
+const icoBtn = (svg, label, cls, on, text) => { const b = h("button", { type: "button", class: cls, "aria-label": label, title: label, onclick: on }); b.innerHTML = svg + (text ? '<span class="dl-ibt">' + text + "</span>" : ""); return b; };
+/** The audio player of the Dictation screens: play / pause, back / forward 3 s, speed, a seek bar, and "Repeat a part"
+ *  (mark the start, mark the end, it loops until "Stop repeating"). Keyboard: Ctrl+Space, Ctrl+, / Ctrl+. (3 s), Ctrl+; (repeat). */
 export function audioPlayer(url) {
   css(); // also used alone on the student screen (index.html)
   if (!url) return h("p", { class: "dl-muted", text: "No audio file is attached to this lesson." });
   const a = h("audio", { preload: "metadata", src: url }); let A = null, B = null;
-  const time = h("span", { class: "dl-time", "aria-live": "off" }, "0:00"); const seek = h("input", { type: "range", min: "0", max: "1000", value: "0", "aria-label": "Position in the audio" });
-  const fmt = (s) => (isFinite(s) ? Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0") : "0:00");
-  const play = btn("Play", () => (a.paused ? a.play().catch(() => {}) : a.pause()), "btn pri", { "aria-label": "Play or pause (Ctrl+Space)" });
-  const ab = btn("Set A", () => { if (A === null) { A = a.currentTime; ab.textContent = "Set B"; } else if (B === null) { B = Math.max(A + 0.5, a.currentTime); ab.textContent = "Clear loop"; } else { A = B = null; ab.textContent = "Set A"; } }, "btn", { "aria-label": "Repeat a part: set start, set end, clear (Ctrl+;)" });
-  const speed = h("select", { "aria-label": "Playback speed", onchange: () => { a.playbackRate = Number(speed.value); } }, ...[0.75, 1, 1.25].map((v) => h("option", { value: String(v), selected: v === 1 }, v + "×")));
-  a.addEventListener("play", () => { play.textContent = "Pause"; }); a.addEventListener("pause", () => { play.textContent = "Play"; });
+  const fmt = (s) => (isFinite(s) && s >= 0 ? Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0") : "0:00");
+  const time = h("span", { class: "dl-time", "aria-live": "off" }, "0:00 / 0:00");
+  const seek = h("input", { type: "range", min: "0", max: "1000", value: "0", "aria-label": "Position in the audio" });
+  const band = h("span", { class: "dl-band", "aria-hidden": "true" });
+  const play = icoBtn(ICO.play, "Play (Ctrl+Space)", "dl-pp", () => (a.paused ? a.play().catch(() => {}) : a.pause()));
+  const back = icoBtn(ICO.back, "Back 3 seconds (Ctrl+,)", "dl-ib", () => { a.currentTime = Math.max(0, a.currentTime - 3); }, "3");
+  const fwd = icoBtn(ICO.fwd, "Forward 3 seconds (Ctrl+.)", "dl-ib", () => { a.currentTime = Math.min(a.duration || a.currentTime + 3, a.currentTime + 3); }, "3");
+  const speeds = [0.75, 1, 1.25].map((v) => { const b = h("button", { type: "button", class: "dl-sp", "aria-pressed": String(v === 1), onclick: () => { a.playbackRate = v; speeds.forEach((x) => x.setAttribute("aria-pressed", String(x === b))); } }, v + "×"); return b; });
+  const speed = h("div", { class: "dl-seg", role: "group", "aria-label": "Speed" }, ...speeds);
+  const loop = h("div", { class: "dl-loop", "aria-live": "polite" });
+  // "Repeat a part" in 3 clear steps instead of the old Set A / Set B / Clear loop
+  function drawLoop() {
+    const dur = a.duration || 0;
+    if (A !== null && B !== null && dur) { band.style.left = (A / dur) * 100 + "%"; band.style.width = ((B - A) / dur) * 100 + "%"; band.hidden = false; } else band.hidden = true;
+    if (A === null) loop.replaceChildren(icoBtn(ICO.loop, "Repeat a part (Ctrl+;)", "dl-lb", markStart, "Repeat a part"), h("span", { class: "dl-muted" }, "Play to where the part starts, then press it."));
+    else if (B === null) loop.replaceChildren(h("span", { class: "dl-chip" }, "Start " + fmt(A)), h("button", { type: "button", class: "dl-lb on", onclick: markEnd }, "Mark the end here"), h("button", { type: "button", class: "dl-lk", onclick: stop }, "Cancel"), h("span", { class: "dl-muted" }, "Let it play to the end of the part."));
+    else { const chip = h("span", { class: "dl-chip on" }); chip.innerHTML = ICO.loop; chip.append("Repeating " + fmt(A) + " – " + fmt(B)); loop.replaceChildren(chip, h("button", { type: "button", class: "dl-lk", onclick: stop }, "Stop repeating")); }
+  }
+  function markStart() { A = a.currentTime; B = null; drawLoop(); }
+  function markEnd() { B = Math.max(A + 0.5, a.currentTime); if (a.currentTime >= B || a.currentTime < A) a.currentTime = A; drawLoop(); if (a.paused) a.play().catch(() => {}); }
+  function stop() { A = B = null; drawLoop(); }
+  const loopKey = () => (A === null ? markStart() : B === null ? markEnd() : stop());
+  a.addEventListener("play", () => { play.innerHTML = ICO.pause; play.setAttribute("aria-label", "Pause (Ctrl+Space)"); play.title = "Pause (Ctrl+Space)"; });
+  a.addEventListener("pause", () => { play.innerHTML = ICO.play; play.setAttribute("aria-label", "Play (Ctrl+Space)"); play.title = "Play (Ctrl+Space)"; });
+  a.addEventListener("loadedmetadata", () => { time.textContent = fmt(0) + " / " + fmt(a.duration); drawLoop(); });
   a.addEventListener("timeupdate", () => { if (B !== null && a.currentTime >= B) a.currentTime = A; time.textContent = fmt(a.currentTime) + " / " + fmt(a.duration); if (a.duration) seek.value = String(Math.round((a.currentTime / a.duration) * 1000)); });
   seek.addEventListener("input", () => { if (a.duration) a.currentTime = (Number(seek.value) / 1000) * a.duration; });
-  const box = h("div", { class: "dl-player", role: "group", "aria-label": "Audio" }, a, btn("−3 s", () => { a.currentTime = Math.max(0, a.currentTime - 3); }, "btn", { "aria-label": "Back 3 seconds (Ctrl+,)" }), play, btn("+3 s", () => { a.currentTime += 3; }, "btn", { "aria-label": "Forward 3 seconds (Ctrl+.)" }), speed, ab, seek, time);
-  box.keys = (e) => { if (!e.ctrlKey) return; if (e.code === "Space") { e.preventDefault(); play.click(); } else if (e.key === ",") { e.preventDefault(); a.currentTime = Math.max(0, a.currentTime - 3); } else if (e.key === ".") { e.preventDefault(); a.currentTime += 3; } else if (e.key === ";") { e.preventDefault(); ab.click(); } };
+  const box = h("div", { class: "dl-player", role: "group", "aria-label": "Audio" }, a,
+    h("div", { class: "dl-prow" }, back, play, fwd, time, speed),
+    h("div", { class: "dl-track" }, band, seek), loop,
+    h("p", { class: "dl-keys" }, "Keys: Ctrl+Space play / pause · Ctrl+, and Ctrl+. 3 seconds · Ctrl+; repeat a part"));
+  box.keys = (e) => { if (!e.ctrlKey) return; if (e.code === "Space") { e.preventDefault(); play.click(); } else if (e.key === ",") { e.preventDefault(); back.click(); } else if (e.key === ".") { e.preventDefault(); fwd.click(); } else if (e.key === ";") { e.preventDefault(); loopKey(); } };
+  // shortcuts work anywhere on the page while this player is shown (e.g. while typing in the text box); gone with the player
+  const onKey = (e) => { if (!box.isConnected) { document.removeEventListener("keydown", onKey); return; } box.keys(e); };
+  document.addEventListener("keydown", onKey);
+  drawLoop();
   return box;
 }
 
@@ -96,7 +132,7 @@ export function mountPractice(el, o) {
   let run; try { const log = key ? store.get(key) : null; run = log ? DictationRun.replay(opts, log) : createRun(opts); } catch { run = createRun(opts); }
   const draft = {}; const fb = {}; const shown = {};
   const save = () => { if (key) store.set(key, run.exportLog()); };
-  const root = h("div", { class: "dl" }); el.replaceChildren(root); const player = audioPlayer(o.audio); root.addEventListener("keydown", (e) => player.keys && player.keys(e));
+  const root = h("div", { class: "dl" }); el.replaceChildren(root); const player = audioPlayer(o.audio);
   const draw = () => {
     const items = run.items(); const sum = run.summary(); const scored = items.filter((i) => i.kind === "scored"); const done = scored.filter((i) => sum.items[i.id]?.attempted).length; const exact = scored.filter((i) => sum.items[i.id]?.firstAttempt?.exact).length;
     const head = [h("div", { class: "dl-row" }, h("span", { class: "pill" }, "Free practice"), o.preview ? h("span", { class: "pill" }, "Teacher preview · nothing is saved") : null, h("span", { class: "dl-muted" }, "Checked " + done + " of " + scored.length + " · first try fully correct: " + exact))];
@@ -133,7 +169,7 @@ export async function mountHomework(el, o) {
   css(); const root = h("div", { class: "dl" }); el.replaceChildren(root, h("p", { class: "dl-muted", text: "Loading…" }));
   const dkey = "md-dlhw:" + (o.email || "") + ":" + o.asgId + ":" + o.exId; const call = (path, extra) => o.api("dictation/" + path, Object.assign({ exId: o.exId, asgId: o.asgId }, extra || {}));
   let res; try { res = await call("payload"); } catch (e) { el.replaceChildren(h("p", { class: "dl-err", text: "Could not load this homework: " + (e.message || e) })); return; }
-  el.replaceChildren(root); const player = audioPlayer(o.audio); root.addEventListener("keydown", (e) => player.keys && player.keys(e));
+  el.replaceChildren(root); const player = audioPlayer(o.audio);
   // the student's own copy of their final answers on THIS device follows the same 90-day limit as the server (P-05); older copies are dropped
   const mineOf = () => { const d = store.get(dkey + ":done"); if (d && d.t && Date.now() - d.t < 90 * 864e5) return d.r; if (d) store.del(dkey + ":done"); return null; };
   if (res.submitted) return result(res.result, mineOf());

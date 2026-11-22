@@ -11,7 +11,9 @@ tiếng Việt), bài đã sửa, **từ vựng mới** lấy từ script (có n
 không tự thêm lỗi và không đổi điểm; AI bận hoặc hết lượt (30 lần/ngày/học sinh) thì vẫn có điểm và giải thích ngắn.
 Lỗi (tối đa 15) được đưa vào **Error Notebook** của học sinh (bài về nhà; với luyện tập chỉ lần đầu).
 
-**Bài về nhà:** chỉ khi giáo viên tick "I checked the script against the audio" (script khớp từng từ với audio). Nộp một lần; sau đó
-học sinh vẫn luyện lại được nhưng không đổi điểm.
+**Mỗi học sinh nộp một lần** (cả bài luyện tập lẫn bài về nhà): bấm Check là nộp luôn, không làm lại được; giáo viên thấy kết quả
+(Dashboard và mục "Submitted answers"). Học sinh vào lại thì xem lại đầy đủ kết quả trong 90 ngày.
 
-**Xem bài của học sinh:** mở bài trong Library, mục "Submitted answers" (giữ 90 ngày nếu chủ dự án bật `DL_RAW_RETENTION`).
+**Bài về nhà:** chỉ khi giáo viên tick "I checked the script against the audio" (script khớp từng từ với audio).
+
+**Xem bài của học sinh:** mở bài trong Library, mục "Submitted answers" (giữ 90 ngày, rồi tự xóa; điểm vẫn còn).

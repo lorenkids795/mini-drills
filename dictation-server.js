@@ -27,7 +27,9 @@ const BOOK = /^cam\d{1,2}$/, TEST = /^t[1-4]$/;
 const clean = (s, n) => String(s ?? '').replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, n);
 const vid = (lid, n) => lid + '_' + n;
 export const DL_RAW_DAYS = 90; const DAY = 864e5; const RAW_MS = DL_RAW_DAYS * DAY;
-export const rawOn = (env) => String((env && env.DL_RAW_RETENTION) || '').toLowerCase() === 'on';
+// owner (11/2026): the student sees their whole result again when they come back, so the approved 90-day text is ON by default;
+// DL_RAW_RETENTION = 'off' switches it off (then only the mark + the copy on the student's device)
+export const rawOn = (env) => String((env && env.DL_RAW_RETENTION) || '').toLowerCase() !== 'off';
 // same as tNorm in index.html: the roster "Giáo viên" column vs the teacher's account name
 export const tNorm = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 'd').toLowerCase().replace(/^\s*(co|thay|ms|mrs|mr|miss|teacher)\.?\s+/, '').replace(/\s+/g, ' ').trim();
 // display text of one submitted response (Level 1 tiles -> their words); it = the server's student payload item
@@ -184,32 +186,56 @@ async function toNotebook(D, env, att, attemptId, ai, exTitle, tzo) {
   try { return await D.saveErrors(env, att, attemptId, { corrections: ai.corrections.slice(0, 15).map((c) => Object.assign({ practice: [] }, c)) }, { exTitle: String(exTitle || ''), dayStart: D.dayOf(tzo).dayStart }); } catch (e) { return 0; }
 }
 
-// POST /api/dictation/practice {exId}: what the screen needs BEFORE writing (title, audio, number of words). Never the script.
-// A homework lesson opens for practice only after the student's accepted submission; staff always (preview); assistants never.
+// ONE submission per student (owner 11/2026: no redo): homework = one per assignment (key <slug>_<asg>_<ex>), practice = one per exercise
+// (key <slug>_p_<ex>). The mark is stored first (dlSubs + attempts, so teachers see it in Dashboard / Marking / Submitted answers),
+// then the AI explanations, the 90-day text (dlRaw: the student sees the whole result again when they come back) and the Error Notebook.
+async function already(D, env, key, script, status, rec) {
+  let full = null; const raw = rawOn(env) ? await D.fsGet(env, 'dlRaw', key) : null;
+  if (raw && Number(raw.data.expMs) > Date.now() && typeof raw.data.text === 'string') { const cmp = compareScript(script, raw.data.text); let ai = null; try { ai = JSON.parse(raw.data.ai || 'null'); } catch (e) { ai = null; } full = resultOf(cmp, ai || { corrections: cmp.corrections, vocabulary_upgrades: [] }, script); }
+  return D.json({ ok: true, status, submitted: true, submissionId: key, summary: rec, script, result: full });
+}
+async function finalize(D, env, C, text, tzo) {
+  const cmp = compareScript(C.script, String(text ?? '').slice(0, MAX_TEXT_CHARS));
+  const rec = { mode: 'script', pct: cmp.pct, passed: cmp.passed, num: cmp.num, den: cmp.den, words: cmp.words, empty: cmp.empty };
+  if (!(await D.fsCreate(env, 'dlSubs', C.key, { email: C.who.em, asg: C.asg, ex: C.exId, ver: C.n, mode: 'script', record: JSON.stringify(rec), ts: C.now, ...(C.asg ? {} : { practice: true }) }))) {
+    const again = await D.fsGet(env, 'dlSubs', C.key); return already(D, env, C.key, C.script, 'duplicate', again ? JSON.parse(again.data.record || '{}') : rec);
+  }
+  const big = cmp.den > 1000; const score = big ? Math.floor((cmp.num * 1000) / cmp.den) : cmp.num, total = big ? 1000 : cmp.den;
+  const name = String((C.r && C.r.data.name) || ''), cls = String((C.r && C.r.data.cls) || '');
+  await D.fsPut(env, 'attempts', C.key, { email: C.who.em, student: name, cls, ex: 'c_' + C.exId, kind: 'dictation', ...(C.asg ? { asg: C.asg } : {}), sts: C.now, ts: C.now,
+    score, total, answered: cmp.empty ? 0 : 1, required: 1, items: [{ i: 0, ok: cmp.pct === 100 }], dl: { ver: C.cv, mode: 'script', pct: cmp.pct, passed: cmp.passed, completed: !cmp.empty, official: true, practice: !C.asg } });
+  const ai = await explain(D, env, C.who, C.script, cmp, tzo); // after the mark is stored: a slow or failed AI never loses the submission
+  // P-05: the final text only (no drafts), 90 days from this server-accepted submission; fsCreate = a retry never resets the clock
+  if (rawOn(env)) await D.fsCreate(env, 'dlRaw', C.key, { email: C.who.em, cls, asg: C.asg, ex: C.exId, ver: C.cv, text: cmp.text, answers: { script: cmp.text },
+    ai: JSON.stringify({ corrections: ai.corrections, vocabulary_upgrades: ai.vocabulary_upgrades, model: ai.model }), submittedAt: C.now, expMs: C.now + RAW_MS, expiresAt: new Date(C.now + RAW_MS) }).catch(() => {});
+  const added = await toNotebook(D, env, { email: C.who.em, student: name, cls, ex: 'c_' + C.exId }, C.key, ai, C.title, tzo);
+  return D.json({ ok: true, status: 'accepted', submissionId: C.key, result: resultOf(cmp, ai, C.script, { added, practice: !C.asg }) });
+}
+
+// POST /api/dictation/practice {exId}: what the screen needs BEFORE writing (title, audio, number of words) — never the script — or, when
+// the student already submitted this exercise, that result. Homework lessons are only done from the homework list; staff always (preview).
 async function practiceGate(D, env, request, body) {
   const who = await D.idUser(env, request); if (!who) return { err: D.json({ error: 'Your sign-in has expired. Sign in again.', code: 'auth' }, 401) };
   if (who.role !== 'student' && who.role !== 'teacher') return { err: D.fail('Not available for this account.', 403) };
   const P = await published(D, env, body.exId); if (!P) return { err: D.fail('This dictation is not available.', 404) };
-  if (who.role === 'student' && P.ex.dlMode !== 'practice') {
-    const subs = await D.fsQueryDocs(env, 'dlSubs', 'email', who.em);
-    if (!subs.some((x) => x.ex === body.exId)) return { err: D.json({ error: 'This dictation is homework. Practice opens after you submit it.', code: 'homework_only' }, 403) };
-  }
-  return { who, P };
+  if (who.role === 'student' && P.ex.dlMode !== 'practice') return { err: D.json({ error: 'This dictation is homework. Open it from your homework list.', code: 'homework_only' }, 403) };
+  return { who, P, key: who.role === 'student' ? D.slug(who.em) + '_p_' + body.exId : '' };
 }
 export async function dlPractice(D, env, request, body) {
-  const G = await practiceGate(D, env, request, body); if (G.err) return G.err; const P = G.P;
-  return D.json({ ok: true, mode: 'script', title: P.ver.title || P.ex.title || '', audio: P.ver.audio || P.ex.audio || '', words: compareScript(scriptOf(P.ver), '').words.script, label: P.ver.audited ? 'teacher_audited' : 'unverified_transcript' });
+  const G = await practiceGate(D, env, request, body); if (G.err) return G.err; const P = G.P; const script = scriptOf(P.ver);
+  if (G.key) { const sub = await D.fsGet(env, 'dlSubs', G.key); if (sub) return already(D, env, G.key, script, 'ok', JSON.parse(sub.data.record || '{}')); }
+  return D.json({ ok: true, mode: 'script', title: P.ver.title || P.ex.title || '', audio: P.ver.audio || P.ex.audio || '', words: compareScript(script, '').words.script, label: P.ver.audited ? 'teacher_audited' : 'unverified_transcript' });
 }
-// POST /api/dictation/check {exId, text, tzo}: practice (and teacher preview) marking. Nothing is kept except the student's FIRST practice
-// mistakes in the Error Notebook (KV dlpe:<email>:<lid>), so retrying does not fill the notebook.
+// POST /api/dictation/check {exId, text, tzo}: a student's ONE submission of a practice lesson (a repeat returns the first result);
+// a teacher's preview check (nothing saved).
 export async function dlCheck(D, env, request, body) {
   const G = await practiceGate(D, env, request, body); if (G.err) return G.err; const { who, P } = G;
-  const text = String(body.text ?? '').slice(0, MAX_TEXT_CHARS); if (!text.trim()) return D.fail('Write what you hear first.');
-  const script = scriptOf(P.ver); const cmp = compareScript(script, text); const ai = await explain(D, env, who, script, cmp, body.tzo);
-  let added = 0;
-  if (who.role === 'student' && env && env.MD_KV) { const mk = 'dlpe:' + who.em + ':' + P.ex.dlId;
-    if (!(await env.MD_KV.get(mk).catch(() => '1'))) { const r = await D.rosterRow(env, who.em); added = await toNotebook(D, env, { email: who.em, student: r ? r.data.name : '', cls: r ? r.data.cls : '', ex: 'c_' + body.exId }, 'dlp-' + P.ex.dlId, ai, P.ex.title, body.tzo); await env.MD_KV.put(mk, '1').catch(() => {}); } }
-  return D.json({ ok: true, result: resultOf(cmp, ai, script, { added, practice: true }) });
+  const text = String(body.text ?? '').slice(0, MAX_TEXT_CHARS); const script = scriptOf(P.ver);
+  if (G.key) { const sub = await D.fsGet(env, 'dlSubs', G.key); if (sub) return already(D, env, G.key, script, 'duplicate', JSON.parse(sub.data.record || '{}')); }
+  if (!text.trim()) return D.fail('Write what you hear first.');
+  if (!G.key) { const cmp = compareScript(script, text); const ai = await explain(D, env, who, script, cmp, body.tzo); return D.json({ ok: true, result: resultOf(cmp, ai, script, { preview: true }) }); }
+  const r = await D.rosterRow(env, who.em);
+  return finalize(D, env, { who, r, key: G.key, asg: '', exId: body.exId, n: Number(P.ex.dlVer), cv: P.ex.dlId + '@' + P.ex.dlVer, script, title: P.ex.title, now: Date.now() }, text, body.tzo);
 }
 
 // The homework sitting of one student: assignment occurrence (class, sent, deadline + late pass), pinned version.
@@ -241,31 +267,13 @@ async function sitting(D, env, request, body) {
 export async function dlHomework(D, env, request, body, route) {
   const S = await sitting(D, env, request, body); if (S.err) return S.err;
   const script = scriptOf(S.ver);
-  const done = async (status, rec) => {
-    let full = null; const raw = rawOn(env) ? await D.fsGet(env, 'dlRaw', S.key) : null;
-    if (raw && Number(raw.data.expMs) > Date.now() && typeof raw.data.text === 'string') { const cmp = compareScript(script, raw.data.text); let ai = null; try { ai = JSON.parse(raw.data.ai || 'null'); } catch (e) { ai = null; } full = resultOf(cmp, ai || { corrections: cmp.corrections, vocabulary_upgrades: [] }, script); }
-    return D.json({ status, submitted: true, submissionId: S.key, summary: rec, script, result: full });
-  };
   const sub = await D.fsGet(env, 'dlSubs', S.key);
-  if (sub) return done(route === 'submit' ? 'duplicate' : 'ok', JSON.parse(sub.data.record || '{}'));
+  if (sub) return already(D, env, S.key, script, route === 'submit' ? 'duplicate' : 'ok', JSON.parse(sub.data.record || '{}'));
   if (route === 'payload') return D.json({ status: 'ok', mode: 'script', open: S.open, title: S.ver.title || S.ex.title || '', audio: S.ver.audio || S.ex.audio || '', words: compareScript(script, '').words.script });
   if (route !== 'submit') return D.fail('Not found.', 404);
   if (!S.open) return D.json({ status: 'rejected', reason: 'closed', error: 'The deadline has passed.' }, 409);
-  const cmp = compareScript(script, String(body.text ?? '').slice(0, MAX_TEXT_CHARS));
-  const rec = { mode: 'script', pct: cmp.pct, passed: cmp.passed, num: cmp.num, den: cmp.den, words: cmp.words, empty: cmp.empty };
-  if (!(await D.fsCreate(env, 'dlSubs', S.key, { email: S.who.em, asg: S.asgId, ex: S.exId, ver: S.n, mode: 'script', record: JSON.stringify(rec), ts: S.now }))) {
-    const again = await D.fsGet(env, 'dlSubs', S.key); return done('duplicate', again ? JSON.parse(again.data.record || '{}') : rec);
-  }
   if (S.sit.data.lock) await D.fsUpdate(env, 'dlSits', S.key, { lock: '', rawExp: 0 }).catch(() => {}); // older sittings only
-  const big = cmp.den > 1000; const score = big ? Math.floor((cmp.num * 1000) / cmp.den) : cmp.num, total = big ? 1000 : cmp.den;
-  await D.fsPut(env, 'attempts', S.key, { email: S.who.em, student: String(S.r.data.name || ''), cls: String(S.r.data.cls || ''), ex: 'c_' + S.exId, kind: 'dictation', asg: S.asgId, sts: S.now, ts: S.now,
-    score, total, answered: cmp.empty ? 0 : 1, required: 1, items: [{ i: 0, ok: cmp.pct === 100 }], dl: { ver: S.cv, mode: 'script', pct: cmp.pct, passed: cmp.passed, completed: !cmp.empty, official: true } });
-  const ai = await explain(D, env, S.who, script, cmp, body.tzo); // after the mark is stored: a slow or failed AI never loses the submission
-  // P-05: the final text only (no drafts), 90 days from this server-accepted submission; fsCreate = a retry never resets the clock
-  if (rawOn(env)) await D.fsCreate(env, 'dlRaw', S.key, { email: S.who.em, cls: String(S.r.data.cls || ''), asg: S.asgId, ex: S.exId, ver: S.cv, text: cmp.text, answers: { script: cmp.text },
-    ai: JSON.stringify({ corrections: ai.corrections, vocabulary_upgrades: ai.vocabulary_upgrades, model: ai.model }), submittedAt: S.now, expMs: S.now + RAW_MS, expiresAt: new Date(S.now + RAW_MS) }).catch(() => {});
-  const added = await toNotebook(D, env, { email: S.who.em, student: String(S.r.data.name || ''), cls: String(S.r.data.cls || ''), ex: 'c_' + S.exId }, S.key, ai, S.ex.title, body.tzo);
-  return D.json({ status: 'accepted', submissionId: S.key, result: resultOf(cmp, ai, script, { added }) });
+  return finalize(D, env, { who: S.who, r: S.r, key: S.key, asg: S.asgId, exId: S.exId, n: S.n, cv: S.cv, script, title: S.ex.title, now: S.now }, body.text, body.tzo);
 }
 
 /* ---------- P-05: teacher-only raw answers (POST /api/dictation/raw {op:'list', exId}) ----------
@@ -281,10 +289,11 @@ export async function dlRaw(D, env, request, body) {
   const subs = (await D.fsQueryDocs(env, 'dlSubs', 'ex', exId)).slice(0, 300); const C = {}; const memo = (k, f) => (k in C ? C[k] : (C[k] = f()));
   const rows = []; let hidden = 0;
   for (const s of subs) {
-    const r = await memo('r:' + s.email, () => D.rosterRow(env, s.email)); const a = await memo('a:' + s.asg, () => D.fsGet(env, 'assignments', s.asg));
+    const r = await memo('r:' + s.email, () => D.rosterRow(env, s.email)); const a = s.asg ? await memo('a:' + s.asg, () => D.fsGet(env, 'assignments', s.asg)) : null;
     const cls = r ? String(r.data.cls || '') : ''; const cd = cls ? await memo('c:' + cls, () => D.fsGet(env, 'classes', D.slug(cls))) : null;
     const removed = ((cd && cd.data && cd.data.removed) || []).some((e) => D.normEmail(e) === D.normEmail(s.email));
-    const ok = !!r && r.data.role !== 'teacher' && !!a && String(a.data.cls || '') === cls && Array.isArray(a.data.ex) && a.data.ex.indexOf('c_' + exId) >= 0 && !removed && (adm || (!!me && tNorm(r.data.teacher) === me));
+    const asgOk = !s.asg ? true : !!a && String(a.data.cls || '') === cls && Array.isArray(a.data.ex) && a.data.ex.indexOf('c_' + exId) >= 0; // practice: no assignment
+    const ok = !!r && r.data.role !== 'teacher' && asgOk && !removed && (adm || (!!me && tNorm(r.data.teacher) === me));
     if (!ok) { hidden++; continue; }
     const raw = await D.fsGet(env, 'dlRaw', s.id); const rec = JSON.parse(s.record || '{}'); const res = JSON.parse(s.result || '{}');
     const live = !!(raw && Number(raw.data.expMs) > now && String(raw.data.email) === String(s.email));

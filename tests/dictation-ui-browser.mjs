@@ -39,7 +39,11 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms)); const txt = (el) => 
 try {
   await import("/dictation/bridge.js?v=t"); const M = window.MD_DL;
   // 1. audio player (the one the student screen uses)
-  const P = document.getElementById("p"); P.append(M.audioPlayer("/dictation/none.mp3")); out.player = [...P.querySelectorAll("button")].length >= 3 && !!document.getElementById("dl-css");
+  const P = document.getElementById("p"); P.append(M.audioPlayer("/dictation/none.mp3")); out.player = [...P.querySelectorAll("button")].length >= 3 && !!document.getElementById("dl-css") && !/Set A/.test(txt(P));
+  [...P.querySelectorAll("button")].find((b) => /Repeat a part/.test(b.textContent)).click(); await wait(20); out.repeatStep2 = /Mark the end here/.test(txt(P)) && /Start 0:00/.test(txt(P));
+  [...P.querySelectorAll("button")].find((b) => b.textContent === "Mark the end here").click(); await wait(20); out.repeatStep3 = /Repeating 0:00/.test(txt(P)) && /Stop repeating/.test(txt(P));
+  [...P.querySelectorAll("button")].find((b) => b.textContent === "Stop repeating").click(); await wait(20); out.repeatStopped = /Repeat a part/.test(txt(P));
+  const sp = [...P.querySelectorAll(".dl-sp")]; sp[0].click(); out.speedSeg = sp.length === 3 && sp[0].getAttribute("aria-pressed") === "true" && sp[1].getAttribute("aria-pressed") === "false";
   // 2. student network flow: nothing of the script before the submission
   const pl = await post("dictation/payload", { exId: "${exId}", asgId: "A1" }); out.payloadOk = pl.status === "ok" && pl.words > 10;
   out.practiceClosedBeforeSubmit = (await post("dictation/practice", { exId: "${exId}" }))._status === 403;
@@ -47,8 +51,8 @@ try {
   const sub = await post("dictation/submit", { exId: "${exId}", asgId: "A1", text: "Hello I would like to join the photograpy club" });
   out.submitted = sub.status === "accepted" && sub.result.pct > 0 && sub.result.pct < 70 && sub.result.script.includes("photography");
   out.aiExplained = sub.result.ai.corrections.some((c) => c.explanation_vi.includes("photograpy")) && sub.result.ai.vocabulary_upgrades[0].upgraded === "free map";
-  const again = await post("dictation/payload", { exId: "${exId}", asgId: "A1" }); out.afterSubmit = again.submitted === true && again.summary.pct === sub.result.pct;
-  out.practiceAfterSubmit = (await post("dictation/practice", { exId: "${exId}" }))._status === 200;
+  const again = await post("dictation/payload", { exId: "${exId}", asgId: "A1" }); out.afterSubmit = again.submitted === true && again.summary.pct === sub.result.pct && !!again.result && again.result.text.startsWith("Hello");
+  out.noRedo = (await post("dictation/practice", { exId: "${exId}" }))._status === 403 && (await post("dictation/submit", { exId: "${exId}", asgId: "A1", text: "again" })).status === "duplicate";
   // 3. authoring: script -> preview (marked on the device) -> save -> list
   const A = document.getElementById("a"); M.mountAuthor(A, { staffApi: (p, b) => okOr(p, b), adminApi: (p, b) => okOr(p, b), uploadAudio: async () => ({ url: "" }), getSlot: () => ({ book: "cam21", test: "t4", part: 2, label: "Cam 21 · Test 4 · Part 2" }), ask, toast: () => {} });
   out.authorGuide = /How to make a dictation exercise/.test(txt(A));

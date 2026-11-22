@@ -77,18 +77,21 @@ const t = (name, fn) => T.push([name, fn]);
     const p = await S.dlPractice(X.D, X.env, stu('a@x.test'), { exId: X.exId }); assert.strictEqual(p.status, 200); assert.deepStrictEqual(leaks(p.data), []); assert.ok(p.data.words >= 15);
     const H = await setup(); const pl = await hw(H, stu('a@x.test'), 'payload'); assert.strictEqual(pl.data.status, 'ok'); assert.deepStrictEqual(leaks(pl.data), []);
   });
-  t('practice gate: a homework lesson only after the submission; assistants never; teacher preview always', async () => {
+  t('practice gate: a homework lesson only from the homework list; assistants never; teacher preview always', async () => {
     const X = await setup(); assert.strictEqual((await S.dlPractice(X.D, X.env, stu('a@x.test'), { exId: X.exId })).data.code, 'homework_only');
     assert.strictEqual((await S.dlCheck(X.D, X.env, stu('a@x.test'), { exId: X.exId, text: 'hello' })).status, 403);
     assert.strictEqual((await S.dlPractice(X.D, X.env, { user: { em: 'h@x.test', role: 'assistant' } }, { exId: X.exId })).status, 403);
     assert.strictEqual((await S.dlCheck(X.D, X.env, { user: { em: 't@x.test', role: 'teacher' } }, { exId: X.exId, text: 'hello' })).status, 200);
   });
-  t('practice check: marked, the script shown after the check, first run only goes to the Error Notebook', async () => {
-    const X = await setup({ mode: 'practice' }); const r = await S.dlCheck(X.D, X.env, stu('a@x.test'), { exId: X.exId, text: 'hello i would like join the photograph club' });
-    assert.strictEqual(r.status, 200); const R = r.data.result; assert.ok(R.pct < 70 && R.script.includes('photography') && R.ai.corrections.length);
-    assert.strictEqual(X.calls.errors.length, 1); assert.strictEqual(X.calls.errors[0].attemptId, 'dlp-' + X.lid);
-    await S.dlCheck(X.D, X.env, stu('a@x.test'), { exId: X.exId, text: 'hello again with more mistakes' }); assert.strictEqual(X.calls.errors.length, 1, 'retries do not fill the notebook');
-    assert.strictEqual(Object.keys(X.db.attempts || {}).length, 0, 'practice writes no attempt'); assert.strictEqual((await S.dlCheck(X.D, X.env, stu('a@x.test'), { exId: X.exId, text: '  ' })).status, 400);
+  t('practice: ONE check = the submission (no redo), teachers get the attempt, the student sees the full result again', async () => {
+    const X = await setup({ mode: 'practice' }); assert.strictEqual((await S.dlCheck(X.D, X.env, stu('a@x.test'), { exId: X.exId, text: '  ' })).status, 400, 'empty text is not a submission');
+    const r = await S.dlCheck(X.D, X.env, stu('a@x.test'), { exId: X.exId, text: 'hello i would like join the photograph club' });
+    assert.strictEqual(r.data.status, 'accepted'); const R = r.data.result; assert.ok(R.pct < 70 && R.script.includes('photography') && R.ai.corrections.length);
+    const att = Object.values(X.db.attempts)[0].data; assert.strictEqual(att.kind, 'dictation'); assert.ok(!('asg' in att) && att.dl.practice === true, 'an attempt for the teacher, no assignment');
+    assert.strictEqual(X.calls.errors.length, 1); const again = await S.dlCheck(X.D, X.env, stu('a@x.test'), { exId: X.exId, text: 'a second try' });
+    assert.strictEqual(again.data.status, 'duplicate'); assert.strictEqual(again.data.summary.pct, R.pct); assert.strictEqual(Object.keys(X.db.attempts).length, 1); assert.strictEqual(X.calls.errors.length, 1);
+    const back = await S.dlPractice(X.D, X.env, stu('a@x.test'), { exId: X.exId }); assert.strictEqual(back.data.submitted, true); assert.strictEqual(back.data.result.text, 'hello i would like join the photograph club', 'full result when coming back');
+    const tch = await S.dlCheck(X.D, X.env, { user: { em: 't@x.test', role: 'teacher' } }, { exId: X.exId, text: 'hello' }); assert.ok(tch.data.result.preview); assert.strictEqual(Object.keys(X.db.attempts).length, 1, 'teacher preview saves nothing');
   });
   t('homework submit: right class, marked once on the server, attempt for md-hw.js, repeat = the same result, script after', async () => {
     const X = await setup(); assert.strictEqual((await hw(X, stu('b@x.test'), 'payload')).data.code, 'noasg', 'other class');
@@ -98,8 +101,8 @@ const t = (name, fn) => T.push([name, fn]);
     const att = Object.values(X.db.attempts)[0].data; assert.strictEqual(att.kind, 'dictation'); assert.strictEqual(att.asg, 'A1'); assert.strictEqual(MDHW.attState(att), 'complete');
     const dup = await hw(X, stu('a@x.test'), 'submit', { text: 'something else' }); assert.strictEqual(dup.data.status, 'duplicate'); assert.strictEqual(dup.data.summary.pct, 100); assert.strictEqual(Object.keys(X.db.attempts).length, 1);
     const again = await hw(X, stu('a@x.test'), 'payload'); assert.strictEqual(again.data.submitted, true); assert.ok(again.data.script.includes('photography'));
-    assert.strictEqual(again.data.result, null, 'retention off: the server keeps no text'); assert.ok(!JSON.stringify(X.db.dlSubs).includes('Hello, I would'), 'no student text in the score record');
-    assert.strictEqual((await S.dlPractice(X.D, X.env, stu('a@x.test'), { exId: X.exId })).status, 200, 'practice opens after submission');
+    assert.ok(again.data.result && again.data.result.text.startsWith('Hello, I would'), 'coming back: the whole result again'); assert.ok(!JSON.stringify(X.db.dlSubs).includes('Hello, I would'), 'no student text in the score record');
+    assert.strictEqual((await S.dlPractice(X.D, X.env, stu('a@x.test'), { exId: X.exId })).status, 403, 'no redo through practice');
   });
   t('an empty homework submission scores 0 and is Incomplete; nothing goes to the AI', async () => {
     const X = await setup({ ai: () => ({ items: [], vocabulary: [] }) }); const sub = await hw(X, stu('a@x.test'), 'submit', { text: '' }); assert.strictEqual(sub.data.result.pct, 0);

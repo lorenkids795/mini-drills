@@ -48,7 +48,8 @@ t('write-the-script result: Writing feedback (numbered corrections at the exact 
   assert.ok(h.includes('✗ Not passed') === !r.passed && h.includes(r.pct + '%'));
   const sp = B.T.fixSpans(text, B.T.aiItems(R.ai)); assert.strictEqual(sp.length, 1); assert.strictEqual(sp[0].i, text.lastIndexOf('blu'), 'the second "bag" area, not the first match');
   const x = B.T.dlResultHTML(Object.assign({}, R, { text: '<img src=x onerror=1>', ai: { corrections: [], vocabulary_upgrades: [] } }), null, '<b>s</b>', 'pr');
-  assert.ok(!x.includes('<img') && !x.includes('<b>s</b>'), 'student text and script escaped'); assert.ok(x.includes('Write it again'));
+  assert.ok(!x.includes('<img') && !x.includes('<b>s</b>'), 'student text and script escaped'); assert.ok(!x.includes('dl-again') && x.includes('You have submitted'), 'students: no redo');
+  assert.ok(B.T.dlResultHTML(R, null, script, 'pv').includes('Write it again'), 'teacher preview can try again');
   const k = B.T.dlResultHTML(null, { pct: 80, passed: true, words: { right: 8, script: 10 } }, script, 'hw'); assert.ok(k.includes('no longer kept') && k.includes('80%'));
 });
 const done = () => { out.forEach((l) => console.log(l)); console.log('---- ' + pass + '/' + (pass + fail) + ' passed'); process.exit(fail ? 1 : 0); }; Promise.all(P).then(done);

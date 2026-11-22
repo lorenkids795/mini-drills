@@ -35,7 +35,7 @@ const DAY = 864e5;
   const stu = (em) => ({ user: { em, role: 'student' } });
   const SECRET = 'zq-secret-answer-77'; // a recognisable raw answer, to search logs / scores / other rows for
   async function setup(on = true) {
-    NOW = realNow(); const X = mk(); const env = { DL_RAW_RETENTION: on ? 'on' : '', MD_KV: kv() }; X.env = env;
+    NOW = realNow(); const X = mk(); const env = { DL_RAW_RETENTION: on ? (on === 'unset' ? undefined : 'on') : 'off', MD_KV: kv() }; X.env = env;
     await X.D.fsPut(null, 'roster', 'a@x.test', { email: 'a@x.test', name: 'An <img src=x onerror=alert(1)>', cls: 'C1', teacher: 'Cô Lan Nguyen' });
     await X.D.fsPut(null, 'roster', 'b@x.test', { email: 'b@x.test', name: 'Binh', cls: 'C2', teacher: 'Thầy Minh' });
     const sv = await S.dlStaff(X.D, env, ADM, { op: 'save', title: 'Club', script: "ANNA: Hello, I would like to join the photography club.\n\nTOM: Great. We meet on Thursday evenings at seven o'clock.", checked: true }); X.lid = sv.data.lid;
@@ -50,11 +50,15 @@ const DAY = 864e5;
   const list = (X, who, body) => S.dlRaw(X.D, X.env, who, Object.assign({ op: 'list', exId: X.exId }, body || {}));
   const rawKey = (X) => Object.keys(X.db.dlRaw || {})[0];
 
-  t('fail closed: with DL_RAW_RETENTION unset nothing raw is stored on the server', async () => {
+  t('DL_RAW_RETENTION=off: nothing raw is stored on the server', async () => {
     const X = await setup(false); const { r } = await submit(X, 'a@x.test', 'A1'); assert.strictEqual(r.data.status, 'accepted');
     assert.strictEqual(Object.keys(X.db.dlRaw || {}).length, 0); assert.ok(!JSON.stringify(X.db).includes(SECRET), 'raw text nowhere');
     assert.strictEqual((await hw(X, 'a@x.test', 'A1', 'payload')).data.result, null, 'after reload: the mark only');
     const L = await list(X, LAN); assert.strictEqual(L.data.on, false); assert.strictEqual(L.data.rows[0].raw, 'not_kept'); assert.ok(!('answer' in L.data.rows[0].items[0]));
+  });
+  t('default (unset) keeps the text, so a student coming back sees the whole result', async () => {
+    const X = await setup('unset'); await submit(X, 'a@x.test', 'A1'); assert.strictEqual(Object.keys(X.db.dlRaw).length, 1);
+    const back = await hw(X, 'a@x.test', 'A1', 'payload'); assert.ok(back.data.result && back.data.result.text.includes(SECRET) && back.data.result.ai);
   });
   t('on: exactly the final answers (no drafts), server time, expiry = submittedAt + 90 days, separate from the score record', async () => {
     const X = await setup(); const t0 = NOW; const { r } = await submit(X, 'a@x.test', 'A1'); assert.strictEqual(r.data.status, 'accepted');
