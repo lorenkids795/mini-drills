@@ -132,7 +132,7 @@ const world = () => ({
 
   // ---------- Create ----------
   await t('Create: the only Add button is at the top of "Pick a free slot"; previews draw none; disabled until a valid lesson + slot', async () => {
-    assert.ok(/<div class="cpslhd"><h3>Pick a free slot<\/h3><div id="cpAddTop"><\/div><\/div>/.test(html)); assert.ok(/function addBarHTML\(\)\{return ''\}/.test(html));
+    assert.ok(/<div class="cpslhd"><h3 id="cpSlotH">Pick a free slot<\/h3><div id="cpAddTop"><\/div><\/div>/.test(html)); assert.ok(/function addBarHTML\(\)\{return ''\}/.test(html));
     const B = boot({ hooks: 'renderAddTop:renderAddTop,get CP(){return CP}' }); B.T.showTab('create'); B.T.renderAddTop(); assert.ok(/data-act="add-ex" type="button" disabled/.test(B.el('cpAddTop').innerHTML));
   });
   await t('Create: Hide editor / Show editor is a class switch only (no redraw, no AI call); Easy / Medium / Hard above the reading preview changes the preview only', async () => {

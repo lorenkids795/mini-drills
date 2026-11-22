@@ -1108,6 +1108,7 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .lsflash{margin-top:10px;font-size:var(--fs-body);color:var(--accent)}.lsflash .lsfh{font-size:1.5rem;font-weight:800;line-height:1.25;margin:0 0 2px}.lsflash .lsfd{margin:0 0 8px}.lsflash .lsfl{font-size:var(--fs-sm);font-weight:700;margin:6px 0 2px}.lsflash .lsfu{list-style:none;margin:0;padding:0 0 0 22px}.lsflash .lsfu li{margin:2px 0}.lsflash .lsfe{margin-top:10px;font-style:italic}.lsflash b,.lsflash small,.lsflash i{color:var(--accent)}.lsexp{font-style:italic;color:var(--accent);margin:6px 0 0}
 .lsc .opt.good,.lsc .opt.good:has(input:checked){background:var(--good-bg);border-color:var(--good);color:var(--good);font-weight:600}.lsc .opt.bad,.lsc .opt.bad:has(input:checked){background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
 .lsw b{font-size:1.2rem}.lsscore{cursor:default;display:inline-block}.lshw.tg.on{background:var(--good);color:var(--bg)}
+.cpxnew{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}.cpxnew input{min-height:40px;padding:6px 10px;border:1px solid var(--line-2);border-radius:var(--r-sm);background:var(--surface);color:var(--ink);font:inherit;min-width:0;width:15em;max-width:100%}.cpxl{margin-top:12px}.cpxlist{margin:4px 0 8px;padding-left:1.2em}
 .attcap{margin:18px 0 8px;font-size:var(--fs-sm);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .lsdemo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;font-size:var(--fs-sm);color:var(--muted)}
 /* ---- Lesson layout shared by Listening (.ls) and Reading (.rm): one type scale (passage 1.06rem / 1.8–1.9, questions 1rem,
@@ -1815,7 +1816,7 @@ body.rmdragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
 
   <section id="v-create" hidden>
     <div class="cpslot" id="cpSlotCard">
-      <div class="cpslhd"><h3>Pick a free slot</h3><div id="cpAddTop"></div></div>
+      <div class="cpslhd"><h3 id="cpSlotH">Pick a free slot</h3><div id="cpAddTop"></div></div>
       <div class="cpt cpskills" id="cpSkills" role="tablist" aria-label="Skill"></div>
       <div class="book-test-row"><select id="cBook" class="book-test-select" aria-label="Book"></select><div class="cptests" id="cpTests" role="group" aria-label="Test"></div></div>
       <div id="cpSlots"></div>
@@ -1968,6 +1969,17 @@ var exSub=function(e){return e.kind==='dictation'?'Dictation · '+(e.dl.homework
 // the Create slot map (exIds) on the real site; EXS keeps them, so old attempts, marks, feedback and old assignments still show the title.
 // Nothing is deleted. Undo = take the id out of LIB_HIDE. Demo mode still shows them.
 var SAMPLE_IDS=['l1','l2','l3','r1','r2','r3','w1','s1','ra1'],LIB_HIDE=['l1','l2','l3','r1','r2','r3','w1','s1'];
+/* ---------- Extra practice (11/2026): exercises outside the Cambridge books ----------
+   Saved like any custom exercise with bookId 'xtra', testId = the category key 'k_<slug>' and cat = the category name, so exIds('xtra',
+   key, skill), the Library test cards, the assignment picker, attempts and homework work exactly as for a Cambridge test. A category
+   exists while it has at least one exercise (no new collection, no new rules). */
+var XTRA='xtra',XBOOK={id:'xtra',title:'Extra practice',short:'Extra practice'};
+function xKey(n){var v=String(n||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\u0111/g,'d').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40);return v?'k_'+v:''}
+function xCats(){var m={},o=[];customEx.forEach(function(c){if(c.bookId===XTRA&&/^k_/.test(String(c.testId||''))&&!m[c.testId]){m[c.testId]=1;o.push({k:c.testId,n:c.cat||c.testId.slice(2)})}});return o.sort(function(a,b){return a.n.localeCompare(b.n)})}
+function catName(k){var c=xCats().filter(function(x){return x.k===k})[0];return c?c.n:(typeof CP!=='undefined'&&CP&&CP.xnew&&CP.xnew.k===k?CP.xnew.n:'')}
+function testsOf(b){return b===XTRA?xCats().map(function(c){return c.k}):TESTS}
+function tName(t){return TNAME[t]||catName(t)||String(t||'')}
+function bookOf(b){return b===XTRA?XBOOK:BOOKS.filter(function(x){return x.id===b})[0]||null}
 function exIds(b,t,s){
   var base=((LIBMAP[b]&&LIBMAP[b][t]&&LIBMAP[b][t][s])||[]).filter(function(id){return DEMO||LIB_HIDE.indexOf(id)<0});
   return base.concat(customEx.filter(function(c){return c.bookId===b&&c.testId===t&&c.skill===s}).sort(function(x,y){return (x.part||99)-(y.part||99)}).map(function(c){return c.id}));
@@ -1976,7 +1988,7 @@ function locOf(id){
   for(var b in LIBMAP)for(var t in LIBMAP[b])for(var s in LIBMAP[b][t])if(LIBMAP[b][t][s].indexOf(id)>=0)return {book:b,test:t,skill:s};
   var c=customMap[id];return c?{book:c.bookId,test:c.testId,skill:c.skill}:null;
 }
-function locLabel(l){var b=BOOKS.filter(function(x){return x.id===l.book})[0];return (b?b.short:l.book)+' · '+TNAME[l.test]+' · '+SNAME[l.skill]}
+function locLabel(l){return bookShort(l.book)+' · '+tName(l.test)+' · '+SNAME[l.skill]}
 function rawEx(id){return customDocs.concat(localCustom).filter(function(d){return 'c_'+d.id===id})[0]||null}
 function tblOf(d){if(!d.tableJson)return null;try{return JSON.parse(d.tableJson)}catch(e){return null}}
 function exJSON(d){
@@ -1993,16 +2005,16 @@ function rebuildCustom(){
   customEx=[];customMap={};
   customDocs.concat(localCustom).forEach(function(d){
     if(d.kind==='dictation'){ // Dictation Lab: the lesson and its answers stay on the server; this is only the Library entry
-      var dw={id:'c_'+d.id,bookId:d.bookId,testId:d.testId,skill:'listening',title:d.title,kind:'dictation',hint:'',qs:[],dl:{lid:String(d.dlId||''),ver:+d.dlVer||0,homework:d.dlMode==='homework',label:String(d.dlLabel||''),audio:String(d.audio||'')},part:+d.part||0,docId:d.docId||null};
+      var dw={id:'c_'+d.id,bookId:d.bookId,testId:d.testId,cat:String(d.cat||''),skill:'listening',title:d.title,kind:'dictation',hint:'',qs:[],dl:{lid:String(d.dlId||''),ver:+d.dlVer||0,homework:d.dlMode==='homework',label:String(d.dlLabel||''),audio:String(d.audio||'')},part:+d.part||0,docId:d.docId||null};
       customEx.push(dw);customMap[dw.id]=dw;return;
     }
     var skill=d.skill==='listening'?'listening':(d.skill==='writing'||d.skill==='speaking'?d.skill:'reading');
     if(d.kind==='writing'||d.kind==='speaking'){
-      var w={id:'c_'+d.id,bookId:d.bookId,testId:d.testId,skill:skill,title:d.title,kind:d.kind,hint:d.hint||'',qs:[]};
+      var w={id:'c_'+d.id,bookId:d.bookId,testId:d.testId,cat:String(d.cat||''),skill:skill,title:d.title,kind:d.kind,hint:d.hint||'',qs:[]};
       if(d.kind==='writing'){w.prompt=d.prompt||'';w.minWords=d.minWords||150;w.table=tblOf(d);var chd=chOf(d);if(chd)w.chart=chd;if(d.writingModule)w.writingModule=String(d.writingModule)}else{w.part1=d.part1||[];w.cue=d.cue||{title:'',points:[]}}
       w.part=+d.part||0;w.docId=d.docId||null;customEx.push(w);customMap[w.id]=w;return;
     }
-    var o={id:'c_'+d.id,bookId:d.bookId,testId:d.testId,skill:skill,title:d.title,kind:'list',hint:'',qs:d.qs||[],material:{type:skill==='listening'?'audio':'passage',labelled:true,paras:String(d.material||'').split(/\n\s*\n/).filter(Boolean),lines:String(d.material||'').split(/\n+/).filter(Boolean).map(function(t){var m=t.match(/^([A-Za-z ]{1,14}):\s*(.*)$/);return m?[m[1],m[2]]:['',t]})}};
+    var o={id:'c_'+d.id,bookId:d.bookId,testId:d.testId,cat:String(d.cat||''),skill:skill,title:d.title,kind:'list',hint:'',qs:d.qs||[],material:{type:skill==='listening'?'audio':'passage',labelled:true,paras:String(d.material||'').split(/\n\s*\n/).filter(Boolean),lines:String(d.material||'').split(/\n+/).filter(Boolean).map(function(t){var m=t.match(/^([A-Za-z ]{1,14}):\s*(.*)$/);return m?[m[1],m[2]]:['',t]})}};
     o.audio=d.audio||'';
     if(d.lesson){o.kind='lesson';o.lesson=d.lesson}
     if(d.rlesson){o.kind='reading-ms';o.rl=d.rlesson;o.qs=rmQs(d.rlesson);o.hint=RM_HINT;if(d.rlevels&&typeof d.rlevels==='object')o.rlv=d.rlevels}
@@ -2127,7 +2139,7 @@ function makeSample(){
 function attemptsOf(email){var me=nEm(email),a=realAttempts().filter(function(x){return nEm(x.email)===me});if(isDemoStudent(email))a=a.concat(sampleData.filter(function(x){return x.email===email}));return a}
 function doneMap(email,since,until){var m={};attemptsOf(email).forEach(function(a){if(since&&a.ts<since)return;if(until&&a.ts>until)return;var o=m[a.ex]||(m[a.ex]={best:0,total:a.total,n:0,band:null});o.best=Math.max(o.best,a.score);o.total=a.total;o.n++;var g=gradeOf(a);if(g)o.band=g.overall});return m}
 function prog(ids,dm){var d=ids.filter(function(i){return dm[i]}).length;return {d:d,t:ids.length,p:ids.length?Math.round(d/ids.length*100):0}}
-function allIdsBook(b){var o=[];TESTS.forEach(function(t){SKILLS.forEach(function(s){o=o.concat(exIds(b,t,s))})});return o}
+function allIdsBook(b){var o=[];testsOf(b).forEach(function(t){SKILLS.forEach(function(s){o=o.concat(exIds(b,t,s))})});return o}
 function allIdsTest(b,t){var o=[];SKILLS.forEach(function(s){o=o.concat(exIds(b,t,s))});return o}
 function progHTML(pr){return '<div class="pc"><div class="prog'+(pr.p===100?' done':'')+'"><i style="width:'+pr.p+'%"></i></div><span>'+(pr.t?pr.p+'% completed':'No exercises yet')+'</span></div>'}
 function scoreColor(p){return p<50?'var(--bad)':(p<70?'var(--more)':'var(--good)')}
@@ -2201,8 +2213,8 @@ function stopAudio(){var a=$('#aud');if(a)try{a.pause()}catch(e){}}
 function clearTimer(){if(timerId){clearInterval(timerId);timerId=null}}
 function crumbs(){
   var c=[['Home',{}]],cr0=$('#crumbs');if(cr0)cr0.hidden=false;
-  if(NAV.book)c.push([BOOKS.filter(function(b){return b.id===NAV.book})[0].title,{book:NAV.book}]);
-  if(NAV.test)c.push([TNAME[NAV.test],{book:NAV.book,test:NAV.test}]);
+  if(NAV.book)c.push([(bookOf(NAV.book)||{title:NAV.book}).title,{book:NAV.book}]);
+  if(NAV.test)c.push([tName(NAV.test),{book:NAV.book,test:NAV.test}]);
   if(NAV.skill)c.push([SNAME[NAV.skill],{book:NAV.book,test:NAV.test,skill:NAV.skill}]);
   if(NAV.ex)c.push([exOf(NAV.ex).title,null]);
   if(c.length===1){$('#crumbs').innerHTML='';return}
@@ -2423,7 +2435,7 @@ function libTestHTML(bk,t,dm,stu){
   var cur=LIBX.skill&&exIds(bk.id,t,LIBX.skill).length?LIBX.skill:(SKILLS.filter(function(s){return exIds(bk.id,t,s).length})[0]||LIBX.skill||SKILLS[0]);
   var h='<div class="ltc'+(open?' open':'')+'"><button class="lth" type="button" data-act="lx" data-l="test" data-v="'+t+'" aria-expanded="'+open+'">'+
     '<span class="chev" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5l11 7-11 7z"/></svg></span>'+
-    '<span class="t">'+TNAME[t]+'</span>'+
+    '<span class="t">'+tName(t)+'</span>'+
     (stu?'<span class="ltbar" aria-hidden="true"><i style="width:'+pr.p+'%"></i></span><span class="ltpct">'+pr.p+'%</span>':'')+'</button>';
   if(!open)return h+'</div>';
   h+='<div class="ltb"><div class="ltabs" role="tablist" aria-label="Skills">'+SKILLS.map(function(s){
@@ -2444,7 +2456,7 @@ function libTestHTML(bk,t,dm,stu){
 /* ---------- Library › Learning Materials (built-in lessons from lm-content.js, not tied to Cambridge books) ---------- */
 // LIBT = which Library tab is open ('cam' | 'lm', localStorage md-libt). LMV = id of the lesson opened in the Learning Materials tab.
 // A lesson with status 'unpublished' is only shown to the admin (preview); lmVisible is the only gate, checked when listing AND when opening.
-var LIBT=(function(){try{return lsGet('md-libt')==='lm'?'lm':'cam'}catch(e){return 'cam'}})(),LMV=null;
+var LIBT=(function(){try{var v=lsGet('md-libt');return v==='lm'||v==='xtra'?v:'cam'}catch(e){return 'cam'}})(),LMV=null;
 function lmData(){var d=window.MD_LM;return d&&d.lessons?d:{skills:[],modules:[],lessons:[]}}
 // Writing in Learning Materials is still being built: ordinary students see it as "Coming soon" and cannot open it; the hidden tester
 // accounts (roster.tester === true, set by staff only, rules: roster is teacher-written) use it as before; teachers and admin unchanged.
@@ -2462,7 +2474,11 @@ var LM_ICO={writing:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19
   reading:'<path d="M2 4h6a4 4 0 014 4v13a3 3 0 00-3-3H2z"/><path d="M22 4h-6a4 4 0 00-4 4v13a3 3 0 013-3h7z"/>',speaking:'<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10a7 7 0 01-14 0M12 17v5"/>'};
 function lmIco(id){return lmSv(LM_ICO[id]||LM_ICO.writing,22)}
 function libTabsHTML(){var tab=function(v,l){return '<button type="button" role="tab" data-act="lib-tab" data-v="'+v+'" aria-selected="'+(LIBT===v)+'">'+l+'</button>'};
-  return '<div class="subtabs libtabs" role="tablist" aria-label="Library">'+tab('cam','Cambridge')+tab('lm','Learning Materials')+'</div>'}
+  return '<div class="subtabs libtabs" role="tablist" aria-label="Library">'+tab('cam','Cambridge')+tab('xtra','Extra practice')+tab('lm','Learning Materials')+'</div>'}
+// Library › Extra practice: one card per category (same cards as a Cambridge test: skills inside, progress for students)
+function xLibHTML(dm,stu){var cats=xCats();
+  if(!cats.length)return '<p class="lmempty"><b>No extra exercises yet.</b><span>'+(U&&U.adm?'Make one in Create: choose “Extra practice” instead of a book, then pick or add a category.':'Exercises outside the Cambridge books appear here when your teacher adds them.')+'</span></p>';
+  return '<div class="lpanel xpanel"><div class="lts">'+cats.map(function(c){return libTestHTML(XBOOK,c.k,dm,stu)}).join('')+'</div></div>'}
 function lmHTML(){
   var D=lmData(),cur=LMV&&lmLesson(LMV);
   if(cur&&lmVisible(cur))return lmLessonHTML(cur);
@@ -3193,6 +3209,7 @@ function renderLib(){
   if(stu)h+='<div class="sechead" style="margin-top:26px"><h2>Library</h2></div>'+libTabsHTML();
   else h+='<div class="sechead"><h2>Library</h2></div>'+libTabsHTML(); // the tabs below already say Cambridge / Learning Materials
   if(LIBT==='lm'){h+=lmHTML();if(stu)h+=recentHTML();$('#libBody').innerHTML=h;return}
+  if(LIBT==='xtra'){h+=xLibHTML(dm,stu);if(stu)h+=recentHTML();$('#libBody').innerHTML=h;return}
   if(stu&&!BOOKS.some(function(b){return allIdsBook(b.id).length}))h+='<p class="lmempty"><b>No Cambridge books yet.</b><span>Books appear here when your teacher adds exercises to them.</span></p>';
   else if(stu)h+='<div class="tiles">'+BOOKS.filter(function(b){return allIdsBook(b.id).length}).map(function(b){
     var ids=allIdsBook(b.id),pr=prog(ids,dm);
@@ -3562,7 +3579,7 @@ function renderDictation(ex,head,ban,C){
   });
 }
 var DLB=false;
-function dlSlot(){if(!CP.slot)return null;var b=BOOKS.filter(function(x){return x.id===CP.book})[0];return {book:CP.book,test:CP.test,part:CP.slot,label:(b?b.short:CP.book)+' · '+TNAME[CP.test]+' · Listening · Part '+CP.slot}}
+function dlSlot(){if(!CP.slot)return null;if(CP.book===XTRA)return CP.test?{book:XTRA,test:CP.test,cat:tName(CP.test),part:exIds(XTRA,CP.test,'listening').length+1,label:'Extra practice · '+tName(CP.test)+' · Listening'}:null;return {book:CP.book,test:CP.test,part:CP.slot,label:bookShort(CP.book)+' · '+tName(CP.test)+' · Listening · Part '+CP.slot}}
 function renderDlBox(){
   var b=$('#dlBox');if(!b)return;b.hidden=!(CP.skill==='listening'&&U&&U.adm);if(b.hidden||DLB)return;DLB=true;
   if(DEMO){b.innerHTML='<h3>Dictation lesson</h3><p class="muted">Dictation Lab needs the live site.</p>';return}
@@ -4166,7 +4183,7 @@ function renderDash(){
   var exS={},tsS={},skS={};
   A.forEach(function(x){var l=locOf(x.ex);[[exS,x.ex],[tsS,l?l.book+'|'+l.test:'?'],[skS,l?l.skill:'?']].forEach(function(p){var o=p[0][p[1]]||(p[0][p[1]]={sc:0,tot:0,n:0});o.sc+=x.score;o.tot+=x.total;o.n++})});
   var hard=function(m,lab,minN){return Object.keys(m).filter(function(k){return m[k].n>=minN&&m[k].tot}).map(function(k){var o=m[k];return {k:k,label:lab(k),wrong:Math.round((1-o.sc/o.tot)*100),n:o.n}}).sort(function(a,b){return b.wrong-a.wrong})};
-  var hardEx=hard(exS,exName,3),hardTest=hard(tsS,function(k){var p=k.split('|'),b=BOOKS.filter(function(x){return x.id===p[0]})[0];return (b?b.short:p[0])+' · '+(TNAME[p[1]]||p[1])},3),hardSk=hard(skS,function(k){return SNAME[k]||k},3);
+  var hardEx=hard(exS,exName,3),hardTest=hard(tsS,function(k){var p=k.split('|'),b=BOOKS.filter(function(x){return x.id===p[0]})[0];return (b?b.short:p[0])+' · '+tName(p[1])},3),hardSk=hard(skS,function(k){return SNAME[k]||k},3);
   var tp=A.reduce(function(s,x){return s+x.score},0),tt=A.reduce(function(s,x){return s+x.total},0);
   var inF=function(x){return (F.course==='all'||x.course===F.course)&&(F.cls==='all'||x.cls===F.cls)};
   var courses=uniq(SS.map(function(x){return [x.course,x.course]})),classes=uniq(SS.filter(function(x){return F.course==='all'||x.course===F.course}).map(function(x){return [x.cls,classTitle(x.cls)]}));
@@ -4243,10 +4260,10 @@ function renderDash(){
 function classList(){return uniq(students().filter(function(s){return clsOk(s.cls)}).map(function(s){return [s.cls,s.cls]})).map(function(x){return x[0]})}
 function idsForKey(k){var p=k.split(':');if(p[0]==='b')return allIdsBook(p[1]);if(p[0]==='t')return allIdsTest(p[1],p[2]);return exIds(p[1],p[2],p[3])}
 function asgName(a){if(a.name)return a.name;var d=new Date(a.due);return 'HW '+DAYS[d.getDay()].toUpperCase()+' '+pad(d.getDate())+'.'+pad(d.getMonth()+1)}
-function pickBooks(){return BOOKS.filter(function(b){return allIdsBook(b.id).length})}
+function pickBooks(){return BOOKS.concat([XBOOK]).filter(function(b){return allIdsBook(b.id).length})}
 function pickIds(){
   var pk=AS.pk,out=[];
-  TESTS.forEach(function(t){if(pk.test!=='all'&&pk.test!==t)return;SKILLS.forEach(function(sk){if(pk.skill!=='all'&&pk.skill!==sk)return;var ids=exIds(pk.book,t,sk).filter(dlAssignable);if(ids.length)out.push({t:t,s:sk,ids:ids})})});
+  testsOf(pk.book).forEach(function(t){if(pk.test!=='all'&&pk.test!==t)return;SKILLS.forEach(function(sk){if(pk.skill!=='all'&&pk.skill!==sk)return;var ids=exIds(pk.book,t,sk).filter(dlAssignable);if(ids.length)out.push({t:t,s:sk,ids:ids})})});
   return out;
 }
 function dlAssignable(id){var e=exOf(id);return !(e&&e.kind==='dictation'&&!e.dl.homework)}
@@ -4260,16 +4277,16 @@ function pkBulkHTML(){var L=[];pickIds().forEach(function(g){L=L.concat(g.ids)})
 function treeHTML(){
   var bs=pickBooks();if(!bs.length)return '<p class="saved">The Library has no exercises yet.</p>';
   var pk=AS.pk;if(!pk||!bs.some(function(b){return b.id===pk.book}))pk=AS.pk={book:bs[0].id,test:pkFirstTest(bs[0].id),skill:'all'};
-  var tests=TESTS.filter(function(t){return allIdsTest(pk.book,t).length});
+  var tests=testsOf(pk.book).filter(function(t){return allIdsTest(pk.book,t).length}),xb=pk.book===XTRA;
   var h='<div class="pk"><label class="field">Book<select data-pk="book">'+bs.map(function(b){return '<option value="'+b.id+'"'+(b.id===pk.book?' selected':'')+'>'+esc(b.title)+'</option>'}).join('')+'</select></label>'+
-   '<label class="field">Test<select data-pk="test"><option value="all">All tests</option>'+tests.map(function(t){return '<option value="'+t+'"'+(t===pk.test?' selected':'')+'>'+TNAME[t]+'</option>'}).join('')+'</select></label>'+
+   '<label class="field">'+(xb?'Category':'Test')+'<select data-pk="test"><option value="all">'+(xb?'All categories':'All tests')+'</option>'+tests.map(function(t){return '<option value="'+t+'"'+(t===pk.test?' selected':'')+'>'+tName(t)+'</option>'}).join('')+'</select></label>'+
    '<label class="field">Skill<select data-pk="skill"><option value="all">All skills</option>'+SKILLS.map(function(k){return '<option value="'+k+'"'+(k===pk.skill?' selected':'')+'>'+SNAME[k]+'</option>'}).join('')+'</select></label>'+
    '<span class="pkbulk" id="pkBulk">'+pkBulkHTML()+'</span></div>';
   var groups=pickIds();
-  return h+'<div class="pklist">'+(groups.length?groups.map(function(g){return '<h5>'+TNAME[g.t]+' · '+SNAME[g.s]+'</h5><div class="pkg">'+g.ids.map(function(id){return '<label class="tl"><input type="checkbox" data-ck="'+esc(id)+'"'+(AS.sel[id]?' checked':'')+'> '+esc(exOf(id).title)+'</label>'}).join('')+'</div>'}).join(''):'<p class="saved">No exercises match these filters.</p>')+'</div>';
+  return h+'<div class="pklist">'+(groups.length?groups.map(function(g){return '<h5>'+tName(g.t)+' · '+SNAME[g.s]+'</h5><div class="pkg">'+g.ids.map(function(id){return '<label class="tl"><input type="checkbox" data-ck="'+esc(id)+'"'+(AS.sel[id]?' checked':'')+'> '+esc(exOf(id).title)+'</label>'}).join('')+'</div>'}).join(''):'<p class="saved">No exercises match these filters.</p>')+'</div>';
 }
 // the picker opens on the first test that has exercises (the whole book is still one choice away: "All tests")
-function pkFirstTest(b){return TESTS.filter(function(t){return allIdsTest(b,t).length})[0]||'all'}
+function pkFirstTest(b){return testsOf(b).filter(function(t){return allIdsTest(b,t).length})[0]||'all'}
 function agSel(){return Object.keys(AS.sel).filter(function(k){return AS.sel[k]&&exOf(k)})}
 function agCountText(){var f=AG.form,n=agSel().length,x=f?f.ext.length:0,p=[];if(n)p.push(plural(n,'exercise'));if(x)p.push(plural(x,'external task'));return p.length?p.join(' · '):'Nothing added yet'}
 function syncTree(){
@@ -5049,7 +5066,7 @@ var CP={skill:'listening',preset:'l5',view:'sum',draft:{},last:null,pvSt:0};
    CP.book / CP.test / CP.slot = one source for the destination (kept in localStorage md-cpbt). Slots come from the real exercises
    (exIds = built-in + teachers' exercises): an exercise with exercises.part sits in that slot; one without part fills the first free slot. */
 var CP_NS={listening:4,reading:3,writing:2,speaking:3},CP_PF={listening:'Part',reading:'Passage',writing:'Task',speaking:'Part'};
-(function(){var o={};try{o=JSON.parse(lsGet('md-cpbt')||'{}')||{}}catch(e){}CP.book=o.book||'cam14';CP.test=o.test||'t1';CP.slot=null;CP.msg=''})();
+(function(){var o={};try{o=JSON.parse(lsGet('md-cpbt')||'{}')||{}}catch(e){}CP.book=o.book||'cam14';CP.test=o.test||(CP.book==='xtra'?'':'t1');if(CP.book!=='xtra'&&!/^t[1-4]$/.test(CP.test))CP.test='t1';CP.slot=null;CP.msg=''})();
 function cpBtSave(){try{lsSet('md-cpbt',JSON.stringify({book:CP.book,test:CP.test}))}catch(e){}}
 function slotsOf(b,t,sk){
   var n=CP_NS[sk]||3,out=[],rest=[];for(var i=1;i<=n;i++)out[i]=null;
@@ -5057,30 +5074,49 @@ function slotsOf(b,t,sk){
   rest.forEach(function(id){for(var i=1;i<=n;i++)if(!out[i]){out[i]=id;return}});
   return out;
 }
-function bookShort(b){var x=BOOKS.filter(function(y){return y.id===b})[0];return x?x.short:b}
+function bookShort(b){var x=bookOf(b);return x?x.short:b}
 function cpTitle(){return String((parsed&&parsed.title)||(CP.skill==='reading'?RD.title:CP.skill==='listening'?AL.title:'')||'').trim()}
 function cpSlotInfo(){
+  if(CP.book===XTRA){var cn=CP.test?tName(CP.test):'';return {label:cn?'Extra practice · '+cn+' · '+SNAME[CP.skill]:'Choose or add a category',btn:cn?'Add to '+cn:'Add',ok:!!cn&&!CP.adding,ex:null,built:false}}
   var pf=CP_PF[CP.skill]||'Part',sl=CP.slot,ex=sl?slotsOf(CP.book,CP.test,CP.skill)[sl]:null,o={label:'Select a slot',btn:'Add',ok:false,ex:ex,built:!!(ex&&!customMap[ex])};
   if(!sl)return o;
-  o.label=bookShort(CP.book)+' · '+TNAME[CP.test]+' · '+pf+' '+sl;
+  o.label=bookShort(CP.book)+' · '+tName(CP.test)+' · '+pf+' '+sl;
   o.btn=(ex?'Replace ':'Add to ')+pf+' '+sl;o.ok=!o.built&&!CP.adding;
   return o;
 }
 function cpWarnHTML(){
+  if(CP.book===XTRA){var tl=cpTitle().toLowerCase();return tl&&CP.test&&exIds(XTRA,CP.test,CP.skill).some(function(id){return String(exOf(id).title||'').trim().toLowerCase()===tl})?'<div class="cpwarn">An exercise with this title is already in “'+esc(tName(CP.test))+'”. Adding makes a second one.</div>':''}
   var pf=CP_PF[CP.skill]||'Part',h='',o=cpSlotInfo(),t=cpTitle().toLowerCase();
   if(o.ex&&o.built)h+='<div class="cpwarn">'+esc(pf+' '+CP.slot)+' has a built-in exercise (“'+esc(exOf(o.ex).title)+'”) that cannot be replaced. Choose another slot.</div>';
   else if(o.ex)h+='<div class="cpwarn"><b>'+esc(pf+' '+CP.slot)+' is taken</b> by “'+esc(exOf(o.ex).title)+'”. Adding will replace it.</div>';
   if(t)TESTS.some(function(tt){var S=slotsOf(CP.book,tt,CP.skill);for(var i=1;i<S.length;i++)if(S[i]&&!(tt===CP.test&&i===CP.slot)&&String(exOf(S[i]).title||'').trim().toLowerCase()===t){
-    h+='<div class="cpwarn">A lesson with this title already exists in '+esc(bookShort(CP.book)+' · '+TNAME[tt]+' · '+pf+' '+i)+'.</div>';return true}return false});
+    h+='<div class="cpwarn">A lesson with this title already exists in '+esc(bookShort(CP.book)+' · '+tName(tt)+' · '+pf+' '+i)+'.</div>';return true}return false});
   return h;
 }
 function renderSlotMap(){
   var b=$('#cBook');if(b&&b.value!==CP.book)b.value=CP.book;
-  var tb=$('#cpTests');if(tb)tb.innerHTML=TESTS.map(function(t){var on=CP.test===t;return '<button type="button" class="cptp'+(on?' on':'')+'" data-act="cp-test" data-t="'+t+'" aria-pressed="'+on+'">'+TNAME[t]+'</button>'}).join('');
+  var sh=$('#cpSlotH');if(sh)sh.textContent=CP.book===XTRA?'Pick a category':'Pick a free slot';
+  if(CP.book===XTRA)return renderXSlot();
+  var tb=$('#cpTests');if(tb)tb.innerHTML=TESTS.map(function(t){var on=CP.test===t;return '<button type="button" class="cptp'+(on?' on':'')+'" data-act="cp-test" data-t="'+t+'" aria-pressed="'+on+'">'+tName(t)+'</button>'}).join('');
   var box=$('#cpSlots');if(!box)return;
   var S=slotsOf(CP.book,CP.test,CP.skill),pf=CP_PF[CP.skill]||'Part',h='<div class="cpsl">';
   for(var i=1;i<S.length;i++){var id=S[i],on=CP.slot===i,tt=id?String(exOf(id).title||''):'';
     h+='<button type="button" class="cpsb'+(id?' f':'')+(on?' on':'')+'" data-act="cp-slot" data-p="'+i+'" aria-pressed="'+on+'" aria-label="'+esc(pf+' '+i+': '+(id?'Taken: '+tt:'empty'))+'"><b>'+esc(pf+' '+i)+'</b><span>'+(id?esc(tt):'+ Add here')+'</span></button>'}
+  box.innerHTML=h+'</div><div id="cpWarn" aria-live="polite">'+cpWarnHTML()+'</div>';
+  renderAddTop();
+}
+// Create › Extra practice: category buttons (+ a new one) instead of tests; no slots, every Add makes a new exercise in the category
+function renderXSlot(){
+  var cats=xCats();if(CP.xnew&&!cats.some(function(c){return c.k===CP.xnew.k}))cats.push(CP.xnew);
+  if(!cats.some(function(c){return c.k===CP.test}))CP.test=cats[0]?cats[0].k:'';
+  CP.slot=CP.test?'x':null;
+  var tb=$('#cpTests');if(tb)tb.innerHTML=cats.map(function(c){var on=CP.test===c.k;return '<button type="button" class="cptp'+(on?' on':'')+'" data-act="cp-test" data-t="'+esc(c.k)+'" aria-pressed="'+on+'">'+esc(c.n)+'</button>'}).join('')+
+    '<span class="cpxnew"><input id="cpXCat" type="text" maxlength="40" placeholder="New category, e.g. Grammar" aria-label="New category name" autocomplete="off"><button class="btn sm" type="button" data-act="cp-xcat">+ Add category</button></span>';
+  var box=$('#cpSlots');if(!box)return;var h='<div class="cpxl">';
+  if(!CP.test)h+='<p class="muted">Type a category name (for example Grammar, Vocabulary, Exam tips) and press “+ Add category”.</p>';
+  else{var L=exIds(XTRA,CP.test,CP.skill);
+    h+=(L.length?'<p class="muted">Already in “'+esc(tName(CP.test))+'” · '+SNAME[CP.skill]+':</p><ul class="cpxlist">'+L.map(function(id){return '<li>'+esc(exOf(id).title)+'</li>'}).join('')+'</ul>':'<p class="muted">No '+SNAME[CP.skill]+' exercises in “'+esc(tName(CP.test))+'” yet.</p>')+
+      '<p class="muted">Each Add makes a new exercise in this category. Students find it in Library › Extra practice.</p>'}
   box.innerHTML=h+'</div><div id="cpWarn" aria-live="polite">'+cpWarnHTML()+'</div>';
   renderAddTop();
 }
@@ -5733,7 +5769,8 @@ function addExercise(gate){ // gate = the Add button (the replace question is as
   if(old){var na=realAttempts().filter(function(a){return a.ex===old.id}).length;
     var rq={title:'Replace “'+old.title+'”?',text:na?'Students already have '+na+' attempt'+(na>1?'s':'')+' on it; they will point to the new lesson.':'',ok:'Replace',danger:true};
     if(gate?uiGate(gate,rq):!confirm(rq.title+(rq.text?' '+rq.text:'')))return}
-  var rec={bookId:CP.book,testId:CP.test,part:CP.slot,skill:parsed.skill,title:parsed.title,material:parsed.material,qs:parsed.qs,ts:Date.now()};
+  var xb=CP.book===XTRA,rec={bookId:CP.book,testId:CP.test,part:xb?exIds(XTRA,CP.test,CP.skill).length+1:CP.slot,skill:parsed.skill,title:parsed.title,material:parsed.material,qs:parsed.qs,ts:Date.now()};
+  if(xb)rec.cat=tName(CP.test);
   if(parsed.lesson)rec.lesson=parsed.lesson;
   if(parsed.rlesson)rec.rlesson=parsed.rlesson;
   if(parsed.rlesson){var rlv=rdLevels();if(rlv)rec.rlevels=rlv} // Easy / Hard versions made with this lesson (Medium = rlesson)
@@ -5746,8 +5783,8 @@ function addExercise(gate){ // gate = the Add button (the replace question is as
     if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
     return;
   }
-  var where=bookShort(CP.book)+' · '+TNAME[CP.test]+' · '+SNAME[CP.skill]+' · '+CP_PF[CP.skill]+' '+CP.slot;
-  var fin=function(){CP.adding=false;CP.msg='Added “'+rec.title+'” to '+where+'.';rebuildCustom();renderSlotMap();cpWarnUpdate()};
+  var where=bookShort(CP.book)+' · '+tName(CP.test)+' · '+SNAME[CP.skill]+(xb?'':' · '+CP_PF[CP.skill]+' '+CP.slot);
+  var fin=function(){CP.adding=false;CP.msg='Added “'+rec.title+'” to '+where+'.';if(xb)CP.xnew=null;rebuildCustom();renderSlotMap();cpWarnUpdate()};
   var loc=function(){
     if(old){[customDocs,localCustom].forEach(function(l){for(var i=0;i<l.length;i++)if('c_'+l[i].id===old.id)l[i]=Object.assign({id:l[i].id,docId:l[i].docId},rec)})}
     else localCustom.push(Object.assign({id:'l'+rec.ts},rec));fin()};
@@ -5865,7 +5902,7 @@ function refreshLive(){
   else if(TAB==='mark'){var ac=document.activeElement;if(!MK.open&&!(ac&&ac.closest&&ac.closest('#v-mark')))renderMark()}
 }
 function populateBookTest(){
-  var b=$('#cBook');if(!b.options.length)b.innerHTML=BOOKS.map(function(x){return '<option value="'+x.id+'">'+x.short+'</option>'}).join('');b.value=CP.book;
+  var b=$('#cBook');if(!b.options.length)b.innerHTML=BOOKS.map(function(x){return '<option value="'+x.id+'">'+x.short+'</option>'}).join('')+'<option value="xtra">Extra practice (not a Cambridge book)</option>';b.value=CP.book;
 }
 
 document.addEventListener('click',function(e){
@@ -5957,6 +5994,9 @@ document.addEventListener('click',function(e){
   if(a==='cp-skill')return cpSkill(t.dataset.v);
   if(a==='ws-check'){var wj=$('#wsJson');WSD.json=wj?wj.value:'';lsSet('md-ws',WSD.json);checkJSON(WSD.json);var pv=$('#createPrev');if(pv&&pv.scrollIntoView)pv.scrollIntoView({block:'start',behavior:reducedMotion()?'auto':'smooth'});return}
   if(a==='ws-ex'){WSD.json=JSON.stringify(CH_EXAMPLE,null,2);lsSet('md-ws',WSD.json);var wj2=$('#wsJson');if(wj2)wj2.value=WSD.json;return}
+  if(a==='cp-xcat'){var xi=$('#cpXCat'),xn=String(xi&&xi.value||'').replace(/\s+/g,' ').trim().slice(0,40),xk=xKey(xn);
+    if(!xk){toast('Type a category name with letters or numbers.');if(xi)xi.focus();return}
+    var xo=xCats().filter(function(c){return c.k===xk})[0];CP.xnew=xo?null:{k:xk,n:xn};CP.test=xk;CP.msg='';cpBtSave();renderSlotMap();cpWarnUpdate();return}
   if(a==='cp-test'){CP.test=t.dataset.t;CP.slot=null;CP.msg='';cpBtSave();renderSlotMap();cpWarnUpdate();return}
   if(a==='cp-slot'){CP.slot=+t.dataset.p;CP.msg='';renderSlotMap();cpWarnUpdate();var sb=$('#cpSlots [data-p="'+CP.slot+'"]');if(sb){try{sb.focus({preventScroll:true})}catch(x){}}return}
   if(a==='rd-gen'){if(!RD.busy&&RD.job&&rdMedDone(RD.job)&&uiGate(t,{title:'Generate a new lesson?',text:'The current Medium'+(rdApproved()?' (approved)':'')+', its review and any Easy / Hard versions are replaced. This uses new AI requests.',ok:'Generate a new lesson',danger:true}))return true;return rdGen()}
@@ -5993,7 +6033,7 @@ document.addEventListener('change',function(e){
   if(e.target.id==='stkFile')stickerFrom(e.target.files[0]);
   if(e.target.id==='csFile')coverFrom(e.target.files[0]);
   // Send date -> Deadline = the Sunday of that week (local calendar; a Sunday stays the same day). The teacher can still change it.
-  if(e.target.id==='cBook'){CP.book=e.target.value;CP.slot=null;CP.msg='';cpBtSave();renderSlotMap();cpWarnUpdate()}
+  if(e.target.id==='cBook'){CP.book=e.target.value;CP.test=CP.book===XTRA?(CP.xnew?CP.xnew.k:''):(TESTS.indexOf(CP.test)<0?'t1':CP.test);CP.slot=null;CP.msg='';cpBtSave();renderSlotMap();cpWarnUpdate()}
   if(e.target.id==='fSd'&&/^\d{4}-\d{2}-\d{2}$/.test(e.target.value)){var sq=e.target.value.split('-'),sdd=new Date(+sq[0],+sq[1]-1,+sq[2]),fdd=$('#fDd');sdd.setDate(sdd.getDate()+(7-sdd.getDay())%7);
     if(fdd){fdd.value=iso(sdd);var nmS=$('#fNm');if(nmS)nmS.placeholder=asgName({due:sdd.getTime()})}}
   if(e.target.id==='fDd'){var nmC=$('#fNm'),dq=e.target.value.split('-');if(nmC&&dq.length===3)nmC.placeholder=asgName({due:new Date(+dq[0],+dq[1]-1,+dq[2]).getTime()})}
@@ -7273,13 +7313,13 @@ document.addEventListener('input',function(e){var t=e.target;if(!XED||!t||!t.dat
 function xSave(){
   var r=parseAI(JSON.stringify(XED.data));
   if(r.errs.length){$('#xerr').innerHTML='<ul class="errs">'+r.errs.map(function(e){return '<li>'+esc(e)+'</li>'}).join('')+'</ul>';window.scrollTo&&window.scrollTo(0,0);return}
-  var E=XED,d=r.data,upd={bookId:E.bookId,testId:E.testId,part:E.part||0,skill:d.skill,title:d.title,material:d.material,qs:d.qs,ts:E.ts};if(d.lesson)upd.lesson=d.lesson;if(d.rlesson)upd.rlesson=d.rlesson;var oldEx=customMap['c_'+E.id]||customMap[E.id];if(d.rlesson&&oldEx&&oldEx.rlv)upd.rlevels=oldEx.rlv;exExtra(upd,d);upd.audio=d.audio||'';
+  var E=XED,d=r.data,upd={bookId:E.bookId,testId:E.testId,part:E.part||0,cat:E.cat||'',skill:d.skill,title:d.title,material:d.material,qs:d.qs,ts:E.ts};if(d.lesson)upd.lesson=d.lesson;if(d.rlesson)upd.rlesson=d.rlesson;var oldEx=customMap['c_'+E.id]||customMap[E.id];if(d.rlesson&&oldEx&&oldEx.rlv)upd.rlevels=oldEx.rlv;exExtra(upd,d);upd.audio=d.audio||'';
   var done=function(){
     var rl=function(l){for(var i=0;i<l.length;i++)if(l[i].id===E.id){l[i]=Object.assign({id:E.id,docId:E.docId},upd);return true}return false};
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-11-21d'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-11-22a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(uiAct(a,t))return true;
@@ -7289,7 +7329,7 @@ function extAct(a,t){
   if(adAct(a,t))return true;
   if(enAct(a,t))return true;
   if(mkAct(a,t))return true;
-  if(a==='lib-tab'){LIBT=t.dataset.v==='lm'?'lm':'cam';LMV=null;try{lsSet('md-libt',LIBT)}catch(e){}renderLib();return true}
+  if(a==='lib-tab'){LIBT=t.dataset.v==='lm'||t.dataset.v==='xtra'?t.dataset.v:'cam';LMV=null;try{lsSet('md-libt',LIBT)}catch(e){}renderLib();return true}
   if(a==='lm-open'){var lo=lmLesson(t.dataset.id);LMV=lmVisible(lo)?lo.id:null;if(LMV)LMY=window.scrollY||0;renderLib();if(LMV&&window.scrollTo)window.scrollTo(0,0);return true} // the lesson view starts at the top
   if(a==='lm-back'){var by=LMV?LMY:0;LMV=null;renderLib();if(window.scrollTo)window.scrollTo(0,by);return true} // back to where the list was
   if(a==='lm-tg'){var lk=t.dataset.k;LMO[lk]=!LMO[lk];renderLib();var nb=document.querySelector('[data-act="lm-tg"][data-k="'+lk+'"]');if(nb)nb.focus({preventScroll:true});return true}
@@ -7304,7 +7344,7 @@ function extAct(a,t){
   if(a==='xed-del'){var p=t.dataset.xp,ix=p.lastIndexOf('.'),ar=xGet(XED.data,p.slice(0,ix));ar.splice(+p.slice(ix+1),1);var y2=window.scrollY;renderEditor();window.scrollTo&&window.scrollTo(0,y2);return true}
   if(a==='xed-save'){xSave();return true}
   if(a==='xed-cancel'){XED=null;renderLib();return true}
-  if(a==='ex-edit'){var d=rawEx(t.dataset.ex);if(!d)return true;XED={id:d.id,docId:d.docId||null,ts:d.ts,bookId:d.bookId,testId:d.testId,part:+d.part||0,title:d.title,data:JSON.parse(JSON.stringify(exJSON(d)))};renderLib();window.scrollTo&&window.scrollTo(0,0);return true}
+  if(a==='ex-edit'){var d=rawEx(t.dataset.ex);if(!d)return true;XED={id:d.id,docId:d.docId||null,ts:d.ts,bookId:d.bookId,testId:d.testId,cat:String(d.cat||''),part:+d.part||0,title:d.title,data:JSON.parse(JSON.stringify(exJSON(d)))};renderLib();window.scrollTo&&window.scrollTo(0,0);return true}
   if(a==='ex-del'){
     var id=t.dataset.ex;
     if(DELC!==id){DELC=id;renderLib();setTimeout(function(){if(DELC===id){DELC=null;if(TAB==='library'&&!NAV.ex&&!XED)renderLib()}},4000);return true}
@@ -8063,10 +8103,10 @@ function rmPsgExHTML(){
   return ps.map(rmPsgP).join('');
 }
 function rmPsgToggleHTML(){var L=rmExIdx();if(!L)return '';var full=RM.full;return '<button type="button" class="linkish rmpsgt" data-act="rm-full" aria-pressed="'+!!full+'">'+(full?'Show only the paragraphs for these questions':'Show full passage')+'</button>'}
-function rmSubText(){var l=RM.ex&&locOf(RM.ex.id);if(l)return bookShort(l.book)+' · '+TNAME[l.test]+' · Reading';if(RM.root&&CP&&CP.book&&TNAME[CP.test])return bookShort(CP.book)+' · '+TNAME[CP.test]+' · Reading · preview';return 'Reading'}
+function rmSubText(){var l=RM.ex&&locOf(RM.ex.id);if(l)return bookShort(l.book)+' · '+tName(l.test)+' · Reading';if(RM.root&&CP&&CP.book&&tName(CP.test))return bookShort(CP.book)+' · '+tName(CP.test)+' · Reading · preview';return 'Reading'}
 function rmDone(){return RM.fin?RST.length:RM.chk.filter(Boolean).length}
 function rmHeadHTML(){var l=!RM.root&&RM.ex&&locOf(RM.ex.id),pct=Math.round(rmDone()/RST.length*100),title=(RM.ex&&RM.ex.title)||RM.D.title||'Reading';
-  return '<div class="rmhd2"><div class="rmhl">'+(l?'<button type="button" class="rmback" data-act="nav" data-book="'+esc(l.book)+'" data-test="'+esc(l.test)+'" data-skill="'+esc(l.skill)+'" aria-label="Back to '+esc(bookShort(l.book)+' · '+TNAME[l.test])+'" title="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 18l-6-6 6-6"/></svg></button>':'')+
+  return '<div class="rmhd2"><div class="rmhl">'+(l?'<button type="button" class="rmback" data-act="nav" data-book="'+esc(l.book)+'" data-test="'+esc(l.test)+'" data-skill="'+esc(l.skill)+'" aria-label="Back to '+esc(bookShort(l.book)+' · '+tName(l.test))+'" title="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 18l-6-6 6-6"/></svg></button>':'')+
     '<div class="rmht"><h2>'+esc(title)+'</h2><p>'+esc(rmSubText())+'</p></div></div>'+rmToolsHTML()+'</div>'}
 // step menu: the preview can open any step (as before); a student only sees where they are (steps open in order, as before)
 function rmStepSelHTML(){var pv=!!RM.root;
