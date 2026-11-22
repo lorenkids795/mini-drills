@@ -47,7 +47,7 @@ function keyText(rv) {
 
 async function loadVersion(D, env, lid, n) { const v = await D.fsGet(env, 'dlVersions', vid(lid, n)); return v ? v.data : null; }
 function docOf(ver) { const doc = JSON.parse(ver.json); return { doc, validation: validateDictationDocument(doc, { schema: SCHEMA }) }; }
-async function audit(D, env, lid, op, by, extra) { const ts = Date.now(); await D.fsPut(env, 'audit', 'dl_' + lid + '_' + ts, Object.assign({ kind: 'dictation', lid, op, by, ts }, extra || {})).catch(() => {}); }
+async function audit(D, env, lid, op, by, extra) { const ts = Date.now(); await D.fsPut(env, 'audit', 'dl_' + lid + '_' + ts + '_' + Math.random().toString(36).slice(2, 7), Object.assign({ kind: 'dictation', lid, op, by, ts }, extra || {})).catch(() => {}); }
 
 /* ---------- staff: save a new version, list, get (POST /api/dictation/staff {op}) ---------- */
 export async function dlStaff(D, env, request, body) {
