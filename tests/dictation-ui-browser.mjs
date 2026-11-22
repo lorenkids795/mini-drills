@@ -40,6 +40,10 @@ try {
   await import("/dictation/bridge.js?v=t"); const M = window.MD_DL;
   // 1. audio player (the one the student screen uses)
   const P = document.getElementById("p"); P.append(M.audioPlayer("/dictation/none.mp3")); out.player = [...P.querySelectorAll("button")].length >= 3 && !!document.getElementById("dl-css") && !/Set A/.test(txt(P));
+  { const lb = P.querySelector(".dl-lb"), sp = lb && lb.querySelector("span"); const r1 = lb.getBoundingClientRect(), r2 = sp.getBoundingClientRect();
+    out.loopLabelInsideButton = !!sp && sp.textContent === "Repeat a part" && r2.left >= r1.left - 1 && r2.right <= r1.right + 1 && r2.top >= r1.top - 1 && r2.bottom <= r1.bottom + 1; }
+  out.shortcutsFolded = !!P.querySelector("details.dl-keys:not([open])") && P.querySelectorAll(".dl-keys kbd").length === 8;
+  out.timeUnderBar = P.querySelectorAll(".dl-time span").length === 2;
   [...P.querySelectorAll("button")].find((b) => /Repeat a part/.test(b.textContent)).click(); await wait(20); out.repeatStep2 = /Mark the end here/.test(txt(P)) && /Start 0:00/.test(txt(P));
   [...P.querySelectorAll("button")].find((b) => b.textContent === "Mark the end here").click(); await wait(20); out.repeatStep3 = /Repeating 0:00/.test(txt(P)) && /Stop repeating/.test(txt(P));
   [...P.querySelectorAll("button")].find((b) => b.textContent === "Stop repeating").click(); await wait(20); out.repeatStopped = /Repeat a part/.test(txt(P));
