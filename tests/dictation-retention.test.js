@@ -38,36 +38,32 @@ const DAY = 864e5;
     NOW = realNow(); const X = mk(); const env = { DL_RAW_RETENTION: on ? 'on' : '', MD_KV: kv() }; X.env = env;
     await X.D.fsPut(null, 'roster', 'a@x.test', { email: 'a@x.test', name: 'An <img src=x onerror=alert(1)>', cls: 'C1', teacher: 'Cô Lan Nguyen' });
     await X.D.fsPut(null, 'roster', 'b@x.test', { email: 'b@x.test', name: 'Binh', cls: 'C2', teacher: 'Thầy Minh' });
-    const sv = await S.dlStaff(X.D, env, ADM, { op: 'save', title: 'Harbour', json: BASE }); X.lid = sv.data.lid;
+    const sv = await S.dlStaff(X.D, env, ADM, { op: 'save', title: 'Club', script: "ANNA: Hello, I would like to join the photography club.\n\nTOM: Great. We meet on Thursday evenings at seven o'clock.", checked: true }); X.lid = sv.data.lid;
     await S.dlAdmin(X.D, env, { op: 'approve', lid: X.lid, n: 1, mode: 'homework' }); X.exId = (await S.dlAdmin(X.D, env, { op: 'publish', lid: X.lid, bookId: 'cam21', testId: 't4', part: 2 })).data.exId;
     await X.D.fsPut(null, 'assignments', 'A1', { cls: 'C1', start: NOW - 3600e3, due: NOW + 30 * DAY, ex: ['c_' + X.exId] });
     await X.D.fsPut(null, 'assignments', 'A2', { cls: 'C2', start: NOW - 3600e3, due: NOW + 30 * DAY, ex: ['c_' + X.exId] });
     return X;
   }
   const hw = (X, em, asg, route, body) => S.dlHomework(X.D, X.env, stu(em), Object.assign({ exId: X.exId, asgId: asg }, body || {}), route);
-  async function submit(X, em, asg, key) {
-    const pl = (await hw(X, em, asg, 'payload')).data.payload; const cv = pl.contentVersion;
-    await hw(X, em, asg, 'lock', { req: { contentVersion: cv, responses: Object.fromEntries(pl.lockOnContinue.map((id) => [id, { text: 'locked ' + id }])) } });
-    const doc = JSON.parse(BASE); const l3 = doc.exercises.level3.items[0];
-    const r = await hw(X, em, asg, 'submit', { req: { schema: E.SUBMISSION_SCHEMA, assignmentId: asg, contentVersion: cv, idempotencyKey: key || 'k1', responses: { [l3.id]: { answer: SECRET } } } });
-    return { r, l3: l3.id, lockId: pl.lockOnContinue[0] };
-  }
+  const TEXT = 'Hello, I would like to join the ' + SECRET + ' club.'; // the student's final text (one box)
+  async function submit(X, em, asg) { await hw(X, em, asg, 'payload'); const r = await hw(X, em, asg, 'submit', { text: TEXT }); return { r }; }
   const list = (X, who, body) => S.dlRaw(X.D, X.env, who, Object.assign({ op: 'list', exId: X.exId }, body || {}));
   const rawKey = (X) => Object.keys(X.db.dlRaw || {})[0];
 
-  t('fail closed: with DL_RAW_RETENTION unset nothing raw is stored, and the phase-1 text is wiped at submit', async () => {
+  t('fail closed: with DL_RAW_RETENTION unset nothing raw is stored on the server', async () => {
     const X = await setup(false); const { r } = await submit(X, 'a@x.test', 'A1'); assert.strictEqual(r.data.status, 'accepted');
     assert.strictEqual(Object.keys(X.db.dlRaw || {}).length, 0); assert.ok(!JSON.stringify(X.db).includes(SECRET), 'raw text nowhere');
-    const sit = Object.values(X.db.dlSits)[0].data; assert.strictEqual(sit.lock, ''); assert.strictEqual(sit.rawExp, 0);
+    assert.strictEqual((await hw(X, 'a@x.test', 'A1', 'payload')).data.result, null, 'after reload: the mark only');
     const L = await list(X, LAN); assert.strictEqual(L.data.on, false); assert.strictEqual(L.data.rows[0].raw, 'not_kept'); assert.ok(!('answer' in L.data.rows[0].items[0]));
   });
   t('on: exactly the final answers (no drafts), server time, expiry = submittedAt + 90 days, separate from the score record', async () => {
-    const X = await setup(); const t0 = NOW; const { r, l3, lockId } = await submit(X, 'a@x.test', 'A1'); assert.strictEqual(r.data.status, 'accepted');
+    const X = await setup(); const t0 = NOW; const { r } = await submit(X, 'a@x.test', 'A1'); assert.strictEqual(r.data.status, 'accepted');
     const d = X.db.dlRaw[rawKey(X)].data; assert.strictEqual(d.submittedAt, t0); assert.strictEqual(d.expMs, t0 + 90 * DAY); assert.strictEqual(d.expiresAt, new Date(t0 + 90 * DAY).toISOString());
-    assert.strictEqual(d.answers[l3], SECRET); assert.strictEqual(d.answers[lockId], 'locked ' + lockId, 'the locked phase-1 answer, not a resend');
-    assert.deepStrictEqual(Object.keys(d).sort(), ['answers', 'asg', 'cls', 'email', 'ex', 'expMs', 'expiresAt', 'submittedAt', 'ver'].sort());
+    assert.strictEqual(d.text, TEXT); assert.strictEqual(d.answers.script, TEXT);
+    assert.deepStrictEqual(Object.keys(d).sort(), ['ai', 'answers', 'asg', 'cls', 'email', 'ex', 'expMs', 'expiresAt', 'submittedAt', 'text', 'ver'].sort());
+    const back = await hw(X, 'a@x.test', 'A1', 'payload'); assert.strictEqual(back.data.result.text, TEXT, 'the student sees their marked text again while it is kept');
     assert.ok(!JSON.stringify(X.db.dlSubs).includes(SECRET) && !JSON.stringify(X.db.attempts).includes(SECRET), 'scores never carry raw text');
-    assert.ok(!JSON.stringify(X.db.dlSits).includes(SECRET) && Object.values(X.db.dlSits)[0].data.lock === '', 'no second copy in the sitting');
+    assert.ok(!JSON.stringify(X.db.dlSits).includes(SECRET), 'no second copy in the sitting');
   });
   t('a duplicate / retried submit a day later neither re-scores nor resets the 90-day clock', async () => {
     const X = await setup(); const t0 = NOW; await submit(X, 'a@x.test', 'A1'); NOW += DAY;
@@ -77,7 +73,7 @@ const DAY = 864e5;
   });
   t('boundary: the class teacher sees the answer at 89 days and 1 ms before expiry; at expiry and after: "expired", deleted, score kept', async () => {
     const X = await setup(); const t0 = NOW; await submit(X, 'a@x.test', 'A1');
-    NOW = t0 + 89 * DAY; let L = await list(X, LAN); assert.strictEqual(L.data.rows[0].raw, 'kept'); assert.ok(L.data.rows[0].items.some((i) => i.answer === SECRET));
+    NOW = t0 + 89 * DAY; let L = await list(X, LAN); assert.strictEqual(L.data.rows[0].raw, 'kept'); assert.ok(L.data.rows[0].items.some((i) => i.answer === TEXT));
     NOW = t0 + 90 * DAY - 1; L = await list(X, LAN); assert.strictEqual(L.data.rows[0].raw, 'kept');
     NOW = t0 + 90 * DAY; L = await list(X, LAN); assert.strictEqual(L.data.rows[0].raw, 'expired'); assert.ok(!JSON.stringify(L.data).includes(SECRET)); assert.strictEqual(Object.keys(X.db.dlRaw).length, 0, 'deleted on read');
     assert.ok(L.data.rows[0].score && L.data.rows[0].items.length > 0, 'score and per-item result remain'); assert.strictEqual(Object.keys(X.db.attempts).length, 1);

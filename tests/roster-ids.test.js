@@ -3,7 +3,7 @@
 // Run: node tests/roster-ids.test.js
 'use strict';
 const assert = require('assert'), fs = require('fs'), path = require('path'), vm = require('vm');
-const SRC = fs.readFileSync(path.join(__dirname, '..', 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest').replace(/^import BUILD from .*$/m, 'const BUILD = {};').replace(/^import \{ dlStaff[^\n]*$/m, 'const dlStaff = null, dlAdmin = null, dlPractice = null, dlHomework = null, dlRaw = null, dlReapMaybe = null;').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(__dirname, '..', 'md-hw.js'), 'utf8'));
+const SRC = fs.readFileSync(path.join(__dirname, '..', 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest').replace(/^import BUILD from .*$/m, 'const BUILD = {};').replace(/^import \{ dlStaff[^\n]*$/m, 'const dlStaff = null, dlAdmin = null, dlPractice = null, dlHomework = null, dlRaw = null, dlReapMaybe = null, dlCheck = null;').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(__dirname, '..', 'md-hw.js'), 'utf8'));
 const RULES = fs.readFileSync(path.join(__dirname, '..', 'firestore.rules'), 'utf8');
 let pass = 0, fail = 0; const out = [];
 async function t(name, fn) { try { await fn(); pass++; out.push('PASS ' + name); } catch (e) { fail++; out.push('FAIL ' + name + ' -> ' + e.message); } }

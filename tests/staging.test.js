@@ -12,7 +12,7 @@ const STG = { FIREBASE_PROJECT_ID: 'md-staging-test', STAGING_FIREBASE_API_KEY: 
 // ---- the server with a chosen BUILD, an in-memory KV and Firestore
 function server(build) {
   const SRC = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest')
-    .replace(/^import BUILD from .*$/m, 'const BUILD = ' + JSON.stringify(build) + ';').replace(/^import \{ dlStaff[^\n]*$/m, 'const dlStaff = null, dlAdmin = null, dlPractice = null, dlHomework = null, dlRaw = null, dlReapMaybe = null;').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(ROOT, 'md-hw.js'), 'utf8'));
+    .replace(/^import BUILD from .*$/m, 'const BUILD = ' + JSON.stringify(build) + ';').replace(/^import \{ dlStaff[^\n]*$/m, 'const dlStaff = null, dlAdmin = null, dlPractice = null, dlHomework = null, dlRaw = null, dlReapMaybe = null, dlCheck = null;').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(ROOT, 'md-hw.js'), 'utf8'));
   const DB = {}, writes = [];
   const ctx = vm.createContext({ console: { log() {}, error() {} }, Response: class { constructor(b, o) { this.body = b; this.status = (o && o.status) || 200; this.headers = { get: () => null }; } }, URL, TextEncoder, TextDecoder, crypto: globalThis.crypto, atob, btoa, fetch: async () => { throw new Error('no network in tests'); } });
   vm.runInContext(SRC + `;this.T={onRequest,envState,envScope,adminStaging,envPublic};

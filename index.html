@@ -1111,6 +1111,8 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .cpxc{display:inline-flex;align-items:stretch}.cpxc .cptp{border-top-right-radius:0;border-bottom-right-radius:0;border-right:0}.cpxdel{min-width:40px;min-height:44px;padding:0 10px;font:inherit;font-size:var(--fs-lg);line-height:1;border:1px solid var(--line-2);border-radius:0 var(--r-md) var(--r-md) 0;background:var(--surface);color:var(--muted);cursor:pointer}.cpxdel:hover,.cpxdel:focus-visible{color:var(--bad);border-color:var(--bad)}.cpxc.on .cpxdel{border-color:var(--accent)}
 .cpxnew{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}.cpxnew input{min-height:40px;padding:6px 10px;border:1px solid var(--line-2);border-radius:var(--r-sm);background:var(--surface);color:var(--ink);font:inherit;min-width:0;width:15em;max-width:100%}.cpxl{margin-top:12px}.cpxlist{margin:4px 0 8px;padding-left:1.2em}
 .attcap{margin:18px 0 8px;font-size:var(--fs-sm);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dlsum{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:4px 0 14px}.dlsum div{border:1px solid var(--line);border-radius:var(--r-md);padding:10px 12px;background:var(--surface)}.dlsum b{display:block;font-size:var(--fs-lg)}.dlsum span{color:var(--muted);font-size:var(--fs-sm)}
+.dlta{width:100%;box-sizing:border-box;min-height:240px;padding:12px 14px;border:1px solid var(--line-2);border-radius:var(--r-md);background:var(--surface);color:var(--ink);resize:vertical}.dlact{justify-content:space-between;align-items:center}.dlaud{margin:0 0 12px}
 .dlraw{border:1px solid var(--line);border-radius:var(--r-md);padding:10px 12px;margin:0 0 8px}.dlraw summary{cursor:pointer;min-height:32px}.dlri{padding:6px 0;border-top:1px solid var(--line);line-height:1.6}.dlans{white-space:pre-wrap;word-break:break-word}
 .lsdemo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;font-size:var(--fs-sm);color:var(--muted)}
 /* ---- Lesson layout shared by Listening (.ls) and Reading (.rm): one type scale (passage 1.06rem / 1.8–1.9, questions 1rem,
@@ -2921,7 +2923,7 @@ document.addEventListener('change',function(e){var t=e.target;if(!t||!t.classLis
   if(t.classList.contains('luslot')){LU.frame=LU.frame||[];LU.frame[+t.getAttribute('data-i')]=t.value}
   if(t.classList.contains('lugsel')&&!LU.gchk){LU.g[t.getAttribute('data-g')]=t.value}});
 // typing in the two writing boxes: save the draft (local only), update the soft sentence count; Guided text opens "Next"
-document.addEventListener('input',function(e){var t=e.target,wk=t&&t.getAttribute&&t.getAttribute('data-w');if(!t||(t.id!=='luG'&&t.id!=='luI'&&!wk))return;var l=LMV&&lmLesson(LMV),u=l&&luUnit(l.id);if(!u)return;
+document.addEventListener('input',function(e){if(e.target&&e.target.id==='dlText'&&DLW.ex){try{lsSet(dlKey(DLW.ex,DLW.asg),e.target.value)}catch(x){}var dwc=$('#dlWc');if(dwc)dwc.textContent=dlWords(e.target.value)+' words';return}var t=e.target,wk=t&&t.getAttribute&&t.getAttribute('data-w');if(!t||(t.id!=='luG'&&t.id!=='luI'&&!wk))return;var l=LMV&&lmLesson(LMV),u=l&&luUnit(l.id);if(!u)return;
   // keep every other field of the draft (sentences, "saved for practice", review ticks, first version)
   var act=t.id==='luI'?'indep':'guided',old=luGet(u,act)||{};if(wk){old.w=old.w||{};old.w[wk]=t.value}else old.t=t.value;
   var ok=luPut(u,act,old),m=$('#luSv_'+act);if(m)m.textContent=luU(u,ok?'ui.dr.saved':'ui.dr.notSaved');
@@ -3561,24 +3563,63 @@ function dlLoad(cb){
 function dlUserApi(path,body){return authHdr().then(function(hd){return adPost(path,body,'',hd)}).then(function(d){if(d._status===401)throw new Error(d.error||'Your sign-in has expired. Sign in again.');if(d._nojson)throw new Error('The server does not know Dictation Lab yet.');return d})}
 function dlAsk(o){uiAsk({title:o.title,text:o.text||'',ok:o.ok||'OK',cancel:o.cancel||'Cancel',danger:!!o.danger,onOk:o.onOk})}
 function dlSubOf(ex){if(!U)return null;var L=attemptsOf(U.email).filter(function(a){return a.ex===ex.id&&a.kind==='dictation'});return L.length?L[L.length-1]:null}
+/* Dictation = "write the script" (owner 11/2026): listen, write the WHOLE recording in one box, submit. The server marks every word
+   (dictation/script.js) and the AI explains the mistakes + picks new words; the result uses the Writing feedback (aiHTML: Corrections,
+   Corrected essay, vocabulary with + Flashcard). The device never gets the script before a check. DLW = this screen.
+   Drafts: localStorage md-dlw:<email>:<ex>:<asg|p>. The student's own copy of a homework result: md-dlres:… (90 days, like the server). */
+var DLW={};
+function dlKey(ex,asg,k){return 'md-'+(k||'dlw')+':'+(U?U.email:'')+':'+ex.id+':'+(asg||'p')}
+function dlMine(ex,asg){var d=null;try{d=JSON.parse(lsGet(dlKey(ex,asg,'dlres'))||'null')}catch(e){d=null}return d&&d.t&&Date.now()-d.t<90*864e5?d.r:null}
+function dlWords(t){return (String(t||'').match(/[A-Za-z0-9À-ɏ'’-]+/g)||[]).length}
 function renderDictation(ex,head,ban,C){
-  $('#libBody').innerHTML='<div class="pane single">'+head+ban+'<div id="dlRoot"><p class="muted">Loading…</p></div><div class="actions" id="dlMore"></div><div id="dlRaw"></div></div>';
-  if(DEMO){$('#dlRoot').innerHTML='<p class="muted">Dictation Lab needs the live site (it is scored on the server).</p>';return}
-  var exId=ex.id.slice(2),stu=U.role==='student',sub=stu?dlSubOf(ex):null;
-  var practice=function(){var el=$('#dlRoot');if(!el)return;el.innerHTML='<p class="muted">Loading…</p>';var mo=$('#dlMore');if(mo)mo.innerHTML='';
-    dlUserApi('dictation/practice',{exId:exId}).then(function(d){var el2=$('#dlRoot');if(!el2)return;if(!d._ok){el2.textContent=d.error||'This dictation is not available.';return}
-      var M=window.MD_DL,doc=JSON.parse(d.json);M.mountPractice(el2,{doc:doc,validation:M.validateDoc(doc),version:d.version,seed:d.seed,deselected:d.deselected||[],audio:d.audio||ex.dl.audio,storeKey:stu?'md-dl:'+U.email+':'+ex.id+':'+d.version:null,preview:!stu})},
-    function(e){var el2=$('#dlRoot');if(el2)el2.textContent=e.message})};
-  dlLoad(function(){
-    var el=$('#dlRoot');if(!el)return;
-    if(stu&&ex.dl.homework&&(C.ctx||sub)){
-      window.MD_DL.mountHomework(el,{api:dlUserApi,exId:exId,asgId:C.ctx?C.ctx.id:sub.asg,audio:ex.dl.audio,email:U.email,ask:dlAsk});
-      if(sub){var mo=$('#dlMore');if(mo){mo.innerHTML='<button class="btn" type="button" id="dlPractise">Practise this dictation (not graded)</button>';$('#dlPractise').onclick=practice}}
-      return;
-    }
-    if(stu&&ex.dl.homework){el.innerHTML='<p class="muted">This dictation is homework. Open it from your homework list; practice opens after you submit it.</p>';return}
-    practice();if(!stu&&ex.dl.homework)dlRawLoad(exId);
-  });
+  var stu=U.role==='student',sub=stu?dlSubOf(ex):null,hw=!!(stu&&ex.dl.homework&&(C.ctx||sub)),asg=hw?(C.ctx?C.ctx.id:sub.asg):'';
+  if(stu&&ex.dl.homework&&!hw){$('#libBody').innerHTML='<div class="pane single">'+head+ban+'<p class="muted">This dictation is homework. Open it from your homework list; you can practise it again after you submit.</p></div>';return}
+  var W=DLW={ex:ex,mode:hw?'hw':(stu?'pr':'pv'),asg:asg,info:null,res:null,sum:null,script:'',busy:false,msg:''};
+  $('#libBody').innerHTML='<div class="pane single dlw">'+head+ban+'<div id="dlAud" class="dlaud"></div><div id="dlMain"><p class="muted">Loading…</p></div><div id="dlRaw"></div></div>';
+  if(DEMO){$('#dlMain').innerHTML='<p class="muted">Dictation needs the live site (it is marked on the server).</p>';return}
+  var exId=ex.id.slice(2);
+  (W.mode==='hw'?dlUserApi('dictation/payload',{exId:exId,asgId:asg}):dlUserApi('dictation/practice',{exId:exId})).then(function(d){if(DLW!==W)return;
+    if(d.submitted){W.sum=d.summary||null;W.script=d.script||'';W.res=d.result||dlMine(ex,asg)}
+    else if(d._ok)W.info=d;else W.msg=d.error||'This dictation is not available.';
+    dlAudio();dlDraw()},function(e){if(DLW!==W)return;W.msg=e.message;dlDraw()});
+  if(!stu&&ex.dl.homework)dlRawLoad(exId);
+}
+function dlAudio(){var W=DLW,url=(W.ex&&W.ex.dl.audio)||(W.info&&W.info.audio)||'';var a=$('#dlAud');if(!a||!url||a.getAttribute('data-on'))return;a.setAttribute('data-on','1');
+  dlLoad(function(){var a2=$('#dlAud');if(a2&&window.MD_DL&&window.MD_DL.audioPlayer)a2.appendChild(window.MD_DL.audioPlayer(url))})}
+function dlDraw(){var m=$('#dlMain'),W=DLW;if(!m||!W.ex)return;
+  if(W.res||W.sum){m.innerHTML=dlResultHTML(W.res,W.sum,W.script,W.mode);return}
+  if(!W.info){m.innerHTML='<p class="err">'+esc(W.msg||'This dictation is not available.')+'</p>';return}
+  var t=lsGet(dlKey(W.ex,W.asg))||'',closed=W.mode==='hw'&&W.info.open===false;
+  m.innerHTML='<p class="muted">Listen and write everything you hear, in order. Capital letters and punctuation are not marked; spelling and word endings are.'+(W.info.words?' The recording has about '+(+W.info.words)+' words.':'')+'</p>'+
+    (closed?'<p class="err">The deadline has passed. This homework can no longer be submitted.</p>':'')+
+    '<label class="sr" for="dlText">Your text</label><textarea id="dlText" class="essay dlta" rows="12" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"'+(W.busy?' readonly':'')+'>'+esc(t)+'</textarea>'+
+    '<div class="actions dlact"><span class="muted" id="dlWc" aria-live="polite">'+dlWords(t)+' words</span><button class="btn pri" type="button" data-act="dl-submit"'+(W.busy||closed?' disabled':'')+(W.busy?' aria-busy="true"':'')+'>'+(W.busy?'Checking… keep this page open':W.mode==='hw'?'Submit homework':'Check my text')+'</button></div>'+
+    (W.msg?'<p class="err" role="status">'+esc(W.msg)+'</p>':'');
+}
+// the result, drawn with the Writing feedback (corrections numbered in the text, corrected text, vocabulary with + Flashcard)
+function dlResultHTML(R,S,script,mode){S=S||R||{};var w=S.words||{},h='<div class="dlsum"><div><b>'+(+S.pct||0)+'%</b><span>Words right, in order</span></div><div><b>'+(S.passed?'✓ Passed':'✗ Not passed')+'</b><span>70% needed</span></div><div><b>'+(+w.right||0)+' / '+(+w.script||0)+'</b><span>Words of the recording</span></div></div>';
+  if(mode==='hw')h+='<p class="muted">This is your official result; it cannot change. Practising again later does not change it.</p>';
+  if(R){
+    if(R.empty)h+='<p class="banner">You did not write anything, so the score is 0.</p>';
+    else if(R.tooDifferent)h+='<p class="banner">Your text is too different from the recording to mark word by word. Listen again and follow the order of the recording.</p>';
+    else{AIX=R.ai||{corrections:[],vocabulary_upgrades:[]};h+='<h3 class="sr">Your text, marked</h3><div id="fixes">'+aiHTML(AIX,R.text,'New vocabulary')+'</div>'}
+    if(R.ai&&R.ai.aiNote==='limit')h+='<p class="muted">AI explanations are used up for today; your marks above are complete.</p>';
+    else if(R.ai&&R.ai.aiNote==='busy')h+='<p class="muted">The AI was busy, so the explanations are short. Your marks are complete.</p>';
+    if(R.added)h+='<p class="saved">'+(+R.added)+' mistake'+(R.added>1?'s were':' was')+' added to your <b>Error Notebook</b>. <button class="linkish" data-act="tab" data-tab="errors" type="button">Open Error Notebook</button></p>';
+  }else if(S.pct!=null)h+='<p class="muted">Your text is no longer kept (90 days), so only your mark is shown.</p>';
+  var sc=(R&&R.script)||script;if(sc)h+='<details class="aisect"><summary><h4 class="tk sect">Script of the recording</h4></summary><div class="essay">'+esc(sc)+'</div></details>';
+  return h+'<div class="actions"><button class="btn" type="button" data-act="dl-again">'+(mode==='hw'?'Practise this dictation (not marked)':'Write it again')+'</button></div>';
+}
+function dlSubmit(t){var W=DLW,ta=$('#dlText');if(!W.ex||W.busy||!ta)return;var txt=ta.value;
+  if(!txt.trim()&&W.mode!=='hw'){W.msg='Write what you hear first.';dlDraw();return}
+  if(W.mode==='hw'&&uiGate(t,{title:'Submit your dictation?',text:txt.trim()?'You cannot change it after submitting. You can practise it again afterwards.':'Your text is empty: it scores 0 and counts as Incomplete.',ok:'Submit',danger:!txt.trim()}))return;
+  W.busy=true;W.msg='';dlDraw(); /* E-5: the text is read-only and Submit is off until the server answers */
+  var exId=W.ex.id.slice(2),tzo=new Date().getTimezoneOffset();
+  (W.mode==='hw'?dlUserApi('dictation/submit',{exId:exId,asgId:W.asg,text:txt,tzo:tzo}):dlUserApi('dictation/check',{exId:exId,text:txt,tzo:tzo})).then(function(d){W.busy=false;if(DLW!==W)return;
+    if(d.result||d.submitted){W.res=d.result||dlMine(W.ex,W.asg);W.sum=d.summary||null;W.script=d.script||'';
+      if(W.mode==='hw'){try{if(d.result)lsSet(dlKey(W.ex,W.asg,'dlres'),JSON.stringify({t:Date.now(),r:d.result}));localStorage.removeItem(dlKey(W.ex,W.asg))}catch(e){}}}
+    else W.msg=(d.error||d.reason||'Not checked yet.')+' Your text is kept: try again.';
+    dlDraw();window.scrollTo&&window.scrollTo(0,0)},function(e){W.busy=false;if(DLW!==W)return;W.msg=e.message+' Your text is kept: try again.';dlDraw()});
 }
 /* P-05 (owner: 90 days): the class teacher sees each student's final submitted answers; the server checks the class on every request,
    hides expired details (score kept) and deletes them. Everything from the server goes through esc(). */
@@ -3602,7 +3643,7 @@ function renderDlBox(){
   var b=$('#dlBox');if(!b)return;b.hidden=!(CP.skill==='listening'&&U&&U.adm);if(b.hidden||DLB)return;DLB=true;
   if(DEMO){b.innerHTML='<h3>Dictation lesson</h3><p class="muted">Dictation Lab needs the live site.</p>';return}
   b.innerHTML='<h3>Dictation lesson</h3><p class="muted">Loading…</p>';
-  dlLoad(function(){var el=$('#dlBox');if(el)window.MD_DL.mountAuthor(el,{staffApi:staffApi,adminApi:adminApi,uploadAudio:function(f){return audioUpload(f,'lesson')},getSlot:dlSlot,ask:dlAsk,toast:toast})});
+  dlLoad(function(){var el=$('#dlBox');if(el)window.MD_DL.mountAuthor(el,{staffApi:staffApi,adminApi:adminApi,uploadAudio:function(f){return audioUpload(f,'lesson')},getSlot:dlSlot,ask:dlAsk,toast:toast,renderResult:function(el,r){el.innerHTML=dlResultHTML(r,null,r.script,'pv').replace(/<div class="actions"><button class="btn" type="button" data-act="dl-again">[^<]*<\/button><\/div>$/,'')}})});
 }
 function renderPlayer(){
   var ex=exOf(NAV.ex);done=false;
@@ -3797,11 +3838,11 @@ function vocEmbed(link){
 /* Corrections: one item = {from, to, cat, why, off}. Built from attempts.ai.corrections (aiItems) or the old attempts.fixes (fixItems).
    fixSpans finds every item in the text (in order, no overlaps), so the marked essay and the corrected essay always match. */
 function fixItems(fixes){return (fixes||[]).filter(function(f){return f&&f.from}).map(function(f){return {from:String(f.from),to:String(f.to||''),cat:f.type||'',why:f.why||'',vi:'',off:false}})}
-function aiItems(ai){return ((ai&&ai.corrections)||[]).filter(function(c){return c&&c.original_text}).map(function(c){return {from:String(c.original_text),to:String(c.corrected_text||''),cat:c.category||c.type||'',why:c.explanation||'',vi:c.explanation_vi||'',off:c.type==='Off-topic'}})}
+function aiItems(ai){return ((ai&&ai.corrections)||[]).filter(function(c){return c&&c.original_text}).map(function(c){return {from:String(c.original_text),to:String(c.corrected_text||''),cat:c.category||c.type||'',why:c.explanation||'',vi:c.explanation_vi||'',off:c.type==='Off-topic',at:typeof c.at==='number'?c.at:-1}})}
 function fixSpans(text,items){
   text=String(text||'');var sp=[];
   items.forEach(function(f){
-    f.n=0;var i=text.indexOf(f.from),k=0;
+    f.n=0;var i=f.at>=0&&text.substr(f.at,f.from.length)===f.from?f.at:text.indexOf(f.from),k=0; /* at = exact place (Dictation marks repeated words) */
     while(i>=0&&k<50&&sp.some(function(s){return i<s.i+s.len&&s.i<i+f.from.length})){i=text.indexOf(f.from,i+1);k++}
     if(i>=0)sp.push({i:i,len:f.from.length,f:f});
   });
@@ -3951,9 +3992,9 @@ function vuBold(ex,up){
   while(i+n<ex.length&&/[A-Za-z]/.test(ex.charAt(i+n)))n++; // demonstrate -> demonstrates
   return esc(ex.slice(0,i))+'<b>'+esc(ex.slice(i,i+n))+'</b>'+esc(ex.slice(i+n));
 }
-function aiHTML(ai,text){
+function aiHTML(ai,text,vt){
   var vu=ai.vocabulary_upgrades||[],h='<div class="aib">'+correctionsHTML(text,aiItems(ai));
-  if(vu.length)h+='<details class="aisect"><summary><h4 class="tk sect">Vocabulary upgrades <span class="aisn">'+vu.length+'</span></h4></summary><div class="vu">'+vu.map(function(v,i){
+  if(vu.length)h+='<details class="aisect"><summary><h4 class="tk sect">'+esc(vt||'Vocabulary upgrades')+' <span class="aisn">'+vu.length+'</span></h4></summary><div class="vu">'+vu.map(function(v,i){
     var stu=U&&U.role==='student',got=stu&&vuHas(v);
     return '<div class="vur"><div class="vul"><span class="vuo">'+esc(v.original||'')+'</span><b class="vuu">'+esc(v.upgraded||'')+'</b></div><div class="vurt">'+
       (v.example?'<p class="vue">'+vuBold(v.example,v.upgraded)+'</p>':'')+(v.note?'<p class="vun">'+esc(v.note)+'</p>':'')+
@@ -5950,7 +5991,7 @@ document.addEventListener('click',function(e){
   if(a==='w-new'){var wsub=mySubs(t.dataset.ex).filter(function(x){return x.id===t.dataset.id})[0]||mySub(t.dataset.ex),wk='md-draft-'+U.email+'-'+t.dataset.ex;WNEW=t.dataset.ex;if(wsub&&(!lsGet(wk)||wsub!==mySub(t.dataset.ex)))lsSet(wk,wsub.text||''); /* from an older version: start from that text */renderPlayer();window.scrollTo&&window.scrollTo(0,0);return}
   if(a==='w-view'){WNEW=null;renderPlayer();return}
   if(a==='sp-new'){var sx=exOf(t.dataset.ex);if(sx)spParts(sx).forEach(function(p,i){recReset(spRid(sx,i))});WNEW=t.dataset.ex;renderPlayer();window.scrollTo&&window.scrollTo(0,0);return}
-  if(a==='ai-card'){var v=AIX&&(AIX.vocabulary_upgrades||[])[+t.dataset.i];if(!v)return;saveCard({w:vuWord(v),ipa:'',pos:'',en:v.note||'',vi:'',ex:v.example||'',syn:[v.original],ant:[]});if(vuHas(v)){t.disabled=true;t.textContent='Added ✓'}return}
+  if(a==='ai-card'){var v=AIX&&(AIX.vocabulary_upgrades||[])[+t.dataset.i];if(!v)return;saveCard({w:vuWord(v),ipa:'',pos:'',en:v.vi?'':v.note||'',vi:v.vi||'',ex:v.example||'',syn:v.original?[v.original]:[],ant:[]});if(vuHas(v)){t.disabled=true;t.textContent='Added ✓'}return}
   if(a==='cx-copy'){var cv=CXP[t.dataset.k]||'',cno=function(){toast('Copy failed. Select the text and copy it by hand.')};try{navigator.clipboard.writeText(cv).then(function(){toast('Copied.')},cno)}catch(x){cno()}return}
   if(a==='fx-tip'){if(t.getAttribute('data-why')!=null)fxPopOpen(t);fxHot(t);return}
   if(a==='sub-s')return submitSpeaking(t);
@@ -6015,6 +6056,8 @@ document.addEventListener('click',function(e){
   if(a==='cp-xcat'){var xi=$('#cpXCat'),xn=String(xi&&xi.value||'').replace(/\s+/g,' ').trim().slice(0,40),xk=xKey(xn);
     if(!xk){toast('Type a category name with letters or numbers.');if(xi)xi.focus();return}
     var xo=xCats().filter(function(c){return c.k===xk})[0];CP.xnew=xo?null:{k:xk,n:xn};CP.test=xk;CP.msg='';cpBtSave();renderSlotMap();cpWarnUpdate();return}
+  if(a==='dl-submit'){dlSubmit(t);return}
+  if(a==='dl-again'){var DW=DLW;if(!DW.ex)return;DW.res=null;DW.sum=null;DW.msg='';if(DW.mode==='hw'){DW.mode='pr';DW.asg='';dlUserApi('dictation/practice',{exId:DW.ex.id.slice(2)}).then(function(d){if(DLW!==DW)return;if(d._ok)DW.info=d;else DW.msg=d.error||'Practice is not available.';dlDraw()},function(e){DW.msg=e.message;dlDraw()})}dlDraw();return}
   if(a==='cp-xdel'){var dk=t.dataset.t,dn=tName(dk),drs=customDocs.concat(localCustom).filter(function(d){return d.bookId===XTRA&&d.testId===dk});
     if(!drs.length){if(CP.xnew&&CP.xnew.k===dk)CP.xnew=null;if(CP.test===dk)CP.test='';CP.msg='';cpBtSave();renderSlotMap();cpWarnUpdate();return}
     if(drs.some(function(d){return d.kind==='dictation'})){toast('“'+dn+'” has a Dictation lesson. Unpublish it first (Dictation lesson › Lessons), then remove the category.');return}
@@ -7345,7 +7388,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-11-22c'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-11-22d'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(uiAct(a,t))return true;

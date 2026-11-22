@@ -7,6 +7,8 @@ kiểm duyệt chỉ để luyện tập; PASS = 70% điểm toàn bài). Engine
 
 **21/11/2026: chủ dự án duyệt cuối E-1 … E-6 và P-05 = lưu 90 ngày (phương án B).** Không cần hỏi lại các mục này.
 
+**22/11/2026: chủ dự án đổi cách làm bài cho học sinh: thay hẳn 4 level + Answer Spotter bằng "viết lại toàn bộ script"** (máy chấm từng từ, AI chỉ giải thích + gợi ý từ vựng, lỗi vào Error Notebook). E-2, E-3 không còn áp dụng cho học sinh (không còn Answer Spotter / nhiều level); E-1 (không Check trước khi Nộp bài về nhà), E-4 (điểm trước, xem lại sau khi chấm), E-5 (khóa khi đang nộp), E-6 và P-05 vẫn giữ.
+
 ## A. Đã duyệt hoặc đã được thay thế theo chính sách mới
 
 | Mã | Trạng thái | Nghĩa là |

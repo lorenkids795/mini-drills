@@ -1,6 +1,6 @@
 import BUILD from '../../build-info.js'; // what this deployment is (production / staging), written by build.js
 import MDHW from '../../md-hw.js'; // the homework rules shared with the app (one source, 11/2026)
-import { dlStaff, dlAdmin, dlPractice, dlHomework, dlRaw, dlReapMaybe } from '../../dictation-server.js'; // Dictation Lab (contract v1.1): homework scored here, never on the device
+import { dlStaff, dlAdmin, dlPractice, dlHomework, dlRaw, dlReapMaybe, dlCheck } from '../../dictation-server.js'; // Dictation Lab (contract v1.1): homework scored here, never on the device
 // Mini Drills auth API (Cloudflare Pages Function, served at /api/*).
 // Everyone signs in with email + password. Students pick class + name the first time;
 // teacher passwords are set by the admin (Admin › Teachers / Users). Teachers reset forgotten student passwords.
@@ -2908,7 +2908,7 @@ async function adminStaging(env, body) {
 
 // helpers handed to dictation-server.js (one place, so its tests can pass fakes)
 const teacherName = async (env, email) => { const st = await staffMap(env); return (st[email] && st[email].name) || ''; };
-const dlDeps = () => ({ fsGet, fsPut, fsCreate, fsUpdate, fsDelete, fsList, fsQueryDocs, fsQueryRange, idUser, staffEmail, rosterRow, normEmail, slug, json, fail, adminEmail, teacherName });
+const dlDeps = () => ({ fsGet, fsPut, fsCreate, fsUpdate, fsDelete, fsList, fsQueryDocs, fsQueryRange, idUser, staffEmail, rosterRow, normEmail, slug, json, fail, adminEmail, teacherName, askGemini, aiReady, saveErrors, dayOf });
 export async function onRequest(ctx) {
   const { request } = ctx;
   let env = ctx.env;
@@ -2960,6 +2960,7 @@ export async function onRequest(ctx) {
       if (route === 'dictation/staff') return await dlStaff(D, env, request, body);
       if (route === 'dictation/practice') return await dlPractice(D, env, request, body);
       if (route === 'dictation/raw') return await dlRaw(D, env, request, body);
+      if (route === 'dictation/check') return await dlCheck(D, env, request, body);
       const hm = /^dictation\/(payload|lock|submit)$/.exec(route); if (hm) return await dlHomework(D, env, request, body, hm[1]);
     }
     if (route === 'hwa/data') return await hwaData(env, request, body);

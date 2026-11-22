@@ -12,10 +12,13 @@
 //   dlRaw/{slug}_{asg}_{ex}    P-05 (owner: 90 days): the FINAL submitted answers as text {email, cls, asg, ex, ver, answers, submittedAt, expMs,
 //                              expiresAt}. Written only when env DL_RAW_RETENTION = 'on'; read only by dlRaw() for an authorized teacher;
 //                              expired rows are never returned and are deleted by dlReap() (fail closed: off = nothing raw is kept).
+// (11/2026, owner) Students no longer do the 4 levels: they write the WHOLE script; compareScript() marks it word by word on the server,
+// the AI (when available) only explains the mistakes found and picks new vocabulary; mistakes go to the Error Notebook.
+//   dlVersions also hold {script, kind:'script'} (new lessons); older JSON lessons are read as the text of their sentences (scriptOf).
 // D = helpers from [[path]].js: {fsGet, fsPut, fsCreate, fsUpdate, fsDelete, fsList, fsQueryDocs, idUser, staffEmail, rosterRow, normEmail, slug, json, fail, adminEmail}
-import * as DL from './dictation/engine/index.js';
 import { validateDictationJson, validateDictationDocument, sha256Utf8 } from './dictation/validator/index.js';
 import SCHEMA from './dictation/validator/schema.js';
+import { compareScript, MAX_SCRIPT_CHARS, MAX_TEXT_CHARS } from './dictation/script.js';
 
 export const DL_MAX_JSON = 900000; // O-4: Firestore string field, well under the 1 MiB document limit
 const PASS_DAYS = { day: 1, week: 7 };
@@ -53,6 +56,7 @@ export async function dlStaff(D, env, request, body) {
   if (op === 'list') { const rows = await D.fsList(env, 'dlLessons'); return D.json({ lessons: rows.map((r) => ({ lid: r.id, title: r.title, cur: r.cur, approved: r.approved || 0, approvedMode: r.approvedMode || '', published: r.published || 0, exId: r.exId || '', gate: r.gate || '', ts: r.ts })) }); }
   if (op === 'get') { const lid = String(body.lid || ''); if (!ID.test(lid)) return D.fail('Bad lesson id.'); const L = await D.fsGet(env, 'dlLessons', lid); if (!L) return D.fail('Not found.', 404); const n = Number(body.n) || L.data.cur; const v = await loadVersion(D, env, lid, n); if (!v) return D.fail('Not found.', 404); return D.json({ lesson: Object.assign({ lid }, L.data), version: v }); }
   if (op !== 'save') return D.fail('Unknown action.');
+  if (typeof body.script === 'string') return saveScript(D, env, body, by);
   const json = String(body.json || ''); if (!json || json.length > DL_MAX_JSON) return D.fail('The lesson file is empty or larger than 900 KB.');
   const val = validateDictationJson(json, { schema: SCHEMA });
   if (!val.valid) return D.json({ error: 'The lesson does not pass the validator.', code: 'invalid', gate: val.semantic?.gate ?? null, schemaErrors: (val.schemaErrors || []).slice(0, 30), errors: (val.semantic?.errors || []).slice(0, 30) }, 400);
@@ -71,6 +75,25 @@ export async function dlStaff(D, env, request, body) {
   return D.json({ ok: true, lid, n, gate, audited, warnings: (val.semantic.warnings || []).length });
 }
 
+// a "write the script" version: the teacher's text as typed (labels kept for reading), checked = they checked it against the audio
+async function saveScript(D, env, body, by) {
+  const script = String(body.script).replace(/\r\n?/g, '\n').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '').trim();
+  if (script.length > MAX_SCRIPT_CHARS) return D.fail('The script is too long (20,000 characters at most).');
+  if (compareScript(script, '').words.script < 5) return D.fail('Paste the script of the recording first (5 words at least).');
+  let lid = String(body.lid || ''); const now = Date.now(); let L = null;
+  if (lid) { if (!ID.test(lid)) return D.fail('Bad lesson id.'); L = await D.fsGet(env, 'dlLessons', lid); if (!L) return D.fail('Not found.', 404); }
+  else lid = 'l' + now.toString(36) + Math.floor(Math.random() * 1e6).toString(36);
+  const n = (L ? Number(L.data.cur) || 0 : 0) + 1; const audited = body.checked === true; const gate = audited ? 'SCRIPT_CHECKED' : 'SCRIPT_UNCHECKED';
+  const audio = /^\/api\/audio\/[A-Za-z0-9_-]{22}$/.test(String(body.audio || '')) ? String(body.audio) : '';
+  const title = clean(body.title, 200) || 'Untitled dictation';
+  if (!(await D.fsCreate(env, 'dlVersions', vid(lid, n), { lid, n, kind: 'script', script, sha: sha256Utf8(script), gate, audited, audio, title, by, ts: now }))) return D.json({ error: 'Someone saved this lesson at the same time. Reload and try again.', code: 'busy' }, 409);
+  const upd = { title, cur: n, gate, by, ts: now }; if (!L) Object.assign(upd, { approved: 0, approvedMode: '', published: 0, exId: '' });
+  if (L) { if (!(await D.fsUpdate(env, 'dlLessons', lid, upd, L.updateTime))) return D.json({ error: 'Someone saved this lesson at the same time. Reload and try again.', code: 'busy' }, 409); }
+  else await D.fsPut(env, 'dlLessons', lid, upd);
+  await audit(D, env, lid, 'save', by, { n, gate });
+  return D.json({ ok: true, lid, n, gate, audited, warnings: 0 });
+}
+
 /* ---------- admin: approve / publish / unpublish (POST /api/admin/dictation {op}) — called after adminKeyOk ---------- */
 export async function dlAdmin(D, env, body) {
   if (body.op === 'retention') return D.json({ ok: true, on: rawOn(env), days: DL_RAW_DAYS, last: env && env.MD_KV ? await env.MD_KV.get('dlreap:last', 'json').catch(() => null) : null });
@@ -85,7 +108,7 @@ export async function dlAdmin(D, env, body) {
   if (body.op === 'approve') {
     const n = Number(body.n); if (n !== Number(L.data.cur)) return D.fail('Only the newest version can be approved. Reload the lesson.', 409);
     const mode = body.mode === 'homework' ? 'homework' : 'practice'; const v = await loadVersion(D, env, lid, n); if (!v) return D.fail('Not found.', 404);
-    if (mode === 'homework' && !v.audited) return D.json({ error: 'This transcript is not teacher-audited, so it can only be approved for Free Practice.', code: 'not_audited' }, 409);
+    if (mode === 'homework' && !v.audited) return D.json({ error: 'This script was not checked against the audio, so it can only be approved for practice. Tick “I checked the script against the audio” and save again.', code: 'not_audited' }, 409);
     await D.fsUpdate(env, 'dlVersions', vid(lid, n), { approvedMode: mode, approvedBy: by, approvedTs: now });
     await D.fsUpdate(env, 'dlLessons', lid, { approved: n, approvedMode: mode, ts: now }); await audit(D, env, lid, 'approve', by, { n, mode });
     return D.json({ ok: true, approved: n, mode });
@@ -109,29 +132,87 @@ export async function dlAdmin(D, env, body) {
   return D.fail('Unknown action.');
 }
 
-/* ---------- signed-in users: practice lesson, homework payload / lock / submit ---------- */
+/* ---------- signed-in users: "write the script" (practice check, homework payload / submit) ---------- */
 async function published(D, env, exId) {
   if (!/^dl-[A-Za-z0-9_-]{1,80}$/.test(String(exId || ''))) return null;
   const ex = await D.fsGet(env, 'exercises', exId); if (!ex || ex.data.kind !== 'dictation') return null;
   const ver = await loadVersion(D, env, ex.data.dlId, Number(ex.data.dlVer)); if (!ver) return null;
   return { ex: ex.data, ver };
 }
-const seedOf = (email, lid) => DL.hashSeed(String(email) + '|' + lid);
+// the script of a version: the teacher's text (new lessons) or, for an older JSON lesson, its sentences in order
+export function scriptOf(ver) {
+  if (ver && typeof ver.script === 'string') return ver.script;
+  try { const doc = JSON.parse(ver.json); const off = new Set(ver.deselected || []); return ((doc.transcript && doc.transcript.sentences) || []).filter((x) => x.enabled !== false && !off.has(x.id)).map((x) => x.cleanText).join(' '); } catch (e) { return ''; }
+}
+function sentenceOf(text, w) { const i = text.toLowerCase().indexOf(w.toLowerCase()); if (i < 0) return ''; let a = i, b = i + w.length; while (a > 0 && !/[.!?\n]/.test(text[a - 1])) a--; while (b < text.length && !/[.!?\n]/.test(text[b])) b++; return text.slice(a, Math.min(text.length, b + 1)).replace(/^[A-Za-z][A-Za-z .'-]{0,30}:\s*/, '').trim().slice(0, 240); }
+const resultOf = (cmp, ai, script, extra) => Object.assign({ mode: 'script', text: cmp.text, script, pct: cmp.pct, passed: cmp.passed, num: cmp.num, den: cmp.den, words: cmp.words, tooDifferent: cmp.tooDifferent, empty: cmp.empty, ai }, extra || {});
 
-// POST /api/dictation/practice {exId}: the practice lesson WITH its answer key (disclosed trade-off). Homework-only lessons are given
-// to a student only after an accepted submission for that exercise; staff always (preview).
-export async function dlPractice(D, env, request, body) {
-  const who = await D.idUser(env, request); if (!who) return D.json({ error: 'Your sign-in has expired. Sign in again.', code: 'auth' }, 401);
-  if (who.role !== 'student' && who.role !== 'teacher') return D.fail('Not available for this account.', 403);
-  const P = await published(D, env, body.exId); if (!P) return D.fail('This dictation is not available.', 404);
-  if (who.role === 'student' && P.ex.dlMode !== 'practice') {
-    const subs = await D.fsQueryDocs(env, 'dlSubs', 'email', who.em);
-    if (!subs.some((s) => s.ex === body.exId)) return D.json({ error: 'This dictation is homework. Practice opens after you submit it.', code: 'homework_only' }, 403);
-  }
-  return D.json({ ok: true, json: P.ver.json, version: P.ex.dlId + '@' + P.ver.n, deselected: P.ver.deselected || [], audio: P.ver.audio || '', seed: seedOf(who.em, P.ex.dlId), label: P.ver.audited ? 'teacher_audited' : 'unverified_transcript' });
+// AI: explains the mistakes compareScript found (never finds or invents mistakes itself) and picks new words FROM THE SCRIPT.
+// No AI / busy / daily limit (KV aidq:<email>:<day>, 30) -> the rule-based explanations, no vocabulary; the mark never depends on it.
+export const DL_AI_DAY = 30;
+const DL_PROMPT = 'You are an IELTS listening tutor for Vietnamese students aged 13-16. A student listened to a recording and wrote it down. ' +
+  'The mistakes below were found by comparing the student\'s text with the transcript word by word; "wrote" is what the student wrote and "correct" is what the recording says. ' +
+  'For EVERY mistake id return: category = a short error-notebook label (for example Spelling, Missing word, Extra word, -s / -es ending, -ed ending, Article, Preposition, Word form, Numbers, Wrong word, Homophone); ' +
+  'explanation = one short sentence in simple English telling WHY it is wrong or how to hear it; ' +
+  'explanation_vi = the same idea in Vietnamese, ONE sentence of at most about 20 words, plain words, name the exact word in quotes. ' +
+  'Do not change "wrote" or "correct". Then choose 4 to 6 useful words or phrases for IELTS from the TRANSCRIPT (copy them exactly as they appear), ' +
+  'each with meaning_vi (a short Vietnamese meaning) and example = the sentence of the transcript that contains it. Return JSON only.';
+const DL_SCHEMA = { type: 'OBJECT', properties: {
+  items: { type: 'ARRAY', items: { type: 'OBJECT', properties: { id: { type: 'INTEGER' }, category: { type: 'STRING' }, explanation: { type: 'STRING' }, explanation_vi: { type: 'STRING' } }, required: ['id', 'category', 'explanation', 'explanation_vi'] } },
+  vocabulary: { type: 'ARRAY', items: { type: 'OBJECT', properties: { word: { type: 'STRING' }, meaning_vi: { type: 'STRING' }, example: { type: 'STRING' } }, required: ['word', 'meaning_vi'] } } },
+  required: ['items', 'vocabulary'] };
+async function explain(D, env, who, script, cmp, tzo) {
+  const base = { corrections: cmp.corrections.slice(0, 60), vocabulary_upgrades: [], model: '', ts: Date.now() };
+  if (cmp.empty || !D.askGemini || !D.aiReady || !D.aiReady(env) || !env || !env.MD_KV) return base;
+  const k = 'aidq:' + who.em + ':' + D.dayOf(tzo).day; const used = Number(await env.MD_KV.get(k).catch(() => 0)) || 0;
+  if (used >= DL_AI_DAY) return Object.assign(base, { aiNote: 'limit' });
+  await env.MD_KV.put(k, String(used + 1), { expirationTtl: 172800 }).catch(() => {});
+  const list = base.corrections.slice(0, 40).map((c, i) => ({ id: i, wrote: c.original_text, correct: c.corrected_text, sentence: c.context }));
+  let g; try { g = await D.askGemini(env, DL_PROMPT + '\n\nTRANSCRIPT:\n' + script.slice(0, 12000) + '\n\nMISTAKES (JSON):\n' + JSON.stringify(list), DL_SCHEMA, '', 30000); }
+  catch (e) { return Object.assign(base, { aiNote: 'busy' }); }
+  const o = (g && g.out) || {}; const low = script.toLowerCase();
+  (Array.isArray(o.items) ? o.items : []).forEach((x) => { const id = Number(x && x.id); if (!(id >= 0 && id < list.length)) return; const c = base.corrections[id];
+    const cat = clean(x.category, 40); if (cat) c.category = cat; const en = clean(x.explanation, 240); if (en) c.explanation = en; const vi = clean(x.explanation_vi, 200); if (vi) c.explanation_vi = vi; });
+  const seen = new Set();
+  base.vocabulary_upgrades = (Array.isArray(o.vocabulary) ? o.vocabulary : []).map((v) => { const w = clean(v && v.word, 60); if (!w || seen.has(w.toLowerCase()) || low.indexOf(w.toLowerCase()) < 0) return null; seen.add(w.toLowerCase());
+    const ex = clean(v.example, 240); const mv = clean(v.meaning_vi, 120); return { original: '', upgraded: w, example: ex && low.indexOf(ex.toLowerCase()) >= 0 ? ex : sentenceOf(script, w), note: mv, vi: mv }; }).filter(Boolean).slice(0, 8);
+  base.model = (g && g.model) || ''; return base;
+}
+// the most important mistakes (first 15) become Error Notebook cards, like Writing (errors/<slug>_<attemptId>_<i>; a repeat run adds nothing)
+async function toNotebook(D, env, att, attemptId, ai, exTitle, tzo) {
+  if (!D.saveErrors || !ai.corrections.length) return 0;
+  try { return await D.saveErrors(env, att, attemptId, { corrections: ai.corrections.slice(0, 15).map((c) => Object.assign({ practice: [] }, c)) }, { exTitle: String(exTitle || ''), dayStart: D.dayOf(tzo).dayStart }); } catch (e) { return 0; }
 }
 
-// The homework sitting of one student: assignment occurrence (class, sent, deadline + late pass), pinned version, server options.
+// POST /api/dictation/practice {exId}: what the screen needs BEFORE writing (title, audio, number of words). Never the script.
+// A homework lesson opens for practice only after the student's accepted submission; staff always (preview); assistants never.
+async function practiceGate(D, env, request, body) {
+  const who = await D.idUser(env, request); if (!who) return { err: D.json({ error: 'Your sign-in has expired. Sign in again.', code: 'auth' }, 401) };
+  if (who.role !== 'student' && who.role !== 'teacher') return { err: D.fail('Not available for this account.', 403) };
+  const P = await published(D, env, body.exId); if (!P) return { err: D.fail('This dictation is not available.', 404) };
+  if (who.role === 'student' && P.ex.dlMode !== 'practice') {
+    const subs = await D.fsQueryDocs(env, 'dlSubs', 'email', who.em);
+    if (!subs.some((x) => x.ex === body.exId)) return { err: D.json({ error: 'This dictation is homework. Practice opens after you submit it.', code: 'homework_only' }, 403) };
+  }
+  return { who, P };
+}
+export async function dlPractice(D, env, request, body) {
+  const G = await practiceGate(D, env, request, body); if (G.err) return G.err; const P = G.P;
+  return D.json({ ok: true, mode: 'script', title: P.ver.title || P.ex.title || '', audio: P.ver.audio || P.ex.audio || '', words: compareScript(scriptOf(P.ver), '').words.script, label: P.ver.audited ? 'teacher_audited' : 'unverified_transcript' });
+}
+// POST /api/dictation/check {exId, text, tzo}: practice (and teacher preview) marking. Nothing is kept except the student's FIRST practice
+// mistakes in the Error Notebook (KV dlpe:<email>:<lid>), so retrying does not fill the notebook.
+export async function dlCheck(D, env, request, body) {
+  const G = await practiceGate(D, env, request, body); if (G.err) return G.err; const { who, P } = G;
+  const text = String(body.text ?? '').slice(0, MAX_TEXT_CHARS); if (!text.trim()) return D.fail('Write what you hear first.');
+  const script = scriptOf(P.ver); const cmp = compareScript(script, text); const ai = await explain(D, env, who, script, cmp, body.tzo);
+  let added = 0;
+  if (who.role === 'student' && env && env.MD_KV) { const mk = 'dlpe:' + who.em + ':' + P.ex.dlId;
+    if (!(await env.MD_KV.get(mk).catch(() => '1'))) { const r = await D.rosterRow(env, who.em); added = await toNotebook(D, env, { email: who.em, student: r ? r.data.name : '', cls: r ? r.data.cls : '', ex: 'c_' + body.exId }, 'dlp-' + P.ex.dlId, ai, P.ex.title, body.tzo); await env.MD_KV.put(mk, '1').catch(() => {}); } }
+  return D.json({ ok: true, result: resultOf(cmp, ai, script, { added, practice: true }) });
+}
+
+// The homework sitting of one student: assignment occurrence (class, sent, deadline + late pass), pinned version.
 async function sitting(D, env, request, body) {
   const who = await D.idUser(env, request); if (!who) return { err: D.json({ error: 'Your sign-in has expired. Sign in again.', code: 'auth' }, 401) };
   if (who.role !== 'student') return { err: D.fail('Only students submit homework.', 403) };
@@ -151,50 +232,40 @@ async function sitting(D, env, request, body) {
   }
   const n = Number(sit.data.ver); const lid = ex.data.dlId; const ver = await loadVersion(D, env, lid, n);
   if (!ver || ver.approvedMode !== 'homework' || !ver.audited) return { err: D.json({ error: 'This dictation version is not approved for homework.', code: 'not_approved' }, 409) };
-  const { doc, validation } = docOf(ver); const cv = lid + '@' + n;
-  const SO = { doc, validation, version: cv, seed: seedOf(who.em, lid), deselected: ver.deselected || [], approval: { approved: true, version: cv } };
-  return { who, r, a, exId, asgId, key, open, sit, SO, cv, lid, n, now };
+  return { who, r, a, ex: ex.data, exId, asgId, key, open, sit, ver, cv: lid + '@' + n, lid, n, now };
 }
 
+// POST /api/dictation/payload | submit {exId, asgId, text?, tzo}. Before: title, audio, word count (never the script).
+// Submit: one official mark (the first accepted submission; a repeat returns it), then the AI explanations and the Error Notebook.
+// After: the mark and the script; the student's own text only while it is kept (dlRaw, 90 days) — the device keeps its own copy too.
 export async function dlHomework(D, env, request, body, route) {
   const S = await sitting(D, env, request, body); if (S.err) return S.err;
+  const script = scriptOf(S.ver);
+  const done = async (status, rec) => {
+    let full = null; const raw = rawOn(env) ? await D.fsGet(env, 'dlRaw', S.key) : null;
+    if (raw && Number(raw.data.expMs) > Date.now() && typeof raw.data.text === 'string') { const cmp = compareScript(script, raw.data.text); let ai = null; try { ai = JSON.parse(raw.data.ai || 'null'); } catch (e) { ai = null; } full = resultOf(cmp, ai || { corrections: cmp.corrections, vocabulary_upgrades: [] }, script); }
+    return D.json({ status, submitted: true, submissionId: S.key, summary: rec, script, result: full });
+  };
   const sub = await D.fsGet(env, 'dlSubs', S.key);
-  if (sub) return D.json({ status: route === 'submit' ? 'duplicate' : 'ok', submitted: true, submissionId: S.key, result: JSON.parse(sub.data.result) });
-  const lock = S.sit.data.lock ? JSON.parse(S.sit.data.lock) : null;
-  if (route === 'payload') return D.json({ status: 'ok', payload: DL.homeworkPayload(S.SO, { assignmentId: S.asgId, phase: lock ? 2 : 1 }), locked: lock || {}, open: S.open });
-  if (!S.open) return D.json({ status: 'rejected', reason: 'closed', error: 'The deadline has passed.' }, 409);
-  const all = DL.homeworkPayload(S.SO, { phase: 9 }).items; const lockIds = DL.phaseLockIds(S.SO);
-  if (route === 'lock') {
-    if (lock) return D.json({ status: 'ok', payload: DL.releasePhase(S.SO, { assignmentId: S.asgId }) }); // the first lock wins
-    const req = body.req || {}; if (req.contentVersion !== S.cv) return D.json({ status: 'rejected', reason: 'version_mismatch' }, 409);
-    const v = DL.validateSubmission({ schema: DL.SUBMISSION_SCHEMA, idempotencyKey: 'phase', assignmentId: S.asgId, contentVersion: S.cv, responses: req.responses }, { assignmentId: S.asgId, contentVersion: S.cv, items: all.filter((i) => lockIds.includes(i.id)) });
-    if (!v.ok) return D.json({ status: 'rejected', reason: v.reason }, 400);
-    if (!(await D.fsUpdate(env, 'dlSits', S.key, { lock: JSON.stringify(req.responses || {}), lockTs: S.now, rawExp: S.now + RAW_MS }, S.sit.updateTime))) return D.json({ status: 'rejected', reason: 'busy' }, 409);
-    return D.json({ status: 'ok', payload: DL.releasePhase(S.SO, { assignmentId: S.asgId }) });
-  }
+  if (sub) return done(route === 'submit' ? 'duplicate' : 'ok', JSON.parse(sub.data.record || '{}'));
+  if (route === 'payload') return D.json({ status: 'ok', mode: 'script', open: S.open, title: S.ver.title || S.ex.title || '', audio: S.ver.audio || S.ex.audio || '', words: compareScript(script, '').words.script });
   if (route !== 'submit') return D.fail('Not found.', 404);
-  const req = body.req || {}; const v = DL.validateSubmission(req, { assignmentId: S.asgId, contentVersion: S.cv, items: all });
-  if (!v.ok) return D.json({ status: 'rejected', reason: v.reason }, 400);
-  if (DL.phaseItemIds(S.SO).length > 1 && !lock) return D.json({ status: 'rejected', reason: 'phase_not_locked' }, 409);
-  const sc = DL.scoreHomework(req, S.SO, { locked: lock || {} }); const result = { items: sc.items, aggregate: sc.aggregate, unanswered: sc.unanswered, review: sc.review };
-  const rec = DL.storageRecord(sc, {}).record; // scores only (kept like any attempt); the raw text goes to dlRaw below and expires
-  if (!(await D.fsCreate(env, 'dlSubs', S.key, { email: S.who.em, asg: S.asgId, ex: S.exId, ver: S.n, record: JSON.stringify(rec), result: JSON.stringify(result), ts: S.now }))) {
-    const again = await D.fsGet(env, 'dlSubs', S.key); return D.json({ status: 'duplicate', submissionId: S.key, result: again ? JSON.parse(again.data.result) : result });
+  if (!S.open) return D.json({ status: 'rejected', reason: 'closed', error: 'The deadline has passed.' }, 409);
+  const cmp = compareScript(script, String(body.text ?? '').slice(0, MAX_TEXT_CHARS));
+  const rec = { mode: 'script', pct: cmp.pct, passed: cmp.passed, num: cmp.num, den: cmp.den, words: cmp.words, empty: cmp.empty };
+  if (!(await D.fsCreate(env, 'dlSubs', S.key, { email: S.who.em, asg: S.asgId, ex: S.exId, ver: S.n, mode: 'script', record: JSON.stringify(rec), ts: S.now }))) {
+    const again = await D.fsGet(env, 'dlSubs', S.key); return done('duplicate', again ? JSON.parse(again.data.record || '{}') : rec);
   }
-  // P-05: final answers only (no drafts, no keystrokes); clock = this server-accepted submission; fsCreate = a retry never resets it
-  if (rawOn(env)) {
-    const R = Object.assign({}, req.responses || {}, lock || {}); const byId = new Map(all.map((i) => [i.id, i])); const answers = {};
-    for (const id of Object.keys(sc.items)) if (R[id] !== undefined) answers[id] = answerText(byId.get(id), R[id]).slice(0, 4000);
-    await D.fsCreate(env, 'dlRaw', S.key, { email: S.who.em, cls: String(S.r.data.cls || ''), asg: S.asgId, ex: S.exId, ver: S.cv, answers, submittedAt: S.now, expMs: S.now + RAW_MS, expiresAt: new Date(S.now + RAW_MS) }).catch(() => {});
-  }
-  if (S.sit.data.lock) await D.fsUpdate(env, 'dlSits', S.key, { lock: '', rawExp: 0 }).catch(() => {}); // phase-1 text is no longer needed
-  const f = sc.aggregate.overall.itemWeightedAssignmentScore || { num: 0, den: 1 }; const big = f.den > 1000;
-  const score = big ? Math.floor((f.num * 1000) / f.den) : f.num, total = big ? 1000 : f.den;
-  const ids = Object.keys(sc.items); const answered = ids.filter((id) => sc.items[id].state === 'attempted').length;
+  if (S.sit.data.lock) await D.fsUpdate(env, 'dlSits', S.key, { lock: '', rawExp: 0 }).catch(() => {}); // older sittings only
+  const big = cmp.den > 1000; const score = big ? Math.floor((cmp.num * 1000) / cmp.den) : cmp.num, total = big ? 1000 : cmp.den;
   await D.fsPut(env, 'attempts', S.key, { email: S.who.em, student: String(S.r.data.name || ''), cls: String(S.r.data.cls || ''), ex: 'c_' + S.exId, kind: 'dictation', asg: S.asgId, sts: S.now, ts: S.now,
-    score, total, answered, required: sc.aggregate.totalItems, items: ids.map((id, i) => ({ i, ok: !!sc.items[id].first?.exact })),
-    dl: { ver: S.cv, passed: !!sc.aggregate.result?.passed, completed: !!sc.aggregate.result?.completed, official: sc.official } });
-  return D.json({ status: 'accepted', submissionId: S.key, result });
+    score, total, answered: cmp.empty ? 0 : 1, required: 1, items: [{ i: 0, ok: cmp.pct === 100 }], dl: { ver: S.cv, mode: 'script', pct: cmp.pct, passed: cmp.passed, completed: !cmp.empty, official: true } });
+  const ai = await explain(D, env, S.who, script, cmp, body.tzo); // after the mark is stored: a slow or failed AI never loses the submission
+  // P-05: the final text only (no drafts), 90 days from this server-accepted submission; fsCreate = a retry never resets the clock
+  if (rawOn(env)) await D.fsCreate(env, 'dlRaw', S.key, { email: S.who.em, cls: String(S.r.data.cls || ''), asg: S.asgId, ex: S.exId, ver: S.cv, text: cmp.text, answers: { script: cmp.text },
+    ai: JSON.stringify({ corrections: ai.corrections, vocabulary_upgrades: ai.vocabulary_upgrades, model: ai.model }), submittedAt: S.now, expMs: S.now + RAW_MS, expiresAt: new Date(S.now + RAW_MS) }).catch(() => {});
+  const added = await toNotebook(D, env, { email: S.who.em, student: String(S.r.data.name || ''), cls: String(S.r.data.cls || ''), ex: 'c_' + S.exId }, S.key, ai, S.ex.title, body.tzo);
+  return D.json({ status: 'accepted', submissionId: S.key, result: resultOf(cmp, ai, script, { added }) });
 }
 
 /* ---------- P-05: teacher-only raw answers (POST /api/dictation/raw {op:'list', exId}) ----------
@@ -218,6 +289,10 @@ export async function dlRaw(D, env, request, body) {
     const raw = await D.fsGet(env, 'dlRaw', s.id); const rec = JSON.parse(s.record || '{}'); const res = JSON.parse(s.result || '{}');
     const live = !!(raw && Number(raw.data.expMs) > now && String(raw.data.email) === String(s.email));
     if (raw && !live) await D.fsDelete(env, 'dlRaw', s.id).catch(() => {}); // expired: never shown, deleted now
+    if (rec.mode === 'script') { const ver = await memo('v:' + s.ex + s.ver, async () => { const e = await D.fsGet(env, 'exercises', s.ex); return e ? loadVersion(D, env, e.data.dlId, Number(s.ver)) : null; });
+      rows.push({ name: String(r.data.name || ''), cls, asg: s.asg, submittedAt: Number(s.ts) || 0, raw: live ? 'kept' : (Number(s.ts) + RAW_MS <= now ? 'expired' : 'not_kept'), expiresAt: live ? Number(raw.data.expMs) : 0,
+        score: { num: Number(rec.num) || 0, den: Number(rec.den) || 1 }, passed: !!rec.passed, items: [Object.assign({ id: 'script', level: 'script', state: rec.empty ? 'unattempted' : 'attempted', first: { num: Number(rec.num) || 0, den: Number(rec.den) || 1, exact: rec.pct === 100 }, key: ver ? scriptOf(ver) : '' }, live ? { answer: String(raw.data.text ?? (raw.data.answers || {}).script ?? '') } : {})] });
+      continue; }
     const items = Object.keys(rec.items || {}).map((id) => { const x = rec.items[id]; const o = { id, level: x.level, state: x.state, first: x.first || null, key: keyText(res.review && res.review[id]) }; if (live) o.answer = String((raw.data.answers || {})[id] ?? ''); return o; });
     rows.push({ name: String(r.data.name || ''), cls, asg: s.asg, submittedAt: Number(s.ts) || 0, raw: live ? 'kept' : (Number(s.ts) + RAW_MS <= now ? 'expired' : 'not_kept'), expiresAt: live ? Number(raw.data.expMs) : 0,
       score: (rec.aggregate && rec.aggregate.overall && rec.aggregate.overall.itemWeightedAssignmentScore) || null, passed: !!(rec.aggregate && rec.aggregate.result && rec.aggregate.result.passed), items });

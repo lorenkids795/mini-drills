@@ -2,6 +2,7 @@
 // Every string from a lesson, a student or the server is written with textContent: nothing is parsed as HTML (SAF-001..003).
 // There is no Hint, no Reveal and no answer preview. Practice: Check, then Review of that item. Homework: no Check; Submit; the
 // result and review come only from the server's acknowledgement.
+import { compareScript } from "./script.js";
 import { createRun, DictationRun, HomeworkClient } from "./engine/index.js";
 import { validateDictationJson, validateDictationDocument } from "./validator/index.js";
 import SCHEMA from "./validator/schema.js";
@@ -40,6 +41,7 @@ function css() {
 
 /* ---------- audio player: full uncut source, ±3 s, speed, A-B loop, keyboard (not answer hints) ---------- */
 export function audioPlayer(url) {
+  css(); // also used alone on the student screen (index.html)
   if (!url) return h("p", { class: "dl-muted", text: "No audio file is attached to this lesson." });
   const a = h("audio", { preload: "metadata", src: url }); let A = null, B = null;
   const time = h("span", { class: "dl-time", "aria-live": "off" }, "0:00"); const seek = h("input", { type: "range", min: "0", max: "1000", value: "0", "aria-label": "Position in the audio" });
@@ -181,40 +183,34 @@ const answerText = (r) => (r.answer ?? r.text ?? r.chosen ?? (Array.isArray(r.an
 // original, made-up dialogue for the "Fill in a sample transcript" button (no audio: preview only)
 const SAMPLE = "ANNA: Hello, I would like to join the photography club.\n\nTOM: Great. We meet on Thursday evenings at seven o'clock.\n\nANNA: Is there a membership fee?\n\nTOM: Yes, it costs twenty pounds a year, and new members get a free map of the city.";
 export function mountAuthor(el, o) {
-  css(); const S = { lid: "", doc: null, json: "", val: null, notes: [], deselected: new Set(), audio: "", lessons: [], msg: null };
+  // (11/2026, owner) "write the script" lessons: the teacher pastes the script of the recording; students write it all; the server marks it.
+  css(); const S = { lid: "", audio: "", lessons: [], msg: null, words: 0 };
   const root = h("div", { class: "dl" }); el.replaceChildren(root);
-  const title = h("input", { type: "text", "aria-label": "Lesson title", placeholder: "Lesson title" }); const src = h("textarea", { rows: 10, spellcheck: "false", "aria-label": "Transcript or lesson JSON" });
-  const mode = h("select", { "aria-label": "What you paste" }, h("option", { value: "transcript" }, "Transcript (plain text)"), h("option", { value: "json" }, "Lesson JSON (made in an external AI chat)"));
-  const attest = h("input", { type: "checkbox", id: "dlAttest" }); const file = h("input", { type: "file", accept: "audio/*", "aria-label": "Lesson audio file" });
+  const title = h("input", { type: "text", "aria-label": "Lesson title", placeholder: "Lesson title" });
+  const src = h("textarea", { rows: 10, spellcheck: "false", "aria-label": "Script of the recording", placeholder: "Paste the script of the recording here. One speaker turn per paragraph; “TOM:” labels are optional and are not marked." });
+  const attest = h("input", { type: "checkbox", id: "dlAttest" }), checked = h("input", { type: "checkbox", id: "dlChecked" });
+  const file = h("input", { type: "file", accept: "audio/*", "aria-label": "Lesson audio file" });
   const out = h("div", {}); const preview = h("div", {}); const list = h("div", {});
   const say = (text, cls) => { S.msg = { text, cls }; drawOut(); };
   file.addEventListener("change", async () => { const f = file.files[0]; if (!f) return; say("Uploading audio…"); try { const r = await o.uploadAudio(f); S.audio = r.url; say("Audio uploaded."); } catch (e) { say("Audio upload failed: " + (e.message || e), "dl-err"); } });
-  function check() {
-    S.notes = []; let doc = null, val = null;
-    if (mode.value === "transcript") { const b = buildTranscriptDoc({ title: title.value, text: src.value, attest: attest.checked }); doc = b.doc; S.notes = b.notes; S.json = JSON.stringify(doc); val = validateDictationDocument(doc, { schema: SCHEMA }); }
-    else { S.json = src.value; val = validateDictationJson(src.value, { schema: SCHEMA }); try { doc = JSON.parse(src.value); } catch { doc = null; } if (doc && !title.value) title.value = doc.metadata?.title || ""; }
-    S.doc = val.valid ? doc : null; S.val = val; preview.replaceChildren(); drawOut();
-  }
+  src.addEventListener("input", () => { S.words = compareScript(src.value, "").words.script; drawOut(); });
   function drawOut() {
-    const v = S.val; const kids = [];
+    const kids = [];
     if (S.msg) kids.push(h("p", { class: S.msg.cls || "dl-muted", role: "status" }, S.msg.text));
-    for (const n of S.notes) kids.push(h("p", { class: "dl-muted" }, n));
-    if (v) {
-      const gate = v.semantic?.gate; kids.push(h("p", { class: v.valid ? "dl-ok" : "dl-err" }, v.valid ? (gate === "GATE_NOT_AUDITED" ? "Valid · not teacher-audited: Free Practice only (labelled unverified)." : "Valid · audited (" + gate + "): can be approved for homework.") : "Not valid. Fix the problems below."));
-      const errs = [...(v.schemaErrors || []).map((e) => e.keyword + " at " + e.path), ...(v.semantic?.errors || []).map((e) => e.code + " at " + e.path + (e.message ? " – " + e.message : ""))];
-      if (errs.length) kids.push(h("ul", { class: "dl-err" }, ...errs.slice(0, 30).map((t) => h("li", {}, t))));
-      const warns = (v.semantic?.warnings || []).map((e) => e.code + " at " + e.path); if (warns.length) kids.push(h("details", {}, h("summary", {}, warns.length + " warning(s)"), h("ul", {}, ...warns.slice(0, 50).map((t) => h("li", {}, t)))));
-    }
-    if (S.doc) {
-      const sents = S.doc.transcript.sentences.filter((s) => s.enabled);
-      kids.push(h("details", {}, h("summary", {}, "Sentences used (" + (sents.length - S.deselected.size) + " of " + sents.length + "). Untick a sentence to leave it out."), h("ul", { class: "dl-list" }, ...sents.map((s) => h("li", {}, h("input", { type: "checkbox", id: "dls-" + s.id, checked: !S.deselected.has(s.id), onchange: (e) => { if (e.target.checked) S.deselected.delete(s.id); else S.deselected.add(s.id); } }), h("label", { for: "dls-" + s.id }, s.id + " · " + s.cleanText))))));
-      kids.push(h("div", { class: "dl-row" }, btn("Preview as a student", () => { try { mountPractice(preview, { doc: S.doc, validation: S.val, version: "preview", seed: 1, deselected: [...S.deselected], audio: S.audio, preview: true }); } catch (e) { preview.replaceChildren(h("p", { class: "dl-err", text: String(e.message || e) })); } }),
-        btn(S.lid ? "Save as a new version" : "Save lesson", save, "btn pri")));
-    }
+    kids.push(h("p", { class: "dl-muted" }, S.words + " words to write" + (S.audio ? " · audio added" : " · no audio yet (students need it)")));
+    kids.push(h("div", { class: "dl-row" }, btn("Preview as a student", previewIt, "btn", { disabled: S.words < 5 }), btn(S.lid ? "Save as a new version" : "Save lesson", save, "btn pri", { disabled: S.words < 5 })));
     out.replaceChildren(...kids);
   }
+  // the student screen, marked here on the device (no AI, nothing saved); o.renderResult draws it exactly like the student result
+  function previewIt() {
+    const box = h("textarea", { rows: 6, spellcheck: "false", autocomplete: "off", "aria-label": "Write what you hear (preview)" }); const res = h("div", {});
+    preview.replaceChildren(h("div", { class: "dl-card" }, h("b", {}, "Student preview · nothing is saved"), S.audio ? audioPlayer(S.audio) : h("p", { class: "dl-muted" }, "No audio yet."), box,
+      h("div", { class: "dl-row" }, btn("Check (preview)", () => { const r = compareScript(src.value, box.value); r.script = src.value; r.ai = { corrections: r.corrections, vocabulary_upgrades: [] }; if (o.renderResult) o.renderResult(res, r); else res.textContent = r.pct + "%"; }, "btn pri")), res));
+  }
   async function save() {
-    try { const r = await o.staffApi("dictation/staff", { op: "save", lid: S.lid || undefined, title: title.value, json: S.json, deselected: [...S.deselected], audio: S.audio }); S.lid = r.lid; say("Saved version " + r.n + " (" + (r.audited ? "audited" : "not audited: practice only") + "). Approve it below before students can use it.", "dl-ok"); loadList(); }
+    if (!attest.checked) return say("Tick “I may use this recording and script with my class” first.", "dl-err");
+    try { const r = await o.staffApi("dictation/staff", { op: "save", lid: S.lid || undefined, title: title.value, script: src.value, checked: checked.checked, audio: S.audio }); S.lid = r.lid;
+      say("Saved version " + r.n + (r.audited ? " (checked against the audio: can be homework)." : " (not checked against the audio: practice only).") + " Approve it below before students can use it.", "dl-ok"); loadList(); }
     catch (e) { say("Not saved: " + (e.message || e), "dl-err"); }
   }
   async function loadList() {
@@ -222,26 +218,32 @@ export function mountAuthor(el, o) {
     const adm = (body, q) => o.ask({ title: q, ok: "Yes", onOk: async () => { try { await o.adminApi("admin/dictation", body); o.toast && o.toast("Done."); loadList(); } catch (e) { say(String(e.message || e), "dl-err"); } } });
     if (!S.lessons.length) { list.replaceChildren(h("p", { class: "dl-muted" }, "No dictation lessons yet. Follow the steps above to make the first one.")); return; }
     const pill = (t, on) => h("span", { class: "dl-pill" + (on ? " on" : "") }, t);
-    list.replaceChildren(h("div", { class: "dl-cards" }, ...S.lessons.map((L) => { const aud = L.gate === "GATE_PASS" || L.gate === "GATE_PASS_WITH_EXCLUSIONS"; const fresh = L.approved === L.cur;
-        return h("div", { class: "dl-card" }, h("b", {}, L.title), h("div", { class: "dl-pills" }, pill("Version " + L.cur), pill(aud ? "Audited" : "Not audited · practice only", aud), pill(L.approved ? "Approved v" + L.approved + " · " + L.approvedMode : "Not approved", !!L.approved), pill(L.published ? "In the Library (v" + L.published + ")" : "Not in the Library", !!L.published)),
+    list.replaceChildren(h("div", { class: "dl-cards" }, ...S.lessons.map((L) => { const aud = ["GATE_PASS", "GATE_PASS_WITH_EXCLUSIONS", "SCRIPT_CHECKED"].includes(L.gate); const fresh = L.approved === L.cur;
+        return h("div", { class: "dl-card" }, h("b", {}, L.title), h("div", { class: "dl-pills" }, pill("Version " + L.cur), pill(aud ? "Checked against audio" : "Not checked · practice only", aud), pill(L.approved ? "Approved v" + L.approved + " · " + L.approvedMode : "Not approved", !!L.approved), pill(L.published ? "In the Library (v" + L.published + ")" : "Not in the Library", !!L.published)),
           h("div", { class: "dl-row" }, btn("Edit", () => edit(L.lid), "btn sm"),
-            btn("Approve for practice", () => adm({ op: "approve", lid: L.lid, n: L.cur, mode: "practice" }, "Approve version " + L.cur + " of “" + L.title + "” for Free Practice?"), "btn sm", { disabled: fresh && L.approvedMode === "practice" }),
-            btn("Approve for homework", () => adm({ op: "approve", lid: L.lid, n: L.cur, mode: "homework" }, "Approve version " + L.cur + " of “" + L.title + "” for homework? Students will be scored on it."), "btn sm", { disabled: !aud || (fresh && L.approvedMode === "homework"), title: aud ? "" : "Not audited: practice only" }),
+            btn("Approve for practice", () => adm({ op: "approve", lid: L.lid, n: L.cur, mode: "practice" }, "Approve version " + L.cur + " of “" + L.title + "” for practice?"), "btn sm", { disabled: fresh && L.approvedMode === "practice" }),
+            btn("Approve for homework", () => adm({ op: "approve", lid: L.lid, n: L.cur, mode: "homework" }, "Approve version " + L.cur + " of “" + L.title + "” for homework? Students will be marked on it."), "btn sm", { disabled: !aud || (fresh && L.approvedMode === "homework"), title: aud ? "" : "Not checked against the audio: practice only" }),
             btn("Publish to the selected slot", () => { const sl = o.getSlot ? o.getSlot() : null; if (!sl) return say("Pick a free Listening slot (book, test, part) or an Extra practice category at the top of Create first.", "dl-err"); adm({ op: "publish", lid: L.lid, bookId: sl.book, testId: sl.test, part: sl.part, cat: sl.cat || "" }, "Publish approved version " + L.approved + " of “" + L.title + "” to " + sl.label + "?"); }, "btn sm", { disabled: !L.approved }),
             L.published ? btn("Unpublish", () => adm({ op: "unpublish", lid: L.lid }, "Remove “" + L.title + "” from the Library? Submitted results are kept."), "btn sm bad") : null)); })));
   }
-  async function edit(lid) { try { const r = await o.staffApi("dictation/staff", { op: "get", lid }); S.lid = lid; mode.value = "json"; src.value = r.version.json; title.value = r.version.title; S.audio = r.version.audio || ""; S.deselected = new Set(r.version.deselected || []); check(); say("Editing “" + r.version.title + "” (version " + r.version.n + "). Saving creates a new version that needs approval again."); } catch (e) { say(String(e.message || e), "dl-err"); } }
-  const guide = h("details", { class: "dl-guide", open: !store.get("md-dlguide") || null, ontoggle: (e) => store.set("md-dlguide", e.target.open ? 0 : 1) }, h("summary", {}, "How to make a dictation exercise (5 steps)"),
+  async function edit(lid) {
+    try { const r = await o.staffApi("dictation/staff", { op: "get", lid }); const v = r.version; S.lid = lid; title.value = v.title || ""; S.audio = v.audio || ""; attest.checked = true; checked.checked = !!v.audited;
+      src.value = typeof v.script === "string" ? v.script : oldScript(v); S.words = compareScript(src.value, "").words.script; preview.replaceChildren();
+      say("Editing “" + v.title + "” (version " + v.n + "). Saving creates a new version that needs approval again."); } catch (e) { say(String(e.message || e), "dl-err"); }
+  }
+  const oldScript = (v) => { try { const d = JSON.parse(v.json); const off = new Set(v.deselected || []); return d.transcript.sentences.filter((x) => x.enabled !== false && !off.has(x.id)).map((x) => x.cleanText).join(" "); } catch { return ""; } };
+  const guide = h("details", { class: "dl-guide", open: !store.get("md-dlguide2") || null, ontoggle: (e) => store.set("md-dlguide2", e.target.open ? 0 : 1) }, h("summary", {}, "How to make a dictation exercise (5 steps)"),
     h("ol", {},
-      h("li", {}, h("b", {}, "Pick a slot. "), "At the top of Create choose the book, test and a free Listening Part. That is where students will find the exercise."),
-      h("li", {}, h("b", {}, "Paste the transcript "), "of the recording below: one speaker turn per paragraph (leave an empty line between turns). “TOM:” labels are optional. Type a title."),
-      h("li", {}, h("b", {}, "Upload the audio "), "(mp3 / m4a). Students need it to listen. Tick “I may use this transcript with my class”, then press ", h("b", {}, "Check"), "."),
-      h("li", {}, h("b", {}, "Look and save. "), "Untick sentences you do not want, press ", h("b", {}, "Preview as a student"), " to try it, then ", h("b", {}, "Save lesson"), "."),
-      h("li", {}, "In ", h("b", {}, "Lessons"), " below press ", h("b", {}, "Approve for practice"), ", then ", h("b", {}, "Publish to the selected slot"), ". The exercise appears in the Library.")),
-    h("p", { class: "dl-muted" }, "A plain transcript is “not audited”, so it is for Free Practice only. Homework needs a lesson whose transcript was checked against the audio (a lesson JSON with an audit), approved with “Approve for homework”, then added to an assignment in Classes."),
-    h("div", { class: "dl-row" }, btn("Fill in a sample transcript", () => { title.value = "Sample: joining a club"; mode.value = "transcript"; src.value = SAMPLE; attest.checked = true; say("Sample filled in. Press Check."); }, "btn sm")));
-  root.append(h("section", { class: "dl-sec" }, h("h3", {}, "Dictation lesson"), guide, h("p", { class: "dl-muted" }, "Paste a transcript or a lesson JSON made in another AI chat. No AI runs here."),
-      title, h("div", { class: "dl-row" }, mode, h("label", { class: "dl-opt" }, attest, "I may use this transcript with my class")), src, h("div", { class: "dl-row" }, h("span", { class: "dl-muted" }, "Audio (optional):"), file), h("div", { class: "dl-row" }, btn("Check", check, "btn pri"), btn("New lesson", () => { S.lid = ""; S.doc = null; S.val = null; S.deselected = new Set(); S.audio = ""; title.value = ""; src.value = ""; preview.replaceChildren(); say("New lesson."); })), out, preview),
+      h("li", {}, h("b", {}, "Pick a slot "), "(book, test, Listening Part) or an Extra practice category at the top of Create. That is where students will find it."),
+      h("li", {}, h("b", {}, "Type a title and paste the script "), "of the recording. Students will write the whole script; capital letters, punctuation and “TOM:” labels are not marked, spelling and word endings are."),
+      h("li", {}, h("b", {}, "Upload the audio "), "(mp3 / m4a). Tick “I may use this recording…”. Tick “I checked the script against the audio” only if every word matches the recording: that is needed for homework."),
+      h("li", {}, h("b", {}, "Try it "), "with ", h("b", {}, "Preview as a student"), ", then ", h("b", {}, "Save lesson"), "."),
+      h("li", {}, "In ", h("b", {}, "Lessons"), " below: ", h("b", {}, "Approve for practice"), " (or for homework), then ", h("b", {}, "Publish to the selected slot"), ". To give it as homework, add it to an assignment in Classes.")),
+    h("p", { class: "dl-muted" }, "After a student submits, the app marks every word, the AI explains each mistake (also in Vietnamese) and suggests new words from the script; the mistakes go to the student's Error Notebook."),
+    h("div", { class: "dl-row" }, btn("Fill in a sample script", () => { title.value = "Sample: joining a club"; src.value = SAMPLE; attest.checked = true; S.words = compareScript(SAMPLE, "").words.script; say("Sample filled in (no audio: preview only)."); }, "btn sm")));
+  root.append(h("section", { class: "dl-sec" }, h("h3", {}, "Dictation lesson"), guide,
+      title, src, h("label", { class: "dl-opt" }, attest, "I may use this recording and script with my class"), h("label", { class: "dl-opt" }, checked, "I checked the script against the audio (needed for homework)"),
+      h("div", { class: "dl-row" }, h("span", { class: "dl-muted" }, "Audio:"), file), h("div", { class: "dl-row" }, btn("New lesson", () => { S.lid = ""; S.audio = ""; S.words = 0; title.value = ""; src.value = ""; checked.checked = false; preview.replaceChildren(); say("New lesson."); }, "btn sm")), out, preview),
     h("section", { class: "dl-sec" }, h("h3", {}, "Lessons"), list));
-  loadList();
+  drawOut(); loadList();
 }

@@ -24,7 +24,7 @@ function app(asgs, atts, passes, user) {
 }
 function server() {
   const SRC = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 'utf8').replace(/^export async function onRequest/m, 'async function onRequest')
-    .replace(/^import BUILD from .*$/m, 'const BUILD = {};').replace(/^import \{ dlStaff[^\n]*$/m, 'const dlStaff = null, dlAdmin = null, dlPractice = null, dlHomework = null, dlRaw = null, dlReapMaybe = null;').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(ROOT, 'md-hw.js'), 'utf8'));
+    .replace(/^import BUILD from .*$/m, 'const BUILD = {};').replace(/^import \{ dlStaff[^\n]*$/m, 'const dlStaff = null, dlAdmin = null, dlPractice = null, dlHomework = null, dlRaw = null, dlReapMaybe = null, dlCheck = null;').replace(/^import MDHW from .*$/m, () => fs.readFileSync(path.join(ROOT, 'md-hw.js'), 'utf8'));
   const KV = { assist: JSON.stringify({ 'as@x.com': { name: 'As', classes: ['7h'] } }) }, DB = { roster: {}, assignments: {}, attempts: {}, hwdone: {}, passes: {}, classes: {}, hwnotes: {}, exercises: {} };
   const env = { MD_KV: { get: async (k, ty) => (k in KV ? (ty === 'json' ? JSON.parse(KV[k]) : KV[k]) : null), put: async (k, v) => { KV[k] = v; }, delete: async (k) => { delete KV[k]; } } };
   const ctx = vm.createContext({ console: { log() {} }, Response: class { constructor(b, o) { this.body = b; this.status = (o && o.status) || 200; this.headers = (o && o.headers) || {}; } }, URL, TextEncoder, TextDecoder, crypto: globalThis.crypto, atob, btoa, fetch: async () => ({ ok: false, status: 500 }) });

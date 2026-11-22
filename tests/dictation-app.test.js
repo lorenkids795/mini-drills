@@ -5,7 +5,7 @@
 const assert = require('assert'), fs = require('fs'), path = require('path');
 const { boot, ROOT } = require('./app-harness.js');
 let pass = 0, fail = 0; const out = [];
-function t(name, fn) { try { fn(); pass++; out.push('PASS ' + name); } catch (e) { fail++; out.push('FAIL ' + name + ' -> ' + e.message); } }
+const P = []; function t(name, fn) { P.push(Promise.resolve().then(fn).then(() => { pass++; out.push('PASS ' + name); }, (e) => { fail++; out.push('FAIL ' + name + ' -> ' + e.message); })); }
 const HOOKS = 'setCustom:function(d){customDocs=d;rebuildCustom()},exOf:exOf,exSub:exSub,dlAssignable:dlAssignable,exIds:exIds,customMap:function(){return customMap},dlRawHTML:dlRawHTML';
 const DOCS = [
   { id: 'dl-lhw', title: 'Harbour (homework)', skill: 'listening', kind: 'dictation', dlId: 'lhw', dlVer: 2, dlMode: 'homework', dlLabel: 'teacher_audited', audio: '/api/audio/AAAAAAAAAAAAAAAAAAAAAA', bookId: 'cam21', testId: 't4', part: 1 },
@@ -38,4 +38,17 @@ t('teacher answers panel: student text and names are escaped; expired details sh
   assert.ok(h.includes('answer details expired') && h.includes('25%'), 'expired: neutral state, score still shown'); assert.ok(h.includes('75%') && h.includes('90 days'));
   assert.ok(h.split('Student:').length === 2, 'no answer line for the expired row'); assert.ok(/1 submission\(s\) from classes that are not yours/.test(h));
 });
-out.forEach((l) => console.log(l)); console.log('---- ' + pass + '/' + (pass + fail) + ' passed'); process.exit(fail ? 1 : 0);
+t('write-the-script result: Writing feedback (numbered corrections at the exact place, corrected text, New vocabulary + Flashcard), script, Error Notebook link', async () => {
+  const S = await import(require('url').pathToFileURL(path.join(ROOT, 'dictation', 'script.js')).href);
+  const script = 'ANNA: I want the red bag and the blue bag.'; const text = 'I want the red bag and the blu bag'; const r = S.compareScript(script, text);
+  const R = Object.assign({ script, ai: { corrections: r.corrections, vocabulary_upgrades: [{ original: '', upgraded: 'blue bag', example: 'I want the red bag and the blue bag.', note: 'túi xanh', vi: 'túi xanh' }] }, added: 1 }, r);
+  const B = boot({ hooks: HOOKS + ',dlResultHTML:dlResultHTML,fixSpans:fixSpans,aiItems:aiItems', user: { name: 'Lan', email: 'lan@x.com', role: 'student', cls: 'A' } });
+  const h = B.T.dlResultHTML(R, null, script, 'hw');
+  assert.ok(h.includes('>Corrections<') && h.includes('Corrected essay') && h.includes('New vocabulary') && h.includes('+ Flashcard') && h.includes('Script of the recording') && h.includes('Error Notebook'));
+  assert.ok(h.includes('✗ Not passed') === !r.passed && h.includes(r.pct + '%'));
+  const sp = B.T.fixSpans(text, B.T.aiItems(R.ai)); assert.strictEqual(sp.length, 1); assert.strictEqual(sp[0].i, text.lastIndexOf('blu'), 'the second "bag" area, not the first match');
+  const x = B.T.dlResultHTML(Object.assign({}, R, { text: '<img src=x onerror=1>', ai: { corrections: [], vocabulary_upgrades: [] } }), null, '<b>s</b>', 'pr');
+  assert.ok(!x.includes('<img') && !x.includes('<b>s</b>'), 'student text and script escaped'); assert.ok(x.includes('Write it again'));
+  const k = B.T.dlResultHTML(null, { pct: 80, passed: true, words: { right: 8, script: 10 } }, script, 'hw'); assert.ok(k.includes('no longer kept') && k.includes('80%'));
+});
+const done = () => { out.forEach((l) => console.log(l)); console.log('---- ' + pass + '/' + (pass + fail) + ' passed'); process.exit(fail ? 1 : 0); }; Promise.all(P).then(done);
