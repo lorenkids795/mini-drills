@@ -39,7 +39,7 @@ t('admin list shows Unit 2 marked as preview', () => { ctx.U = ADM; api.setLMV(n
 t('admin opens the shell: no fake practice', () => { ctx.U = ADM; api.setLMV('lm-writing-ac-t1-u2'); const h = api.lmHTML(); assert.ok(h.includes('lmshell') && h.includes('no content yet')); assert.ok(!/Check answers|Submit|textarea/.test(h)); });
 t('unknown lesson id falls back to the list', () => { ctx.U = ADM; api.setLMV('nope'); assert.ok(!api.lmHTML().includes('lmshell')); });
 t('Coming soon: an ordinary student sees no lesson of any skill, even a published one; teacher keeps published lessons', () => { ctx.U = STU; ['writing', 'listening', 'reading', 'speaking'].forEach((k) => assert.strictEqual(api.lmVisible({ status: 'published', skill: k }), false)); ctx.U = TEA; assert.strictEqual(api.lmVisible({ status: 'published', skill: 'listening' }), true); });
-t('tabs: Cambridge IELTS + Learning Materials', () => { const h = api.libTabsHTML(); assert.ok(h.includes('>Cambridge<') && h.includes('Learning Materials') && (h.match(/role="tab"/g) || []).length === 2); });
+t('tabs: Cambridge IELTS + Learning Materials', () => { const h = api.libTabsHTML(); assert.ok(h.includes('>Cambridge<') && h.includes('Learning Materials') && h.includes('Extra practice') && (h.match(/role="tab"/g) || []).length === 3); });
 t('tree: 4 skills in order; Writing open by default with 2 task groups (closed); skills without groups are disabled "Coming soon"', () => {
   ctx.U = ADM; api.setLMV(null); api.close('m:ielts-academic-task1'); const h = api.lmHTML(); const n = (re) => (h.match(re) || []).length;
   assert.deepStrictEqual((h.match(/class="lmnm">(\w+)</g) || []).map((x) => x.slice(13, -1)), ['Writing', 'Listening', 'Reading', 'Speaking']);

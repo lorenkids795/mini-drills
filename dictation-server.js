@@ -93,9 +93,11 @@ export async function dlAdmin(D, env, body) {
   if (body.op === 'publish') {
     const n = Number(L.data.approved) || 0; if (!n) return D.fail('Approve a version first.', 409);
     const bookId = String(body.bookId || ''), testId = String(body.testId || ''), part = Math.max(0, Math.min(9, Number(body.part) || 0));
-    if (!BOOK.test(bookId) || !TEST.test(testId)) return D.fail('Choose a book and a test.');
+    const xtra = bookId === 'xtra' && /^k_[a-z0-9-]{1,40}$/.test(testId); const cat = xtra ? clean(body.cat, 40) : '';
+    if (!xtra && (!BOOK.test(bookId) || !TEST.test(testId))) return D.fail('Choose a book and a test.');
+    if (xtra && !cat) return D.fail('Choose a category.');
     const v = await loadVersion(D, env, lid, n); const exId = 'dl-' + lid;
-    await D.fsPut(env, 'exercises', exId, { title: v.title, skill: 'listening', kind: 'dictation', dlId: lid, dlVer: n, dlMode: L.data.approvedMode || 'practice', dlLabel: v.audited ? 'teacher_audited' : 'unverified_transcript', audio: v.audio || '', bookId, testId, part, hint: '', ts: now });
+    await D.fsPut(env, 'exercises', exId, { title: v.title, skill: 'listening', kind: 'dictation', dlId: lid, dlVer: n, dlMode: L.data.approvedMode || 'practice', dlLabel: v.audited ? 'teacher_audited' : 'unverified_transcript', audio: v.audio || '', bookId, testId, part, ...(xtra ? { cat } : {}), hint: '', ts: now });
     await D.fsUpdate(env, 'dlLessons', lid, { published: n, exId, ts: now }); await audit(D, env, lid, 'publish', by, { n, bookId, testId, part });
     return D.json({ ok: true, exId, published: n });
   }

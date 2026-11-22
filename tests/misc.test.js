@@ -25,7 +25,7 @@ const SRV = fs.readFileSync(path.join(ROOT, 'functions', 'api', '[[path]].js'), 
     assert.ok(hero.includes('Student 0') && !cards.includes('Student 0')); assert.ok(/lb2[\s\S]*Student 1/.test(cards) && /lb3[\s\S]*Student 2/.test(cards));
     const h2 = lb(2); assert.ok(h2.includes('lbcards one') && !h2.includes('3rd place')); assert.ok(lb(1).includes('lbhero') && !lb(1).includes('lbcards')); assert.ok(lb(0).includes('lbempty'));
   });
-  await t('Library: the tab is named "Cambridge"', () => { assert.ok(/tab\('cam','Cambridge'\)\+tab\('lm','Learning Materials'\)/.test(html)); });
+  await t('Library: the tab is named "Cambridge"', () => { assert.ok(/tab\('cam','Cambridge'\)\+tab\('xtra','Extra practice'\)\+tab\('lm','Learning Materials'\)/.test(html)); });
   await t('Admin › Users: no "Edit class" button any more (other buttons stay)', () => {
     const B = boot({ hooks: 'get AD(){return AD},renderAdmin:renderAdmin' }); const AD = B.T.AD; AD.sub = 'users'; AD.locked = false; AD.ver = 'x';
     AD.users = [{ email: 'k@x.com', name: 'K', role: 'student', cls: '17h', status: 'active', hasPassword: true }]; B.T.showTab('admin'); const v = B.el('v-admin').innerHTML;
