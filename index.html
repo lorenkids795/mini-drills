@@ -1108,6 +1108,7 @@ h4.tk.sect{font-size:1.3rem;font-weight:800;text-transform:none;letter-spacing:-
 .lsflash{margin-top:10px;font-size:var(--fs-body);color:var(--accent)}.lsflash .lsfh{font-size:1.5rem;font-weight:800;line-height:1.25;margin:0 0 2px}.lsflash .lsfd{margin:0 0 8px}.lsflash .lsfl{font-size:var(--fs-sm);font-weight:700;margin:6px 0 2px}.lsflash .lsfu{list-style:none;margin:0;padding:0 0 0 22px}.lsflash .lsfu li{margin:2px 0}.lsflash .lsfe{margin-top:10px;font-style:italic}.lsflash b,.lsflash small,.lsflash i{color:var(--accent)}.lsexp{font-style:italic;color:var(--accent);margin:6px 0 0}
 .lsc .opt.good,.lsc .opt.good:has(input:checked){background:var(--good-bg);border-color:var(--good);color:var(--good);font-weight:600}.lsc .opt.bad,.lsc .opt.bad:has(input:checked){background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
 .lsw b{font-size:1.2rem}.lsscore{cursor:default;display:inline-block}.lshw.tg.on{background:var(--good);color:var(--bg)}
+.cpxc{display:inline-flex;align-items:stretch}.cpxc .cptp{border-top-right-radius:0;border-bottom-right-radius:0;border-right:0}.cpxdel{min-width:40px;min-height:44px;padding:0 10px;font:inherit;font-size:var(--fs-lg);line-height:1;border:1px solid var(--line-2);border-radius:0 var(--r-md) var(--r-md) 0;background:var(--surface);color:var(--muted);cursor:pointer}.cpxdel:hover,.cpxdel:focus-visible{color:var(--bad);border-color:var(--bad)}.cpxc.on .cpxdel{border-color:var(--accent)}
 .cpxnew{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}.cpxnew input{min-height:40px;padding:6px 10px;border:1px solid var(--line-2);border-radius:var(--r-sm);background:var(--surface);color:var(--ink);font:inherit;min-width:0;width:15em;max-width:100%}.cpxl{margin-top:12px}.cpxlist{margin:4px 0 8px;padding-left:1.2em}
 .attcap{margin:18px 0 8px;font-size:var(--fs-sm);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .lsdemo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;font-size:var(--fs-sm);color:var(--muted)}
@@ -5110,7 +5111,7 @@ function renderXSlot(){
   var cats=xCats();if(CP.xnew&&!cats.some(function(c){return c.k===CP.xnew.k}))cats.push(CP.xnew);
   if(!cats.some(function(c){return c.k===CP.test}))CP.test=cats[0]?cats[0].k:'';
   CP.slot=CP.test?'x':null;
-  var tb=$('#cpTests');if(tb)tb.innerHTML=cats.map(function(c){var on=CP.test===c.k;return '<button type="button" class="cptp'+(on?' on':'')+'" data-act="cp-test" data-t="'+esc(c.k)+'" aria-pressed="'+on+'">'+esc(c.n)+'</button>'}).join('')+
+  var tb=$('#cpTests');if(tb)tb.innerHTML=cats.map(function(c){var on=CP.test===c.k;return '<span class="cpxc'+(on?' on':'')+'"><button type="button" class="cptp'+(on?' on':'')+'" data-act="cp-test" data-t="'+esc(c.k)+'" aria-pressed="'+on+'">'+esc(c.n)+'</button><button type="button" class="cpxdel" data-act="cp-xdel" data-t="'+esc(c.k)+'" aria-label="Remove category '+esc(c.n)+'" title="Remove category">×</button></span>'}).join('')+
     '<span class="cpxnew"><input id="cpXCat" type="text" maxlength="40" placeholder="New category, e.g. Grammar" aria-label="New category name" autocomplete="off"><button class="btn sm" type="button" data-act="cp-xcat">+ Add category</button></span>';
   var box=$('#cpSlots');if(!box)return;var h='<div class="cpxl">';
   if(!CP.test)h+='<p class="muted">Type a category name (for example Grammar, Vocabulary, Exam tips) and press “+ Add category”.</p>';
@@ -5997,6 +5998,14 @@ document.addEventListener('click',function(e){
   if(a==='cp-xcat'){var xi=$('#cpXCat'),xn=String(xi&&xi.value||'').replace(/\s+/g,' ').trim().slice(0,40),xk=xKey(xn);
     if(!xk){toast('Type a category name with letters or numbers.');if(xi)xi.focus();return}
     var xo=xCats().filter(function(c){return c.k===xk})[0];CP.xnew=xo?null:{k:xk,n:xn};CP.test=xk;CP.msg='';cpBtSave();renderSlotMap();cpWarnUpdate();return}
+  if(a==='cp-xdel'){var dk=t.dataset.t,dn=tName(dk),drs=customDocs.concat(localCustom).filter(function(d){return d.bookId===XTRA&&d.testId===dk});
+    if(!drs.length){if(CP.xnew&&CP.xnew.k===dk)CP.xnew=null;if(CP.test===dk)CP.test='';CP.msg='';cpBtSave();renderSlotMap();cpWarnUpdate();return}
+    if(drs.some(function(d){return d.kind==='dictation'})){toast('“'+dn+'” has a Dictation lesson. Unpublish it first (Dictation lesson › Lessons), then remove the category.');return}
+    var dna=realAttempts().filter(function(x){return drs.some(function(d){return x.ex==='c_'+d.id})}).length;
+    if(uiGate(t,{title:'Remove the category “'+dn+'”?',text:'Its '+drs.length+' exercise'+(drs.length>1?'s are':' is')+' deleted from the Library (every skill).'+(dna?' Students keep their '+dna+' result'+(dna>1?'s':'')+'; the exercise name shows as “Removed exercise”.':'')+' This cannot be undone.',ok:'Remove category',danger:true,must:'DELETE'}))return;
+    drs.forEach(function(d){if(d.docId&&dbh)dbh.doc('exercises/'+d.docId).delete().then(function(){},function(){})});
+    customDocs=customDocs.filter(function(d){return drs.indexOf(d)<0});localCustom=localCustom.filter(function(d){return drs.indexOf(d)<0});
+    if(CP.test===dk)CP.test='';CP.msg='';rebuildCustom();cpBtSave();renderSlotMap();cpWarnUpdate();toast('Category “'+dn+'” removed.');return}
   if(a==='cp-test'){CP.test=t.dataset.t;CP.slot=null;CP.msg='';cpBtSave();renderSlotMap();cpWarnUpdate();return}
   if(a==='cp-slot'){CP.slot=+t.dataset.p;CP.msg='';renderSlotMap();cpWarnUpdate();var sb=$('#cpSlots [data-p="'+CP.slot+'"]');if(sb){try{sb.focus({preventScroll:true})}catch(x){}}return}
   if(a==='rd-gen'){if(!RD.busy&&RD.job&&rdMedDone(RD.job)&&uiGate(t,{title:'Generate a new lesson?',text:'The current Medium'+(rdApproved()?' (approved)':'')+', its review and any Easy / Hard versions are replaced. This uses new AI requests.',ok:'Generate a new lesson',danger:true}))return true;return rdGen()}
@@ -7319,7 +7328,7 @@ function xSave(){
     if(!rl(customDocs))rl(localCustom);XED=null;rebuildCustom();toast('Exercise updated.');renderLib()};
   if(dbh&&E.docId)dbh.doc('exercises/'+E.docId).set(upd).then(done,done);else done();
 }
-var APP_VERSION='2026-11-22a'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
+var APP_VERSION='2026-11-22b'; // shown in Admin › Users next to the server version: proves which index.html the site really runs
 function actFail(a,err){try{console.error('[action '+a+']',err)}catch(x){}var m='Something went wrong ('+a+': '+((err&&err.message)||err)+'). Reload the page and try again.';toast(m);if(a.indexOf('ad-')===0)adSay(m)}
 function extAct(a,t){
   if(uiAct(a,t))return true;

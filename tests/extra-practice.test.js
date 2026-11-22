@@ -54,6 +54,18 @@ t('Create: switching back to a book returns to Test 1 and slots; no category wit
   B.change({ id: 'cBook', value: 'xtra' }); B.el('cpXCat').value = ' !!! '; B.press({ act: 'cp-xcat' }); assert.ok(/category name/.test(B.toast()));
   B.change({ id: 'cBook', value: 'cam14' }); assert.strictEqual(B.T.CP.test, 't1'); assert.strictEqual(B.el('cpSlotH').textContent, 'Pick a free slot');
 });
+t('× next to a category: an empty new one goes at once; one with exercises asks (type DELETE) and deletes them; Dictation blocks it', () => {
+  const B = boot({ hooks: HOOKS }); B.T.setCustom(DOCS); B.T.showTab('create'); B.T.CP.skill = 'reading'; B.change({ id: 'cBook', value: 'xtra' });
+  assert.ok(B.el('cpTests').innerHTML.includes('data-act="cp-xdel" data-t="k_grammar" aria-label="Remove category Grammar"'));
+  B.el('cpXCat').value = 'Tips'; B.press({ act: 'cp-xcat' }); assert.ok(B.el('cpTests').innerHTML.includes('>Tips<'));
+  B.press({ act: 'cp-xdel', t: 'k_tips' }); assert.strictEqual(B.asking(), '', 'no question for an empty category'); assert.ok(!B.el('cpTests').innerHTML.includes('>Tips<'));
+  B.press({ act: 'cp-xdel', t: 'k_grammar' }); assert.ok(/Remove the category “Grammar”/.test(B.asking()));
+  B.cancel(); assert.ok(B.T.xCats().some((c) => c.k === 'k_grammar'), 'Cancel keeps it');
+  B.press({ act: 'cp-xdel', t: 'k_grammar' }); B.ok(); assert.ok(B.asking(), 'needs DELETE typed'); B.el('uiIn').value = 'DELETE'; B.ok();
+  assert.strictEqual(B.T.xCats().length, 0); assert.strictEqual(B.T.exIds('cam14', 't1', 'reading').join(), 'c_c1', 'Cambridge untouched'); assert.ok(/removed/.test(B.toast()));
+  const D = boot({ hooks: HOOKS }); D.T.setCustom(DOCS.concat([{ id: 'dl-L9', kind: 'dictation', bookId: 'xtra', testId: 'k_grammar', cat: 'Grammar', skill: 'listening', title: 'D' }])); D.T.showTab('create'); D.change({ id: 'cBook', value: 'xtra' });
+  D.press({ act: 'cp-xdel', t: 'k_grammar' }); assert.strictEqual(D.asking(), ''); assert.ok(/Unpublish it first/.test(D.toast())); assert.ok(D.T.xCats().length === 1);
+});
 t('Dictation can be published into an Extra practice category (server checks the key and the name)', async () => {
   const B = boot({ hooks: HOOKS }); B.T.setCustom(DOCS); B.T.showTab('create'); B.T.CP.skill = 'listening'; B.change({ id: 'cBook', value: 'xtra' }); B.T.renderSlotMap();
   const sl = B.T.dlSlot(); assert.strictEqual(sl.book, 'xtra'); assert.strictEqual(sl.test, 'k_grammar'); assert.strictEqual(sl.cat, 'Grammar');
