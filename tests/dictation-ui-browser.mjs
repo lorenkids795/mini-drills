@@ -65,6 +65,10 @@ try {
   [...A.querySelectorAll("button")].find((b) => b.textContent === "Preview as a student").click(); await wait(50); out.authorPreview = /Teacher preview/.test(txt(A));
   [...A.querySelectorAll("button")].find((b) => /Save lesson/.test(b.textContent)).click(); await wait(400); out.authorSaved = /Saved version 1/.test(txt(A)) && /Sports centre/.test(txt(A));
   const hwBtn = [...A.querySelectorAll("button")].filter((b) => b.textContent === "Approve for homework"); out.authorHomeworkBlockedForUnaudited = hwBtn.some((b) => b.disabled);
+  out.authorGuide = /How to make a dictation exercise/.test(txt(A)) && !!A.querySelector(".dl-card");
+  A.style.width = "340px"; await wait(50); out.authorFitsNarrowColumn = A.scrollWidth <= A.clientWidth + 1; A.style.width = "";
+  [...A.querySelectorAll("button")].find((b) => b.textContent === "Fill in a sample transcript").click(); [...A.querySelectorAll("button")].find((b) => b.textContent === "Check").click(); await wait(50);
+  out.authorSampleValid = /not teacher-audited: Free Practice only/.test(txt(A)) && A.querySelector("input[type=text]").value === "Sample: joining a club";
   out.nodeGlobals = typeof process === "undefined";
 } catch (e) { out.error = String(e && e.stack || e); }
 const pre = document.createElement("pre"); pre.id = "selftest"; pre.textContent = JSON.stringify(out); document.body.append(pre);

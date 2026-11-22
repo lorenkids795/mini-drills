@@ -27,10 +27,14 @@ function css() {
 .dl textarea{min-height:72px;resize:vertical;line-height:1.6}.dl-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.dl-fb{margin:0;font-size:var(--fs-sm,.84rem)}.dl-ok{color:var(--good);font-weight:700}.dl-bad{color:var(--bad);font-weight:700}
 .dl-muted{color:var(--muted);font-size:var(--fs-sm,.84rem)}.dl-review{border-left:3px solid var(--accent);padding:6px 10px;background:var(--surface-2,transparent);border-radius:0 var(--r-sm,8px) var(--r-sm,8px) 0;line-height:1.7}
 .dl-tiles{display:flex;flex-wrap:wrap;gap:6px;min-height:44px;padding:6px;border:1px dashed var(--line-2,var(--line));border-radius:var(--r-sm,8px)}.dl-tile{min-height:40px;padding:0 12px;border:1px solid var(--line-2,var(--line));border-radius:var(--r-sm,8px);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}
-.dl-tile:focus-visible,.dl button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}.dl-gap{display:inline-block;width:9em;min-height:36px!important;margin:2px 4px;vertical-align:middle}.dl-sent{line-height:2.2}
+.dl-tile:focus-visible,.dl button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}.dl .dl-gap{display:inline-block;width:9em;max-width:calc(100% - 8px);min-height:36px!important;margin:2px 4px;vertical-align:middle}.dl-sent{line-height:2.2}
 .dl-warn{padding:10px 12px;border-radius:var(--r-sm,8px);background:var(--hl-soft,#fff7d6);color:var(--ink)}.dl-err{color:var(--bad)}.dl-opt{display:flex;gap:8px;align-items:center;min-height:44px}
 .dl-player{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:var(--r-md,12px);background:var(--surface)}.dl-player input[type=range]{flex:1 1 160px}.dl-player .dl-time{font-family:var(--mono,monospace);font-size:var(--fs-sm,.84rem)}
 .dl-sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.dl-sum div{border:1px solid var(--line);border-radius:var(--r-sm,8px);padding:8px 10px}.dl-sum b{display:block;font-size:var(--fs-lg,1.15rem)}
+.dl *{min-width:0}.dl select{min-height:44px;max-width:100%;font:inherit;padding:8px 10px;border:1px solid var(--line-2,var(--line));border-radius:var(--r-sm,8px);background:var(--surface);color:var(--ink)}.dl input[type=file]{max-width:100%;font:inherit}
+.dl-guide{border:1px solid var(--line);border-radius:var(--r-md,12px);padding:10px 14px;background:var(--surface-2,var(--surface))}.dl-guide summary{cursor:pointer;font-weight:700;min-height:32px;display:flex;align-items:center}.dl-guide ol{margin:8px 0 4px;padding-left:1.3em;display:grid;gap:6px;line-height:1.6}.dl-guide p{margin:6px 0}
+.dl-cards{display:grid;gap:10px}.dl-card{border:1px solid var(--line);border-radius:var(--r-md,12px);padding:12px;display:grid;gap:8px;background:var(--surface)}.dl-card b{overflow-wrap:anywhere}.dl-pills{display:flex;flex-wrap:wrap;gap:6px}.dl-pill{font-size:var(--fs-xs,.78rem);padding:2px 8px;border-radius:999px;border:1px solid var(--line-2,var(--line));color:var(--muted)}.dl-pill.on{border-color:var(--good);color:var(--good)}
+.dl-list label{overflow-wrap:anywhere}
 .dl-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}.dl-list li{display:flex;gap:8px;align-items:flex-start}.dl-table{width:100%;border-collapse:collapse}.dl-table td,.dl-table th{border-top:1px solid var(--line);padding:6px;text-align:left;vertical-align:top;font-size:var(--fs-sm,.84rem)}` }));
 }
 
@@ -174,6 +178,8 @@ export async function mountHomework(el, o) {
 const answerText = (r) => (r.answer ?? r.text ?? r.chosen ?? (Array.isArray(r.answers) ? r.answers.join(" · ") : Array.isArray(r.placedIds) ? "(word order)" : ""));
 
 /* ---------- Teacher / admin authoring ---------- */
+// original, made-up dialogue for the "Fill in a sample transcript" button (no audio: preview only)
+const SAMPLE = "ANNA: Hello, I would like to join the photography club.\n\nTOM: Great. We meet on Thursday evenings at seven o'clock.\n\nANNA: Is there a membership fee?\n\nTOM: Yes, it costs twenty pounds a year, and new members get a free map of the city.";
 export function mountAuthor(el, o) {
   css(); const S = { lid: "", doc: null, json: "", val: null, notes: [], deselected: new Set(), audio: "", lessons: [], msg: null };
   const root = h("div", { class: "dl" }); el.replaceChildren(root);
@@ -214,17 +220,27 @@ export function mountAuthor(el, o) {
   async function loadList() {
     try { const r = await o.staffApi("dictation/staff", { op: "list" }); S.lessons = (r.lessons || []).sort((x, y) => (y.ts || 0) - (x.ts || 0)); } catch (e) { list.replaceChildren(h("p", { class: "dl-err", text: "Could not load the lessons: " + (e.message || e) })); return; }
     const adm = (body, q) => o.ask({ title: q, ok: "Yes", onOk: async () => { try { await o.adminApi("admin/dictation", body); o.toast && o.toast("Done."); loadList(); } catch (e) { say(String(e.message || e), "dl-err"); } } });
-    list.replaceChildren(h("table", { class: "dl-table" }, h("thead", {}, h("tr", {}, ...["Lesson", "Version", "Status", "Actions"].map((t) => h("th", {}, t)))),
-      h("tbody", {}, ...S.lessons.map((L) => { const aud = L.gate === "GATE_PASS" || L.gate === "GATE_PASS_WITH_EXCLUSIONS"; const fresh = L.approved === L.cur;
-        return h("tr", {}, h("td", {}, L.title), h("td", {}, "v" + L.cur), h("td", {}, (aud ? "audited" : "not audited") + " · " + (L.approved ? "approved v" + L.approved + " (" + L.approvedMode + ")" : "not approved") + (L.published ? " · published v" + L.published : "")),
-          h("td", {}, h("div", { class: "dl-row" }, btn("Edit", () => edit(L.lid), "btn sm"),
+    if (!S.lessons.length) { list.replaceChildren(h("p", { class: "dl-muted" }, "No dictation lessons yet. Follow the steps above to make the first one.")); return; }
+    const pill = (t, on) => h("span", { class: "dl-pill" + (on ? " on" : "") }, t);
+    list.replaceChildren(h("div", { class: "dl-cards" }, ...S.lessons.map((L) => { const aud = L.gate === "GATE_PASS" || L.gate === "GATE_PASS_WITH_EXCLUSIONS"; const fresh = L.approved === L.cur;
+        return h("div", { class: "dl-card" }, h("b", {}, L.title), h("div", { class: "dl-pills" }, pill("Version " + L.cur), pill(aud ? "Audited" : "Not audited · practice only", aud), pill(L.approved ? "Approved v" + L.approved + " · " + L.approvedMode : "Not approved", !!L.approved), pill(L.published ? "In the Library (v" + L.published + ")" : "Not in the Library", !!L.published)),
+          h("div", { class: "dl-row" }, btn("Edit", () => edit(L.lid), "btn sm"),
             btn("Approve for practice", () => adm({ op: "approve", lid: L.lid, n: L.cur, mode: "practice" }, "Approve version " + L.cur + " of “" + L.title + "” for Free Practice?"), "btn sm", { disabled: fresh && L.approvedMode === "practice" }),
             btn("Approve for homework", () => adm({ op: "approve", lid: L.lid, n: L.cur, mode: "homework" }, "Approve version " + L.cur + " of “" + L.title + "” for homework? Students will be scored on it."), "btn sm", { disabled: !aud || (fresh && L.approvedMode === "homework"), title: aud ? "" : "Not audited: practice only" }),
             btn("Publish to the selected slot", () => { const sl = o.getSlot ? o.getSlot() : null; if (!sl) return say("Pick a free Listening slot (book, test, part) at the top of Create first.", "dl-err"); adm({ op: "publish", lid: L.lid, bookId: sl.book, testId: sl.test, part: sl.part }, "Publish approved version " + L.approved + " of “" + L.title + "” to " + sl.label + "?"); }, "btn sm", { disabled: !L.approved }),
-            L.published ? btn("Unpublish", () => adm({ op: "unpublish", lid: L.lid }, "Remove “" + L.title + "” from the Library? Submitted results are kept."), "btn sm bad") : null))); }))));
+            L.published ? btn("Unpublish", () => adm({ op: "unpublish", lid: L.lid }, "Remove “" + L.title + "” from the Library? Submitted results are kept."), "btn sm bad") : null)); })));
   }
   async function edit(lid) { try { const r = await o.staffApi("dictation/staff", { op: "get", lid }); S.lid = lid; mode.value = "json"; src.value = r.version.json; title.value = r.version.title; S.audio = r.version.audio || ""; S.deselected = new Set(r.version.deselected || []); check(); say("Editing “" + r.version.title + "” (version " + r.version.n + "). Saving creates a new version that needs approval again."); } catch (e) { say(String(e.message || e), "dl-err"); } }
-  root.append(h("section", { class: "dl-sec" }, h("h3", {}, "Dictation lesson"), h("p", { class: "dl-muted" }, "Paste a transcript (one speaker turn per paragraph, optional “NAME:” labels) or a lesson JSON made in another AI chat. No AI runs here."),
+  const guide = h("details", { class: "dl-guide", open: !store.get("md-dlguide") || null, ontoggle: (e) => store.set("md-dlguide", e.target.open ? 0 : 1) }, h("summary", {}, "How to make a dictation exercise (5 steps)"),
+    h("ol", {},
+      h("li", {}, h("b", {}, "Pick a slot. "), "At the top of Create choose the book, test and a free Listening Part. That is where students will find the exercise."),
+      h("li", {}, h("b", {}, "Paste the transcript "), "of the recording below: one speaker turn per paragraph (leave an empty line between turns). “TOM:” labels are optional. Type a title."),
+      h("li", {}, h("b", {}, "Upload the audio "), "(mp3 / m4a). Students need it to listen. Tick “I may use this transcript with my class”, then press ", h("b", {}, "Check"), "."),
+      h("li", {}, h("b", {}, "Look and save. "), "Untick sentences you do not want, press ", h("b", {}, "Preview as a student"), " to try it, then ", h("b", {}, "Save lesson"), "."),
+      h("li", {}, "In ", h("b", {}, "Lessons"), " below press ", h("b", {}, "Approve for practice"), ", then ", h("b", {}, "Publish to the selected slot"), ". The exercise appears in the Library.")),
+    h("p", { class: "dl-muted" }, "A plain transcript is “not audited”, so it is for Free Practice only. Homework needs a lesson whose transcript was checked against the audio (a lesson JSON with an audit), approved with “Approve for homework”, then added to an assignment in Classes."),
+    h("div", { class: "dl-row" }, btn("Fill in a sample transcript", () => { title.value = "Sample: joining a club"; mode.value = "transcript"; src.value = SAMPLE; attest.checked = true; say("Sample filled in. Press Check."); }, "btn sm")));
+  root.append(h("section", { class: "dl-sec" }, h("h3", {}, "Dictation lesson"), guide, h("p", { class: "dl-muted" }, "Paste a transcript or a lesson JSON made in another AI chat. No AI runs here."),
       title, h("div", { class: "dl-row" }, mode, h("label", { class: "dl-opt" }, attest, "I may use this transcript with my class")), src, h("div", { class: "dl-row" }, h("span", { class: "dl-muted" }, "Audio (optional):"), file), h("div", { class: "dl-row" }, btn("Check", check, "btn pri"), btn("New lesson", () => { S.lid = ""; S.doc = null; S.val = null; S.deselected = new Set(); S.audio = ""; title.value = ""; src.value = ""; preview.replaceChildren(); say("New lesson."); })), out, preview),
     h("section", { class: "dl-sec" }, h("h3", {}, "Lessons"), list));
   loadList();
